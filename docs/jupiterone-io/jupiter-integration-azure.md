@@ -1,12 +1,11 @@
-# Example
+# JupiterOne Managed Integration for Microsoft Azure
 
 ## Overview
 
-JupiterOne provides a managed integration with Example Provider. The integration
-connects directly to Example Provider APIs to obtain account metadata and
-analyze resource relationships. Customers authorize access by creating an API
-token in their target Example Provider account and providing that credential to
-JupiterOne.
+JupiterOne provides a managed integration for Microsoft Azure. The integration
+connects directly to Azure APIs to obtain account metadata and analyze resource
+relationships. Customers authorize access by ... and providing that credential
+to JupiterOne.
 
 ## Integration Instance Configuration
 

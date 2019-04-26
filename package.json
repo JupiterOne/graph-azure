@@ -1,9 +1,9 @@
 {
-  "name": "@jupiterone/managed-integration-example",
+  "name": "@jupiterone/jupiter-integration-azure",
   "version": "0.1.0",
-  "description": "An example JupiterOne managed integration.",
+  "description": "A JupiterOne managed integration for https://azure.microsoft.com/.",
   "main": "dist/index.js",
-  "repository": "https://github.com/JupiterOne/managed-integration-example",
+  "repository": "https://github.com/JupiterOne/jupiter-integration-azure",
   "license": "SEE LICENSE IN LICENSE",
   "files": [
     "LICENSE",

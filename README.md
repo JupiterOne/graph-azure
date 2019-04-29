@@ -65,12 +65,25 @@ provider. Developing an integration involves:
     graph
 
 Run the integration to see what happens. You may use use Node to execute
-directly on your machine (NVM is recommended).
+directly on your machine (NVM is recommended), or you may use Docker Compose to
+run the project in a contained environment
 
-1.  Install Docker
+Node:
+
+1.  Install Docker and Node
 1.  `yarn install`
+1.  Provide credentials in `.env`
 1.  `yarn start:graph`
 1.  `yarn start`
+
+Docker Compose:
+
+1.  Install Docker and Docker Compose
+1.  Copy `docker-compose.sample.yml` to `docker-compose.yml`
+1.  Provide credentials in `docker-compose.yml` `ENV`
+1.  `docker-compose build`
+1.  `docker-compose run --rm integration yarn install`
+1.  `docker-compose run --rm integration yarn start`
 
 Activity is logged to the console indicating the operations produced and
 processed. View raw data in the graph database using
@@ -84,6 +97,20 @@ with no existing data.
 
 ```sh
 yarn stop:graph && yarn start:graph
+```
+
+Or:
+
+```sh
+docker-compose restart graph
+```
+
+### Docker Compose Interactive Session
+
+You can start interactive session inside a container:
+
+```sh
+docker-compose run --rm integration bash
 ```
 
 ### Environment Variables
@@ -142,12 +169,18 @@ To run tests locally:
 yarn test
 ```
 
+Or:
+
+```sh
+docker-compose run --rm integration yarn test
+```
+
 ### Deployment
 
 Managed integrations are deployed into the JupiterOne infrastructure by staff
 engineers using internal projects that declare a dependency on the open source
 integration NPM package. The package will be published by the JupiterOne team.
 
-```sh
+```shell
 yarn build:publish
 ```

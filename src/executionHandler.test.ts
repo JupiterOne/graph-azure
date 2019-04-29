@@ -1,60 +1,157 @@
-import { IntegrationExecutionContext } from "@jupiterone/jupiter-managed-integration-sdk";
+import {
+  IntegrationActionName,
+  IntegrationExecutionContext,
+  JobsClient,
+  PersisterClient,
+} from "@jupiterone/jupiter-managed-integration-sdk";
+
+import { AzureClient } from "./azure";
 import executionHandler from "./executionHandler";
 import initializeContext from "./initializeContext";
-import {
-  DEVICE_ENTITY_TYPE,
-  USER_DEVICE_RELATIONSHIP_TYPE,
-  USER_ENTITY_TYPE,
-} from "./types";
+
+jest.mock("./azure");
+
+const clients = {
+  graph: {
+    findEntitiesByType: jest.fn().mockResolvedValue([]),
+    findRelationshipsByType: jest.fn().mockResolvedValue([]),
+  },
+  persister: {
+    processEntities: jest.fn().mockReturnValue([]),
+    processRelationships: jest.fn().mockReturnValue([]),
+    publishEntityOperations: jest.fn().mockResolvedValue({}),
+    publishRelationshipOperations: jest.fn().mockResolvedValue({}),
+    publishPersisterOperations: jest.fn().mockResolvedValue({}),
+  } as PersisterClient,
+  jobs: {
+    logEvent: jest.fn().mockReturnValue({}),
+    getLastCompleted: jest.fn().mockReturnValue({}),
+  } as JobsClient,
+};
+
+let azureClient: AzureClient;
+let executionContext: IntegrationExecutionContext;
 
 jest.mock("./initializeContext");
 
-test("executionHandler", async () => {
-  const executionContext: any = {
-    graph: {
-      findEntitiesByType: jest.fn().mockResolvedValue([]),
-      findRelationshipsByType: jest.fn().mockResolvedValue([]),
+beforeEach(() => {
+  azureClient = ({
+    authenticate: jest.fn().mockReturnValue([]),
+    fetchGroups: jest.fn().mockReturnValue([
+      {
+        id: "89fac263-2430-48fd-9278-dacfdfc89792",
+        deletedDateTime: undefined,
+        classification: undefined,
+        createdDateTime: "2019-04-23T18:06:05Z",
+        creationOptions: [],
+        description: "descr",
+        displayName: "test group",
+        groupTypes: [],
+        mail: undefined,
+        mailEnabled: false,
+        mailNickname: "8bb2d1c34",
+        onPremisesLastSyncDateTime: undefined,
+        onPremisesSecurityIdentifier: undefined,
+        onPremisesSyncEnabled: undefined,
+        preferredDataLocation: undefined,
+        proxyAddresses: [],
+        renewedDateTime: "2019-04-23T18:06:05Z",
+        resourceBehaviorOptions: [],
+        resourceProvisioningOptions: [],
+        securityEnabled: true,
+        visibility: undefined,
+        onPremisesProvisioningErrors: [],
+      },
+    ]),
+    fetchUsers: jest.fn().mockReturnValue([]),
+    fetchMembers: jest.fn().mockReturnValue([
+      {
+        "@odata.type": "#microsoft.graph.user",
+        id: "324e8daa-9c29-42a4-a74b-b9893e6d9750",
+        businessPhones: [],
+        displayName: "Second Test User",
+        givenName: "Second",
+        jobTitle: "Developer",
+        mail: null,
+        mobilePhone: null,
+        officeLocation: null,
+        preferredLanguage: null,
+        surname: "Test",
+        userPrincipalName: "second@admintestdualboot.onmicrosoft.com",
+      },
+      {
+        "@odata.type": "#microsoft.graph.group",
+        id: "89fac263-2430-48fd-9278-dacfdfc89792",
+        deletedDateTime: null,
+        classification: null,
+        createdDateTime: "2019-04-23T18:06:05Z",
+        creationOptions: [],
+        description: null,
+        displayName: "test group",
+        groupTypes: [],
+        mail: null,
+        mailEnabled: false,
+        mailNickname: "8bb2d1c34",
+        onPremisesLastSyncDateTime: null,
+        onPremisesSecurityIdentifier: null,
+        onPremisesSyncEnabled: null,
+        preferredDataLocation: null,
+        proxyAddresses: [],
+        renewedDateTime: "2019-04-23T18:06:05Z",
+        resourceBehaviorOptions: [],
+        resourceProvisioningOptions: [],
+        securityEnabled: true,
+        visibility: null,
+        onPremisesProvisioningErrors: [],
+      },
+    ]),
+  } as unknown) as AzureClient;
+
+  executionContext = ({
+    event: {
+      action: {
+        name: IntegrationActionName.INGEST,
+      },
     },
-    persister: {
-      processEntities: jest.fn().mockReturnValue([]),
-      processRelationships: jest.fn().mockReturnValue([]),
-      publishPersisterOperations: jest.fn().mockResolvedValue({}),
+    ...clients,
+    azure: azureClient,
+    instance: {
+      config: {},
     },
-    provider: {
-      fetchAccountDetails: jest.fn().mockResolvedValue({}),
-      fetchDevices: jest.fn().mockResolvedValue([]),
-      fetchUsers: jest.fn().mockResolvedValue([]),
-    },
-  };
+  } as unknown) as IntegrationExecutionContext;
 
   (initializeContext as jest.Mock).mockReturnValue(executionContext);
+});
 
-  const invocationContext = {} as IntegrationExecutionContext;
-  await executionHandler(invocationContext);
+describe("INGEST", () => {
+  test("all azure data", async () => {
+    await executionHandler(executionContext);
 
-  expect(initializeContext).toHaveBeenCalledWith(invocationContext);
+    expect(azureClient.fetchGroups).toHaveBeenCalledTimes(1);
+    expect(azureClient.fetchUsers).toHaveBeenCalledTimes(1);
+    expect(azureClient.fetchMembers).toHaveBeenCalledTimes(1);
+  });
+});
 
-  expect(executionContext.graph.findEntitiesByType).toHaveBeenCalledWith(
-    USER_ENTITY_TYPE,
-  );
-  expect(executionContext.graph.findEntitiesByType).toHaveBeenCalledWith(
-    DEVICE_ENTITY_TYPE,
-  );
-  expect(executionContext.graph.findRelationshipsByType).toHaveBeenCalledWith(
-    USER_DEVICE_RELATIONSHIP_TYPE,
-  );
+describe("INVALID EVENT", () => {
+  test("all azure data", async () => {
+    executionContext = ({
+      event: {
+        action: {
+          name: "RANDOM",
+        },
+      },
+      ...clients,
+      azure: azureClient,
+      instance: {
+        config: {},
+      },
+    } as unknown) as IntegrationExecutionContext;
 
-  expect(executionContext.provider.fetchAccountDetails).toHaveBeenCalledTimes(
-    1,
-  );
-  expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
-  expect(executionContext.provider.fetchDevices).toHaveBeenCalledTimes(1);
+    await executionHandler(executionContext);
 
-  expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(3);
-  expect(executionContext.persister.processRelationships).toHaveBeenCalledTimes(
-    2,
-  );
-  expect(
-    executionContext.persister.publishPersisterOperations,
-  ).toHaveBeenCalledTimes(1);
+    expect(azureClient.fetchGroups).toHaveBeenCalledTimes(0);
+    expect(azureClient.fetchUsers).toHaveBeenCalledTimes(0);
+    expect(azureClient.fetchMembers).toHaveBeenCalledTimes(0);
+  });
 });

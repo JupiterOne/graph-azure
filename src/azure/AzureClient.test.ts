@@ -4,9 +4,9 @@ import AzureClient from "./AzureClient";
 const CLIENT_ID =
   process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_ID || "example_token";
 const CLIENT_SECRET =
-  process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_SECRET || "example_token";
+  process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_SECRET || "example_secret";
 const DIRRECTORY_ID =
-  process.env.AZURE_CLOUD_LOCAL_EXECUTION_DIRRECTORY_ID || "example_token";
+  process.env.AZURE_CLOUD_LOCAL_EXECUTION_DIRRECTORY_ID || "example_dirrectory";
 
 describe("AzureClient fetch ok data", () => {
   beforeAll(() => {
@@ -17,6 +17,13 @@ describe("AzureClient fetch ok data", () => {
   });
 
   async function getAuthenticatedClient() {
+    nock("https://login.microsoftonline.com")
+      .post(`/${DIRRECTORY_ID}/oauth2/v2.0/token`)
+      .reply(
+        200,
+        '{"token_type": "Bearer","expires_in": 3600,"ext_expires_in": 3600,"access_token": "token"}',
+      );
+
     const azure = new AzureClient(CLIENT_ID, CLIENT_SECRET, DIRRECTORY_ID);
     await azure.authenticate();
 

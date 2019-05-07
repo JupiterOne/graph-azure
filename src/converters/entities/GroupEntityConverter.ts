@@ -7,6 +7,7 @@ import {
 import { Group } from "../../azure/types";
 
 import { generateEntityKey } from "../../utils/generateKeys";
+import getTime from "../../utils/getTime";
 
 export function createGroupEntities(data: Group[]): GroupEntity[] {
   return data.map(d => {
@@ -16,14 +17,14 @@ export function createGroupEntities(data: Group[]): GroupEntity[] {
       _type: GROUP_ENTITY_TYPE,
       displayName: d.displayName,
       id: d.id,
-      deletedDateTime: d.deletedDateTime,
+      deletedDateTime: getTime(d.deletedDateTime),
       classification: d.classification,
-      createdDateTime: d.createdDateTime,
+      createdDateTime: getTime(d.createdDateTime),
       description: d.description,
       mail: d.mail,
       mailEnabled: d.mailEnabled,
       mailNickname: d.mailNickname,
-      renewedDateTime: d.renewedDateTime,
+      renewedDateTime: getTime(d.renewedDateTime),
       securityEnabled: d.securityEnabled,
     };
     return group;

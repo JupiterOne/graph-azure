@@ -5,14 +5,14 @@ export const GROUP_ENTITY_CLASS = "UserGroup";
 
 export interface GroupEntity extends EntityFromIntegration {
   id: string;
-  deletedDateTime?: string;
+  deletedDateTime?: number;
   classification?: string;
-  createdDateTime?: string;
+  createdDateTime?: number;
   description?: string;
   displayName?: string;
   mail?: string;
   mailEnabled?: boolean;
   mailNickname?: string;
-  renewedDateTime?: string;
+  renewedDateTime?: number;
   securityEnabled?: boolean;
 }

@@ -28,8 +28,11 @@ export function createGroupMemberRelationships(
       const groupMembers = groupMember.members.reduce(
         (groupMembersRelationships, member) => {
           const relationship = createRelationship(groupMember.group, member);
+          if (relationship) {
+            return [...groupMembersRelationships, relationship];
+          }
 
-          return [...groupMembersRelationships, relationship];
+          return groupMembersRelationships;
         },
         [] as GroupUserRelationship[],
       );
@@ -41,18 +44,16 @@ export function createGroupMemberRelationships(
 }
 
 function createRelationship(group: Group, member: GroupMember) {
-  const childKey = getMemberKey(member);
+  const memberType = getMemberType(member);
+  const relationshipType = getRelationshipType(member);
+  const relationshipClass = getRelationshipClass(member);
+
+  if (!(memberType && relationshipType && relationshipClass)) {
+    return null;
+  }
+
+  const childKey = generateEntityKey(memberType, member.id);
   const parentKey = generateEntityKey(GROUP_ENTITY_TYPE, group.id);
-
-  const relationshipType =
-    member["@odata.type"] === MemberType.USER
-      ? GROUP_USER_RELATIONSHIP_TYPE
-      : GROUP_GROUP_RELATIONSHIP_TYPE;
-
-  const relationshipClass =
-    member["@odata.type"] === MemberType.USER
-      ? GROUP_USER_RELATIONSHIP_CLASS
-      : GROUP_GROUP_RELATIONSHIP_CLASS;
 
   const key = generateRelationshipKey(parentKey, childKey, relationshipClass);
 
@@ -67,10 +68,29 @@ function createRelationship(group: Group, member: GroupMember) {
   return relationship;
 }
 
-function getMemberKey(member: GroupMember) {
-  const type =
-    member["@odata.type"] === MemberType.USER
-      ? USER_ENTITY_TYPE
-      : GROUP_ENTITY_TYPE;
-  return generateEntityKey(type, member.id);
+function getMemberType(member: GroupMember) {
+  switch (member["@odata.type"]) {
+    case MemberType.USER:
+      return USER_ENTITY_TYPE;
+    case MemberType.GROUP:
+      return GROUP_ENTITY_TYPE;
+  }
+}
+
+function getRelationshipType(member: GroupMember) {
+  switch (member["@odata.type"]) {
+    case MemberType.USER:
+      return GROUP_USER_RELATIONSHIP_TYPE;
+    case MemberType.GROUP:
+      return GROUP_GROUP_RELATIONSHIP_TYPE;
+  }
+}
+
+function getRelationshipClass(member: GroupMember) {
+  switch (member["@odata.type"]) {
+    case MemberType.USER:
+      return GROUP_USER_RELATIONSHIP_CLASS;
+    case MemberType.GROUP:
+      return GROUP_GROUP_RELATIONSHIP_CLASS;
+  }
 }

@@ -79,7 +79,7 @@ test("convert groups", async () => {
       createdDateTime: "2019-04-23T18:06:05Z",
       deletedDateTime: undefined,
       description: "descr",
-      displayName: "",
+      displayName: undefined,
       id: "89fac263-2430-48fd-9278-dacfdfc11111",
       mail: undefined,
       mailEnabled: false,

@@ -14,7 +14,7 @@ export function createGroupEntities(data: Group[]): GroupEntity[] {
       _class: GROUP_ENTITY_CLASS,
       _key: generateEntityKey(GROUP_ENTITY_TYPE, d.id),
       _type: GROUP_ENTITY_TYPE,
-      displayName: d.displayName || "",
+      displayName: d.displayName,
       id: d.id,
       deletedDateTime: d.deletedDateTime,
       classification: d.classification,

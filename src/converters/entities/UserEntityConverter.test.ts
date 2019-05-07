@@ -82,8 +82,8 @@ test("convert users", async () => {
       _class: "User",
       _key: "azure_user_19f7fe21-48c7-4cdb-ab87-99670e9f3af0",
       _type: "azure_user",
-      displayName: "",
-      givenName: "",
+      displayName: undefined,
+      givenName: undefined,
       id: "19f7fe21-48c7-4cdb-ab87-99670e9f3af0",
       jobTitle: undefined,
       mail: undefined,
@@ -91,7 +91,7 @@ test("convert users", async () => {
       officeLocation: undefined,
       preferredLanguage: undefined,
       surname: undefined,
-      userPrincipalName: "",
+      userPrincipalName: undefined,
     },
   ]);
 });

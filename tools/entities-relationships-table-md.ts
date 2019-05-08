@@ -17,7 +17,7 @@ const defaultTable: Table = {
       "_class of the Entity",
     ],
   ],
-  RELATIONSHIP: [["From", "Type", "To"]],
+  RELATIONSHIP: [["From", "Edge", "To"]],
 };
 
 function codeBlock(word: string): string {

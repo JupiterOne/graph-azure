@@ -23,7 +23,7 @@ registered with Azure AD. You need:
 5. Get `Application (client) ID` and pass it as a
    `AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_ID` environment variable
 6. Get `Directory (tenant) ID` and pass it as
-   `AZURE_CLOUD_LOCAL_EXECUTION_DIRRECTORY_ID` environment variable
+   `AZURE_CLOUD_LOCAL_EXECUTION_DIRECTORY_ID` environment variable
 7. Navigate to the `Certificates & secrets` section.
 8. Create a new client secret.
 9. Store generated token and pass it as
@@ -49,7 +49,7 @@ The following entity resources are ingested when the integration runs:
 
 The following relationships are created/mapped:
 
-| From               | Type         | To                 |
+| From               | Edge         | To                 |
 | ------------------ | ------------ | ------------------ |
 | `azure_account`    | **HAS**      | `azure_user_group` |
 | `azure_account`    | **HAS**      | `azure_user`       |

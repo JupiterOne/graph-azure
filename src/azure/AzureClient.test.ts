@@ -6,7 +6,7 @@ const CLIENT_ID =
 const CLIENT_SECRET =
   process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_SECRET || "example_secret";
 const DIRRECTORY_ID =
-  process.env.AZURE_CLOUD_LOCAL_EXECUTION_DIRRECTORY_ID || "example_dirrectory";
+  process.env.AZURE_CLOUD_LOCAL_EXECUTION_DIRECTORY_ID || "example_dirrectory";
 
 describe("AzureClient fetch ok data", () => {
   beforeAll(() => {

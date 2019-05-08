@@ -659,10 +659,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@jupiterone/jupiter-managed-integration-sdk@^22.0.1":
-  version "22.0.2"
-  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-22.0.2.tgz#6d6754e72819178b549ddf9ec715b07b539bc585"
-  integrity sha512-eWr2XpCY2MIFBf1N8MZgRxjBrnrDsKdxTNJ4QNqdlXKkLlBv+fYYLFRfFUJMslKiDdVaT2jbfuyXBNXBLt+FvA==
+"@jupiterone/jupiter-managed-integration-sdk@^23.0.2":
+  version "23.0.2"
+  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-23.0.2.tgz#78e6c71d3da1c6b51ff9f9a4bbb34bd0970f9337"
+  integrity sha512-PWmnj6x4XstMVJkqx7bOF1xBVXey5rOOI9kmym6vsEt/OrtZqN2x32bzXcgHWiKUcn0mALLaKZj+J5FKWxpcLg==
 
 "@microsoft/microsoft-graph-client@^1.5.2":
   version "1.5.2"
@@ -5663,10 +5663,10 @@ ts-jest@^24.0.0:
     semver "^5.5"
     yargs-parser "10.x"
 
-ts-node@^8.0.2:
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-8.0.2.tgz#9ecdf8d782a0ca4c80d1d641cbb236af4ac1b756"
-  integrity sha512-MosTrinKmaAcWgO8tqMjMJB22h+sp3Rd1i4fdoWY4mhBDekOwIAKI/bzmRi7IcbCmjquccYg2gcF6NBkLgr0Tw==
+ts-node@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-8.1.0.tgz#8c4b37036abd448577db22a061fd7a67d47e658e"
+  integrity sha512-34jpuOrxDuf+O6iW1JpgTRDFynUZ1iEqtYruBqh35gICNjN8x+LpVcPAcwzLPi9VU6mdA3ym+x233nZmZp445A==
   dependencies:
     arg "^4.1.0"
     diff "^3.1.0"
@@ -5739,10 +5739,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^3.3.1:
-  version "3.3.3333"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.3333.tgz#171b2c5af66c59e9431199117a3bcadc66fdcfd6"
-  integrity sha512-JjSKsAfuHBE/fB2oZ8NxtRTk5iGcg6hkYXMnZ3Wc+b2RSqejEqTaem11mHASMnFilHrax3sLK0GDzcJrekZYLw==
+typescript@^3.4.5:
+  version "3.4.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.5.tgz#2d2618d10bb566572b8d7aad5180d84257d70a99"
+  integrity sha512-YycBxUb49UUhdNMU5aJ7z5Ej2XGmaIBL0x34vZ82fn3hGvD+bgrMrVDpatgz2f7YxUMJxMkbWxJZeAvDxVe7Vw==
 
 uglify-js@^3.1.4:
   version "3.4.9"

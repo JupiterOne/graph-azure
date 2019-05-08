@@ -15,7 +15,7 @@ services:
       AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_ID: "Yor Application (client) ID"
       AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_SECRET:
         "One of the yor app's client secret"
-      AZURE_CLOUD_LOCAL_EXECUTION_DIRRECTORY_ID: "Directory (tenant) ID"
+      AZURE_CLOUD_LOCAL_EXECUTION_DIRECTORY_ID: "Directory (tenant) ID"
     depends_on:
       - graph
   graph:

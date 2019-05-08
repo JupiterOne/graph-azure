@@ -180,7 +180,3 @@ docker-compose run --rm integration yarn test
 Managed integrations are deployed into the JupiterOne infrastructure by staff
 engineers using internal projects that declare a dependency on the open source
 integration NPM package. The package will be published by the JupiterOne team.
-
-```shell
-yarn build:publish
-```

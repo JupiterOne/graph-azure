@@ -36,6 +36,7 @@ export default async function invocationValidator(
       config.clientId,
       config.clientSecret,
       config.directoryId,
+      validationContext.logger,
     );
     await client.authenticate();
   } catch (err) {

@@ -58,7 +58,24 @@ beforeEach(() => {
         onPremisesProvisioningErrors: [],
       },
     ]),
-    fetchUsers: jest.fn().mockReturnValue([]),
+    fetchUsers: jest.fn().mockReturnValue([
+      {
+        _class: "User",
+        _key: "azure_user_abf00eda-02d6-4053-a077-eef036e1a4c8",
+        _type: "azure_user",
+        displayName: "Andrew Kulakov",
+        givenName: "Andrew",
+        id: "abf00eda-02d6-4053-a077-eef036e1a4c8",
+        jobTitle: "test title",
+        mail: undefined,
+        mobilePhone: "+1 2223334444",
+        officeLocation: "DBP",
+        preferredLanguage: undefined,
+        surname: "Kulakov",
+        userPrincipalName:
+          "admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com",
+      },
+    ]),
     fetchMembers: jest.fn().mockReturnValue([
       {
         "@odata.type": "#microsoft.graph.user",
@@ -125,6 +142,38 @@ describe("INGEST", () => {
     expect(azureClient.fetchGroups).toHaveBeenCalledTimes(1);
     expect(azureClient.fetchUsers).toHaveBeenCalledTimes(1);
     expect(azureClient.fetchMembers).toHaveBeenCalledTimes(1);
+    expect(clients.persister.processEntities).toHaveBeenCalledTimes(3);
+    expect(clients.persister.processRelationships).toHaveBeenCalledTimes(5);
+  });
+
+  test("do not change graph when API response invalid", async () => {
+    azureClient = ({
+      authenticate: jest.fn().mockReturnValue(undefined),
+      fetchGroups: jest.fn().mockReturnValue(undefined),
+
+      fetchUsers: jest.fn().mockReturnValue(undefined),
+      fetchMembers: jest.fn().mockReturnValue(undefined),
+    } as unknown) as AzureClient;
+
+    executionContext = ({
+      event: {
+        action: {
+          name: IntegrationActionName.INGEST,
+        },
+      },
+      ...clients,
+      azure: azureClient,
+      instance: {
+        config: {},
+      },
+    } as unknown) as IntegrationExecutionContext;
+
+    (initializeContext as jest.Mock).mockReturnValue(executionContext);
+
+    await executionHandler(executionContext);
+
+    expect(clients.persister.processEntities).toHaveBeenCalledTimes(1);
+    expect(clients.persister.processRelationships).toHaveBeenCalledTimes(0);
   });
 });
 

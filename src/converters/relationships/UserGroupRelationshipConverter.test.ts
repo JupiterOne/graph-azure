@@ -71,6 +71,33 @@ test("convert user -> group relationships", async () => {
       },
       members,
     },
+    {
+      group: {
+        id: "asdasdasd-2430-48fd-9278-dacfdfc89792",
+        deletedDateTime: undefined,
+        classification: undefined,
+        createdDateTime: "2019-04-23T18:06:05Z",
+        creationOptions: [],
+        description: "descr",
+        displayName: "test group",
+        groupTypes: [],
+        mail: undefined,
+        mailEnabled: false,
+        mailNickname: "8bb2d1c34",
+        onPremisesLastSyncDateTime: undefined,
+        onPremisesSecurityIdentifier: undefined,
+        onPremisesSyncEnabled: undefined,
+        preferredDataLocation: undefined,
+        proxyAddresses: [],
+        renewedDateTime: "2019-04-23T18:06:05Z",
+        resourceBehaviorOptions: [],
+        resourceProvisioningOptions: [],
+        securityEnabled: true,
+        visibility: undefined,
+        onPremisesProvisioningErrors: [],
+      },
+      members: undefined,
+    },
   ];
 
   const relationshipss = createUserGroupRelationships(groupsMembers);

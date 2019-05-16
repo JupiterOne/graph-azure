@@ -22,11 +22,11 @@ export interface GroupMember {
 
 export interface GroupMembers {
   group: Group;
-  members: GroupMember[];
+  members: GroupMember[] | undefined;
 }
 
 export interface AzureDataModel {
-  groups: Group[];
-  users: User[];
-  groupsMembers: GroupMembers[];
+  groups: Group[] | undefined;
+  users: User[] | undefined;
+  groupsMembers: GroupMembers[] | undefined;
 }

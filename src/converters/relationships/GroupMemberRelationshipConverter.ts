@@ -25,6 +25,10 @@ export function createGroupMemberRelationships(
 ): GroupUserRelationship[] {
   return groupsMembers.reduce(
     (relationships, groupMember) => {
+      if (!groupMember.members) {
+        return relationships;
+      }
+
       const groupMembers = groupMember.members.reduce(
         (groupMembersRelationships, member) => {
           const relationship = createRelationship(groupMember.group, member);

@@ -1,5 +1,6 @@
-// tslint:disable:no-var-requires
+import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 import fetch, { RequestInit } from "node-fetch";
+import AzureClientError from "./AzureClientError";
 import { Group, GroupMember, User } from "./types";
 
 export enum Method {
@@ -20,11 +21,18 @@ export default class AzureClient {
   private directoryId: string;
   private accessToken: string;
   private host: string = "https://graph.microsoft.com/v1.0";
+  private logger: IntegrationLogger;
 
-  constructor(clientId: string, clientSecret: string, directoryId: string) {
+  constructor(
+    clientId: string,
+    clientSecret: string,
+    directoryId: string,
+    logger: IntegrationLogger,
+  ) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.directoryId = directoryId;
+    this.logger = logger;
   }
 
   public async authenticate() {
@@ -56,28 +64,58 @@ export default class AzureClient {
     this.accessToken = json.access_token;
   }
 
-  public async fetchUsers(): Promise<User[]> {
-    const { value } = await this.makeRequest(`${this.host}/users/`, Method.GET);
+  public async fetchUsers(): Promise<User[] | undefined> {
+    try {
+      const { value } = await this.makeRequest(
+        `${this.host}/users/`,
+        Method.GET,
+      );
 
-    return value;
+      return value;
+    } catch (error) {
+      if (error instanceof AzureClientError && error.status === 404) {
+        return [];
+      }
+      this.logger.warn({ err: error }, "azure.fetchUsers failed");
+      return undefined;
+    }
   }
 
-  public async fetchGroups(): Promise<Group[]> {
-    const { value } = await this.makeRequest(
-      `${this.host}/groups/`,
-      Method.GET,
-    );
+  public async fetchGroups(): Promise<Group[] | undefined> {
+    try {
+      const { value } = await this.makeRequest(
+        `${this.host}/groups/`,
+        Method.GET,
+      );
 
-    return value;
+      return value;
+    } catch (error) {
+      if (error instanceof AzureClientError && error.status === 404) {
+        return [];
+      }
+
+      this.logger.warn({ err: error }, "azure.fetchGroups failed");
+      return undefined;
+    }
   }
 
-  public async fetchMembers(groupId: string): Promise<GroupMember[]> {
-    const { value } = await this.makeRequest(
-      `${this.host}/groups/${groupId}/members`,
-      Method.GET,
-    );
+  public async fetchMembers(
+    groupId: string,
+  ): Promise<GroupMember[] | undefined> {
+    try {
+      const { value } = await this.makeRequest(
+        `${this.host}/groups/${groupId}/members`,
+        Method.GET,
+      );
 
-    return value;
+      return value;
+    } catch (error) {
+      if (error instanceof AzureClientError && error.status === 404) {
+        return [];
+      }
+      this.logger.warn({ err: error }, "azure.fetchMembers failed");
+      return undefined;
+    }
   }
 
   private async makeRequest<T>(
@@ -96,6 +134,9 @@ export default class AzureClient {
     };
 
     const response = await fetch(url, options);
+    if (response.status >= 300) {
+      throw new AzureClientError(response);
+    }
 
     return response.json();
   }

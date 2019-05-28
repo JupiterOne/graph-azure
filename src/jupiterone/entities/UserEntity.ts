@@ -14,4 +14,15 @@ export interface UserEntity extends EntityFromIntegration {
   preferredLanguage?: string;
   surname?: string;
   userPrincipalName?: string;
+  employeeType?: string;
+  employeeNumber?: string;
+  email?: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  title?: string;
+  manager?: string;
+  managerId?: string;
+  managerEmail?: string;
 }

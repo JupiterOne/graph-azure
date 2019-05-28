@@ -9,7 +9,7 @@
       "token_type": "Bearer",
       "expires_in": 3600,
       "ext_expires_in": 3600,
-      "access_token": "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkFRQUJBQUFBQUFEQ29NcGpKWHJ4VHE5Vkc5dGUtN0ZYN1p0bVFCQ0dZQWVCT3c2WW5OTE56ZEwwMlZPQW5RRzRFamk3V09SN04ybWN4WEtOZS10OWplN1psODk3Q0pzT19PcUhfUlBQRmtuVDF2OFVyemhCNUNBQSIsImFsZyI6IlJTMjU2IiwieDV0IjoiSEJ4bDltQWU2Z3hhdkNrY29PVTJUSHNETmEwIiwia2lkIjoiSEJ4bDltQWU2Z3hhdkNrY29PVTJUSHNETmEwIn0.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wMWYyZWZiYy1kMTdhLTQ2M2ItODFlOS05OGE4ZjY0MWJlNzUvIiwiaWF0IjoxNTU2NTQxMjI0LCJuYmYiOjE1NTY1NDEyMjQsImV4cCI6MTU1NjU0NTEyNCwiYWlvIjoiNDJaZ1lEZ3RmdXYwemRQMXIwKzgyN0UzL01tNWFRQT0iLCJhcHBfZGlzcGxheW5hbWUiOiJNeSB0ZXN0IGFwcCIsImFwcGlkIjoiOWRkNDk5YTEtYjgwMi00MDViLThkYTYtZGRhMmE4ZGUxOWZjIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvMDFmMmVmYmMtZDE3YS00NjNiLTgxZTktOThhOGY2NDFiZTc1LyIsIm9pZCI6ImJhMGVmMmQ3LTEzZTctNGRhNC04NjI1LWI4NjA2MDA2ZWFlOCIsInJvbGVzIjpbIkdyb3VwLlJlYWQuQWxsIiwiVXNlci5SZWFkLkFsbCJdLCJzdWIiOiJiYTBlZjJkNy0xM2U3LTRkYTQtODYyNS1iODYwNjAwNmVhZTgiLCJ0aWQiOiIwMWYyZWZiYy1kMTdhLTQ2M2ItODFlOS05OGE4ZjY0MWJlNzUiLCJ1dGkiOiJ1QkZEU05PdWtrbVEwM0JEVUtpOEFBIiwidmVyIjoiMS4wIiwieG1zX3RjZHQiOjE1NTYwMzY0NzR9.vcoGqFH9zOVk-y7D-j718TcbJdT0wD0yprxCoD87lfOQK5zbXl87lb-QlljmPQMowAwe5JMVTVOKWmkJ6e7TXxGt89w7qRuVDkfWBlhlFMNkXle2GMsIdc87_aeCxU3j1D5HBToKOzkOm2eNt51xa01bfkeoqOKuy-ZNRefDGrRq8x6PuSMfAHZlIUUiLTUskaCVWEVIFt-iLobO4Q0Hdas756aKqinzhhajC-gEmLJ3pB0sn6rnvxXHTRpvw07H5hgK7lxj7LDgUfHGg2wlPfiM_RiRoLRuTl03EEGSEnY_c4h6gp8yX9JrsMCO1Wy4pZPHzyx9i9YSsnZNVTi6Ew"
+      "access_token": "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkFRQUJBQUFBQUFEQ29NcGpKWHJ4VHE5Vkc5dGUtN0ZYanlNVmFpZ1R6LVhicURMUTdvaXRsd2Y1Mm95Yk85Ni1tWllzd0JjaXd3TjNQa3g4bEVncDdodC1UQVNoU1VOUUhfQW9lam1WclhFbExDNGhBS1hDT3lBQSIsImFsZyI6IlJTMjU2IiwieDV0IjoiSEJ4bDltQWU2Z3hhdkNrY29PVTJUSHNETmEwIiwia2lkIjoiSEJ4bDltQWU2Z3hhdkNrY29PVTJUSHNETmEwIn0.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wMWYyZWZiYy1kMTdhLTQ2M2ItODFlOS05OGE4ZjY0MWJlNzUvIiwiaWF0IjoxNTU5MDY3MTc5LCJuYmYiOjE1NTkwNjcxNzksImV4cCI6MTU1OTA3MTA3OSwiYWlvIjoiNDJaZ1lQQjgwdXIvV09uSElwc1hxdUtIV1I5bkF3QT0iLCJhcHBfZGlzcGxheW5hbWUiOiJNeSB0ZXN0IGFwcCIsImFwcGlkIjoiOWRkNDk5YTEtYjgwMi00MDViLThkYTYtZGRhMmE4ZGUxOWZjIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvMDFmMmVmYmMtZDE3YS00NjNiLTgxZTktOThhOGY2NDFiZTc1LyIsIm9pZCI6ImJhMGVmMmQ3LTEzZTctNGRhNC04NjI1LWI4NjA2MDA2ZWFlOCIsInJvbGVzIjpbIkdyb3VwLlJlYWQuQWxsIiwiVXNlci5SZWFkLkFsbCJdLCJzdWIiOiJiYTBlZjJkNy0xM2U3LTRkYTQtODYyNS1iODYwNjAwNmVhZTgiLCJ0aWQiOiIwMWYyZWZiYy1kMTdhLTQ2M2ItODFlOS05OGE4ZjY0MWJlNzUiLCJ1dGkiOiJZTVdsak5qbE5rNmQ2dUtWNmxacUFBIiwidmVyIjoiMS4wIiwieG1zX3RjZHQiOjE1NTYwMzY0NzR9.cXljhJAzAJd9tHtW-X_odqzqOq1V5PI_O9JQR5Z6g6Io0DUKAbd5TBh8JHnolV_PauWieWNOz3oSbc47O7V_ihEIFZ0T6PVSzHQb88_-tAa7x2r7qtfPmN8KUQY26mZqP932cAjKuDPmO-2mqIS9GMhIttriKLjBu8GgPJWEwuYwubrsghqb0IVJG9jCPl5TIHBjqbce2KV9Utoz0ZVUi324wKvBij0_S1B3oQOLDdJB7I_jlDH8RZaAMEpdHnLVg5QkpnjiMnsCP70AWzruwO0utGz4dvMhA_zj5CU5-gs0ChG4QiWIRgJM5bAm4eQJ6wPkbzVODNDlN6-4x5tlAA"
     },
     "rawHeaders": [
       "Cache-Control",
@@ -25,17 +25,17 @@
       "X-Content-Type-Options",
       "nosniff",
       "x-ms-request-id",
-      "484311b8-aed3-4992-90d3-704350a8bc00",
+      "8ca5c560-e5d8-4e36-9dea-e295ea566a00",
       "P3P",
       "CP=\"DSP CUR OTPi IND OTRi ONL FIN\"",
       "Set-Cookie",
-      "fpc=Aj4eFj81nmZAgldcFfccGW8pVipJAQAAAFTnWNQOAAAA; expires=Wed, 29-May-2019 12:38:44 GMT; path=/; secure; HttpOnly",
+      "fpc=AmKMUPlb2kNLqXs9z-Dsy8cpVipJAQAAAFZyf9QOAAAA; expires=Thu, 27-Jun-2019 18:17:59 GMT; path=/; secure; HttpOnly",
       "Set-Cookie",
       "x-ms-gateway-slice=prod; path=/; secure; HttpOnly",
       "Set-Cookie",
       "stsservicecookie=ests; path=/; secure; HttpOnly",
       "Date",
-      "Mon, 29 Apr 2019 12:38:43 GMT",
+      "Tue, 28 May 2019 18:17:58 GMT",
       "Connection",
       "close",
       "Content-Length",
@@ -45,12 +45,12 @@
   {
     "scope": "https://graph.microsoft.com:443",
     "method": "GET",
-    "path": "/v1.0/users/",
+    "path": "/v1.0/users?$select=displayName,givenName,jobTitle,mail,mobilePhone,officeLocation,preferredLanguage,surname,userPrincipalName,id,userPrincipalName,jobTitle,displayName,mailNickname,userType,employeeId",
     "body": "",
     "status": 200,
     "response": [
-      "1f8b0800000000000400edbd07601c499625262f6dca7b7f4af54ad7e074a10880601324d8904010ecc188cde692ec1d69472329ab2a81ca6556655d661640cced9dbcf7de7befbdf7de7befbdf7ba3b9d4e27f7dfff3f5c6664016cf6ce4adac99e2180aac81f3f7e7c1f3f227ef147bf6735cbda6c3cad966dfeaefde8d147f3b65d358feedebda8b3d57cbc28a675d554e72db558dcbddc1defdcfddd16799be1a51f5f3779dd7c34fae8322bd7f9478fbef78b3f9aac9b629937cdcb79453fe8a38f3ed94df7f6f6eeddbbb74fcf47df1f7d342b9a55995dbfc816f4ca47c7cb599d5fa5bfd7baccde569704eba2b8cc97c197f4e14f579337455be2b3366fdab4e53f461f2db2a2fce8d1725d96f47b3529ca9c3ba66661b7a38faaf3f3629a3fafa6595b544b6af0f4c94bfa7855e7e7795de7b3e7d9f2629d5dd0ab02ad59d74b41c2a186e1beac8be5b45865a5a298cd16c5f2f70752e3d93a2b2755c594faf1d3dffbcd8fff9efc25beb35f55cb80a004b49801cae47c67279f65db3b7bb34fb7f777eedfdbce761e3cd8cef3f39d7b9fe6bbd9fef4e0a35f328ad0b747d0d7394de52c7d43bda65f11c2d4854f52f99a3ef448fa34bfcccb6ac56d07292a1f75c9289fde828ac087c0c748d8304ab727d6bdbdfdfc609665db0fa77b0fb7f7f7b2fdedecc1fe647bf2f0e0e1bdfcd3d9c307f7776e49ac6745ddb443b49221383ac9df3f4b04923f63e401496e4f9cdd87e70fcef3bdddedfd83e983edfde96cb29d4d0e1e6c3f7cf8e9839dfce1f9bdec9c88f3fd",
-      "5ff2ff0092549878f9030000"
+      "1f8b0800000000000400edbd07601c499625262f6dca7b7f4af54ad7e074a10880601324d8904010ecc188cde692ec1d69472329ab2a81ca6556655d661640cced9dbcf7de7befbdf7de7befbdf7ba3b9d4e27f7dfff3f5c6664016cf6ce4adac99e2180aac81f3f7e7c1f3f227ef147bf6735cbda6c3cad966dfeaefde8d147f3b65d358feedebda8b3d57cbc28a675d554e72db558dcbddc1defdcfddd16799be1a51f5f3779dd6ccd8a665566d72fb2453eba282ef325fff6d3d5e44dd196f9689115e568514d8a327f39af96f9a83a3f2fa6f9f36a9ab545b51cadeafc3cafeb7cf63c5b5eacb38b7cd4aceb254000fccbba584e8b555632d062c6e05e14d3b7b6c59beb553eca17abb2bacef3b3d99d8f461f5d66e53affe8d1f77ef1471e6e34b46cb62896f4bdc5f2a347cb75598e3e32c89abfd189fddda16e3e0a47603eed0d847acc97db5fbda61e7548a629f00e46464d19b9df93ff6df3a69dadb3725255edb85a067340c08a1935ff74effc7c6ff7dec3edbdddfdfdedfdfdfbbbdbd9c3bdddedfd9d7b07b3ddbdd9fdfdc97d6a8b911872d15b0c9e3e0602201c7df445be98e4357de6682868fe9251977ec7cb599d5fa5bfd7baccde5697f48a4748fd923e74c4fc0803495bfe435011c8f4bb4fd48f3ed94df7f6f6eeddbbb74f0fb5ecd2f7a3a74f5ed2c711020b344bdd8f1c6a186194c4bf3f901a5bf212497ffcf4f77ef3e3b7a77c3639dfd9c967d9f6cedeec53a2f7fd7bdbd9ce8307db797ebe73efd37c37db9f1e505b0cb74bf981bea935d07dff09799d93dcced2370435fd8a20d04bfe94c8d7f4a137254ff3cbbcac56dc16280a68fadd9f11f9a83b0df2e92d6601f810788ca93b050da3747b62dfdbdbcf0f6659b6fd70baf7707b7f2fdbdfce1eec4fb6270f0f1edecb3f9d3d7c707f87da62241eb1a517fa1c28bc3f599f15351114a3885015aff81495bf8180fdfd9b23a5fc8951740909e2dd9e8cbb0fcf1f9ce7500f07d307dbfbd3d9643b9b1c3cd87ef8f0d3073bf9c3f37bd979848c804c9fa2fb1b89f8fd5f",
+      "f2ff001ff7422b4c060000"
     ],
     "rawHeaders": [
       "Cache-Control",
@@ -64,19 +64,19 @@
       "Vary",
       "Accept-Encoding",
       "request-id",
-      "3d5d8511-8513-40d5-b116-9eb2c5175d9d",
+      "5f4566d8-972b-41df-a408-5229e53fbb73",
       "client-request-id",
-      "3d5d8511-8513-40d5-b116-9eb2c5175d9d",
+      "5f4566d8-972b-41df-a408-5229e53fbb73",
       "x-ms-ags-diagnostic",
-      "{\"ServerInfo\":{\"DataCenter\":\"West Europe\",\"Slice\":\"SliceC\",\"Ring\":\"5\",\"ScaleUnit\":\"001\",\"RoleInstance\":\"AGSFE_IN_53\",\"ADSiteName\":\"WEU\"}}",
+      "{\"ServerInfo\":{\"DataCenter\":\"West Europe\",\"Slice\":\"SliceC\",\"Ring\":\"5\",\"ScaleUnit\":\"003\",\"RoleInstance\":\"AGSFE_IN_14\",\"ADSiteName\":\"WEU\"}}",
       "OData-Version",
       "4.0",
       "Duration",
-      "67.3476",
+      "51.9197",
       "Strict-Transport-Security",
       "max-age=31536000",
       "Date",
-      "Mon, 29 Apr 2019 12:38:44 GMT",
+      "Tue, 28 May 2019 18:17:59 GMT",
       "Connection",
       "close"
     ]

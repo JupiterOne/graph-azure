@@ -14,7 +14,7 @@ test("convert group has user relationships", async () => {
       officeLocation: null,
       preferredLanguage: null,
       surname: "Test",
-      userPrincipalName: "second@admintestdualboot.onmicrosoft.com",
+      userPrincipalName: "second@admintestexample.onmicrosoft.com",
     },
     {
       "@odata.type": "#microsoft.graph.group",

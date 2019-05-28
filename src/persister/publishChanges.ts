@@ -118,7 +118,11 @@ export function convertEntities(
       EntityConverters.createGroupEntities(azureDataModel.groups),
     users:
       azureDataModel.users &&
-      EntityConverters.createUserEntities(azureDataModel.users),
+      azureDataModel.usersManagers &&
+      EntityConverters.createUserEntities(
+        azureDataModel.users,
+        azureDataModel.usersManagers,
+      ),
   };
 }
 

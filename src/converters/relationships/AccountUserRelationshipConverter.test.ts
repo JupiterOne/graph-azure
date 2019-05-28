@@ -4,16 +4,16 @@ test("convert account -> group relationships", async () => {
   const groups = [
     {
       businessPhones: ["+1 2223334444"],
-      displayName: "Andrew Kulakov",
-      givenName: "Andrew",
+      displayName: "bob white",
+      givenName: "bob",
       jobTitle: "test title",
       mail: undefined,
       mobilePhone: "+1 2223334444",
       officeLocation: "DBP",
       preferredLanguage: undefined,
-      surname: "Kulakov",
+      surname: "white",
       userPrincipalName:
-        "admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com",
+        "admin_test.example.com#EXT#@admintestexample.onmicrosoft.com",
       id: "abf00eda-02d6-4053-a077-eef036e1a4c8",
     },
     {
@@ -26,7 +26,7 @@ test("convert account -> group relationships", async () => {
       officeLocation: undefined,
       preferredLanguage: undefined,
       surname: "Test",
-      userPrincipalName: "second@admintestdualboot.onmicrosoft.com",
+      userPrincipalName: "second@admintestexample.onmicrosoft.com",
       id: "324e8daa-9c29-42a4-a74b-b9893e6d9750",
     },
   ];

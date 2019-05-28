@@ -58,24 +58,8 @@ beforeEach(() => {
         onPremisesProvisioningErrors: [],
       },
     ]),
-    fetchUsers: jest.fn().mockReturnValue([
-      {
-        _class: "User",
-        _key: "azure_user_abf00eda-02d6-4053-a077-eef036e1a4c8",
-        _type: "azure_user",
-        displayName: "Andrew Kulakov",
-        givenName: "Andrew",
-        id: "abf00eda-02d6-4053-a077-eef036e1a4c8",
-        jobTitle: "test title",
-        mail: undefined,
-        mobilePhone: "+1 2223334444",
-        officeLocation: "DBP",
-        preferredLanguage: undefined,
-        surname: "Kulakov",
-        userPrincipalName:
-          "admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com",
-      },
-    ]),
+    fetchUsers: jest.fn().mockReturnValue([{ id: "fake-id" }]),
+    fetchUserManager: jest.fn().mockReturnValue({ id: "fake-id-1" }),
     fetchMembers: jest.fn().mockReturnValue([
       {
         "@odata.type": "#microsoft.graph.user",
@@ -89,7 +73,7 @@ beforeEach(() => {
         officeLocation: null,
         preferredLanguage: null,
         surname: "Test",
-        userPrincipalName: "second@admintestdualboot.onmicrosoft.com",
+        userPrincipalName: "second@admintestexample.onmicrosoft.com",
       },
       {
         "@odata.type": "#microsoft.graph.group",
@@ -150,7 +134,7 @@ describe("INGEST", () => {
     azureClient = ({
       authenticate: jest.fn().mockReturnValue(undefined),
       fetchGroups: jest.fn().mockReturnValue(undefined),
-
+      fetchUserManager: jest.fn().mockReturnValue(undefined),
       fetchUsers: jest.fn().mockReturnValue(undefined),
       fetchMembers: jest.fn().mockReturnValue(undefined),
     } as unknown) as AzureClient;

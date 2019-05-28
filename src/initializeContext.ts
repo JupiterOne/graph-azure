@@ -7,14 +7,14 @@ export default async function initializeContext(
 ): Promise<AzureExecutionContext> {
   const {
     instance: { config },
-    logger
+    logger,
   } = context;
 
   const azure = new AzureClient(
     config.clientId,
     config.clientSecret,
     config.directoryId,
-    logger
+    logger,
   );
   await azure.authenticate();
 

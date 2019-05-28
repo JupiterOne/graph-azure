@@ -60,6 +60,17 @@ describe("AzureClient fetch data with unknown error", () => {
     expect(response).toEqual(undefined);
   });
 
+  test("fetchUserManager with a error", async () => {
+    const client = await getClient();
+    try {
+      await client.fetchUserManager({
+        id: "89fac263-2430-48fd-9278-dacfdfc89792",
+      });
+    } catch (e) {
+      expect(e instanceof Error).toBe(true);
+    }
+  });
+
   afterAll(() => {
     nock.restore();
   });

@@ -25,8 +25,14 @@ export interface GroupMembers {
   members: GroupMember[] | undefined;
 }
 
+export interface UserManager {
+  user: User;
+  manager: User | undefined;
+}
+
 export interface AzureDataModel {
   groups: Group[] | undefined;
   users: User[] | undefined;
   groupsMembers: GroupMembers[] | undefined;
+  usersManagers: UserManager[] | undefined;
 }

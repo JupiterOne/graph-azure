@@ -1,5 +1,11 @@
 import AzureClient from "./AzureClient";
-import { AzureDataModel, Group, GroupMembers } from "./types";
+import {
+  AzureDataModel,
+  Group,
+  GroupMembers,
+  User,
+  UserManager,
+} from "./types";
 
 export default async function fetchAzureData(
   client: AzureClient,
@@ -16,7 +22,14 @@ export default async function fetchAzureData(
     );
   }
 
-  return { groups, groupsMembers, users };
+  let usersManagers;
+  if (users) {
+    usersManagers = await Promise.all(
+      users.map((user: User) => fetchUserManager(user, client)),
+    );
+  }
+
+  return { groups, groupsMembers, users, usersManagers };
 }
 
 async function fetchGroupMembers(
@@ -28,5 +41,17 @@ async function fetchGroupMembers(
   return {
     group,
     members,
+  };
+}
+
+async function fetchUserManager(
+  user: User,
+  client: AzureClient,
+): Promise<UserManager> {
+  const manager = await client.fetchUserManager(user);
+
+  return {
+    user,
+    manager,
   };
 }

@@ -66,8 +66,10 @@ export default class AzureClient {
 
   public async fetchUsers(): Promise<User[] | undefined> {
     try {
+      const select = `$select=displayName,givenName,jobTitle,mail,mobilePhone,officeLocation,preferredLanguage,surname,userPrincipalName,id,userPrincipalName,jobTitle,displayName,mailNickname,userType,employeeId`;
+
       const { value } = await this.makeRequest(
-        `${this.host}/users/`,
+        `${this.host}/users?${select}`,
         Method.GET,
       );
 
@@ -77,6 +79,20 @@ export default class AzureClient {
         return [];
       }
       this.logger.warn({ err: error }, "azure.fetchUsers failed");
+      return undefined;
+    }
+  }
+
+  public async fetchUserManager(user: User): Promise<User | undefined> {
+    try {
+      const response = (await this.makeRequest(
+        `${this.host}/users/${user.id}/manager`,
+        Method.GET,
+      )) as User;
+
+      return response;
+    } catch (error) {
+      this.logger.warn({ err: error }, "azure.fetchUserManager failed");
       return undefined;
     }
   }

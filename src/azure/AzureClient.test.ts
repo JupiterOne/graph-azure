@@ -64,6 +64,16 @@ describe("AzureClient fetch ok data", () => {
     nockDone();
   });
 
+  test("fetchUserManager ok", async () => {
+    const { nockDone } = await nock.back("user-manager-ok.json");
+    const client = await getAuthenticatedClient();
+    const response = await client.fetchUserManager({
+      id: "abf00eda-02d6-4053-a077-eef036e1a4c8",
+    });
+    expect(response).not.toBeUndefined();
+    nockDone();
+  });
+
   afterAll(() => {
     nock.restore();
   });
@@ -119,6 +129,16 @@ describe("AzureClient fetch data with http error", () => {
       "89fac263-2430-48fd-9278-dacfdfc89792",
     );
     expect(response && response.length).toEqual(0);
+    nockDone();
+  });
+
+  test("fetchUserManager 404", async () => {
+    const { nockDone } = await nock.back("user-manager-404.json");
+    const client = await getAuthenticatedClient();
+    const response = await client.fetchUserManager({
+      id: "abf00eda-02d6-4053-a077-eef036e1a4c8",
+    });
+    expect(response).toBeUndefined();
     nockDone();
   });
 

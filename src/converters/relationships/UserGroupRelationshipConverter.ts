@@ -23,6 +23,10 @@ export function createUserGroupRelationships(
 ): GroupUserRelationship[] {
   return groupsMembers.reduce(
     (relationships, groupMember) => {
+      if (!groupMember.members) {
+        return relationships;
+      }
+
       const groupMembers = groupMember.members.reduce(
         (groupMembersRelationships, member) => {
           if (member["@odata.type"] !== MemberType.USER) {

@@ -55,6 +55,10 @@ function createEntitiesOperations(
     const oldEntities = oldData[entityName];
     const newEntities = newData[entityName];
 
+    if (!oldEntities || !newEntities) {
+      return operations;
+    }
+
     return [
       ...operations,
       ...persister.processEntities<EntityFromIntegration>(
@@ -78,6 +82,10 @@ function createRelationshipsOperations(
   return relationships.reduce((operations, relationshipName) => {
     const oldRelationhips = oldData[relationshipName];
     const newRelationhips = newData[relationshipName];
+
+    if (!oldRelationhips || !newRelationhips) {
+      return operations;
+    }
 
     return [
       ...operations,
@@ -105,8 +113,12 @@ export function convertEntities(
 ): JupiterOneEntitiesData {
   return {
     accounts: [EntityConverters.createAccountEntity(instance)],
-    groups: EntityConverters.createGroupEntities(azureDataModel.groups),
-    users: EntityConverters.createUserEntities(azureDataModel.users),
+    groups:
+      azureDataModel.groups &&
+      EntityConverters.createGroupEntities(azureDataModel.groups),
+    users:
+      azureDataModel.users &&
+      EntityConverters.createUserEntities(azureDataModel.users),
   };
 }
 
@@ -116,30 +128,43 @@ export function convertRelationships(
 ): JupiterOneRelationshipsData {
   const account = entities.accounts[0];
 
-  const memberRelationships = RelationshipConverters.createGroupMemberRelationships(
-    azureDataModel.groupsMembers,
-  );
+  let memberRelationships;
+  let groupUserRelationships;
+  let groupGroupRelationships;
 
-  const groupUserRelationships = memberRelationships.filter(
-    r => r._type === Relationships.GROUP_USER_RELATIONSHIP_TYPE,
-  );
-  const groupGroupRelationships = memberRelationships.filter(
-    r => r._type === Relationships.GROUP_GROUP_RELATIONSHIP_TYPE,
-  );
+  if (azureDataModel.groupsMembers) {
+    memberRelationships = RelationshipConverters.createGroupMemberRelationships(
+      azureDataModel.groupsMembers,
+    );
+
+    groupUserRelationships = memberRelationships.filter(
+      r => r._type === Relationships.GROUP_USER_RELATIONSHIP_TYPE,
+    );
+
+    groupGroupRelationships = memberRelationships.filter(
+      r => r._type === Relationships.GROUP_GROUP_RELATIONSHIP_TYPE,
+    );
+  }
 
   return {
-    accountUserRelationships: RelationshipConverters.createAccountUserRelationships(
-      azureDataModel.users,
-      account,
-    ),
-    accountGroupRelationships: RelationshipConverters.createAccountGroupRelationships(
-      azureDataModel.groups,
-      account,
-    ),
+    accountUserRelationships:
+      azureDataModel.users &&
+      RelationshipConverters.createAccountUserRelationships(
+        azureDataModel.users,
+        account,
+      ),
+    accountGroupRelationships:
+      azureDataModel.groups &&
+      RelationshipConverters.createAccountGroupRelationships(
+        azureDataModel.groups,
+        account,
+      ),
 
-    userGroupRelationships: RelationshipConverters.createUserGroupRelationships(
-      azureDataModel.groupsMembers,
-    ),
+    userGroupRelationships:
+      azureDataModel.groupsMembers &&
+      RelationshipConverters.createUserGroupRelationships(
+        azureDataModel.groupsMembers,
+      ),
     groupUserRelationships,
     groupGroupRelationships,
   };

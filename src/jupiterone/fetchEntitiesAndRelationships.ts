@@ -4,16 +4,18 @@ import * as Relationships from "./relationships";
 
 export interface JupiterOneEntitiesData {
   accounts: Entities.AccountEntity[];
-  groups: Entities.GroupEntity[];
-  users: Entities.UserEntity[];
+  groups: Entities.GroupEntity[] | undefined;
+  users: Entities.UserEntity[] | undefined;
 }
 
 export interface JupiterOneRelationshipsData {
-  accountGroupRelationships: Relationships.AccountGroupRelationship[];
-  accountUserRelationships: Relationships.AccountUserRelationship[];
-  userGroupRelationships: Relationships.UserGroupRelationship[];
-  groupUserRelationships: Relationships.GroupUserRelationship[];
-  groupGroupRelationships: Relationships.GroupGroupRelationship[];
+  accountGroupRelationships:
+    | Relationships.AccountGroupRelationship[]
+    | undefined;
+  accountUserRelationships: Relationships.AccountUserRelationship[] | undefined;
+  userGroupRelationships: Relationships.UserGroupRelationship[] | undefined;
+  groupUserRelationships: Relationships.GroupUserRelationship[] | undefined;
+  groupGroupRelationships: Relationships.GroupGroupRelationship[] | undefined;
 }
 
 export interface JupiterOneDataModel {

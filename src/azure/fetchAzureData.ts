@@ -9,9 +9,12 @@ export default async function fetchAzureData(
     client.fetchUsers(),
   ]);
 
-  const groupsMembers = await Promise.all(
-    groups.map((group: Group) => fetchGroupMembers(group, client)),
-  );
+  let groupsMembers;
+  if (groups) {
+    groupsMembers = await Promise.all(
+      groups.map((group: Group) => fetchGroupMembers(group, client)),
+    );
+  }
 
   return { groups, groupsMembers, users };
 }

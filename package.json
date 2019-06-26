@@ -29,11 +29,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@jupiterone/jupiter-managed-integration-sdk": "^24.0.3",
     "@microsoft/microsoft-graph-client": "^1.5.2",
     "node-fetch": "^2.3.0"
-  },
-  "peerDependencies": {
-    "@jupiterone/jupiter-managed-integration-sdk": "^23.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -42,7 +40,6 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
-    "@jupiterone/jupiter-managed-integration-sdk": "^23.2.0",
     "@microsoft/microsoft-graph-types": "^1.8.0",
     "@types/bunyan": "^1.8.5",
     "@types/fs-extra": "^5.0.5",

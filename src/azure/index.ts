@@ -1,4 +1,13 @@
 import AzureClient from "./AzureClient";
-import fetchAzureData from "./fetchAzureData";
+import fetchBatchOfGroupMembers from "./fetchBatchOfGroupMembers";
+import fetchBatchOfGroups from "./fetchBatchOfGroups";
+import fetchBatchOfUsers from "./fetchBatchOfUsers";
 
-export { AzureClient, fetchAzureData };
+export {
+  AzureClient,
+  fetchBatchOfGroupMembers,
+  fetchBatchOfGroups,
+  fetchBatchOfUsers,
+};
+
+export * from "./types";

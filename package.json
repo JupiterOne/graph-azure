@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/jupiter-integration-azure",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "A JupiterOne managed integration for https://azure.microsoft.com/.",
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/jupiter-integration-azure",

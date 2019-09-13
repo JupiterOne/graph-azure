@@ -1,6 +1,6 @@
 /* tslint:disable:no-console */
 import { executeIntegrationLocal } from "@jupiterone/jupiter-managed-integration-sdk";
-import invocationConfig from "../src/index";
+import { stepFunctionsInvocationConfig } from "../src/index";
 
 const integrationConfig = {
   clientId: process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_ID,
@@ -14,9 +14,11 @@ const invocationArgs = {
 
 executeIntegrationLocal(
   integrationConfig,
-  invocationConfig,
+  stepFunctionsInvocationConfig,
   invocationArgs,
 ).catch(err => {
   console.error(err);
-  process.exit(1);
+  process.stdout.end(() => {
+    process.exit(1);
+  });
 });

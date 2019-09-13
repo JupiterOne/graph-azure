@@ -2,14 +2,14 @@
   {
     "scope": "https://login.microsoftonline.com:443",
     "method": "POST",
-    "path": "/01f2efbc-d17a-463b-81e9-98a8f641be75%20/oauth2/v2.0/token",
-    "body": "client_id=abc123secrety&grant_type=client_credentials&client_secret=%20%20.%20DDF_(%202n%20%21*-kIK&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default",
+    "path": "/a76fc728-0cba-45f0-a9eb-d45207e14513/oauth2/v2.0/token",
+    "body": "credrequest=redacted&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default",
     "status": 200,
     "response": {
       "token_type": "Bearer",
       "expires_in": 3600,
       "ext_expires_in": 3600,
-      "access_token": "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkFRQUJBQUFBQUFEQ29NcGpKWHJ4VHE5Vkc5dGUtN0ZYN1p0bVFCQ0dZQWVCT3c2WW5OTE56ZEwwMlZPQW5RRzRFamk3V09SN04ybWN4WEtOZS10OWplN1psODk3Q0pzT19PcUhfUlBQRmtuVDF2OFVyemhCNUNBQSIsImFsZyI6IlJTMjU2IiwieDV0IjoiSEJ4bDltQWU2Z3hhdkNrY29PVTJUSHNETmEwIiwia2lkIjoiSEJ4bDltQWU2Z3hhdkNrY29PVTJUSHNETmEwIn0.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wMWYyZWZiYy1kMTdhLTQ2M2ItODFlOS05OGE4ZjY0MWJlNzUvIiwiaWF0IjoxNTU2NTQxMjI0LCJuYmYiOjE1NTY1NDEyMjQsImV4cCI6MTU1NjU0NTEyNCwiYWlvIjoiNDJaZ1lEZ3RmdXYwemRQMXIwKzgyN0UzL01tNWFRQT0iLCJhcHBfZGlzcGxheW5hbWUiOiJNeSB0ZXN0IGFwcCIsImFwcGlkIjoiOWRkNDk5YTEtYjgwMi00MDViLThkYTYtZGRhMmE4ZGUxOWZjIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvMDFmMmVmYmMtZDE3YS00NjNiLTgxZTktOThhOGY2NDFiZTc1LyIsIm9pZCI6ImJhMGVmMmQ3LTEzZTctNGRhNC04NjI1LWI4NjA2MDA2ZWFlOCIsInJvbGVzIjpbIkdyb3VwLlJlYWQuQWxsIiwiVXNlci5SZWFkLkFsbCJdLCJzdWIiOiJiYTBlZjJkNy0xM2U3LTRkYTQtODYyNS1iODYwNjAwNmVhZTgiLCJ0aWQiOiIwMWYyZWZiYy1kMTdhLTQ2M2ItODFlOS05OGE4ZjY0MWJlNzUiLCJ1dGkiOiJ1QkZEU05PdWtrbVEwM0JEVUtpOEFBIiwidmVyIjoiMS4wIiwieG1zX3RjZHQiOjE1NTYwMzY0NzR9.vcoGqFH9zOVk-y7D-j718TcbJdT0wD0yprxCoD87lfOQK5zbXl87lb-QlljmPQMowAwe5JMVTVOKWmkJ6e7TXxGt89w7qRuVDkfWBlhlFMNkXle2GMsIdc87_aeCxU3j1D5HBToKOzkOm2eNt51xa01bfkeoqOKuy-ZNRefDGrRq8x6PuSMfAHZlIUUiLTUskaCVWEVIFt-iLobO4Q0Hdas756aKqinzhhajC-gEmLJ3pB0sn6rnvxXHTRpvw07H5hgK7lxj7LDgUfHGg2wlPfiM_RiRoLRuTl03EEGSEnY_c4h6gp8yX9JrsMCO1Wy4pZPHzyx9i9YSsnZNVTi6Ew"
+      "access_token": "eyJ0eXAiOiJKV1QiLCJub25jZSI6IlZVZWllY2phd0FWdzhwS1R1QnFDZlcwNGNNa09KT1hyNC1LcTN0U1E2Z2ciLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9hNzZmYzcyOC0wY2JhLTQ1ZjAtYTllYi1kNDUyMDdlMTQ1MTMvIiwiaWF0IjoxNTY3NzgxMzM1LCJuYmYiOjE1Njc3ODEzMzUsImV4cCI6MTU2Nzc4NTIzNSwiYWlvIjoiNDJGZ1lGaXNuK1Q1WEhqRGRYT2RGVC9TVTFTMEFRPT0iLCJhcHBfZGlzcGxheW5hbWUiOiJKdXBpdGVyT25lIiwiYXBwaWQiOiI1OTVkZjZjNy02ZDIyLTQyM2ItYmM4Yi02M2Q1NWFhZTYxMWQiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9hNzZmYzcyOC0wY2JhLTQ1ZjAtYTllYi1kNDUyMDdlMTQ1MTMvIiwib2lkIjoiOGFkOGZkNzMtODNmYi00OWI2LTgxODUtM2M0NTRjODVhMjJmIiwicm9sZXMiOlsiR3JvdXAuUmVhZC5BbGwiLCJVc2VyLlJlYWQuQWxsIl0sInN1YiI6IjhhZDhmZDczLTgzZmItNDliNi04MTg1LTNjNDU0Yzg1YTIyZiIsInRpZCI6ImE3NmZjNzI4LTBjYmEtNDVmMC1hOWViLWQ0NTIwN2UxNDUxMyIsInV0aSI6InUzcmlCWE4xSGtteThUMWIwb1RmQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfdGNkdCI6MTU2NzYxNjM3Nn0.NT8PuDKHKIUyZzuvtfPaZRKQB7uB9nAZbLaow-CgVIKyuT0vl3Rjz4Dmh8tIi_fvMMFkMo_sfstr8O2BncxEQerVejvy4TOG0grljQvVLnsFZV17ya0s_5GlT1inPiFmcnj5cNH4tS-agwV85w_fm-9-YeDwcJ1IBX32nlzk81f7MW4a6MsZ3awPwgYqzEBT8uIsNKBxyAw4LJoCHdn62OJ7yvKosQ0eVYSS6b4CMOAxAs8GZMk5kScREsieoq5yI00WiJqL3RR-jkdwckG4-cG1d1Xx4EsDBd8-ROCAylmuTEORVL3zqabQ-4GAyF9O7ZHEo5KrPkeLDH7Ezx2iuA"
     },
     "rawHeaders": [
       "Cache-Control",
@@ -25,32 +25,34 @@
       "X-Content-Type-Options",
       "nosniff",
       "x-ms-request-id",
-      "484311b8-aed3-4992-90d3-704350a8bc00",
+      "05e27abb-7573-491e-b2f1-3d5bd284df00",
+      "x-ms-ests-server",
+      "2.1.9288.15 - SAN ProdSlices",
       "P3P",
       "CP=\"DSP CUR OTPi IND OTRi ONL FIN\"",
       "Set-Cookie",
-      "fpc=Aj4eFj81nmZAgldcFfccGW8pVipJAQAAAFTnWNQOAAAA; expires=Wed, 29-May-2019 12:38:44 GMT; path=/; secure; HttpOnly",
+      "fpc=AvsBFOrwrGBFg3VaSXUmNKR2112nAQAAAANqBNUOAAAA; expires=Sun, 06-Oct-2019 14:53:55 GMT; path=/; secure; HttpOnly",
       "Set-Cookie",
       "x-ms-gateway-slice=prod; path=/; secure; HttpOnly",
       "Set-Cookie",
       "stsservicecookie=ests; path=/; secure; HttpOnly",
       "Date",
-      "Mon, 29 Apr 2019 12:38:43 GMT",
+      "Fri, 06 Sep 2019 14:53:55 GMT",
       "Connection",
       "close",
       "Content-Length",
-      "1540"
+      "1436"
     ]
   },
   {
     "scope": "https://graph.microsoft.com:443",
     "method": "GET",
-    "path": "/v1.0/users/",
+    "path": "/v1.0/users",
     "body": "",
     "status": 200,
     "response": [
-      "1f8b0800000000000400edbd07601c499625262f6dca7b7f4af54ad7e074a10880601324d8904010ecc188cde692ec1d69472329ab2a81ca6556655d661640cced9dbcf7de7befbdf7de7befbdf7ba3b9d4e27f7dfff3f5c6664016cf6ce4adac99e2180aac81f3f7e7c1f3f227ef147bf6735cbda6c3cad966dfeaefde8d147f3b65d358feedebda8b3d57cbc28a675d554e72db558dcbddc1defdcfddd16799be1a51f5f3779dd7c34fae8322bd7f9478fbef78b3f9aac9b629937cdcb79453fe8a38f3ed94df7f6f6eeddbbb74fcf47df1f7d342b9a55995dbfc816f4ca47c7cb599d5fa5bfd7baccde569704eba2b8cc97c197f4e14f579337455be2b3366fdab4e53f461f2db2a2fce8d1725d96f47b3529ca9c3ba66661b7a38faaf3f3629a3fafa6595b544b6af0f4c94bfa7855e7e7795de7b3e7d9f2629d5dd0ab02ad59d74b41c2a186e1beac8be5b45865a5a298cd16c5f2f70752e3d93a2b2755c594faf1d3dffbcd8fff9efc25beb35f55cb80a004b49801cae47c67279f65db3b7bb34fb7f777eedfdbce761e3cd8cef3f39d7b9fe6bbd9fef4e0a35f328ad0b747d0d7394de52c7d43bda65f11c2d4854f52f99a3ef448fa34bfcccb6ac56d07292a1f75c9289fde828ac087c0c748d8304ab727d6bdbdfdfc609665db0fa77b0fb7f7f7b2fdedecc1fe647bf2f0e0e1bdfcd3d9c307f7776e49ac6745ddb443b49221383ac9df3f4b04923f63e401496e4f9cdd87e70fcef3bdddedfd83e983edfde96cb29d4d0e1e6c3f7cf8e9839dfce1f9bdec9c88f3fd",
-      "5ff2ff0092549878f9030000"
+      "1f8b0800000000000400edbd07601c499625262f6dca7b7f4af54ad7e074a10880601324d8904010ecc188cde692ec1d69472329ab2a81ca6556655d661640cced9dbcf7de7befbdf7de7befbdf7ba3b9d4e27f7dfff3f5c6664016cf6ce4adac99e2180aac81f3f7e7c1f3f227ef147bf6735cbda6c3cad966dfeaefde8d147f3b65d358feedebda8b3d57cbc28a675d554e72db558dcbddc1defdcfddd16799be1a51f5f3779dd7c34fae8322bd7f9478fbef78b3f9aac9b629937cdcb79453fe8a3ef8f3e9a15cdaaccae5f640b6af3d1f12c5ba4df2dcab2c81678f7a2b8cc97de77f4d14f579337455bd227cb75598e3e5a6445697faf2645993378f351757e5e4cf3e7d5346b8b6a693e5dd5f9795ed7f9ec79b6bc586717d4fca37c49d09b75bd94ee3c2c30929775b19c16abac546cb2d9a258fe9e34d2c54faf57459bd7d4e7bc6a810dd1625c2d03da109062466fcd76f283fd7bf70fb6f3d98387dbfb59beb3fd70f7fe83ed837bb37bd94e7efe70f2e0e0a35f32ba0da9d03581f52824438bd3879bff9eed3cbfd2618daf30b20f21987c6109267fc649952d7effb0eb1f3ffdbddffcf87b536f7732bdf7e0de74b27defd3d9fef6fef9ece1f6c1c3879f6e4f1e3c98ddbbbfbf9fdd3bd8f9e8977cff",
+      "97fc3f71901b90b8020000"
     ],
     "rawHeaders": [
       "Cache-Control",
@@ -64,19 +66,19 @@
       "Vary",
       "Accept-Encoding",
       "request-id",
-      "3d5d8511-8513-40d5-b116-9eb2c5175d9d",
+      "786dd53b-0986-4f57-9f30-366500a15ec9",
       "client-request-id",
-      "3d5d8511-8513-40d5-b116-9eb2c5175d9d",
+      "786dd53b-0986-4f57-9f30-366500a15ec9",
       "x-ms-ags-diagnostic",
-      "{\"ServerInfo\":{\"DataCenter\":\"West Europe\",\"Slice\":\"SliceC\",\"Ring\":\"5\",\"ScaleUnit\":\"001\",\"RoleInstance\":\"AGSFE_IN_53\",\"ADSiteName\":\"WEU\"}}",
+      "{\"ServerInfo\":{\"DataCenter\":\"South Central US\",\"Slice\":\"SliceC\",\"Ring\":\"5\",\"ScaleUnit\":\"001\",\"RoleInstance\":\"AGSFE_IN_16\",\"ADSiteName\":\"SCU\"}}",
       "OData-Version",
       "4.0",
       "Duration",
-      "67.3476",
+      "52.8106",
       "Strict-Transport-Security",
       "max-age=31536000",
       "Date",
-      "Mon, 29 Apr 2019 12:38:44 GMT",
+      "Fri, 06 Sep 2019 14:53:55 GMT",
       "Connection",
       "close"
     ]

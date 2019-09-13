@@ -7,26 +7,21 @@ export enum MemberType {
 
 export interface Group extends MicrosoftGraph.Group {
   id: string;
-  classification: any;
 }
 
 export interface User extends MicrosoftGraph.User {
   id: string;
 }
 
-export interface GroupMember {
-  id: string;
+/**
+ * The data answered by a request for group members. The properties are those
+ * requested. Additional properties need to be added here and in
+ * `fetchBatchOfGroupMembers`.
+ */
+export interface GroupMember extends MicrosoftGraph.DirectoryObject {
   "@odata.type": string;
-  [key: string]: any;
-}
-
-export interface GroupMembers {
-  group: Group;
-  members: GroupMember[] | undefined;
-}
-
-export interface AzureDataModel {
-  groups: Group[] | undefined;
-  users: User[] | undefined;
-  groupsMembers: GroupMembers[] | undefined;
+  id: string;
+  displayName?: string;
+  mail?: string | null;
+  jobTitle?: string | null;
 }

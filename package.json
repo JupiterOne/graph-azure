@@ -29,7 +29,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@jupiterone/jupiter-managed-integration-sdk": "^24.0.3",
+    "@jupiterone/jupiter-managed-integration-sdk": "^24.2.0",
     "@microsoft/microsoft-graph-client": "^1.5.2",
     "node-fetch": "^2.3.0"
   },

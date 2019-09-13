@@ -659,10 +659,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@jupiterone/jupiter-managed-integration-sdk@^24.0.3":
-  version "24.0.3"
-  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-24.0.3.tgz#08341dc8e0fdb5b319e46dec5e60394a52044a75"
-  integrity sha512-Qif5J3glncNThi3DM2cMExFYebIEuuqu/bQPFOTdvKwN44WtZBTSXqgNDqnfSnkZpsu7eYmt+8bkup0ke7WX4A==
+"@jupiterone/jupiter-managed-integration-sdk@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-24.2.0.tgz#7443065368290ca3776a932be9a2d6a4006c1a44"
+  integrity sha512-CQYzT3ASdOPp/+q542Q4KUIMu+RiOn7bqKgH8lFcO0+poX92tCawUJytMrqwjVGaF0AF2kOoF8hPfuRaCBcy8Q==
 
 "@microsoft/microsoft-graph-client@^1.5.2":
   version "1.5.2"

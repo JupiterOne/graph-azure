@@ -2,21 +2,20 @@ import { IntegrationExecutionContext } from "@jupiterone/jupiter-managed-integra
 import AzureClient from "./azure/AzureClient";
 import { AzureExecutionContext } from "./types";
 
-export default async function initializeContext(
+export default function initializeContext(
   context: IntegrationExecutionContext,
-): Promise<AzureExecutionContext> {
+): AzureExecutionContext {
   const {
     instance: { config },
-    logger
+    logger,
   } = context;
 
   const azure = new AzureClient(
     config.clientId,
     config.clientSecret,
     config.directoryId,
-    logger
+    logger,
   );
-  await azure.authenticate();
 
   return {
     ...context,

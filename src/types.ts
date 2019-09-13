@@ -10,3 +10,13 @@ export interface AzureExecutionContext extends IntegrationExecutionContext {
   persister: PersisterClient;
   azure: AzureClient;
 }
+
+export interface ResourceCacheState {
+  resourceFetchCompleted?: boolean;
+}
+
+export interface GroupsCacheState extends ResourceCacheState {
+  groupMembersFetchCompleted?: boolean;
+}
+
+export type UsersCacheState = ResourceCacheState;

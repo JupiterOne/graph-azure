@@ -35,6 +35,10 @@ Recap:
 
 **Authentication for Terraform**
 
+Terraform is a script that needs to authenticate with the Resource Manager API.
+Scripts run using Service Principal credentials instead of User Principal
+credentials. [Create a Service Principal][1] using the Azure CLI.
+
 ```sh
 $ az account list --query "[].{name:name, subscriptionId:id, tenantId:tenantId}"
 [
@@ -84,3 +88,5 @@ $ docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure
 ```sh
 $ docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light plan
 ```
+
+1. https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest

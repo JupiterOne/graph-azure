@@ -1,27 +1,49 @@
 import { IntegrationInstance } from "@jupiterone/jupiter-managed-integration-sdk";
+import { Organization } from "@microsoft/microsoft-graph-types";
 
+import { AccountEntity } from "../jupiterone";
 import {
   createAccountEntity,
   createGroupEntity,
   createUserEntity,
-} from "./entities";
+} from "./graph";
 
 describe("createAccountEntity", () => {
   test("properties transferred", () => {
     const instance = {
-      id: "id",
-      name: "name",
+      id: "the-instance-id",
+      name: "instance.config.name configured by customer",
       config: {},
     } as IntegrationInstance;
 
-    const accountEntity = createAccountEntity(instance);
+    const organization: Organization = {
+      displayName: "Org Display Name",
+      verifiedDomains: [
+        {
+          name: "whatever.onmicrosoft.com",
+        },
+        {
+          isDefault: true,
+          name: "something.onmicrosoft.com",
+        },
+      ],
+    };
+    const accountEntity = createAccountEntity(instance, organization);
 
-    expect(accountEntity).toEqual({
+    const expected: AccountEntity = {
       _class: "Account",
-      _key: "azure_account_id",
+      _key: "azure_account_the-instance-id",
       _type: "azure_account",
-      displayName: "name",
-    });
+      displayName: "instance.config.name configured by customer",
+      defaultDomain: "something.onmicrosoft.com",
+      organizationName: "Org Display Name",
+      verifiedDomains: [
+        "whatever.onmicrosoft.com",
+        "something.onmicrosoft.com",
+      ],
+    };
+
+    expect(accountEntity).toEqual(expected);
   });
 });
 

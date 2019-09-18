@@ -4,7 +4,8 @@ import {
   IntegrationValidationContext,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
-import AzureClient from "./azure/AzureClient";
+import { AzureClient } from "./azure";
+import { AzureIntegrationInstanceConfig } from "./types";
 
 /**
  * Performs validation of the execution before the execution handler function is
@@ -24,7 +25,8 @@ import AzureClient from "./azure/AzureClient";
 export default async function invocationValidator(
   validationContext: IntegrationValidationContext,
 ) {
-  const { config } = validationContext.instance;
+  const config = validationContext.instance
+    .config as AzureIntegrationInstanceConfig;
 
   if (!config.clientId || !config.clientSecret || !config.directoryId) {
     throw new IntegrationInstanceConfigError(

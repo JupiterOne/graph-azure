@@ -4,12 +4,11 @@ import { createTestLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import AzureClient from "./AzureClient";
 
-const CLIENT_ID =
-  process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_ID || "example_token";
+const CLIENT_ID = process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_ID || "token";
 const CLIENT_SECRET =
-  process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_SECRET || "example_secret";
+  process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_SECRET || "secret";
 const DIRECTORY_ID =
-  process.env.AZURE_CLOUD_LOCAL_EXECUTION_DIRECTORY_ID || "example_dirrectory";
+  process.env.AZURE_CLOUD_LOCAL_EXECUTION_DIRECTORY_ID || "directory";
 
 const logger = createTestLogger();
 

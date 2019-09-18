@@ -11,6 +11,7 @@ import {
 } from "./azure";
 import initializeContext from "./initializeContext";
 import invocationValidator from "./invocationValidator";
+import synchronizeComputeResources from "./synchronizers/compute/syncronizeComputeResources";
 import deleteDeprecatedTypes from "./synchronizers/deleteDeprecatedTypes";
 import synchronizeAccount from "./synchronizers/synchronizeAccount";
 import synchronizeGroupMembers from "./synchronizers/synchronizeGroupMembers";
@@ -42,6 +43,16 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
             executionContext: IntegrationStepExecutionContext,
           ) => {
             return synchronizeAccount(initializeContext(executionContext));
+          },
+        },
+        {
+          name: "Synchronize VMs",
+          executionHandler: async (
+            executionContext: IntegrationStepExecutionContext,
+          ) => {
+            return synchronizeComputeResources(
+              initializeContext(executionContext),
+            );
           },
         },
       ],

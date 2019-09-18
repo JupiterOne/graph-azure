@@ -3,7 +3,11 @@ import { EntityFromIntegration } from "@jupiterone/jupiter-managed-integration-s
 export const ACCOUNT_ENTITY_TYPE = "azure_account";
 export const ACCOUNT_ENTITY_CLASS = "Account";
 
-export type AccountEntity = EntityFromIntegration;
+export interface AccountEntity extends EntityFromIntegration {
+  organizationName: string | undefined;
+  defaultDomain: string | undefined;
+  verifiedDomains: string[] | undefined;
+}
 
 export const GROUP_ENTITY_TYPE = "azure_user_group";
 export const GROUP_ENTITY_CLASS = "UserGroup";
@@ -59,3 +63,13 @@ export interface GroupMemberEntity extends EntityFromIntegration {
   jobTitle?: string;
   mail?: string;
 }
+
+export interface VirtualMachineEntity extends EntityFromIntegration {
+  vmSize: string | undefined;
+  type: string | undefined;
+  vmId: string | undefined;
+  location: string;
+}
+
+export const VIRTUAL_MACHINE_ENTITY_TYPE = "azurerm_virtual_machine";
+export const VIRTUAL_MACHINE_ENTITY_CLASS = "Host";

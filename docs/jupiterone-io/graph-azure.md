@@ -10,7 +10,12 @@ to JupiterOne.
 ## Integration Instance Configuration
 
 The integration is triggered by an event containing the information for a
-specific integration instance.
+specific integration instance. Users configure the integration by providing API
+credentials obtained through the Azure portal.
+
+Azure Active Directory is authenticated and accessed through the [Microsoft
+Graph API][1]. Azure Resource Manager is authenticated and accessed through
+[Resource Manager APIs][2].
 
 The integration instance configuration requires credentials of the App which is
 registered with Azure AD. You need:
@@ -37,6 +42,9 @@ registered with Azure AD. You need:
 Check this instruction for additional information:
 https://docs.microsoft.com/en-us/graph/auth-v2-service
 
+Access to Resource Manager:
+https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-api-authentication
+
 ## Entities
 
 The following entity resources are ingested when the integration runs:
@@ -59,3 +67,6 @@ The following relationships are created/mapped:
 | `azure_user_group` | **HAS** | `azure_user`         |
 | `azure_user_group` | **HAS** | `azure_user_group`   |
 | `azure_user_group` | **HAS** | `azure_group_member` |
+
+1. https://docs.microsoft.com/en-us/graph/auth-v2-service
+2. https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-api-authentication

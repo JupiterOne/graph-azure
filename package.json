@@ -69,29 +69,5 @@
     "ts-jest": "^24.0.0",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "linters": {
-      "*.md": [
-        "remark .",
-        "prettier --write",
-        "git add"
-      ],
-      "*.ts": [
-        "eslint",
-        "prettier --write",
-        "git add"
-      ],
-      "*.{js,json}": [
-        "prettier --write",
-        "git add"
-      ]
-    },
-    "ignore": []
   }
 }

@@ -9,11 +9,11 @@ import FSPersister from "@pollyjs/persister-fs";
 Polly.register(NodeHttpAdapter);
 
 class SafeHeadersFSPersister extends FSPersister {
-  constructor() {
+  constructor(...rest: any[]) {
     // We're forced to use arguments[0] here instead of an actual argument by
     // the @types/pollyjs__persister, which hasn't typed the Polly Persister's
     // constructor.
-    super(arguments[0]);
+    super(rest[0]);
   }
 
   public saveRecording(recordingId: number, data: Har) {
@@ -54,7 +54,7 @@ class SafeHeadersFSPersister extends FSPersister {
 
       const responseJson = JSON.parse(responseText);
 
-      if (entry.request.url.match(/login/) && entry.request.postData) {
+      if (/login/.exec(entry.request.url) && entry.request.postData) {
         // Redact request body with secrets for authentication
         entry.request.postData.text = "[REDACTED]";
 
@@ -63,6 +63,7 @@ class SafeHeadersFSPersister extends FSPersister {
           entry.response.content.text = JSON.stringify(
             {
               ...responseJson,
+              /* eslint-disable-next-line @typescript-eslint/camelcase */
               access_token: "[REDACTED]",
             },
             null,

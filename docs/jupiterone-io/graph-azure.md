@@ -21,16 +21,16 @@ Graph API][1]. Azure Resource Manager is authenticated and accessed through
 To create the App Registration:
 
 1. Go to your Azure portal
-2. Navigate to **App registrations**
-3. Create a new App registration, using the **Name** "JupiterOne", selecting
+1. Navigate to **App registrations**
+1. Create a new App registration, using the **Name** "JupiterOne", selecting
    **Accounts in this organizational directory only**, with **no** "Redirect
    URI"
-4. Navigate to the **Overview** page of the new app
-5. Copy the **Application (client) ID**
-6. Copy the **Directory (tenant) ID**
-7. Navigate to the **Certificates & secrets** section
-8. Create a new client secret
-9. Copy the generated secret (you only get one chance!)
+1. Navigate to the **Overview** page of the new app
+1. Copy the **Application (client) ID**
+1. Copy the **Directory (tenant) ID**
+1. Navigate to the **Certificates & secrets** section
+1. Create a new client secret
+1. Copy the generated secret (you only get one chance!)
 
 Grant permission to read Microsoft Graph information:
 
@@ -77,5 +77,6 @@ The following relationships are created/mapped:
 | `azure_user_group` | **HAS** | `azure_user_group`   |
 | `azure_user_group` | **HAS** | `azure_group_member` |
 
-1. https://docs.microsoft.com/en-us/graph/auth-v2-service
-2. https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-api-authentication
+[1]: https://docs.microsoft.com/en-us/graph/auth-v2-service
+[2]:
+  https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-api-authentication

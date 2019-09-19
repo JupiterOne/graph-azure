@@ -16,7 +16,7 @@ export default async function synchronizeAccount(
     instance: { config },
   } = executionContext;
 
-  const graphClient = await createGraphClient(config);
+  const graphClient = createGraphClient(config);
   const organization = await fetchOrganization(graphClient);
   const newAccount = createAccountEntity(instance, organization);
 

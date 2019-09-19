@@ -3,8 +3,6 @@
 Working with the Microsoft Graph is made easier by setting up the [Postman
 collection][1].
 
-[1]: https://docs.microsoft.com/en-us/graph/use-postman?view=graph-rest-1.0
-
 Any Azure account may be used for local development, though JupiterOne staff
 developers maintain an Azure account for the purpose of developing this
 integration. The account has a credit card associated with it, so it must be
@@ -15,14 +13,14 @@ The example Azure resources are maintained by Terraform to allow for easy setup
 and teardown, to allow for the use of any Azure account and to avoid unnecessary
 expenses between development cycles.
 
-**Prerequisites**
+## Prerequisites
 
 On a Mac:
 
 ```sh
-$ brew update && brew install azure-cli
-$ az login
-$ docker run -i -t hashicorp/terraform:light --version
+brew update && brew install azure-cli
+az login
+docker run -i -t hashicorp/terraform:light --version
 ```
 
 Recap:
@@ -33,11 +31,11 @@ Recap:
    [Terraform Docker Container](https://hub.docker.com/r/hashicorp/terraform/)
    works
 
-**Authentication for Terraform**
+## Authentication for Terraform
 
 Terraform is a script that needs to authenticate with the Resource Manager API.
 Scripts run using Service Principal credentials instead of User Principal
-credentials. [Create a Service Principal][1] using the Azure CLI.
+credentials. [Create a Service Principal][2] using the Azure CLI.
 
 ```sh
 $ az account list --query "[].{name:name, subscriptionId:id, tenantId:tenantId}"
@@ -77,7 +75,7 @@ ARM_TENANT_ID=your_tenant_id
 ARM_ENVIRONMENT=public
 ```
 
-**Terraforming for Development**
+## Terraforming for Development
 
 Initialize Terraform:
 
@@ -89,4 +87,6 @@ $ docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure
 $ docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light plan
 ```
 
-1. https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest
+[1]: https://docs.microsoft.com/en-us/graph/use-postman?view=graph-rest-1.0
+[2]:
+  https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest

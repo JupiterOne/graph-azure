@@ -14,6 +14,8 @@ using a single Service Principal:
 1. Add the App to the Subscription that will be ingested, granting the
    [Reader][3] role, to allow reading Azure resources (networks, VMs, etc.)
 
-1. https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-api-authentication
-1. https://docs.microsoft.com/en-us/graph/auth-v2-service
-1. https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#reader
+[1]:
+  https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-api-authentication
+[2]: https://docs.microsoft.com/en-us/graph/auth-v2-service
+[3]:
+  https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#reader

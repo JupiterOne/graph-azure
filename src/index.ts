@@ -2,6 +2,7 @@ import {
   IntegrationError,
   IntegrationInvocationConfig,
   IntegrationStepExecutionContext,
+  IntegrationExecutionResult,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
@@ -132,7 +133,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           name: "Synchronize VMs",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
-          ) => {
+          ): Promise<IntegrationExecutionResult> => {
             if (
               (executionContext.instance
                 .config as AzureIntegrationInstanceConfig).subscriptionId
@@ -141,7 +142,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
                 initializeContext(executionContext),
               );
             } else {
-              return {};
+              return Promise.resolve({});
             }
           },
         },

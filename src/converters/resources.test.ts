@@ -6,7 +6,7 @@ import { createVirtualMachineEntity } from "./resources";
 const webLinker = createAzureWebLinker("something.onmicrosoft.com");
 
 describe("createVirtualMachineEntity", () => {
-  test("properties transferred", async () => {
+  test("properties transferred", () => {
     const data: VirtualMachine = {
       id:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",

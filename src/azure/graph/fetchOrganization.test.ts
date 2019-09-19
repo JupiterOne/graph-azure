@@ -14,7 +14,7 @@ afterEach(async () => {
 test("fetchOrganization", async () => {
   p = polly(__dirname, "fetchOrganization");
 
-  const client = await createGraphClient(config);
+  const client = createGraphClient(config);
   await expect(fetchOrganization(client)).resolves.toMatchObject({
     verifiedDomains: [
       expect.objectContaining({

@@ -6,9 +6,9 @@ import {
 import { AzureIntegrationInstanceConfig } from "../../types";
 import authenticate from "./authenticate";
 
-export default async function createGraphClient(
+export default function createGraphClient(
   config: AzureIntegrationInstanceConfig,
-): Promise<Client> {
+): Client {
   return Client.initWithMiddleware({
     authProvider: new GraphAuthenticationProvider(config),
   });

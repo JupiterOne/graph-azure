@@ -20,5 +20,5 @@ deploy:
   on:
     tags: true
     branch: master
-    repo: JupiterOne/jupiter-integration-azure
+    repo: JupiterOne/graph-azure
     node: '8'

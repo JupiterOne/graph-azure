@@ -50,7 +50,7 @@ describe("createAccountGroupRelationship", () => {
 });
 
 describe("createAccountUserRelationship", () => {
-  test("properties transferred", async () => {
+  test("properties transferred", () => {
     expect(
       createAccountUserRelationship(account, {
         businessPhones: ["+1 2223334444"],

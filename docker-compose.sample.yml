@@ -2,9 +2,9 @@ version: "3.7"
 
 services:
   integration:
-    image: jupiter-integration-azure-app
+    image: graph-azure-app
     build: .
-    container_name: jupiter-integration-azure-app
+    container_name: graph-azure-app
     volumes:
       - .:/app:cached
       - ~/.ssh:/root/.ssh

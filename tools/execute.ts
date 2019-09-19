@@ -6,6 +6,7 @@ const integrationConfig = {
   clientId: process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_ID,
   clientSecret: process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_SECRET,
   directoryId: process.env.AZURE_CLOUD_LOCAL_EXECUTION_DIRECTORY_ID,
+  subscriptionId: process.env.AZURE_CLOUD_LOCAL_EXECUTION_SUBSCRIPTION_ID,
 };
 
 const invocationArgs = {

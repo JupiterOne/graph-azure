@@ -11,18 +11,19 @@ import {
 } from "./azure";
 import initializeContext from "./initializeContext";
 import invocationValidator from "./invocationValidator";
-import synchronizeComputeResources from "./synchronizers/compute/syncronizeComputeResources";
 import deleteDeprecatedTypes from "./synchronizers/deleteDeprecatedTypes";
 import synchronizeAccount from "./synchronizers/synchronizeAccount";
 import synchronizeGroupMembers from "./synchronizers/synchronizeGroupMembers";
 import synchronizeGroups from "./synchronizers/synchronizeGroups";
+import synchronizeComputeResources from "./synchronizers/syncronizeComputeResources";
 import synchronizeUsers from "./synchronizers/syncronizeUsers";
+import { AzureIntegrationInstanceConfig } from "./types";
 
 export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   instanceConfigFields: {
     clientId: {
       type: "string",
-      mask: true,
+      mask: false,
     },
     clientSecret: {
       type: "string",
@@ -30,7 +31,11 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     },
     directoryId: {
       type: "string",
-      mask: true,
+      mask: false,
+    },
+    subscriptionId: {
+      type: "string",
+      mask: false,
     },
   },
   invocationValidator,
@@ -43,16 +48,6 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
             executionContext: IntegrationStepExecutionContext,
           ) => {
             return synchronizeAccount(initializeContext(executionContext));
-          },
-        },
-        {
-          name: "Synchronize VMs",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ) => {
-            return synchronizeComputeResources(
-              initializeContext(executionContext),
-            );
           },
         },
       ],
@@ -131,6 +126,23 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
             executionContext: IntegrationStepExecutionContext,
           ) => {
             return synchronizeGroups(initializeContext(executionContext));
+          },
+        },
+        {
+          name: "Synchronize VMs",
+          executionHandler: async (
+            executionContext: IntegrationStepExecutionContext,
+          ) => {
+            if (
+              (executionContext.instance
+                .config as AzureIntegrationInstanceConfig).subscriptionId
+            ) {
+              return synchronizeComputeResources(
+                initializeContext(executionContext),
+              );
+            } else {
+              return {};
+            }
           },
         },
       ],

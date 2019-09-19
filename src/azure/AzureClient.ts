@@ -4,18 +4,12 @@ import querystring from "querystring";
 import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import AzureClientError from "./AzureClientError";
+import authenticate from "./graph/authenticate";
 import { Group, GroupMember, User } from "./types";
 
 export enum Method {
   GET = "get",
   POST = "post",
-}
-
-interface TokenResponse {
-  token_type: string;
-  expires_in: number;
-  ext_expires_in: number;
-  access_token: string;
 }
 
 export interface PaginationOptions {
@@ -63,32 +57,11 @@ export default class AzureClient {
   }
 
   public async authenticate() {
-    const body = [
-      `client_id=${encodeURIComponent(this.clientId)}`,
-      "grant_type=client_credentials",
-      `client_secret=${encodeURIComponent(this.clientSecret)}`,
-      "scope=https%3A%2F%2Fgraph.microsoft.com%2F.default",
-    ].join("&");
-
-    const options: RequestInit = {
-      method: Method.POST,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body,
-    };
-
-    const loginUrl = `https://login.microsoftonline.com/${
-      this.directoryId
-    }/oauth2/v2.0/token`;
-    const response = await fetch(loginUrl, options);
-    const json = (await response.json()) as TokenResponse;
-
-    if (!json.access_token) {
-      throw new Error("Inavalid credentials");
-    }
-
-    this.accessToken = json.access_token;
+    this.accessToken = await authenticate({
+      clientId: this.clientId,
+      clientSecret: this.clientSecret,
+      directoryId: this.directoryId,
+    });
   }
 
   public async fetchUsers(

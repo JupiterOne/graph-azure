@@ -1,3 +1,5 @@
+import "cross-fetch/polyfill";
+
 import { Buffer } from "buffer";
 import { Har } from "har-format";
 import { gunzipSync } from "zlib";

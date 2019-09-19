@@ -71,5 +71,5 @@ export interface VirtualMachineEntity extends EntityFromIntegration {
   location: string;
 }
 
-export const VIRTUAL_MACHINE_ENTITY_TYPE = "azurerm_virtual_machine";
+export const VIRTUAL_MACHINE_ENTITY_TYPE = "azure_vm";
 export const VIRTUAL_MACHINE_ENTITY_CLASS = "Host";

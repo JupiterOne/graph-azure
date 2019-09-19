@@ -80,8 +80,8 @@ describe("createVirtualMachineEntity", () => {
     };
 
     expect(createVirtualMachineEntity(webLinker, data)).toEqual({
-      _key: "azurerm_virtual_machine_2ed98ec3-b9a4-4126-926e-081889e3bc3a",
-      _type: "azurerm_virtual_machine",
+      _key: "azure_vm_2ed98ec3-b9a4-4126-926e-081889e3bc3a",
+      _type: "azure_vm",
       _class: "Host",
       _rawData: [{ name: "default", rawData: data }],
       displayName: "j1dev",

@@ -46,8 +46,8 @@ export default class AzureClient {
   private clientSecret: string;
   private directoryId: string;
   private accessToken: string;
-  private apiHost: string = "https://graph.microsoft.com";
-  private apiVersion: string = "v1.0";
+  private apiHost = "https://graph.microsoft.com";
+  private apiVersion = "v1.0";
   private logger: IntegrationLogger;
 
   constructor(

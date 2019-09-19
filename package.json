@@ -22,9 +22,9 @@
     "build:docs": "ts-node tools/docs.ts",
     "build:types": "tsc --project tsconfig.dist.json --declaration --emitDeclarationOnly",
     "build:docs:model": "ts-node tools/entities-relationships-table-md.ts",
-    "lint": "yarn lint:ts && yarn lint:md",
+    "lint": "yarn lint:es && yarn lint:md",
     "lint:md": "remark .",
-    "lint:ts": "tslint --project .",
+    "lint:es": "eslint . --ext .ts --ignore-pattern dist",
     "format": "yarn prettier --write '**/*.{ts,js,json,md}'",
     "test": "jest"
   },
@@ -83,7 +83,7 @@
         "git add"
       ],
       "*.ts": [
-        "tslint --project .",
+        "eslint",
         "prettier --write",
         "git add"
       ],

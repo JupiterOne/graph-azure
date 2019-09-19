@@ -7,7 +7,7 @@ import {
 } from "./entities";
 
 describe("createAccountEntity", () => {
-  test("properties transferred", async () => {
+  test("properties transferred", () => {
     const instance = {
       id: "id",
       name: "name",
@@ -68,7 +68,7 @@ describe("createGroupEntity", () => {
 });
 
 describe("createUserEntity", () => {
-  test("properties transferred", async () => {
+  test("properties transferred", () => {
     expect(
       createUserEntity({
         businessPhones: ["+1 2223334444"],

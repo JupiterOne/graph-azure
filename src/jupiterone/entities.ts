@@ -14,16 +14,16 @@ export const GROUP_ENTITY_CLASS = "UserGroup";
 
 export interface GroupEntity extends EntityFromIntegration {
   id: string;
-  deletedDateTime?: number;
-  classification?: string;
-  createdDateTime?: number;
-  description?: string;
-  displayName?: string;
-  mail?: string;
-  mailEnabled?: boolean;
-  mailNickname?: string;
-  renewedDateTime?: number;
-  securityEnabled?: boolean;
+  deletedDateTime: number | undefined;
+  classification: string | undefined;
+  createdDateTime: number | undefined;
+  description: string | undefined;
+  displayName: string | undefined;
+  mail: string | undefined;
+  mailEnabled: boolean | undefined;
+  mailNickname: string | undefined;
+  renewedDateTime: number | undefined;
+  securityEnabled: boolean | undefined;
 }
 
 export const USER_ENTITY_TYPE = "azure_user";
@@ -31,15 +31,15 @@ export const USER_ENTITY_CLASS = "User";
 
 export interface UserEntity extends EntityFromIntegration {
   id: string;
-  displayName?: string;
-  givenName?: string;
-  jobTitle?: string;
-  mail?: string;
-  mobilePhone?: string;
-  officeLocation?: string;
-  preferredLanguage?: string;
-  surname?: string;
-  userPrincipalName?: string;
+  displayName: string | undefined;
+  givenName: string | undefined;
+  jobTitle: string | undefined;
+  mail: string | undefined;
+  mobilePhone: string | undefined;
+  officeLocation: string | undefined;
+  preferredLanguage: string | undefined;
+  surname: string | undefined;
+  userPrincipalName: string | undefined;
 }
 
 /**
@@ -59,9 +59,9 @@ export const GROUP_MEMBER_ENTITY_CLASS = "User";
  * directory objects.
  */
 export interface GroupMemberEntity extends EntityFromIntegration {
-  displayName?: string;
-  jobTitle?: string;
-  mail?: string;
+  displayName: string | undefined;
+  jobTitle: string | undefined;
+  mail: string | undefined;
 }
 
 export interface VirtualMachineEntity extends EntityFromIntegration {
@@ -73,3 +73,30 @@ export interface VirtualMachineEntity extends EntityFromIntegration {
 
 export const VIRTUAL_MACHINE_ENTITY_TYPE = "azure_vm";
 export const VIRTUAL_MACHINE_ENTITY_CLASS = "Host";
+
+export interface PublicIpAddress extends EntityFromIntegration {
+  domain: string | undefined;
+  vmId: string | undefined;
+  publicIp: string | undefined;
+  publicIpAddress: string | undefined;
+  networkInterfaceId: string | undefined;
+}
+
+export const PUBLIC_IP_ADDRESS_ENTITY_TYPE = "azure_public_ip";
+export const PUBLIC_IP_ADDRESS_ENTITY_CLASS = "IpAddress";
+
+export interface NetworkInterfaceEntity extends EntityFromIntegration {
+  type: string | undefined;
+  location: string | undefined;
+  vmId: string | undefined;
+  publicIp: string[] | undefined;
+  publicIpAddress: string[] | undefined;
+  privateIp: string[] | undefined;
+  privateIpAddress: string[] | undefined;
+  macAddress: string | undefined;
+  securityGroupId: string | undefined;
+  ipForwarding: boolean | undefined;
+}
+
+export const NETWORK_INTERFACE_ENTITY_TYPE = "azure_nic";
+export const NETWORK_INTERFACE_ENTITY_CLASS = "NetworkInterface";

@@ -13,3 +13,4 @@ export {
 };
 
 export * from "./types";
+export * from "./resource-manager/index";

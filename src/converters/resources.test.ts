@@ -1,9 +1,98 @@
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 
 import { createAzureWebLinker } from "../azure";
-import { createVirtualMachineEntity } from "./resources";
+import {
+  createVirtualMachineEntity,
+  createNetworkInterfaceEntity,
+} from "./resources";
+import { NetworkInterface } from "@azure/arm-network/esm/models";
+import { NetworkInterfaceEntity } from "../jupiterone";
 
 const webLinker = createAzureWebLinker("something.onmicrosoft.com");
+
+describe("createNetworkInterfaceEntity", () => {
+  test("properties transferred", () => {
+    const data: NetworkInterface = {
+      name: "j1dev",
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
+      etag: 'W/"39076d6b-2dd2-4096-9af4-8df45d4fa312"',
+      location: "eastus",
+      tags: {
+        environment: "j1dev",
+      },
+      provisioningState: "Succeeded",
+      resourceGuid: "ab964820-ee40-4f8d-bfd9-0349b8b4f316",
+      ipConfigurations: [
+        {
+          name: "j1devConfiguration",
+          id:
+            "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration",
+          etag: 'W/"39076d6b-2dd2-4096-9af4-8df45d4fa312"',
+          provisioningState: "Succeeded",
+          privateIPAddress: "10.0.2.4",
+          privateIPAllocationMethod: "Dynamic",
+          publicIPAddress: {
+            id:
+              "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
+          },
+          subnet: {
+            id:
+              "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+          },
+          primary: true,
+          privateIPAddressVersion: "IPv4",
+        },
+      ],
+      dnsSettings: {
+        dnsServers: [],
+        appliedDnsServers: [],
+        internalDomainNameSuffix:
+          "iqtrdnvdttbudhqhotjymog2pe.bx.internal.cloudapp.net",
+      },
+      macAddress: "00-0D-3A-14-85-87",
+      enableAcceleratedNetworking: false,
+      enableIPForwarding: false,
+      networkSecurityGroup: {
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+      },
+      primary: true,
+      virtualMachine: {
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Compute/virtualMachines/j1dev",
+      },
+      hostedWorkloads: [],
+      tapConfigurations: [],
+      type: "Microsoft.Network/networkInterfaces",
+    };
+
+    const entity: NetworkInterfaceEntity = {
+      _key: "azure_nic_ab964820-ee40-4f8d-bfd9-0349b8b4f316",
+      _type: "azure_nic",
+      _class: "NetworkInterface",
+      _rawData: [{ name: "default", rawData: data }],
+      displayName: "j1dev",
+      vmId:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Compute/virtualMachines/j1dev",
+      type: "Microsoft.Network/networkInterfaces",
+      location: "eastus",
+      publicIp: undefined,
+      publicIpAddress: undefined,
+      privateIp: ["10.0.2.4"],
+      privateIpAddress: ["10.0.2.4"],
+      macAddress: "00-0D-3A-14-85-87",
+      securityGroupId:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+      ipForwarding: false,
+      webLink: webLinker.portalResourceUrl(
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
+      ),
+    };
+
+    expect(createNetworkInterfaceEntity(webLinker, data)).toEqual(entity);
+  });
+});
 
 describe("createVirtualMachineEntity", () => {
   test("properties transferred", () => {

@@ -11,6 +11,15 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
+"@azure/arm-network@^16.0.0":
+  version "16.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-network/-/arm-network-16.0.0.tgz#33908b3ad4dde2e3150abcbcfe7aa28b9b5f254b"
+  integrity sha512-TC5ciV63SCf6uqe+uj2hKUkpFe1PxePWdCwZbolDD4FHPoF3kEJKvlTkk7KOlp0DZAsm9zJVJooO9y9ResWOWQ==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/ms-rest-azure-env@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@azure/ms-rest-azure-env/-/ms-rest-azure-env-2.0.0.tgz#45809f89763a480924e21d3c620cd40866771625"

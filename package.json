@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@azure/arm-compute": "^11.0.0",
+    "@azure/arm-network": "^16.0.0",
     "@azure/ms-rest-nodeauth": "^2.0.5",
     "@jupiterone/jupiter-managed-integration-sdk": "^24.2.0",
     "@microsoft/microsoft-graph-client": "^2.0.0",

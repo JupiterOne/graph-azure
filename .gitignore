@@ -5,3 +5,4 @@ dist/
 yarn-error.log
 docker-compose.yml
 .env
+*.tfstate

@@ -7,12 +7,12 @@ import {
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
-  createAccountEntity,
   createAccountGroupRelationship,
   createGroupEntity,
 } from "../converters";
 import {
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
+  AccountEntity,
   AccountGroupRelationship,
   GROUP_ENTITY_TYPE,
   GroupEntity,
@@ -22,10 +22,11 @@ import { AzureExecutionContext, GroupsCacheState } from "../types";
 export default async function synchronizeGroups(
   executionContext: AzureExecutionContext,
 ): Promise<IntegrationExecutionResult> {
-  const { instance } = executionContext;
-  const groupsCache = executionContext.clients
-    .getCache()
-    .iterableCache<IntegrationCacheEntry, GroupsCacheState>("groups");
+  const cache = executionContext.clients.getCache();
+  const groupsCache = cache.iterableCache<
+    IntegrationCacheEntry,
+    GroupsCacheState
+  >("groups");
 
   const groupsState = await groupsCache.getState();
   if (!groupsState || !groupsState.resourceFetchCompleted) {
@@ -34,7 +35,13 @@ export default async function synchronizeGroups(
     );
   }
 
-  const accountEntity = createAccountEntity(instance);
+  const accountEntity = (await cache.getEntry("account")).data as AccountEntity;
+  if (!accountEntity) {
+    throw new IntegrationError(
+      "Account fetch did not complete, cannot synchronize groups",
+    );
+  }
+
   const newGroupEntities: GroupEntity[] = [];
   const newGroupRelationships: AccountGroupRelationship[] = [];
 

@@ -1,2 +1,3 @@
-export * from "./entities";
+export * from "./graph";
 export * from "./relationships";
+export * from "./resources";

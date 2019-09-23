@@ -4,7 +4,9 @@ import {
   IntegrationValidationContext,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
-import AzureClient from "./azure/AzureClient";
+import { default as authenticateGraph } from "./azure/graph/authenticate";
+import { default as authenticateResourceManager } from "./azure/resource-manager/authenticate";
+import { AzureIntegrationInstanceConfig } from "./types";
 
 /**
  * Performs validation of the execution before the execution handler function is
@@ -24,21 +26,20 @@ import AzureClient from "./azure/AzureClient";
 export default async function invocationValidator(
   validationContext: IntegrationValidationContext,
 ) {
-  const { config } = validationContext.instance;
+  const config = validationContext.instance
+    .config as AzureIntegrationInstanceConfig;
 
   if (!config.clientId || !config.clientSecret || !config.directoryId) {
     throw new IntegrationInstanceConfigError(
-      "clentId or clientSecret or directoryId missing in config",
+      "Integration configuration requires all of {clentId, clientSecret, directoryId}",
     );
   }
+
   try {
-    const client = new AzureClient(
-      config.clientId,
-      config.clientSecret,
-      config.directoryId,
-      validationContext.logger,
-    );
-    await client.authenticate();
+    await authenticateGraph(config);
+    if (config.subscriptionId) {
+      await authenticateResourceManager(config);
+    }
   } catch (err) {
     throw new IntegrationInstanceAuthenticationError(err);
   }

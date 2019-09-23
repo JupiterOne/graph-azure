@@ -1,7 +1,7 @@
 import { RelationshipDirection } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember } from "../azure";
-import { GroupMemberRelationship } from "../jupiterone";
+import { AccountEntity, GroupMemberRelationship } from "../jupiterone";
 import {
   createAccountGroupRelationship,
   createAccountUserRelationship,
@@ -13,7 +13,7 @@ const account = {
   _key: "azure_account_id",
   _type: "azure_account",
   displayName: "name",
-};
+} as AccountEntity;
 
 describe("createAccountGroupRelationship", () => {
   test("properties transferred", () => {

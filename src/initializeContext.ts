@@ -1,5 +1,5 @@
 import { IntegrationExecutionContext } from "@jupiterone/jupiter-managed-integration-sdk";
-import AzureClient from "./azure/AzureClient";
+import { AzureClient } from "./azure";
 import { AzureExecutionContext } from "./types";
 
 export default function initializeContext(

@@ -6,11 +6,10 @@ import {
   summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
-import { createAccountEntity } from "../converters";
-import { createUserEntity } from "../converters/entities";
-import { createAccountUserRelationship } from "../converters/relationships";
+import { createAccountUserRelationship, createUserEntity } from "../converters";
 import {
   ACCOUNT_USER_RELATIONSHIP_TYPE,
+  AccountEntity,
   AccountUserRelationship,
   USER_ENTITY_TYPE,
   UserEntity,
@@ -20,10 +19,12 @@ import { AzureExecutionContext, UsersCacheState } from "../types";
 export default async function synchronizeUsers(
   executionContext: AzureExecutionContext,
 ): Promise<IntegrationExecutionResult> {
-  const { instance } = executionContext;
-  const usersCache = executionContext.clients
-    .getCache()
-    .iterableCache<IntegrationCacheEntry, UsersCacheState>("users");
+  const cache = executionContext.clients.getCache();
+  const usersCache = cache.iterableCache<
+    IntegrationCacheEntry,
+    UsersCacheState
+  >("users");
+
   const usersState = await usersCache.getState();
   if (!usersState || !usersState.resourceFetchCompleted) {
     throw new IntegrationError(
@@ -31,7 +32,13 @@ export default async function synchronizeUsers(
     );
   }
 
-  const accountEntity = createAccountEntity(instance);
+  const accountEntity = (await cache.getEntry("account")).data as AccountEntity;
+  if (!accountEntity) {
+    throw new IntegrationError(
+      "Account fetch did not complete, cannot synchronize users",
+    );
+  }
+
   const newUserEntities: UserEntity[] = [];
   const newUserRelationships: AccountUserRelationship[] = [];
 

@@ -2,6 +2,7 @@ import {
   IntegrationError,
   IntegrationInvocationConfig,
   IntegrationStepExecutionContext,
+  IntegrationExecutionResult,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
@@ -15,13 +16,15 @@ import deleteDeprecatedTypes from "./synchronizers/deleteDeprecatedTypes";
 import synchronizeAccount from "./synchronizers/synchronizeAccount";
 import synchronizeGroupMembers from "./synchronizers/synchronizeGroupMembers";
 import synchronizeGroups from "./synchronizers/synchronizeGroups";
+import synchronizeComputeResources from "./synchronizers/syncronizeComputeResources";
 import synchronizeUsers from "./synchronizers/syncronizeUsers";
+import { AzureIntegrationInstanceConfig } from "./types";
 
 export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   instanceConfigFields: {
     clientId: {
       type: "string",
-      mask: true,
+      mask: false,
     },
     clientSecret: {
       type: "string",
@@ -29,7 +32,11 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     },
     directoryId: {
       type: "string",
-      mask: true,
+      mask: false,
+    },
+    subscriptionId: {
+      type: "string",
+      mask: false,
     },
   },
   invocationValidator,
@@ -54,12 +61,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
           ) => {
-            const iterationState = executionContext.event.iterationState;
-            if (!iterationState) {
-              throw new IntegrationError(
-                "Expected iterationState not found in event!",
-              );
-            }
+            const iterationState = getIterationState(executionContext);
             return fetchBatchOfUsers(
               initializeContext(executionContext),
               iterationState,
@@ -72,12 +74,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
           ) => {
-            const iterationState = executionContext.event.iterationState;
-            if (!iterationState) {
-              throw new IntegrationError(
-                "Expected iterationState not found in event!",
-              );
-            }
+            const iterationState = getIterationState(executionContext);
             return fetchBatchOfGroups(
               initializeContext(executionContext),
               iterationState,
@@ -94,12 +91,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
           ) => {
-            const iterationState = executionContext.event.iterationState;
-            if (!iterationState) {
-              throw new IntegrationError(
-                "Expected iterationState not found in event!",
-              );
-            }
+            const iterationState = getIterationState(executionContext);
             return fetchBatchOfGroupMembers(
               initializeContext(executionContext),
               iterationState,
@@ -120,6 +112,23 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
             executionContext: IntegrationStepExecutionContext,
           ) => {
             return synchronizeGroups(initializeContext(executionContext));
+          },
+        },
+        {
+          name: "Synchronize VMs",
+          executionHandler: async (
+            executionContext: IntegrationStepExecutionContext,
+          ): Promise<IntegrationExecutionResult> => {
+            if (
+              (executionContext.instance
+                .config as AzureIntegrationInstanceConfig).subscriptionId
+            ) {
+              return synchronizeComputeResources(
+                initializeContext(executionContext),
+              );
+            } else {
+              return Promise.resolve({});
+            }
           },
         },
       ],
@@ -146,3 +155,11 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     },
   ],
 };
+
+function getIterationState(executionContext: IntegrationStepExecutionContext) {
+  const iterationState = executionContext.event.iterationState;
+  if (!iterationState) {
+    throw new IntegrationError("Expected iterationState not found in event!");
+  }
+  return iterationState;
+}

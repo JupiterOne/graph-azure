@@ -29,9 +29,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@azure/arm-compute": "^11.0.0",
+    "@azure/ms-rest-nodeauth": "^2.0.5",
     "@jupiterone/jupiter-managed-integration-sdk": "^24.2.0",
-    "@microsoft/microsoft-graph-client": "^1.5.2",
-    "node-fetch": "^2.3.0"
+    "@microsoft/microsoft-graph-client": "^2.0.0",
+    "cross-fetch": "^3.0.4",
+    "lodash.map": "^4.6.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -40,13 +43,20 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
-    "@microsoft/microsoft-graph-types": "^1.8.0",
+    "@microsoft/microsoft-graph-types": "^1.10.0",
+    "@pollyjs/adapter-node-http": "^2.6.2",
+    "@pollyjs/core": "^2.6.2",
+    "@pollyjs/persister-fs": "^2.6.2",
     "@types/bunyan": "^1.8.5",
     "@types/fs-extra": "^5.0.5",
+    "@types/har-format": "^1.2.4",
     "@types/jest": "^24.0.0",
+    "@types/lodash.map": "^4.6.13",
     "@types/nock": "^9.3.1",
     "@types/node": "^10.12.20",
     "@types/node-fetch": "^2.1.6",
+    "@types/pollyjs__adapter-node-http": "^2.0.0",
+    "@types/pollyjs__core": "^2.6.0",
     "@typescript-eslint/eslint-plugin": "^2.3.0",
     "@typescript-eslint/parser": "^2.3.0",
     "bunyan": "^1.8.12",

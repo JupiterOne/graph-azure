@@ -10,11 +10,8 @@ import FSPersister from "@pollyjs/persister-fs";
 
 Polly.register(NodeHttpAdapter);
 
-class SafeHeadersFSPersister extends FSPersister {
+class AzureFSPersister extends FSPersister {
   constructor(...rest: any[]) {
-    // We're forced to use arguments[0] here instead of an actual argument by
-    // the @types/pollyjs__persister, which hasn't typed the Polly Persister's
-    // constructor.
     super(rest[0]);
   }
 
@@ -100,9 +97,9 @@ export default function polly(
 ): Polly {
   return new Polly(name, {
     adapters: ["node-http"],
-    persister: SafeHeadersFSPersister,
+    persister: AzureFSPersister,
     persisterOptions: {
-      SafeHeadersFSPersister: {
+      AzureFSPersister: {
         recordingsDir: `${recordingsDir}/__recordings__`,
       },
     },

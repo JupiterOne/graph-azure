@@ -61,12 +61,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
           ) => {
-            const iterationState = executionContext.event.iterationState;
-            if (!iterationState) {
-              throw new IntegrationError(
-                "Expected iterationState not found in event!",
-              );
-            }
+            const iterationState = getIterationState(executionContext);
             return fetchBatchOfUsers(
               initializeContext(executionContext),
               iterationState,
@@ -79,12 +74,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
           ) => {
-            const iterationState = executionContext.event.iterationState;
-            if (!iterationState) {
-              throw new IntegrationError(
-                "Expected iterationState not found in event!",
-              );
-            }
+            const iterationState = getIterationState(executionContext);
             return fetchBatchOfGroups(
               initializeContext(executionContext),
               iterationState,
@@ -101,12 +91,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
           ) => {
-            const iterationState = executionContext.event.iterationState;
-            if (!iterationState) {
-              throw new IntegrationError(
-                "Expected iterationState not found in event!",
-              );
-            }
+            const iterationState = getIterationState(executionContext);
             return fetchBatchOfGroupMembers(
               initializeContext(executionContext),
               iterationState,
@@ -170,3 +155,11 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     },
   ],
 };
+
+function getIterationState(executionContext: IntegrationStepExecutionContext) {
+  const iterationState = executionContext.event.iterationState;
+  if (!iterationState) {
+    throw new IntegrationError("Expected iterationState not found in event!");
+  }
+  return iterationState;
+}

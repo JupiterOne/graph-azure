@@ -14,7 +14,7 @@ import {
   VirtualMachineEntity,
 } from "../jupiterone";
 
-import map = require("lodash.map");
+import map from "lodash.map";
 
 export function createNetworkInterfaceEntity(
   webLinker: AzureWebLinker,

@@ -47,14 +47,14 @@ export function createGroupEntity(d: Group): GroupEntity {
     _type: GROUP_ENTITY_TYPE,
     displayName: d.displayName,
     id: d.id,
-    deletedDateTime: getTime(d.deletedDateTime),
+    deletedOn: getTime(d.deletedDateTime),
     classification: d.classification,
-    createdDateTime: getTime(d.createdDateTime),
+    createdOn: getTime(d.createdDateTime),
     description: d.description,
     mail: d.mail,
     mailEnabled: d.mailEnabled,
     mailNickname: d.mailNickname,
-    renewedDateTime: getTime(d.renewedDateTime),
+    renewedOn: getTime(d.renewedDateTime),
     securityEnabled: d.securityEnabled,
   };
 }

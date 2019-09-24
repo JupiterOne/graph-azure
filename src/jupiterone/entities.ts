@@ -14,15 +14,15 @@ export const GROUP_ENTITY_CLASS = "UserGroup";
 
 export interface GroupEntity extends EntityFromIntegration {
   id: string;
-  deletedDateTime: number | undefined;
+  createdOn: number | undefined;
+  deletedOn: number | undefined;
+  renewedOn: number | undefined;
   classification: string | undefined;
-  createdDateTime: number | undefined;
   description: string | undefined;
   displayName: string | undefined;
   mail: string | undefined;
   mailEnabled: boolean | undefined;
   mailNickname: string | undefined;
-  renewedDateTime: number | undefined;
   securityEnabled: boolean | undefined;
 }
 

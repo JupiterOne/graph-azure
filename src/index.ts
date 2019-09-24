@@ -1,3 +1,5 @@
+import "cross-fetch/polyfill";
+
 import {
   IntegrationError,
   IntegrationInvocationConfig,

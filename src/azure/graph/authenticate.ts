@@ -1,5 +1,3 @@
-import fetch from "cross-fetch";
-
 import { IntegrationError } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { AzureIntegrationInstanceConfig } from "../../types";

@@ -1,4 +1,3 @@
-import fetch, { RequestInit } from "node-fetch";
 import querystring from "querystring";
 
 import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";

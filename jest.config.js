@@ -10,7 +10,7 @@ module.exports = {
     "!src/**/**/index.ts",
     "!src/initializeContext.ts",
   ],
-  setupFiles: ["dotenv/config"],
+  setupFiles: ["dotenv/config", "cross-fetch/polyfill"],
   moduleFileExtensions: [...defaults.moduleFileExtensions, "ts"],
   testEnvironment: "node",
   clearMocks: true,

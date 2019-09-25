@@ -61,6 +61,21 @@ export default async function synchronizeComputeResources(
     fetchNetworkInterfaces(azrm, webLinker),
   ]);
 
+  forEach(newNics, nic => {
+    const nicData = getRawData(nic) as NetworkInterface;
+    const publicIp: string[] = [];
+    forEach(nicData.ipConfigurations, c => {
+      const ipAddress = newAddresses.find(
+        i => i._key === (c.publicIPAddress && c.publicIPAddress.id),
+      );
+      if (ipAddress && ipAddress.publicIp) {
+        publicIp.push(ipAddress.publicIp);
+      }
+    });
+    nic.publicIp = publicIp;
+    nic.publicIpAddress = publicIp;
+  });
+
   const [oldVms, newVms] = await Promise.all([
     graph.findEntitiesByType(VIRTUAL_MACHINE_ENTITY_TYPE),
     fetchVirtualMachines(azrm, webLinker),

@@ -1,5 +1,8 @@
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
-import { NetworkInterface } from "@azure/arm-network/esm/models";
+import {
+  NetworkInterface,
+  PublicIPAddress,
+} from "@azure/arm-network/esm/models";
 import { Polly } from "@pollyjs/core";
 
 import polly from "../../../test/helpers/polly";
@@ -48,6 +51,29 @@ describe("iterateNetworkInterfaces", () => {
     });
 
     expect(vms).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: "j1dev",
+        tags: expect.objectContaining({
+          environment: "j1dev",
+        }),
+      }),
+    ]);
+  });
+});
+
+describe("iteratePublicIPAddresses", () => {
+  test("all", async () => {
+    p = polly(__dirname, "iteratePublicIPAddresses");
+
+    const client = new ResourceManagerClient(config);
+
+    const addresses: PublicIPAddress[] = [];
+    await client.iteratePublicIPAddresses(e => {
+      addresses.push(e);
+    });
+
+    expect(addresses).toEqual([
       expect.objectContaining({
         id: expect.any(String),
         name: "j1dev",

@@ -1,12 +1,16 @@
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
+import {
+  NetworkInterface,
+  PublicIPAddress,
+} from "@azure/arm-network/esm/models";
 
 import { createAzureWebLinker } from "../azure";
+import { NetworkInterfaceEntity, PublicIPAddressEntity } from "../jupiterone";
 import {
-  createVirtualMachineEntity,
   createNetworkInterfaceEntity,
+  createPublicIPAddressEntity,
+  createVirtualMachineEntity,
 } from "./resources";
-import { NetworkInterface } from "@azure/arm-network/esm/models";
-import { NetworkInterfaceEntity } from "../jupiterone";
 
 const webLinker = createAzureWebLinker("something.onmicrosoft.com");
 
@@ -68,15 +72,17 @@ describe("createNetworkInterfaceEntity", () => {
     };
 
     const entity: NetworkInterfaceEntity = {
-      _key: "azure_nic_ab964820-ee40-4f8d-bfd9-0349b8b4f316",
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
       _type: "azure_nic",
       _class: "NetworkInterface",
       _rawData: [{ name: "default", rawData: data }],
+      resourceGuid: "ab964820-ee40-4f8d-bfd9-0349b8b4f316",
       displayName: "j1dev",
-      vmId:
+      virtualMachineId:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Compute/virtualMachines/j1dev",
       type: "Microsoft.Network/networkInterfaces",
-      location: "eastus",
+      region: "eastus",
       publicIp: undefined,
       publicIpAddress: undefined,
       privateIp: ["10.0.2.4"],
@@ -91,6 +97,55 @@ describe("createNetworkInterfaceEntity", () => {
     };
 
     expect(createNetworkInterfaceEntity(webLinker, data)).toEqual(entity);
+  });
+});
+
+describe("createPublicIPAddressEntity", () => {
+  test("properties transferred", () => {
+    const data: PublicIPAddress = {
+      name: "j1dev",
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
+      etag: 'W/"0d9bdc1d-3e57-42eb-8a6b-9be1241ef5bc"',
+      location: "eastus",
+      tags: {
+        environment: "j1dev",
+      },
+      provisioningState: "Succeeded",
+      resourceGuid: "d908c31d-c93a-4359-987f-8cfdd1b65a61",
+      ipAddress: "13.90.252.212",
+      publicIPAddressVersion: "IPv4",
+      publicIPAllocationMethod: "Dynamic",
+      idleTimeoutInMinutes: 4,
+      ipTags: [],
+      ipConfiguration: {
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration",
+      },
+      type: "Microsoft.Network/publicIPAddresses",
+      sku: {
+        name: "Basic",
+      },
+    };
+
+    const entity: PublicIPAddressEntity = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
+      _type: "azure_public_ip",
+      _class: "IpAddress",
+      _rawData: [{ name: "default", rawData: data }],
+      resourceGuid: "d908c31d-c93a-4359-987f-8cfdd1b65a61",
+      displayName: "j1dev",
+      type: "Microsoft.Network/publicIPAddresses",
+      region: "eastus",
+      publicIp: "13.90.252.212",
+      publicIpAddress: "13.90.252.212",
+      webLink: webLinker.portalResourceUrl(
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
+      ),
+    };
+
+    expect(createPublicIPAddressEntity(webLinker, data)).toEqual(entity);
   });
 });
 
@@ -169,14 +224,15 @@ describe("createVirtualMachineEntity", () => {
     };
 
     expect(createVirtualMachineEntity(webLinker, data)).toEqual({
-      _key: "azure_vm_2ed98ec3-b9a4-4126-926e-081889e3bc3a",
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
       _type: "azure_vm",
       _class: "Host",
       _rawData: [{ name: "default", rawData: data }],
       displayName: "j1dev",
       vmId: "2ed98ec3-b9a4-4126-926e-081889e3bc3a",
       type: "Microsoft.Compute/virtualMachines",
-      location: "eastus",
+      region: "eastus",
       vmSize: "Standard_DS1_v2",
       webLink: webLinker.portalResourceUrl(
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",

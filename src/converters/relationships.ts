@@ -1,3 +1,8 @@
+import { VirtualMachine } from "@azure/arm-compute/esm/models";
+import {
+  PublicIPAddress,
+  NetworkInterface,
+} from "@azure/arm-network/esm/models";
 import { RelationshipDirection } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember, MemberType, User } from "../azure";
@@ -18,6 +23,8 @@ import {
   GroupMemberRelationship,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
+  VirtualMachinePublicIPAddressRelationship,
+  VirtualMachineNetworkInterfaceRelationship,
 } from "../jupiterone";
 import {
   generateEntityKey,
@@ -110,4 +117,34 @@ function getGroupMemberEntityClass(member: GroupMember) {
     default:
       return GROUP_MEMBER_ENTITY_CLASS;
   }
+}
+
+export function createVirtualMachinePublicIPAddressRelationship(
+  vm: VirtualMachine,
+  ipAddress: PublicIPAddress,
+): VirtualMachinePublicIPAddressRelationship {
+  return {
+    _key: `${vm.id}_uses_${ipAddress.id}`,
+    _type: "azure_vm_uses_public_ip",
+    _class: "USES",
+    _fromEntityKey: vm.id as string,
+    _toEntityKey: ipAddress.id as string,
+    displayName: "USES",
+    vmId: vm.vmId as string,
+  };
+}
+
+export function createVirtualMachineNetworkInterfaceRelationship(
+  vm: VirtualMachine,
+  nic: NetworkInterface,
+): VirtualMachineNetworkInterfaceRelationship {
+  return {
+    _key: `${vm.id}_uses_${nic.id}`,
+    _type: "azure_vm_uses_network_interface",
+    _class: "USES",
+    _fromEntityKey: vm.id as string,
+    _toEntityKey: nic.id as string,
+    displayName: "USES",
+    vmId: vm.vmId as string,
+  };
 }

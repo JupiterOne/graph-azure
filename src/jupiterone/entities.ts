@@ -67,19 +67,23 @@ export interface GroupMemberEntity extends EntityFromIntegration {
 export interface VirtualMachineEntity extends EntityFromIntegration {
   vmSize: string | undefined;
   type: string | undefined;
+
+  /**
+   * The `vmId` property of the `VirtualMachine`. This is distinct from the `id`.
+   */
   vmId: string | undefined;
-  location: string;
+  region: string | undefined;
 }
 
 export const VIRTUAL_MACHINE_ENTITY_TYPE = "azure_vm";
 export const VIRTUAL_MACHINE_ENTITY_CLASS = "Host";
 
-export interface PublicIpAddress extends EntityFromIntegration {
-  domain: string | undefined;
-  vmId: string | undefined;
+export interface PublicIPAddressEntity extends EntityFromIntegration {
+  type: string | undefined;
+  resourceGuid: string | undefined;
+  region: string | undefined;
   publicIp: string | undefined;
   publicIpAddress: string | undefined;
-  networkInterfaceId: string | undefined;
 }
 
 export const PUBLIC_IP_ADDRESS_ENTITY_TYPE = "azure_public_ip";
@@ -87,8 +91,13 @@ export const PUBLIC_IP_ADDRESS_ENTITY_CLASS = "IpAddress";
 
 export interface NetworkInterfaceEntity extends EntityFromIntegration {
   type: string | undefined;
-  location: string | undefined;
-  vmId: string | undefined;
+  resourceGuid: string | undefined;
+  region: string | undefined;
+
+  /**
+   * The `id` property of the `VirtualMachine`. This is NOT the `vmId`.
+   */
+  virtualMachineId: string | undefined;
   publicIp: string[] | undefined;
   publicIpAddress: string[] | undefined;
   privateIp: string[] | undefined;

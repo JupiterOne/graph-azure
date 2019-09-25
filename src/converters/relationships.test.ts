@@ -1,11 +1,23 @@
+import { VirtualMachine } from "@azure/arm-compute/esm/models";
+import {
+  NetworkInterface,
+  PublicIPAddress,
+} from "@azure/arm-network/esm/models";
 import { RelationshipDirection } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember } from "../azure";
-import { AccountEntity, GroupMemberRelationship } from "../jupiterone";
+import {
+  AccountEntity,
+  GroupMemberRelationship,
+  VirtualMachineNetworkInterfaceRelationship,
+  VirtualMachinePublicIPAddressRelationship,
+} from "../jupiterone";
 import {
   createAccountGroupRelationship,
   createAccountUserRelationship,
   createGroupMemberRelationship,
+  createVirtualMachineNetworkInterfaceRelationship,
+  createVirtualMachinePublicIPAddressRelationship,
 } from "./relationships";
 
 const account = {
@@ -186,5 +198,71 @@ describe("createGroupMemberRelationship", () => {
     };
 
     expect(createGroupMemberRelationship(group, member)).toEqual(relationship);
+  });
+});
+
+describe("createVirtualMachinePublicIPAddressRelationship", () => {
+  test("properties transferred", () => {
+    const vm: VirtualMachine = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
+      vmId: "d908c31d-c93a-4359-987f-8cfdd1b65a61",
+      location: "eastus",
+    };
+
+    const ip: PublicIPAddress = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
+    };
+
+    const relationship: VirtualMachinePublicIPAddressRelationship = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev_uses_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
+      _type: "azure_vm_uses_public_ip",
+      _class: "USES",
+      _fromEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
+      _toEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
+      displayName: "USES",
+      vmId: "d908c31d-c93a-4359-987f-8cfdd1b65a61",
+    };
+
+    expect(createVirtualMachinePublicIPAddressRelationship(vm, ip)).toEqual(
+      relationship,
+    );
+  });
+});
+
+describe("createVirtualMachineNetworkInterfaceRelationship", () => {
+  test("properties transferred", () => {
+    const vm: VirtualMachine = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
+      vmId: "d908c31d-c93a-4359-987f-8cfdd1b65a61",
+      location: "eastus",
+    };
+
+    const nic: NetworkInterface = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
+    };
+
+    const relationship: VirtualMachineNetworkInterfaceRelationship = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev_uses_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
+      _type: "azure_vm_uses_network_interface",
+      _class: "USES",
+      _fromEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
+      _toEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
+      displayName: "USES",
+      vmId: "d908c31d-c93a-4359-987f-8cfdd1b65a61",
+    };
+
+    expect(createVirtualMachineNetworkInterfaceRelationship(vm, nic)).toEqual(
+      relationship,
+    );
   });
 });

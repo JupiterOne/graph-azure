@@ -1,5 +1,3 @@
-import { Response } from "node-fetch";
-
 export default class AzureClientError extends Error {
   private static generateMessage(response: Response): string {
     const intro = "Unexpected response from Azure API:";

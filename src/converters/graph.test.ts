@@ -75,15 +75,15 @@ describe("createGroupEntity", () => {
       _key: "azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792",
       _type: "azure_user_group",
       classification: undefined,
-      createdDateTime: 1556042765000,
-      deletedDateTime: undefined,
+      createdOn: 1556042765000,
+      deletedOn: undefined,
       description: "descr",
       displayName: "test group",
       id: "89fac263-2430-48fd-9278-dacfdfc89792",
       mail: undefined,
       mailEnabled: false,
       mailNickname: "8bb2d1c34",
-      renewedDateTime: 1556042765000,
+      renewedOn: 1556042765000,
       securityEnabled: true,
     });
   });

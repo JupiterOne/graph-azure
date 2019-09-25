@@ -26,3 +26,21 @@ export interface GroupMemberRelationship
   memberId: string;
   memberType: string;
 }
+
+export const VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_TYPE =
+  "azure_vm_uses_network_interface";
+export const VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_CLASS = "USES";
+
+export interface VirtualMachineNetworkInterfaceRelationship
+  extends RelationshipFromIntegration {
+  vmId: string;
+}
+
+export const VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE =
+  "azure_vm_uses_public_ip";
+export const VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS = "USES";
+
+export interface VirtualMachinePublicIPAddressRelationship
+  extends RelationshipFromIntegration {
+  vmId: string;
+}

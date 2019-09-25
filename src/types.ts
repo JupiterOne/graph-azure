@@ -3,7 +3,7 @@ import {
   IntegrationExecutionContext,
   PersisterClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
-import { AzureClient } from "./azure";
+import { AzureClient, ResourceManagerClient } from "./azure";
 
 /**
  * Properties provided by the `IntegrationInstance.config`. Values identifying
@@ -49,6 +49,7 @@ export interface AzureExecutionContext extends IntegrationExecutionContext {
   graph: GraphClient;
   persister: PersisterClient;
   azure: AzureClient;
+  azrm: ResourceManagerClient;
 }
 
 export interface ResourceCacheState {

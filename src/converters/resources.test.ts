@@ -140,6 +140,7 @@ describe("createPublicIPAddressEntity", () => {
       region: "eastus",
       publicIp: "13.90.252.212",
       publicIpAddress: "13.90.252.212",
+      public: true,
       webLink: webLinker.portalResourceUrl(
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
       ),

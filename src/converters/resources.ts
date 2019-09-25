@@ -62,6 +62,7 @@ export function createPublicIPAddressEntity(
     region: data.location,
     publicIp: data.ipAddress,
     publicIpAddress: data.ipAddress,
+    public: true,
     webLink: webLinker.portalResourceUrl(data.id),
   };
 }

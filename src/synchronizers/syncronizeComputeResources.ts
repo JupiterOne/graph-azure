@@ -1,4 +1,5 @@
 import forEach from "lodash.foreach";
+import map from "lodash.map";
 
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import { NetworkInterface } from "@azure/arm-network/esm/models";
@@ -35,7 +36,6 @@ import {
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
 
-import map = require("lodash.map");
 export default async function synchronizeComputeResources(
   executionContext: AzureExecutionContext,
 ): Promise<IntegrationExecutionResult> {

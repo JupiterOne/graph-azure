@@ -64,22 +64,23 @@ provider. Developing an integration involves:
     graph
 
 Run the integration to see what happens. You may use use Node to execute
-directly on your machine (NVM is recommended), or you may use Docker Compose to
-run the project in a contained environment
+directly on your machine, or you may use Docker Compose to run the project in a
+contained environment.
+
+Prerequisites:
+
+1.  Install Docker and Docker Compose (both included in Docker for Mac installs)
+1.  Provide credentials in `.env`
 
 Node:
 
-1.  Install Docker and Node
+1.  Install Node (Node Version Manager is recommended)
 1.  `yarn install`
-1.  Provide credentials in `.env`
 1.  `yarn start:graph`
 1.  `yarn start`
 
 Docker Compose:
 
-1.  Install Docker and Docker Compose
-1.  Copy `docker-compose.sample.yml` to `docker-compose.yml`
-1.  Provide credentials in `docker-compose.yml` `ENV`
 1.  `docker-compose build`
 1.  `docker-compose run --rm integration yarn install`
 1.  `docker-compose run --rm integration yarn start`
@@ -95,13 +96,7 @@ Restart the graph server to clear the data when you want to run the integration
 with no existing data.
 
 ```sh
-yarn stop:graph && yarn start:graph
-```
-
-Or:
-
-```sh
-docker-compose restart graph
+yarn restart:graph
 ```
 
 ### Docker Compose Interactive Session

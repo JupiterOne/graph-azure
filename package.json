@@ -14,8 +14,9 @@
   },
   "scripts": {
     "start": "ts-node --require dotenv/config tools/execute.ts | bunyan",
-    "start:graph": "docker run -d --rm --name jupiterone-local-graph -p 8182:8182 tinkerpop/gremlin-server:3.3",
-    "stop:graph": "docker stop jupiterone-local-graph",
+    "start:graph": "docker-compose up -d graph",
+    "stop:graph": "docker-compose down",
+    "restart:graph": "docker-compose restart graph",
     "prebuild": "yarn test",
     "build": "rm -rf dist/* && yarn build:types && yarn build:src && yarn build:docs",
     "build:src": "babel src --extensions '.ts' --out-dir dist",

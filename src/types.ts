@@ -43,6 +43,19 @@ export interface AzureIntegrationInstanceConfig {
    * privilege) to the Service Principal used to obtain API access tokens.
    */
   subscriptionId?: string;
+
+  /**
+   * A directive indicating whether or not to ingest Active Directory resources.
+   * A value of `undefined` will be interpreted as `false`.
+   *
+   * The integration may be configured to enable or disable the ingestion of
+   * Active Directory resources. This is necessary to prevent a graph from
+   * ending up with duplicate AD resources when more than one integration is
+   * configured for an AD domain, a scenario that exists when more than one
+   * subscription from the AD domain is ingested through different integration
+   * instances.
+   */
+  ingestActiveDirectory?: boolean;
 }
 
 export interface AzureExecutionContext extends IntegrationExecutionContext {

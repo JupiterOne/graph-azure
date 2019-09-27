@@ -2,9 +2,11 @@ import "cross-fetch/polyfill";
 
 import {
   IntegrationError,
+  IntegrationExecutionContext,
+  IntegrationExecutionResult,
   IntegrationInvocationConfig,
   IntegrationStepExecutionContext,
-  IntegrationExecutionResult,
+  IntegrationStepStartStates,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
@@ -21,6 +23,17 @@ import synchronizeGroups from "./synchronizers/synchronizeGroups";
 import synchronizeComputeResources from "./synchronizers/syncronizeComputeResources";
 import synchronizeUsers from "./synchronizers/syncronizeUsers";
 import { AzureIntegrationInstanceConfig } from "./types";
+
+export const AD_FETCH_GROUPS = "fetch-groups";
+export const AD_FETCH_GROUP_MEMBERS = "fetch-group-members";
+export const AD_FETCH_USERS = "fetch-users";
+export const AD_SYNC_GROUPS = "sync-groups";
+export const AD_SYNC_GROUP_MEMBERS = "sync-group-members";
+export const AD_SYNC_USERS = "sync-users";
+
+export const CLEANUP = "cleanup";
+
+export const RM_SYNC_RESOURCES = "sync-rm";
 
 export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   instanceConfigFields: {
@@ -41,11 +54,47 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
       mask: false,
     },
   },
+
   invocationValidator,
+
+  getStepStartStates: (
+    executionContext: IntegrationExecutionContext,
+  ): IntegrationStepStartStates => {
+    const config = (executionContext.instance.config ||
+      {}) as AzureIntegrationInstanceConfig;
+
+    const activeDirectory = { disabled: !config.ingestActiveDirectory };
+    const resourceManager = {
+      disabled: typeof config.subscriptionId !== "string",
+    };
+
+    const states: IntegrationStepStartStates = {};
+
+    if (activeDirectory.disabled) {
+      Object.assign(states, {
+        [AD_FETCH_GROUPS]: activeDirectory,
+        [AD_FETCH_GROUP_MEMBERS]: activeDirectory,
+        [AD_FETCH_USERS]: activeDirectory,
+        [AD_SYNC_GROUPS]: activeDirectory,
+        [AD_SYNC_GROUP_MEMBERS]: activeDirectory,
+        [AD_SYNC_USERS]: activeDirectory,
+      });
+    }
+
+    if (resourceManager.disabled) {
+      Object.assign(states, {
+        [RM_SYNC_RESOURCES]: resourceManager,
+      });
+    }
+
+    return states;
+  },
+
   integrationStepPhases: [
     {
       steps: [
         {
+          id: "account",
           name: "Synchronize Account",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
@@ -58,6 +107,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     {
       steps: [
         {
+          id: AD_FETCH_USERS,
           name: "Fetch Users",
           iterates: true,
           executionHandler: async (
@@ -71,6 +121,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           },
         },
         {
+          id: AD_FETCH_GROUPS,
           name: "Fetch Groups",
           iterates: true,
           executionHandler: async (
@@ -88,6 +139,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     {
       steps: [
         {
+          id: AD_FETCH_GROUP_MEMBERS,
           name: "Fetch Group Members",
           iterates: true,
           executionHandler: async (
@@ -101,6 +153,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           },
         },
         {
+          id: AD_SYNC_USERS,
           name: "Synchronize Users",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
@@ -109,6 +162,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           },
         },
         {
+          id: AD_SYNC_GROUPS,
           name: "Synchronize Groups",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
@@ -117,20 +171,14 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           },
         },
         {
-          name: "Synchronize VMs",
+          id: RM_SYNC_RESOURCES,
+          name: "Synchronize Azure Resources",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
           ): Promise<IntegrationExecutionResult> => {
-            if (
-              (executionContext.instance
-                .config as AzureIntegrationInstanceConfig).subscriptionId
-            ) {
-              return synchronizeComputeResources(
-                initializeContext(executionContext),
-              );
-            } else {
-              return Promise.resolve({});
-            }
+            return synchronizeComputeResources(
+              initializeContext(executionContext),
+            );
           },
         },
       ],
@@ -138,6 +186,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     {
       steps: [
         {
+          id: AD_SYNC_GROUP_MEMBERS,
           name: "Synchronize Group Members",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
@@ -146,6 +195,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           },
         },
         {
+          id: CLEANUP,
           name: "Cleanup",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,

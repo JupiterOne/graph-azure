@@ -53,6 +53,10 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
       type: "string",
       mask: false,
     },
+    ingestActiveDirectory: {
+      type: "boolean",
+      mask: false,
+    },
   },
 
   invocationValidator,

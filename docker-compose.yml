@@ -9,17 +9,18 @@ services:
       - .:/app:cached
       - ~/.ssh:/root/.ssh
       - ~/.bash_history:/root/.bash_history
+    env_file:
+      - .env
     environment:
       NODE_ENV: development
       GRAPH_DB_ENDPOINT: graph
-      AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_ID: "Yor Application (client) ID"
-      AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_SECRET:
-        "One of the yor app's client secret"
-      AZURE_CLOUD_LOCAL_EXECUTION_DIRECTORY_ID: "Directory (tenant) ID"
     depends_on:
       - graph
   graph:
-    image: tinkerpop/gremlin-server:3.3
+    image: tinkerpop/gremlin-server:3.4
+    volumes:
+      - ./node_modules/@jupiterone/jupiter-managed-integration-sdk/gremlin-client/conf:/etc/opt/
+    command: /etc/opt/gremlin-server.yaml
     restart: unless-stopped
     ports:
       - "8182:8182"

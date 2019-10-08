@@ -72,23 +72,25 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
       disabled: typeof config.subscriptionId !== "string",
     };
 
-    const states: IntegrationStepStartStates = {};
+    let states: IntegrationStepStartStates = {};
 
     if (activeDirectory.disabled) {
-      Object.assign(states, {
+      states = {
+        ...states,
         [AD_FETCH_GROUPS]: activeDirectory,
         [AD_FETCH_GROUP_MEMBERS]: activeDirectory,
         [AD_FETCH_USERS]: activeDirectory,
         [AD_SYNC_GROUPS]: activeDirectory,
         [AD_SYNC_GROUP_MEMBERS]: activeDirectory,
         [AD_SYNC_USERS]: activeDirectory,
-      });
+      };
     }
 
     if (resourceManager.disabled) {
-      Object.assign(states, {
+      states = {
+        ...states,
         [RM_SYNC_RESOURCES]: resourceManager,
-      });
+      };
     }
 
     return states;

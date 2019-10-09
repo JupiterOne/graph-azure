@@ -1,6 +1,5 @@
 import {
   IntegrationCacheEntry,
-  IntegrationStepExecutionResult,
   IntegrationStepIterationState,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 import { Group } from "@microsoft/microsoft-graph-types";
@@ -12,7 +11,7 @@ import { GroupMember } from "./types";
 export default async function fetchBatchOfGroupMembers(
   executionContext: AzureExecutionContext,
   iterationState: IntegrationStepIterationState,
-): Promise<IntegrationStepExecutionResult> {
+): Promise<IntegrationStepIterationState> {
   const { azure } = executionContext;
   const cache = executionContext.clients.getCache();
   const groupsCache = cache.iterableCache<
@@ -85,16 +84,14 @@ export default async function fetchBatchOfGroupMembers(
   await groupsCache.putState({ groupMembersFetchCompleted });
 
   return {
-    iterationState: {
-      ...iterationState,
-      finished: groupMembersFetchCompleted,
-      state: {
-        nextLink,
-        limit,
-        pages: pagesProcessed,
-        count: membersCount,
-        groupIndex,
-      },
+    ...iterationState,
+    finished: groupMembersFetchCompleted,
+    state: {
+      nextLink,
+      limit,
+      pages: pagesProcessed,
+      count: membersCount,
+      groupIndex,
     },
   };
 }

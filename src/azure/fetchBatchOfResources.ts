@@ -1,6 +1,5 @@
 import {
   IntegrationCacheEntry,
-  IntegrationStepExecutionResult,
   IntegrationStepIterationState,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
@@ -26,7 +25,7 @@ export default async function fetchBatchOfResources<
     azure: AzureClient,
     paginationOptions: PaginationOptions,
   ) => Promise<FetchResourcesResponse<T> | undefined>,
-): Promise<IntegrationStepExecutionResult> {
+): Promise<IntegrationStepIterationState> {
   const { azure } = executionContext;
   const cache = executionContext.clients.getCache();
   const resourceCache = cache.iterableCache<
@@ -34,8 +33,8 @@ export default async function fetchBatchOfResources<
     ResourceCacheState
   >(resourceName);
 
-  const batchPages = getBatchPages(resourceName, 2);
-  const limit = getPageLimit(resourceName, 200);
+  const batchPages = getBatchPages(resourceName, 1);
+  const limit = getPageLimit(resourceName, 1);
 
   let pagesProcessed = 0;
   let entryCount: number = iterationState.state.count || 0;
@@ -64,15 +63,13 @@ export default async function fetchBatchOfResources<
   await resourceCache.putState({ resourceFetchCompleted: finished });
 
   return {
-    iterationState: {
-      ...iterationState,
-      finished,
-      state: {
-        nextLink,
-        limit,
-        pages: pagesProcessed,
-        count: entryCount,
-      },
+    ...iterationState,
+    finished,
+    state: {
+      nextLink,
+      limit,
+      pages: pagesProcessed,
+      count: entryCount,
     },
   };
 }

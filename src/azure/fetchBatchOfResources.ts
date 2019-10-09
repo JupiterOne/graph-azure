@@ -33,8 +33,8 @@ export default async function fetchBatchOfResources<
     ResourceCacheState
   >(resourceName);
 
-  const batchPages = getBatchPages(resourceName, 1);
-  const limit = getPageLimit(resourceName, 1);
+  const batchPages = getBatchPages(resourceName, 2);
+  const limit = getPageLimit(resourceName, 200);
 
   let pagesProcessed = 0;
   let entryCount: number = iterationState.state.count || 0;

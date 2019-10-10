@@ -1,3 +1,5 @@
+import map from "lodash.map";
+
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   IPConfiguration,
@@ -10,15 +12,14 @@ import {
   NETWORK_INTERFACE_ENTITY_CLASS,
   NETWORK_INTERFACE_ENTITY_TYPE,
   NetworkInterfaceEntity,
+  PUBLIC_IP_ADDRESS_ENTITY_CLASS,
+  PUBLIC_IP_ADDRESS_ENTITY_TYPE,
+  PublicIPAddressEntity,
   VIRTUAL_MACHINE_ENTITY_CLASS,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VirtualMachineEntity,
-  PublicIPAddressEntity,
-  PUBLIC_IP_ADDRESS_ENTITY_TYPE,
-  PUBLIC_IP_ADDRESS_ENTITY_CLASS,
 } from "../jupiterone";
-
-import map from "lodash.map";
+import { resourceGroup } from "./utils";
 
 export function createNetworkInterfaceEntity(
   webLinker: AzureWebLinker,
@@ -32,6 +33,7 @@ export function createNetworkInterfaceEntity(
     _class: NETWORK_INTERFACE_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: data }],
     resourceGuid: data.resourceGuid,
+    resourceGroup: resourceGroup(data.id),
     displayName: data.name,
     virtualMachineId: data.virtualMachine && data.virtualMachine.id,
     type: data.type,
@@ -57,6 +59,7 @@ export function createPublicIPAddressEntity(
     _class: PUBLIC_IP_ADDRESS_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: data }],
     resourceGuid: data.resourceGuid,
+    resourceGroup: resourceGroup(data.id),
     displayName: data.name,
     type: data.type,
     region: data.location,
@@ -80,6 +83,7 @@ export function createVirtualMachineEntity(
     vmId: data.vmId,
     type: data.type,
     region: data.location,
+    resourceGroup: resourceGroup(data.id),
     vmSize: data.hardwareProfile && data.hardwareProfile.vmSize,
     webLink: webLinker.portalResourceUrl(data.id),
   };

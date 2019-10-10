@@ -78,6 +78,7 @@ describe("createNetworkInterfaceEntity", () => {
       _class: "NetworkInterface",
       _rawData: [{ name: "default", rawData: data }],
       resourceGuid: "ab964820-ee40-4f8d-bfd9-0349b8b4f316",
+      resourceGroup: "j1dev",
       displayName: "j1dev",
       virtualMachineId:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Compute/virtualMachines/j1dev",
@@ -135,6 +136,7 @@ describe("createPublicIPAddressEntity", () => {
       _class: "IpAddress",
       _rawData: [{ name: "default", rawData: data }],
       resourceGuid: "d908c31d-c93a-4359-987f-8cfdd1b65a61",
+      resourceGroup: "j1dev",
       displayName: "j1dev",
       type: "Microsoft.Network/publicIPAddresses",
       region: "eastus",
@@ -233,6 +235,7 @@ describe("createVirtualMachineEntity", () => {
       displayName: "j1dev",
       vmId: "2ed98ec3-b9a4-4126-926e-081889e3bc3a",
       type: "Microsoft.Compute/virtualMachines",
+      resourceGroup: "j1dev",
       region: "eastus",
       vmSize: "Standard_DS1_v2",
       webLink: webLinker.portalResourceUrl(

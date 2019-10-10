@@ -72,6 +72,7 @@ export interface VirtualMachineEntity extends EntityFromIntegration {
    * The `vmId` property of the `VirtualMachine`. This is distinct from the `id`.
    */
   vmId: string | undefined;
+  resourceGroup: string | undefined;
   region: string | undefined;
 }
 
@@ -81,6 +82,7 @@ export const VIRTUAL_MACHINE_ENTITY_CLASS = "Host";
 export interface PublicIPAddressEntity extends EntityFromIntegration {
   type: string | undefined;
   resourceGuid: string | undefined;
+  resourceGroup: string | undefined;
   region: string | undefined;
   publicIp: string | undefined;
   publicIpAddress: string | undefined;
@@ -93,6 +95,7 @@ export const PUBLIC_IP_ADDRESS_ENTITY_CLASS = "IpAddress";
 export interface NetworkInterfaceEntity extends EntityFromIntegration {
   type: string | undefined;
   resourceGuid: string | undefined;
+  resourceGroup: string | undefined;
   region: string | undefined;
 
   /**

@@ -5,7 +5,11 @@ import {
 } from "@azure/arm-network/esm/models";
 
 import { createAzureWebLinker } from "../azure";
-import { NetworkInterfaceEntity, PublicIPAddressEntity } from "../jupiterone";
+import {
+  NetworkInterfaceEntity,
+  PublicIPAddressEntity,
+  VirtualMachineEntity,
+} from "../jupiterone";
 import {
   createNetworkInterfaceEntity,
   createPublicIPAddressEntity,
@@ -97,7 +101,10 @@ describe("createNetworkInterfaceEntity", () => {
       ),
     };
 
-    expect(createNetworkInterfaceEntity(webLinker, data)).toEqual(entity);
+    expect(createNetworkInterfaceEntity(webLinker, data)).toEqual({
+      ...entity,
+      "tag.environment": "j1dev",
+    });
   });
 });
 
@@ -148,7 +155,10 @@ describe("createPublicIPAddressEntity", () => {
       ),
     };
 
-    expect(createPublicIPAddressEntity(webLinker, data)).toEqual(entity);
+    expect(createPublicIPAddressEntity(webLinker, data)).toEqual({
+      ...entity,
+      "tag.environment": "j1dev",
+    });
   });
 });
 
@@ -226,7 +236,7 @@ describe("createVirtualMachineEntity", () => {
       vmId: "2ed98ec3-b9a4-4126-926e-081889e3bc3a",
     };
 
-    expect(createVirtualMachineEntity(webLinker, data)).toEqual({
+    const entity: VirtualMachineEntity = {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
       _type: "azure_vm",
@@ -241,6 +251,11 @@ describe("createVirtualMachineEntity", () => {
       webLink: webLinker.portalResourceUrl(
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
       ),
+    };
+
+    expect(createVirtualMachineEntity(webLinker, data)).toEqual({
+      ...entity,
+      "tag.environment": "j1dev",
     });
   });
 });

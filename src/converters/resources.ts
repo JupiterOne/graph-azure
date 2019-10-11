@@ -72,6 +72,7 @@ export function createPublicIPAddressEntity(
     publicIpAddress: data.ipAddress,
     public: true,
     webLink: webLinker.portalResourceUrl(data.id),
+    sku: data.sku && data.sku.name,
   };
 
   assignTags(entity, data.tags);

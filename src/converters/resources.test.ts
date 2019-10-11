@@ -153,6 +153,7 @@ describe("createPublicIPAddressEntity", () => {
       webLink: webLinker.portalResourceUrl(
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
       ),
+      sku: "Basic",
     };
 
     expect(createPublicIPAddressEntity(webLinker, data)).toEqual({

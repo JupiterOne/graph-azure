@@ -87,6 +87,7 @@ export interface PublicIPAddressEntity extends EntityFromIntegration {
   publicIp: string | undefined;
   publicIpAddress: string | undefined;
   public: boolean;
+  sku: string | undefined;
 }
 
 export const PUBLIC_IP_ADDRESS_ENTITY_TYPE = "azure_public_ip";

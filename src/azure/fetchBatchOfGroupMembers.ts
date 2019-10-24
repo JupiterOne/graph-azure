@@ -28,6 +28,7 @@ export default async function fetchBatchOfGroupMembers(
 
   let pagesProcessed = 0;
   let totalGroups = 0;
+  let fetchErrorOccurred = false;
 
   await groupsCache.forEach(
     async (
@@ -56,24 +57,34 @@ export default async function fetchBatchOfGroupMembers(
           groupMembers.push(...response.resources);
           membersCount += response.resources.length;
           nextLink = response.nextLink;
+        } else {
+          fetchErrorOccurred = true;
         }
 
         pagesProcessed++;
-      } while (pagesProcessed < batchPages && nextLink);
+      } while (!fetchErrorOccurred && pagesProcessed < batchPages && nextLink);
 
-      // update the cached group to include members loaded during this invocation
-      await cache.putEntry({
-        key: groupEntry.key,
-        data: { ...groupEntry.data, members: groupMembers },
-      });
+      if (fetchErrorOccurred) {
+        // Stop iterating groups altogether until we learn more about the errors.
+        // Are there some groups we don't have access to, so that we should skip
+        // them, or is this a temporary problem that should be ignored (do not
+        // produce any operations to avoid unintended data deletion)?
+        return true;
+      } else {
+        // update the cached group to include members loaded during this invocation
+        await cache.putEntry({
+          key: groupEntry.key,
+          data: { ...groupEntry.data, members: groupMembers },
+        });
 
-      // move to the next group if there are no more members in this group
-      if (!nextLink) {
-        groupIndex = groupEntryIndex + 1;
+        // move to the next group if there are no more members in this group
+        if (!nextLink) {
+          groupIndex = groupEntryIndex + 1;
+        }
+
+        // stop iteration when pagesProcessed reaches invocation limit
+        return pagesProcessed === batchPages;
       }
-
-      // stop iteration when pagesProcessed reaches invocation limit
-      return pagesProcessed === batchPages;
     },
     groupIndex,
   );
@@ -81,11 +92,14 @@ export default async function fetchBatchOfGroupMembers(
   const groupMembersFetchCompleted =
     typeof nextLink !== "string" && groupIndex === totalGroups;
 
-  await groupsCache.putState({ groupMembersFetchCompleted });
+  await groupsCache.putState({
+    groupMembersFetchCompleted:
+      !fetchErrorOccurred && groupMembersFetchCompleted,
+  });
 
   return {
     ...iterationState,
-    finished: groupMembersFetchCompleted,
+    finished: fetchErrorOccurred || groupMembersFetchCompleted,
     state: {
       nextLink,
       limit,

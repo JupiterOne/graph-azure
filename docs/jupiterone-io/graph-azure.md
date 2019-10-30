@@ -36,7 +36,8 @@ Grant permission to read Microsoft Graph information:
 
 1. Navigate to **API permissions**, choose **Microsoft Graph**, then
    **Application Permissions**
-1. Grant `Group.Read.All` and `User.Read.All` permissions
+1. Grant `Group.Read.All`, `User.Read.All`, and `OrgContact.Read.All`
+   permissions
 1. Grant admin consent for this directory for the permissions above
 
 Please note that [`User.Read` is required][3] even when AD ingestion is

@@ -36,13 +36,14 @@ Grant permission to read Microsoft Graph information:
 
 1. Navigate to **API permissions**, choose **Microsoft Graph**, then
    **Application Permissions**
-1. Grant `Group.Read.All`, `User.Read.All`, and `OrgContact.Read.All`
-   permissions
+1. Grant `Directory.Read.All` permissions to allow reading users, groups, and
+   members of groups, including organization contacts and Microsoft Intune
+   devices
 1. Grant admin consent for this directory for the permissions above
 
-Please note that [`User.Read` is required][3] even when AD ingestion is
-disabled. The integration will request Organization information to maintain the
-`Account` entity.
+Please note that minimally [`User.Read` is required][3] even when AD ingestion
+is disabled. The integration will request Organization information to maintain
+the `Account` entity.
 
 Grant the `Reader` RBAC subscription role to read Azure Resource Manager
 information:

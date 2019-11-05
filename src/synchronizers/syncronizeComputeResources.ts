@@ -2,12 +2,18 @@ import forEach from "lodash.foreach";
 import map from "lodash.map";
 
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
-import { NetworkInterface } from "@azure/arm-network/esm/models";
+import {
+  NetworkInterface,
+  VirtualNetwork,
+} from "@azure/arm-network/esm/models";
 import {
   EntityFromIntegration,
   getRawData,
   IntegrationError,
   IntegrationExecutionResult,
+  PersisterOperationsResult,
+  RelationshipFromIntegration,
+  summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
@@ -18,10 +24,12 @@ import {
 import {
   createNetworkInterfaceEntity,
   createPublicIPAddressEntity,
+  createSubnetEntity,
   createVirtualMachineEntity,
   createVirtualMachineNetworkInterfaceRelationship,
   createVirtualMachinePublicIPAddressRelationship,
   createVirtualNetworkEntity,
+  createVirtualNetworkSubnetRelationship,
 } from "../converters";
 import {
   AccountEntity,
@@ -29,10 +37,12 @@ import {
   NetworkInterfaceEntity,
   PUBLIC_IP_ADDRESS_ENTITY_TYPE,
   PublicIPAddressEntity,
+  SUBNET_ENTITY_TYPE,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
   VIRTUAL_NETWORK_ENTITY_TYPE,
+  VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
   VirtualMachineEntity,
   VirtualMachineNetworkInterfaceRelationship,
   VirtualMachinePublicIPAddressRelationship,
@@ -54,10 +64,9 @@ export default async function synchronizeComputeResources(
 
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain);
 
-  const [oldVirtualNetworks, newVirtualNetworks] = await Promise.all([
-    graph.findAllEntitiesByType(VIRTUAL_NETWORK_ENTITY_TYPE),
-    fetchVirtualNetworks(azrm, webLinker),
-  ]);
+  const operationResults: PersisterOperationsResult[] = [
+    await synchronizeNetworkResources(executionContext, webLinker),
+  ];
 
   const [oldAddresses, newAddresses] = await Promise.all([
     graph.findEntitiesByType(PUBLIC_IP_ADDRESS_ENTITY_TYPE),
@@ -124,28 +133,73 @@ export default async function synchronizeComputeResources(
     ),
   ]);
 
-  const operationResults = await persister.publishPersisterOperations([
-    [
-      ...persister.processEntities(oldVirtualNetworks, newVirtualNetworks),
-      ...persister.processEntities(oldAddresses, newAddresses),
-      ...persister.processEntities(oldNics, newNics),
-      ...persister.processEntities(oldVms, newVms),
-    ],
-    [
-      ...persister.processRelationships(
-        oldVMNicRelationships,
-        newVMNicRelationships,
-      ),
-      ...persister.processRelationships(
-        oldVMAddressRelationships,
-        newVMAddressRelationships,
-      ),
-    ],
-  ]);
+  operationResults.push(
+    await persister.publishPersisterOperations([
+      [
+        ...persister.processEntities(oldAddresses, newAddresses),
+        ...persister.processEntities(oldNics, newNics),
+        ...persister.processEntities(oldVms, newVms),
+      ],
+      [
+        ...persister.processRelationships(
+          oldVMNicRelationships,
+          newVMNicRelationships,
+        ),
+        ...persister.processRelationships(
+          oldVMAddressRelationships,
+          newVMAddressRelationships,
+        ),
+      ],
+    ]),
+  );
 
   return {
-    operations: operationResults,
+    operations: summarizePersisterOperationsResults(...operationResults),
   };
+}
+
+async function synchronizeNetworkResources(
+  executionContext: AzureExecutionContext,
+  webLinker: AzureWebLinker,
+) {
+  const { graph, persister, azrm } = executionContext;
+
+  const [oldVirtualNetworks, newVirtualNetworks] = await Promise.all([
+    graph.findEntitiesByType(VIRTUAL_NETWORK_ENTITY_TYPE),
+    fetchVirtualNetworks(azrm, webLinker),
+  ]);
+
+  const [oldSubnets, oldVnetSubnetRelationships] = await Promise.all([
+    graph.findEntitiesByType(SUBNET_ENTITY_TYPE),
+    graph.findRelationshipsByType(VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE),
+  ]);
+
+  const newSubnets: EntityFromIntegration[] = [];
+  const newVnetSubnetRelationships: RelationshipFromIntegration[] = [];
+
+  for (const vnetEntity of newVirtualNetworks) {
+    const vnet = getRawData(vnetEntity) as VirtualNetwork;
+    if (vnet.subnets) {
+      for (const s of vnet.subnets) {
+        const subnetEntity = createSubnetEntity(webLinker, vnet, s);
+        newSubnets.push(subnetEntity);
+        newVnetSubnetRelationships.push(
+          createVirtualNetworkSubnetRelationship(vnet, s),
+        );
+      }
+    }
+  }
+
+  return persister.publishPersisterOperations([
+    [
+      ...persister.processEntities(oldVirtualNetworks, newVirtualNetworks),
+      ...persister.processEntities(oldSubnets, newSubnets),
+    ],
+    persister.processRelationships(
+      oldVnetSubnetRelationships,
+      newVnetSubnetRelationships,
+    ),
+  ]);
 }
 
 async function fetchVirtualNetworks(

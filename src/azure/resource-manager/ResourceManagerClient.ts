@@ -49,7 +49,9 @@ export default class ResourceManagerClient {
     return this.iterateAllResources(client.virtualMachines, callback);
   }
 
-  public async iterateVirtualNetworks(callback: (vm: VirtualNetwork) => void) {
+  public async iterateVirtualNetworks(
+    callback: (vnet: VirtualNetwork) => void,
+  ) {
     const client = await this.getAuthenticatedClient(NetworkManagementClient);
     return this.iterateAllResources(client.virtualNetworks, callback);
   }

@@ -27,6 +27,9 @@ export interface GroupMemberRelationship
   memberType: string;
 }
 
+export const VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE = "azure_vnet_has_subnet";
+export const VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS = "HAS";
+
 export const VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_TYPE =
   "azure_vm_uses_network_interface";
 export const VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_CLASS = "USES";

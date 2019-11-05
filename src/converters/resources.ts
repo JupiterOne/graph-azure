@@ -5,6 +5,7 @@ import {
   IPConfiguration,
   NetworkInterface,
   PublicIPAddress,
+  Subnet,
   VirtualNetwork,
 } from "@azure/arm-network/esm/models";
 import {
@@ -21,6 +22,8 @@ import {
   PUBLIC_IP_ADDRESS_ENTITY_CLASS,
   PUBLIC_IP_ADDRESS_ENTITY_TYPE,
   PublicIPAddressEntity,
+  SUBNET_ENTITY_CLASS,
+  SUBNET_ENTITY_TYPE,
   VIRTUAL_MACHINE_ENTITY_CLASS,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_NETWORK_ENTITY_CLASS,
@@ -108,6 +111,33 @@ export function createVirtualMachineEntity(
   assignTags(entity, data.tags);
 
   return entity;
+}
+
+export function createSubnetEntity(
+  webLinker: AzureWebLinker,
+  vnet: VirtualNetwork,
+  data: Subnet,
+): EntityFromIntegration {
+  const CIDR = data.addressPrefix;
+
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _type: SUBNET_ENTITY_TYPE,
+        _class: SUBNET_ENTITY_CLASS,
+        displayName: CIDR ? `${data.name} (${CIDR})` : data.name,
+        webLink: webLinker.portalResourceUrl(data.id),
+        CIDR,
+        public: false,
+        internal: true,
+        region: vnet.location,
+        resourceGroup: resourceGroup(data.id),
+        environment: vnet.tags && vnet.tags["environment"],
+      },
+      tagProperties: ["environment"],
+    },
+  });
 }
 
 export function createVirtualNetworkEntity(

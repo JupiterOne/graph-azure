@@ -67,6 +67,9 @@ export interface GroupMemberEntity extends EntityFromIntegration {
 export const VIRTUAL_NETWORK_ENTITY_TYPE = "azure_vnet";
 export const VIRTUAL_NETWORK_ENTITY_CLASS = "Network";
 
+export const SUBNET_ENTITY_TYPE = "azure_subnet";
+export const SUBNET_ENTITY_CLASS = "Network";
+
 export interface VirtualMachineEntity extends EntityFromIntegration {
   vmSize: string | undefined;
   type: string | undefined;

@@ -2,8 +2,13 @@ import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   PublicIPAddress,
   NetworkInterface,
+  VirtualNetwork,
+  Subnet,
 } from "@azure/arm-network/esm/models";
-import { RelationshipDirection } from "@jupiterone/jupiter-managed-integration-sdk";
+import {
+  RelationshipDirection,
+  RelationshipFromIntegration,
+} from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember, MemberType, User } from "../azure";
 import {
@@ -117,6 +122,21 @@ function getGroupMemberEntityClass(member: GroupMember) {
     default:
       return GROUP_MEMBER_ENTITY_CLASS;
   }
+}
+
+export function createVirtualNetworkSubnetRelationship(
+  vnet: VirtualNetwork,
+  subnet: Subnet,
+): RelationshipFromIntegration & { vnetId: string | undefined } {
+  return {
+    _key: `${vnet.id}_has_${subnet.id}`,
+    _type: "azure_vnet_has_subnet",
+    _class: "HAS",
+    _fromEntityKey: vnet.id as string,
+    _toEntityKey: subnet.id as string,
+    displayName: "HAS",
+    vnetId: vnet.id,
+  };
 }
 
 export function createVirtualMachinePublicIPAddressRelationship(

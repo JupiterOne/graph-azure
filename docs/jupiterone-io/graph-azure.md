@@ -71,9 +71,10 @@ though the `Account` entity will always be ingested.
 
 | Azure Resources   | \_type of the Entity | \_class of the Entity |
 | ----------------- | -------------------- | --------------------- |
-| Virtual Machine   | `azure_vm`           | `Host`                |
+| Virtual Network   | `azure_vnet`         | `Network`             |
 | Network Interface | `azure_nic`          | `NetworkInterface`    |
 | Public IP Address | `azure_public_ip`    | `IpAddress`           |
+| Virtual Machine   | `azure_vm`           | `Host`                |
 
 ## Relationships
 
@@ -81,8 +82,8 @@ The following relationships are created/mapped:
 
 | From               | Edge     | To                   |
 | ------------------ | -------- | -------------------- |
-| `azure_account`    | **HAS**  | `azure_user_group`   |
 | `azure_account`    | **HAS**  | `azure_user`         |
+| `azure_account`    | **HAS**  | `azure_user_group`   |
 | `azure_user_group` | **HAS**  | `azure_user`         |
 | `azure_user_group` | **HAS**  | `azure_user_group`   |
 | `azure_user_group` | **HAS**  | `azure_group_member` |

@@ -4,6 +4,7 @@ import map from "lodash.map";
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import { NetworkInterface } from "@azure/arm-network/esm/models";
 import {
+  EntityFromIntegration,
   getRawData,
   IntegrationError,
   IntegrationExecutionResult,
@@ -20,6 +21,7 @@ import {
   createVirtualMachineEntity,
   createVirtualMachineNetworkInterfaceRelationship,
   createVirtualMachinePublicIPAddressRelationship,
+  createVirtualNetworkEntity,
 } from "../converters";
 import {
   AccountEntity,
@@ -30,6 +32,7 @@ import {
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+  VIRTUAL_NETWORK_ENTITY_TYPE,
   VirtualMachineEntity,
   VirtualMachineNetworkInterfaceRelationship,
   VirtualMachinePublicIPAddressRelationship,
@@ -50,6 +53,11 @@ export default async function synchronizeComputeResources(
   }
 
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain);
+
+  const [oldVirtualNetworks, newVirtualNetworks] = await Promise.all([
+    graph.findAllEntitiesByType(VIRTUAL_NETWORK_ENTITY_TYPE),
+    fetchVirtualNetworks(azrm, webLinker),
+  ]);
 
   const [oldAddresses, newAddresses] = await Promise.all([
     graph.findEntitiesByType(PUBLIC_IP_ADDRESS_ENTITY_TYPE),
@@ -118,6 +126,7 @@ export default async function synchronizeComputeResources(
 
   const operationResults = await persister.publishPersisterOperations([
     [
+      ...persister.processEntities(oldVirtualNetworks, newVirtualNetworks),
       ...persister.processEntities(oldAddresses, newAddresses),
       ...persister.processEntities(oldNics, newNics),
       ...persister.processEntities(oldVms, newVms),
@@ -137,6 +146,17 @@ export default async function synchronizeComputeResources(
   return {
     operations: operationResults,
   };
+}
+
+async function fetchVirtualNetworks(
+  client: ResourceManagerClient,
+  webLinker: AzureWebLinker,
+): Promise<EntityFromIntegration[]> {
+  const entities: EntityFromIntegration[] = [];
+  await client.iterateVirtualNetworks(e => {
+    entities.push(createVirtualNetworkEntity(webLinker, e));
+  });
+  return entities;
 }
 
 async function fetchVirtualMachines(

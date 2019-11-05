@@ -5,7 +5,13 @@ import {
   IPConfiguration,
   NetworkInterface,
   PublicIPAddress,
+  VirtualNetwork,
 } from "@azure/arm-network/esm/models";
+import {
+  assignTags,
+  createIntegrationEntity,
+  EntityFromIntegration,
+} from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { AzureWebLinker } from "../azure";
 import {
@@ -17,10 +23,11 @@ import {
   PublicIPAddressEntity,
   VIRTUAL_MACHINE_ENTITY_CLASS,
   VIRTUAL_MACHINE_ENTITY_TYPE,
+  VIRTUAL_NETWORK_ENTITY_CLASS,
+  VIRTUAL_NETWORK_ENTITY_TYPE,
   VirtualMachineEntity,
 } from "../jupiterone";
 import { resourceGroup } from "./utils";
-import { assignTags } from "@jupiterone/jupiter-managed-integration-sdk";
 
 export function createNetworkInterfaceEntity(
   webLinker: AzureWebLinker,
@@ -101,6 +108,35 @@ export function createVirtualMachineEntity(
   assignTags(entity, data.tags);
 
   return entity;
+}
+
+export function createVirtualNetworkEntity(
+  webLinker: AzureWebLinker,
+  data: VirtualNetwork,
+): EntityFromIntegration {
+  const CIDR =
+    data.addressSpace &&
+    data.addressSpace.addressPrefixes &&
+    data.addressSpace.addressPrefixes.length > 0 &&
+    data.addressSpace.addressPrefixes[0];
+
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _type: VIRTUAL_NETWORK_ENTITY_TYPE,
+        _class: VIRTUAL_NETWORK_ENTITY_CLASS,
+        displayName: CIDR ? `${data.name} (${CIDR})` : data.name,
+        webLink: webLinker.portalResourceUrl(data.id),
+        CIDR,
+        public: false,
+        internal: true,
+        region: data.location,
+        resourceGroup: resourceGroup(data.id),
+      },
+      tagProperties: ["environment"],
+    },
+  });
 }
 
 function privateIpAddresses(

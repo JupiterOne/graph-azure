@@ -2,6 +2,7 @@ import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   NetworkInterface,
   PublicIPAddress,
+  VirtualNetwork,
 } from "@azure/arm-network/esm/models";
 
 import { createAzureWebLinker } from "../azure";
@@ -14,6 +15,7 @@ import {
   createNetworkInterfaceEntity,
   createPublicIPAddressEntity,
   createVirtualMachineEntity,
+  createVirtualNetworkEntity,
 } from "./resources";
 
 const webLinker = createAzureWebLinker("something.onmicrosoft.com");
@@ -104,6 +106,7 @@ describe("createNetworkInterfaceEntity", () => {
     expect(createNetworkInterfaceEntity(webLinker, data)).toEqual({
       ...entity,
       "tag.environment": "j1dev",
+      tags: ["j1dev"],
     });
   });
 });
@@ -159,6 +162,7 @@ describe("createPublicIPAddressEntity", () => {
     expect(createPublicIPAddressEntity(webLinker, data)).toEqual({
       ...entity,
       "tag.environment": "j1dev",
+      tags: ["j1dev"],
     });
   });
 });
@@ -257,6 +261,77 @@ describe("createVirtualMachineEntity", () => {
     expect(createVirtualMachineEntity(webLinker, data)).toEqual({
       ...entity,
       "tag.environment": "j1dev",
+      tags: ["j1dev"],
     });
+  });
+});
+
+describe("createVirtualNetworkEntity", () => {
+  test("properties transferred", () => {
+    const data: VirtualNetwork = {
+      name: "j1dev",
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+      etag: 'W/"4f9fb61f-5fa0-49c1-afbe-4c7d93bcab4c"',
+      type: "Microsoft.Network/virtualNetworks",
+      location: "eastus",
+      tags: {
+        environment: "j1dev",
+      },
+      provisioningState: "Succeeded",
+      resourceGuid: "db9a7800-856d-4758-8f1d-8bbd7c77a11c",
+      addressSpace: {
+        addressPrefixes: ["10.0.0.0/16"],
+      },
+      dhcpOptions: {
+        dnsServers: [],
+      },
+      subnets: [
+        {
+          name: "j1dev",
+          id:
+            "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+          etag: 'W/"4f9fb61f-5fa0-49c1-afbe-4c7d93bcab4c"',
+          provisioningState: "Succeeded",
+          addressPrefix: "10.0.2.0/24",
+          ipConfigurations: [
+            {
+              id:
+                "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration",
+            },
+          ],
+          serviceEndpoints: [],
+          delegations: [],
+          privateEndpointNetworkPolicies: "Enabled",
+          privateLinkServiceNetworkPolicies: "Enabled",
+        },
+      ],
+      virtualNetworkPeerings: [],
+      enableDdosProtection: false,
+      enableVmProtection: false,
+    };
+
+    const entity = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+      _type: "azure_vnet",
+      _class: ["Network"],
+      _rawData: [{ name: "default", rawData: data }],
+      name: "j1dev",
+      displayName: "j1dev (10.0.0.0/16)",
+      resourceGroup: "j1dev",
+      region: "eastus",
+      environment: "j1dev",
+      webLink: webLinker.portalResourceUrl(
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+      ),
+      CIDR: "10.0.0.0/16",
+      internal: true,
+      public: false,
+      "tag.environment": "j1dev",
+      tags: ["j1dev"],
+    };
+
+    expect(createVirtualNetworkEntity(webLinker, data)).toEqual(entity);
   });
 });

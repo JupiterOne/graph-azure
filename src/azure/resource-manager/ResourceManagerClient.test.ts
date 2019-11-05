@@ -2,6 +2,7 @@ import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   NetworkInterface,
   PublicIPAddress,
+  VirtualNetwork,
 } from "@azure/arm-network/esm/models";
 import { Polly } from "@pollyjs/core";
 
@@ -93,6 +94,29 @@ describe("iterateVirtualMachines", () => {
 
     const vms: VirtualMachine[] = [];
     await client.iterateVirtualMachines(e => {
+      vms.push(e);
+    });
+
+    expect(vms).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: "j1dev",
+        tags: expect.objectContaining({
+          environment: "j1dev",
+        }),
+      }),
+    ]);
+  });
+});
+
+describe("iterateVirtualNetworks", () => {
+  test("all", async () => {
+    p = polly(__dirname, "iterateVirtualNetworks");
+
+    const client = new ResourceManagerClient(config);
+
+    const vms: VirtualNetwork[] = [];
+    await client.iterateVirtualNetworks(e => {
       vms.push(e);
     });
 

@@ -4,6 +4,7 @@ import { NetworkManagementClient } from "@azure/arm-network";
 import {
   NetworkInterface,
   PublicIPAddress,
+  VirtualNetwork,
 } from "@azure/arm-network/esm/models";
 import { ServiceClientCredentials } from "@azure/ms-rest-js";
 
@@ -46,6 +47,11 @@ export default class ResourceManagerClient {
   public async iterateVirtualMachines(callback: (vm: VirtualMachine) => void) {
     const client = await this.getAuthenticatedClient(ComputeManagementClient);
     return this.iterateAllResources(client.virtualMachines, callback);
+  }
+
+  public async iterateVirtualNetworks(callback: (vm: VirtualNetwork) => void) {
+    const client = await this.getAuthenticatedClient(NetworkManagementClient);
+    return this.iterateAllResources(client.virtualNetworks, callback);
   }
 
   public async iteratePublicIPAddresses(

@@ -4,6 +4,7 @@ import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   IPConfiguration,
   NetworkInterface,
+  NetworkSecurityGroup,
   PublicIPAddress,
   Subnet,
   VirtualNetwork,
@@ -15,6 +16,7 @@ import {
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { AzureWebLinker } from "../azure";
+import { resourceGroupName } from "../azure/utils";
 import {
   NETWORK_INTERFACE_ENTITY_CLASS,
   NETWORK_INTERFACE_ENTITY_TYPE,
@@ -22,6 +24,8 @@ import {
   PUBLIC_IP_ADDRESS_ENTITY_CLASS,
   PUBLIC_IP_ADDRESS_ENTITY_TYPE,
   PublicIPAddressEntity,
+  SECURITY_GROUP_ENTITY_CLASS,
+  SECURITY_GROUP_ENTITY_TYPE,
   SUBNET_ENTITY_CLASS,
   SUBNET_ENTITY_TYPE,
   VIRTUAL_MACHINE_ENTITY_CLASS,
@@ -30,7 +34,6 @@ import {
   VIRTUAL_NETWORK_ENTITY_TYPE,
   VirtualMachineEntity,
 } from "../jupiterone";
-import { resourceGroup } from "./utils";
 
 export function createNetworkInterfaceEntity(
   webLinker: AzureWebLinker,
@@ -44,7 +47,7 @@ export function createNetworkInterfaceEntity(
     _class: NETWORK_INTERFACE_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: data }],
     resourceGuid: data.resourceGuid,
-    resourceGroup: resourceGroup(data.id),
+    resourceGroup: resourceGroupName(data.id),
     displayName: data.name,
     virtualMachineId: data.virtualMachine && data.virtualMachine.id,
     type: data.type,
@@ -74,7 +77,7 @@ export function createPublicIPAddressEntity(
     _class: PUBLIC_IP_ADDRESS_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: data }],
     resourceGuid: data.resourceGuid,
-    resourceGroup: resourceGroup(data.id),
+    resourceGroup: resourceGroupName(data.id),
     displayName: data.name,
     type: data.type,
     region: data.location,
@@ -103,7 +106,7 @@ export function createVirtualMachineEntity(
     vmId: data.vmId,
     type: data.type,
     region: data.location,
-    resourceGroup: resourceGroup(data.id),
+    resourceGroup: resourceGroupName(data.id),
     vmSize: data.hardwareProfile && data.hardwareProfile.vmSize,
     webLink: webLinker.portalResourceUrl(data.id),
   };
@@ -132,8 +135,28 @@ export function createSubnetEntity(
         public: false,
         internal: true,
         region: vnet.location,
-        resourceGroup: resourceGroup(data.id),
+        resourceGroup: resourceGroupName(data.id),
         environment: vnet.tags && vnet.tags["environment"],
+      },
+      tagProperties: ["environment"],
+    },
+  });
+}
+
+export function createNetworkSecurityGroupEntity(
+  webLinker: AzureWebLinker,
+  data: NetworkSecurityGroup,
+): EntityFromIntegration {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _type: SECURITY_GROUP_ENTITY_TYPE,
+        _class: SECURITY_GROUP_ENTITY_CLASS,
+        webLink: webLinker.portalResourceUrl(data.id),
+        region: data.location,
+        resourceGroup: resourceGroupName(data.id),
+        category: "network",
       },
       tagProperties: ["environment"],
     },
@@ -162,7 +185,7 @@ export function createVirtualNetworkEntity(
         public: false,
         internal: true,
         region: data.location,
-        resourceGroup: resourceGroup(data.id),
+        resourceGroup: resourceGroupName(data.id),
       },
       tagProperties: ["environment"],
     },

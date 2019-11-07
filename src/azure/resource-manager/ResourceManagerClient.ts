@@ -3,15 +3,16 @@ import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import { NetworkManagementClient } from "@azure/arm-network";
 import {
   NetworkInterface,
+  NetworkSecurityGroup,
   PublicIPAddress,
   VirtualNetwork,
 } from "@azure/arm-network/esm/models";
+import { AzureServiceClient } from "@azure/ms-rest-azure-js";
 import { ServiceClientCredentials } from "@azure/ms-rest-js";
 
 import { AzureIntegrationInstanceConfig } from "../../types";
 import authenticate from "./authenticate";
 import { AzureManagementClientCredentials } from "./types";
-import { AzureServiceClient } from "@azure/ms-rest-azure-js";
 
 interface ClientConstructor<T extends AzureServiceClient> {
   new (credentials: ServiceClientCredentials, subscriptionId: string): T;
@@ -38,27 +39,36 @@ export default class ResourceManagerClient {
   }
 
   public async iterateNetworkInterfaces(
-    callback: (vm: NetworkInterface) => void,
-  ) {
+    callback: (nic: NetworkInterface) => void,
+  ): Promise<void> {
     const client = await this.getAuthenticatedClient(NetworkManagementClient);
     return this.iterateAllResources(client.networkInterfaces, callback);
   }
 
-  public async iterateVirtualMachines(callback: (vm: VirtualMachine) => void) {
+  public async iterateVirtualMachines(
+    callback: (vm: VirtualMachine) => void,
+  ): Promise<void> {
     const client = await this.getAuthenticatedClient(ComputeManagementClient);
     return this.iterateAllResources(client.virtualMachines, callback);
   }
 
   public async iterateVirtualNetworks(
     callback: (vnet: VirtualNetwork) => void,
-  ) {
+  ): Promise<void> {
     const client = await this.getAuthenticatedClient(NetworkManagementClient);
     return this.iterateAllResources(client.virtualNetworks, callback);
   }
 
+  public async iterateNetworkSecurityGroups(
+    callback: (sg: NetworkSecurityGroup) => void,
+  ): Promise<void> {
+    const client = await this.getAuthenticatedClient(NetworkManagementClient);
+    return this.iterateAllResources(client.networkSecurityGroups, callback);
+  }
+
   public async iteratePublicIPAddresses(
-    callback: (vm: PublicIPAddress) => void,
-  ) {
+    callback: (ip: PublicIPAddress) => void,
+  ): Promise<void> {
     const client = await this.getAuthenticatedClient(NetworkManagementClient);
     return this.iterateAllResources(client.publicIPAddresses, callback);
   }
@@ -86,8 +96,8 @@ export default class ResourceManagerClient {
 
   private async iterateAllResources<T, L extends ResourceListResponse<T>>(
     rmModule: ResourceManagementModule,
-    callback: (r: T) => void,
-  ) {
+    callback: (r: T) => void | Promise<void>,
+  ): Promise<void> {
     let nextLink: string | undefined;
     do {
       const response = nextLink
@@ -96,7 +106,7 @@ export default class ResourceManagerClient {
         : await rmModule.listAll<L>();
 
       for (const e of response) {
-        callback(e);
+        await callback(e);
       }
 
       nextLink = response.nextLink;

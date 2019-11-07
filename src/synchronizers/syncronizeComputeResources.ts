@@ -4,6 +4,7 @@ import map from "lodash.map";
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   NetworkInterface,
+  NetworkSecurityGroup,
   VirtualNetwork,
 } from "@azure/arm-network/esm/models";
 import {
@@ -23,6 +24,8 @@ import {
 } from "../azure";
 import {
   createNetworkInterfaceEntity,
+  createNetworkSecurityGroupEntity,
+  createNetworkSecurityGroupSubnetRelationship,
   createPublicIPAddressEntity,
   createSubnetEntity,
   createVirtualMachineEntity,
@@ -37,6 +40,8 @@ import {
   NetworkInterfaceEntity,
   PUBLIC_IP_ADDRESS_ENTITY_TYPE,
   PublicIPAddressEntity,
+  SECURITY_GROUP_ENTITY_TYPE,
+  SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
   SUBNET_ENTITY_TYPE,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_TYPE,
@@ -161,7 +166,7 @@ export default async function synchronizeComputeResources(
 async function synchronizeNetworkResources(
   executionContext: AzureExecutionContext,
   webLinker: AzureWebLinker,
-) {
+): Promise<PersisterOperationsResult> {
   const { graph, persister, azrm } = executionContext;
 
   const [oldVirtualNetworks, newVirtualNetworks] = await Promise.all([
@@ -169,13 +174,37 @@ async function synchronizeNetworkResources(
     fetchVirtualNetworks(azrm, webLinker),
   ]);
 
+  const [
+    oldSecurityGroups,
+    oldSecurityGroupSubnetRelationships,
+    newSecurityGroups,
+  ] = await Promise.all([
+    graph.findEntitiesByType(SECURITY_GROUP_ENTITY_TYPE),
+    graph.findRelationshipsByType(SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE),
+    fetchNetworkSecurityGroups(azrm, webLinker),
+  ]);
+
   const [oldSubnets, oldVnetSubnetRelationships] = await Promise.all([
     graph.findEntitiesByType(SUBNET_ENTITY_TYPE),
     graph.findRelationshipsByType(VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE),
   ]);
 
+  const subnetSecurityGroupMap = newSecurityGroups.reduce(
+    (m: { [subnetId: string]: NetworkSecurityGroup }, e) => {
+      const sg = getRawData(e) as NetworkSecurityGroup;
+      if (sg.subnets) {
+        for (const s of sg.subnets) {
+          m[s.id as string] = sg;
+        }
+      }
+      return m;
+    },
+    {},
+  );
+
   const newSubnets: EntityFromIntegration[] = [];
   const newVnetSubnetRelationships: RelationshipFromIntegration[] = [];
+  const newSecurityGroupSubnetRelationships: RelationshipFromIntegration[] = [];
 
   for (const vnetEntity of newVirtualNetworks) {
     const vnet = getRawData(vnetEntity) as VirtualNetwork;
@@ -186,6 +215,12 @@ async function synchronizeNetworkResources(
         newVnetSubnetRelationships.push(
           createVirtualNetworkSubnetRelationship(vnet, s),
         );
+        const sg = subnetSecurityGroupMap[s.id as string];
+        if (sg) {
+          newSecurityGroupSubnetRelationships.push(
+            createNetworkSecurityGroupSubnetRelationship(sg, s),
+          );
+        }
       }
     }
   }
@@ -193,13 +228,31 @@ async function synchronizeNetworkResources(
   return persister.publishPersisterOperations([
     [
       ...persister.processEntities(oldVirtualNetworks, newVirtualNetworks),
+      ...persister.processEntities(oldSecurityGroups, newSecurityGroups),
       ...persister.processEntities(oldSubnets, newSubnets),
     ],
-    persister.processRelationships(
-      oldVnetSubnetRelationships,
-      newVnetSubnetRelationships,
-    ),
+    [
+      ...persister.processRelationships(
+        oldVnetSubnetRelationships,
+        newVnetSubnetRelationships,
+      ),
+      ...persister.processRelationships(
+        oldSecurityGroupSubnetRelationships,
+        newSecurityGroupSubnetRelationships,
+      ),
+    ],
   ]);
+}
+
+async function fetchNetworkSecurityGroups(
+  client: ResourceManagerClient,
+  webLinker: AzureWebLinker,
+): Promise<EntityFromIntegration[]> {
+  const entities: EntityFromIntegration[] = [];
+  await client.iterateNetworkSecurityGroups(e => {
+    entities.push(createNetworkSecurityGroupEntity(webLinker, e));
+  });
+  return entities;
 }
 
 async function fetchVirtualNetworks(

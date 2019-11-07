@@ -1,6 +1,7 @@
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   NetworkInterface,
+  NetworkSecurityGroup,
   PublicIPAddress,
   VirtualNetwork,
 } from "@azure/arm-network/esm/models";
@@ -58,6 +59,35 @@ describe("iterateNetworkInterfaces", () => {
         tags: expect.objectContaining({
           environment: "j1dev",
         }),
+      }),
+    ]);
+  });
+});
+
+describe("iterateNetworkSecurityGroups", () => {
+  test("all", async () => {
+    p = polly(__dirname, "iterateNetworkSecurityGroups");
+
+    const client = new ResourceManagerClient(config);
+
+    const securityGroups: NetworkSecurityGroup[] = [];
+    await client.iterateNetworkSecurityGroups(e => {
+      securityGroups.push(e);
+    });
+
+    expect(securityGroups).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: "j1dev",
+        tags: expect.objectContaining({
+          environment: "j1dev",
+        }),
+        // ensure subnet references come back
+        subnets: expect.arrayContaining([
+          expect.objectContaining({
+            id: expect.any(String),
+          }),
+        ]),
       }),
     ]);
   });

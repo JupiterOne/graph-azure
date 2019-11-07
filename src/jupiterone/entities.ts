@@ -67,6 +67,9 @@ export interface GroupMemberEntity extends EntityFromIntegration {
 export const VIRTUAL_NETWORK_ENTITY_TYPE = "azure_vnet";
 export const VIRTUAL_NETWORK_ENTITY_CLASS = "Network";
 
+export const SECURITY_GROUP_ENTITY_TYPE = "azure_security_group";
+export const SECURITY_GROUP_ENTITY_CLASS = "Firewall";
+
 export const SUBNET_ENTITY_TYPE = "azure_subnet";
 export const SUBNET_ENTITY_CLASS = "Network";
 

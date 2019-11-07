@@ -147,6 +147,14 @@ export function createNetworkSecurityGroupEntity(
   webLinker: AzureWebLinker,
   data: NetworkSecurityGroup,
 ): EntityFromIntegration {
+  const category: string[] = [];
+  if (data.subnets && data.subnets.length > 0) {
+    category.push("network");
+  }
+  if (data.networkInterfaces && data.networkInterfaces.length > 0) {
+    category.push("host");
+  }
+
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -156,7 +164,7 @@ export function createNetworkSecurityGroupEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         region: data.location,
         resourceGroup: resourceGroupName(data.id),
-        category: "network",
+        category,
       },
       tagProperties: ["environment"],
     },

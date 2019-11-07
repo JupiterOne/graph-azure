@@ -27,12 +27,14 @@ import {
   GROUP_MEMBER_RELATIONSHIP_CLASS,
   GROUP_MEMBER_RELATIONSHIP_TYPE,
   GroupMemberRelationship,
+  SECURITY_GROUP_NIC_RELATIONSHIP_CLASS,
+  SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
   SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS,
   SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
-  VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_CLASS,
-  VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_TYPE,
+  VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
+  VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS,
@@ -133,6 +135,20 @@ function getGroupMemberEntityClass(member: GroupMember): string {
   }
 }
 
+export function createNetworkSecurityGroupNicRelationship(
+  securityGroup: NetworkSecurityGroup,
+  nic: NetworkInterface,
+): RelationshipFromIntegration {
+  return {
+    _key: `${securityGroup.id}_protects_${nic.id}`,
+    _type: SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
+    _class: SECURITY_GROUP_NIC_RELATIONSHIP_CLASS,
+    _fromEntityKey: securityGroup.id as string,
+    _toEntityKey: nic.id as string,
+    displayName: "PROTECTS",
+  };
+}
+
 export function createNetworkSecurityGroupSubnetRelationship(
   securityGroup: NetworkSecurityGroup,
   subnet: Subnet,
@@ -182,8 +198,8 @@ export function createVirtualMachineNetworkInterfaceRelationship(
 ): VirtualMachineNetworkInterfaceRelationship {
   return {
     _key: `${vm.id}_uses_${nic.id}`,
-    _type: VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_TYPE,
-    _class: VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_CLASS,
+    _type: VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+    _class: VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
     _fromEntityKey: vm.id as string,
     _toEntityKey: nic.id as string,
     displayName: "USES",

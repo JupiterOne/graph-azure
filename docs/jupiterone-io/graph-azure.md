@@ -91,6 +91,7 @@ The following relationships are created/mapped:
 | `azure_user_group`     | **HAS**      | `azure_group_member` |
 | `azure_vnet`           | **CONTAINS** | `azure_subnet`       |
 | `azure_security_group` | **PROTECTS** | `azure_subnet`       |
+| `azure_security_group` | **PROTECTS** | `azure_nic`          |
 | `azure_vm`             | **USES**     | `azure_nic`          |
 | `azure_vm`             | **USES**     | `azure_public_ip`    |
 

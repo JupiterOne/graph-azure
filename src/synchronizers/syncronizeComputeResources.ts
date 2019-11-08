@@ -326,7 +326,7 @@ function findNetworkInterfacesForVM(
   if (vm.networkProfile) {
     map(vm.networkProfile.networkInterfaces, n =>
       nics.find(e => e.id === n.id),
-    );
+    ).forEach(e => e && vmNics.push(e));
   }
   return vmNics;
 }

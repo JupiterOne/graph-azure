@@ -138,7 +138,6 @@ export function createSubnetEntity(
         resourceGroup: resourceGroupName(data.id),
         environment: vnet.tags && vnet.tags["environment"],
       },
-      tagProperties: ["environment"],
     },
   });
 }

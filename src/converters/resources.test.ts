@@ -110,7 +110,6 @@ describe("createNetworkInterfaceEntity", () => {
     expect(createNetworkInterfaceEntity(webLinker, data)).toEqual({
       ...entity,
       "tag.environment": "j1dev",
-      tags: ["j1dev"],
     });
   });
 });
@@ -166,7 +165,6 @@ describe("createPublicIPAddressEntity", () => {
     expect(createPublicIPAddressEntity(webLinker, data)).toEqual({
       ...entity,
       "tag.environment": "j1dev",
-      tags: ["j1dev"],
     });
   });
 });
@@ -265,7 +263,6 @@ describe("createVirtualMachineEntity", () => {
     expect(createVirtualMachineEntity(webLinker, data)).toEqual({
       ...entity,
       "tag.environment": "j1dev",
-      tags: ["j1dev"],
     });
   });
 });
@@ -456,7 +453,6 @@ describe("createNetworkSecurityGroupEntity", () => {
     ),
     category: ["network", "host"],
     "tag.environment": "j1dev",
-    tags: ["j1dev"],
   };
 
   test("properties transferred", () => {
@@ -542,7 +538,6 @@ describe("createVirtualNetworkEntity", () => {
       internal: true,
       public: false,
       "tag.environment": "j1dev",
-      tags: ["j1dev"],
     };
 
     expect(createVirtualNetworkEntity(webLinker, data)).toEqual(entity);

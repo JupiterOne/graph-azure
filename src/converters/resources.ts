@@ -121,7 +121,7 @@ export function createSubnetEntity(
   vnet: VirtualNetwork,
   data: Subnet,
 ): EntityFromIntegration {
-  const CIDR = data.addressPrefix;
+  const CIDR = data.addressPrefix as string;
 
   return createIntegrationEntity({
     entityData: {
@@ -129,7 +129,7 @@ export function createSubnetEntity(
       assign: {
         _type: SUBNET_ENTITY_TYPE,
         _class: SUBNET_ENTITY_CLASS,
-        displayName: CIDR ? `${data.name} (${CIDR})` : data.name,
+        displayName: `${data.name} (${CIDR})`,
         webLink: webLinker.portalResourceUrl(data.id),
         CIDR,
         public: false,
@@ -187,7 +187,7 @@ export function createVirtualNetworkEntity(
       assign: {
         _type: VIRTUAL_NETWORK_ENTITY_TYPE,
         _class: VIRTUAL_NETWORK_ENTITY_CLASS,
-        displayName: CIDR ? `${data.name} (${CIDR})` : data.name,
+        displayName: `${data.name} (${CIDR})`,
         webLink: webLinker.portalResourceUrl(data.id),
         CIDR,
         public: false,

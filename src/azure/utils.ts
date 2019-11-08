@@ -10,13 +10,28 @@ const resourceGroupRegex = /\/resourceGroups\/(.*?)\//;
  * https://github.com/Azure/azure-sdk-for-java/issues/1708 for example.
  *
  * @param id the resource id, which is expected to include the resource group
+ * @param required optional, throw an error when the group name is not found in
+ * the id
  * @returns the resource group name lowercased, or `undefined` when not found
  */
-export function resourceGroup(id: string | undefined): string | undefined {
+export function resourceGroupName(
+  id: string | undefined,
+  required = false,
+): string | undefined {
+  let name: string | undefined;
+
   if (id) {
     const m = resourceGroupRegex.exec(id);
     if (m) {
-      return m[1].toLowerCase();
+      name = m[1].toLowerCase();
     }
   }
+
+  if (!name && required) {
+    throw new Error(
+      `Resource group name not found in '${id}' using '${resourceGroupRegex}`,
+    );
+  }
+
+  return name;
 }

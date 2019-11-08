@@ -1,7 +1,10 @@
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   NetworkInterface,
+  NetworkSecurityGroup,
   PublicIPAddress,
+  Subnet,
+  VirtualNetwork,
 } from "@azure/arm-network/esm/models";
 
 import { createAzureWebLinker } from "../azure";
@@ -12,8 +15,11 @@ import {
 } from "../jupiterone";
 import {
   createNetworkInterfaceEntity,
+  createNetworkSecurityGroupEntity,
   createPublicIPAddressEntity,
+  createSubnetEntity,
   createVirtualMachineEntity,
+  createVirtualNetworkEntity,
 } from "./resources";
 
 const webLinker = createAzureWebLinker("something.onmicrosoft.com");
@@ -258,5 +264,350 @@ describe("createVirtualMachineEntity", () => {
       ...entity,
       "tag.environment": "j1dev",
     });
+  });
+});
+
+describe("createNetworkSecurityGroupEntity", () => {
+  const data: NetworkSecurityGroup = {
+    name: "j1dev",
+    id:
+      "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+    etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
+    type: "Microsoft.Network/networkSecurityGroups",
+    location: "eastus",
+    tags: {
+      environment: "j1dev",
+    },
+    provisioningState: "Succeeded",
+    resourceGuid: "48b6006f-a105-4a29-9466-8fccd73b4e79",
+    securityRules: [
+      {
+        name: "SSH",
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/SSH",
+        etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
+        provisioningState: "Succeeded",
+        protocol: "Tcp",
+        sourcePortRange: "*",
+        destinationPortRange: "22",
+        sourceAddressPrefix: "*",
+        destinationAddressPrefix: "*",
+        access: "Allow",
+        priority: 1001,
+        direction: "Inbound",
+        sourcePortRanges: [],
+        destinationPortRanges: [],
+        sourceAddressPrefixes: [],
+        destinationAddressPrefixes: [],
+      },
+    ],
+    defaultSecurityRules: [
+      {
+        name: "AllowVnetInBound",
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetInBound",
+        etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
+        provisioningState: "Succeeded",
+        description: "Allow inbound traffic from all VMs in VNET",
+        protocol: "*",
+        sourcePortRange: "*",
+        destinationPortRange: "*",
+        sourceAddressPrefix: "VirtualNetwork",
+        destinationAddressPrefix: "VirtualNetwork",
+        access: "Allow",
+        priority: 65000,
+        direction: "Inbound",
+        sourcePortRanges: [],
+        destinationPortRanges: [],
+        sourceAddressPrefixes: [],
+        destinationAddressPrefixes: [],
+      },
+      {
+        name: "AllowAzureLoadBalancerInBound",
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowAzureLoadBalancerInBound",
+        etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
+        provisioningState: "Succeeded",
+        description: "Allow inbound traffic from azure load balancer",
+        protocol: "*",
+        sourcePortRange: "*",
+        destinationPortRange: "*",
+        sourceAddressPrefix: "AzureLoadBalancer",
+        destinationAddressPrefix: "*",
+        access: "Allow",
+        priority: 65001,
+        direction: "Inbound",
+        sourcePortRanges: [],
+        destinationPortRanges: [],
+        sourceAddressPrefixes: [],
+        destinationAddressPrefixes: [],
+      },
+      {
+        name: "DenyAllInBound",
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllInBound",
+        etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
+        provisioningState: "Succeeded",
+        description: "Deny all inbound traffic",
+        protocol: "*",
+        sourcePortRange: "*",
+        destinationPortRange: "*",
+        sourceAddressPrefix: "*",
+        destinationAddressPrefix: "*",
+        access: "Deny",
+        priority: 65500,
+        direction: "Inbound",
+        sourcePortRanges: [],
+        destinationPortRanges: [],
+        sourceAddressPrefixes: [],
+        destinationAddressPrefixes: [],
+      },
+      {
+        name: "AllowVnetOutBound",
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetOutBound",
+        etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
+        provisioningState: "Succeeded",
+        description: "Allow outbound traffic from all VMs to all VMs in VNET",
+        protocol: "*",
+        sourcePortRange: "*",
+        destinationPortRange: "*",
+        sourceAddressPrefix: "VirtualNetwork",
+        destinationAddressPrefix: "VirtualNetwork",
+        access: "Allow",
+        priority: 65000,
+        direction: "Outbound",
+        sourcePortRanges: [],
+        destinationPortRanges: [],
+        sourceAddressPrefixes: [],
+        destinationAddressPrefixes: [],
+      },
+      {
+        name: "AllowInternetOutBound",
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowInternetOutBound",
+        etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
+        provisioningState: "Succeeded",
+        description: "Allow outbound traffic from all VMs to Internet",
+        protocol: "*",
+        sourcePortRange: "*",
+        destinationPortRange: "*",
+        sourceAddressPrefix: "*",
+        destinationAddressPrefix: "Internet",
+        access: "Allow",
+        priority: 65001,
+        direction: "Outbound",
+        sourcePortRanges: [],
+        destinationPortRanges: [],
+        sourceAddressPrefixes: [],
+        destinationAddressPrefixes: [],
+      },
+      {
+        name: "DenyAllOutBound",
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllOutBound",
+        etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
+        provisioningState: "Succeeded",
+        description: "Deny all outbound traffic",
+        protocol: "*",
+        sourcePortRange: "*",
+        destinationPortRange: "*",
+        sourceAddressPrefix: "*",
+        destinationAddressPrefix: "*",
+        access: "Deny",
+        priority: 65500,
+        direction: "Outbound",
+        sourcePortRanges: [],
+        destinationPortRanges: [],
+        sourceAddressPrefixes: [],
+        destinationAddressPrefixes: [],
+      },
+    ],
+    networkInterfaces: [
+      {
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
+      },
+    ],
+    subnets: [
+      {
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      },
+    ],
+  };
+
+  const entity = {
+    _key:
+      "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+    _type: "azure_security_group",
+    _class: ["Firewall"],
+    _rawData: [{ name: "default", rawData: data }],
+    name: "j1dev",
+    displayName: "j1dev",
+    resourceGroup: "j1dev",
+    region: "eastus",
+    environment: "j1dev",
+    webLink: webLinker.portalResourceUrl(
+      "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+    ),
+    category: ["network", "host"],
+    "tag.environment": "j1dev",
+  };
+
+  test("properties transferred", () => {
+    expect(createNetworkSecurityGroupEntity(webLinker, data)).toEqual(entity);
+  });
+
+  test("category when only networkInterfaces", () => {
+    expect(
+      createNetworkSecurityGroupEntity(webLinker, { ...data, subnets: [] }),
+    ).toMatchObject({ category: ["host"] });
+  });
+
+  test("category when only subnets", () => {
+    expect(
+      createNetworkSecurityGroupEntity(webLinker, {
+        ...data,
+        networkInterfaces: [],
+      }),
+    ).toMatchObject({ category: ["network"] });
+  });
+});
+
+describe("createVirtualNetworkEntity", () => {
+  test("properties transferred", () => {
+    const data: VirtualNetwork = {
+      name: "j1dev",
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+      etag: 'W/"4f9fb61f-5fa0-49c1-afbe-4c7d93bcab4c"',
+      type: "Microsoft.Network/virtualNetworks",
+      location: "eastus",
+      tags: {
+        environment: "j1dev",
+      },
+      provisioningState: "Succeeded",
+      resourceGuid: "db9a7800-856d-4758-8f1d-8bbd7c77a11c",
+      addressSpace: {
+        addressPrefixes: ["10.0.0.0/16"],
+      },
+      dhcpOptions: {
+        dnsServers: [],
+      },
+      subnets: [
+        {
+          name: "j1dev",
+          id:
+            "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+          etag: 'W/"4f9fb61f-5fa0-49c1-afbe-4c7d93bcab4c"',
+          provisioningState: "Succeeded",
+          addressPrefix: "10.0.2.0/24",
+          ipConfigurations: [
+            {
+              id:
+                "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration",
+            },
+          ],
+          serviceEndpoints: [],
+          delegations: [],
+          privateEndpointNetworkPolicies: "Enabled",
+          privateLinkServiceNetworkPolicies: "Enabled",
+        },
+      ],
+      virtualNetworkPeerings: [],
+      enableDdosProtection: false,
+      enableVmProtection: false,
+    };
+
+    const entity = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+      _type: "azure_vnet",
+      _class: ["Network"],
+      _rawData: [{ name: "default", rawData: data }],
+      name: "j1dev",
+      displayName: "j1dev (10.0.0.0/16)",
+      resourceGroup: "j1dev",
+      region: "eastus",
+      environment: "j1dev",
+      webLink: webLinker.portalResourceUrl(
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+      ),
+      CIDR: "10.0.0.0/16",
+      internal: true,
+      public: false,
+      "tag.environment": "j1dev",
+    };
+
+    expect(createVirtualNetworkEntity(webLinker, data)).toEqual(entity);
+  });
+});
+
+describe("createSubnetEntity", () => {
+  test("properties transferred", () => {
+    const data: Subnet = {
+      name: "j1dev",
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      etag: 'W/"4f9fb61f-5fa0-49c1-afbe-4c7d93bcab4c"',
+      provisioningState: "Succeeded",
+      addressPrefix: "10.0.2.0/24",
+      ipConfigurations: [
+        {
+          id:
+            "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration",
+        },
+      ],
+      serviceEndpoints: [],
+      delegations: [],
+      privateEndpointNetworkPolicies: "Enabled",
+      privateLinkServiceNetworkPolicies: "Enabled",
+    };
+
+    const vnet: VirtualNetwork = {
+      name: "j1dev",
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+      etag: 'W/"4f9fb61f-5fa0-49c1-afbe-4c7d93bcab4c"',
+      type: "Microsoft.Network/virtualNetworks",
+      location: "eastus",
+      tags: {
+        environment: "j1dev",
+      },
+      provisioningState: "Succeeded",
+      resourceGuid: "db9a7800-856d-4758-8f1d-8bbd7c77a11c",
+      addressSpace: {
+        addressPrefixes: ["10.0.0.0/16"],
+      },
+      dhcpOptions: {
+        dnsServers: [],
+      },
+      subnets: [data],
+      virtualNetworkPeerings: [],
+      enableDdosProtection: false,
+      enableVmProtection: false,
+    };
+
+    const entity = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      _type: "azure_subnet",
+      _class: ["Network"],
+      _rawData: [{ name: "default", rawData: data }],
+      name: "j1dev",
+      displayName: "j1dev (10.0.2.0/24)",
+      resourceGroup: "j1dev",
+      region: "eastus",
+      environment: "j1dev",
+      webLink: webLinker.portalResourceUrl(
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      ),
+      CIDR: "10.0.2.0/24",
+      internal: true,
+      public: false,
+    };
+
+    expect(createSubnetEntity(webLinker, vnet, data)).toEqual(entity);
   });
 });

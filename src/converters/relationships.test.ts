@@ -1,7 +1,10 @@
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   NetworkInterface,
+  NetworkSecurityGroup,
   PublicIPAddress,
+  Subnet,
+  VirtualNetwork,
 } from "@azure/arm-network/esm/models";
 import { RelationshipDirection } from "@jupiterone/jupiter-managed-integration-sdk";
 
@@ -16,8 +19,12 @@ import {
   createAccountGroupRelationship,
   createAccountUserRelationship,
   createGroupMemberRelationship,
+  createNetworkSecurityGroupNicRelationship,
+  createNetworkSecurityGroupSubnetRelationship,
+  createSubnetVirtualMachineRelationship,
   createVirtualMachineNetworkInterfaceRelationship,
   createVirtualMachinePublicIPAddressRelationship,
+  createVirtualNetworkSubnetRelationship,
 } from "./relationships";
 
 const account = {
@@ -198,6 +205,128 @@ describe("createGroupMemberRelationship", () => {
     };
 
     expect(createGroupMemberRelationship(group, member)).toEqual(relationship);
+  });
+});
+
+describe("createVirtualNetworkSubnetRelationship", () => {
+  test("properties transferred", () => {
+    const subnet: Subnet = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+    };
+
+    const vnet: VirtualNetwork = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+    };
+
+    const relationship = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_contains_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      _type: "azure_vnet_contains_subnet",
+      _class: "CONTAINS",
+      _fromEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+      _toEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      displayName: "CONTAINS",
+    };
+
+    expect(createVirtualNetworkSubnetRelationship(vnet, subnet)).toEqual(
+      relationship,
+    );
+  });
+});
+
+describe("createSecurityGroupSubnetRelationship", () => {
+  test("properties transferred", () => {
+    const sg: NetworkSecurityGroup = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+    };
+
+    const subnet: Subnet = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+    };
+
+    const relationship = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev_protects_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      _type: "azure_security_group_protects_subnet",
+      _class: "PROTECTS",
+      _fromEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+      _toEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      displayName: "PROTECTS",
+    };
+
+    expect(createNetworkSecurityGroupSubnetRelationship(sg, subnet)).toEqual(
+      relationship,
+    );
+  });
+});
+
+describe("createNetworkSecurityGroupNicRelationship", () => {
+  test("properties transferred", () => {
+    const sg: NetworkSecurityGroup = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+    };
+
+    const nic: NetworkInterface = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
+    };
+
+    const relationship = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev_protects_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
+      _type: "azure_security_group_protects_nic",
+      _class: "PROTECTS",
+      _fromEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+      _toEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
+      displayName: "PROTECTS",
+    };
+
+    expect(createNetworkSecurityGroupNicRelationship(sg, nic)).toEqual(
+      relationship,
+    );
+  });
+});
+
+describe("createVirtualMachinePublicIPAddressRelationship", () => {
+  test("properties transferred", () => {
+    const subnet: Subnet = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+    };
+
+    const vm: VirtualMachine = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
+      vmId: "d908c31d-c93a-4359-987f-8cfdd1b65a61",
+      location: "eastus",
+    };
+
+    const relationship = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_has_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
+      _type: "azure_subnet_has_vm",
+      _class: "HAS",
+      _fromEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      _toEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
+      displayName: "HAS",
+    };
+
+    expect(createSubnetVirtualMachineRelationship(subnet, vm)).toEqual(
+      relationship,
+    );
   });
 });
 

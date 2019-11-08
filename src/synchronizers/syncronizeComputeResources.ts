@@ -2,11 +2,19 @@ import forEach from "lodash.foreach";
 import map from "lodash.map";
 
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
-import { NetworkInterface } from "@azure/arm-network/esm/models";
 import {
+  NetworkInterface,
+  NetworkSecurityGroup,
+  VirtualNetwork,
+} from "@azure/arm-network/esm/models";
+import {
+  EntityFromIntegration,
   getRawData,
   IntegrationError,
   IntegrationExecutionResult,
+  PersisterOperationsResult,
+  RelationshipFromIntegration,
+  summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
@@ -16,10 +24,17 @@ import {
 } from "../azure";
 import {
   createNetworkInterfaceEntity,
+  createNetworkSecurityGroupEntity,
+  createNetworkSecurityGroupNicRelationship,
+  createNetworkSecurityGroupSubnetRelationship,
   createPublicIPAddressEntity,
+  createSubnetEntity,
   createVirtualMachineEntity,
   createVirtualMachineNetworkInterfaceRelationship,
   createVirtualMachinePublicIPAddressRelationship,
+  createVirtualNetworkEntity,
+  createVirtualNetworkSubnetRelationship,
+  createSubnetVirtualMachineRelationship,
 } from "../converters";
 import {
   AccountEntity,
@@ -27,14 +42,26 @@ import {
   NetworkInterfaceEntity,
   PUBLIC_IP_ADDRESS_ENTITY_TYPE,
   PublicIPAddressEntity,
+  SECURITY_GROUP_ENTITY_TYPE,
+  SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
+  SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
+  SUBNET_ENTITY_TYPE,
+  SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_ENTITY_TYPE,
-  VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_TYPE,
+  VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+  VIRTUAL_NETWORK_ENTITY_TYPE,
+  VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
   VirtualMachineEntity,
   VirtualMachineNetworkInterfaceRelationship,
   VirtualMachinePublicIPAddressRelationship,
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
+
+type NetworkSynchronizationResults = {
+  operationsResult: PersisterOperationsResult;
+  nics: NetworkInterface[];
+};
 
 export default async function synchronizeComputeResources(
   executionContext: AzureExecutionContext,
@@ -50,6 +77,94 @@ export default async function synchronizeComputeResources(
   }
 
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain);
+
+  const networkResults = await synchronizeNetworkResources(
+    executionContext,
+    webLinker,
+  );
+
+  const [oldVms, newVms] = await Promise.all([
+    graph.findEntitiesByType(VIRTUAL_MACHINE_ENTITY_TYPE),
+    fetchVirtualMachines(azrm, webLinker),
+  ]);
+
+  const newSubnetVmRelationships: RelationshipFromIntegration[] = [];
+  const newVMNicRelationships: VirtualMachineNetworkInterfaceRelationship[] = [];
+  const newVMAddressRelationships: VirtualMachinePublicIPAddressRelationship[] = [];
+
+  forEach(newVms, vm => {
+    const vmData = getRawData(vm) as VirtualMachine;
+    const nicData = findNetworkInterfacesForVM(vmData, networkResults.nics);
+    forEach(nicData, nic => {
+      newVMNicRelationships.push(
+        createVirtualMachineNetworkInterfaceRelationship(vmData, nic),
+      );
+      forEach(nic.ipConfigurations, c => {
+        if (c.subnet) {
+          newSubnetVmRelationships.push(
+            createSubnetVirtualMachineRelationship(c.subnet, vmData),
+          );
+        }
+        if (c.publicIPAddress) {
+          newVMAddressRelationships.push(
+            createVirtualMachinePublicIPAddressRelationship(
+              vmData,
+              c.publicIPAddress,
+            ),
+          );
+        }
+      });
+    });
+  });
+
+  const [
+    oldSubnetVmRelationships,
+    oldVMNicRelationships,
+    oldVMAddressRelationships,
+  ] = await Promise.all([
+    graph.findRelationshipsByType(SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE),
+    graph.findRelationshipsByType(VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE),
+    graph.findRelationshipsByType(
+      VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+    ),
+  ]);
+
+  const operationsResult = await persister.publishPersisterOperations([
+    [...persister.processEntities(oldVms, newVms)],
+    [
+      ...persister.processRelationships(
+        oldSubnetVmRelationships,
+        newSubnetVmRelationships,
+      ),
+      ...persister.processRelationships(
+        oldVMNicRelationships,
+        newVMNicRelationships,
+      ),
+      ...persister.processRelationships(
+        oldVMAddressRelationships,
+        newVMAddressRelationships,
+      ),
+    ],
+  ]);
+
+  return {
+    operations: summarizePersisterOperationsResults(
+      networkResults.operationsResult,
+      operationsResult,
+    ),
+  };
+}
+
+async function synchronizeNetworkResources(
+  executionContext: AzureExecutionContext,
+  webLinker: AzureWebLinker,
+): Promise<NetworkSynchronizationResults> {
+  const { graph, persister, azrm } = executionContext;
+
+  const [oldVirtualNetworks, newVirtualNetworks] = await Promise.all([
+    graph.findEntitiesByType(VIRTUAL_NETWORK_ENTITY_TYPE),
+    fetchVirtualNetworks(azrm, webLinker),
+  ]);
 
   const [oldAddresses, newAddresses] = await Promise.all([
     graph.findEntitiesByType(PUBLIC_IP_ADDRESS_ENTITY_TYPE),
@@ -76,67 +191,115 @@ export default async function synchronizeComputeResources(
     nic.publicIpAddress = publicIp;
   });
 
-  const [oldVms, newVms] = await Promise.all([
-    graph.findEntitiesByType(VIRTUAL_MACHINE_ENTITY_TYPE),
-    fetchVirtualMachines(azrm, webLinker),
+  const [
+    oldSecurityGroups,
+    oldSecurityGroupNicRelationships,
+    oldSecurityGroupSubnetRelationships,
+    newSecurityGroups,
+  ] = await Promise.all([
+    graph.findEntitiesByType(SECURITY_GROUP_ENTITY_TYPE),
+    graph.findRelationshipsByType(SECURITY_GROUP_NIC_RELATIONSHIP_TYPE),
+    graph.findRelationshipsByType(SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE),
+    fetchNetworkSecurityGroups(azrm, webLinker),
   ]);
 
-  const newVMNicRelationships: VirtualMachineNetworkInterfaceRelationship[] = [];
-  const newVMAddressRelationships: VirtualMachinePublicIPAddressRelationship[] = [];
+  const [oldSubnets, oldVnetSubnetRelationships] = await Promise.all([
+    graph.findEntitiesByType(SUBNET_ENTITY_TYPE),
+    graph.findRelationshipsByType(VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE),
+  ]);
 
-  forEach(newVms, vm => {
-    const vmData = getRawData(vm) as VirtualMachine;
-    const nicData = findNetworkInterfacesForVM(
-      vmData,
-      newNics.map(e => getRawData(e)),
-    );
-    forEach(nicData, nic => {
-      newVMNicRelationships.push(
-        createVirtualMachineNetworkInterfaceRelationship(vmData, nic),
-      );
-      forEach(nic.ipConfigurations, c => {
-        if (c.publicIPAddress) {
-          newVMAddressRelationships.push(
-            createVirtualMachinePublicIPAddressRelationship(
-              vmData,
-              c.publicIPAddress,
-            ),
+  const subnetSecurityGroupMap: {
+    [subnetId: string]: NetworkSecurityGroup;
+  } = {};
+  const newSecurityGroupNicRelationships: RelationshipFromIntegration[] = [];
+
+  for (const sge of newSecurityGroups) {
+    const sg = getRawData(sge) as NetworkSecurityGroup;
+    if (sg.subnets) {
+      for (const s of sg.subnets) {
+        subnetSecurityGroupMap[s.id as string] = sg;
+      }
+    }
+    if (sg.networkInterfaces) {
+      for (const i of sg.networkInterfaces) {
+        newSecurityGroupNicRelationships.push(
+          createNetworkSecurityGroupNicRelationship(sg, i),
+        );
+      }
+    }
+  }
+
+  const newSubnets: EntityFromIntegration[] = [];
+  const newVnetSubnetRelationships: RelationshipFromIntegration[] = [];
+  const newSecurityGroupSubnetRelationships: RelationshipFromIntegration[] = [];
+
+  for (const vnetEntity of newVirtualNetworks) {
+    const vnet = getRawData(vnetEntity) as VirtualNetwork;
+    if (vnet.subnets) {
+      for (const s of vnet.subnets) {
+        const subnetEntity = createSubnetEntity(webLinker, vnet, s);
+        newSubnets.push(subnetEntity);
+        newVnetSubnetRelationships.push(
+          createVirtualNetworkSubnetRelationship(vnet, s),
+        );
+        const sg = subnetSecurityGroupMap[s.id as string];
+        if (sg) {
+          newSecurityGroupSubnetRelationships.push(
+            createNetworkSecurityGroupSubnetRelationship(sg, s),
           );
         }
-      });
-    });
-  });
-
-  const [oldVMNicRelationships, oldVMAddressRelationships] = await Promise.all([
-    graph.findRelationshipsByType(
-      VIRTUAL_MACHINE_NETWORK_INTERFACE_RELATIONSHIP_TYPE,
-    ),
-    graph.findRelationshipsByType(
-      VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
-    ),
-  ]);
-
-  const operationResults = await persister.publishPersisterOperations([
-    [
-      ...persister.processEntities(oldAddresses, newAddresses),
-      ...persister.processEntities(oldNics, newNics),
-      ...persister.processEntities(oldVms, newVms),
-    ],
-    [
-      ...persister.processRelationships(
-        oldVMNicRelationships,
-        newVMNicRelationships,
-      ),
-      ...persister.processRelationships(
-        oldVMAddressRelationships,
-        newVMAddressRelationships,
-      ),
-    ],
-  ]);
+      }
+    }
+  }
 
   return {
-    operations: operationResults,
+    nics: newNics.map(e => getRawData(e)),
+    operationsResult: await persister.publishPersisterOperations([
+      [
+        ...persister.processEntities(oldVirtualNetworks, newVirtualNetworks),
+        ...persister.processEntities(oldSecurityGroups, newSecurityGroups),
+        ...persister.processEntities(oldSubnets, newSubnets),
+        ...persister.processEntities(oldAddresses, newAddresses),
+        ...persister.processEntities(oldNics, newNics),
+      ],
+      [
+        ...persister.processRelationships(
+          oldVnetSubnetRelationships,
+          newVnetSubnetRelationships,
+        ),
+        ...persister.processRelationships(
+          oldSecurityGroupNicRelationships,
+          newSecurityGroupNicRelationships,
+        ),
+        ...persister.processRelationships(
+          oldSecurityGroupSubnetRelationships,
+          newSecurityGroupSubnetRelationships,
+        ),
+      ],
+    ]),
   };
+}
+
+async function fetchNetworkSecurityGroups(
+  client: ResourceManagerClient,
+  webLinker: AzureWebLinker,
+): Promise<EntityFromIntegration[]> {
+  const entities: EntityFromIntegration[] = [];
+  await client.iterateNetworkSecurityGroups(e => {
+    entities.push(createNetworkSecurityGroupEntity(webLinker, e));
+  });
+  return entities;
+}
+
+async function fetchVirtualNetworks(
+  client: ResourceManagerClient,
+  webLinker: AzureWebLinker,
+): Promise<EntityFromIntegration[]> {
+  const entities: EntityFromIntegration[] = [];
+  await client.iterateVirtualNetworks(e => {
+    entities.push(createVirtualNetworkEntity(webLinker, e));
+  });
+  return entities;
 }
 
 async function fetchVirtualMachines(
@@ -180,7 +343,7 @@ function findNetworkInterfacesForVM(
   if (vm.networkProfile) {
     map(vm.networkProfile.networkInterfaces, n =>
       nics.find(e => e.id === n.id),
-    );
+    ).forEach(e => e && vmNics.push(e));
   }
   return vmNics;
 }

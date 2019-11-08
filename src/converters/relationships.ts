@@ -1,9 +1,15 @@
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
-  PublicIPAddress,
   NetworkInterface,
+  NetworkSecurityGroup,
+  PublicIPAddress,
+  Subnet,
+  VirtualNetwork,
 } from "@azure/arm-network/esm/models";
-import { RelationshipDirection } from "@jupiterone/jupiter-managed-integration-sdk";
+import {
+  RelationshipDirection,
+  RelationshipFromIntegration,
+} from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember, MemberType, User } from "../azure";
 import {
@@ -21,10 +27,22 @@ import {
   GROUP_MEMBER_RELATIONSHIP_CLASS,
   GROUP_MEMBER_RELATIONSHIP_TYPE,
   GroupMemberRelationship,
+  SECURITY_GROUP_NIC_RELATIONSHIP_CLASS,
+  SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
+  SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS,
+  SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
+  SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
+  SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
-  VirtualMachinePublicIPAddressRelationship,
+  VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
+  VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+  VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS,
+  VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+  VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS,
+  VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
   VirtualMachineNetworkInterfaceRelationship,
+  VirtualMachinePublicIPAddressRelationship,
 } from "../jupiterone";
 import {
   generateEntityKey,
@@ -97,7 +115,7 @@ export function createGroupMemberRelationship(
   };
 }
 
-function getGroupMemberEntityType(member: GroupMember) {
+function getGroupMemberEntityType(member: GroupMember): string {
   switch (member["@odata.type"]) {
     case MemberType.USER:
       return USER_ENTITY_TYPE;
@@ -108,7 +126,7 @@ function getGroupMemberEntityType(member: GroupMember) {
   }
 }
 
-function getGroupMemberEntityClass(member: GroupMember) {
+function getGroupMemberEntityClass(member: GroupMember): string {
   switch (member["@odata.type"]) {
     case MemberType.USER:
       return USER_ENTITY_CLASS;
@@ -119,14 +137,70 @@ function getGroupMemberEntityClass(member: GroupMember) {
   }
 }
 
+export function createNetworkSecurityGroupNicRelationship(
+  securityGroup: NetworkSecurityGroup,
+  nic: NetworkInterface,
+): RelationshipFromIntegration {
+  return {
+    _key: `${securityGroup.id}_protects_${nic.id}`,
+    _type: SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
+    _class: SECURITY_GROUP_NIC_RELATIONSHIP_CLASS,
+    _fromEntityKey: securityGroup.id as string,
+    _toEntityKey: nic.id as string,
+    displayName: "PROTECTS",
+  };
+}
+
+export function createNetworkSecurityGroupSubnetRelationship(
+  securityGroup: NetworkSecurityGroup,
+  subnet: Subnet,
+): RelationshipFromIntegration {
+  return {
+    _key: `${securityGroup.id}_protects_${subnet.id}`,
+    _type: SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
+    _class: SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS,
+    _fromEntityKey: securityGroup.id as string,
+    _toEntityKey: subnet.id as string,
+    displayName: "PROTECTS",
+  };
+}
+
+export function createSubnetVirtualMachineRelationship(
+  subnet: Subnet,
+  vm: VirtualMachine,
+): RelationshipFromIntegration {
+  return {
+    _key: `${subnet.id}_has_${vm.id}`,
+    _type: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
+    _class: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
+    _fromEntityKey: subnet.id as string,
+    _toEntityKey: vm.id as string,
+    displayName: "HAS",
+  };
+}
+
+export function createVirtualNetworkSubnetRelationship(
+  vnet: VirtualNetwork,
+  subnet: Subnet,
+): RelationshipFromIntegration {
+  return {
+    _key: `${vnet.id}_contains_${subnet.id}`,
+    _type: VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
+    _class: VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS,
+    _fromEntityKey: vnet.id as string,
+    _toEntityKey: subnet.id as string,
+    displayName: "CONTAINS",
+  };
+}
+
 export function createVirtualMachinePublicIPAddressRelationship(
   vm: VirtualMachine,
   ipAddress: PublicIPAddress,
 ): VirtualMachinePublicIPAddressRelationship {
   return {
     _key: `${vm.id}_uses_${ipAddress.id}`,
-    _type: "azure_vm_uses_public_ip",
-    _class: "USES",
+    _type: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+    _class: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS,
     _fromEntityKey: vm.id as string,
     _toEntityKey: ipAddress.id as string,
     displayName: "USES",
@@ -140,8 +214,8 @@ export function createVirtualMachineNetworkInterfaceRelationship(
 ): VirtualMachineNetworkInterfaceRelationship {
   return {
     _key: `${vm.id}_uses_${nic.id}`,
-    _type: "azure_vm_uses_network_interface",
-    _class: "USES",
+    _type: VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+    _class: VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
     _fromEntityKey: vm.id as string,
     _toEntityKey: nic.id as string,
     displayName: "USES",

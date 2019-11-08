@@ -932,10 +932,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@jupiterone/jupiter-managed-integration-sdk@^28.1.2":
-  version "28.1.2"
-  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-28.1.2.tgz#487b193bcb1362dccb0d0e929d612d95eb4414d2"
-  integrity sha512-GyXwaKOtAr81ePP1W0Sn9bHHINOjdE6CRVR0n/njMZRNT2ZKZef3KOBDGztITAQFjz6JTG72R3gg7KIhr1X5nQ==
+"@jupiterone/jupiter-managed-integration-sdk@^28.2.0":
+  version "28.2.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-28.2.0.tgz#31a0680429c13e334e7c8d7136e3d79193185f7a"
+  integrity sha512-+JiuTtvYPaSLDu+GhLnU+GIirW2Xnj3ToxZlaUaS8/zYvt4Q/+jbzVHEQxWBulmeOZzMSBdsewavKmurCyH8CQ==
 
 "@microsoft/microsoft-graph-client@^2.0.0":
   version "2.0.0"

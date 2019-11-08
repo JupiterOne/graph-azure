@@ -35,6 +35,9 @@ export const SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE =
   "azure_security_group_protects_subnet";
 export const SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS = "PROTECTS";
 
+export const SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE = "azure_subnet_has_vm";
+export const SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS = "HAS";
+
 export const VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE =
   "azure_vnet_contains_subnet";
 export const VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS = "CONTAINS";

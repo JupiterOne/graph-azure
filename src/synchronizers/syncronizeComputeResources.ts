@@ -34,6 +34,7 @@ import {
   createVirtualMachinePublicIPAddressRelationship,
   createVirtualNetworkEntity,
   createVirtualNetworkSubnetRelationship,
+  createSubnetVirtualMachineRelationship,
 } from "../converters";
 import {
   AccountEntity,
@@ -45,6 +46,7 @@ import {
   SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
   SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
   SUBNET_ENTITY_TYPE,
+  SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
@@ -86,6 +88,7 @@ export default async function synchronizeComputeResources(
     fetchVirtualMachines(azrm, webLinker),
   ]);
 
+  const newSubnetVmRelationships: RelationshipFromIntegration[] = [];
   const newVMNicRelationships: VirtualMachineNetworkInterfaceRelationship[] = [];
   const newVMAddressRelationships: VirtualMachinePublicIPAddressRelationship[] = [];
 
@@ -97,6 +100,11 @@ export default async function synchronizeComputeResources(
         createVirtualMachineNetworkInterfaceRelationship(vmData, nic),
       );
       forEach(nic.ipConfigurations, c => {
+        if (c.subnet) {
+          newSubnetVmRelationships.push(
+            createSubnetVirtualMachineRelationship(c.subnet, vmData),
+          );
+        }
         if (c.publicIPAddress) {
           newVMAddressRelationships.push(
             createVirtualMachinePublicIPAddressRelationship(
@@ -109,7 +117,12 @@ export default async function synchronizeComputeResources(
     });
   });
 
-  const [oldVMNicRelationships, oldVMAddressRelationships] = await Promise.all([
+  const [
+    oldSubnetVmRelationships,
+    oldVMNicRelationships,
+    oldVMAddressRelationships,
+  ] = await Promise.all([
+    graph.findRelationshipsByType(SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(
       VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
@@ -119,6 +132,10 @@ export default async function synchronizeComputeResources(
   const operationsResult = await persister.publishPersisterOperations([
     [...persister.processEntities(oldVms, newVms)],
     [
+      ...persister.processRelationships(
+        oldSubnetVmRelationships,
+        newSubnetVmRelationships,
+      ),
       ...persister.processRelationships(
         oldVMNicRelationships,
         newVMNicRelationships,

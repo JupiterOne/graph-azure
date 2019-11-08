@@ -31,6 +31,8 @@ import {
   SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
   SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS,
   SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
+  SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
+  SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
   VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
@@ -160,6 +162,20 @@ export function createNetworkSecurityGroupSubnetRelationship(
     _fromEntityKey: securityGroup.id as string,
     _toEntityKey: subnet.id as string,
     displayName: "PROTECTS",
+  };
+}
+
+export function createSubnetVirtualMachineRelationship(
+  subnet: Subnet,
+  vm: VirtualMachine,
+): RelationshipFromIntegration {
+  return {
+    _key: `${subnet.id}_has_${vm.id}`,
+    _type: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
+    _class: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
+    _fromEntityKey: subnet.id as string,
+    _toEntityKey: vm.id as string,
+    displayName: "HAS",
   };
 }
 

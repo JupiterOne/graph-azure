@@ -90,6 +90,7 @@ The following relationships are created/mapped:
 | `azure_user_group`     | **HAS**      | `azure_user_group`   |
 | `azure_user_group`     | **HAS**      | `azure_group_member` |
 | `azure_vnet`           | **CONTAINS** | `azure_subnet`       |
+| `azure_subnet`         | **HAS**      | `azure_vm`           |
 | `azure_security_group` | **PROTECTS** | `azure_subnet`       |
 | `azure_security_group` | **PROTECTS** | `azure_nic`          |
 | `azure_vm`             | **USES**     | `azure_nic`          |

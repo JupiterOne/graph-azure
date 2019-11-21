@@ -129,9 +129,6 @@ export const STORAGE_BLOB_SERVICE_ENTITY_CLASS = "Service";
 
 export const STORAGE_CONTAINER_ENTITY_TYPE = "azure_storage_container";
 export const STORAGE_CONTAINER_ENTITY_CLASS = "DataStore";
-export const STORAGE_CONTAINER_RELATIONSHIP_TYPE =
-  "azure_storage_has_container";
-export const STORAGE_CONTAINER_RELATIONSHIP_CLASS = "HAS";
 
 export const STORAGE_FILE_SERVICE_ENTITY_TYPE = "azure_storage_file_service";
 export const STORAGE_FILE_SERVICE_ENTITY_CLASS = "Service";

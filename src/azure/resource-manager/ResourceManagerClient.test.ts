@@ -216,10 +216,6 @@ describe("iterateStorageBlobContainers", () => {
           id:
             "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/j1dev",
           name: "j1dev",
-          metadata: {
-            Classification: "critical",
-            Environment: "j1dev",
-          },
         }),
       ]),
     );

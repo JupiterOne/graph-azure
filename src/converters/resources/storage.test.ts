@@ -2,7 +2,7 @@ import { BlobContainer, StorageAccount } from "@azure/arm-storage/esm/models";
 
 import { createAzureWebLinker } from "../../azure";
 import {
-  createStorageAccountEntity,
+  createStorageServiceEntity,
   createStorageContainerEntity,
 } from "./storage";
 
@@ -73,7 +73,7 @@ describe("createStorageAccountEntity", () => {
       "tag.environment": "j1dev",
     };
 
-    expect(createStorageAccountEntity(webLinker, data, "blob")).toEqual(entity);
+    expect(createStorageServiceEntity(webLinker, data, "blob")).toEqual(entity);
   });
 
   test("properties transferred file", () => {
@@ -97,7 +97,7 @@ describe("createStorageAccountEntity", () => {
       "tag.environment": "j1dev",
     };
 
-    expect(createStorageAccountEntity(webLinker, data, "file")).toEqual(entity);
+    expect(createStorageServiceEntity(webLinker, data, "file")).toEqual(entity);
   });
 
   test("properties transferred queue", () => {
@@ -121,7 +121,7 @@ describe("createStorageAccountEntity", () => {
       "tag.environment": "j1dev",
     };
 
-    expect(createStorageAccountEntity(webLinker, data, "queue")).toEqual(
+    expect(createStorageServiceEntity(webLinker, data, "queue")).toEqual(
       entity,
     );
   });
@@ -147,7 +147,7 @@ describe("createStorageAccountEntity", () => {
       "tag.environment": "j1dev",
     };
 
-    expect(createStorageAccountEntity(webLinker, data, "table")).toEqual(
+    expect(createStorageServiceEntity(webLinker, data, "table")).toEqual(
       entity,
     );
   });
@@ -181,6 +181,7 @@ describe("createStorageBlobContainerEntity", () => {
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
       ),
       resourceGroup: "j1dev",
+      classification: "unknown",
     };
 
     expect(createStorageContainerEntity(webLinker, data)).toEqual(entity);

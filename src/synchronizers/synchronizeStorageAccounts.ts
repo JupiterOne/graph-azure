@@ -1,19 +1,24 @@
 import { StorageAccount } from "@azure/arm-storage/esm/models";
 import {
+  createIntegrationRelationship,
   EntityFromIntegration,
+  generateRelationshipType,
   IntegrationError,
   IntegrationExecutionResult,
+  IntegrationRelationship,
   PersisterOperationsResult,
-  RelationshipFromIntegration,
   summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { AzureWebLinker, createAzureWebLinker } from "../azure";
-import { createStorageContainerEntity } from "../converters/resources/storage";
+import {
+  createStorageContainerEntity,
+  createStorageServiceEntity,
+} from "../converters/resources/storage";
 import {
   AccountEntity,
+  STORAGE_BLOB_SERVICE_ENTITY_TYPE,
   STORAGE_CONTAINER_ENTITY_TYPE,
-  STORAGE_CONTAINER_RELATIONSHIP_TYPE,
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
 
@@ -50,6 +55,10 @@ export default async function synchronizeStorageAccounts(
   };
 }
 
+/**
+ * Synchronize containers in the Blob storage service. The service entity is
+ * created whether or not there are any blobs.
+ */
 async function synchronizeBlobStorage(
   executionContext: AzureExecutionContext,
   accountEntity: AccountEntity,
@@ -58,30 +67,63 @@ async function synchronizeBlobStorage(
 ): Promise<PersisterOperationsResult> {
   const { azrm, graph, persister } = executionContext;
 
-  // const newServiceEntity = createStorageAccountEntity(webLinker, storageAccount, "blob");
+  const newServiceEntity = createStorageServiceEntity(
+    webLinker,
+    storageAccount,
+    "blob",
+  );
+
+  const newAccountServiceRelationship = createIntegrationRelationship(
+    "HAS",
+    accountEntity,
+    newServiceEntity,
+  );
+
   const newContainerEntities: EntityFromIntegration[] = [];
-  const newServiceContainerRelationships: RelationshipFromIntegration[] = [];
+  const newServiceContainerRelationships: IntegrationRelationship[] = [];
 
   await azrm.iterateStorageBlobContainers(storageAccount, e => {
     const containerEntity = createStorageContainerEntity(webLinker, e);
     newContainerEntities.push(containerEntity);
-    // newServiceContainerRelationships.push(createStorageContainerRelationship(newServiceEntity, containerEntity))
+    newServiceContainerRelationships.push(
+      createIntegrationRelationship("HAS", newServiceEntity, containerEntity),
+    );
   });
 
   const [
+    oldServiceEntities,
+    oldAccountServiceRelationships,
     oldContainerEntities,
     oldServiceContainerRelationships,
   ] = await Promise.all([
+    graph.findEntitiesByType(STORAGE_BLOB_SERVICE_ENTITY_TYPE),
+    graph.findRelationshipsByType(
+      generateRelationshipType("HAS", accountEntity, newServiceEntity),
+    ),
     graph.findEntitiesByType(STORAGE_CONTAINER_ENTITY_TYPE),
-    graph.findRelationshipsByType(STORAGE_CONTAINER_RELATIONSHIP_TYPE),
+    graph.findRelationshipsByType(
+      generateRelationshipType(
+        "HAS",
+        newServiceEntity,
+        STORAGE_CONTAINER_ENTITY_TYPE,
+      ),
+    ),
   ]);
 
   return persister.publishPersisterOperations([
-    persister.processEntities(oldContainerEntities, newContainerEntities),
-    persister.processRelationships(
-      oldServiceContainerRelationships,
-      newServiceContainerRelationships,
-    ),
+    [
+      ...persister.processEntities(oldServiceEntities, [newServiceEntity]),
+      ...persister.processEntities(oldContainerEntities, newContainerEntities),
+    ],
+    [
+      ...persister.processRelationships(oldAccountServiceRelationships, [
+        newAccountServiceRelationship,
+      ]),
+      ...persister.processRelationships(
+        oldServiceContainerRelationships,
+        newServiceContainerRelationships,
+      ),
+    ],
   ]);
 }
 

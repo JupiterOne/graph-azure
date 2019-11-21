@@ -55,7 +55,11 @@ const storageAccountServiceConfig: StorageAccountServiceConfigMap = {
   },
 };
 
-export function createStorageAccountEntity(
+/**
+ * Creates an entity for a storage service. Storage accounts have one or more
+ * services enabled.
+ */
+export function createStorageServiceEntity(
   webLinker: AzureWebLinker,
   data: StorageAccount,
   service: keyof StorageAccountServiceConfigMap,
@@ -83,6 +87,10 @@ export function createStorageAccountEntity(
   });
 }
 
+/**
+ * Creates an integration entity for a Blob service container (similar to S3
+ * bucket). Containers do not currently support tagging. See /docs/tagging.md.
+ */
 export function createStorageContainerEntity(
   webLinker: AzureWebLinker,
   data: BlobContainer,
@@ -95,6 +103,7 @@ export function createStorageContainerEntity(
         _class: STORAGE_CONTAINER_ENTITY_CLASS,
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
+        classification: "unknown",
       },
     },
   });

@@ -154,37 +154,71 @@ describe("createStorageAccountEntity", () => {
 });
 
 describe("createStorageBlobContainerEntity", () => {
+  const data: BlobContainer = {
+    id:
+      "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
+    name: "bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
+    type: "Microsoft.Storage/storageAccounts/blobServices/containers",
+    etag: '"0x8D76DE4341D7231"',
+    publicAccess: "None",
+    leaseStatus: "Unlocked",
+    leaseState: "Available",
+    lastModifiedTime: ("2019-11-20T18:05:19.0000000Z" as unknown) as Date,
+    hasImmutabilityPolicy: false,
+    hasLegalHold: false,
+  };
+
+  const entity = {
+    _key:
+      "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
+    _type: "azure_storage_container",
+    _class: ["DataStore"],
+    _rawData: [{ name: "default", rawData: data }],
+    name: "bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
+    displayName: "bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
+    webLink: webLinker.portalResourceUrl(
+      "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
+    ),
+    resourceGroup: "j1dev",
+    public: false,
+    publicAccess: "None",
+    classification: null,
+    encrypted: null,
+  };
+
   test("properties transferred", () => {
-    const data: BlobContainer = {
-      id:
-        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
-      name: "bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
-      type: "Microsoft.Storage/storageAccounts/blobServices/containers",
-      etag: '"0x8D76DE4341D7231"',
-      publicAccess: "None",
-      leaseStatus: "Unlocked",
-      leaseState: "Available",
-      lastModifiedTime: ("2019-11-20T18:05:19.0000000Z" as unknown) as Date,
-      hasImmutabilityPolicy: false,
-      hasLegalHold: false,
-    };
-
-    const entity = {
-      _key:
-        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
-      _type: "azure_storage_container",
-      _class: ["DataStore"],
-      _rawData: [{ name: "default", rawData: data }],
-      name: "bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
-      displayName: "bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
-      webLink: webLinker.portalResourceUrl(
-        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
-      ),
-      resourceGroup: "j1dev",
-      classification: null,
-      encrypted: null,
-    };
-
     expect(createStorageContainerEntity(webLinker, data)).toEqual(entity);
+  });
+
+  test("public container", () => {
+    expect(
+      createStorageContainerEntity(webLinker, {
+        ...data,
+        publicAccess: "Container",
+      }),
+    ).toEqual({
+      ...entity,
+      _rawData: [
+        { name: "default", rawData: { ...data, publicAccess: "Container" } },
+      ],
+      public: true,
+      publicAccess: "Container",
+    });
+  });
+
+  test("public blob", () => {
+    expect(
+      createStorageContainerEntity(webLinker, {
+        ...data,
+        publicAccess: "Blob",
+      }),
+    ).toEqual({
+      ...entity,
+      _rawData: [
+        { name: "default", rawData: { ...data, publicAccess: "Blob" } },
+      ],
+      public: true,
+      publicAccess: "Blob",
+    });
   });
 });

@@ -103,6 +103,10 @@ export function createStorageContainerEntity(
         _class: STORAGE_CONTAINER_ENTITY_CLASS,
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
+        public: !!(
+          data.publicAccess && /(container|blob)/i.exec(data.publicAccess)
+        ),
+        publicAccess: data.publicAccess,
         classification: null,
         encrypted: null,
       },

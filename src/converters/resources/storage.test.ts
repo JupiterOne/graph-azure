@@ -181,7 +181,8 @@ describe("createStorageBlobContainerEntity", () => {
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
       ),
       resourceGroup: "j1dev",
-      classification: "unknown",
+      classification: null,
+      encrypted: null,
     };
 
     expect(createStorageContainerEntity(webLinker, data)).toEqual(entity);

@@ -103,7 +103,8 @@ export function createStorageContainerEntity(
         _class: STORAGE_CONTAINER_ENTITY_CLASS,
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
-        classification: "unknown",
+        classification: null,
+        encrypted: null,
       },
     },
   });

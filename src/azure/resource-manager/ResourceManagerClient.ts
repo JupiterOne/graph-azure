@@ -94,7 +94,9 @@ export default class ResourceManagerClient {
         list: async () => {
           return client.blobContainers.list(resourceGroup, accountName);
         },
-        listNext: async (nextLink: string) => {
+        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
+          nextLink: string,
+        ) => {
           return client.blobContainers.listNext(nextLink);
         },
       } as any,

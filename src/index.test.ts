@@ -31,8 +31,12 @@ describe("getStepStartStates", () => {
     // have disable state, to catch failure to add new steps that should be
     // accounted for in determining disablement based on integration config.
     const stepIds = stepFunctionsInvocationConfig
-      .integrationStepPhases!.map(e => e.steps.map(s => s.id))
-      .flat()
+      .integrationStepPhases!.map(phase => phase.steps.map(s => s.id))
+      .reduce((a, phaseStepIds) => {
+        // replace with flatMap() when available
+        a.push(...phaseStepIds);
+        return a;
+      }, [])
       .filter(e => !/(account|cleanup)/.exec(e));
     expect(Object.keys(states)).toEqual(expect.arrayContaining(stepIds));
   });

@@ -83,7 +83,11 @@ async function synchronizeBlobStorage(
   const newServiceContainerRelationships: IntegrationRelationship[] = [];
 
   await azrm.iterateStorageBlobContainers(storageAccount, e => {
-    const containerEntity = createStorageContainerEntity(webLinker, e);
+    const containerEntity = createStorageContainerEntity(
+      webLinker,
+      storageAccount,
+      e,
+    );
     newContainerEntities.push(containerEntity);
     newServiceContainerRelationships.push(
       createIntegrationRelationship("HAS", newServiceEntity, containerEntity),

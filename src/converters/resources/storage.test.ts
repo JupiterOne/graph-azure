@@ -183,16 +183,18 @@ describe("createStorageBlobContainerEntity", () => {
     public: false,
     publicAccess: "None",
     classification: null,
-    encrypted: null,
+    encrypted: true,
   };
 
   test("properties transferred", () => {
-    expect(createStorageContainerEntity(webLinker, data)).toEqual(entity);
+    expect(
+      createStorageContainerEntity(webLinker, storageAccount, data),
+    ).toEqual(entity);
   });
 
   test("public container", () => {
     expect(
-      createStorageContainerEntity(webLinker, {
+      createStorageContainerEntity(webLinker, storageAccount, {
         ...data,
         publicAccess: "Container",
       }),
@@ -208,7 +210,7 @@ describe("createStorageBlobContainerEntity", () => {
 
   test("public blob", () => {
     expect(
-      createStorageContainerEntity(webLinker, {
+      createStorageContainerEntity(webLinker, storageAccount, {
         ...data,
         publicAccess: "Blob",
       }),
@@ -219,6 +221,44 @@ describe("createStorageBlobContainerEntity", () => {
       ],
       public: true,
       publicAccess: "Blob",
+    });
+  });
+
+  test("blob encryption not enabled", () => {
+    expect(
+      createStorageContainerEntity(
+        webLinker,
+        {
+          ...storageAccount,
+          encryption: {
+            keySource: "Microsoft.Storage",
+            services: { blob: { enabled: false } },
+          },
+        },
+        data,
+      ),
+    ).toEqual({
+      ...entity,
+      encrypted: false,
+    });
+  });
+
+  test("blob encryption service not provided", () => {
+    expect(
+      createStorageContainerEntity(
+        webLinker,
+        {
+          ...storageAccount,
+          encryption: {
+            keySource: "Microsoft.Storage",
+            services: {},
+          },
+        },
+        data,
+      ),
+    ).toEqual({
+      ...entity,
+      encrypted: false,
     });
   });
 });

@@ -89,10 +89,16 @@ export function createStorageServiceEntity(
 
 /**
  * Creates an integration entity for a Blob service container (similar to S3
- * bucket). Containers do not currently support tagging. See /docs/tagging.md.
+ * bucket).
+ *
+ * * Containers do not currently support tagging. See /docs/tagging.md.
+ * * Containers are considered to be encrypted when the storage account is
+ *   configured as encrypted. See
+ *   https://azure.microsoft.com/en-us/blog/announcing-default-encryption-for-azure-blobs-files-table-and-queue-storage/
  */
 export function createStorageContainerEntity(
   webLinker: AzureWebLinker,
+  account: StorageAccount,
   data: BlobContainer,
 ): EntityFromIntegration {
   return createIntegrationEntity({
@@ -108,7 +114,12 @@ export function createStorageContainerEntity(
         ),
         publicAccess: data.publicAccess,
         classification: null,
-        encrypted: null,
+        encrypted: !!(
+          account.encryption &&
+          account.encryption.services &&
+          account.encryption.services.blob &&
+          account.encryption.services.blob.enabled
+        ),
       },
     },
   });

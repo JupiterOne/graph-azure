@@ -92,6 +92,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
       states = {
         ...states,
         [RM_SYNC_COMPUTE]: resourceManager,
+        [RM_SYNC_STORAGE]: resourceManager,
       };
     }
 

@@ -7,7 +7,8 @@ import {
   AD_SYNC_GROUP_MEMBERS,
   AD_SYNC_GROUPS,
   AD_SYNC_USERS,
-  RM_SYNC_RESOURCES,
+  RM_SYNC_COMPUTE,
+  RM_SYNC_STORAGE,
   stepFunctionsInvocationConfig,
 } from "./index";
 
@@ -22,8 +23,18 @@ describe("getStepStartStates", () => {
       [AD_SYNC_GROUPS]: { disabled: true },
       [AD_SYNC_GROUP_MEMBERS]: { disabled: true },
       [AD_SYNC_USERS]: { disabled: true },
-      [RM_SYNC_RESOURCES]: { disabled: true },
+      [RM_SYNC_COMPUTE]: { disabled: true },
+      [RM_SYNC_STORAGE]: { disabled: true },
     });
+
+    // Verify all but account and cleanup steps (the rest are AD or RM steps)
+    // have disable state, to catch failure to add new steps that should be
+    // accounted for in determining disablement based on integration config.
+    const stepIds = stepFunctionsInvocationConfig
+      .integrationStepPhases!.map(e => e.steps.map(s => s.id))
+      .flat()
+      .filter(e => !/(account|cleanup)/.exec(e));
+    expect(Object.keys(states)).toEqual(expect.arrayContaining(stepIds));
   });
 
   test("ingestActiveDirectory: true", () => {
@@ -32,7 +43,8 @@ describe("getStepStartStates", () => {
     });
     const states = stepFunctionsInvocationConfig.getStepStartStates!(context);
     expect(states).toEqual({
-      [RM_SYNC_RESOURCES]: { disabled: true },
+      [RM_SYNC_COMPUTE]: { disabled: true },
+      [RM_SYNC_STORAGE]: { disabled: true },
     });
   });
 

@@ -20,6 +20,15 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
+"@azure/arm-storage@^11.0.0":
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-storage/-/arm-storage-11.0.0.tgz#9445b42d65a6f97c2337ab3e4cabeecaa79b99bb"
+  integrity sha512-E8n5J9jG+Bt767yfgyeRl9TS8MScEStZ/38eAvmpAqFes6BDyfvpfpPJLUDfg9fo3JoDoUD1w5dUjepiNlKh8Q==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/ms-rest-azure-env@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@azure/ms-rest-azure-env/-/ms-rest-azure-env-2.0.0.tgz#45809f89763a480924e21d3c620cd40866771625"
@@ -932,10 +941,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@jupiterone/jupiter-managed-integration-sdk@^28.2.3":
-  version "28.2.3"
-  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-28.2.3.tgz#e2d4afc950bd53e49cf082f130e8116118e6e747"
-  integrity sha512-DefMuFdUHr3GlXcHM7QI/fg5050zRvJnieq/sVrVCGcEmkysIyUklBbNNl8WWKuT7e5RW3DRQmKAx+oUKfJnXw==
+"@jupiterone/jupiter-managed-integration-sdk@^28.3.0":
+  version "28.3.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-28.3.0.tgz#2f0b1069086556845291131d56d2330b75b8fd18"
+  integrity sha512-b76ZiGaIrh9HtjUfm5lZUCd4hkXmt5FMPKK5BBn7M6L6/7sKTqV3U8PU0cod27i6jn3aEdrF2OfUIETqTvkcOQ==
 
 "@microsoft/microsoft-graph-client@^2.0.0":
   version "2.0.0"

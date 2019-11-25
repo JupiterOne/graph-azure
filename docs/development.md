@@ -6,11 +6,11 @@ collection][1].
 Any Azure account may be used for local development, though JupiterOne staff
 developers maintain an Azure account for the purpose of developing this
 integration. The account has a credit card associated with it, so it must be
-considered one to keep secured to avoid unauthorized resource allocation and
+considered a secured account to avoid unauthorized resource allocation and
 expenses.
 
 The example Azure resources are maintained by Terraform to allow for easy setup
-and teardown, to allow for the use of any Azure account and to avoid unnecessary
+and teardown, for the use of any Azure account, and to avoid unnecessary
 expenses between development cycles.
 
 ## Prerequisites

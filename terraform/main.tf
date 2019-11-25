@@ -31,7 +31,12 @@ resource "azurerm_subnet" "j1dev" {
   resource_group_name       = "${azurerm_resource_group.j1dev.name}"
   virtual_network_name      = "${azurerm_virtual_network.j1dev.name}"
   address_prefix            = "10.0.2.0/24"
-  network_security_group_id = "${azurerm_network_security_group.j1dev}"
+  network_security_group_id = "${azurerm_network_security_group.j1dev.id}"
+}
+
+resource "azurerm_subnet_network_security_group_association" "j1dev" {
+  subnet_id                 = "${azurerm_subnet.j1dev.id}"
+  network_security_group_id = "${azurerm_network_security_group.j1dev.id}"
 }
 
 resource "azurerm_public_ip" "j1dev" {
@@ -85,17 +90,8 @@ resource "azurerm_network_interface" "j1dev" {
   }
 }
 
-resource "random_id" "randomId" {
-  keepers = {
-    # Generate a new ID only when a new resource group is defined
-    resource_group = "${azurerm_resource_group.j1dev.name}"
-  }
-
-  byte_length = 8
-}
-
 resource "azurerm_storage_account" "j1dev" {
-  name                = "diag${random_id.randomId.hex}"
+  name                = "j1dev"
   resource_group_name = "${azurerm_resource_group.j1dev.name}"
   location            = "eastus"
   account_replication_type = "LRS"
@@ -104,6 +100,11 @@ resource "azurerm_storage_account" "j1dev" {
   tags = {
     environment = "${local.j1env}"
   }
+}
+
+resource "azurerm_storage_container" "j1dev" {
+  name = "j1dev"
+  storage_account_name = "${azurerm_storage_account.j1dev.name}"
 }
 
 resource "azurerm_virtual_machine" "j1dev" {

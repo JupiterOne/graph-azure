@@ -65,6 +65,7 @@ export function createAccountGroupRelationship(
     _toEntityKey: childKey,
   };
 }
+
 export function createAccountUserRelationship(
   account: AccountEntity,
   user: User,

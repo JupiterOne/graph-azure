@@ -5,6 +5,7 @@ import {
   PublicIPAddress,
   VirtualNetwork,
 } from "@azure/arm-network/esm/models";
+import { BlobContainer, StorageAccount } from "@azure/arm-storage/esm/models";
 import { Polly } from "@pollyjs/core";
 
 import polly from "../../../test/helpers/polly";
@@ -159,5 +160,64 @@ describe("iterateVirtualNetworks", () => {
         }),
       }),
     ]);
+  });
+});
+
+describe("iterateStorageAccounts", () => {
+  test("all", async () => {
+    p = polly(__dirname, "iterateStorageAccounts");
+
+    const client = new ResourceManagerClient(config);
+
+    const sa: StorageAccount[] = [];
+    await client.iterateStorageAccounts(e => {
+      sa.push(e);
+    });
+
+    expect(sa).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: "j1dev",
+        tags: expect.objectContaining({
+          environment: "j1dev",
+        }),
+      }),
+    ]);
+  });
+});
+
+describe("iterateStorageBlobContainers", () => {
+  test("all", async () => {
+    p = polly(__dirname, "iterateStorageBlobContainers");
+
+    const client = new ResourceManagerClient(config);
+
+    const containers: BlobContainer[] = [];
+    await client.iterateStorageBlobContainers(
+      {
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev",
+        name: "j1dev",
+      } as StorageAccount,
+      e => {
+        containers.push(e);
+      },
+    );
+
+    expect(containers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.stringMatching(
+            /Microsoft\.Storage\/storageAccounts\/j1dev\/blobServices\/default\/containers\/bootdiagnostics-j1dev-/,
+          ),
+          name: expect.stringMatching(/bootdiagnostics-j1dev-/),
+        }),
+        expect.objectContaining({
+          id:
+            "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/j1dev",
+          name: "j1dev",
+        }),
+      ]),
+    );
   });
 });

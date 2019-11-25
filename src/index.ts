@@ -23,6 +23,7 @@ import synchronizeGroups from "./synchronizers/synchronizeGroups";
 import synchronizeComputeResources from "./synchronizers/syncronizeComputeResources";
 import synchronizeUsers from "./synchronizers/syncronizeUsers";
 import { AzureIntegrationInstanceConfig } from "./types";
+import synchronizeStorageAccounts from "./synchronizers/synchronizeStorageAccounts";
 
 export const AD_FETCH_GROUPS = "fetch-groups";
 export const AD_FETCH_GROUP_MEMBERS = "fetch-group-members";
@@ -33,7 +34,8 @@ export const AD_SYNC_USERS = "sync-users";
 
 export const CLEANUP = "cleanup";
 
-export const RM_SYNC_RESOURCES = "sync-rm";
+export const RM_SYNC_COMPUTE = "sync-rm-compute";
+export const RM_SYNC_STORAGE = "sync-rm-storage";
 
 export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   instanceConfigFields: {
@@ -89,7 +91,8 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     if (resourceManager.disabled) {
       states = {
         ...states,
-        [RM_SYNC_RESOURCES]: resourceManager,
+        [RM_SYNC_COMPUTE]: resourceManager,
+        [RM_SYNC_STORAGE]: resourceManager,
       };
     }
 
@@ -177,12 +180,23 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           },
         },
         {
-          id: RM_SYNC_RESOURCES,
-          name: "Synchronize Azure Resources",
+          id: RM_SYNC_COMPUTE,
+          name: "Synchronize Compute",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
           ): Promise<IntegrationExecutionResult> => {
             return synchronizeComputeResources(
+              initializeContext(executionContext),
+            );
+          },
+        },
+        {
+          id: RM_SYNC_STORAGE,
+          name: "Synchronize Storage",
+          executionHandler: async (
+            executionContext: IntegrationStepExecutionContext,
+          ): Promise<IntegrationExecutionResult> => {
+            return synchronizeStorageAccounts(
               initializeContext(executionContext),
             );
           },

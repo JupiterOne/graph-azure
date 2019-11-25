@@ -1,6 +1,6 @@
 # Microsoft Resource Manager Tag Support
 
-Grouping resouces is important for accomplishing a number of infrastructure
+Grouping resources is important for accomplishing a number of infrastructure
 management tasks. This is supported in Azure using resource groups and tagging.
 The Azure [Tags How to][1] states:
 

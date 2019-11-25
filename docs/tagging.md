@@ -7,7 +7,7 @@ The Azure [Tags How to][1] states:
 > Tags enable you to retrieve related resources from different resource groups.
 
 See [Tag Support][2] for details on which resources support tagging, because not
-all of them do 😳. This means that it will not be possible to leverage tags as
+all of them do. 😳 This means that it will not be possible to leverage tags as
 additional properties on JupiterOne entities representing resources that do not
 support tagging.
 

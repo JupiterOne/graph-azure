@@ -4,6 +4,7 @@ import {
   IntegrationExecutionResult,
   PersisterOperationsResult,
   summarizePersisterOperationsResults,
+  IntegrationRelationship,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
@@ -13,7 +14,6 @@ import {
 import {
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
   AccountEntity,
-  AccountGroupRelationship,
   GROUP_ENTITY_TYPE,
   GroupEntity,
 } from "../jupiterone";
@@ -43,12 +43,12 @@ export default async function synchronizeGroups(
   }
 
   const newGroupEntities: GroupEntity[] = [];
-  const newGroupRelationships: AccountGroupRelationship[] = [];
+  const newGroupRelationships: IntegrationRelationship[] = [];
 
-  await groupsCache.forEach((e, i, t) => {
-    newGroupEntities.push(createGroupEntity(e.data));
+  await groupsCache.forEach(e => {
+    newGroupEntities.push(createGroupEntity(e.entry.data));
     newGroupRelationships.push(
-      createAccountGroupRelationship(accountEntity, e.data),
+      createAccountGroupRelationship(accountEntity, e.entry.data),
     );
   });
 
@@ -82,7 +82,7 @@ async function processGroups(
 
 async function processAccountGroups(
   executionContext: AzureExecutionContext,
-  newAccountGroupRelationships: AccountGroupRelationship[],
+  newAccountGroupRelationships: IntegrationRelationship[],
 ): Promise<PersisterOperationsResult> {
   const { graph, persister } = executionContext;
   const oldRelationships = await graph.findRelationshipsByType(

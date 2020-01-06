@@ -1,7 +1,9 @@
-import { IntegrationInstance } from "@jupiterone/jupiter-managed-integration-sdk";
+import {
+  IntegrationInstance,
+  EntityFromIntegration,
+} from "@jupiterone/jupiter-managed-integration-sdk";
 import { Organization } from "@microsoft/microsoft-graph-types";
 
-import { AccountEntity } from "../jupiterone";
 import {
   createAccountEntity,
   createGroupEntity,
@@ -30,10 +32,18 @@ describe("createAccountEntity", () => {
     };
     const accountEntity = createAccountEntity(instance, organization);
 
-    const expected: AccountEntity = {
-      _class: "Account",
+    const expected: EntityFromIntegration & {
+      name: string;
+      defaultDomain: string;
+      organizationName: string;
+      verifiedDomains: string[];
+    } = {
+      _class: ["Account"],
       _key: "azure_account_the-instance-id",
       _type: "azure_account",
+      _scope: "azure_account",
+      _rawData: [{ name: "default", rawData: organization }],
+      name: "Org Display Name",
       displayName: "instance.config.name configured by customer",
       defaultDomain: "something.onmicrosoft.com",
       organizationName: "Org Display Name",
@@ -74,6 +84,7 @@ describe("createGroupEntity", () => {
       _class: "UserGroup",
       _key: "azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792",
       _type: "azure_user_group",
+      _scope: "azure_user_group",
       classification: undefined,
       createdOn: 1556042765000,
       deletedOn: undefined,
@@ -110,6 +121,7 @@ describe("createUserEntity", () => {
       _class: "User",
       _key: "azure_user_abf00eda-02d6-4053-a077-eef036e1a4c8",
       _type: "azure_user",
+      _scope: "azure_user",
       displayName: "Andrew Kulakov",
       givenName: "Andrew",
       id: "abf00eda-02d6-4053-a077-eef036e1a4c8",

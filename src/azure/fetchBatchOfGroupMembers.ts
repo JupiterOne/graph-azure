@@ -31,14 +31,12 @@ export default async function fetchBatchOfGroupMembers(
   let fetchErrorOccurred = false;
 
   await groupsCache.forEach(
-    async (
-      groupEntry: IntegrationCacheEntry,
-      groupEntryIndex: number,
-      groupEntryCount: number,
-    ) => {
-      totalGroups = groupEntryCount;
-
+    async e => {
+      const groupEntry = e.entry;
+      const groupEntryIndex = e.entryIndex;
       const group = groupEntry.data as Group;
+
+      totalGroups = e.totalEntries;
 
       // load up accumulated list of members
       const groupMembers: GroupMember[] =
@@ -46,6 +44,7 @@ export default async function fetchBatchOfGroupMembers(
 
       // fetch members for group
       do {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const response = await azure.fetchGroupMembers(group.id!, {
           nextLink,
           limit,
@@ -86,7 +85,7 @@ export default async function fetchBatchOfGroupMembers(
         return pagesProcessed === batchPages;
       }
     },
-    groupIndex,
+    { skip: groupIndex },
   );
 
   const groupMembersFetchCompleted =

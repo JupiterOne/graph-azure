@@ -73,11 +73,11 @@ async function synchronizeBlobStorage(
     "blob",
   );
 
-  const newAccountServiceRelationship = createIntegrationRelationship(
-    "HAS",
-    accountEntity,
-    newServiceEntity,
-  );
+  const newAccountServiceRelationship = createIntegrationRelationship({
+    _class: "HAS",
+    from: accountEntity,
+    to: newServiceEntity,
+  });
 
   const newContainerEntities: EntityFromIntegration[] = [];
   const newServiceContainerRelationships: IntegrationRelationship[] = [];
@@ -90,7 +90,11 @@ async function synchronizeBlobStorage(
     );
     newContainerEntities.push(containerEntity);
     newServiceContainerRelationships.push(
-      createIntegrationRelationship("HAS", newServiceEntity, containerEntity),
+      createIntegrationRelationship({
+        _class: "HAS",
+        from: newServiceEntity,
+        to: containerEntity,
+      }),
     );
   });
 

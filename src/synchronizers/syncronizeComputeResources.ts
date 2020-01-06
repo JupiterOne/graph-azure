@@ -13,8 +13,8 @@ import {
   IntegrationError,
   IntegrationExecutionResult,
   PersisterOperationsResult,
-  RelationshipFromIntegration,
   summarizePersisterOperationsResults,
+  IntegrationRelationship,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
@@ -53,8 +53,6 @@ import {
   VIRTUAL_NETWORK_ENTITY_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
   VirtualMachineEntity,
-  VirtualMachineNetworkInterfaceRelationship,
-  VirtualMachinePublicIPAddressRelationship,
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
 
@@ -88,9 +86,9 @@ export default async function synchronizeComputeResources(
     fetchVirtualMachines(azrm, webLinker),
   ]);
 
-  const newSubnetVmRelationships: RelationshipFromIntegration[] = [];
-  const newVMNicRelationships: VirtualMachineNetworkInterfaceRelationship[] = [];
-  const newVMAddressRelationships: VirtualMachinePublicIPAddressRelationship[] = [];
+  const newSubnetVmRelationships: IntegrationRelationship[] = [];
+  const newVMNicRelationships: IntegrationRelationship[] = [];
+  const newVMAddressRelationships: IntegrationRelationship[] = [];
 
   forEach(newVms, vm => {
     const vmData = getRawData(vm) as VirtualMachine;
@@ -211,7 +209,7 @@ async function synchronizeNetworkResources(
   const subnetSecurityGroupMap: {
     [subnetId: string]: NetworkSecurityGroup;
   } = {};
-  const newSecurityGroupNicRelationships: RelationshipFromIntegration[] = [];
+  const newSecurityGroupNicRelationships: IntegrationRelationship[] = [];
 
   for (const sge of newSecurityGroups) {
     const sg = getRawData(sge) as NetworkSecurityGroup;
@@ -230,8 +228,8 @@ async function synchronizeNetworkResources(
   }
 
   const newSubnets: EntityFromIntegration[] = [];
-  const newVnetSubnetRelationships: RelationshipFromIntegration[] = [];
-  const newSecurityGroupSubnetRelationships: RelationshipFromIntegration[] = [];
+  const newVnetSubnetRelationships: IntegrationRelationship[] = [];
+  const newSecurityGroupSubnetRelationships: IntegrationRelationship[] = [];
 
   for (const vnetEntity of newVirtualNetworks) {
     const vnet = getRawData(vnetEntity) as VirtualNetwork;

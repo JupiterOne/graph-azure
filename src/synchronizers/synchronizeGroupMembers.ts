@@ -2,16 +2,14 @@ import {
   IntegrationCacheEntry,
   IntegrationError,
   IntegrationExecutionResult,
+  IntegrationRelationship,
   PersisterOperationsResult,
   summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember } from "../azure";
 import { createGroupMemberRelationship } from "../converters";
-import {
-  GROUP_MEMBER_RELATIONSHIP_TYPE,
-  GroupMemberRelationship,
-} from "../jupiterone";
+import { GROUP_MEMBER_RELATIONSHIP_TYPE } from "../jupiterone";
 import { AzureExecutionContext, GroupsCacheState } from "../types";
 
 export default async function synchronizeGroupMembers(
@@ -31,9 +29,9 @@ export default async function synchronizeGroupMembers(
 
   const operationResults: PersisterOperationsResult[] = [];
 
-  await groupsCache.forEach(async (e, i, t) => {
-    const newGroupRelationships: GroupMemberRelationship[] = [];
-    const group: Group = e.data;
+  await groupsCache.forEach(async e => {
+    const newGroupRelationships: IntegrationRelationship[] = [];
+    const group: Group = e.entry.data;
     if (group.members) {
       for (const member of group.members as GroupMember[]) {
         newGroupRelationships.push(

@@ -7,42 +7,45 @@ import {
   VirtualNetwork,
 } from "@azure/arm-network/esm/models";
 import {
+  createIntegrationRelationship,
+  IntegrationRelationship,
   RelationshipDirection,
-  RelationshipFromIntegration,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember, MemberType, User } from "../azure";
 import {
+  ACCOUNT_ENTITY_TYPE,
   ACCOUNT_GROUP_RELATIONSHIP_CLASS,
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
   ACCOUNT_USER_RELATIONSHIP_CLASS,
   ACCOUNT_USER_RELATIONSHIP_TYPE,
   AccountEntity,
-  AccountGroupRelationship,
-  AccountUserRelationship,
   GROUP_ENTITY_CLASS,
   GROUP_ENTITY_TYPE,
   GROUP_MEMBER_ENTITY_CLASS,
   GROUP_MEMBER_ENTITY_TYPE,
   GROUP_MEMBER_RELATIONSHIP_CLASS,
   GROUP_MEMBER_RELATIONSHIP_TYPE,
-  GroupMemberRelationship,
+  NETWORK_INTERFACE_ENTITY_TYPE,
+  PUBLIC_IP_ADDRESS_ENTITY_TYPE,
+  SECURITY_GROUP_ENTITY_TYPE,
   SECURITY_GROUP_NIC_RELATIONSHIP_CLASS,
   SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
   SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS,
   SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
+  SUBNET_ENTITY_TYPE,
   SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
   SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
+  VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
   VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+  VIRTUAL_NETWORK_ENTITY_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
-  VirtualMachineNetworkInterfaceRelationship,
-  VirtualMachinePublicIPAddressRelationship,
 } from "../jupiterone";
 import {
   generateEntityKey,
@@ -52,51 +55,57 @@ import {
 export function createAccountGroupRelationship(
   account: AccountEntity,
   group: Group,
-): AccountGroupRelationship {
+): IntegrationRelationship {
   const parentKey = account._key;
   const childKey = generateEntityKey(GROUP_ENTITY_TYPE, group.id);
   const key = generateRelationshipKey(parentKey, childKey);
 
-  return {
+  return createIntegrationRelationship({
     _class: ACCOUNT_GROUP_RELATIONSHIP_CLASS,
-    _fromEntityKey: parentKey,
-    _key: key,
-    _type: ACCOUNT_GROUP_RELATIONSHIP_TYPE,
-    _toEntityKey: childKey,
-  };
+    fromKey: parentKey,
+    fromType: ACCOUNT_ENTITY_TYPE,
+    toKey: childKey,
+    toType: GROUP_ENTITY_TYPE,
+    properties: {
+      _key: key,
+      _type: ACCOUNT_GROUP_RELATIONSHIP_TYPE,
+    },
+  });
 }
 
 export function createAccountUserRelationship(
   account: AccountEntity,
   user: User,
-): AccountUserRelationship {
-  const parentKey = account._key;
-  const childKey = generateEntityKey(USER_ENTITY_TYPE, user.id);
-  const key = generateRelationshipKey(parentKey, childKey);
+): IntegrationRelationship {
+  const fromKey = account._key;
+  const toKey = generateEntityKey(USER_ENTITY_TYPE, user.id);
+  const _key = generateRelationshipKey(fromKey, toKey);
 
-  return {
+  return createIntegrationRelationship({
     _class: ACCOUNT_USER_RELATIONSHIP_CLASS,
-    _fromEntityKey: parentKey,
-    _key: key,
-    _type: ACCOUNT_USER_RELATIONSHIP_TYPE,
-    _toEntityKey: childKey,
-  };
+    fromType: ACCOUNT_ENTITY_TYPE,
+    fromKey,
+    toType: USER_ENTITY_TYPE,
+    toKey,
+    properties: {
+      _key,
+      _type: ACCOUNT_USER_RELATIONSHIP_TYPE,
+    },
+  });
 }
 
 export function createGroupMemberRelationship(
   group: Group,
   member: GroupMember,
-): GroupMemberRelationship {
+): IntegrationRelationship {
   const memberEntityType = getGroupMemberEntityType(member);
   const memberEntityClass = getGroupMemberEntityClass(member);
 
   const groupKey = generateEntityKey(GROUP_ENTITY_TYPE, group.id);
   const memberKey = generateEntityKey(memberEntityType, member.id);
 
-  return {
+  return createIntegrationRelationship({
     _class: GROUP_MEMBER_RELATIONSHIP_CLASS,
-    _key: generateRelationshipKey(groupKey, memberKey),
-    _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
     _mapping: {
       relationshipDirection: RelationshipDirection.FORWARD,
       sourceEntityKey: groupKey,
@@ -110,10 +119,14 @@ export function createGroupMemberRelationship(
         email: member.mail,
       },
     },
-    groupId: group.id,
-    memberId: member.id,
-    memberType: member["@odata.type"],
-  };
+    properties: {
+      _key: generateRelationshipKey(groupKey, memberKey),
+      _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
+      groupId: group.id,
+      memberId: member.id,
+      memberType: member["@odata.type"],
+    },
+  });
 }
 
 function getGroupMemberEntityType(member: GroupMember): string {
@@ -141,85 +154,103 @@ function getGroupMemberEntityClass(member: GroupMember): string {
 export function createNetworkSecurityGroupNicRelationship(
   securityGroup: NetworkSecurityGroup,
   nic: NetworkInterface,
-): RelationshipFromIntegration {
-  return {
-    _key: `${securityGroup.id}_protects_${nic.id}`,
-    _type: SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
+): IntegrationRelationship {
+  return createIntegrationRelationship({
     _class: SECURITY_GROUP_NIC_RELATIONSHIP_CLASS,
-    _fromEntityKey: securityGroup.id as string,
-    _toEntityKey: nic.id as string,
-    displayName: "PROTECTS",
-  };
+    fromKey: securityGroup.id as string,
+    fromType: SECURITY_GROUP_ENTITY_TYPE,
+    toKey: nic.id as string,
+    toType: NETWORK_INTERFACE_ENTITY_TYPE,
+    properties: {
+      _key: `${securityGroup.id}_protects_${nic.id}`,
+      _type: SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
+    },
+  });
 }
 
 export function createNetworkSecurityGroupSubnetRelationship(
   securityGroup: NetworkSecurityGroup,
   subnet: Subnet,
-): RelationshipFromIntegration {
-  return {
-    _key: `${securityGroup.id}_protects_${subnet.id}`,
-    _type: SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
+): IntegrationRelationship {
+  return createIntegrationRelationship({
     _class: SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS,
-    _fromEntityKey: securityGroup.id as string,
-    _toEntityKey: subnet.id as string,
-    displayName: "PROTECTS",
-  };
+    fromKey: securityGroup.id as string,
+    fromType: SECURITY_GROUP_ENTITY_TYPE,
+    toKey: subnet.id as string,
+    toType: SUBNET_ENTITY_TYPE,
+    properties: {
+      _key: `${securityGroup.id}_protects_${subnet.id}`,
+      _type: SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
+    },
+  });
 }
 
 export function createSubnetVirtualMachineRelationship(
   subnet: Subnet,
   vm: VirtualMachine,
-): RelationshipFromIntegration {
-  return {
-    _key: `${subnet.id}_has_${vm.id}`,
-    _type: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
+): IntegrationRelationship {
+  return createIntegrationRelationship({
     _class: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
-    _fromEntityKey: subnet.id as string,
-    _toEntityKey: vm.id as string,
-    displayName: "HAS",
-  };
+    fromKey: subnet.id as string,
+    fromType: SUBNET_ENTITY_TYPE,
+    toKey: vm.id as string,
+    toType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    properties: {
+      _key: `${subnet.id}_has_${vm.id}`,
+      _type: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
+    },
+  });
 }
 
 export function createVirtualNetworkSubnetRelationship(
   vnet: VirtualNetwork,
   subnet: Subnet,
-): RelationshipFromIntegration {
-  return {
-    _key: `${vnet.id}_contains_${subnet.id}`,
-    _type: VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
+): IntegrationRelationship {
+  return createIntegrationRelationship({
     _class: VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS,
-    _fromEntityKey: vnet.id as string,
-    _toEntityKey: subnet.id as string,
-    displayName: "CONTAINS",
-  };
+    fromKey: vnet.id as string,
+    fromType: VIRTUAL_NETWORK_ENTITY_TYPE,
+    toKey: subnet.id as string,
+    toType: SUBNET_ENTITY_TYPE,
+    properties: {
+      _key: `${vnet.id}_contains_${subnet.id}`,
+      _type: VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
+    },
+  });
 }
 
 export function createVirtualMachinePublicIPAddressRelationship(
   vm: VirtualMachine,
   ipAddress: PublicIPAddress,
-): VirtualMachinePublicIPAddressRelationship {
-  return {
-    _key: `${vm.id}_uses_${ipAddress.id}`,
-    _type: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+): IntegrationRelationship {
+  return createIntegrationRelationship({
     _class: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS,
-    _fromEntityKey: vm.id as string,
-    _toEntityKey: ipAddress.id as string,
-    displayName: "USES",
-    vmId: vm.vmId as string,
-  };
+    fromKey: vm.id as string,
+    fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    toKey: ipAddress.id as string,
+    toType: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
+    properties: {
+      _key: `${vm.id}_uses_${ipAddress.id}`,
+      _type: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+      vmId: vm.vmId as string,
+    },
+  });
 }
 
 export function createVirtualMachineNetworkInterfaceRelationship(
   vm: VirtualMachine,
   nic: NetworkInterface,
-): VirtualMachineNetworkInterfaceRelationship {
-  return {
-    _key: `${vm.id}_uses_${nic.id}`,
-    _type: VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+): IntegrationRelationship {
+  return createIntegrationRelationship({
     _class: VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
-    _fromEntityKey: vm.id as string,
-    _toEntityKey: nic.id as string,
-    displayName: "USES",
-    vmId: vm.vmId as string,
-  };
+    fromKey: vm.id as string,
+    fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    toKey: nic.id as string,
+    toType: NETWORK_INTERFACE_ENTITY_TYPE,
+    properties: {
+      _key: `${vm.id}_uses_${nic.id}`,
+      _type: VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+      vmId: vm.vmId as string,
+    },
+  });
 }

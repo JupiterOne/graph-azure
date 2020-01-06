@@ -1,12 +1,16 @@
-import { IntegrationInstance } from "@jupiterone/jupiter-managed-integration-sdk";
-import { Organization } from "@microsoft/microsoft-graph-types";
 import map from "lodash.map";
+
+import {
+  createIntegrationEntity,
+  EntityFromIntegration,
+  IntegrationInstance,
+} from "@jupiterone/jupiter-managed-integration-sdk";
+import { Organization } from "@microsoft/microsoft-graph-types";
 
 import { Group, User } from "../azure";
 import {
   ACCOUNT_ENTITY_CLASS,
   ACCOUNT_ENTITY_TYPE,
-  AccountEntity,
   GROUP_ENTITY_CLASS,
   GROUP_ENTITY_TYPE,
   GroupEntity,
@@ -20,24 +24,30 @@ import getTime from "../utils/getTime";
 export function createAccountEntity(
   instance: IntegrationInstance,
   organization: Organization,
-): AccountEntity {
+): EntityFromIntegration {
   let defaultDomain: string | undefined;
   const verifiedDomains = map(organization.verifiedDomains, e => {
-    if (e.isDefault!) {
+    if (e.isDefault) {
       defaultDomain = e.name;
     }
-    return e.name!;
+    return e.name as string;
   });
 
-  return {
-    _class: ACCOUNT_ENTITY_CLASS,
-    _key: generateEntityKey(ACCOUNT_ENTITY_TYPE, instance.id),
-    _type: ACCOUNT_ENTITY_TYPE,
-    displayName: instance.name,
-    organizationName: organization.displayName,
-    defaultDomain,
-    verifiedDomains,
-  };
+  return createIntegrationEntity({
+    entityData: {
+      source: organization,
+      assign: {
+        _class: ACCOUNT_ENTITY_CLASS,
+        _key: generateEntityKey(ACCOUNT_ENTITY_TYPE, instance.id),
+        _type: ACCOUNT_ENTITY_TYPE,
+        name: organization.displayName,
+        displayName: instance.name,
+        organizationName: organization.displayName,
+        defaultDomain,
+        verifiedDomains,
+      },
+    },
+  });
 }
 
 export function createGroupEntity(d: Group): GroupEntity {
@@ -45,6 +55,7 @@ export function createGroupEntity(d: Group): GroupEntity {
     _class: GROUP_ENTITY_CLASS,
     _key: generateEntityKey(GROUP_ENTITY_TYPE, d.id),
     _type: GROUP_ENTITY_TYPE,
+    _scope: GROUP_ENTITY_TYPE,
     displayName: d.displayName,
     id: d.id,
     deletedOn: getTime(d.deletedDateTime),
@@ -64,6 +75,7 @@ export function createUserEntity(data: User): UserEntity {
     _class: USER_ENTITY_CLASS,
     _key: generateEntityKey(USER_ENTITY_TYPE, data.id),
     _type: USER_ENTITY_TYPE,
+    _scope: USER_ENTITY_TYPE,
     displayName: data.displayName,
     givenName: data.givenName,
     jobTitle: data.jobTitle,

@@ -6,15 +6,14 @@ import {
   Subnet,
   VirtualNetwork,
 } from "@azure/arm-network/esm/models";
-import { RelationshipDirection } from "@jupiterone/jupiter-managed-integration-sdk";
+import {
+  RelationshipDirection,
+  RelationshipFromIntegration,
+  MappedRelationshipFromIntegration,
+} from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember } from "../azure";
-import {
-  AccountEntity,
-  GroupMemberRelationship,
-  VirtualMachineNetworkInterfaceRelationship,
-  VirtualMachinePublicIPAddressRelationship,
-} from "../jupiterone";
+import { AccountEntity } from "../jupiterone";
 import {
   createAccountGroupRelationship,
   createAccountUserRelationship,
@@ -64,6 +63,8 @@ describe("createAccountGroupRelationship", () => {
         "azure_account_id_azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792",
       _toEntityKey: "azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792",
       _type: "azure_account_has_group",
+      _scope: "azure_account_has_azure_user_group",
+      displayName: "HAS",
     });
   });
 });
@@ -91,6 +92,8 @@ describe("createAccountUserRelationship", () => {
       _key: "azure_account_id_azure_user_abf00eda-02d6-4053-a077-eef036e1a4c8",
       _toEntityKey: "azure_user_abf00eda-02d6-4053-a077-eef036e1a4c8",
       _type: "azure_account_has_user",
+      _scope: "azure_account_has_azure_user",
+      displayName: "HAS",
     });
   });
 });
@@ -109,11 +112,16 @@ describe("createGroupMemberRelationship", () => {
       mail: "user@example.com",
     };
 
-    const relationship: GroupMemberRelationship = {
+    const relationship: MappedRelationshipFromIntegration & {
+      groupId: string;
+      memberId: string;
+      memberType: string;
+    } = {
       _class: "HAS",
       _key:
         "azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792_azure_user_324e8daa-9c29-42a4-a74b-b9893e6d9750",
       _type: "azure_group_has_member",
+      _scope: "azure_group_has_member",
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
         sourceEntityKey:
@@ -131,6 +139,7 @@ describe("createGroupMemberRelationship", () => {
       groupId: "89fac263-2430-48fd-9278-dacfdfc89792",
       memberId: "324e8daa-9c29-42a4-a74b-b9893e6d9750",
       memberType: "#microsoft.graph.user",
+      displayName: "HAS",
     };
 
     expect(createGroupMemberRelationship(group, member)).toEqual(relationship);
@@ -145,11 +154,16 @@ describe("createGroupMemberRelationship", () => {
       mail: null,
     };
 
-    const relationship: GroupMemberRelationship = {
+    const relationship: MappedRelationshipFromIntegration & {
+      groupId: string;
+      memberId: string;
+      memberType: string;
+    } = {
       _class: "HAS",
       _key:
         "azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792_azure_user_group_324e8daa-9c29-42a4-a74b-b9893e6d9750",
       _type: "azure_group_has_member",
+      _scope: "azure_group_has_member",
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
         sourceEntityKey:
@@ -167,6 +181,7 @@ describe("createGroupMemberRelationship", () => {
       groupId: "89fac263-2430-48fd-9278-dacfdfc89792",
       memberId: "324e8daa-9c29-42a4-a74b-b9893e6d9750",
       memberType: "#microsoft.graph.group",
+      displayName: "HAS",
     };
 
     expect(createGroupMemberRelationship(group, member)).toEqual(relationship);
@@ -180,11 +195,16 @@ describe("createGroupMemberRelationship", () => {
       jobTitle: null,
     };
 
-    const relationship: GroupMemberRelationship = {
+    const relationship: MappedRelationshipFromIntegration & {
+      groupId: string;
+      memberId: string;
+      memberType: string;
+    } = {
       _class: "HAS",
       _key:
         "azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792_azure_group_member_324e8daa-9c29-42a4-a74b-b9893e6d9750",
       _type: "azure_group_has_member",
+      _scope: "azure_group_has_member",
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
         sourceEntityKey:
@@ -202,6 +222,7 @@ describe("createGroupMemberRelationship", () => {
       groupId: "89fac263-2430-48fd-9278-dacfdfc89792",
       memberId: "324e8daa-9c29-42a4-a74b-b9893e6d9750",
       memberType: "#microsoft.graph.directoryObject",
+      displayName: "HAS",
     };
 
     expect(createGroupMemberRelationship(group, member)).toEqual(relationship);
@@ -220,10 +241,11 @@ describe("createVirtualNetworkSubnetRelationship", () => {
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
     };
 
-    const relationship = {
+    const relationship: RelationshipFromIntegration = {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_contains_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
       _type: "azure_vnet_contains_subnet",
+      _scope: "azure_vnet_contains_azure_subnet",
       _class: "CONTAINS",
       _fromEntityKey:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
@@ -250,10 +272,11 @@ describe("createSecurityGroupSubnetRelationship", () => {
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
     };
 
-    const relationship = {
+    const relationship: RelationshipFromIntegration = {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev_protects_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
       _type: "azure_security_group_protects_subnet",
+      _scope: "azure_security_group_protects_azure_subnet",
       _class: "PROTECTS",
       _fromEntityKey:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
@@ -280,10 +303,11 @@ describe("createNetworkSecurityGroupNicRelationship", () => {
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
     };
 
-    const relationship = {
+    const relationship: RelationshipFromIntegration = {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev_protects_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
       _type: "azure_security_group_protects_nic",
+      _scope: "azure_security_group_protects_azure_nic",
       _class: "PROTECTS",
       _fromEntityKey:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
@@ -312,10 +336,11 @@ describe("createVirtualMachinePublicIPAddressRelationship", () => {
       location: "eastus",
     };
 
-    const relationship = {
+    const relationship: RelationshipFromIntegration = {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_has_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
       _type: "azure_subnet_has_vm",
+      _scope: "azure_subnet_has_azure_vm",
       _class: "HAS",
       _fromEntityKey:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
@@ -344,10 +369,11 @@ describe("createVirtualMachinePublicIPAddressRelationship", () => {
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
     };
 
-    const relationship: VirtualMachinePublicIPAddressRelationship = {
+    const relationship: RelationshipFromIntegration & { vmId: string } = {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev_uses_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
       _type: "azure_vm_uses_public_ip",
+      _scope: "azure_vm_uses_azure_public_ip",
       _class: "USES",
       _fromEntityKey:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
@@ -377,10 +403,11 @@ describe("createVirtualMachineNetworkInterfaceRelationship", () => {
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
     };
 
-    const relationship: VirtualMachineNetworkInterfaceRelationship = {
+    const relationship: RelationshipFromIntegration & { vmId: string } = {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev_uses_/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
       _type: "azure_vm_uses_network_interface",
+      _scope: "azure_vm_uses_azure_nic",
       _class: "USES",
       _fromEntityKey:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",

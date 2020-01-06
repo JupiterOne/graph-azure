@@ -2,6 +2,7 @@ import {
   IntegrationCacheEntry,
   IntegrationError,
   IntegrationExecutionResult,
+  IntegrationRelationship,
   PersisterOperationsResult,
   summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
@@ -10,7 +11,6 @@ import { createAccountUserRelationship, createUserEntity } from "../converters";
 import {
   ACCOUNT_USER_RELATIONSHIP_TYPE,
   AccountEntity,
-  AccountUserRelationship,
   USER_ENTITY_TYPE,
   UserEntity,
 } from "../jupiterone";
@@ -40,12 +40,12 @@ export default async function synchronizeUsers(
   }
 
   const newUserEntities: UserEntity[] = [];
-  const newUserRelationships: AccountUserRelationship[] = [];
+  const newUserRelationships: IntegrationRelationship[] = [];
 
-  await usersCache.forEach((e, i, t) => {
-    newUserEntities.push(createUserEntity(e.data));
+  await usersCache.forEach(e => {
+    newUserEntities.push(createUserEntity(e.entry.data));
     newUserRelationships.push(
-      createAccountUserRelationship(accountEntity, e.data),
+      createAccountUserRelationship(accountEntity, e.entry.data),
     );
   });
 
@@ -79,7 +79,7 @@ async function processUsers(
 
 async function processAccountUsers(
   executionContext: AzureExecutionContext,
-  newAccountUserRelationships: AccountUserRelationship[],
+  newAccountUserRelationships: IntegrationRelationship[],
 ): Promise<PersisterOperationsResult> {
   const { graph, persister } = executionContext;
   const oldRelationships = await graph.findRelationshipsByType(

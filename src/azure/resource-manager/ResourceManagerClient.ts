@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { ComputeManagementClient } from "@azure/arm-compute";
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import { NetworkManagementClient } from "@azure/arm-network";

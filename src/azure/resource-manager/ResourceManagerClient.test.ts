@@ -22,22 +22,22 @@ test("client accessToken fetched once and used across resources", async () => {
   let requests = 0;
 
   p = polly(__dirname, "accessTokenCaching");
-  p.server.any().on("request", req => requests++);
+  p.server.any().on("request", () => requests++);
 
   const client = new ResourceManagerClient(config);
 
   await expect(
-    client.iterateNetworkInterfaces(e => undefined),
+    client.iterateNetworkInterfaces(() => undefined),
   ).resolves.toBeUndefined();
   expect(requests).toEqual(3);
 
   await expect(
-    client.iterateNetworkInterfaces(e => undefined),
+    client.iterateNetworkInterfaces(() => undefined),
   ).resolves.toBeUndefined();
   expect(requests).toEqual(4);
 
   await expect(
-    client.iterateVirtualMachines(e => undefined),
+    client.iterateVirtualMachines(() => undefined),
   ).resolves.toBeUndefined();
   expect(requests).toEqual(5);
 });

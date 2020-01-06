@@ -25,7 +25,7 @@ import { AzureExecutionContext } from "../types";
 export default async function synchronizeStorageAccounts(
   executionContext: AzureExecutionContext,
 ): Promise<IntegrationExecutionResult> {
-  const { azrm } = executionContext;
+  const { azrm, logger } = executionContext;
   const cache = executionContext.clients.getCache();
 
   const accountEntity = (await cache.getEntry("account")).data as AccountEntity;
@@ -40,6 +40,8 @@ export default async function synchronizeStorageAccounts(
   const operationsResults: PersisterOperationsResult[] = [];
 
   await azrm.iterateStorageAccounts(async e => {
+    logger.info({ storageAccount: e }, "Processing storage account...");
+
     operationsResults.push(
       await synchronizeStorageAccount(
         executionContext,
@@ -148,10 +150,20 @@ async function synchronizeStorageAccount(
   const { logger } = executionContext;
   const operationsResults: PersisterOperationsResult[] = [];
 
+  const storageAccountLogInfo = {
+    storageAccount: {
+      id: storageAccount.id,
+      kind: storageAccount.kind,
+    },
+  };
+
   if (storageAccount.primaryEndpoints) {
     for (const s of Object.keys(storageAccount.primaryEndpoints)) {
+      const logInfo = { ...storageAccountLogInfo, service: s };
+
       const synchronizer = storageServiceSynchronizers[s];
       if (synchronizer) {
+        logger.info(logInfo, "Processing storage account service...");
         operationsResults.push(
           await synchronizer(
             executionContext,
@@ -161,15 +173,12 @@ async function synchronizeStorageAccount(
           ),
         );
       } else {
-        logger.warn(
-          { storageAccount, service: s },
-          "Unhandled storage account service!",
-        );
+        logger.warn(logInfo, "Unhandled storage account service!");
       }
     }
   } else {
     logger.info(
-      { storageAccount },
+      storageAccountLogInfo,
       "Storage account has no registered service endpoints, nothing to synchronize",
     );
   }

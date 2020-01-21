@@ -85,7 +85,6 @@ describe("createNetworkInterfaceEntity", () => {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
       _type: "azure_nic",
-      _scope: "azure_nic",
       _class: "NetworkInterface",
       _rawData: [{ name: "default", rawData: data }],
       resourceGuid: "ab964820-ee40-4f8d-bfd9-0349b8b4f316",
@@ -147,7 +146,6 @@ describe("createPublicIPAddressEntity", () => {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
       _type: "azure_public_ip",
-      _scope: "azure_public_ip",
       _class: "IpAddress",
       _rawData: [{ name: "default", rawData: data }],
       resourceGuid: "d908c31d-c93a-4359-987f-8cfdd1b65a61",
@@ -249,7 +247,6 @@ describe("createVirtualMachineEntity", () => {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
       _type: "azure_vm",
-      _scope: "azure_vm",
       _class: "Host",
       _rawData: [{ name: "default", rawData: data }],
       displayName: "j1dev",
@@ -444,7 +441,6 @@ describe("createNetworkSecurityGroupEntity", () => {
     _key:
       "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
     _type: "azure_security_group",
-    _scope: "azure_security_group",
     _class: ["Firewall"],
     _rawData: [{ name: "default", rawData: data }],
     name: "j1dev",
@@ -528,7 +524,6 @@ describe("createVirtualNetworkEntity", () => {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
       _type: "azure_vnet",
-      _scope: "azure_vnet",
       _class: ["Network"],
       _rawData: [{ name: "default", rawData: data }],
       name: "j1dev",
@@ -598,7 +593,6 @@ describe("createSubnetEntity", () => {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
       _type: "azure_subnet",
-      _scope: "azure_subnet",
       _class: ["Network"],
       _rawData: [{ name: "default", rawData: data }],
       name: "j1dev",

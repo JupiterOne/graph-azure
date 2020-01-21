@@ -44,7 +44,6 @@ export function createNetworkInterfaceEntity(
   const entity: NetworkInterfaceEntity = {
     _key: data.id as string,
     _type: NETWORK_INTERFACE_ENTITY_TYPE,
-    _scope: NETWORK_INTERFACE_ENTITY_TYPE,
     _class: NETWORK_INTERFACE_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: data }],
     resourceGuid: data.resourceGuid,
@@ -75,7 +74,6 @@ export function createPublicIPAddressEntity(
   const entity = {
     _key: data.id as string,
     _type: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
-    _scope: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
     _class: PUBLIC_IP_ADDRESS_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: data }],
     resourceGuid: data.resourceGuid,
@@ -102,7 +100,6 @@ export function createVirtualMachineEntity(
   const entity = {
     _key: data.id as string,
     _type: VIRTUAL_MACHINE_ENTITY_TYPE,
-    _scope: VIRTUAL_MACHINE_ENTITY_TYPE,
     _class: VIRTUAL_MACHINE_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: data }],
     displayName: data.name,

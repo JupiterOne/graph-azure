@@ -57,7 +57,6 @@ describe("createStorageAccountEntity", () => {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev#blob",
       _type: "azure_storage_blob_service",
-      _scope: "azure_storage_blob_service",
       _class: ["Service"],
       _rawData: [{ name: "default", rawData: data }],
       name: "j1dev",
@@ -82,7 +81,6 @@ describe("createStorageAccountEntity", () => {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev#file",
       _type: "azure_storage_file_service",
-      _scope: "azure_storage_file_service",
       _class: ["Service"],
       _rawData: [{ name: "default", rawData: data }],
       name: "j1dev",
@@ -107,7 +105,6 @@ describe("createStorageAccountEntity", () => {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev#queue",
       _type: "azure_storage_queue_service",
-      _scope: "azure_storage_queue_service",
       _class: ["Service"],
       _rawData: [{ name: "default", rawData: data }],
       name: "j1dev",
@@ -134,7 +131,6 @@ describe("createStorageAccountEntity", () => {
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev#table",
       _type: "azure_storage_table_service",
-      _scope: "azure_storage_table_service",
       _class: ["Service"],
       _rawData: [{ name: "default", rawData: data }],
       name: "j1dev",
@@ -176,7 +172,6 @@ describe("createStorageBlobContainerEntity", () => {
     _key:
       "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
     _type: "azure_storage_container",
-    _scope: "azure_storage_container",
     _class: ["DataStore"],
     _rawData: [{ name: "default", rawData: data }],
     name: "bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",

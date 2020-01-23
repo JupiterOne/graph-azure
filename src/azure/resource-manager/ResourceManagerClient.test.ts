@@ -1,3 +1,5 @@
+import { createTestLogger } from "@jupiterone/jupiter-managed-integration-sdk";
+
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   NetworkInterface,
@@ -24,7 +26,7 @@ test("client accessToken fetched once and used across resources", async () => {
   p = polly(__dirname, "accessTokenCaching");
   p.server.any().on("request", () => requests++);
 
-  const client = new ResourceManagerClient(config);
+  const client = new ResourceManagerClient(config, createTestLogger());
 
   await expect(
     client.iterateNetworkInterfaces(() => undefined),
@@ -46,7 +48,7 @@ describe("iterateNetworkInterfaces", () => {
   test("all", async () => {
     p = polly(__dirname, "iterateNetworkInterfaces");
 
-    const client = new ResourceManagerClient(config);
+    const client = new ResourceManagerClient(config, createTestLogger());
 
     const vms: NetworkInterface[] = [];
     await client.iterateNetworkInterfaces(e => {
@@ -69,7 +71,7 @@ describe("iterateNetworkSecurityGroups", () => {
   test("all", async () => {
     p = polly(__dirname, "iterateNetworkSecurityGroups");
 
-    const client = new ResourceManagerClient(config);
+    const client = new ResourceManagerClient(config, createTestLogger());
 
     const securityGroups: NetworkSecurityGroup[] = [];
     await client.iterateNetworkSecurityGroups(e => {
@@ -98,7 +100,7 @@ describe("iteratePublicIPAddresses", () => {
   test("all", async () => {
     p = polly(__dirname, "iteratePublicIPAddresses");
 
-    const client = new ResourceManagerClient(config);
+    const client = new ResourceManagerClient(config, createTestLogger());
 
     const addresses: PublicIPAddress[] = [];
     await client.iteratePublicIPAddresses(e => {
@@ -121,7 +123,7 @@ describe("iterateVirtualMachines", () => {
   test("all", async () => {
     p = polly(__dirname, "iterateVirtualMachines");
 
-    const client = new ResourceManagerClient(config);
+    const client = new ResourceManagerClient(config, createTestLogger());
 
     const vms: VirtualMachine[] = [];
     await client.iterateVirtualMachines(e => {
@@ -144,7 +146,7 @@ describe("iterateVirtualNetworks", () => {
   test("all", async () => {
     p = polly(__dirname, "iterateVirtualNetworks");
 
-    const client = new ResourceManagerClient(config);
+    const client = new ResourceManagerClient(config, createTestLogger());
 
     const vms: VirtualNetwork[] = [];
     await client.iterateVirtualNetworks(e => {
@@ -167,7 +169,7 @@ describe("iterateStorageAccounts", () => {
   test("all", async () => {
     p = polly(__dirname, "iterateStorageAccounts");
 
-    const client = new ResourceManagerClient(config);
+    const client = new ResourceManagerClient(config, createTestLogger());
 
     const sa: StorageAccount[] = [];
     await client.iterateStorageAccounts(e => {
@@ -190,7 +192,7 @@ describe("iterateStorageBlobContainers", () => {
   test("all", async () => {
     p = polly(__dirname, "iterateStorageBlobContainers");
 
-    const client = new ResourceManagerClient(config);
+    const client = new ResourceManagerClient(config, createTestLogger());
 
     const containers: BlobContainer[] = [];
     await client.iterateStorageBlobContainers(

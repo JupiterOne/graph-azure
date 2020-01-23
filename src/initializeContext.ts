@@ -20,6 +20,6 @@ export default function initializeContext(
       config.directoryId,
       logger,
     ),
-    azrm: new ResourceManagerClient(config),
+    azrm: new ResourceManagerClient(config, context.logger),
   };
 }

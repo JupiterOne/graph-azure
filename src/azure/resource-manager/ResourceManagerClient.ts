@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
+
 import { ComputeManagementClient } from "@azure/arm-compute";
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import { NetworkManagementClient } from "@azure/arm-network";
@@ -13,15 +15,24 @@ import {
 import { StorageManagementClient } from "@azure/arm-storage";
 import { BlobContainer, StorageAccount } from "@azure/arm-storage/esm/models";
 import { AzureServiceClient } from "@azure/ms-rest-azure-js";
-import { ServiceClientCredentials } from "@azure/ms-rest-js";
+import {
+  ServiceClientCredentials,
+  ServiceClientOptions,
+  RequestPolicyFactory,
+} from "@azure/ms-rest-js";
 
 import { AzureIntegrationInstanceConfig } from "../../types";
 import { resourceGroupName } from "../utils";
 import authenticate from "./authenticate";
 import { AzureManagementClientCredentials } from "./types";
+import { bunyanLogPolicy } from "./BunyanLogPolicy";
 
 interface ClientConstructor<T extends AzureServiceClient> {
-  new (credentials: ServiceClientCredentials, subscriptionId: string): T;
+  new (
+    credentials: ServiceClientCredentials,
+    subscriptionId: string,
+    options?: ServiceClientOptions,
+  ): T;
 }
 
 interface ResourceManagementModule {
@@ -45,7 +56,10 @@ export default class ResourceManagerClient {
     AzureServiceClient
   >;
 
-  constructor(private config: AzureIntegrationInstanceConfig) {
+  constructor(
+    private config: AzureIntegrationInstanceConfig,
+    readonly logger: IntegrationLogger,
+  ) {
     this.clientCache = new Map();
   }
 
@@ -132,7 +146,13 @@ export default class ResourceManagerClient {
     if (!this.auth) {
       this.auth = await authenticate(config);
     }
-    return new ctor(this.auth.credentials, this.auth.subscriptionId);
+    return new ctor(this.auth.credentials, this.auth.subscriptionId, {
+      requestPolicyFactories: (
+        defaultRequestPolicyFactories: RequestPolicyFactory[],
+      ): RequestPolicyFactory[] => {
+        return [...defaultRequestPolicyFactories, bunyanLogPolicy(this.logger)];
+      },
+    });
   }
 
   /**

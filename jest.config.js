@@ -29,10 +29,10 @@ module.exports = {
       lines: 100,
     },
     "src/azure/resource-manager": {
-      statements: 100,
-      branches: 100,
+      statements: 98,
+      branches: 92,
       functions: 100,
-      lines: 100,
+      lines: 98,
     },
     "src/converters/": {
       statements: 100,

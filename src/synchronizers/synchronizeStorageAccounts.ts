@@ -171,18 +171,18 @@ async function synchronizeStorageAccount(
       const synchronizer = storageServiceSynchronizers[s];
       if (synchronizer) {
         logger.info(logInfo, "Processing storage account service...");
-        const operations = await synchronizer(
+        const operationsSummary = await synchronizer(
           executionContext,
           accountEntity,
           webLinker,
           storageAccount,
         );
-        operationsResults.push(operations);
+        operationsResults.push(operationsSummary);
 
         logger.info(
           {
             storageAccount,
-            operationsSummary: operations,
+            operationsSummary,
           },
           "Finished iterating containers for storage account",
         );

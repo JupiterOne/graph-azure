@@ -42,7 +42,6 @@ export class BunyanLogPolicy extends BaseRequestPolicy {
       const logData = {
         url: httpRequest.url,
         status: response.status,
-        requestHeaders: response.request.headers.toString(),
         responseHeaders: response.headers.toString(),
       };
 

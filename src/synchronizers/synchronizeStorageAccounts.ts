@@ -137,7 +137,14 @@ async function synchronizeBlobStorage(
   ]);
 }
 
-const storageServiceSynchronizers: { [service: string]: Function } = {
+const storageServiceSynchronizers: {
+  [service: string]: (
+    executionContext: AzureExecutionContext,
+    accountEntity: AccountEntity,
+    webLinker: AzureWebLinker,
+    storageAccount: StorageAccount,
+  ) => Promise<PersisterOperationsResult>;
+} = {
   blob: synchronizeBlobStorage,
 };
 
@@ -164,13 +171,20 @@ async function synchronizeStorageAccount(
       const synchronizer = storageServiceSynchronizers[s];
       if (synchronizer) {
         logger.info(logInfo, "Processing storage account service...");
-        operationsResults.push(
-          await synchronizer(
-            executionContext,
-            accountEntity,
-            webLinker,
+        const operations = await synchronizer(
+          executionContext,
+          accountEntity,
+          webLinker,
+          storageAccount,
+        );
+        operationsResults.push(operations);
+
+        logger.info(
+          {
             storageAccount,
-          ),
+            operationsSummary: operations,
+          },
+          "Finished iterating containers for storage account",
         );
       } else {
         logger.warn(logInfo, "Unhandled storage account service!");

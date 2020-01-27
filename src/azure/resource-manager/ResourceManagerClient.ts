@@ -19,6 +19,7 @@ import {
   ServiceClientCredentials,
   ServiceClientOptions,
   RequestPolicyFactory,
+  HttpResponse,
 } from "@azure/ms-rest-js";
 
 import { AzureIntegrationInstanceConfig } from "../../types";
@@ -46,6 +47,7 @@ interface ScopedResourceManagementModule {
 }
 
 interface ResourceListResponse<T> extends Array<T> {
+  readonly _response: HttpResponse;
   readonly nextLink?: string;
 }
 
@@ -199,6 +201,14 @@ export default class ResourceManagerClient {
         ? /* istanbul ignore next: testing iteration might be difficult */
           await rmModule.listNext<L>(nextLink)
         : await rmModule.list<L>();
+
+      this.logger.info(
+        {
+          resourceCount: response.length,
+          resource: response._response.request.url,
+        },
+        "Received resources for endpoint",
+      );
 
       for (const e of response) {
         await callback(e);

@@ -43,6 +43,7 @@ export class BunyanLogPolicy extends BaseRequestPolicy {
         url: httpRequest.url,
         status: response.status,
         responseHeaders: response.headers.rawHeaders(),
+        requestHeaders: Object.keys(response.request.headers.rawHeaders()),
       };
 
       this.logger.info(logData, "Received response from Azure API");

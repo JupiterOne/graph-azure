@@ -120,6 +120,16 @@ async function synchronizeBlobStorage(
     ),
   ]);
 
+  executionContext.logger.info(
+    {
+      oldServiceEntitiesLength: oldServiceEntities.length,
+      oldAccountServiceRelationships: oldAccountServiceRelationships.length,
+      oldContainerEntities: oldContainerEntities.length,
+      oldServiceContainerRelationships: oldServiceContainerRelationships.length,
+    },
+    "Finished fetching old entities and relationships for synchronizing storage blob containers",
+  );
+
   return persister.publishPersisterOperations([
     [
       ...persister.processEntities(oldServiceEntities, [newServiceEntity]),

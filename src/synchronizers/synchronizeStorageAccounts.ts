@@ -1,4 +1,5 @@
 import { StorageAccount } from "@azure/arm-storage/esm/models";
+import { PersistedObjectAssignable } from "@jupiterone/jupiter-managed-integration-sdk/jupiter-types";
 import {
   createIntegrationRelationship,
   EntityFromIntegration,
@@ -22,10 +23,68 @@ import {
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
 
+interface OldDataMaps {
+  serviceEntityMap: Map<EntityFromIntegration>;
+  accountServiceRelationshipMap: Map<IntegrationRelationship>;
+  containerEntityMap: Map<EntityFromIntegration>;
+  serviceContainerRelationshipMap: Map<IntegrationRelationship>;
+}
+
+type Map<T> = Record<string, T>;
+
+interface AzureStorageAccountsContext extends AzureExecutionContext {
+  oldData: OldDataMaps;
+}
+
+function createOldDataMap([
+  storageServiceEntities,
+  accountServiceRelationships,
+  storageContainerEntities,
+  serviceContainerRelationships,
+]: [
+  EntityFromIntegration[],
+  IntegrationRelationship[],
+  EntityFromIntegration[],
+  IntegrationRelationship[]
+]): OldDataMaps {
+  return {
+    serviceEntityMap: createMap(storageServiceEntities),
+    accountServiceRelationshipMap: createMap(accountServiceRelationships),
+    containerEntityMap: createMap(storageContainerEntities),
+    serviceContainerRelationshipMap: createMap(serviceContainerRelationships),
+  };
+}
+
+function createMap<T extends PersistedObjectAssignable>(objects: T[]): Map<T> {
+  const map: Map<T> = {};
+  objects.forEach(obj => {
+    map[obj._key] = obj;
+  });
+  return map;
+}
+
+function oldDataGetter(map: keyof OldDataMaps) {
+  return (
+    oldData: OldDataMaps,
+    newData: PersistedObjectAssignable,
+  ): EntityFromIntegration | IntegrationRelationship | undefined => {
+    return oldData[map][newData._key];
+  };
+}
+
+const getOldStorageServiceEntity = oldDataGetter("serviceEntityMap");
+const getOldAccountServiceRelationship = oldDataGetter(
+  "accountServiceRelationshipMap",
+);
+const getOldContainerEntity = oldDataGetter("containerEntityMap");
+const getOldServiceContainerRelationship = oldDataGetter(
+  "serviceContainerRelationshipMap",
+);
+
 export default async function synchronizeStorageAccounts(
   executionContext: AzureExecutionContext,
 ): Promise<IntegrationExecutionResult> {
-  const { azrm, logger } = executionContext;
+  const { azrm, graph, logger } = executionContext;
   const cache = executionContext.clients.getCache();
 
   const accountEntity = (await cache.getEntry("account")).data as AccountEntity;
@@ -39,12 +98,38 @@ export default async function synchronizeStorageAccounts(
 
   const operationsResults: PersisterOperationsResult[] = [];
 
+  const oldData = createOldDataMap(
+    await Promise.all([
+      graph.findEntitiesByType(STORAGE_BLOB_SERVICE_ENTITY_TYPE),
+      graph.findRelationshipsByType(
+        generateRelationshipType(
+          "HAS",
+          accountEntity,
+          STORAGE_BLOB_SERVICE_ENTITY_TYPE,
+        ),
+      ),
+      graph.findEntitiesByType(STORAGE_CONTAINER_ENTITY_TYPE),
+      graph.findRelationshipsByType(
+        generateRelationshipType(
+          "HAS",
+          STORAGE_BLOB_SERVICE_ENTITY_TYPE,
+          STORAGE_CONTAINER_ENTITY_TYPE,
+        ),
+      ),
+    ]),
+  );
+
+  executionContext.logger.info(
+    {},
+    "Finished fetching old entities and relationships for synchronizing storage blob containers",
+  );
+
   await azrm.iterateStorageAccounts(async e => {
     logger.info({ storageAccount: e }, "Processing storage account...");
 
     operationsResults.push(
       await synchronizeStorageAccount(
-        executionContext,
+        { ...executionContext, oldData },
         accountEntity,
         webLinker,
         e,
@@ -62,17 +147,21 @@ export default async function synchronizeStorageAccounts(
  * created whether or not there are any blobs.
  */
 async function synchronizeBlobStorage(
-  executionContext: AzureExecutionContext,
+  context: AzureStorageAccountsContext,
   accountEntity: AccountEntity,
   webLinker: AzureWebLinker,
   storageAccount: StorageAccount,
 ): Promise<PersisterOperationsResult> {
-  const { azrm, graph, persister } = executionContext;
+  const { azrm, persister, oldData } = context;
 
   const newServiceEntity = createStorageServiceEntity(
     webLinker,
     storageAccount,
     "blob",
+  );
+  const oldServiceEntity = getOldStorageServiceEntity(
+    oldData,
+    newServiceEntity,
   );
 
   const newAccountServiceRelationship = createIntegrationRelationship({
@@ -80,8 +169,15 @@ async function synchronizeBlobStorage(
     from: accountEntity,
     to: newServiceEntity,
   });
+  const oldAccountServiceRelationship = getOldAccountServiceRelationship(
+    oldData,
+    newAccountServiceRelationship,
+  );
 
+  const oldContainerEntities: EntityFromIntegration[] = [];
   const newContainerEntities: EntityFromIntegration[] = [];
+
+  const oldServiceContainerRelationships: IntegrationRelationship[] = [];
   const newServiceContainerRelationships: IntegrationRelationship[] = [];
 
   await azrm.iterateStorageBlobContainers(storageAccount, e => {
@@ -91,54 +187,37 @@ async function synchronizeBlobStorage(
       e,
     );
     newContainerEntities.push(containerEntity);
-    newServiceContainerRelationships.push(
-      createIntegrationRelationship({
-        _class: "HAS",
-        from: newServiceEntity,
-        to: containerEntity,
-      }),
+
+    const oldContainerEntity = getOldContainerEntity(oldData, containerEntity);
+    oldContainerEntity && oldContainerEntities.push(oldContainerEntity);
+
+    const serviceContainerRelationship = createIntegrationRelationship({
+      _class: "HAS",
+      from: newServiceEntity,
+      to: containerEntity,
+    });
+    newServiceContainerRelationships.push(serviceContainerRelationship);
+
+    const oldServiceContainerRelationship = getOldServiceContainerRelationship(
+      oldData,
+      serviceContainerRelationship,
     );
+    oldServiceContainerRelationship &&
+      oldServiceContainerRelationships.push(oldServiceContainerRelationship);
   });
-
-  const [
-    oldServiceEntities,
-    oldAccountServiceRelationships,
-    oldContainerEntities,
-    oldServiceContainerRelationships,
-  ] = await Promise.all([
-    graph.findEntitiesByType(STORAGE_BLOB_SERVICE_ENTITY_TYPE),
-    graph.findRelationshipsByType(
-      generateRelationshipType("HAS", accountEntity, newServiceEntity),
-    ),
-    graph.findEntitiesByType(STORAGE_CONTAINER_ENTITY_TYPE),
-    graph.findRelationshipsByType(
-      generateRelationshipType(
-        "HAS",
-        newServiceEntity,
-        STORAGE_CONTAINER_ENTITY_TYPE,
-      ),
-    ),
-  ]);
-
-  executionContext.logger.info(
-    {
-      oldServiceEntitiesLength: oldServiceEntities.length,
-      oldAccountServiceRelationships: oldAccountServiceRelationships.length,
-      oldContainerEntities: oldContainerEntities.length,
-      oldServiceContainerRelationships: oldServiceContainerRelationships.length,
-    },
-    "Finished fetching old entities and relationships for synchronizing storage blob containers",
-  );
 
   return persister.publishPersisterOperations([
     [
-      ...persister.processEntities(oldServiceEntities, [newServiceEntity]),
+      ...persister.processEntities(oldServiceEntity ? [oldServiceEntity] : [], [
+        newServiceEntity,
+      ]),
       ...persister.processEntities(oldContainerEntities, newContainerEntities),
     ],
     [
-      ...persister.processRelationships(oldAccountServiceRelationships, [
-        newAccountServiceRelationship,
-      ]),
+      ...persister.processRelationships(
+        oldAccountServiceRelationship ? [oldAccountServiceRelationship] : [],
+        [newAccountServiceRelationship],
+      ),
       ...persister.processRelationships(
         oldServiceContainerRelationships,
         newServiceContainerRelationships,
@@ -149,7 +228,7 @@ async function synchronizeBlobStorage(
 
 const storageServiceSynchronizers: {
   [service: string]: (
-    executionContext: AzureExecutionContext,
+    context: AzureStorageAccountsContext,
     accountEntity: AccountEntity,
     webLinker: AzureWebLinker,
     storageAccount: StorageAccount,
@@ -159,12 +238,12 @@ const storageServiceSynchronizers: {
 };
 
 async function synchronizeStorageAccount(
-  executionContext: AzureExecutionContext,
+  context: AzureStorageAccountsContext,
   accountEntity: AccountEntity,
   webLinker: AzureWebLinker,
   storageAccount: StorageAccount,
 ): Promise<PersisterOperationsResult> {
-  const { logger } = executionContext;
+  const { logger } = context;
   const operationsResults: PersisterOperationsResult[] = [];
 
   const storageAccountLogInfo = {
@@ -182,7 +261,7 @@ async function synchronizeStorageAccount(
       if (synchronizer) {
         logger.info(logInfo, "Processing storage account service...");
         const operationsSummary = await synchronizer(
-          executionContext,
+          context,
           accountEntity,
           webLinker,
           storageAccount,

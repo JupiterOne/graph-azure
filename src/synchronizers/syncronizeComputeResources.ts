@@ -70,7 +70,7 @@ export default async function synchronizeComputeResources(
   const accountEntity = (await cache.getEntry("account")).data as AccountEntity;
   if (!accountEntity) {
     throw new IntegrationError(
-      "Account fetch did not complete, cannot synchronize groups",
+      "Account fetch did not complete, cannot synchronize compute resources",
     );
   }
 

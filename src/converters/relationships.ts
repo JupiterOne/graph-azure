@@ -10,6 +10,7 @@ import {
   createIntegrationRelationship,
   IntegrationRelationship,
   RelationshipDirection,
+  EntityFromIntegration,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember, MemberType, User } from "../azure";
@@ -46,6 +47,8 @@ import {
   VIRTUAL_NETWORK_ENTITY_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
+  SQL_SERVER_DATABASE_RELATIONSHIP_CLASS,
+  SQL_SERVER_DATABASE_RELATIONSHIP_TYPE,
 } from "../jupiterone";
 import {
   generateEntityKey,
@@ -251,6 +254,22 @@ export function createVirtualMachineNetworkInterfaceRelationship(
       _key: `${vm.id}_uses_${nic.id}`,
       _type: VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
       vmId: vm.vmId as string,
+    },
+  });
+}
+
+export function createSqlServerDatabaseRelationship(
+  server: EntityFromIntegration,
+  database: EntityFromIntegration,
+): IntegrationRelationship {
+  return createIntegrationRelationship({
+    _class: SQL_SERVER_DATABASE_RELATIONSHIP_CLASS,
+    fromKey: server._key,
+    fromType: server._type,
+    toKey: database._key,
+    toType: database._type,
+    properties: {
+      _type: SQL_SERVER_DATABASE_RELATIONSHIP_TYPE,
     },
   });
 }

@@ -1,158 +1,37 @@
 import { StorageAccount } from "@azure/arm-storage/esm/models";
-import { PersistedObjectAssignable } from "@jupiterone/jupiter-managed-integration-sdk/jupiter-types";
 import {
   createIntegrationRelationship,
   EntityFromIntegration,
-  generateRelationshipType,
   IntegrationError,
   IntegrationExecutionResult,
   IntegrationRelationship,
   PersisterOperationsResult,
   summarizePersisterOperationsResults,
-  GraphClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
-import { AzureWebLinker, createAzureWebLinker } from "../azure";
+import { AzureWebLinker, createAzureWebLinker } from "../../azure";
 import {
   createStorageContainerEntity,
   createStorageServiceEntity,
-} from "../converters/resources/storage";
+} from "../../converters/resources/storage";
+import { AccountEntity } from "../../jupiterone";
+import { AzureExecutionContext } from "../../types";
+
 import {
-  AccountEntity,
-  STORAGE_BLOB_SERVICE_ENTITY_TYPE,
-  STORAGE_CONTAINER_ENTITY_TYPE,
-} from "../jupiterone";
-import { AzureExecutionContext } from "../types";
-
-interface OldDataMeta {
-  metadata: {
-    lengths: Record<keyof OldDataMaps, number>;
-  };
-}
-
-interface OldDataMaps {
-  serviceEntityMap: Record<string, EntityFromIntegration>;
-  accountServiceRelationshipMap: Record<string, IntegrationRelationship>;
-  containerEntityMap: Record<string, EntityFromIntegration>;
-  serviceContainerRelationshipMap: Record<string, IntegrationRelationship>;
-}
-
-type OldData = OldDataMaps & OldDataMeta;
+  OldData,
+  fetchOldData,
+  entityOrRelationship,
+  cloneOldData,
+  getOldStorageServiceEntity,
+  getOldAccountServiceRelationship,
+  getOldContainerEntity,
+  getOldServiceContainerRelationship,
+} from "./oldData";
 
 interface AzureStorageAccountsContext extends AzureExecutionContext {
   oldData: OldData;
   operationsResults: PersisterOperationsResult[];
 }
-
-function createMap<T extends PersistedObjectAssignable>(
-  objects: T[],
-): Record<string, T> {
-  const map: Record<string, T> = {};
-  objects.forEach(obj => {
-    map[obj._key] = obj;
-  });
-  return map;
-}
-
-async function fetchOldData(
-  graph: GraphClient,
-  account: AccountEntity,
-): Promise<OldData> {
-  const [
-    storageServiceEntities,
-    accountServiceRelationships,
-    storageContainerEntities,
-    serviceContainerRelationships,
-  ] = await Promise.all([
-    graph.findEntitiesByType(STORAGE_BLOB_SERVICE_ENTITY_TYPE),
-    graph.findRelationshipsByType(
-      generateRelationshipType(
-        "HAS",
-        account,
-        STORAGE_BLOB_SERVICE_ENTITY_TYPE,
-      ),
-    ),
-    graph.findEntitiesByType(STORAGE_CONTAINER_ENTITY_TYPE),
-    graph.findRelationshipsByType(
-      generateRelationshipType(
-        "HAS",
-        STORAGE_BLOB_SERVICE_ENTITY_TYPE,
-        STORAGE_CONTAINER_ENTITY_TYPE,
-      ),
-    ),
-  ]);
-
-  return {
-    metadata: {
-      lengths: {
-        serviceEntityMap: storageServiceEntities.length,
-        accountServiceRelationshipMap: accountServiceRelationships.length,
-        containerEntityMap: storageContainerEntities.length,
-        serviceContainerRelationshipMap: serviceContainerRelationships.length,
-      },
-    },
-    serviceEntityMap: createMap(storageServiceEntities),
-    accountServiceRelationshipMap: createMap(accountServiceRelationships),
-    containerEntityMap: createMap(storageContainerEntities),
-    serviceContainerRelationshipMap: createMap(serviceContainerRelationships),
-  };
-}
-
-function cloneOldData({
-  oldData,
-  mapToUpdate,
-  updatedMap,
-}: {
-  oldData: OldData;
-  mapToUpdate?: keyof OldDataMaps;
-  updatedMap?: Record<string, EntityFromIntegration | IntegrationRelationship>;
-}): OldData {
-  const oldDataClone = {
-    ...oldData,
-    metadata: {
-      ...oldData.metadata,
-      lengths: {
-        ...oldData.metadata.lengths,
-      },
-    },
-  };
-
-  if (mapToUpdate && updatedMap) {
-    oldDataClone[mapToUpdate] = updatedMap;
-    oldDataClone.metadata.lengths[mapToUpdate] =
-      oldData.metadata.lengths[mapToUpdate] - 1;
-  }
-
-  return oldDataClone;
-}
-
-function oldDataGetter(mapKey: keyof OldDataMaps) {
-  return (
-    oldData: OldData,
-    newData: PersistedObjectAssignable,
-  ): [EntityFromIntegration | IntegrationRelationship | undefined, OldData] => {
-    const map = oldData[mapKey];
-    const obj = map[newData._key];
-
-    const { [newData._key]: _, ...updatedMap } = map;
-    const updatedOldData = cloneOldData({
-      oldData,
-      mapToUpdate: mapKey,
-      updatedMap,
-    });
-
-    return [obj, updatedOldData];
-  };
-}
-
-const getOldStorageServiceEntity = oldDataGetter("serviceEntityMap");
-const getOldAccountServiceRelationship = oldDataGetter(
-  "accountServiceRelationshipMap",
-);
-const getOldContainerEntity = oldDataGetter("containerEntityMap");
-const getOldServiceContainerRelationship = oldDataGetter(
-  "serviceContainerRelationshipMap",
-);
 
 export default async function synchronizeStorageAccounts(
   executionContext: AzureExecutionContext,
@@ -290,32 +169,40 @@ async function synchronizeBlobStorage(
 
   let oldData = cloneOldData({ oldData: context.oldData });
 
-  const newServiceEntity = createStorageServiceEntity(
-    webLinker,
-    storageAccount,
-    "blob",
-  );
-  let oldServiceEntity;
-  [oldServiceEntity, oldData] = getOldStorageServiceEntity(
-    oldData,
+  const [
     newServiceEntity,
-  );
+    oldServiceEntity,
+    serviceOldData,
+  ] = entityOrRelationship({
+    newEntityConstructor: () => {
+      return createStorageServiceEntity(webLinker, storageAccount, "blob");
+    },
+    oldData,
+    oldDataGetter: getOldStorageServiceEntity,
+  });
+  oldData = serviceOldData;
 
   logger.info(
     oldData.metadata.lengths,
     "Finished getting old storage service entity and reassigning old data",
   );
 
-  const newAccountServiceRelationship = createIntegrationRelationship({
-    _class: "HAS",
-    from: accountEntity,
-    to: newServiceEntity,
-  });
-  let oldAccountServiceRelationship;
-  [oldAccountServiceRelationship, oldData] = getOldAccountServiceRelationship(
-    oldData,
+  const [
     newAccountServiceRelationship,
-  );
+    oldAccountServiceRelationship,
+    accountServiceOldData,
+  ] = entityOrRelationship({
+    newEntityConstructor: () => {
+      return createIntegrationRelationship({
+        _class: "HAS",
+        from: accountEntity,
+        to: newServiceEntity,
+      });
+    },
+    oldData,
+    oldDataGetter: getOldAccountServiceRelationship,
+  });
+  oldData = accountServiceOldData;
 
   logger.info(
     oldData.metadata.lengths,
@@ -324,23 +211,24 @@ async function synchronizeBlobStorage(
 
   const oldContainerEntities: EntityFromIntegration[] = [];
   const newContainerEntities: EntityFromIntegration[] = [];
-
   const oldServiceContainerRelationships: IntegrationRelationship[] = [];
   const newServiceContainerRelationships: IntegrationRelationship[] = [];
 
   await azrm.iterateStorageBlobContainers(storageAccount, e => {
-    const containerEntity = createStorageContainerEntity(
-      webLinker,
-      storageAccount,
-      e,
-    );
-    newContainerEntities.push(containerEntity);
-
-    let oldContainerEntity;
-    [oldContainerEntity, oldData] = getOldContainerEntity(
-      oldData,
+    const [
       containerEntity,
-    );
+      oldContainerEntity,
+      containerOldData,
+    ] = entityOrRelationship({
+      newEntityConstructor: () => {
+        return createStorageContainerEntity(webLinker, storageAccount, e);
+      },
+      oldData,
+      oldDataGetter: getOldContainerEntity,
+    });
+    oldData = containerOldData;
+
+    newContainerEntities.push(containerEntity);
     oldContainerEntity && oldContainerEntities.push(oldContainerEntity);
 
     logger.info(
@@ -348,21 +236,24 @@ async function synchronizeBlobStorage(
       "Finished getting old container entity and reassigning old data",
     );
 
-    const serviceContainerRelationship = createIntegrationRelationship({
-      _class: "HAS",
-      from: newServiceEntity,
-      to: containerEntity,
-    });
-    newServiceContainerRelationships.push(serviceContainerRelationship);
-
-    let oldServiceContainerRelationship;
-    [
-      oldServiceContainerRelationship,
-      oldData,
-    ] = getOldServiceContainerRelationship(
-      oldData,
+    const [
       serviceContainerRelationship,
-    );
+      oldServiceContainerRelationship,
+      serviceContainerOldData,
+    ] = entityOrRelationship({
+      newEntityConstructor: () => {
+        return createIntegrationRelationship({
+          _class: "HAS",
+          from: newServiceEntity,
+          to: containerEntity,
+        });
+      },
+      oldData,
+      oldDataGetter: getOldServiceContainerRelationship,
+    });
+    oldData = serviceContainerOldData;
+
+    newServiceContainerRelationships.push(serviceContainerRelationship);
     oldServiceContainerRelationship &&
       oldServiceContainerRelationships.push(oldServiceContainerRelationship);
 

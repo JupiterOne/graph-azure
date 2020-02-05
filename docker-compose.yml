@@ -18,6 +18,7 @@ services:
       - graph
   graph:
     image: tinkerpop/gremlin-server:3.4
+    user: "1000"
     volumes:
       - ./node_modules/@jupiterone/jupiter-managed-integration-sdk/gremlin-client/conf:/etc/opt/
     command: /etc/opt/gremlin-server.yaml

@@ -127,6 +127,16 @@ export default async function synchronizeComputeResources(
     ),
   ]);
 
+  // This has been changed to "azure_vm_uses_nic"
+  const DEPRECATED_VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE =
+    "azure_vm_uses_network_interface";
+
+  oldVMNicRelationships.push(
+    ...(await graph.findRelationshipsByType(
+      DEPRECATED_VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+    )),
+  );
+
   const operationsResult = await persister.publishPersisterOperations([
     [...persister.processEntities(oldVms, newVms)],
     [

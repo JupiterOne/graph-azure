@@ -35,8 +35,10 @@
   },
   "dependencies": {
     "@azure/arm-compute": "^11.0.0",
+    "@azure/arm-mariadb": "^1.4.0",
     "@azure/arm-mysql": "^3.3.0",
     "@azure/arm-network": "^16.0.0",
+    "@azure/arm-postgresql": "^4.4.0",
     "@azure/arm-sql": "^7.0.0",
     "@azure/arm-storage": "^11.0.0",
     "@azure/ms-rest-nodeauth": "^2.0.5",

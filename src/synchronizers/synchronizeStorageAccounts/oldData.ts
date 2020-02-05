@@ -73,38 +73,25 @@ export async function fetchOldData(
         serviceContainerRelationshipMap: serviceContainerRelationships.length,
       },
     },
-    serviceEntityMap: createMap(storageServiceEntities),
-    accountServiceRelationshipMap: createMap(accountServiceRelationships),
-    containerEntityMap: createMap(storageContainerEntities),
-    serviceContainerRelationshipMap: createMap(serviceContainerRelationships),
+    serviceEntityMap: createObjectByKeyMap(storageServiceEntities),
+    accountServiceRelationshipMap: createObjectByKeyMap(
+      accountServiceRelationships,
+    ),
+    containerEntityMap: createObjectByKeyMap(storageContainerEntities),
+    serviceContainerRelationshipMap: createObjectByKeyMap(
+      serviceContainerRelationships,
+    ),
   };
 }
 
-export const getOldStorageServiceEntity = oldDataGetter("serviceEntityMap");
-export const getOldAccountServiceRelationship = oldDataGetter(
+export const popOldStorageServiceEntity = popOldData("serviceEntityMap");
+export const popOldAccountServiceRelationship = popOldData(
   "accountServiceRelationshipMap",
 );
-export const getOldContainerEntity = oldDataGetter("containerEntityMap");
-export const getOldServiceContainerRelationship = oldDataGetter(
+export const popOldContainerEntity = popOldData("containerEntityMap");
+export const popOldServiceContainerRelationship = popOldData(
   "serviceContainerRelationshipMap",
 );
-
-export function entityOrRelationship({
-  oldData,
-  oldDataGetter,
-  newEntityConstructor,
-}: {
-  oldData: OldData;
-  oldDataGetter: OldDataGetter;
-  newEntityConstructor: () => EntityOrRelationship;
-}): [EntityOrRelationship, EntityOrRelationship | undefined, OldData] {
-  const obj = newEntityConstructor();
-
-  let oldObj;
-  [oldObj, oldData] = oldDataGetter(oldData, obj);
-
-  return [obj, oldObj, oldData];
-}
 
 export function cloneOldData({
   oldData,
@@ -134,7 +121,7 @@ export function cloneOldData({
   return oldDataClone;
 }
 
-function createMap<T extends PersistedObjectAssignable>(
+function createObjectByKeyMap<T extends PersistedObjectAssignable>(
   objects: T[],
 ): Record<string, T> {
   const map: Record<string, T> = {};
@@ -144,7 +131,7 @@ function createMap<T extends PersistedObjectAssignable>(
   return map;
 }
 
-function oldDataGetter(mapKey: keyof OldDataMaps): OldDataGetter {
+function popOldData(mapKey: keyof OldDataMaps): OldDataGetter {
   return (oldData, newData) => {
     const map = oldData[mapKey];
     const obj = map[newData._key];

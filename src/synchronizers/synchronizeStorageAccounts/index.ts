@@ -20,12 +20,11 @@ import { AzureExecutionContext } from "../../types";
 import {
   OldData,
   fetchOldData,
-  entityOrRelationship,
   cloneOldData,
-  getOldStorageServiceEntity,
-  getOldAccountServiceRelationship,
-  getOldContainerEntity,
-  getOldServiceContainerRelationship,
+  popOldStorageServiceEntity,
+  popOldAccountServiceRelationship,
+  popOldContainerEntity,
+  popOldServiceContainerRelationship,
 } from "./oldData";
 
 interface AzureStorageAccountsContext extends AzureExecutionContext {
@@ -169,44 +168,26 @@ async function synchronizeBlobStorage(
 
   let oldData = cloneOldData({ oldData: context.oldData });
 
-  const [
-    newServiceEntity,
-    oldServiceEntity,
-    serviceOldData,
-  ] = entityOrRelationship({
-    newEntityConstructor: () => {
-      return createStorageServiceEntity(webLinker, storageAccount, "blob");
-    },
+  const newServiceEntity = createStorageServiceEntity(
+    webLinker,
+    storageAccount,
+    "blob",
+  );
+  let oldServiceEntity;
+  [oldServiceEntity, oldData] = popOldStorageServiceEntity(
     oldData,
-    oldDataGetter: getOldStorageServiceEntity,
-  });
-  oldData = serviceOldData;
-
-  logger.info(
-    oldData.metadata.lengths,
-    "Finished getting old storage service entity and reassigning old data",
+    newServiceEntity,
   );
 
-  const [
-    newAccountServiceRelationship,
-    oldAccountServiceRelationship,
-    accountServiceOldData,
-  ] = entityOrRelationship({
-    newEntityConstructor: () => {
-      return createIntegrationRelationship({
-        _class: "HAS",
-        from: accountEntity,
-        to: newServiceEntity,
-      });
-    },
-    oldData,
-    oldDataGetter: getOldAccountServiceRelationship,
+  const newAccountServiceRelationship = createIntegrationRelationship({
+    _class: "HAS",
+    from: accountEntity,
+    to: newServiceEntity,
   });
-  oldData = accountServiceOldData;
-
-  logger.info(
-    oldData.metadata.lengths,
-    "Finished getting old account service relationship and reassigning old data",
+  let oldAccountServiceRelationship;
+  [oldAccountServiceRelationship, oldData] = popOldAccountServiceRelationship(
+    oldData,
+    newAccountServiceRelationship,
   );
 
   const oldContainerEntities: EntityFromIntegration[] = [];
@@ -215,52 +196,37 @@ async function synchronizeBlobStorage(
   const newServiceContainerRelationships: IntegrationRelationship[] = [];
 
   await azrm.iterateStorageBlobContainers(storageAccount, e => {
-    const [
-      containerEntity,
-      oldContainerEntity,
-      containerOldData,
-    ] = entityOrRelationship({
-      newEntityConstructor: () => {
-        return createStorageContainerEntity(webLinker, storageAccount, e);
-      },
+    const containerEntity = createStorageContainerEntity(
+      webLinker,
+      storageAccount,
+      e,
+    );
+    let oldContainerEntity;
+    [oldContainerEntity, oldData] = popOldContainerEntity(
       oldData,
-      oldDataGetter: getOldContainerEntity,
-    });
-    oldData = containerOldData;
+      containerEntity,
+    );
 
     newContainerEntities.push(containerEntity);
     oldContainerEntity && oldContainerEntities.push(oldContainerEntity);
 
-    logger.info(
-      oldData.metadata.lengths,
-      "Finished getting old container entity and reassigning old data",
-    );
-
-    const [
-      serviceContainerRelationship,
-      oldServiceContainerRelationship,
-      serviceContainerOldData,
-    ] = entityOrRelationship({
-      newEntityConstructor: () => {
-        return createIntegrationRelationship({
-          _class: "HAS",
-          from: newServiceEntity,
-          to: containerEntity,
-        });
-      },
-      oldData,
-      oldDataGetter: getOldServiceContainerRelationship,
+    const serviceContainerRelationship = createIntegrationRelationship({
+      _class: "HAS",
+      from: newServiceEntity,
+      to: containerEntity,
     });
-    oldData = serviceContainerOldData;
+    let oldServiceContainerRelationship;
+    [
+      oldServiceContainerRelationship,
+      oldData,
+    ] = popOldServiceContainerRelationship(
+      oldData,
+      serviceContainerRelationship,
+    );
 
     newServiceContainerRelationships.push(serviceContainerRelationship);
     oldServiceContainerRelationship &&
       oldServiceContainerRelationships.push(oldServiceContainerRelationship);
-
-    logger.info(
-      oldData.metadata.lengths,
-      "Finished getting old service container relationship and reassigning old data",
-    );
   });
 
   const operationsSummary = await persister.publishPersisterOperations([
@@ -286,6 +252,7 @@ async function synchronizeBlobStorage(
     {
       storageAccount,
       operationsSummary,
+      oldDataLengths: oldData.metadata.lengths,
     },
     "Finished iterating containers for storage account",
   );

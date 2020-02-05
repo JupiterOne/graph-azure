@@ -1,10 +1,11 @@
 import {
+  getRawData,
+  summarizePersisterOperationsResults,
   EntityFromIntegration,
   IntegrationError,
   IntegrationExecutionResult,
-  summarizePersisterOperationsResults,
-  getRawData,
   IntegrationRelationship,
+  PersisterOperationsResult,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
@@ -29,7 +30,6 @@ import { Server } from "@azure/arm-sql/esm/models";
 export default async function synchronizeDatabaseResources(
   executionContext: AzureExecutionContext,
 ): Promise<IntegrationExecutionResult> {
-  const { azrm, graph, persister } = executionContext;
   const cache = executionContext.clients.getCache();
 
   const accountEntity = (await cache.getEntry("account")).data as AccountEntity;
@@ -41,6 +41,18 @@ export default async function synchronizeDatabaseResources(
 
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain);
 
+  const operationsResultSQL = await synchronizeSQL(executionContext, webLinker);
+
+  return {
+    operations: summarizePersisterOperationsResults(operationsResultSQL),
+  };
+}
+
+async function synchronizeSQL(
+  executionContext: AzureExecutionContext,
+  webLinker: AzureWebLinker,
+): Promise<PersisterOperationsResult> {
+  const { azrm, graph, persister } = executionContext;
   const [
     oldDBs,
     oldServers,
@@ -67,7 +79,7 @@ export default async function synchronizeDatabaseResources(
     }
   }
 
-  const operationsResult = await persister.publishPersisterOperations([
+  return await persister.publishPersisterOperations([
     [
       ...persister.processEntities(oldServers, newServers),
       ...persister.processEntities(oldDBs, newDBs),
@@ -79,10 +91,6 @@ export default async function synchronizeDatabaseResources(
       ),
     ],
   ]);
-
-  return {
-    operations: summarizePersisterOperationsResults(operationsResult),
-  };
 }
 
 async function fetchSqlServers(

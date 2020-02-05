@@ -70,6 +70,7 @@ describe("createStorageAccountEntity", () => {
       resourceGroup: "j1dev",
       category: ["infrastructure"],
       endpoints: ["https://j1dev.blob.core.windows.net/"],
+      createdOn: new Date("2019-10-09T18:53:02.1947326Z").getTime(),
       "tag.environment": "j1dev",
     };
 
@@ -94,6 +95,7 @@ describe("createStorageAccountEntity", () => {
       resourceGroup: "j1dev",
       category: ["infrastructure"],
       endpoints: ["https://j1dev.file.core.windows.net/"],
+      createdOn: new Date("2019-10-09T18:53:02.1947326Z").getTime(),
       "tag.environment": "j1dev",
     };
 
@@ -118,6 +120,7 @@ describe("createStorageAccountEntity", () => {
       resourceGroup: "j1dev",
       category: ["infrastructure"],
       endpoints: ["https://j1dev.queue.core.windows.net/"],
+      createdOn: new Date("2019-10-09T18:53:02.1947326Z").getTime(),
       "tag.environment": "j1dev",
     };
 
@@ -144,6 +147,7 @@ describe("createStorageAccountEntity", () => {
       resourceGroup: "j1dev",
       category: ["infrastructure"],
       endpoints: ["https://j1dev.table.core.windows.net/"],
+      createdOn: new Date("2019-10-09T18:53:02.1947326Z").getTime(),
       "tag.environment": "j1dev",
     };
 

@@ -12,6 +12,7 @@ import {
   PublicIPAddress,
   VirtualNetwork,
 } from "@azure/arm-network/esm/models";
+import { SqlManagementClient } from "@azure/arm-sql";
 import { StorageManagementClient } from "@azure/arm-storage";
 import { BlobContainer, StorageAccount } from "@azure/arm-storage/esm/models";
 import { AzureServiceClient } from "@azure/ms-rest-azure-js";
@@ -27,6 +28,7 @@ import { resourceGroupName } from "../utils";
 import authenticate from "./authenticate";
 import { AzureManagementClientCredentials } from "./types";
 import { bunyanLogPolicy } from "./BunyanLogPolicy";
+import { Server, Database } from "@azure/arm-sql/esm/models";
 
 interface ClientConstructor<T extends AzureServiceClient> {
   new (
@@ -117,6 +119,29 @@ export default class ResourceManagerClient {
           nextLink: string,
         ) => {
           return client.blobContainers.listNext(nextLink);
+        },
+      } as any,
+      callback,
+    );
+  }
+
+  public async iterateSqlServers(callback: (s: Server) => void): Promise<void> {
+    const client = await this.getAuthenticatedClient(SqlManagementClient);
+    return this.iterateScopedResources(client.servers, callback);
+  }
+
+  public async iterateSqlDatabases(
+    server: Server,
+    callback: (d: Database) => void,
+  ): Promise<void> {
+    const client = await this.getAuthenticatedClient(SqlManagementClient);
+    const resourceGroup = resourceGroupName(server.id, true)!;
+    const serverName = server.name!;
+
+    return this.iterateScopedResources(
+      {
+        list: async () => {
+          return client.databases.listByServer(resourceGroup, serverName);
         },
       } as any,
       callback,

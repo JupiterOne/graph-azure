@@ -70,7 +70,7 @@ export default async function synchronizeComputeResources(
   const accountEntity = (await cache.getEntry("account")).data as AccountEntity;
   if (!accountEntity) {
     throw new IntegrationError(
-      "Account fetch did not complete, cannot synchronize groups",
+      "Account fetch did not complete, cannot synchronize compute resources",
     );
   }
 
@@ -126,6 +126,16 @@ export default async function synchronizeComputeResources(
       VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
     ),
   ]);
+
+  // This has been changed to "azure_vm_uses_nic"
+  const DEPRECATED_VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE =
+    "azure_vm_uses_network_interface";
+
+  oldVMNicRelationships.push(
+    ...(await graph.findRelationshipsByType(
+      DEPRECATED_VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+    )),
+  );
 
   const operationsResult = await persister.publishPersisterOperations([
     [...persister.processEntities(oldVms, newVms)],

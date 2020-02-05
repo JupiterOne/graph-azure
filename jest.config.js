@@ -9,6 +9,7 @@ module.exports = {
     "src/**/*.ts",
     "!src/**/**/index.ts",
     "!src/initializeContext.ts",
+    "!src/converters/*.ts",
   ],
   setupFiles: ["dotenv/config", "cross-fetch/polyfill"],
   moduleFileExtensions: [...defaults.moduleFileExtensions, "ts"],
@@ -29,16 +30,10 @@ module.exports = {
       lines: 100,
     },
     "src/azure/resource-manager": {
-      statements: 98,
+      statements: 89,
       branches: 92,
-      functions: 100,
-      lines: 98,
-    },
-    "src/converters/": {
-      statements: 100,
-      branches: 100,
-      functions: 100,
-      lines: 100,
+      functions: 87.5,
+      lines: 89,
     },
     "src/jupiterone/": {
       statements: 100,

@@ -21,6 +21,7 @@ import synchronizeAccount from "./synchronizers/synchronizeAccount";
 import synchronizeGroupMembers from "./synchronizers/synchronizeGroupMembers";
 import synchronizeGroups from "./synchronizers/synchronizeGroups";
 import synchronizeComputeResources from "./synchronizers/syncronizeComputeResources";
+import synchronizeDatabaseResources from "./synchronizers/syncronizeDatabaseResources";
 import synchronizeUsers from "./synchronizers/syncronizeUsers";
 import { AzureIntegrationInstanceConfig } from "./types";
 import synchronizeStorageAccounts from "./synchronizers/synchronizeStorageAccounts";
@@ -36,6 +37,7 @@ export const CLEANUP = "cleanup";
 
 export const RM_SYNC_COMPUTE = "sync-rm-compute";
 export const RM_SYNC_STORAGE = "sync-rm-storage";
+export const RM_SYNC_DATABASES = "sync-rm-databases";
 
 export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   instanceConfigFields: {
@@ -93,6 +95,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
         ...states,
         [RM_SYNC_COMPUTE]: resourceManager,
         [RM_SYNC_STORAGE]: resourceManager,
+        [RM_SYNC_DATABASES]: resourceManager,
       };
     }
 
@@ -197,6 +200,17 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
             executionContext: IntegrationStepExecutionContext,
           ): Promise<IntegrationExecutionResult> => {
             return synchronizeStorageAccounts(
+              initializeContext(executionContext),
+            );
+          },
+        },
+        {
+          id: RM_SYNC_DATABASES,
+          name: "Synchronize Databases",
+          executionHandler: async (
+            executionContext: IntegrationStepExecutionContext,
+          ): Promise<IntegrationExecutionResult> => {
+            return synchronizeDatabaseResources(
               initializeContext(executionContext),
             );
           },

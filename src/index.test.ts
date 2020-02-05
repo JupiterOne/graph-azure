@@ -9,6 +9,7 @@ import {
   AD_SYNC_USERS,
   RM_SYNC_COMPUTE,
   RM_SYNC_STORAGE,
+  RM_SYNC_DATABASES,
   stepFunctionsInvocationConfig,
 } from "./index";
 
@@ -25,6 +26,7 @@ describe("getStepStartStates", () => {
       [AD_SYNC_USERS]: { disabled: true },
       [RM_SYNC_COMPUTE]: { disabled: true },
       [RM_SYNC_STORAGE]: { disabled: true },
+      [RM_SYNC_DATABASES]: { disabled: true },
     });
 
     // Verify all but account and cleanup steps (the rest are AD or RM steps)
@@ -49,6 +51,7 @@ describe("getStepStartStates", () => {
     expect(states).toEqual({
       [RM_SYNC_COMPUTE]: { disabled: true },
       [RM_SYNC_STORAGE]: { disabled: true },
+      [RM_SYNC_DATABASES]: { disabled: true },
     });
   });
 

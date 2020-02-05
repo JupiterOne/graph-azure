@@ -29,13 +29,6 @@ interface OldDataMaps {
 
 export type OldData = OldDataMaps & OldDataMeta;
 
-export interface OldDataGetter {
-  (oldData: OldData, newData: PersistedObjectAssignable): [
-    EntityOrRelationship | undefined,
-    OldData
-  ];
-}
-
 export async function fetchOldData(
   graph: GraphClient,
   account: AccountEntity,
@@ -131,7 +124,14 @@ function createObjectByKeyMap<T extends PersistedObjectAssignable>(
   return map;
 }
 
-function popOldData(mapKey: keyof OldDataMaps): OldDataGetter {
+function popOldData(
+  mapKey: keyof OldDataMaps,
+): {
+  (oldData: OldData, newData: PersistedObjectAssignable): [
+    OldData,
+    EntityOrRelationship | undefined
+  ];
+} {
   return (oldData, newData) => {
     const map = oldData[mapKey];
     const obj = map[newData._key];
@@ -143,6 +143,6 @@ function popOldData(mapKey: keyof OldDataMaps): OldDataGetter {
       updatedMap,
     });
 
-    return [obj, updatedOldData];
+    return [updatedOldData, obj];
   };
 }

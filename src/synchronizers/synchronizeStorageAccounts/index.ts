@@ -174,7 +174,7 @@ async function synchronizeBlobStorage(
     "blob",
   );
   let oldServiceEntity;
-  [oldServiceEntity, oldData] = popOldStorageServiceEntity(
+  [oldData, oldServiceEntity] = popOldStorageServiceEntity(
     oldData,
     newServiceEntity,
   );
@@ -185,7 +185,7 @@ async function synchronizeBlobStorage(
     to: newServiceEntity,
   });
   let oldAccountServiceRelationship;
-  [oldAccountServiceRelationship, oldData] = popOldAccountServiceRelationship(
+  [oldData, oldAccountServiceRelationship] = popOldAccountServiceRelationship(
     oldData,
     newAccountServiceRelationship,
   );
@@ -202,7 +202,7 @@ async function synchronizeBlobStorage(
       e,
     );
     let oldContainerEntity;
-    [oldContainerEntity, oldData] = popOldContainerEntity(
+    [oldData, oldContainerEntity] = popOldContainerEntity(
       oldData,
       containerEntity,
     );
@@ -217,8 +217,8 @@ async function synchronizeBlobStorage(
     });
     let oldServiceContainerRelationship;
     [
-      oldServiceContainerRelationship,
       oldData,
+      oldServiceContainerRelationship,
     ] = popOldServiceContainerRelationship(
       oldData,
       serviceContainerRelationship,

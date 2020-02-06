@@ -14,18 +14,21 @@ import {
   ResourceManagerClient,
 } from "../azure";
 import {
-  createSqlDatabaseEntity,
-  createSqlServerEntity,
+  createDatabaseEntity,
+  createDbServerEntity,
   createSqlServerDatabaseRelationship,
 } from "../converters";
-import {
-  AccountEntity,
-  SQL_DATABASE_ENTITY_TYPE,
-  SQL_SERVER_ENTITY_TYPE,
-  SQL_SERVER_DATABASE_RELATIONSHIP_TYPE,
-} from "../jupiterone";
+import { AccountEntity } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
-import { Server } from "@azure/arm-sql/esm/models";
+import { Server as SQLServer } from "@azure/arm-sql/esm/models";
+import { Server as MySQLServer } from "@azure/arm-mysql/esm/models";
+
+enum DatabaseType {
+  MariaDB = "mariadb",
+  MySQL = "mysql",
+  PostgreSQL = "postgresql",
+  SQL = "sql",
+}
 
 export default async function synchronizeDatabaseResources(
   executionContext: AzureExecutionContext,
@@ -41,17 +44,25 @@ export default async function synchronizeDatabaseResources(
 
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain);
 
-  const operationsResultSQL = await synchronizeSQL(executionContext, webLinker);
-
   return {
-    operations: summarizePersisterOperationsResults(operationsResultSQL),
+    operations: summarizePersisterOperationsResults(
+      await synchronize(executionContext, webLinker, DatabaseType.MariaDB),
+      await synchronize(executionContext, webLinker, DatabaseType.MySQL),
+      await synchronize(executionContext, webLinker, DatabaseType.PostgreSQL),
+      await synchronize(executionContext, webLinker, DatabaseType.SQL),
+    ),
   };
 }
 
-async function synchronizeSQL(
+async function synchronize(
   executionContext: AzureExecutionContext,
   webLinker: AzureWebLinker,
+  dbType: string,
 ): Promise<PersisterOperationsResult> {
+  const DATABASE_ENTITY_TYPE = `azure_${dbType}_database`;
+  const DB_SERVER_ENTITY_TYPE = `azure_${dbType}_server`;
+  const SERVER_DATABASE_RELATIONSHIP_TYPE = `azure_${dbType}_server_has_database`;
+
   const { azrm, graph, persister } = executionContext;
   const [
     oldDBs,
@@ -59,17 +70,17 @@ async function synchronizeSQL(
     oldServerDbRelationships,
     newServers,
   ] = await Promise.all([
-    graph.findEntitiesByType(SQL_DATABASE_ENTITY_TYPE),
-    graph.findEntitiesByType(SQL_SERVER_ENTITY_TYPE),
-    graph.findRelationshipsByType(SQL_SERVER_DATABASE_RELATIONSHIP_TYPE),
-    fetchSqlServers(azrm, webLinker),
+    graph.findEntitiesByType(DATABASE_ENTITY_TYPE),
+    graph.findEntitiesByType(DB_SERVER_ENTITY_TYPE),
+    graph.findRelationshipsByType(SERVER_DATABASE_RELATIONSHIP_TYPE),
+    fetchDbServers(azrm, webLinker, dbType),
   ]);
 
   const newDBs: EntityFromIntegration[] = [];
   const newSqlServerDbRelationships: IntegrationRelationship[] = [];
   for (const s of newServers) {
-    const server = getRawData(s) as Server;
-    const databases = await fetchSqlDatabases(azrm, webLinker, server);
+    const server = getRawData(s);
+    const databases = await fetchDatabases(azrm, webLinker, server, dbType);
 
     for (const db of databases) {
       newSqlServerDbRelationships.push(
@@ -93,25 +104,51 @@ async function synchronizeSQL(
   ]);
 }
 
-async function fetchSqlServers(
+async function fetchDbServers(
   client: ResourceManagerClient,
   webLinker: AzureWebLinker,
+  dbType: string,
 ): Promise<EntityFromIntegration[]> {
+  const DB_SERVER_ENTITY_TYPE = `azure_${dbType}_server`;
   const entities: EntityFromIntegration[] = [];
-  await client.iterateSqlServers(e => {
-    entities.push(createSqlServerEntity(webLinker, e));
-  });
+  switch (dbType) {
+    case DatabaseType.MySQL:
+      await client.iterateMySqlServers(e => {
+        entities.push(
+          createDbServerEntity(webLinker, e, DB_SERVER_ENTITY_TYPE),
+        );
+      });
+      break;
+    case DatabaseType.SQL:
+      await client.iterateSqlServers(e => {
+        entities.push(
+          createDbServerEntity(webLinker, e, DB_SERVER_ENTITY_TYPE),
+        );
+      });
+      break;
+  }
   return entities;
 }
 
-async function fetchSqlDatabases(
+async function fetchDatabases(
   client: ResourceManagerClient,
   webLinker: AzureWebLinker,
-  server: Server,
+  server: MySQLServer | SQLServer,
+  dbType: string,
 ): Promise<EntityFromIntegration[]> {
+  const DATABASE_ENTITY_TYPE = `azure_${dbType}_database`;
   const entities: EntityFromIntegration[] = [];
-  await client.iterateSqlDatabases(server, e => {
-    entities.push(createSqlDatabaseEntity(webLinker, e));
-  });
+  switch (dbType) {
+    case DatabaseType.MySQL:
+      await client.iterateMySqlDatabases(server as MySQLServer, e => {
+        entities.push(createDatabaseEntity(webLinker, e, DATABASE_ENTITY_TYPE));
+      });
+      break;
+    case DatabaseType.SQL:
+      await client.iterateSqlDatabases(server as SQLServer, e => {
+        entities.push(createDatabaseEntity(webLinker, e, DATABASE_ENTITY_TYPE));
+      });
+      break;
+  }
   return entities;
 }

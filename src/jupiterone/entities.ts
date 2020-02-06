@@ -139,10 +139,11 @@ export const STORAGE_QUEUE_SERVICE_ENTITY_CLASS = "Service";
 export const STORAGE_TABLE_SERVICE_ENTITY_TYPE = "azure_storage_table_service";
 export const STORAGE_TABLE_SERVICE_ENTITY_CLASS = "Service";
 
+export const AZURE_DATABASE_ENTITY_CLASS = ["Database", "DataStore"];
+export const AZURE_DB_SERVER_ENTITY_CLASS = ["Database", "DataStore", "Host"];
+
 export const SQL_DATABASE_ENTITY_TYPE = "azure_sql_database";
-export const SQL_DATABASE_ENTITY_CLASS = ["Database", "DataStore"];
 export const SQL_SERVER_ENTITY_TYPE = "azure_sql_server";
-export const SQL_SERVER_ENTITY_CLASS = ["Database", "DataStore", "Host"];
 
 export interface SQLDatabaseEntity extends EntityFromIntegration {
   location: string | undefined;

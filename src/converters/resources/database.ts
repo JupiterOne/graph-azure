@@ -1,38 +1,44 @@
-import { Database, Server } from "@azure/arm-sql/esm/models";
 import {
   createIntegrationEntity,
   EntityFromIntegration,
   convertProperties,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
+import {
+  Server as MySQLServer,
+  Database as MySQLDatabase,
+} from "@azure/arm-mysql/esm/models";
+
+import {
+  Server as SQLServer,
+  Database as SQLDatabase,
+} from "@azure/arm-sql/esm/models";
+
 import { AzureWebLinker } from "../../azure";
 import { resourceGroupName } from "../../azure/utils";
 
 import {
-  SQL_DATABASE_ENTITY_TYPE,
-  SQL_DATABASE_ENTITY_CLASS,
-  SQL_SERVER_ENTITY_TYPE,
-  SQL_SERVER_ENTITY_CLASS,
+  AZURE_DATABASE_ENTITY_CLASS,
+  AZURE_DB_SERVER_ENTITY_CLASS,
 } from "../../jupiterone";
 
 import { REDACTED_VALUE } from "../../utils/constants";
 
-export function createSqlDatabaseEntity(
+export function createDatabaseEntity(
   webLinker: AzureWebLinker,
-  data: Database,
+  data: MySQLDatabase | SQLDatabase,
+  _type: string,
 ): EntityFromIntegration {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
         ...convertProperties(data),
-        _type: SQL_DATABASE_ENTITY_TYPE,
-        _class: SQL_DATABASE_ENTITY_CLASS,
-        displayName: data.name || data.databaseId || data.id || "unnamed",
+        _type,
+        _class: AZURE_DATABASE_ENTITY_CLASS,
+        displayName: data.name || data.id || "unnamed",
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
-        active: data.status === "Online",
-        createdOn: data.creationDate && data.creationDate.getTime(),
         classification: null,
         encrypted: null,
       },
@@ -40,17 +46,20 @@ export function createSqlDatabaseEntity(
   });
 }
 
-export function createSqlServerEntity(
+export function createDbServerEntity(
   webLinker: AzureWebLinker,
-  data: Server,
+  data: MySQLServer | SQLServer,
+  _type: string,
 ): EntityFromIntegration {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
         ...convertProperties(data),
-        _type: SQL_SERVER_ENTITY_TYPE,
-        _class: SQL_SERVER_ENTITY_CLASS,
+        ...convertProperties((data as any).sku, { prefix: "sku" }),
+        ...convertProperties((data as any).storageProfile),
+        _type,
+        _class: AZURE_DB_SERVER_ENTITY_CLASS,
         displayName:
           data.name || data.fullyQualifiedDomainName || data.id || "unnamed",
         webLink: webLinker.portalResourceUrl(data.id),

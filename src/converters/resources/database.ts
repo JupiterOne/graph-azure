@@ -56,6 +56,8 @@ export function createDbServerEntity(
       source: data,
       assign: {
         ...convertProperties(data),
+        ...convertProperties((data as any).sku, { prefix: "sku" }),
+        ...convertProperties((data as any).storageProfile),
         _type,
         _class: AZURE_DB_SERVER_ENTITY_CLASS,
         displayName:

@@ -14,11 +14,23 @@ import {
   VirtualNetwork,
 } from "@azure/arm-network/esm/models";
 
+import { MariaDBManagementClient } from "@azure/arm-mariadb";
+import {
+  Server as MariaDBServer,
+  Database as MariaDBDatabase,
+} from "@azure/arm-mariadb/esm/models";
+
 import { MySQLManagementClient } from "@azure/arm-mysql";
 import {
   Server as MySQLServer,
   Database as MySQLDatabase,
 } from "@azure/arm-mysql/esm/models";
+
+import { PostgreSQLManagementClient } from "@azure/arm-postgresql";
+import {
+  Server as PostgreSQLServer,
+  Database as PostgreSQLDatabase,
+} from "@azure/arm-postgresql/esm/models";
 
 import { SqlManagementClient } from "@azure/arm-sql";
 import {
@@ -195,6 +207,70 @@ export default class ResourceManagerClient {
     const client = ((await this.getAuthenticatedClient(
       MySQLManagementClient as any,
     )) as unknown) as MySQLManagementClient;
+    const resourceGroup = resourceGroupName(server.id, true)!;
+    const serverName = server.name!;
+
+    return this.iterateScopedResources(
+      {
+        list: async () => {
+          return client.databases.listByServer(resourceGroup, serverName);
+        },
+      } as any,
+      callback,
+    );
+  }
+
+  public async iterateMariaDbServers(
+    callback: (s: MariaDBServer) => void,
+  ): Promise<void> {
+    const client = ((await this.getAuthenticatedClient(
+      MariaDBManagementClient as any,
+    )) as unknown) as MariaDBManagementClient;
+    const servers = await client.servers.list();
+    for (const server of servers) {
+      callback(server);
+    }
+  }
+
+  public async iterateMariaDbDatabases(
+    server: PostgreSQLServer,
+    callback: (d: MariaDBDatabase) => void,
+  ): Promise<void> {
+    const client = ((await this.getAuthenticatedClient(
+      MariaDBManagementClient as any,
+    )) as unknown) as MariaDBManagementClient;
+    const resourceGroup = resourceGroupName(server.id, true)!;
+    const serverName = server.name!;
+
+    return this.iterateScopedResources(
+      {
+        list: async () => {
+          return client.databases.listByServer(resourceGroup, serverName);
+        },
+      } as any,
+      callback,
+    );
+  }
+
+  public async iteratePostgreSqlServers(
+    callback: (s: PostgreSQLServer) => void,
+  ): Promise<void> {
+    const client = ((await this.getAuthenticatedClient(
+      PostgreSQLManagementClient as any,
+    )) as unknown) as PostgreSQLManagementClient;
+    const servers = await client.servers.list();
+    for (const server of servers) {
+      callback(server);
+    }
+  }
+
+  public async iteratePostgreSqlDatabases(
+    server: PostgreSQLServer,
+    callback: (d: PostgreSQLDatabase) => void,
+  ): Promise<void> {
+    const client = ((await this.getAuthenticatedClient(
+      PostgreSQLManagementClient as any,
+    )) as unknown) as PostgreSQLManagementClient;
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 

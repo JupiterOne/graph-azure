@@ -11,6 +11,15 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
+"@azure/arm-mariadb@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-mariadb/-/arm-mariadb-1.4.0.tgz#a049e0b35a1f8411df0ce483b8d704fe4d7ec599"
+  integrity sha512-K66qnKJ2jqaRjFq2ecI98ehsXjUcB1960LkOw5FchvzMX+FMV6nggBvp8HoAr7qRcK2ljpkBr0a7O6UmXpV3jA==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^1.3.2"
+    "@azure/ms-rest-js" "^1.8.1"
+    tslib "^1.9.3"
+
 "@azure/arm-mysql@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-mysql/-/arm-mysql-3.3.0.tgz#e47f3523dcdb4be3542b1e77179ecdf2e8ca4ea6"
@@ -28,6 +37,15 @@
     "@azure/ms-rest-azure-js" "^2.0.1"
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
+
+"@azure/arm-postgresql@^4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-postgresql/-/arm-postgresql-4.4.0.tgz#57b7cb3edc9a032fe24a9aaa346bde9c27255920"
+  integrity sha512-gO5Y13bnp4OiKBDywhAz/tQXqb+KDY9EH7K8FnS2MzlgWeTzgu5RwtIS7L7J4O09gwA0lVLDEOwiVk0WDNmnEQ==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^1.3.2"
+    "@azure/ms-rest-js" "^1.8.1"
+    tslib "^1.9.3"
 
 "@azure/arm-sql@^7.0.0":
   version "7.0.0"
@@ -981,10 +999,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@jupiterone/jupiter-managed-integration-sdk@^33.1.0":
-  version "33.1.0"
-  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-33.1.0.tgz#02b00cf398acc310cc750b0bd1e39f162ef43856"
-  integrity sha512-ZmaC9IFvMgQP6jkdT9QZWND2WGgCJl9zoZqrg/lHZYavYqmLD4KV2xKwTj62Ht1oMdTx/DBVepDtWhScMIgYMw==
+"@jupiterone/jupiter-managed-integration-sdk@^33.1.1":
+  version "33.1.1"
+  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-33.1.1.tgz#db1cfd1aa274550628837c9373f52b49976473e8"
+  integrity sha512-10wgZrJt62B4BA+b7z0ysl+kiJ0W9cTizu13XcXtBMhIpmYkfyXRbolnumtL4MOBLPwhgAv/qEwxWOeccBLNJw==
 
 "@microsoft/microsoft-graph-client@^2.0.0":
   version "2.0.0"

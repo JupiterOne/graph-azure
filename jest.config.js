@@ -30,10 +30,10 @@ module.exports = {
       lines: 100,
     },
     "src/azure/resource-manager": {
-      statements: 80,
+      statements: 67.29,
       branches: 92,
-      functions: 77.78,
-      lines: 80,
+      functions: 63.64,
+      lines: 67.29,
     },
     "src/jupiterone/": {
       statements: 100,

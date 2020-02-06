@@ -44,27 +44,17 @@ export default async function synchronizeDatabaseResources(
 
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain);
 
-  const operationsResultMySQL = await synchronizeSQL(
-    executionContext,
-    webLinker,
-    DatabaseType.MySQL,
-  );
-
-  const operationsResultSQL = await synchronizeSQL(
-    executionContext,
-    webLinker,
-    DatabaseType.SQL,
-  );
-
   return {
     operations: summarizePersisterOperationsResults(
-      operationsResultMySQL,
-      operationsResultSQL,
+      await synchronize(executionContext, webLinker, DatabaseType.MariaDB),
+      await synchronize(executionContext, webLinker, DatabaseType.MySQL),
+      await synchronize(executionContext, webLinker, DatabaseType.PostgreSQL),
+      await synchronize(executionContext, webLinker, DatabaseType.SQL),
     ),
   };
 }
 
-async function synchronizeSQL(
+async function synchronize(
   executionContext: AzureExecutionContext,
   webLinker: AzureWebLinker,
   dbType: string,

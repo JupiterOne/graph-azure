@@ -69,23 +69,23 @@ though the `Account` entity will always be ingested.
 | Group Member                    | `azure_group_member` | `User`                |
 | User                            | `azure_user`         | `User`                |
 
-| Azure Resources   | \_type of the Entity        | \_class of the Entity            |
-| ----------------- | --------------------------- | -------------------------------- |
-| Virtual Network   | `azure_vnet`                | `Network`                        |
-| Subnet            | `azure_subnet`              | `Network`                        |
-| Security Group    | `azure_security_group`      | `Firewall`                       |
-| Network Interface | `azure_nic`                 | `NetworkInterface`               |
-| Public IP Address | `azure_public_ip`           | `IpAddress`                      |
-| Virtual Machine   | `azure_vm`                  | `Host`                           |
-| Blob (Storage)    | `azure_storage_container`   | `DataStore`                      |
-| Databases         | `azure_mariadb_database`    | `Databasde`, `DataStore`         |
-|                   | `azure_mariadb_server`      | `Databasde`, `DataStore`, `Host` |
-|                   | `azure_mysql_database`      | `Databasde`, `DataStore`         |
-|                   | `azure_mysql_server`        | `Databasde`, `DataStore`, `Host` |
-|                   | `azure_postgresql_database` | `Databasde`, `DataStore`         |
-|                   | `azure_postgresql_server`   | `Databasde`, `DataStore`, `Host` |
-|                   | `azure_sql_database`        | `Databasde`, `DataStore`         |
-|                   | `azure_sql_server`          | `Databasde`, `DataStore`, `Host` |
+| Azure Resources   | \_type of the Entity        | \_class of the Entity           |
+| ----------------- | --------------------------- | ------------------------------- |
+| Virtual Network   | `azure_vnet`                | `Network`                       |
+| Subnet            | `azure_subnet`              | `Network`                       |
+| Security Group    | `azure_security_group`      | `Firewall`                      |
+| Network Interface | `azure_nic`                 | `NetworkInterface`              |
+| Public IP Address | `azure_public_ip`           | `IpAddress`                     |
+| Virtual Machine   | `azure_vm`                  | `Host`                          |
+| Blob (Storage)    | `azure_storage_container`   | `DataStore`                     |
+| Databases         | `azure_mariadb_database`    | `Database`, `DataStore`         |
+|                   | `azure_mariadb_server`      | `Database`, `DataStore`, `Host` |
+|                   | `azure_mysql_database`      | `Database`, `DataStore`         |
+|                   | `azure_mysql_server`        | `Database`, `DataStore`, `Host` |
+|                   | `azure_postgresql_database` | `Database`, `DataStore`         |
+|                   | `azure_postgresql_server`   | `Database`, `DataStore`, `Host` |
+|                   | `azure_sql_database`        | `Database`, `DataStore`         |
+|                   | `azure_sql_server`          | `Database`, `DataStore`, `Host` |
 
 ## Relationships
 

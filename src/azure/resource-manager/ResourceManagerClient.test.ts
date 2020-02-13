@@ -24,7 +24,9 @@ test("client accessToken fetched once and used across resources", async () => {
   let requests = 0;
 
   p = polly(__dirname, "accessTokenCaching");
-  p.server.any().on("request", () => requests++);
+  p.server.any().on("request", _req => {
+    requests++;
+  });
 
   const client = new ResourceManagerClient(config, createTestLogger());
 

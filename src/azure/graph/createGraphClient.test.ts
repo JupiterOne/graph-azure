@@ -14,7 +14,9 @@ test("createGraphClient accessToken fetched and cached", async () => {
   let requests = 0;
 
   p = polly(__dirname, "createGraphClient");
-  p.server.any().on("request", _req => requests++);
+  p.server.any().on("request", _req => {
+    requests++;
+  });
 
   const client = createGraphClient(config);
   await expect(client.api("/").get()).resolves.toMatchObject({

@@ -4,7 +4,10 @@
 import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { ComputeManagementClient } from "@azure/arm-compute";
-import { VirtualMachine } from "@azure/arm-compute/esm/models";
+import {
+  VirtualMachine,
+  VirtualMachineImage,
+} from "@azure/arm-compute/esm/models";
 
 import { NetworkManagementClient } from "@azure/arm-network";
 import {
@@ -106,6 +109,20 @@ export default class ResourceManagerClient {
   ): Promise<void> {
     const client = await this.getAuthenticatedClient(ComputeManagementClient);
     return this.iterateAllResources(client.virtualMachines, callback);
+  }
+
+  public async iterateVirtualMachineImages(
+    callback: (vm: VirtualMachineImage) => void,
+  ): Promise<void> {
+    const client = await this.getAuthenticatedClient(ComputeManagementClient);
+    return this.iterateScopedResources(
+      {
+        list: async () => {
+          return client.images.list();
+        },
+      } as any,
+      callback,
+    );
   }
 
   public async iterateVirtualNetworks(

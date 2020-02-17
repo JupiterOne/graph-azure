@@ -5,9 +5,9 @@ import {
 import { Organization } from "@microsoft/microsoft-graph-types";
 
 import {
-  createAccountEntity,
   createGroupEntity,
   createUserEntity,
+  createAccountEntityWithOrganization,
 } from "./graph";
 
 describe("createAccountEntity", () => {
@@ -30,7 +30,10 @@ describe("createAccountEntity", () => {
         },
       ],
     };
-    const accountEntity = createAccountEntity(instance, organization);
+    const accountEntity = createAccountEntityWithOrganization(
+      instance,
+      organization,
+    );
 
     const expected: EntityFromIntegration & {
       name: string;

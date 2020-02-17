@@ -23,6 +23,23 @@ import getTime from "../utils/getTime";
 
 export function createAccountEntity(
   instance: IntegrationInstance,
+): EntityFromIntegration {
+  return createIntegrationEntity({
+    entityData: {
+      source: {},
+      assign: {
+        _class: ACCOUNT_ENTITY_CLASS,
+        _key: generateEntityKey(ACCOUNT_ENTITY_TYPE, instance.id),
+        _type: ACCOUNT_ENTITY_TYPE,
+        name: instance.name,
+        displayName: instance.name,
+      },
+    },
+  });
+}
+
+export function createAccountEntityWithOrganization(
+  instance: IntegrationInstance,
   organization: Organization,
 ): EntityFromIntegration {
   let defaultDomain: string | undefined;

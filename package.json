@@ -70,6 +70,7 @@
     "@types/node": "^10.12.20",
     "@types/pollyjs__adapter-node-http": "^2.0.0",
     "@types/pollyjs__core": "^2.6.0",
+    "@types/vfile-message": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^2.3.0",
     "@typescript-eslint/parser": "^2.3.0",
     "aws-sdk": "^2.610.0",

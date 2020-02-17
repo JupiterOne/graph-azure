@@ -36,6 +36,7 @@ import {
   createSubnetVirtualMachineRelationship,
   createImageEntity,
   createDiskEntity,
+  createVirtualMachineDiskRelationships,
 } from "../converters";
 import {
   AccountEntity,
@@ -55,6 +56,7 @@ import {
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
   VirtualMachineEntity,
   AzureRegionalEntity,
+  VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
 
@@ -101,9 +103,10 @@ export default async function synchronizeComputeResources(
   const newSubnetVmRelationships: IntegrationRelationship[] = [];
   const newVMNicRelationships: IntegrationRelationship[] = [];
   const newVMAddressRelationships: IntegrationRelationship[] = [];
+  const newVMDiskRelationships: IntegrationRelationship[] = [];
 
   for (const vm of newVms) {
-    const vmData = getRawData(vm as EntityFromIntegration) as VirtualMachine;
+    const vmData = getRawData(vm) as VirtualMachine;
     const nicData = findNetworkInterfacesForVM(vmData, networkResults.nics);
     for (const nic of nicData) {
       newVMNicRelationships.push(
@@ -125,18 +128,26 @@ export default async function synchronizeComputeResources(
         }
       }
     }
+
+    if (vmData.storageProfile) {
+      newVMNicRelationships.push(
+        ...createVirtualMachineDiskRelationships(vmData),
+      );
+    }
   }
 
   const [
     oldSubnetVmRelationships,
     oldVMNicRelationships,
     oldVMAddressRelationships,
+    oldVMDiskRelationships,
   ] = await Promise.all([
     graph.findRelationshipsByType(SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(
       VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
     ),
+    graph.findRelationshipsByType(VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE),
   ]);
 
   // This has been changed to "azure_vm_uses_nic"
@@ -167,6 +178,10 @@ export default async function synchronizeComputeResources(
       ...persister.processRelationships(
         oldVMAddressRelationships,
         newVMAddressRelationships,
+      ),
+      ...persister.processRelationships(
+        oldVMDiskRelationships,
+        newVMDiskRelationships,
       ),
     ],
   ]);

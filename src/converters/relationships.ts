@@ -33,6 +33,7 @@ import {
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
   VIRTUAL_NETWORK_ENTITY_TYPE,
+  DISK_ENTITY_TYPE,
 } from "../jupiterone";
 import {
   generateEntityKey,
@@ -214,6 +215,48 @@ export function createVirtualMachineNetworkInterfaceRelationship(
       vmId: vm.vmId as string,
     },
   });
+}
+
+export function createVirtualMachineDiskRelationships(
+  vm: VirtualMachine,
+): IntegrationRelationship[] {
+  const relationships: IntegrationRelationship[] = [];
+
+  if (vm.storageProfile) {
+    if (vm.storageProfile.osDisk && vm.storageProfile.osDisk.managedDisk) {
+      relationships.push(
+        createIntegrationRelationship({
+          _class: DataModel.RelationshipClass.USES,
+          fromKey: vm.id as string,
+          fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
+          toKey: vm.storageProfile.osDisk.managedDisk.id as string,
+          toType: DISK_ENTITY_TYPE,
+          properties: {
+            osDisk: true,
+          },
+        }),
+      );
+    }
+
+    for (const disk of vm.storageProfile.dataDisks || []) {
+      if (disk.managedDisk) {
+        relationships.push(
+          createIntegrationRelationship({
+            _class: DataModel.RelationshipClass.USES,
+            fromKey: vm.id as string,
+            fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
+            toKey: disk.managedDisk.id as string,
+            toType: DISK_ENTITY_TYPE,
+            properties: {
+              dataDisk: true,
+            },
+          }),
+        );
+      }
+    }
+  }
+
+  return relationships;
 }
 
 export function createSqlServerDatabaseRelationship(

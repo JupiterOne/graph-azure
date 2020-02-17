@@ -18,5 +18,7 @@ export const VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE = "azure_vm_uses_nic";
 export const VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE =
   "azure_vm_uses_public_ip";
 
+export const VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE = "azure_vm_uses_disk";
+
 export const SQL_SERVER_DATABASE_RELATIONSHIP_TYPE =
   "azure_sql_server_has_database";

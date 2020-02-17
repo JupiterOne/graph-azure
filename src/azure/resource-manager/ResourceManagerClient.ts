@@ -88,7 +88,7 @@ export default class ResourceManagerClient {
   }
 
   public async iterateVirtualMachineImages(
-    callback: (vm: VirtualMachineImage) => void,
+    callback: (i: VirtualMachineImage) => void,
   ): Promise<void> {
     const client = await this.getAuthenticatedClient(ComputeManagementClient);
     return this.iterateScopedResources(client.images, callback);

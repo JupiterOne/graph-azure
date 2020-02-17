@@ -5,6 +5,7 @@ import { ComputeManagementClient } from "@azure/arm-compute";
 import {
   VirtualMachine,
   VirtualMachineImage,
+  Disk,
 } from "@azure/arm-compute/esm/models";
 import { MariaDBManagementClient } from "@azure/arm-mariadb";
 import {
@@ -90,14 +91,17 @@ export default class ResourceManagerClient {
     callback: (vm: VirtualMachineImage) => void,
   ): Promise<void> {
     const client = await this.getAuthenticatedClient(ComputeManagementClient);
-    return this.iterateScopedResources(
-      {
-        list: async () => {
-          return client.images.list();
-        },
-      } as any,
-      callback,
-    );
+    return this.iterateScopedResources(client.images, callback);
+  }
+
+  public async iterateVirtualMachineDisks(
+    callback: (d: Disk) => void,
+  ): Promise<void> {
+    const client = await this.getAuthenticatedClient(ComputeManagementClient);
+    const items = await client.disks.list();
+    for (const item of items) {
+      callback(item);
+    }
   }
 
   public async iterateVirtualNetworks(
@@ -241,9 +245,9 @@ export default class ResourceManagerClient {
   public async iteratePostgreSqlServers(
     callback: (s: PostgreSQLServer) => void,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient<
-      PostgreSQLManagementClient
-    >(PostgreSQLManagementClient);
+    const client = await this.getAuthenticatedClient(
+      PostgreSQLManagementClient,
+    );
     const servers = await client.servers.list();
     for (const server of servers) {
       callback(server);

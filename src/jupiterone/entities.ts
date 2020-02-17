@@ -20,6 +20,7 @@ export interface GroupEntity extends EntityFromIntegration {
   classification: string | undefined;
   description: string | undefined;
   displayName: string | undefined;
+  email: string | undefined;
   mail: string | undefined;
   mailEnabled: boolean | undefined;
   mailNickname: string | undefined;
@@ -33,12 +34,15 @@ export interface UserEntity extends EntityFromIntegration {
   id: string;
   displayName: string | undefined;
   givenName: string | undefined;
+  firstName: string | undefined;
   jobTitle: string | undefined;
+  email: string | undefined;
   mail: string | undefined;
   mobilePhone: string | undefined;
   officeLocation: string | undefined;
   preferredLanguage: string | undefined;
   surname: string | undefined;
+  lastName: string | undefined;
   userPrincipalName: string | undefined;
 }
 

@@ -5,6 +5,7 @@ import {
   IntegrationRelationship,
   PersisterOperationsResult,
   summarizePersisterOperationsResults,
+  IntegrationInstanceAuthorizationError,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember } from "../azure";
@@ -22,8 +23,11 @@ export default async function synchronizeGroupMembers(
 
   const groupsState = await groupsCache.getState();
   if (!groupsState || !groupsState.groupMembersFetchCompleted) {
-    throw new IntegrationError(
-      "Group members fetching did not complete, cannot synchronize group members",
+    throw new IntegrationInstanceAuthorizationError(
+      new IntegrationError(
+        "Group members fetching did not complete, cannot synchronize group members.",
+      ),
+      "Group Members",
     );
   }
 

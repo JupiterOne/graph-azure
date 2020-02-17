@@ -77,14 +77,18 @@ export async function fetchOldData(
   };
 }
 
-export const popOldStorageServiceEntity = popOldData("serviceEntityMap");
-export const popOldAccountServiceRelationship = popOldData(
-  "accountServiceRelationshipMap",
+export const popOldStorageServiceEntity = popOldData<EntityFromIntegration>(
+  "serviceEntityMap",
 );
-export const popOldContainerEntity = popOldData("containerEntityMap");
-export const popOldServiceContainerRelationship = popOldData(
-  "serviceContainerRelationshipMap",
+export const popOldAccountServiceRelationship = popOldData<
+  IntegrationRelationship
+>("accountServiceRelationshipMap");
+export const popOldContainerEntity = popOldData<EntityFromIntegration>(
+  "containerEntityMap",
 );
+export const popOldServiceContainerRelationship = popOldData<
+  IntegrationRelationship
+>("serviceContainerRelationshipMap");
 
 export function cloneOldData({
   oldData,
@@ -124,15 +128,15 @@ function createObjectByKeyMap<T extends PersistedObjectAssignable>(
   return map;
 }
 
-function popOldData(
+function popOldData<T extends EntityOrRelationship>(
   mapKey: keyof OldDataMaps,
 ): {
   (oldData: OldData, newData: PersistedObjectAssignable): [
     OldData,
-    EntityOrRelationship | undefined
+    T | undefined
   ];
 } {
-  return (oldData, newData) => {
+  return (oldData, newData): [OldData, T] => {
     const map = oldData[mapKey];
     const obj = map[newData._key];
 
@@ -143,6 +147,6 @@ function popOldData(
       updatedMap,
     });
 
-    return [updatedOldData, obj];
+    return [updatedOldData, obj as T];
   };
 }

@@ -22,13 +22,18 @@ export default async function synchronizeGroupMembers(
     .iterableCache<IntegrationCacheEntry, GroupsCacheState>("groups");
 
   const groupsState = await groupsCache.getState();
-  if (!groupsState || !groupsState.groupMembersFetchCompleted) {
-    throw new IntegrationInstanceAuthorizationError(
-      new IntegrationError(
-        "Group members fetching did not complete, cannot synchronize group members.",
-      ),
-      "Group Members",
-    );
+  const baseError = new IntegrationError(
+    "Group members fetching did not complete, cannot synchronize group members.",
+  );
+
+  if (
+    groupsState &&
+    groupsState.fetchError &&
+    groupsState.fetchError.status === 403
+  ) {
+    throw new IntegrationInstanceAuthorizationError(baseError, "Group Members");
+  } else if (!groupsState || !groupsState.groupMembersFetchCompleted) {
+    throw baseError;
   }
 
   const operationResults: PersisterOperationsResult[] = [];

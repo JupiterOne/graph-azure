@@ -12,11 +12,11 @@ const DIRECTORY_ID =
 
 const logger = createTestLogger();
 
-function createAzureClient() {
+function createAzureClient(): AzureClient {
   return new AzureClient(CLIENT_ID, CLIENT_SECRET, DIRECTORY_ID, logger);
 }
 
-function createClientWithAuth() {
+function createClientWithAuth(): AzureClient {
   nock("https://login.microsoftonline.com")
     .post(`/${DIRECTORY_ID}/oauth2/v2.0/token`)
     .reply(
@@ -108,7 +108,7 @@ describe("fetchUsers", () => {
     });
   });
 
-  test("unexpected error answers undefined, logs warning", async () => {
+  test("unexpected error returns error, logs warning", async () => {
     const client = createClientWithAuth();
 
     nock("https://graph.microsoft.com")
@@ -118,7 +118,11 @@ describe("fetchUsers", () => {
     const warn = jest.spyOn(logger, "warn");
 
     const response = await client.fetchUsers();
-    expect(response).toBeUndefined();
+    expect(response).toEqual({
+      nextLink: undefined,
+      resources: [],
+      err: expect.any(Error),
+    });
     expect(warn).toHaveBeenCalledTimes(1);
     expect(warn.mock.calls[0]).toEqual([
       {
@@ -176,7 +180,7 @@ describe("fetchGroups", () => {
     });
   });
 
-  test("unexpected error answers undefined, logs warning", async () => {
+  test("unexpected error returns error, logs warning", async () => {
     const client = createClientWithAuth();
 
     nock("https://graph.microsoft.com")
@@ -186,7 +190,11 @@ describe("fetchGroups", () => {
     const warn = jest.spyOn(logger, "warn");
 
     const response = await client.fetchGroups();
-    expect(response).toBeUndefined();
+    expect(response).toEqual({
+      nextLink: undefined,
+      resources: [],
+      err: expect.any(Error),
+    });
     expect(warn).toHaveBeenCalledTimes(1);
     expect(warn.mock.calls[0]).toEqual([
       {
@@ -249,7 +257,7 @@ describe("fetchGroupMembers", () => {
       nextLink: undefined,
       resources: expect.any(Array),
     });
-    const resource = response!.resources[0];
+    const resource = response.resources[0];
     expect(resource).toMatchObject({
       id: expect.any(String),
     });
@@ -268,7 +276,7 @@ describe("fetchGroupMembers", () => {
       nextLink: undefined,
       resources: expect.any(Array),
     });
-    expect(response!.resources[0]).toMatchObject({
+    expect(response.resources[0]).toMatchObject({
       id: expect.any(String),
       displayName: expect.any(String),
     });
@@ -291,7 +299,7 @@ describe("fetchGroupMembers", () => {
     });
   });
 
-  test("unexpected error answers undefined, logs warning", async () => {
+  test("unexpected error returns error, logs warning", async () => {
     const client = createClientWithAuth();
 
     nock("https://graph.microsoft.com")
@@ -303,7 +311,11 @@ describe("fetchGroupMembers", () => {
     const response = await client.fetchGroupMembers(
       "58e48aba-cd45-440f-a851-2bf9715fadc1",
     );
-    expect(response).toBeUndefined();
+    expect(response).toEqual({
+      nextLink: undefined,
+      resources: [],
+      err: expect.any(Error),
+    });
     expect(warn).toHaveBeenCalledTimes(1);
     expect(warn.mock.calls[0]).toEqual([
       {

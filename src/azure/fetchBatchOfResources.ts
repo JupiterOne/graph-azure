@@ -24,7 +24,7 @@ export default async function fetchBatchOfResources<
   fetch: (
     azure: AzureClient,
     paginationOptions: PaginationOptions,
-  ) => Promise<FetchResourcesResponse<T> | undefined>,
+  ) => Promise<FetchResourcesResponse<T>>,
 ): Promise<IntegrationStepIterationState> {
   const { azure } = executionContext;
   const cache = executionContext.clients.getCache();

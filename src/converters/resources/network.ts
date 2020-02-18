@@ -1,6 +1,5 @@
 import map from "lodash.map";
 
-import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   IPConfiguration,
   NetworkInterface,
@@ -15,8 +14,8 @@ import {
   EntityFromIntegration,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
-import { AzureWebLinker } from "../azure";
-import { resourceGroupName } from "../azure/utils";
+import { AzureWebLinker } from "../../azure";
+import { resourceGroupName } from "../../azure/utils";
 import {
   NETWORK_INTERFACE_ENTITY_CLASS,
   NETWORK_INTERFACE_ENTITY_TYPE,
@@ -28,12 +27,9 @@ import {
   SECURITY_GROUP_ENTITY_TYPE,
   SUBNET_ENTITY_CLASS,
   SUBNET_ENTITY_TYPE,
-  VIRTUAL_MACHINE_ENTITY_CLASS,
-  VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_NETWORK_ENTITY_CLASS,
   VIRTUAL_NETWORK_ENTITY_TYPE,
-  VirtualMachineEntity,
-} from "../jupiterone";
+} from "../../jupiterone";
 
 export function createNetworkInterfaceEntity(
   webLinker: AzureWebLinker,
@@ -86,29 +82,6 @@ export function createPublicIPAddressEntity(
     public: true,
     webLink: webLinker.portalResourceUrl(data.id),
     sku: data.sku && data.sku.name,
-  };
-
-  assignTags(entity, data.tags);
-
-  return entity;
-}
-
-export function createVirtualMachineEntity(
-  webLinker: AzureWebLinker,
-  data: VirtualMachine,
-): VirtualMachineEntity {
-  const entity = {
-    _key: data.id as string,
-    _type: VIRTUAL_MACHINE_ENTITY_TYPE,
-    _class: VIRTUAL_MACHINE_ENTITY_CLASS,
-    _rawData: [{ name: "default", rawData: data }],
-    displayName: data.name,
-    vmId: data.vmId,
-    type: data.type,
-    region: data.location,
-    resourceGroup: resourceGroupName(data.id),
-    vmSize: data.hardwareProfile && data.hardwareProfile.vmSize,
-    webLink: webLinker.portalResourceUrl(data.id),
   };
 
   assignTags(entity, data.tags);

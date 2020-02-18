@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - '8'
+  - '10'
   - '12'
 
 notifications:
@@ -20,4 +20,4 @@ deploy:
     tags: true
     branch: master
     repo: JupiterOne/graph-azure
-    node: '8'
+    node: '10'

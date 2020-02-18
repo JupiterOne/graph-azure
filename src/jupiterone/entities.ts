@@ -20,6 +20,7 @@ export interface GroupEntity extends EntityFromIntegration {
   classification: string | undefined;
   description: string | undefined;
   displayName: string | undefined;
+  email: string | undefined;
   mail: string | undefined;
   mailEnabled: boolean | undefined;
   mailNickname: string | undefined;
@@ -33,12 +34,15 @@ export interface UserEntity extends EntityFromIntegration {
   id: string;
   displayName: string | undefined;
   givenName: string | undefined;
+  firstName: string | undefined;
   jobTitle: string | undefined;
+  email: string | undefined;
   mail: string | undefined;
   mobilePhone: string | undefined;
   officeLocation: string | undefined;
   preferredLanguage: string | undefined;
   surname: string | undefined;
+  lastName: string | undefined;
   userPrincipalName: string | undefined;
 }
 
@@ -73,20 +77,30 @@ export const SECURITY_GROUP_ENTITY_CLASS = "Firewall";
 export const SUBNET_ENTITY_TYPE = "azure_subnet";
 export const SUBNET_ENTITY_CLASS = "Network";
 
-export interface VirtualMachineEntity extends EntityFromIntegration {
-  vmSize: string | undefined;
+export interface AzureRegionalEntity extends EntityFromIntegration {
   type: string | undefined;
-
-  /**
-   * The `vmId` property of the `VirtualMachine`. This is distinct from the `id`.
-   */
-  vmId: string | undefined;
   resourceGroup: string | undefined;
   region: string | undefined;
 }
 
+export interface VirtualMachineEntity
+  extends EntityFromIntegration,
+    AzureRegionalEntity {
+  /**
+   * The `vmId` property of the `VirtualMachine`. This is distinct from the `id`.
+   */
+  vmId: string | undefined;
+  vmSize: string | undefined;
+}
+
 export const VIRTUAL_MACHINE_ENTITY_TYPE = "azure_vm";
 export const VIRTUAL_MACHINE_ENTITY_CLASS = "Host";
+
+export const VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE = "azure_image";
+export const VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS = "Image";
+
+export const DISK_ENTITY_TYPE = "azure_managed_disk";
+export const DISK_ENTITY_CLASS = ["DataStore", "Disk"];
 
 export interface PublicIPAddressEntity extends EntityFromIntegration {
   type: string | undefined;

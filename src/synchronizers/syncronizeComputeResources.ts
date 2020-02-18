@@ -1,4 +1,3 @@
-import forEach from "lodash.foreach";
 import map from "lodash.map";
 
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
@@ -35,6 +34,9 @@ import {
   createVirtualNetworkEntity,
   createVirtualNetworkSubnetRelationship,
   createSubnetVirtualMachineRelationship,
+  createImageEntity,
+  createDiskEntity,
+  createVirtualMachineDiskRelationships,
 } from "../converters";
 import {
   AccountEntity,
@@ -53,6 +55,8 @@ import {
   VIRTUAL_NETWORK_ENTITY_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
   VirtualMachineEntity,
+  AzureRegionalEntity,
+  VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
 
@@ -86,18 +90,29 @@ export default async function synchronizeComputeResources(
     fetchVirtualMachines(azrm, webLinker),
   ]);
 
+  const [oldImages, newImages] = await Promise.all([
+    graph.findEntitiesByType(VIRTUAL_MACHINE_ENTITY_TYPE),
+    fetchVirtualMachineImages(azrm, webLinker),
+  ]);
+
+  const [oldDisks, newDisks] = await Promise.all([
+    graph.findEntitiesByType(VIRTUAL_MACHINE_ENTITY_TYPE),
+    fetchVirtualMachineDisks(azrm, webLinker),
+  ]);
+
   const newSubnetVmRelationships: IntegrationRelationship[] = [];
   const newVMNicRelationships: IntegrationRelationship[] = [];
   const newVMAddressRelationships: IntegrationRelationship[] = [];
+  const newVMDiskRelationships: IntegrationRelationship[] = [];
 
-  forEach(newVms, vm => {
+  for (const vm of newVms) {
     const vmData = getRawData(vm) as VirtualMachine;
     const nicData = findNetworkInterfacesForVM(vmData, networkResults.nics);
-    forEach(nicData, nic => {
+    for (const nic of nicData) {
       newVMNicRelationships.push(
         createVirtualMachineNetworkInterfaceRelationship(vmData, nic),
       );
-      forEach(nic.ipConfigurations, c => {
+      for (const c of nic.ipConfigurations || []) {
         if (c.subnet) {
           newSubnetVmRelationships.push(
             createSubnetVirtualMachineRelationship(c.subnet, vmData),
@@ -111,20 +126,28 @@ export default async function synchronizeComputeResources(
             ),
           );
         }
-      });
-    });
-  });
+      }
+    }
+
+    if (vmData.storageProfile) {
+      newVMNicRelationships.push(
+        ...createVirtualMachineDiskRelationships(vmData),
+      );
+    }
+  }
 
   const [
     oldSubnetVmRelationships,
     oldVMNicRelationships,
     oldVMAddressRelationships,
+    oldVMDiskRelationships,
   ] = await Promise.all([
     graph.findRelationshipsByType(SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(
       VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
     ),
+    graph.findRelationshipsByType(VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE),
   ]);
 
   // This has been changed to "azure_vm_uses_nic"
@@ -138,7 +161,11 @@ export default async function synchronizeComputeResources(
   );
 
   const operationsResult = await persister.publishPersisterOperations([
-    [...persister.processEntities(oldVms, newVms)],
+    [
+      ...persister.processEntities(oldVms, newVms),
+      ...persister.processEntities(oldDisks, newDisks),
+      ...persister.processEntities(oldImages, newImages),
+    ],
     [
       ...persister.processRelationships(
         oldSubnetVmRelationships,
@@ -151,6 +178,10 @@ export default async function synchronizeComputeResources(
       ...persister.processRelationships(
         oldVMAddressRelationships,
         newVMAddressRelationships,
+      ),
+      ...persister.processRelationships(
+        oldVMDiskRelationships,
+        newVMDiskRelationships,
       ),
     ],
   ]);
@@ -184,20 +215,24 @@ async function synchronizeNetworkResources(
     fetchNetworkInterfaces(azrm, webLinker),
   ]);
 
-  forEach(newNics, nic => {
-    const nicData = getRawData(nic) as NetworkInterface;
+  for (const nic of newNics) {
+    const nicData = getRawData(
+      nic as EntityFromIntegration,
+    ) as NetworkInterface;
     const publicIp: string[] = [];
-    forEach(nicData.ipConfigurations, c => {
+    for (const c of nicData.ipConfigurations || []) {
       const ipAddress = newAddresses.find(
         i => i._key === (c.publicIPAddress && c.publicIPAddress.id),
-      );
+      ) as PublicIPAddressEntity;
       if (ipAddress && ipAddress.publicIp) {
         publicIp.push(ipAddress.publicIp);
       }
+    }
+    Object.assign(nic, {
+      publicIp,
+      publicIpAddress: publicIp,
     });
-    nic.publicIp = publicIp;
-    nic.publicIpAddress = publicIp;
-  });
+  }
 
   const [
     oldSecurityGroups,
@@ -317,6 +352,28 @@ async function fetchVirtualMachines(
   const entities: VirtualMachineEntity[] = [];
   await client.iterateVirtualMachines(e => {
     entities.push(createVirtualMachineEntity(webLinker, e));
+  });
+  return entities;
+}
+
+async function fetchVirtualMachineImages(
+  client: ResourceManagerClient,
+  webLinker: AzureWebLinker,
+): Promise<AzureRegionalEntity[]> {
+  const entities: AzureRegionalEntity[] = [];
+  await client.iterateVirtualMachineImages(e => {
+    entities.push(createImageEntity(webLinker, e));
+  });
+  return entities;
+}
+
+async function fetchVirtualMachineDisks(
+  client: ResourceManagerClient,
+  webLinker: AzureWebLinker,
+): Promise<AzureRegionalEntity[]> {
+  const entities: AzureRegionalEntity[] = [];
+  await client.iterateVirtualMachineDisks(e => {
+    entities.push(createDiskEntity(webLinker, e));
   });
   return entities;
 }

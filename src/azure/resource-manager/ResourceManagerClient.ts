@@ -1,11 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
-
 import { ComputeManagementClient } from "@azure/arm-compute";
-import { VirtualMachine } from "@azure/arm-compute/esm/models";
-
+import {
+  VirtualMachine,
+  VirtualMachineImage,
+  Disk,
+} from "@azure/arm-compute/esm/models";
+import { MariaDBManagementClient } from "@azure/arm-mariadb";
+import {
+  Database as MariaDBDatabase,
+  Server as MariaDBServer,
+} from "@azure/arm-mariadb/esm/models";
+import { MySQLManagementClient } from "@azure/arm-mysql";
+import {
+  Database as MySQLDatabase,
+  Server as MySQLServer,
+} from "@azure/arm-mysql/esm/models";
 import { NetworkManagementClient } from "@azure/arm-network";
 import {
   NetworkInterface,
@@ -13,55 +24,26 @@ import {
   PublicIPAddress,
   VirtualNetwork,
 } from "@azure/arm-network/esm/models";
-
-import { MariaDBManagementClient } from "@azure/arm-mariadb";
-import {
-  Server as MariaDBServer,
-  Database as MariaDBDatabase,
-} from "@azure/arm-mariadb/esm/models";
-
-import { MySQLManagementClient } from "@azure/arm-mysql";
-import {
-  Server as MySQLServer,
-  Database as MySQLDatabase,
-} from "@azure/arm-mysql/esm/models";
-
 import { PostgreSQLManagementClient } from "@azure/arm-postgresql";
 import {
-  Server as PostgreSQLServer,
   Database as PostgreSQLDatabase,
+  Server as PostgreSQLServer,
 } from "@azure/arm-postgresql/esm/models";
-
 import { SqlManagementClient } from "@azure/arm-sql";
 import {
-  Server as SQLServer,
   Database as SQLDatabase,
+  Server as SQLServer,
 } from "@azure/arm-sql/esm/models";
-
 import { StorageManagementClient } from "@azure/arm-storage";
 import { BlobContainer, StorageAccount } from "@azure/arm-storage/esm/models";
-
-import { AzureServiceClient } from "@azure/ms-rest-azure-js";
-import {
-  ServiceClientCredentials,
-  ServiceClientOptions,
-  RequestPolicyFactory,
-  HttpResponse,
-} from "@azure/ms-rest-js";
+import { HttpResponse, RequestPolicyFactory } from "@azure/ms-rest-js";
+import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { AzureIntegrationInstanceConfig } from "../../types";
 import { resourceGroupName } from "../utils";
 import authenticate from "./authenticate";
-import { AzureManagementClientCredentials } from "./types";
 import { bunyanLogPolicy } from "./BunyanLogPolicy";
-
-interface ClientConstructor<T extends AzureServiceClient> {
-  new (
-    credentials: ServiceClientCredentials,
-    subscriptionId: string,
-    options?: ServiceClientOptions,
-  ): T;
-}
+import { AzureManagementClientCredentials } from "./types";
 
 interface ResourceManagementModule {
   listAll: <L>() => Promise<L>;
@@ -80,10 +62,7 @@ interface ResourceListResponse<T> extends Array<T> {
 
 export default class ResourceManagerClient {
   private auth: AzureManagementClientCredentials;
-  private clientCache: Map<
-    ClientConstructor<AzureServiceClient>,
-    AzureServiceClient
-  >;
+  private clientCache: Map<any, any>;
 
   constructor(
     private config: AzureIntegrationInstanceConfig,
@@ -106,6 +85,23 @@ export default class ResourceManagerClient {
   ): Promise<void> {
     const client = await this.getAuthenticatedClient(ComputeManagementClient);
     return this.iterateAllResources(client.virtualMachines, callback);
+  }
+
+  public async iterateVirtualMachineImages(
+    callback: (i: VirtualMachineImage) => void,
+  ): Promise<void> {
+    const client = await this.getAuthenticatedClient(ComputeManagementClient);
+    return this.iterateScopedResources(client.images, callback);
+  }
+
+  public async iterateVirtualMachineDisks(
+    callback: (d: Disk) => void,
+  ): Promise<void> {
+    const client = await this.getAuthenticatedClient(ComputeManagementClient);
+    const items = await client.disks.list();
+    for (const item of items) {
+      callback(item);
+    }
   }
 
   public async iterateVirtualNetworks(
@@ -191,9 +187,7 @@ export default class ResourceManagerClient {
   public async iterateMySqlServers(
     callback: (s: MySQLServer) => void,
   ): Promise<void> {
-    const client = ((await this.getAuthenticatedClient(
-      MySQLManagementClient as any,
-    )) as unknown) as MySQLManagementClient;
+    const client = await this.getAuthenticatedClient(MySQLManagementClient);
     const servers = await client.servers.list();
     for (const server of servers) {
       callback(server);
@@ -204,9 +198,7 @@ export default class ResourceManagerClient {
     server: MySQLServer,
     callback: (d: MySQLDatabase) => void,
   ): Promise<void> {
-    const client = ((await this.getAuthenticatedClient(
-      MySQLManagementClient as any,
-    )) as unknown) as MySQLManagementClient;
+    const client = await this.getAuthenticatedClient(MySQLManagementClient);
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
@@ -223,9 +215,7 @@ export default class ResourceManagerClient {
   public async iterateMariaDbServers(
     callback: (s: MariaDBServer) => void,
   ): Promise<void> {
-    const client = ((await this.getAuthenticatedClient(
-      MariaDBManagementClient as any,
-    )) as unknown) as MariaDBManagementClient;
+    const client = await this.getAuthenticatedClient(MariaDBManagementClient);
     const servers = await client.servers.list();
     for (const server of servers) {
       callback(server);
@@ -236,9 +226,9 @@ export default class ResourceManagerClient {
     server: PostgreSQLServer,
     callback: (d: MariaDBDatabase) => void,
   ): Promise<void> {
-    const client = ((await this.getAuthenticatedClient(
-      MariaDBManagementClient as any,
-    )) as unknown) as MariaDBManagementClient;
+    const client = await this.getAuthenticatedClient<MariaDBManagementClient>(
+      MariaDBManagementClient,
+    );
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
@@ -255,9 +245,9 @@ export default class ResourceManagerClient {
   public async iteratePostgreSqlServers(
     callback: (s: PostgreSQLServer) => void,
   ): Promise<void> {
-    const client = ((await this.getAuthenticatedClient(
-      PostgreSQLManagementClient as any,
-    )) as unknown) as PostgreSQLManagementClient;
+    const client = await this.getAuthenticatedClient(
+      PostgreSQLManagementClient,
+    );
     const servers = await client.servers.list();
     for (const server of servers) {
       callback(server);
@@ -268,9 +258,9 @@ export default class ResourceManagerClient {
     server: PostgreSQLServer,
     callback: (d: PostgreSQLDatabase) => void,
   ): Promise<void> {
-    const client = ((await this.getAuthenticatedClient(
-      PostgreSQLManagementClient as any,
-    )) as unknown) as PostgreSQLManagementClient;
+    const client = await this.getAuthenticatedClient(
+      PostgreSQLManagementClient,
+    );
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
@@ -286,9 +276,9 @@ export default class ResourceManagerClient {
 
   //// Private Functions ////
 
-  private async getAuthenticatedClient<T extends AzureServiceClient>(
-    ctor: ClientConstructor<T>,
-  ): Promise<T> {
+  private async getAuthenticatedClient<T>(ctor: {
+    new (...args: any[]): T;
+  }): Promise<T> {
     let client = this.clientCache.get(ctor);
     if (!client) {
       client = await this.createAuthenticatedClient(ctor, this.config);
@@ -297,8 +287,8 @@ export default class ResourceManagerClient {
     return client as T;
   }
 
-  private async createAuthenticatedClient<T extends AzureServiceClient>(
-    ctor: ClientConstructor<T>,
+  private async createAuthenticatedClient<T>(
+    ctor: { new (...args: any[]): T },
     config: AzureIntegrationInstanceConfig,
   ): Promise<T> {
     if (!this.auth) {

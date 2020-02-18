@@ -32,6 +32,7 @@ interface FetchResourcesInput {
 export interface FetchResourcesResponse<T extends microsoftgraph.Entity> {
   nextLink: string | undefined;
   resources: T[];
+  err?: AzureClientError;
 }
 
 export default class AzureClient {
@@ -65,7 +66,7 @@ export default class AzureClient {
 
   public async fetchUsers(
     options?: PaginationOptions,
-  ): Promise<FetchResourcesResponse<User> | undefined> {
+  ): Promise<FetchResourcesResponse<User>> {
     return this.fetchResources({
       url: this.resourceUrl({ path: "/users", ...options }),
     });
@@ -73,7 +74,7 @@ export default class AzureClient {
 
   public async fetchGroups(
     options?: PaginationOptions,
-  ): Promise<FetchResourcesResponse<Group> | undefined> {
+  ): Promise<FetchResourcesResponse<Group>> {
     return this.fetchResources({
       url: this.resourceUrl({ path: "/groups", ...options }),
     });
@@ -82,7 +83,7 @@ export default class AzureClient {
   public async fetchGroupMembers(
     groupId: string,
     options?: PaginationOptions,
-  ): Promise<FetchResourcesResponse<GroupMember> | undefined> {
+  ): Promise<FetchResourcesResponse<GroupMember>> {
     return this.fetchResources({
       url: this.resourceUrl({
         path: `/groups/${groupId}/members`,
@@ -93,7 +94,7 @@ export default class AzureClient {
 
   private async fetchResources<T>(
     input: FetchResourcesInput,
-  ): Promise<FetchResourcesResponse<T> | undefined> {
+  ): Promise<FetchResourcesResponse<T>> {
     try {
       this.logger.trace({ url: input.url }, "Fetching Azure resources");
 
@@ -111,6 +112,8 @@ export default class AzureClient {
           { err, url: input.url, method: Method.GET },
           "Azure resource request failed",
         );
+
+        return { nextLink: undefined, resources: [], err };
       }
     }
   }

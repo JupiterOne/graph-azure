@@ -10,7 +10,7 @@ import {
   createAccountEntityWithOrganization,
 } from "./graph";
 
-describe("createAccountEntity", () => {
+describe("createAccountEntityWithOrganization", () => {
   test("properties transferred", () => {
     const instance = {
       id: "the-instance-id",

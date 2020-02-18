@@ -7,6 +7,7 @@ import { Group } from "@microsoft/microsoft-graph-types";
 import { AzureExecutionContext, GroupsCacheState } from "../types";
 import { getBatchPages, getPageLimit } from "./batch";
 import { GroupMember } from "./types";
+import AzureClientError from "./AzureClientError";
 
 export default async function fetchBatchOfGroupMembers(
   executionContext: AzureExecutionContext,
@@ -28,7 +29,7 @@ export default async function fetchBatchOfGroupMembers(
 
   let pagesProcessed = 0;
   let totalGroups = 0;
-  let fetchErrorOccurred = false;
+  let fetchError: AzureClientError | undefined;
 
   await groupsCache.forEach(
     async e => {
@@ -52,18 +53,18 @@ export default async function fetchBatchOfGroupMembers(
           select: ["id", "displayName", "jobTitle", "mail"],
         });
 
-        if (response) {
+        if (!response.err) {
           groupMembers.push(...response.resources);
           membersCount += response.resources.length;
           nextLink = response.nextLink;
         } else {
-          fetchErrorOccurred = true;
+          fetchError = response.err;
         }
 
         pagesProcessed++;
-      } while (!fetchErrorOccurred && pagesProcessed < batchPages && nextLink);
+      } while (!fetchError && pagesProcessed < batchPages && nextLink);
 
-      if (fetchErrorOccurred) {
+      if (fetchError) {
         // Stop iterating groups altogether until we learn more about the errors.
         // Are there some groups we don't have access to, so that we should skip
         // them, or is this a temporary problem that should be ignored (do not
@@ -92,13 +93,13 @@ export default async function fetchBatchOfGroupMembers(
     typeof nextLink !== "string" && groupIndex === totalGroups;
 
   await groupsCache.putState({
-    groupMembersFetchCompleted:
-      !fetchErrorOccurred && groupMembersFetchCompleted,
+    groupMembersFetchCompleted: !fetchError && groupMembersFetchCompleted,
+    fetchError: fetchError,
   });
 
   return {
     ...iterationState,
-    finished: fetchErrorOccurred || groupMembersFetchCompleted,
+    finished: !!fetchError || groupMembersFetchCompleted,
     state: {
       nextLink,
       limit,

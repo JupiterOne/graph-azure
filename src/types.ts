@@ -3,7 +3,9 @@ import {
   IntegrationExecutionContext,
   PersisterClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
+
 import { AzureClient, ResourceManagerClient } from "./azure";
+import AzureClientError from "./azure/AzureClientError";
 
 /**
  * Properties provided by the `IntegrationInstance.config`. Values identifying
@@ -71,6 +73,7 @@ export interface ResourceCacheState {
 
 export interface GroupsCacheState extends ResourceCacheState {
   groupMembersFetchCompleted?: boolean;
+  fetchError?: AzureClientError;
 }
 
 export type UsersCacheState = ResourceCacheState;

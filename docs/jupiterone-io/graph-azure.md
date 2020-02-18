@@ -71,12 +71,14 @@ though the `Account` entity will always be ingested.
 
 | Azure Resources   | \_type of the Entity        | \_class of the Entity           |
 | ----------------- | --------------------------- | ------------------------------- |
+| Compute           | `azure_vm`                  | `Host`                          |
+|                   | `azure_image`               | `Image`                         |
+|                   | `azure_managed_disk`        | `DataStore`, `Disk`             |
 | Virtual Network   | `azure_vnet`                | `Network`                       |
 | Subnet            | `azure_subnet`              | `Network`                       |
 | Security Group    | `azure_security_group`      | `Firewall`                      |
 | Network Interface | `azure_nic`                 | `NetworkInterface`              |
 | Public IP Address | `azure_public_ip`           | `IpAddress`                     |
-| Virtual Machine   | `azure_vm`                  | `Host`                          |
 | Blob (Storage)    | `azure_storage_container`   | `DataStore`                     |
 | Databases         | `azure_mariadb_database`    | `Database`, `DataStore`         |
 |                   | `azure_mariadb_server`      | `Database`, `DataStore`, `Host` |
@@ -104,6 +106,7 @@ The following relationships are created/mapped:
 | `azure_security_group`       | **PROTECTS** | `azure_subnet`               |
 | `azure_security_group`       | **PROTECTS** | `azure_nic`                  |
 | `azure_vm`                   | **USES**     | `azure_nic`                  |
+| `azure_vm`                   | **USES**     | `azure_managed_disk`         |
 | `azure_vm`                   | **USES**     | `azure_public_ip`            |
 | `azure_storage_blob_service` | **HAS**      | `azure_storage_container`    |
 | `azure_mariadb_server`       | **HAS**      | `azure_mariadb_database`     |

@@ -130,7 +130,7 @@ export default async function synchronizeComputeResources(
     }
 
     if (vmData.storageProfile) {
-      newVMNicRelationships.push(
+      newVMDiskRelationships.push(
         ...createVirtualMachineDiskRelationships(vmData),
       );
     }

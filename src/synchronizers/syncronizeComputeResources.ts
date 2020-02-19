@@ -59,6 +59,10 @@ import {
   VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
+import {
+  isWideOpen,
+  createSecurityGroupRuleRelationships,
+} from "../converters/securityGroups";
 
 type NetworkSynchronizationResults = {
   operationsResult: PersisterOperationsResult;
@@ -255,6 +259,7 @@ async function synchronizeNetworkResources(
     [subnetId: string]: NetworkSecurityGroup;
   } = {};
   const newSecurityGroupNicRelationships: IntegrationRelationship[] = [];
+  const newSecurityGroupRuleRelationships: IntegrationRelationship[] = [];
 
   for (const sge of newSecurityGroups) {
     const sg = getRawData(sge) as NetworkSecurityGroup;
@@ -270,6 +275,19 @@ async function synchronizeNetworkResources(
         );
       }
     }
+
+    const rules = [
+      ...(sg.defaultSecurityRules || []),
+      ...(sg.securityRules || []),
+    ];
+
+    Object.assign(sge, {
+      wideOpen: isWideOpen(rules),
+    });
+
+    newSecurityGroupRuleRelationships.push(
+      ...createSecurityGroupRuleRelationships(sg),
+    );
   }
 
   const newSubnets: EntityFromIntegration[] = [];

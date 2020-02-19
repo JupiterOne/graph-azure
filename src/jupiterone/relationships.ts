@@ -8,6 +8,9 @@ export const SECURITY_GROUP_NIC_RELATIONSHIP_TYPE =
 export const SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE =
   "azure_security_group_protects_subnet";
 
+export const SECURITY_GROUP_RULE_RELATIONSHIP_TYPE =
+  "azure_security_group_rule";
+
 export const SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE = "azure_subnet_has_vm";
 
 export const VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE =

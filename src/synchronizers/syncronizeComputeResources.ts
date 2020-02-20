@@ -57,8 +57,13 @@ import {
   VirtualMachineEntity,
   AzureRegionalEntity,
   VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
+  SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
+import {
+  isWideOpen,
+  createSecurityGroupRuleRelationships,
+} from "../converters/securityGroups";
 
 type NetworkSynchronizationResults = {
   operationsResult: PersisterOperationsResult;
@@ -238,11 +243,13 @@ async function synchronizeNetworkResources(
     oldSecurityGroups,
     oldSecurityGroupNicRelationships,
     oldSecurityGroupSubnetRelationships,
+    oldSecurityGroupRuleRelationships,
     newSecurityGroups,
   ] = await Promise.all([
     graph.findEntitiesByType(SECURITY_GROUP_ENTITY_TYPE),
     graph.findRelationshipsByType(SECURITY_GROUP_NIC_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE),
+    graph.findRelationshipsByType(SECURITY_GROUP_RULE_RELATIONSHIP_TYPE),
     fetchNetworkSecurityGroups(azrm, webLinker),
   ]);
 
@@ -255,6 +262,7 @@ async function synchronizeNetworkResources(
     [subnetId: string]: NetworkSecurityGroup;
   } = {};
   const newSecurityGroupNicRelationships: IntegrationRelationship[] = [];
+  const newSecurityGroupRuleRelationships: IntegrationRelationship[] = [];
 
   for (const sge of newSecurityGroups) {
     const sg = getRawData(sge) as NetworkSecurityGroup;
@@ -270,6 +278,19 @@ async function synchronizeNetworkResources(
         );
       }
     }
+
+    const rules = [
+      ...(sg.defaultSecurityRules || []),
+      ...(sg.securityRules || []),
+    ];
+
+    Object.assign(sge, {
+      wideOpen: isWideOpen(rules),
+    });
+
+    newSecurityGroupRuleRelationships.push(
+      ...createSecurityGroupRuleRelationships(sg, executionContext.instance.id),
+    );
   }
 
   const newSubnets: EntityFromIntegration[] = [];
@@ -317,6 +338,10 @@ async function synchronizeNetworkResources(
         ...persister.processRelationships(
           oldSecurityGroupSubnetRelationships,
           newSecurityGroupSubnetRelationships,
+        ),
+        ...persister.processRelationships(
+          oldSecurityGroupRuleRelationships,
+          newSecurityGroupRuleRelationships,
         ),
       ],
     ]),

@@ -1054,10 +1054,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@jupiterone/jupiter-managed-integration-sdk@^33.1.1":
-  version "33.1.1"
-  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-33.1.1.tgz#db1cfd1aa274550628837c9373f52b49976473e8"
-  integrity sha512-10wgZrJt62B4BA+b7z0ysl+kiJ0W9cTizu13XcXtBMhIpmYkfyXRbolnumtL4MOBLPwhgAv/qEwxWOeccBLNJw==
+"@jupiterone/jupiter-managed-integration-sdk@^33.2.0":
+  version "33.2.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-33.2.0.tgz#f58ee02c697c2851f4da2031baf7258f675c1641"
+  integrity sha512-9ds70+r50Qy951VCzgM8TDLH3LcV+9BUtzUlGB7Lf0kgs3p5lSCSjKLt2fZpD3iGVMm9wEFTuPqUlZ6BHdb8SA==
 
 "@microsoft/microsoft-graph-client@^2.0.0":
   version "2.0.0"
@@ -4498,6 +4498,11 @@ lodash.memoize@4.x:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
+
+lodash.snakecase@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.snakecase/-/lodash.snakecase-4.1.1.tgz#39d714a35357147837aefd64b5dcbb16becd8f8d"
+  integrity sha1-OdcUo1NXFHg3rv1ktdy7Fr7Nj40=
 
 lodash.sortby@^4.7.0:
   version "4.7.0"

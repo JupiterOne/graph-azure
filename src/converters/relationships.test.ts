@@ -11,6 +11,7 @@ import {
   RelationshipFromIntegration,
   MappedRelationshipFromIntegration,
   EntityFromIntegration,
+  createIntegrationRelationship,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { Group, GroupMember } from "../azure";
@@ -26,6 +27,7 @@ import {
   createVirtualMachinePublicIPAddressRelationship,
   createVirtualNetworkSubnetRelationship,
   createSqlServerDatabaseRelationship,
+  createVirtualMachineDiskRelationships,
 } from "./relationships";
 
 const account = {
@@ -441,5 +443,51 @@ describe("createSqlServerDatabaseRelationship", () => {
     expect(createSqlServerDatabaseRelationship(server, database)).toEqual(
       relationship,
     );
+  });
+});
+
+describe("createVirtualMachineDiskRelationships", () => {
+  test("properties transferred", () => {
+    const vm: Partial<VirtualMachine> = {
+      id:
+        "/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/j1",
+      storageProfile: {
+        imageReference: {
+          publisher: "Canonical",
+          offer: "UbuntuServer",
+          sku: "18.04-LTS",
+          version: "latest",
+          exactVersion: "18.04.202002080",
+        },
+        osDisk: {
+          osType: "Linux",
+          name: "j1_disk1_xyz",
+          caching: "ReadWrite",
+          createOption: "FromImage",
+          diskSizeGB: 30,
+          managedDisk: {
+            id:
+              "/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/disks/j1_disk1_xyz",
+            storageAccountType: "StandardSSD_LRS",
+          },
+        },
+        dataDisks: [],
+      },
+    };
+
+    expect(createVirtualMachineDiskRelationships(vm as any)).toEqual([
+      createIntegrationRelationship({
+        _class: "USES",
+        fromKey:
+          "/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/j1",
+        fromType: "azure_vm",
+        toKey:
+          "/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/disks/j1_disk1_xyz",
+        toType: "azure_managed_disk",
+        properties: {
+          osDisk: true,
+        },
+      }),
+    ]);
   });
 });

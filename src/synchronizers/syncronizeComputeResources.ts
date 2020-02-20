@@ -57,6 +57,7 @@ import {
   VirtualMachineEntity,
   AzureRegionalEntity,
   VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
+  SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
 import {
@@ -242,11 +243,13 @@ async function synchronizeNetworkResources(
     oldSecurityGroups,
     oldSecurityGroupNicRelationships,
     oldSecurityGroupSubnetRelationships,
+    oldSecurityGroupRuleRelationships,
     newSecurityGroups,
   ] = await Promise.all([
     graph.findEntitiesByType(SECURITY_GROUP_ENTITY_TYPE),
     graph.findRelationshipsByType(SECURITY_GROUP_NIC_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE),
+    graph.findRelationshipsByType(SECURITY_GROUP_RULE_RELATIONSHIP_TYPE),
     fetchNetworkSecurityGroups(azrm, webLinker),
   ]);
 
@@ -286,7 +289,7 @@ async function synchronizeNetworkResources(
     });
 
     newSecurityGroupRuleRelationships.push(
-      ...createSecurityGroupRuleRelationships(sg),
+      ...createSecurityGroupRuleRelationships(sg, executionContext.instance.id),
     );
   }
 
@@ -335,6 +338,10 @@ async function synchronizeNetworkResources(
         ...persister.processRelationships(
           oldSecurityGroupSubnetRelationships,
           newSecurityGroupSubnetRelationships,
+        ),
+        ...persister.processRelationships(
+          oldSecurityGroupRuleRelationships,
+          newSecurityGroupRuleRelationships,
         ),
       ],
     ]),

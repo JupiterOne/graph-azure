@@ -90,10 +90,10 @@ export default async function synchronizeComputeResources(
     webLinker,
   );
 
-  const [oldVms, newVms] = await Promise.all([
+  const [oldVms, newVms] = (await Promise.all([
     graph.findEntitiesByType(VIRTUAL_MACHINE_ENTITY_TYPE),
     fetchVirtualMachines(azrm, webLinker),
-  ]);
+  ])) as [EntityFromIntegration[], VirtualMachineEntity[]];
 
   const [oldImages, newImages] = await Promise.all([
     graph.findEntitiesByType(VIRTUAL_MACHINE_ENTITY_TYPE),
@@ -205,20 +205,20 @@ async function synchronizeNetworkResources(
 ): Promise<NetworkSynchronizationResults> {
   const { graph, persister, azrm } = executionContext;
 
-  const [oldVirtualNetworks, newVirtualNetworks] = await Promise.all([
+  const [oldVirtualNetworks, newVirtualNetworks] = (await Promise.all([
     graph.findEntitiesByType(VIRTUAL_NETWORK_ENTITY_TYPE),
     fetchVirtualNetworks(azrm, webLinker),
-  ]);
+  ])) as [EntityFromIntegration[], EntityFromIntegration[]];
 
   const [oldAddresses, newAddresses] = await Promise.all([
     graph.findEntitiesByType(PUBLIC_IP_ADDRESS_ENTITY_TYPE),
     fetchPublicIPAddresses(azrm, webLinker),
   ]);
 
-  const [oldNics, newNics] = await Promise.all([
+  const [oldNics, newNics] = (await Promise.all([
     graph.findEntitiesByType(NETWORK_INTERFACE_ENTITY_TYPE),
     fetchNetworkInterfaces(azrm, webLinker),
-  ]);
+  ])) as [EntityFromIntegration[], NetworkInterfaceEntity[]];
 
   for (const nic of newNics) {
     const nicData = getRawData(
@@ -245,18 +245,24 @@ async function synchronizeNetworkResources(
     oldSecurityGroupSubnetRelationships,
     oldSecurityGroupRuleRelationships,
     newSecurityGroups,
-  ] = await Promise.all([
+  ] = (await Promise.all([
     graph.findEntitiesByType(SECURITY_GROUP_ENTITY_TYPE),
     graph.findRelationshipsByType(SECURITY_GROUP_NIC_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(SECURITY_GROUP_RULE_RELATIONSHIP_TYPE),
     fetchNetworkSecurityGroups(azrm, webLinker),
-  ]);
+  ])) as [
+    EntityFromIntegration[],
+    IntegrationRelationship[],
+    IntegrationRelationship[],
+    IntegrationRelationship[],
+    EntityFromIntegration[]
+  ];
 
-  const [oldSubnets, oldVnetSubnetRelationships] = await Promise.all([
+  const [oldSubnets, oldVnetSubnetRelationships] = (await Promise.all([
     graph.findEntitiesByType(SUBNET_ENTITY_TYPE),
     graph.findRelationshipsByType(VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE),
-  ]);
+  ])) as [EntityFromIntegration[], IntegrationRelationship[]];
 
   const subnetSecurityGroupMap: {
     [subnetId: string]: NetworkSecurityGroup;

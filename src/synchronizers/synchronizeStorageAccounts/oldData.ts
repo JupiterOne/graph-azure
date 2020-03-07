@@ -38,7 +38,7 @@ export async function fetchOldData(
     accountServiceRelationships,
     storageContainerEntities,
     serviceContainerRelationships,
-  ] = await Promise.all([
+  ] = (await Promise.all([
     graph.findEntitiesByType(STORAGE_BLOB_SERVICE_ENTITY_TYPE),
     graph.findRelationshipsByType(
       generateRelationshipType(
@@ -55,7 +55,12 @@ export async function fetchOldData(
         STORAGE_CONTAINER_ENTITY_TYPE,
       ),
     ),
-  ]);
+  ])) as [
+    EntityFromIntegration[],
+    IntegrationRelationship[],
+    EntityFromIntegration[],
+    IntegrationRelationship[]
+  ];
 
   return {
     metadata: {
@@ -110,7 +115,7 @@ export function cloneOldData({
   };
 
   if (mapToUpdate && updatedMap) {
-    oldDataClone[mapToUpdate] = updatedMap;
+    Object.assign(oldDataClone, { [mapToUpdate]: updatedMap });
     oldDataClone.metadata.lengths[mapToUpdate] =
       oldData.metadata.lengths[mapToUpdate] - 1;
   }

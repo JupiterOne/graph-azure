@@ -69,12 +69,17 @@ async function synchronize(
     oldServers,
     oldServerDbRelationships,
     newServers,
-  ] = await Promise.all([
+  ] = (await Promise.all([
     graph.findEntitiesByType(DATABASE_ENTITY_TYPE),
     graph.findEntitiesByType(DB_SERVER_ENTITY_TYPE),
     graph.findRelationshipsByType(SERVER_DATABASE_RELATIONSHIP_TYPE),
     fetchDbServers(azrm, webLinker, dbType),
-  ]);
+  ])) as [
+    EntityFromIntegration[],
+    EntityFromIntegration[],
+    IntegrationRelationship[],
+    EntityFromIntegration[]
+  ];
 
   const newDBs: EntityFromIntegration[] = [];
   const newSqlServerDbRelationships: IntegrationRelationship[] = [];

@@ -1265,6 +1265,13 @@
   dependencies:
     "@types/lodash" "*"
 
+"@types/lodash.snakecase@^4.1.6":
+  version "4.1.6"
+  resolved "https://registry.yarnpkg.com/@types/lodash.snakecase/-/lodash.snakecase-4.1.6.tgz#85f2b68f67b36c39875f26484b3a78b158ebf060"
+  integrity sha512-qGTf27ncTRUhSwvxD0hzYFmelmTrzEBGvBigrLyx6PRN1rKuy0ZEK+A3X3QnW7k+CwEjIJeAM6XBN4Ay6F03IQ==
+  dependencies:
+    "@types/lodash" "*"
+
 "@types/lodash@*":
   version "4.14.149"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.149.tgz#1342d63d948c6062838fbf961012f74d4e638440"

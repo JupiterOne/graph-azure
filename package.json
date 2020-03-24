@@ -14,9 +14,9 @@
   },
   "scripts": {
     "start": "ts-node --require dotenv/config tools/execute.ts | bunyan",
-    "start:graph": "docker-compose up -d graph",
-    "stop:graph": "docker-compose down",
-    "restart:graph": "docker-compose restart graph",
+    "start:containers": "docker-compose up -d",
+    "stop:containers": "docker-compose down",
+    "restart:containers": "docker-compose restart",
     "prebuild": "yarn test",
     "build": "rm -rf dist/* && yarn build:types && yarn build:src && yarn build:docs",
     "build:src": "babel src --extensions '.ts' --out-dir dist",
@@ -34,13 +34,13 @@
     "tf:destroy": "docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light destroy"
   },
   "dependencies": {
-    "@azure/arm-compute": "^13.0.0",
+    "@azure/arm-compute": "^14.0.0",
     "@azure/arm-mariadb": "^1.4.0",
     "@azure/arm-mysql": "^3.3.0",
-    "@azure/arm-network": "^16.0.0",
+    "@azure/arm-network": "^20.0.0",
     "@azure/arm-postgresql": "^4.4.0",
     "@azure/arm-sql": "^7.0.0",
-    "@azure/arm-storage": "^11.0.0",
+    "@azure/arm-storage": "^13.1.0",
     "@azure/ms-rest-nodeauth": "^2.0.5",
     "@jupiterone/jupiter-managed-integration-sdk": "33.4.0",
     "@microsoft/microsoft-graph-client": "^2.0.0",
@@ -48,6 +48,10 @@
     "lodash.foreach": "^4.5.0",
     "lodash.map": "^4.6.0",
     "lodash.snakecase": "^4.1.1"
+  },
+  "resolutions": {
+    "@azure/ms-rest-azure-js": "^2.0.0",
+    "@azure/ms-rest-js": "^2.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

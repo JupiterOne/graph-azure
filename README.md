@@ -1,89 +1,27 @@
-# JupiterOne Managed Integration for Microsoft Azure
+# graph-azure
 
 [![Build Status](https://travis-ci.org/JupiterOne/graph-azure.svg?branch=master)](https://travis-ci.org/JupiterOne/graph-azure)
 
-A JupiterOne integration ingests information such as configurations and other
-metadata about digital and physical assets belonging to an organization. The
-integration is responsible for connecting to data provider APIs and determining
-changes to make to the JupiterOne graph database to reflect the current state of
-assets. Managed integrations execute within the JupiterOne infrastructure and
-are deployed by the JupiterOne engineering team.
-
-## Integration Instance Configuration
-
-JupiterOne accounts may configure a number of instances of an integration, each
-containing credentials and other information necessary for the integration to
-connect to provider APIs. An integration is triggered by an event containing the
-instance configuration. `IntegrationInstance.config` is encrypted at rest and
-decrypted before it is delivered to the integration execution handler.
-
-Currently, the integration instance configuration user interface will need code
-changes to collect necessary information.
-
-Local execution of the integration is started through `execute.ts`
-(`yarn start`), which may be changed to load development credentials into the
-`IntegrationInstance.config`. Use environment variables to avoid publishing
-sensitive information to GitHub!
-
-## Documentation
-
-Integration projects must provide documentation for docs.jupiterone.io. This
-documentation should outline the credentials required by the data provider API
-(including specific permissions if the data provider allows scoping of
-credentials), which entities are ingested, and what relationships are created.
-At build time, this documentation will be placed in a docs folder inside dist so
-that it's included in the NPM module.
-
-The documentation should be placed in `docs/jupiterone-io` and named after the
-package. For example, an AWS integration with the name "integration-aws" in
-`package.json` should have its documentation in
-`docs/jupiterone-io/integration-aws.md`. Any other files in `docs/jupiterone-io`
-will not be published. Also note that namespace is ignored, so "integration-aws"
-and "@jupiterone/integration-aws" should both name their docs file the same.
-
-The first header in the documentation is used as the title of the document in
-the table of contents on docs.jupiterone.io, so it should be the name of the
-provider (E.G. "AWS").
-
-The documentation is pushed to docs.jupiterone.io every time a new version of
-the integration is specified in `package.json`, so make sure it's up to date
-every time you release a new version.
+Integrations are responsible for connecting to data provider APIs to collect
+current state and maintain a graph database representing the entities and
+relationships managed by the provider.
 
 ## Development Environment
 
-Integrations mutate the graph to reflect configurations and metadata from the
-provider. Developing an integration involves:
-
-1.  Establishing a secure connection to a provider API
-1.  Fetching provider data and converting it to entities and relationships
-1.  Collecting the existing set of entities and relationships already in the
-    graph
-1.  Performing a diff to determine which entites/relationships to
-    create/update/delete
-1.  Delivering create/update/delete operations to the persister to update the
-    graph
-
-Run the integration to see what happens. You may use use Node to execute
-directly on your machine, or you may use Docker Compose to run the project in a
-contained environment.
+You may use use Node to execute directly on your machine.
 
 Prerequisites:
 
 1.  Install Docker and Docker Compose (both included in Docker for Mac installs)
-1.  Provide credentials in `.env`
+1.  Provide credentials in `.env` (see
+    [Environment Variable](#environment-variables))
 
 Node:
 
 1.  Install Node (Node Version Manager is recommended)
 1.  `yarn install`
-1.  `yarn start:graph`
+1.  `yarn start:containers`
 1.  `yarn start`
-
-Docker Compose:
-
-1.  `docker-compose build`
-1.  `docker-compose run --rm integration yarn install`
-1.  `docker-compose run --rm integration yarn start`
 
 Activity is logged to the console indicating the operations produced and
 processed. View raw data in the graph database using
@@ -96,15 +34,7 @@ Restart the graph server to clear the data when you want to run the integration
 with no existing data.
 
 ```sh
-yarn restart:graph
-```
-
-### Docker Compose Interactive Session
-
-You can start interactive session inside a container:
-
-```sh
-docker-compose run --rm integration bash
+yarn restart:containers
 ```
 
 ### Environment Variables
@@ -163,14 +93,21 @@ To run tests locally:
 yarn test
 ```
 
-Or:
-
-```sh
-docker-compose run --rm integration yarn test
-```
-
 ### Deployment
 
 Managed integrations are deployed into the JupiterOne infrastructure by staff
 engineers using internal projects that declare a dependency on the open source
 integration NPM package. The package will be published by the JupiterOne team.
+
+#### Publishing to NPM
+
+Create a PR with changes and request review. Once approved, the branch will be
+merged into `master`. An administrator of the GitHub project should:
+
+1. Pull the latest from `master`
+1. Determine the new semantic version number
+1. Create the version and tag with `yarn version [--major] [--minor] [--patch]`
+1. Push the commit and tag with `git push --follow-tags`
+
+That's it! Travis will deploy the necessary bits to NPM. Manual deployment is
+possible of course, just be certain to follow the `yarn build` road.

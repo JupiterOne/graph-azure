@@ -1,21 +1,6 @@
 version: "3.7"
 
 services:
-  integration:
-    image: graph-azure-app
-    build: .
-    container_name: graph-azure-app
-    volumes:
-      - .:/app:cached
-      - ~/.ssh:/root/.ssh
-      - ~/.bash_history:/root/.bash_history
-    env_file:
-      - .env
-    environment:
-      NODE_ENV: development
-      GRAPH_DB_ENDPOINT: graph
-    depends_on:
-      - graph
   graph:
     image: tinkerpop/gremlin-server:3.4
     user: "1000"

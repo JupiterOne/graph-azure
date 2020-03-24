@@ -224,4 +224,41 @@ describe("iterateStorageBlobContainers", () => {
       ]),
     );
   });
+
+  test("retry", async () => {
+    p = polly(__dirname, "iterateStorageBlobContainersRetry");
+
+    const client = new ResourceManagerClient(config, createTestLogger());
+
+    const containers: BlobContainer[] = [];
+    await expect(
+      client.iterateStorageBlobContainers(
+        {
+          id:
+            "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev",
+          name: "j1dev",
+        } as StorageAccount,
+        e => {
+          containers.push(e);
+        },
+      ),
+    ).rejects.toThrow(/throttled/);
+
+    // TODO Get fix from https://github.com/Azure/azure-sdk-for-js/issues/7989 or devise a work-around
+    // expect(containers).toEqual(
+    //   expect.arrayContaining([
+    //     expect.objectContaining({
+    //       id: expect.stringMatching(
+    //         /Microsoft\.Storage\/storageAccounts\/j1dev\/blobServices\/default\/containers\/bootdiagnostics-j1dev-/,
+    //       ),
+    //       name: expect.stringMatching(/bootdiagnostics-j1dev-/),
+    //     }),
+    //     expect.objectContaining({
+    //       id:
+    //         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/j1dev",
+    //       name: "j1dev",
+    //     }),
+    //   ]),
+    // );
+  });
 });

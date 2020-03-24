@@ -82,6 +82,16 @@ export async function fetchOldData(
   };
 }
 
+function createObjectByKeyMap<T extends PersistedObjectAssignable>(
+  objects: T[],
+): Record<string, T> {
+  const map: Record<string, T> = {};
+  objects.forEach(obj => {
+    map[obj._key] = obj;
+  });
+  return map;
+}
+
 export const popOldStorageServiceEntity = popOldData<EntityFromIntegration>(
   "serviceEntityMap",
 );
@@ -95,63 +105,18 @@ export const popOldServiceContainerRelationship = popOldData<
   IntegrationRelationship
 >("serviceContainerRelationshipMap");
 
-export function cloneOldData({
-  oldData,
-  mapToUpdate,
-  updatedMap,
-}: {
-  oldData: OldData;
-  mapToUpdate?: keyof OldDataMaps;
-  updatedMap?: Record<string, EntityOrRelationship>;
-}): OldData {
-  const oldDataClone = {
-    ...oldData,
-    metadata: {
-      ...oldData.metadata,
-      lengths: {
-        ...oldData.metadata.lengths,
-      },
-    },
-  };
-
-  if (mapToUpdate && updatedMap) {
-    Object.assign(oldDataClone, { [mapToUpdate]: updatedMap });
-    oldDataClone.metadata.lengths[mapToUpdate] =
-      oldData.metadata.lengths[mapToUpdate] - 1;
-  }
-
-  return oldDataClone;
-}
-
-function createObjectByKeyMap<T extends PersistedObjectAssignable>(
-  objects: T[],
-): Record<string, T> {
-  const map: Record<string, T> = {};
-  objects.forEach(obj => {
-    map[obj._key] = obj;
-  });
-  return map;
-}
-
 function popOldData<T extends EntityOrRelationship>(
   mapKey: keyof OldDataMaps,
 ): {
-  (oldData: OldData, newData: PersistedObjectAssignable): [
-    OldData,
-    T | undefined
-  ];
+  (oldData: OldData, newData: PersistedObjectAssignable): T | undefined;
 } {
-  return (oldData, newData): [OldData, T] => {
+  return (oldData, newData): T => {
     const map = oldData[mapKey];
     const obj = map[newData._key];
 
-    const { [newData._key]: _, ...updatedMap } = map;
-    const updatedOldData = cloneOldData({
-      oldData,
-      mapToUpdate: mapKey,
-      updatedMap,
-    });
+    delete map[newData._key];
+    oldData.metadata.lengths[mapKey] = oldData.metadata.lengths[mapKey] - 1;
 
-    return [updatedOldData, obj as T];
+    return obj as T;
   };
 }

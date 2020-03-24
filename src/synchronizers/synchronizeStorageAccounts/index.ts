@@ -20,7 +20,6 @@ import { AzureExecutionContext } from "../../types";
 import {
   OldData,
   fetchOldData,
-  cloneOldData,
   popOldStorageServiceEntity,
   popOldAccountServiceRelationship,
   popOldContainerEntity,
@@ -164,17 +163,14 @@ async function synchronizeBlobStorage(
   webLinker: AzureWebLinker,
   storageAccount: StorageAccount,
 ): Promise<AzureStorageAccountsContext> {
-  const { azrm, persister, logger } = context;
-
-  let oldData = cloneOldData({ oldData: context.oldData });
+  const { azrm, persister, logger, oldData } = context;
 
   const newServiceEntity = createStorageServiceEntity(
     webLinker,
     storageAccount,
     "blob",
   );
-  let oldServiceEntity;
-  [oldData, oldServiceEntity] = popOldStorageServiceEntity(
+  const oldServiceEntity = popOldStorageServiceEntity(
     oldData,
     newServiceEntity,
   );
@@ -184,8 +180,7 @@ async function synchronizeBlobStorage(
     from: accountEntity,
     to: newServiceEntity,
   });
-  let oldAccountServiceRelationship;
-  [oldData, oldAccountServiceRelationship] = popOldAccountServiceRelationship(
+  const oldAccountServiceRelationship = popOldAccountServiceRelationship(
     oldData,
     newAccountServiceRelationship,
   );
@@ -201,11 +196,7 @@ async function synchronizeBlobStorage(
       storageAccount,
       e,
     );
-    let oldContainerEntity;
-    [oldData, oldContainerEntity] = popOldContainerEntity(
-      oldData,
-      containerEntity,
-    );
+    const oldContainerEntity = popOldContainerEntity(oldData, containerEntity);
 
     newContainerEntities.push(containerEntity);
     oldContainerEntity && oldContainerEntities.push(oldContainerEntity);
@@ -215,11 +206,7 @@ async function synchronizeBlobStorage(
       from: newServiceEntity,
       to: containerEntity,
     });
-    let oldServiceContainerRelationship;
-    [
-      oldData,
-      oldServiceContainerRelationship,
-    ] = popOldServiceContainerRelationship(
+    const oldServiceContainerRelationship = popOldServiceContainerRelationship(
       oldData,
       serviceContainerRelationship,
     );

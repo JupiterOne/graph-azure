@@ -39,6 +39,7 @@ import {
   createDiskEntity,
   createVirtualMachineDiskRelationships,
   createLoadBalancerBackendNicRelationship,
+  createLoadBalancerEntity,
 } from "../converters";
 import {
   AccountEntity,
@@ -436,11 +437,13 @@ async function fetchVirtualMachineDisks(
 async function fetchLoadBalaners(
   client: ResourceManagerClient,
   webLinker: AzureWebLinker,
-): Promise<NetworkInterfaceEntity[]> {
-  const entities: NetworkInterfaceEntity[] = [];
+): Promise<EntityFromIntegration[]> {
+  const entities: EntityFromIntegration[] = [];
   await client.iterateLoadBalancers(e => {
-    entities.push(createNetworkInterfaceEntity(webLinker, e));
+    entities.push(createLoadBalancerEntity(webLinker, e));
   });
+  console.log("GETTING LOAD BALANCERS");
+  console.log({ entities });
   return entities;
 }
 

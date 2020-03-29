@@ -19,6 +19,7 @@ import {
 } from "@azure/arm-mysql/esm/models";
 import { NetworkManagementClient } from "@azure/arm-network";
 import {
+  LoadBalancer,
   NetworkInterface,
   NetworkSecurityGroup,
   PublicIPAddress,
@@ -109,6 +110,13 @@ export default class ResourceManagerClient {
   ): Promise<void> {
     const client = await this.getAuthenticatedClient(NetworkManagementClient);
     return this.iterateAllResources(client.virtualNetworks, callback);
+  }
+
+  public async iterateLoadBalancers(
+    callback: (lb: LoadBalancer) => void,
+  ): Promise<void> {
+    const client = await this.getAuthenticatedClient(NetworkManagementClient);
+    return this.iterateAllResources(client.loadBalancers, callback);
   }
 
   public async iterateNetworkSecurityGroups(

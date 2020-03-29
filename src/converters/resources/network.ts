@@ -2,6 +2,7 @@ import map from "lodash.map";
 
 import {
   IPConfiguration,
+  LoadBalancer,
   NetworkInterface,
   NetworkSecurityGroup,
   PublicIPAddress,
@@ -17,6 +18,8 @@ import {
 import { AzureWebLinker } from "../../azure";
 import { resourceGroupName } from "../../azure/utils";
 import {
+  LOAD_BALANCER_ENTITY_CLASS,
+  LOAD_BALANCER_ENTITY_TYPE,
   NETWORK_INTERFACE_ENTITY_CLASS,
   NETWORK_INTERFACE_ENTITY_TYPE,
   NetworkInterfaceEntity,
@@ -30,6 +33,44 @@ import {
   VIRTUAL_NETWORK_ENTITY_CLASS,
   VIRTUAL_NETWORK_ENTITY_TYPE,
 } from "../../jupiterone";
+
+export function createLoadBalancerEntity(
+  webLinker: AzureWebLinker,
+  data: LoadBalancer,
+): EntityFromIntegration {
+  const publicIp = [];
+  const privateIp = [];
+  for (const ip of data.frontendIPConfigurations || []) {
+    if (ip.publicIPAddress) {
+      publicIp.push(ip.publicIPAddress);
+    }
+    if (ip.privateIPAddress) {
+      privateIp.push(ip.privateIPAddress);
+    }
+  }
+
+  const entity = {
+    _key: data.id as string,
+    _type: LOAD_BALANCER_ENTITY_TYPE,
+    _class: LOAD_BALANCER_ENTITY_CLASS,
+    _rawData: [{ name: "default", rawData: data }],
+    category: "network",
+    function: "load-balancing",
+    resourceGuid: data.resourceGuid,
+    resourceGroup: resourceGroupName(data.id),
+    displayName: data.name,
+    type: data.type,
+    region: data.location,
+    publicIp,
+    privateIp,
+    public: publicIp.length > 0,
+    webLink: webLinker.portalResourceUrl(data.id),
+  };
+
+  assignTags(entity, data.tags);
+
+  return entity;
+}
 
 export function createNetworkInterfaceEntity(
   webLinker: AzureWebLinker,

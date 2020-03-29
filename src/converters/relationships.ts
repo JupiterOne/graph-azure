@@ -265,9 +265,20 @@ export function createSqlServerDatabaseRelationship(
 ): IntegrationRelationship {
   return createIntegrationRelationship({
     _class: DataModel.RelationshipClass.HAS,
-    fromKey: server._key,
-    fromType: server._type,
-    toKey: database._key,
-    toType: database._type,
+    from: server,
+    to: database,
+  });
+}
+
+export function createLoadBalancerBackendNicRelationship(
+  lb: EntityFromIntegration,
+  nicId: string,
+): IntegrationRelationship {
+  return createIntegrationRelationship({
+    _class: DataModel.RelationshipClass.CONNECTS,
+    fromKey: lb._key,
+    fromType: lb._type,
+    toKey: nicId,
+    toType: NETWORK_INTERFACE_ENTITY_TYPE,
   });
 }

@@ -138,6 +138,9 @@ export interface NetworkInterfaceEntity extends EntityFromIntegration {
 export const NETWORK_INTERFACE_ENTITY_TYPE = "azure_nic";
 export const NETWORK_INTERFACE_ENTITY_CLASS = "NetworkInterface";
 
+export const LOAD_BALANCER_ENTITY_TYPE = "azure_lb";
+export const LOAD_BALANCER_ENTITY_CLASS = "Gateway";
+
 export const STORAGE_BLOB_SERVICE_ENTITY_TYPE = "azure_storage_blob_service";
 export const STORAGE_BLOB_SERVICE_ENTITY_CLASS = "Service";
 

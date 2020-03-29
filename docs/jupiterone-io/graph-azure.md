@@ -74,6 +74,7 @@ though the `Account` entity will always be ingested.
 | Compute           | `azure_vm`                  | `Host`                          |
 |                   | `azure_image`               | `Image`                         |
 |                   | `azure_managed_disk`        | `DataStore`, `Disk`             |
+| Load Balancer     | `azure_lb`                  | `Gateway`                       |
 | Virtual Network   | `azure_vnet`                | `Network`                       |
 | Subnet            | `azure_subnet`              | `Network`                       |
 | Security Group    | `azure_security_group`      | `Firewall`                      |
@@ -108,6 +109,7 @@ The following relationships are created/mapped:
 | `azure_vm`                   | **USES**     | `azure_nic`                  |
 | `azure_vm`                   | **USES**     | `azure_managed_disk`         |
 | `azure_vm`                   | **USES**     | `azure_public_ip`            |
+| `azure_lb`                   | **CONNECTS** | `azure_nic`                  |
 | `azure_storage_blob_service` | **HAS**      | `azure_storage_container`    |
 | `azure_mariadb_server`       | **HAS**      | `azure_mariadb_database`     |
 | `azure_mysql_server`         | **HAS**      | `azure_mysql_database`       |

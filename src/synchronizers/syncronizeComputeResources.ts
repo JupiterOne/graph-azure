@@ -491,7 +491,8 @@ function processLoadBalancerBackends(
         backend.backendIPConfigurations.forEach(ip => {
           if (ip.id) {
             /**
-             * Need to remove the extra `/ipConfigurations/*` path from the nicId.
+             * Need to remove the extra `/ipConfigurations/*` path from the nicId,
+             * so that they can be mapped to the `_key` on the `azure_nic` entity.
              * For example:
              * "id": "/subscriptions/<uuid>/resourceGroups/xtest/providers/Microsoft.Network/networkInterfaces/j1234/ipConfigurations/ipconfig1",
              */

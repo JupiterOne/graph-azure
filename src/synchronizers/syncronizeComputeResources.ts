@@ -442,8 +442,6 @@ async function fetchLoadBalaners(
   await client.iterateLoadBalancers(e => {
     entities.push(createLoadBalancerEntity(webLinker, e));
   });
-  console.log("GETTING LOAD BALANCERS");
-  console.log({ entities });
   return entities;
 }
 

@@ -1,7 +1,9 @@
 import map from "lodash.map";
 
 import {
+  FrontendIPConfiguration,
   IPConfiguration,
+  LoadBalancer,
   NetworkInterface,
   NetworkSecurityGroup,
   PublicIPAddress,
@@ -17,6 +19,8 @@ import {
 import { AzureWebLinker } from "../../azure";
 import { resourceGroupName } from "../../azure/utils";
 import {
+  LOAD_BALANCER_ENTITY_CLASS,
+  LOAD_BALANCER_ENTITY_TYPE,
   NETWORK_INTERFACE_ENTITY_CLASS,
   NETWORK_INTERFACE_ENTITY_TYPE,
   NetworkInterfaceEntity,
@@ -30,6 +34,36 @@ import {
   VIRTUAL_NETWORK_ENTITY_CLASS,
   VIRTUAL_NETWORK_ENTITY_TYPE,
 } from "../../jupiterone";
+
+export function createLoadBalancerEntity(
+  webLinker: AzureWebLinker,
+  data: LoadBalancer,
+): EntityFromIntegration {
+  const publicIp = publicIpAddresses(data.frontendIPConfigurations);
+  const privateIp = privateIpAddresses(data.frontendIPConfigurations);
+
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id as string,
+        _type: LOAD_BALANCER_ENTITY_TYPE,
+        _class: LOAD_BALANCER_ENTITY_CLASS,
+        category: ["network"],
+        function: ["load-balancing"],
+        resourceGuid: data.resourceGuid,
+        resourceGroup: resourceGroupName(data.id),
+        displayName: data.name,
+        type: data.type,
+        region: data.location,
+        publicIp,
+        privateIp,
+        public: publicIp.length > 0,
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
 
 export function createNetworkInterfaceEntity(
   webLinker: AzureWebLinker,
@@ -172,8 +206,19 @@ export function createVirtualNetworkEntity(
   });
 }
 
+function publicIpAddresses(
+  ipConfigurations: IPConfiguration[] | FrontendIPConfiguration[] | undefined,
+): string[] {
+  const configs =
+    ipConfigurations && ipConfigurations.filter(c => c.publicIPAddress);
+  return map(
+    configs,
+    a => a.publicIPAddress && a.publicIPAddress.ipAddress,
+  ) as string[];
+}
+
 function privateIpAddresses(
-  ipConfigurations: IPConfiguration[] | undefined,
+  ipConfigurations: IPConfiguration[] | FrontendIPConfiguration[] | undefined,
 ): string[] {
   const configs =
     ipConfigurations && ipConfigurations.filter(c => c.privateIPAddress);

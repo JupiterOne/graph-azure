@@ -2,6 +2,7 @@ import map from "lodash.map";
 
 import { VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
+  LoadBalancer,
   NetworkInterface,
   NetworkSecurityGroup,
   VirtualNetwork,
@@ -37,9 +38,13 @@ import {
   createImageEntity,
   createDiskEntity,
   createVirtualMachineDiskRelationships,
+  createLoadBalancerBackendNicRelationship,
+  createLoadBalancerEntity,
 } from "../converters";
 import {
   AccountEntity,
+  LB_BACKEND_NIC_RELATIONSHIP_TYPE,
+  LOAD_BALANCER_ENTITY_TYPE,
   NETWORK_INTERFACE_ENTITY_TYPE,
   NetworkInterfaceEntity,
   PUBLIC_IP_ADDRESS_ENTITY_TYPE,
@@ -220,6 +225,11 @@ async function synchronizeNetworkResources(
     fetchNetworkInterfaces(azrm, webLinker),
   ])) as [EntityFromIntegration[], NetworkInterfaceEntity[]];
 
+  const [oldLoadBalancers, newLoadBalancers] = (await Promise.all([
+    graph.findEntitiesByType(LOAD_BALANCER_ENTITY_TYPE),
+    fetchLoadBalaners(azrm, webLinker),
+  ])) as [EntityFromIntegration[], EntityFromIntegration[]];
+
   for (const nic of newNics) {
     const nicData = getRawData(
       nic as EntityFromIntegration,
@@ -240,24 +250,34 @@ async function synchronizeNetworkResources(
   }
 
   const [
+    oldLoadBalancerBackendNicRelationships,
     oldSecurityGroups,
     oldSecurityGroupNicRelationships,
     oldSecurityGroupSubnetRelationships,
     oldSecurityGroupRuleRelationships,
     newSecurityGroups,
   ] = (await Promise.all([
+    graph.findRelationshipsByType(LB_BACKEND_NIC_RELATIONSHIP_TYPE),
     graph.findEntitiesByType(SECURITY_GROUP_ENTITY_TYPE),
     graph.findRelationshipsByType(SECURITY_GROUP_NIC_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE),
     graph.findRelationshipsByType(SECURITY_GROUP_RULE_RELATIONSHIP_TYPE),
     fetchNetworkSecurityGroups(azrm, webLinker),
   ])) as [
+    IntegrationRelationship[],
     EntityFromIntegration[],
     IntegrationRelationship[],
     IntegrationRelationship[],
     IntegrationRelationship[],
     EntityFromIntegration[]
   ];
+
+  const newLoadBalancerBackendNicRelationships = [];
+  for (const lb of newLoadBalancers) {
+    newLoadBalancerBackendNicRelationships.push(
+      ...processLoadBalancerBackends(lb),
+    );
+  }
 
   const [oldSubnets, oldVnetSubnetRelationships] = (await Promise.all([
     graph.findEntitiesByType(SUBNET_ENTITY_TYPE),
@@ -331,11 +351,16 @@ async function synchronizeNetworkResources(
         ...persister.processEntities(oldSubnets, newSubnets),
         ...persister.processEntities(oldAddresses, newAddresses),
         ...persister.processEntities(oldNics, newNics),
+        ...persister.processEntities(oldLoadBalancers, newLoadBalancers),
       ],
       [
         ...persister.processRelationships(
           oldVnetSubnetRelationships,
           newVnetSubnetRelationships,
+        ),
+        ...persister.processRelationships(
+          oldLoadBalancerBackendNicRelationships,
+          newLoadBalancerBackendNicRelationships,
         ),
         ...persister.processRelationships(
           oldSecurityGroupNicRelationships,
@@ -409,6 +434,19 @@ async function fetchVirtualMachineDisks(
   return entities;
 }
 
+async function fetchLoadBalaners(
+  client: ResourceManagerClient,
+  webLinker: AzureWebLinker,
+): Promise<EntityFromIntegration[]> {
+  const entities: EntityFromIntegration[] = [];
+  await client.iterateLoadBalancers(e => {
+    entities.push(createLoadBalancerEntity(webLinker, e));
+  });
+  console.log("GETTING LOAD BALANCERS");
+  console.log({ entities });
+  return entities;
+}
+
 async function fetchNetworkInterfaces(
   client: ResourceManagerClient,
   webLinker: AzureWebLinker,
@@ -442,4 +480,31 @@ function findNetworkInterfacesForVM(
     ).forEach(e => e && vmNics.push(e));
   }
   return vmNics;
+}
+
+function processLoadBalancerBackends(
+  lb: EntityFromIntegration,
+): IntegrationRelationship[] {
+  const relationships: IntegrationRelationship[] = [];
+  const lbData = getRawData(lb) as LoadBalancer;
+  if (lbData.backendAddressPools) {
+    lbData.backendAddressPools.forEach(backend => {
+      if (backend.backendIPConfigurations) {
+        backend.backendIPConfigurations.forEach(ip => {
+          if (ip.id) {
+            /**
+             * Need to remove the extra `/ipConfigurations/*` path from the nicId.
+             * For example:
+             * "id": "/subscriptions/<uuid>/resourceGroups/xtest/providers/Microsoft.Network/networkInterfaces/j1234/ipConfigurations/ipconfig1",
+             */
+            const nicId = ip.id.split("/ipConfigurations")[0];
+            relationships.push(
+              createLoadBalancerBackendNicRelationship(lb, nicId),
+            );
+          }
+        });
+      }
+    });
+  }
+  return relationships;
 }

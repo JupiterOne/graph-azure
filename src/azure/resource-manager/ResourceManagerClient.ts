@@ -79,13 +79,16 @@ interface ResourceListResponse<T> extends Array<T> {
  * > client-side self-throttling when the available call count for a target
  * > operation group drops below some low threshold.
  *
- * It seems they've coded the ms-rest-js `ServiceClient` in such a way as to
- * enforce that because, once a 429 response is returned, it may be that the
- * specific resource provider answers a `retry-after` that is useless, and
- * another try gets another 429, which the `ThrottlingRetryPolicy` will not
- * handle. That is, given 100 req/5 minutes, a burst of 100 requests will burn
- * the allowed requests, a 429 is returned with `retry-after: 17`, but in fact
- * the API will not answer again until up to 5 minutes has passed!
+ * That would be nice for them to handle in the client, and it would be great to
+ * see the endpoints always return the resource provider counts remaining, and
+ * they'd get bonus points for having use `retry-after` header values.
+ *
+ * Some resource provider endpoints have returned 429 a response with a
+ * `retry-after` that is useless, and another try gets another 429, which the
+ * `ThrottlingRetryPolicy` will not handle. That is, given 100 req/5 minutes, a
+ * burst of 100 requests will burn the allowed requests, a 429 is returned with
+ * `retry-after: 17`, but in fact the API will not answer again until up to 5
+ * minutes has passed!
  *
  * The approach here is designed to:
  *
@@ -96,6 +99,7 @@ interface ResourceListResponse<T> extends Array<T> {
  *    seen a 429, it means we've burned up our limit for the period.
  * 3. Allow resource providers that return a useful `retry-after` to continue to
  *    work, because the `ThrottlingRetryPolicy` is still in place.
+ * 4. Allow specific resource provider endpoint period wait times.
  *
  * @param requestFunc code making a request to Azure RM
  * @param resourceProviderRatePeriod the resource provider's rate limiting

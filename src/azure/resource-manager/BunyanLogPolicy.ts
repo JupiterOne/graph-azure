@@ -1,13 +1,12 @@
-import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
-
 import {
   BaseRequestPolicy,
-  WebResource,
   HttpOperationResponse,
   RequestPolicy,
-  RequestPolicyOptions,
   RequestPolicyFactory,
+  RequestPolicyOptions,
+  WebResource,
 } from "@azure/ms-rest-js";
+import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 
 export function bunyanLogPolicy(
   logger: IntegrationLogger,
@@ -34,13 +33,10 @@ export class BunyanLogPolicy extends BaseRequestPolicy {
     super(nextPolicy, options);
   }
 
-  /* eslint-disable-next-line @typescript-eslint/require-await */
-  public async sendRequest(
-    httpRequest: WebResource,
-  ): Promise<HttpOperationResponse> {
-    return this._nextPolicy.sendRequest(httpRequest.clone()).then(response => {
+  public sendRequest(request: WebResource): Promise<HttpOperationResponse> {
+    return this._nextPolicy.sendRequest(request.clone()).then(response => {
       const logData = {
-        url: httpRequest.url,
+        url: request.url,
         status: response.status,
         responseHeaders: response.headers.rawHeaders(),
         requestHeaders: Object.keys(response.request.headers.rawHeaders()),

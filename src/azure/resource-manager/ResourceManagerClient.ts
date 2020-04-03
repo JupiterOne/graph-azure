@@ -3,9 +3,9 @@
 
 import { ComputeManagementClient } from "@azure/arm-compute";
 import {
+  Disk,
   VirtualMachine,
   VirtualMachineImage,
-  Disk,
 } from "@azure/arm-compute/esm/models";
 import { MariaDBManagementClient } from "@azure/arm-mariadb";
 import {
@@ -37,8 +37,15 @@ import {
 } from "@azure/arm-sql/esm/models";
 import { StorageManagementClient } from "@azure/arm-storage";
 import { BlobContainer, StorageAccount } from "@azure/arm-storage/esm/models";
-import { HttpResponse, RequestPolicyFactory } from "@azure/ms-rest-js";
+import {
+  exponentialRetryPolicy,
+  HttpResponse,
+  RequestPolicyFactory,
+  systemErrorRetryPolicy,
+  throttlingRetryPolicy,
+} from "@azure/ms-rest-js";
 import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
+import { retry } from "@lifeomic/attempt";
 
 import { AzureIntegrationInstanceConfig } from "../../types";
 import { resourceGroupName } from "../utils";
@@ -59,6 +66,73 @@ interface ScopedResourceManagementModule {
 interface ResourceListResponse<T> extends Array<T> {
   readonly _response: HttpResponse;
   readonly nextLink?: string;
+}
+
+/**
+ * Retries a resource request that throws an error on a 429 response.
+ *
+ * Note that the documentation at
+ * https://docs.microsoft.com/en-us/azure/virtual-machines/troubleshooting/troubleshooting-throttling-errors
+ * states plainly:
+ *
+ * > In high-volume API automation cases, consider implementing proactive
+ * > client-side self-throttling when the available call count for a target
+ * > operation group drops below some low threshold.
+ *
+ * It seems they've coded the ms-rest-js `ServiceClient` in such a way as to
+ * enforce that because, once a 429 response is returned, it may be that the
+ * specific resource provider answers a `retry-after` that is useless, and
+ * another try gets another 429, which the `ThrottlingRetryPolicy` will not
+ * handle. That is, given 100 req/5 minutes, a burst of 100 requests will burn
+ * the allowed requests, a 429 is returned with `retry-after: 17`, but in fact
+ * the API will not answer again until up to 5 minutes has passed!
+ *
+ * The approach here is designed to:
+ *
+ * 1. Allow a burst of requests up to the maximum per period supported by the
+ *    resource provider vs. always spreading out requests, which makes scenarios
+ *    where the endpoint is only called 10 times really slow.
+ * 2. Wait the period out after two subsequent 429 responses, because once we've
+ *    seen a 429, it means we've burned up our limit for the period.
+ * 3. Allow resource providers that return a useful `retry-after` to continue to
+ *    work, because the `ThrottlingRetryPolicy` is still in place.
+ *
+ * @param requestFunc code making a request to Azure RM
+ * @param resourceProviderRatePeriod the resource provider's rate limiting
+ * period; the time in a reqs/time ratio
+ */
+/* istanbul ignore next: testing iteration might be difficult */
+function retryResourceRequest<T>(
+  requestFunc: () => Promise<T>,
+  resourceProviderRatePeriod: number,
+): Promise<T> {
+  return retry(
+    async _context => {
+      return requestFunc();
+    },
+    {
+      // Things aren't working as expected if we're asked to retry more than
+      // once. The request policy of the `ServiceClient` will handle all other
+      // retry scenarios.
+      maxAttempts: 2,
+
+      // No delay on the first attempt, wait for next period on subsequent
+      // attempts. Assumes non-429 responses will not lead to subsequent
+      // attempts (`handleError` will abort for other error responses).
+      calculateDelay: (context, _options) => {
+        return context.attemptNum === 0 ? 0 : resourceProviderRatePeriod;
+      },
+
+      // Most errors will be handled by the request policies. They will raise
+      // a `RestError.statusCode: 429` when they see two 429 responses in a row,
+      // which is the scenario we're aiming to address with our retry.
+      handleError: (err, context, _options) => {
+        if (err.statusCode !== 429) {
+          context.abort();
+        }
+      },
+    },
+  );
 }
 
 export default class ResourceManagerClient {
@@ -302,11 +376,23 @@ export default class ResourceManagerClient {
     if (!this.auth) {
       this.auth = await authenticate(config);
     }
+
+    // Builds a custom policy chain to address
+    // https://github.com/Azure/azure-sdk-for-js/issues/7989
+    // See also: https://docs.microsoft.com/en-us/azure/virtual-machines/troubleshooting/troubleshooting-throttling-errors
     return new ctor(this.auth.credentials, this.auth.subscriptionId, {
+      noRetryPolicy: true, // < -- This removes retry policies so they can be added after the Deserialization
       requestPolicyFactories: (
         defaultRequestPolicyFactories: RequestPolicyFactory[],
       ): RequestPolicyFactory[] => {
-        return [...defaultRequestPolicyFactories, bunyanLogPolicy(this.logger)];
+        const policyChain = [
+          ...defaultRequestPolicyFactories,
+          exponentialRetryPolicy(), // < -- This will not retry a 429 response
+          systemErrorRetryPolicy(),
+          throttlingRetryPolicy(), // < -- This thing will only retry once
+          bunyanLogPolicy(this.logger),
+        ];
+        return policyChain;
       },
     });
   }
@@ -317,17 +403,23 @@ export default class ResourceManagerClient {
    *
    * @param rmModule a module that supports listAll() and listAllNext()
    * @param callback a function to receive each resource throughout pagination
+   * @param resourceProviderRateLimit number of requests allowed per rate period
+   * @param resourceProviderRatePeriod number of milliseconds over which rate
+   * limit applies
    */
   private async iterateAllResources<T, L extends ResourceListResponse<T>>(
     rmModule: ResourceManagementModule,
     callback: (r: T) => void | Promise<void>,
+    resourceProviderRatePeriod = 6 * 60 * 1000,
   ): Promise<void> {
     let nextLink: string | undefined;
     do {
-      const response = nextLink
-        ? /* istanbul ignore next: testing iteration might be difficult */
-          await rmModule.listAllNext<L>(nextLink)
-        : await rmModule.listAll<L>();
+      const response = await retryResourceRequest(async () => {
+        return nextLink
+          ? /* istanbul ignore next: testing iteration might be difficult */
+            await rmModule.listAllNext<L>(nextLink)
+          : await rmModule.listAll<L>();
+      }, resourceProviderRatePeriod);
 
       for (const e of response) {
         await callback(e);
@@ -343,17 +435,23 @@ export default class ResourceManagerClient {
    *
    * @param rmModule a module that supports list() and listNext()
    * @param callback a function to receive each resource throughout pagination
+   * @param resourceProviderRateLimit number of requests allowed per rate period
+   * @param resourceProviderRatePeriod number of milliseconds over which rate
+   * limit applies
    */
   private async iterateScopedResources<T, L extends ResourceListResponse<T>>(
     rmModule: ScopedResourceManagementModule,
     callback: (r: T) => void | Promise<void>,
+    resourceProviderRatePeriod = 6 * 60 * 1000,
   ): Promise<void> {
     let nextLink: string | undefined;
     do {
-      const response = nextLink
-        ? /* istanbul ignore next: testing iteration might be difficult */
-          await rmModule.listNext<L>(nextLink)
-        : await rmModule.list<L>();
+      const response = await retryResourceRequest(async () => {
+        return nextLink
+          ? /* istanbul ignore next: testing iteration might be difficult */
+            await rmModule.listNext<L>(nextLink)
+          : await rmModule.list<L>();
+      }, resourceProviderRatePeriod);
 
       this.logger.info(
         {

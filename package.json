@@ -43,6 +43,7 @@
     "@azure/arm-storage": "^13.1.0",
     "@azure/ms-rest-nodeauth": "^2.0.5",
     "@jupiterone/jupiter-managed-integration-sdk": "33.5.2",
+    "@lifeomic/attempt": "^3.0.0",
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "cross-fetch": "^3.0.4",
     "lodash.foreach": "^4.5.0",

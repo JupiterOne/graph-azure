@@ -91,8 +91,13 @@ describe("createVirtualMachineEntity", () => {
       displayName: "j1dev",
       vmId: "2ed98ec3-b9a4-4126-926e-081889e3bc3a",
       type: "Microsoft.Compute/virtualMachines",
+      adminUser: "azureuser",
+      disablePasswordAuthentication: true,
+      osName: "UbuntuServer",
+      platform: "linux",
       resourceGroup: "j1dev",
       region: "eastus",
+      state: "Succeeded",
       vmSize: "Standard_DS1_v2",
       webLink: webLinker.portalResourceUrl(
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",

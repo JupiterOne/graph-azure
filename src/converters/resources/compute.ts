@@ -20,8 +20,27 @@ export function createVirtualMachineEntity(
   webLinker: AzureWebLinker,
   data: VirtualMachine,
 ): VirtualMachineEntity {
+  const osProperties = {};
+  if (data.storageProfile) {
+    Object.assign(osProperties, {
+      platform: data.storageProfile.osDisk?.osType?.toLowerCase(),
+      osName: data.storageProfile.imageReference?.offer,
+      osVersion: data.storageProfile.imageReference?.exactVersion,
+    });
+  }
+  if (data.osProfile) {
+    Object.assign(osProperties, {
+      adminUser: data.osProfile.adminUsername,
+      disablePasswordAuthentication:
+        data.osProfile.linuxConfiguration?.disablePasswordAuthentication,
+      enableAutomaticUpdates:
+        data.osProfile.windowsConfiguration?.enableAutomaticUpdates,
+      timeZone: data.osProfile.windowsConfiguration?.timeZone,
+    });
+  }
   const entity = {
     ...convertProperties(data),
+    ...osProperties,
     _key: data.id as string,
     _type: VIRTUAL_MACHINE_ENTITY_TYPE,
     _class: VIRTUAL_MACHINE_ENTITY_CLASS,
@@ -31,6 +50,7 @@ export function createVirtualMachineEntity(
     type: data.type,
     region: data.location,
     resourceGroup: resourceGroupName(data.id),
+    state: data.provisioningState,
     vmSize: data.hardwareProfile && data.hardwareProfile.vmSize,
     webLink: webLinker.portalResourceUrl(data.id),
   };

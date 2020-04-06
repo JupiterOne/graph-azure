@@ -10,7 +10,6 @@ import {
   RelationshipDirection,
   RelationshipFromIntegration,
   MappedRelationshipFromIntegration,
-  EntityFromIntegration,
   createIntegrationRelationship,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
@@ -26,7 +25,6 @@ import {
   createVirtualMachineNetworkInterfaceRelationship,
   createVirtualMachinePublicIPAddressRelationship,
   createVirtualNetworkSubnetRelationship,
-  createSqlServerDatabaseRelationship,
   createVirtualMachineDiskRelationships,
 } from "./relationships";
 
@@ -412,35 +410,6 @@ describe("createVirtualMachineNetworkInterfaceRelationship", () => {
     };
 
     expect(createVirtualMachineNetworkInterfaceRelationship(vm, nic)).toEqual(
-      relationship,
-    );
-  });
-});
-
-describe("createSqlServerDatabaseRelationship", () => {
-  test("properties transferred", () => {
-    const server: EntityFromIntegration = {
-      _key: "server_abc",
-      _class: "Database",
-      _type: "azure_sql_server",
-    };
-
-    const database: EntityFromIntegration = {
-      _key: "db_xyz",
-      _class: "Database",
-      _type: "azure_sql_database",
-    };
-
-    const relationship: RelationshipFromIntegration = {
-      _key: "server_abc|has|db_xyz",
-      _type: "azure_sql_server_has_database",
-      _class: "HAS",
-      _fromEntityKey: "server_abc",
-      _toEntityKey: "db_xyz",
-      displayName: "HAS",
-    };
-
-    expect(createSqlServerDatabaseRelationship(server, database)).toEqual(
       relationship,
     );
   });

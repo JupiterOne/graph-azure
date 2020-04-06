@@ -53,14 +53,26 @@ import authenticate from "./authenticate";
 import { bunyanLogPolicy } from "./BunyanLogPolicy";
 import { AzureManagementClientCredentials } from "./types";
 
-interface ResourceManagementModule {
-  listAll: <L>() => Promise<L>;
-  listAllNext: <L>(nextLink: string) => Promise<L>;
+/**
+ * An Azure resource manager resource provider.
+ */
+interface ResourceProvider {
+  listAll: <ListResponseType>() => Promise<ListResponseType>;
+  listAllNext: <ListResponseType>(
+    nextLink: string,
+  ) => Promise<ListResponseType>;
 }
 
-interface ScopedResourceManagementModule {
-  list<L>(): Promise<L>;
-  listNext<L>(nextLink: string): Promise<L>;
+/**
+ * An Azure resource manager resource provider that has been scoped to the
+ * necessary parent resource. For example, a database resource provider must be
+ * scoped to the containing database server. The results are limited to those
+ * which are contained in the scope, therefore the functions are not `listAll`
+ * and `listAllNext`.
+ */
+interface ScopedResourceProvider {
+  list<ListResponseType>(): Promise<ListResponseType>;
+  listNext<ListResponseType>(nextLink: string): Promise<ListResponseType>;
 }
 
 interface ResourceListResponse<T> extends Array<T> {
@@ -81,9 +93,9 @@ interface ResourceListResponse<T> extends Array<T> {
  *
  * That would be nice for them to handle in the client, and it would be great to
  * see the endpoints always return the resource provider counts remaining, and
- * they'd get bonus points for having use `retry-after` header values.
+ * they'd get bonus points for having useful `retry-after` header values.
  *
- * Some resource provider endpoints have returned 429 a response with a
+ * Some resource provider endpoints have returned a 429 response with a
  * `retry-after` that is useless, and another try gets another 429, which the
  * `ThrottlingRetryPolicy` will not handle. That is, given 100 req/5 minutes, a
  * burst of 100 requests will burn the allowed requests, a 429 is returned with
@@ -106,10 +118,10 @@ interface ResourceListResponse<T> extends Array<T> {
  * period; the time in a reqs/time ratio
  */
 /* istanbul ignore next: testing iteration might be difficult */
-function retryResourceRequest<T>(
-  requestFunc: () => Promise<T>,
+function retryResourceRequest<ResponseType>(
+  requestFunc: () => Promise<ResponseType>,
   resourceProviderRatePeriod: number,
-): Promise<T> {
+): Promise<ResponseType> {
   return retry(
     async _context => {
       return requestFunc();
@@ -141,74 +153,118 @@ function retryResourceRequest<T>(
 
 export default class ResourceManagerClient {
   private auth: AzureManagementClientCredentials;
-  private clientCache: Map<any, any>;
+  private serviceClientCache: Map<any, any>;
 
   constructor(
     private config: AzureIntegrationInstanceConfig,
     readonly logger: IntegrationLogger,
   ) {
-    this.clientCache = new Map();
+    this.serviceClientCache = new Map();
   }
 
   //// Compute and Network ////
 
   public async iterateNetworkInterfaces(
-    callback: (nic: NetworkInterface) => void,
+    callback: (nic: NetworkInterface) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(NetworkManagementClient);
-    return this.iterateAllResources(client.networkInterfaces, callback);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+    return this.iterateAllResources({
+      serviceClient,
+      resourceProvider: serviceClient.networkInterfaces,
+      callback,
+    });
   }
 
   public async iterateVirtualMachines(
-    callback: (vm: VirtualMachine) => void,
+    callback: (vm: VirtualMachine) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(ComputeManagementClient);
-    return this.iterateAllResources(client.virtualMachines, callback);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ComputeManagementClient,
+    );
+    return this.iterateAllResources({
+      serviceClient,
+      resourceProvider: serviceClient.virtualMachines,
+      callback,
+    });
   }
 
   public async iterateVirtualMachineImages(
-    callback: (i: VirtualMachineImage) => void,
+    callback: (i: VirtualMachineImage) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(ComputeManagementClient);
-    return this.iterateScopedResources(client.images, callback);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ComputeManagementClient,
+    );
+    return this.iterateScopedResources({
+      serviceClient,
+      resourceProvider: serviceClient.images,
+      callback,
+    });
   }
 
   public async iterateVirtualMachineDisks(
-    callback: (d: Disk) => void,
+    callback: (d: Disk) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(ComputeManagementClient);
-    const items = await client.disks.list();
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ComputeManagementClient,
+    );
+    const items = await serviceClient.disks.list();
     for (const item of items) {
-      callback(item);
+      await callback(item);
     }
   }
 
   public async iterateVirtualNetworks(
-    callback: (vnet: VirtualNetwork) => void,
+    callback: (vnet: VirtualNetwork) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(NetworkManagementClient);
-    return this.iterateAllResources(client.virtualNetworks, callback);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+    return this.iterateAllResources({
+      serviceClient,
+      resourceProvider: serviceClient.virtualNetworks,
+      callback,
+    });
   }
 
   public async iterateLoadBalancers(
-    callback: (lb: LoadBalancer) => void,
+    callback: (lb: LoadBalancer) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(NetworkManagementClient);
-    return this.iterateAllResources(client.loadBalancers, callback);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+    return this.iterateAllResources({
+      serviceClient,
+      resourceProvider: serviceClient.loadBalancers,
+      callback,
+    });
   }
 
   public async iterateNetworkSecurityGroups(
-    callback: (sg: NetworkSecurityGroup) => void,
+    callback: (sg: NetworkSecurityGroup) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(NetworkManagementClient);
-    return this.iterateAllResources(client.networkSecurityGroups, callback);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+    return this.iterateAllResources({
+      serviceClient,
+      resourceProvider: serviceClient.networkSecurityGroups,
+      callback,
+    });
   }
 
   public async iteratePublicIPAddresses(
-    callback: (ip: PublicIPAddress) => void,
+    callback: (ip: PublicIPAddress) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(NetworkManagementClient);
-    return this.iterateAllResources(client.publicIPAddresses, callback);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+    return this.iterateAllResources({
+      serviceClient,
+      resourceProvider: serviceClient.publicIPAddresses,
+      callback,
+    });
   }
 
   //// Storage ////
@@ -216,159 +272,219 @@ export default class ResourceManagerClient {
   public async iterateStorageAccounts(
     callback: (sa: StorageAccount) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(StorageManagementClient);
-    return this.iterateScopedResources(client.storageAccounts, callback);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      StorageManagementClient,
+    );
+    return this.iterateScopedResources({
+      serviceClient,
+      resourceProvider: serviceClient.storageAccounts,
+      callback,
+    });
   }
 
   public async iterateStorageBlobContainers(
     storageAccount: StorageAccount,
-    callback: (e: BlobContainer) => void,
+    callback: (e: BlobContainer) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(StorageManagementClient);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      StorageManagementClient,
+    );
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name!;
 
-    return this.iterateScopedResources(
-      {
+    return this.iterateScopedResources({
+      serviceClient,
+      resourceProvider: {
         list: async () => {
-          return client.blobContainers.list(resourceGroup, accountName);
+          return serviceClient.blobContainers.list(resourceGroup, accountName);
         },
         listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
           nextLink: string,
         ) => {
-          return client.blobContainers.listNext(nextLink);
+          return serviceClient.blobContainers.listNext(nextLink);
         },
       } as any,
       callback,
-    );
+    });
   }
 
   //// Databases ////
 
   public async iterateSqlServers(
-    callback: (s: SQLServer) => void,
+    callback: (s: SQLServer) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(SqlManagementClient);
-    return this.iterateScopedResources(client.servers, callback);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      SqlManagementClient,
+    );
+    return this.iterateScopedResources({
+      serviceClient,
+      resourceProvider: serviceClient.servers,
+      callback,
+    });
   }
 
   public async iterateSqlDatabases(
     server: SQLServer,
-    callback: (d: SQLDatabase) => void,
+    callback: (
+      d: SQLDatabase,
+      serviceClient: SqlManagementClient,
+    ) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(SqlManagementClient);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      SqlManagementClient,
+    );
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
-    return this.iterateScopedResources(
-      {
+    return this.iterateScopedResources({
+      serviceClient,
+      resourceProvider: {
         list: async () => {
-          return client.databases.listByServer(resourceGroup, serverName);
+          return serviceClient.databases.listByServer(
+            resourceGroup,
+            serverName,
+          );
         },
       } as any,
       callback,
-    );
+    });
   }
 
   public async iterateMySqlServers(
-    callback: (s: MySQLServer) => void,
+    callback: (
+      s: MySQLServer,
+      serviceClient: MySQLManagementClient,
+    ) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(MySQLManagementClient);
-    const servers = await client.servers.list();
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      MySQLManagementClient,
+    );
+    const servers = await serviceClient.servers.list();
     for (const server of servers) {
-      callback(server);
+      await callback(server, serviceClient);
     }
   }
 
   public async iterateMySqlDatabases(
     server: MySQLServer,
-    callback: (d: MySQLDatabase) => void,
+    callback: (
+      d: MySQLDatabase,
+      serviceClient: MySQLManagementClient,
+    ) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(MySQLManagementClient);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      MySQLManagementClient,
+    );
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
-    return this.iterateScopedResources(
-      {
+    return this.iterateScopedResources({
+      serviceClient,
+      resourceProvider: {
         list: async () => {
-          return client.databases.listByServer(resourceGroup, serverName);
+          return serviceClient.databases.listByServer(
+            resourceGroup,
+            serverName,
+          );
         },
       } as any,
       callback,
-    );
+    });
   }
 
   public async iterateMariaDbServers(
-    callback: (s: MariaDBServer) => void,
+    callback: (
+      s: MariaDBServer,
+      serviceClient: MariaDBManagementClient,
+    ) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(MariaDBManagementClient);
-    const servers = await client.servers.list();
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      MariaDBManagementClient,
+    );
+    const servers = await serviceClient.servers.list();
     for (const server of servers) {
-      callback(server);
+      await callback(server, serviceClient);
     }
   }
 
   public async iterateMariaDbDatabases(
     server: PostgreSQLServer,
-    callback: (d: MariaDBDatabase) => void,
+    callback: (
+      d: MariaDBDatabase,
+      serviceClient: MariaDBManagementClient,
+    ) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient<MariaDBManagementClient>(
-      MariaDBManagementClient,
-    );
+    const serviceClient = await this.getAuthenticatedServiceClient<
+      MariaDBManagementClient
+    >(MariaDBManagementClient);
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
-    return this.iterateScopedResources(
-      {
+    return this.iterateScopedResources({
+      serviceClient,
+      resourceProvider: {
         list: async () => {
-          return client.databases.listByServer(resourceGroup, serverName);
+          return serviceClient.databases.listByServer(
+            resourceGroup,
+            serverName,
+          );
         },
       } as any,
       callback,
-    );
+    });
   }
 
   public async iteratePostgreSqlServers(
-    callback: (s: PostgreSQLServer) => void,
+    callback: (
+      s: PostgreSQLServer,
+      serviceClient: PostgreSQLManagementClient,
+    ) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(
+    const serviceClient = await this.getAuthenticatedServiceClient(
       PostgreSQLManagementClient,
     );
-    const servers = await client.servers.list();
+    const servers = await serviceClient.servers.list();
     for (const server of servers) {
-      callback(server);
+      await callback(server, serviceClient);
     }
   }
 
   public async iteratePostgreSqlDatabases(
     server: PostgreSQLServer,
-    callback: (d: PostgreSQLDatabase) => void,
+    callback: (
+      d: PostgreSQLDatabase,
+      serviceClient: PostgreSQLManagementClient,
+    ) => void | Promise<void>,
   ): Promise<void> {
-    const client = await this.getAuthenticatedClient(
+    const serviceClient = await this.getAuthenticatedServiceClient(
       PostgreSQLManagementClient,
     );
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
-    return this.iterateScopedResources(
-      {
+    return this.iterateScopedResources({
+      serviceClient,
+      resourceProvider: {
         list: async () => {
-          return client.databases.listByServer(resourceGroup, serverName);
+          return serviceClient.databases.listByServer(
+            resourceGroup,
+            serverName,
+          );
         },
       } as any,
       callback,
-    );
+    });
   }
 
   //// Private Functions ////
 
-  private async getAuthenticatedClient<T>(ctor: {
+  private async getAuthenticatedServiceClient<T>(ctor: {
     new (...args: any[]): T;
   }): Promise<T> {
-    let client = this.clientCache.get(ctor);
+    let client = this.serviceClientCache.get(ctor);
     if (!client) {
       client = await this.createAuthenticatedClient(ctor, this.config);
-      this.clientCache.set(ctor, client);
+      this.serviceClientCache.set(ctor, client);
     }
     return client as T;
   }
@@ -405,28 +521,41 @@ export default class ResourceManagerClient {
    * Iterate ALL resources of a `ResourceManagementModule`. These are Azure
    * Resource Node modules that that support a `listAll` function.
    *
-   * @param rmModule a module that supports listAll() and listAllNext()
+   * @param resourceProvider a module that supports listAll() and listAllNext()
    * @param callback a function to receive each resource throughout pagination
    * @param resourceProviderRateLimit number of requests allowed per rate period
    * @param resourceProviderRatePeriod number of milliseconds over which rate
    * limit applies
    */
-  private async iterateAllResources<T, L extends ResourceListResponse<T>>(
-    rmModule: ResourceManagementModule,
-    callback: (r: T) => void | Promise<void>,
+  private async iterateAllResources<
+    ServiceClientType,
+    ResourceType,
+    ListResponseType extends ResourceListResponse<ResourceType>
+  >({
+    serviceClient,
+    resourceProvider,
+    callback,
     resourceProviderRatePeriod = 6 * 60 * 1000,
-  ): Promise<void> {
+  }: {
+    serviceClient: ServiceClientType;
+    resourceProvider: ResourceProvider;
+    callback: (
+      r: ResourceType,
+      serviceClient: ServiceClientType,
+    ) => void | Promise<void>;
+    resourceProviderRatePeriod?: number;
+  }): Promise<void> {
     let nextLink: string | undefined;
     do {
       const response = await retryResourceRequest(async () => {
         return nextLink
           ? /* istanbul ignore next: testing iteration might be difficult */
-            await rmModule.listAllNext<L>(nextLink)
-          : await rmModule.listAll<L>();
+            await resourceProvider.listAllNext<ListResponseType>(nextLink)
+          : await resourceProvider.listAll<ListResponseType>();
       }, resourceProviderRatePeriod);
 
       for (const e of response) {
-        await callback(e);
+        await callback(e, serviceClient);
       }
 
       nextLink = response.nextLink;
@@ -434,8 +563,8 @@ export default class ResourceManagerClient {
   }
 
   /**
-   * Iterate resources of a `ScopedResourceManagementModule`. These are Azure
-   * Resource Node modules that do not support a `listAll` function.
+   * Iterate resources of a `ScopedResourceProvider`. These are Azure Resource
+   * Node modules that do not support a `listAll` function.
    *
    * @param rmModule a module that supports list() and listNext()
    * @param callback a function to receive each resource throughout pagination
@@ -443,18 +572,31 @@ export default class ResourceManagerClient {
    * @param resourceProviderRatePeriod number of milliseconds over which rate
    * limit applies
    */
-  private async iterateScopedResources<T, L extends ResourceListResponse<T>>(
-    rmModule: ScopedResourceManagementModule,
-    callback: (r: T) => void | Promise<void>,
+  private async iterateScopedResources<
+    ServiceClientType,
+    ResourceType,
+    ListResponseType extends ResourceListResponse<ResourceType>
+  >({
+    serviceClient,
+    resourceProvider: rmModule,
+    callback,
     resourceProviderRatePeriod = 6 * 60 * 1000,
-  ): Promise<void> {
+  }: {
+    serviceClient: ServiceClientType;
+    resourceProvider: ScopedResourceProvider;
+    callback: (
+      r: ResourceType,
+      serviceClient: ServiceClientType,
+    ) => void | Promise<void>;
+    resourceProviderRatePeriod?: number;
+  }): Promise<void> {
     let nextLink: string | undefined;
     do {
       const response = await retryResourceRequest(async () => {
         return nextLink
           ? /* istanbul ignore next: testing iteration might be difficult */
-            await rmModule.listNext<L>(nextLink)
-          : await rmModule.list<L>();
+            await rmModule.listNext<ListResponseType>(nextLink)
+          : await rmModule.list<ListResponseType>();
       }, resourceProviderRatePeriod);
 
       this.logger.info(
@@ -466,7 +608,7 @@ export default class ResourceManagerClient {
       );
 
       for (const e of response) {
-        await callback(e);
+        await callback(e, serviceClient);
       }
 
       nextLink = response.nextLink;

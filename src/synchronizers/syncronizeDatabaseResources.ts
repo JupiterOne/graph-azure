@@ -1,27 +1,23 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Server as MySQLServer } from "@azure/arm-mysql/esm/models";
+import { Server as SQLServer } from "@azure/arm-sql/esm/models";
 import {
-  getRawData,
-  summarizePersisterOperationsResults,
+  createIntegrationRelationship,
+  DataModel,
   EntityFromIntegration,
+  getRawData,
   IntegrationError,
   IntegrationExecutionResult,
   IntegrationRelationship,
   PersisterOperationsResult,
+  summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
-import {
-  AzureWebLinker,
-  createAzureWebLinker,
-  ResourceManagerClient,
-} from "../azure";
-import {
-  createDatabaseEntity,
-  createDbServerEntity,
-  createSqlServerDatabaseRelationship,
-} from "../converters";
+import { AzureWebLinker, createAzureWebLinker } from "../azure";
+import { resourceGroupName } from "../azure/utils";
+import { createDatabaseEntity, createDbServerEntity } from "../converters";
 import { AccountEntity } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
-import { Server as SQLServer } from "@azure/arm-sql/esm/models";
-import { Server as MySQLServer } from "@azure/arm-mysql/esm/models";
 
 enum DatabaseType {
   MariaDB = "mariadb",
@@ -59,100 +55,149 @@ async function synchronize(
   webLinker: AzureWebLinker,
   dbType: string,
 ): Promise<PersisterOperationsResult> {
-  const DATABASE_ENTITY_TYPE = `azure_${dbType}_database`;
-  const DB_SERVER_ENTITY_TYPE = `azure_${dbType}_server`;
-  const SERVER_DATABASE_RELATIONSHIP_TYPE = `azure_${dbType}_server_has_database`;
+  const databaseEntityType = `azure_${dbType}_database`;
+  const serverEntityType = `azure_${dbType}_server`;
+  const serverDatabaseRelationshipType = `azure_${dbType}_server_has_database`;
 
-  const { azrm, graph, persister } = executionContext;
-  const [
-    oldDBs,
-    oldServers,
-    oldServerDbRelationships,
-    newServers,
-  ] = (await Promise.all([
-    graph.findEntitiesByType(DATABASE_ENTITY_TYPE),
-    graph.findEntitiesByType(DB_SERVER_ENTITY_TYPE),
-    graph.findRelationshipsByType(SERVER_DATABASE_RELATIONSHIP_TYPE),
-    fetchDbServers(azrm, webLinker, dbType),
-  ])) as [
-    EntityFromIntegration[],
-    EntityFromIntegration[],
-    IntegrationRelationship[],
-    EntityFromIntegration[]
-  ];
+  const { graph, persister } = executionContext;
 
-  const newDBs: EntityFromIntegration[] = [];
-  const newSqlServerDbRelationships: IntegrationRelationship[] = [];
-  for (const s of newServers) {
-    const server = getRawData(s);
-    const databases = await fetchDatabases(azrm, webLinker, server, dbType);
+  const [oldDatabaseEntities, oldServerEntities] = await Promise.all([
+    graph.findEntitiesByType(databaseEntityType),
+    graph.findEntitiesByType(serverEntityType),
+  ]);
 
-    for (const db of databases) {
-      newSqlServerDbRelationships.push(
-        createSqlServerDatabaseRelationship(s, db),
+  const oldServerDbRelationships = await graph.findRelationshipsByType(
+    serverDatabaseRelationshipType,
+  );
+
+  const newServerEntities = await fetchDbServers(
+    executionContext,
+    webLinker,
+    dbType,
+  );
+
+  const newDatabaseEntities: EntityFromIntegration[] = [];
+  const newServerDbRelationships: IntegrationRelationship[] = [];
+  for (const serverEntity of newServerEntities) {
+    const serverData = getRawData(serverEntity);
+    const databaseEntities = await fetchDatabases(
+      executionContext,
+      webLinker,
+      serverData,
+      dbType,
+    );
+
+    for (const databaseEntity of databaseEntities) {
+      newServerDbRelationships.push(
+        createIntegrationRelationship({
+          _class: DataModel.RelationshipClass.HAS,
+          from: serverEntity,
+          to: databaseEntity,
+        }),
       );
-      newDBs.push(db);
+      newDatabaseEntities.push(databaseEntity);
     }
   }
 
   return await persister.publishPersisterOperations([
     [
-      ...persister.processEntities(oldServers, newServers),
-      ...persister.processEntities(oldDBs, newDBs),
+      ...persister.processEntities(oldServerEntities, newServerEntities),
+      ...persister.processEntities(oldDatabaseEntities, newDatabaseEntities),
     ],
     [
       ...persister.processRelationships(
         oldServerDbRelationships,
-        newSqlServerDbRelationships,
+        newServerDbRelationships,
       ),
     ],
   ]);
 }
 
 async function fetchDbServers(
-  client: ResourceManagerClient,
+  executionContext: AzureExecutionContext,
   webLinker: AzureWebLinker,
   dbType: string,
 ): Promise<EntityFromIntegration[]> {
-  const DB_SERVER_ENTITY_TYPE = `azure_${dbType}_server`;
+  const { azrm } = executionContext;
+  const serverEntityType = `azure_${dbType}_server`;
   const entities: EntityFromIntegration[] = [];
   switch (dbType) {
     case DatabaseType.MySQL:
-      await client.iterateMySqlServers(e => {
-        entities.push(
-          createDbServerEntity(webLinker, e, DB_SERVER_ENTITY_TYPE),
-        );
+      await azrm.iterateMySqlServers(e => {
+        entities.push(createDbServerEntity(webLinker, e, serverEntityType));
       });
       break;
     case DatabaseType.SQL:
-      await client.iterateSqlServers(e => {
-        entities.push(
-          createDbServerEntity(webLinker, e, DB_SERVER_ENTITY_TYPE),
-        );
+      await azrm.iterateSqlServers(e => {
+        entities.push(createDbServerEntity(webLinker, e, serverEntityType));
       });
       break;
   }
   return entities;
 }
 
+const ENCRYPTION_ENABLED_PATTERN = /enabled/i;
+
 async function fetchDatabases(
-  client: ResourceManagerClient,
+  executionContext: AzureExecutionContext,
   webLinker: AzureWebLinker,
   server: MySQLServer | SQLServer,
   dbType: string,
 ): Promise<EntityFromIntegration[]> {
-  const DATABASE_ENTITY_TYPE = `azure_${dbType}_database`;
+  const { azrm, logger } = executionContext;
+
+  const databaseEntityType = `azure_${dbType}_database`;
   const entities: EntityFromIntegration[] = [];
   switch (dbType) {
     case DatabaseType.MySQL:
-      await client.iterateMySqlDatabases(server as MySQLServer, e => {
-        entities.push(createDatabaseEntity(webLinker, e, DATABASE_ENTITY_TYPE));
+      await azrm.iterateMySqlDatabases(server as MySQLServer, e => {
+        const encrypted = null;
+        entities.push(
+          createDatabaseEntity(webLinker, e, databaseEntityType, encrypted),
+        );
       });
       break;
     case DatabaseType.SQL:
-      await client.iterateSqlDatabases(server as SQLServer, e => {
-        entities.push(createDatabaseEntity(webLinker, e, DATABASE_ENTITY_TYPE));
-      });
+      await azrm.iterateSqlDatabases(
+        server as SQLServer,
+        async (database, serviceClient) => {
+          let encrypted: boolean | null = null;
+
+          try {
+            const encryption = await serviceClient.transparentDataEncryptions.get(
+              resourceGroupName(server.id, true)!,
+              server.name!,
+              database.name!,
+            );
+
+            // There is something broken with deserializing this response...
+            const status =
+              encryption.status ||
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (encryption as any).content["m:properties"]["d:properties"][
+                "d:status"
+              ];
+
+            if (status) {
+              encrypted = ENCRYPTION_ENABLED_PATTERN.test(status);
+            }
+          } catch (err) {
+            logger.warn(
+              { err, server: server.id, database: database.id },
+              "Failed to obtain transparentDataEncryptions for database",
+            );
+          }
+
+          entities.push(
+            createDatabaseEntity(
+              webLinker,
+              database,
+              databaseEntityType,
+              encrypted,
+            ),
+          );
+        },
+      );
       break;
   }
   return entities;

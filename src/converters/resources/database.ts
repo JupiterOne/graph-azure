@@ -28,6 +28,7 @@ export function createDatabaseEntity(
   webLinker: AzureWebLinker,
   data: MySQLDatabase | SQLDatabase,
   _type: string,
+  encrypted: boolean | null,
 ): EntityFromIntegration {
   return createIntegrationEntity({
     entityData: {
@@ -40,7 +41,7 @@ export function createDatabaseEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
         classification: null,
-        encrypted: null,
+        encrypted,
       },
     },
   });

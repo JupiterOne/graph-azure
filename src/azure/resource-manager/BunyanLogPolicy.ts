@@ -44,10 +44,6 @@ export class BunyanLogPolicy extends BaseRequestPolicy {
 
       this.logger.info(logData, "Received response from Azure API");
 
-      if (response.status === 429) {
-        this.logger.info(logData, "Request throttled");
-      }
-
       return response;
     });
   }

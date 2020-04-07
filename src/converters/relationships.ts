@@ -259,17 +259,6 @@ export function createVirtualMachineDiskRelationships(
   return relationships;
 }
 
-export function createSqlServerDatabaseRelationship(
-  server: EntityFromIntegration,
-  database: EntityFromIntegration,
-): IntegrationRelationship {
-  return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.HAS,
-    from: server,
-    to: database,
-  });
-}
-
 export function createLoadBalancerBackendNicRelationship(
   lb: EntityFromIntegration,
   nicId: string,

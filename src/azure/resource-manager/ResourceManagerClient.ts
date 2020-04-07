@@ -54,9 +54,9 @@ import { bunyanLogPolicy } from "./BunyanLogPolicy";
 import { AzureManagementClientCredentials } from "./types";
 
 /**
- * An Azure resource manager resource provider.
+ * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
  */
-interface ResourceProvider {
+interface ListAllResourcesEndpoint {
   listAll: <ListResponseType>() => Promise<ListResponseType>;
   listAllNext: <ListResponseType>(
     nextLink: string,
@@ -64,13 +64,9 @@ interface ResourceProvider {
 }
 
 /**
- * An Azure resource manager resource provider that has been scoped to the
- * necessary parent resource. For example, a database resource provider must be
- * scoped to the containing database server. The results are limited to those
- * which are contained in the scope, therefore the functions are not `listAll`
- * and `listAllNext`.
+ * An Azure resource manager endpoint that has `list` and `listNext` functions.
  */
-interface ScopedResourceProvider {
+interface ListResourcesEndpoint {
   list<ListResponseType>(): Promise<ListResponseType>;
   listNext<ListResponseType>(nextLink: string): Promise<ListResponseType>;
 }
@@ -114,13 +110,13 @@ interface ResourceListResponse<T> extends Array<T> {
  * 4. Allow specific resource provider endpoint period wait times.
  *
  * @param requestFunc code making a request to Azure RM
- * @param resourceProviderRatePeriod the resource provider's rate limiting
- * period; the time in a reqs/time ratio
+ * @param endpointRatePeriod the resource provider's rate limiting period; the
+ * time in a reqs/time ratio
  */
 /* istanbul ignore next: testing iteration might be difficult */
 function retryResourceRequest<ResponseType>(
   requestFunc: () => Promise<ResponseType>,
-  resourceProviderRatePeriod: number,
+  endpointRatePeriod: number,
 ): Promise<ResponseType> {
   return retry(
     async _context => {
@@ -136,7 +132,7 @@ function retryResourceRequest<ResponseType>(
       // attempts. Assumes non-429 responses will not lead to subsequent
       // attempts (`handleError` will abort for other error responses).
       calculateDelay: (context, _options) => {
-        return context.attemptNum === 0 ? 0 : resourceProviderRatePeriod;
+        return context.attemptNum === 0 ? 0 : endpointRatePeriod;
       },
 
       // Most errors will be handled by the request policies. They will raise
@@ -172,7 +168,7 @@ export default class ResourceManagerClient {
     );
     return this.iterateAllResources({
       serviceClient,
-      resourceProvider: serviceClient.networkInterfaces,
+      resourceEndpoint: serviceClient.networkInterfaces,
       callback,
     });
   }
@@ -185,24 +181,26 @@ export default class ResourceManagerClient {
     );
     return this.iterateAllResources({
       serviceClient,
-      resourceProvider: serviceClient.virtualMachines,
+      resourceEndpoint: serviceClient.virtualMachines,
       callback,
     });
   }
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateVirtualMachineImages(
     callback: (i: VirtualMachineImage) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       ComputeManagementClient,
     );
-    return this.iterateScopedResources({
+    return this.iterateAllResources({
       serviceClient,
-      resourceProvider: serviceClient.images,
+      resourceEndpoint: serviceClient.images,
       callback,
     });
   }
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateVirtualMachineDisks(
     callback: (d: Disk) => void | Promise<void>,
   ): Promise<void> {
@@ -223,11 +221,12 @@ export default class ResourceManagerClient {
     );
     return this.iterateAllResources({
       serviceClient,
-      resourceProvider: serviceClient.virtualNetworks,
+      resourceEndpoint: serviceClient.virtualNetworks,
       callback,
     });
   }
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateLoadBalancers(
     callback: (lb: LoadBalancer) => void | Promise<void>,
   ): Promise<void> {
@@ -236,7 +235,7 @@ export default class ResourceManagerClient {
     );
     return this.iterateAllResources({
       serviceClient,
-      resourceProvider: serviceClient.loadBalancers,
+      resourceEndpoint: serviceClient.loadBalancers,
       callback,
     });
   }
@@ -249,7 +248,7 @@ export default class ResourceManagerClient {
     );
     return this.iterateAllResources({
       serviceClient,
-      resourceProvider: serviceClient.networkSecurityGroups,
+      resourceEndpoint: serviceClient.networkSecurityGroups,
       callback,
     });
   }
@@ -262,7 +261,7 @@ export default class ResourceManagerClient {
     );
     return this.iterateAllResources({
       serviceClient,
-      resourceProvider: serviceClient.publicIPAddresses,
+      resourceEndpoint: serviceClient.publicIPAddresses,
       callback,
     });
   }
@@ -275,9 +274,9 @@ export default class ResourceManagerClient {
     const serviceClient = await this.getAuthenticatedServiceClient(
       StorageManagementClient,
     );
-    return this.iterateScopedResources({
+    return this.iterateAllResources({
       serviceClient,
-      resourceProvider: serviceClient.storageAccounts,
+      resourceEndpoint: serviceClient.storageAccounts,
       callback,
     });
   }
@@ -292,9 +291,9 @@ export default class ResourceManagerClient {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name!;
 
-    return this.iterateScopedResources({
+    return this.iterateAllResources({
       serviceClient,
-      resourceProvider: {
+      resourceEndpoint: {
         list: async () => {
           return serviceClient.blobContainers.list(resourceGroup, accountName);
         },
@@ -310,19 +309,21 @@ export default class ResourceManagerClient {
 
   //// Databases ////
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateSqlServers(
     callback: (s: SQLServer) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-    return this.iterateScopedResources({
+    return this.iterateAllResources({
       serviceClient,
-      resourceProvider: serviceClient.servers,
+      resourceEndpoint: serviceClient.servers,
       callback,
     });
   }
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateSqlDatabases(
     server: SQLServer,
     callback: (
@@ -336,9 +337,9 @@ export default class ResourceManagerClient {
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
-    return this.iterateScopedResources({
+    return this.iterateAllResources({
       serviceClient,
-      resourceProvider: {
+      resourceEndpoint: {
         list: async () => {
           return serviceClient.databases.listByServer(
             resourceGroup,
@@ -350,6 +351,7 @@ export default class ResourceManagerClient {
     });
   }
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateMySqlServers(
     callback: (
       s: MySQLServer,
@@ -365,6 +367,7 @@ export default class ResourceManagerClient {
     }
   }
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateMySqlDatabases(
     server: MySQLServer,
     callback: (
@@ -378,9 +381,9 @@ export default class ResourceManagerClient {
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
-    return this.iterateScopedResources({
+    return this.iterateAllResources({
       serviceClient,
-      resourceProvider: {
+      resourceEndpoint: {
         list: async () => {
           return serviceClient.databases.listByServer(
             resourceGroup,
@@ -392,6 +395,7 @@ export default class ResourceManagerClient {
     });
   }
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateMariaDbServers(
     callback: (
       s: MariaDBServer,
@@ -407,6 +411,7 @@ export default class ResourceManagerClient {
     }
   }
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateMariaDbDatabases(
     server: PostgreSQLServer,
     callback: (
@@ -420,9 +425,9 @@ export default class ResourceManagerClient {
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
-    return this.iterateScopedResources({
+    return this.iterateAllResources({
       serviceClient,
-      resourceProvider: {
+      resourceEndpoint: {
         list: async () => {
           return serviceClient.databases.listByServer(
             resourceGroup,
@@ -434,6 +439,7 @@ export default class ResourceManagerClient {
     });
   }
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iteratePostgreSqlServers(
     callback: (
       s: PostgreSQLServer,
@@ -449,10 +455,11 @@ export default class ResourceManagerClient {
     }
   }
 
+  /* istanbul ignore next: core functionality covered by other tests */
   public async iteratePostgreSqlDatabases(
     server: PostgreSQLServer,
     callback: (
-      d: PostgreSQLDatabase,
+      resource: PostgreSQLDatabase,
       serviceClient: PostgreSQLManagementClient,
     ) => void | Promise<void>,
   ): Promise<void> {
@@ -462,9 +469,9 @@ export default class ResourceManagerClient {
     const resourceGroup = resourceGroupName(server.id, true)!;
     const serverName = server.name!;
 
-    return this.iterateScopedResources({
+    return this.iterateAllResources({
       serviceClient,
-      resourceProvider: {
+      resourceEndpoint: {
         list: async () => {
           return serviceClient.databases.listByServer(
             resourceGroup,
@@ -518,86 +525,49 @@ export default class ResourceManagerClient {
   }
 
   /**
-   * Iterate ALL resources of a `ResourceManagementModule`. These are Azure
-   * Resource Node modules that that support a `listAll` function.
+   * Iterate all resources of the provided `resourceEndpoint`.
    *
-   * @param resourceProvider a module that supports listAll() and listAllNext()
+   * @param resourceEndpoint a module that supports list()/listNext() or
+   * listAll()/listAllNext()
    * @param callback a function to receive each resource throughout pagination
-   * @param resourceProviderRateLimit number of requests allowed per rate period
-   * @param resourceProviderRatePeriod number of milliseconds over which rate
+   * @param endpointRatePeriod number of milliseconds over which rate
    * limit applies
    */
-  private async iterateAllResources<
-    ServiceClientType,
-    ResourceType,
-    ListResponseType extends ResourceListResponse<ResourceType>
-  >({
+  private async iterateAllResources<ServiceClientType, ResourceType>({
     serviceClient,
-    resourceProvider,
+    resourceEndpoint,
     callback,
-    resourceProviderRatePeriod = 6 * 60 * 1000,
+    endpointRatePeriod = 5 * 60 * 1000,
   }: {
     serviceClient: ServiceClientType;
-    resourceProvider: ResourceProvider;
+    resourceEndpoint: ListAllResourcesEndpoint | ListResourcesEndpoint;
     callback: (
-      r: ResourceType,
+      resource: ResourceType,
       serviceClient: ServiceClientType,
     ) => void | Promise<void>;
-    resourceProviderRatePeriod?: number;
+    endpointRatePeriod?: number;
   }): Promise<void> {
     let nextLink: string | undefined;
     do {
       const response = await retryResourceRequest(async () => {
-        return nextLink
-          ? /* istanbul ignore next: testing iteration might be difficult */
-            await resourceProvider.listAllNext<ListResponseType>(nextLink)
-          : await resourceProvider.listAll<ListResponseType>();
-      }, resourceProviderRatePeriod);
-
-      for (const e of response) {
-        await callback(e, serviceClient);
-      }
-
-      nextLink = response.nextLink;
-    } while (nextLink);
-  }
-
-  /**
-   * Iterate resources of a `ScopedResourceProvider`. These are Azure Resource
-   * Node modules that do not support a `listAll` function.
-   *
-   * @param rmModule a module that supports list() and listNext()
-   * @param callback a function to receive each resource throughout pagination
-   * @param resourceProviderRateLimit number of requests allowed per rate period
-   * @param resourceProviderRatePeriod number of milliseconds over which rate
-   * limit applies
-   */
-  private async iterateScopedResources<
-    ServiceClientType,
-    ResourceType,
-    ListResponseType extends ResourceListResponse<ResourceType>
-  >({
-    serviceClient,
-    resourceProvider: rmModule,
-    callback,
-    resourceProviderRatePeriod = 6 * 60 * 1000,
-  }: {
-    serviceClient: ServiceClientType;
-    resourceProvider: ScopedResourceProvider;
-    callback: (
-      r: ResourceType,
-      serviceClient: ServiceClientType,
-    ) => void | Promise<void>;
-    resourceProviderRatePeriod?: number;
-  }): Promise<void> {
-    let nextLink: string | undefined;
-    do {
-      const response = await retryResourceRequest(async () => {
-        return nextLink
-          ? /* istanbul ignore next: testing iteration might be difficult */
-            await rmModule.listNext<ListResponseType>(nextLink)
-          : await rmModule.list<ListResponseType>();
-      }, resourceProviderRatePeriod);
+        if ("listAllNext" in resourceEndpoint) {
+          return nextLink
+            ? /* istanbul ignore next: testing iteration might be difficult */
+              await resourceEndpoint.listAllNext<
+                ResourceListResponse<ResourceType>
+              >(nextLink)
+            : await resourceEndpoint.listAll<
+                ResourceListResponse<ResourceType>
+              >();
+        } else {
+          return nextLink
+            ? /* istanbul ignore next: testing iteration might be difficult */
+              await resourceEndpoint.listNext<
+                ResourceListResponse<ResourceType>
+              >(nextLink)
+            : await resourceEndpoint.list<ResourceListResponse<ResourceType>>();
+        }
+      }, endpointRatePeriod);
 
       this.logger.info(
         {

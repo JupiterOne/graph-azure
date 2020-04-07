@@ -6,6 +6,7 @@ import {
   IntegrationExecutionResult,
   IntegrationInvocationConfig,
   IntegrationStepExecutionContext,
+  IntegrationStepIterationState,
   IntegrationStepStartStates,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
@@ -16,15 +17,14 @@ import {
 } from "./azure";
 import initializeContext from "./initializeContext";
 import invocationValidator from "./invocationValidator";
-import deleteDeprecatedTypes from "./synchronizers/deleteDeprecatedTypes";
 import synchronizeAccount from "./synchronizers/synchronizeAccount";
 import synchronizeGroupMembers from "./synchronizers/synchronizeGroupMembers";
 import synchronizeGroups from "./synchronizers/synchronizeGroups";
+import synchronizeStorageAccounts from "./synchronizers/synchronizeStorageAccounts";
 import synchronizeComputeResources from "./synchronizers/syncronizeComputeResources";
 import synchronizeDatabaseResources from "./synchronizers/syncronizeDatabaseResources";
 import synchronizeUsers from "./synchronizers/syncronizeUsers";
 import { AzureIntegrationInstanceConfig } from "./types";
-import synchronizeStorageAccounts from "./synchronizers/synchronizeStorageAccounts";
 
 export const AD_FETCH_GROUPS = "fetch-groups";
 export const AD_FETCH_GROUP_MEMBERS = "fetch-group-members";
@@ -110,7 +110,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           name: "Synchronize Account",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
-          ) => {
+          ): Promise<IntegrationExecutionResult> => {
             return synchronizeAccount(initializeContext(executionContext));
           },
         },
@@ -124,7 +124,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           iterates: true,
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
-          ) => {
+          ): Promise<IntegrationStepIterationState> => {
             const iterationState = getIterationState(executionContext);
             return fetchBatchOfUsers(
               initializeContext(executionContext),
@@ -138,7 +138,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           iterates: true,
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
-          ) => {
+          ): Promise<IntegrationStepIterationState> => {
             const iterationState = getIterationState(executionContext);
             return fetchBatchOfGroups(
               initializeContext(executionContext),
@@ -156,7 +156,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           iterates: true,
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
-          ) => {
+          ): Promise<IntegrationStepIterationState> => {
             const iterationState = getIterationState(executionContext);
             return fetchBatchOfGroupMembers(
               initializeContext(executionContext),
@@ -169,7 +169,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           name: "Synchronize Users",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
-          ) => {
+          ): Promise<IntegrationExecutionResult> => {
             return synchronizeUsers(initializeContext(executionContext));
           },
         },
@@ -178,7 +178,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           name: "Synchronize Groups",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
-          ) => {
+          ): Promise<IntegrationExecutionResult> => {
             return synchronizeGroups(initializeContext(executionContext));
           },
         },
@@ -224,17 +224,8 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
           name: "Synchronize Group Members",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
-          ) => {
+          ): Promise<IntegrationExecutionResult> => {
             return synchronizeGroupMembers(initializeContext(executionContext));
-          },
-        },
-        {
-          id: CLEANUP,
-          name: "Cleanup",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ) => {
-            return deleteDeprecatedTypes(initializeContext(executionContext));
           },
         },
       ],
@@ -242,7 +233,9 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   ],
 };
 
-function getIterationState(executionContext: IntegrationStepExecutionContext) {
+function getIterationState(
+  executionContext: IntegrationStepExecutionContext,
+): IntegrationStepIterationState {
   const iterationState = executionContext.event.iterationState;
   if (!iterationState) {
     throw new IntegrationError("Expected iterationState not found in event!");

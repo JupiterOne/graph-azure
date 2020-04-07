@@ -169,8 +169,17 @@ async function fetchDatabases(
               server.name!,
               database.name!,
             );
-            if (encryption.status) {
-              encrypted = ENCRYPTION_ENABLED_PATTERN.test(encryption.status);
+
+            // There is something broken with deserializing this response...
+            const status =
+              encryption.status ||
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (encryption as any).content["m:properties"]["d:properties"][
+                "d:status"
+              ];
+
+            if (status) {
+              encrypted = ENCRYPTION_ENABLED_PATTERN.test(status);
             }
           } catch (err) {
             logger.warn(

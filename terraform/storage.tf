@@ -20,8 +20,8 @@ resource "azurerm_sql_server" "j1dev" {
   resource_group_name          = azurerm_resource_group.j1dev.name
   location                     = "eastus"
   version                      = "12.0"
-  administrator_login          = "4dm1n157r470r"
-  administrator_login_password = "4-v3ry-53cr37-p455w0rd"
+  administrator_login          = random_string.administrator_login.result
+  administrator_login_password = random_password.administrator_password.result
 
   tags = {
     environment = "${local.j1env}"
@@ -37,4 +37,13 @@ resource "azurerm_sql_database" "j1dev" {
   tags = {
     environment = "${local.j1env}"
   }
+}
+
+resource "random_string" "administrator_login" {
+  length = 13
+}
+
+resource "random_password" "administrator_password" {
+  length = 16
+  special = true
 }

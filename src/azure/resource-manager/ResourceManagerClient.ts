@@ -44,7 +44,10 @@ import {
   systemErrorRetryPolicy,
   throttlingRetryPolicy,
 } from "@azure/ms-rest-js";
-import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
+import {
+  IntegrationLogger,
+  IntegrationError,
+} from "@jupiterone/jupiter-managed-integration-sdk";
 import { retry } from "@lifeomic/attempt";
 
 import { AzureIntegrationInstanceConfig } from "../../types";
@@ -108,6 +111,8 @@ interface ResourceListResponse<T> extends Array<T> {
  * 3. Allow resource providers that return a useful `retry-after` to continue to
  *    work, because the `ThrottlingRetryPolicy` is still in place.
  * 4. Allow specific resource provider endpoint period wait times.
+ * 5. Allow other error responses to continue to throw an error (this will not
+ *    attempt to retry those).
  *
  * @param requestFunc code making a request to Azure RM
  * @param endpointRatePeriod the resource provider's rate limiting period; the
@@ -527,11 +532,14 @@ export default class ResourceManagerClient {
   /**
    * Iterate all resources of the provided `resourceEndpoint`.
    *
+   * Sometimes listing fails with a `404` response. In this case, the `callback`
+   * will not be invoked, as if there are no contained resources.
+   *
    * @param resourceEndpoint a module that supports list()/listNext() or
    * listAll()/listAllNext()
    * @param callback a function to receive each resource throughout pagination
-   * @param endpointRatePeriod number of milliseconds over which rate
-   * limit applies
+   * @param endpointRatePeriod number of milliseconds over which rate limit
+   * applies
    */
   private async iterateAllResources<ServiceClientType, ResourceType>({
     serviceClient,
@@ -548,40 +556,52 @@ export default class ResourceManagerClient {
     endpointRatePeriod?: number;
   }): Promise<void> {
     let nextLink: string | undefined;
-    do {
-      const response = await retryResourceRequest(async () => {
-        if ("listAllNext" in resourceEndpoint) {
-          return nextLink
-            ? /* istanbul ignore next: testing iteration might be difficult */
-              await resourceEndpoint.listAllNext<
-                ResourceListResponse<ResourceType>
-              >(nextLink)
-            : await resourceEndpoint.listAll<
-                ResourceListResponse<ResourceType>
-              >();
-        } else {
-          return nextLink
-            ? /* istanbul ignore next: testing iteration might be difficult */
-              await resourceEndpoint.listNext<
-                ResourceListResponse<ResourceType>
-              >(nextLink)
-            : await resourceEndpoint.list<ResourceListResponse<ResourceType>>();
+    try {
+      do {
+        const response = await retryResourceRequest(async () => {
+          if ("listAllNext" in resourceEndpoint) {
+            return nextLink
+              ? /* istanbul ignore next: testing iteration might be difficult */
+                await resourceEndpoint.listAllNext<
+                  ResourceListResponse<ResourceType>
+                >(nextLink)
+              : await resourceEndpoint.listAll<
+                  ResourceListResponse<ResourceType>
+                >();
+          } else {
+            return nextLink
+              ? /* istanbul ignore next: testing iteration might be difficult */
+                await resourceEndpoint.listNext<
+                  ResourceListResponse<ResourceType>
+                >(nextLink)
+              : await resourceEndpoint.list<
+                  ResourceListResponse<ResourceType>
+                >();
+          }
+        }, endpointRatePeriod);
+
+        this.logger.info(
+          {
+            resourceCount: response.length,
+            resource: response._response.request.url,
+          },
+          "Received resources for endpoint",
+        );
+
+        for (const e of response) {
+          callback(e, serviceClient);
         }
-      }, endpointRatePeriod);
 
-      this.logger.info(
-        {
-          resourceCount: response.length,
-          resource: response._response.request.url,
-        },
-        "Received resources for endpoint",
-      );
-
-      for (const e of response) {
-        await callback(e, serviceClient);
+        nextLink = response.nextLink;
+      } while (nextLink);
+    } catch (err) {
+      if (err.statusCode === 404) {
+        this.logger.warn({ err }, "Resources not found");
+      } else {
+        throw new IntegrationError("Failed to list resources", err, {
+          expose: true,
+        });
       }
-
-      nextLink = response.nextLink;
-    } while (nextLink);
+    }
   }
 }

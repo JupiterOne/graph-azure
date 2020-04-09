@@ -314,7 +314,6 @@ export default class ResourceManagerClient {
 
   //// Databases ////
 
-  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateSqlServers(
     callback: (s: SQLServer) => void | Promise<void>,
   ): Promise<void> {
@@ -328,7 +327,6 @@ export default class ResourceManagerClient {
     });
   }
 
-  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateSqlDatabases(
     server: SQLServer,
     callback: (
@@ -595,6 +593,7 @@ export default class ResourceManagerClient {
         nextLink = response.nextLink;
       } while (nextLink);
     } catch (err) {
+      /* istanbul ignore else */
       if (err.statusCode === 404) {
         this.logger.warn({ err }, "Resources not found");
       } else {

@@ -13,6 +13,7 @@ import { Polly } from "@pollyjs/core";
 import polly from "../../../test/helpers/polly";
 import config from "../../../test/integrationInstanceConfig";
 import { ResourceManagerClient } from "./";
+import { Server, Database } from "@azure/arm-sql/esm/models";
 
 let p: Polly;
 
@@ -118,6 +119,91 @@ describe("iteratePublicIPAddresses", () => {
         }),
       }),
     ]);
+  });
+});
+
+describe("iterateSqlServers", () => {
+  test("all", async () => {
+    p = polly(__dirname, "iterateSqlServers");
+
+    const client = new ResourceManagerClient(config, createTestLogger());
+
+    const resources: Server[] = [];
+    await client.iterateSqlServers(e => {
+      resources.push(e);
+    });
+
+    expect(resources).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: "j1dev-sqlserver",
+        tags: expect.objectContaining({
+          environment: "j1dev",
+        }),
+      }),
+    ]);
+  }, 10000);
+});
+
+describe("iterateSqlDatabases", () => {
+  const server: Server = {
+    kind: "v12.0",
+    administratorLogin: "?wJ@=_6Yxt#&Y",
+    version: "12.0",
+    state: "Ready",
+    fullyQualifiedDomainName: "j1dev-sqlserver.database.windows.net",
+    location: "eastus",
+    tags: { environment: "j1dev" },
+    id:
+      "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver",
+    name: "j1dev-sqlserver",
+    type: "Microsoft.Sql/servers",
+  };
+
+  test("all", async () => {
+    p = polly(__dirname, "iterateSqlDatabases");
+
+    const client = new ResourceManagerClient(config, createTestLogger());
+
+    const resources: Database[] = [];
+    await client.iterateSqlDatabases(server, e => {
+      resources.push(e);
+    });
+
+    expect(resources).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: "j1dev-sqldatabase",
+        tags: expect.objectContaining({
+          environment: "j1dev",
+        }),
+      }),
+      expect.objectContaining({
+        id: expect.any(String),
+        name: "master",
+      }),
+    ]);
+  });
+
+  test("server not found", async () => {
+    p = polly(__dirname, "iterateSqlDatabasesServerNotFound", {
+      recordFailedRequests: true,
+    });
+
+    const client = new ResourceManagerClient(config, createTestLogger());
+
+    const iteratee = jest.fn();
+    await client.iterateSqlDatabases(
+      {
+        ...server,
+        id:
+          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver-notfound",
+        name: "j1dev-sqlserver-notfound",
+      },
+      iteratee,
+    );
+
+    expect(iteratee).not.toHaveBeenCalled();
   });
 });
 

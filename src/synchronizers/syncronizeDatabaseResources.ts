@@ -87,15 +87,22 @@ async function synchronize(
       dbType,
     );
 
-    for (const databaseEntity of databaseEntities) {
-      newServerDbRelationships.push(
-        createIntegrationRelationship({
-          _class: DataModel.RelationshipClass.HAS,
-          from: serverEntity,
-          to: databaseEntity,
-        }),
-      );
-      newDatabaseEntities.push(databaseEntity);
+    // No databaseEntities means there was a failure fetching them for this
+    // server. In the case this is a transient failure, ideally we would avoid
+    // deleting previously ingested databases for this server. That would
+    // require that we process each server independently, fetching the databases
+    // and relationships that are scoped to this one server.
+    if (databaseEntities) {
+      for (const databaseEntity of databaseEntities) {
+        newServerDbRelationships.push(
+          createIntegrationRelationship({
+            _class: DataModel.RelationshipClass.HAS,
+            from: serverEntity,
+            to: databaseEntity,
+          }),
+        );
+        newDatabaseEntities.push(databaseEntity);
+      }
     }
   }
 
@@ -143,19 +150,27 @@ async function fetchDatabases(
   webLinker: AzureWebLinker,
   server: MySQLServer | SQLServer,
   dbType: string,
-): Promise<EntityFromIntegration[]> {
+): Promise<EntityFromIntegration[] | undefined> {
   const { azrm, logger } = executionContext;
 
   const databaseEntityType = `azure_${dbType}_database`;
   const entities: EntityFromIntegration[] = [];
   switch (dbType) {
     case DatabaseType.MySQL:
-      await azrm.iterateMySqlDatabases(server as MySQLServer, e => {
-        const encrypted = null;
-        entities.push(
-          createDatabaseEntity(webLinker, e, databaseEntityType, encrypted),
+      try {
+        await azrm.iterateMySqlDatabases(server as MySQLServer, e => {
+          const encrypted = null;
+          entities.push(
+            createDatabaseEntity(webLinker, e, databaseEntityType, encrypted),
+          );
+        });
+      } catch (err) {
+        logger.warn(
+          { err, server: { id: server.id, type: server.type } },
+          "Failure requesting databases for server",
         );
-      });
+        return undefined;
+      }
       break;
     case DatabaseType.SQL:
       await azrm.iterateSqlDatabases(

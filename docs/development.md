@@ -33,9 +33,10 @@ Recap:
 
 ## Authentication for Terraform
 
-Terraform is a script that needs to authenticate with the Resource Manager API.
-Scripts run using Service Principal credentials instead of User Principal
-credentials. [Create a Service Principal][2] using the Azure CLI.
+In Azure API parlance, Terraform is considered a script that needs to
+authenticate with the Resource Manager API. Scripts run using Service Principal
+credentials instead of User Principal credentials. [Create a Service
+Principal][2] using the Azure CLI.
 
 ```sh
 $ az account list --query "[].{name:name, subscriptionId:id, tenantId:tenantId}"
@@ -76,6 +77,19 @@ ARM_ENVIRONMENT=public
 ```
 
 ## Terraforming for Development
+
+### Using `tfenv` on Mac
+
+```sh
+$ brew install tfenv
+$ cat .terraform-version
+$ tfenv install <version>
+$ cd terraform
+$ env $(grep -v '^#' .env) terraform init
+$ env $(grep -v '^#' .env) terraform plan
+```
+
+### Using Docker
 
 Initialize Terraform:
 

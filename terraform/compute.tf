@@ -58,7 +58,6 @@ resource "azurerm_network_interface" "j1dev" {
   name                = "j1dev"
   location            = "eastus"
   resource_group_name = azurerm_resource_group.j1dev.name
-  network_security_group_id = azurerm_network_security_group.j1dev.id
 
   ip_configuration {
     name                          = "j1devConfiguration"
@@ -70,6 +69,11 @@ resource "azurerm_network_interface" "j1dev" {
   tags = {
     environment = "${local.j1env}"
   }
+}
+
+resource "azurerm_network_interface_security_group_association" "j1dev" {
+  network_interface_id      = azurerm_network_interface.j1dev.id
+  network_security_group_id = azurerm_network_security_group.j1dev.id
 }
 
 resource "azurerm_virtual_machine" "j1dev" {

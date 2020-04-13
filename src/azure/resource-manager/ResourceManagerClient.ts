@@ -159,6 +159,7 @@ export default class ResourceManagerClient {
   constructor(
     private config: AzureIntegrationInstanceConfig,
     readonly logger: IntegrationLogger,
+    readonly noRetryPolicy: boolean = false,
   ) {
     this.serviceClientCache = new Map();
   }
@@ -354,7 +355,6 @@ export default class ResourceManagerClient {
     });
   }
 
-  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateMySqlServers(
     callback: (
       s: MySQLServer,
@@ -370,7 +370,6 @@ export default class ResourceManagerClient {
     }
   }
 
-  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateMySqlDatabases(
     server: MySQLServer,
     callback: (
@@ -515,13 +514,21 @@ export default class ResourceManagerClient {
       requestPolicyFactories: (
         defaultRequestPolicyFactories: RequestPolicyFactory[],
       ): RequestPolicyFactory[] => {
-        const policyChain = [
-          ...defaultRequestPolicyFactories,
-          exponentialRetryPolicy(), // < -- This will not retry a 429 response
-          systemErrorRetryPolicy(),
-          throttlingRetryPolicy(), // < -- This thing will only retry once
-          bunyanLogPolicy(this.logger),
-        ];
+        const policyChain = defaultRequestPolicyFactories;
+
+        if (!this.noRetryPolicy) {
+          // < -- Tests may turn off retry altogether
+          policyChain.push(
+            ...[
+              exponentialRetryPolicy(), // < -- This will not retry a 429 response
+              systemErrorRetryPolicy(),
+              throttlingRetryPolicy(), // < -- This thing will only retry once
+            ],
+          );
+        }
+
+        policyChain.push(bunyanLogPolicy(this.logger));
+
         return policyChain;
       },
     });

@@ -78,7 +78,7 @@ export function createStorageServiceEntity(
         webLink: webLinker.portalResourceUrl(`${data.id}${config.pathSuffix}`),
         region: data.location,
         resourceGroup: resourceGroupName(data.id),
-        sku: data.sku && data.sku.name,
+        sku: data.sku?.name,
         endpoints: [endpoint],
         category: ["infrastructure"],
       },
@@ -110,16 +110,11 @@ export function createStorageContainerEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
         public: !!(
-          data.publicAccess && /(container|blob)/i.exec(data.publicAccess)
+          data.publicAccess && /(container|blob)/i.test(data.publicAccess)
         ),
         publicAccess: data.publicAccess,
         classification: null,
-        encrypted: !!(
-          account.encryption &&
-          account.encryption.services &&
-          account.encryption.services.blob &&
-          account.encryption.services.blob.enabled
-        ),
+        encrypted: !!account.encryption?.services?.blob?.enabled,
       },
     },
   });

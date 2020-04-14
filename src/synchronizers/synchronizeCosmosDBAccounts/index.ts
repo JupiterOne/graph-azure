@@ -3,14 +3,17 @@ import {
   IntegrationExecutionResult,
   IntegrationError,
   PersisterOperationsResult,
-  createIntegrationEntity,
   EntityFromIntegration,
   summarizePersisterOperationsResults,
+  IntegrationRelationship,
+  createIntegrationRelationship,
+  DataModel,
+  generateRelationshipType,
 } from "@jupiterone/jupiter-managed-integration-sdk";
-import { AccountEntity, AZURE_DATABASE_ENTITY_CLASS } from "../../jupiterone";
+import { AccountEntity } from "../../jupiterone";
 import { createAzureWebLinker } from "../../azure";
 import { CosmosDBClient } from "./client";
-import { resourceGroupName } from "../../azure/utils";
+import { createSQLDatabaseEntity, createAccountEntity } from "./converters";
 
 export default async function synchronizeCosmosDBAccounts(
   executionContext: AzureExecutionContext,
@@ -30,40 +33,62 @@ export default async function synchronizeCosmosDBAccounts(
 
   const operationsResults: PersisterOperationsResult[] = [];
 
-  await cosmosDBClient.iterateCosmosDBAccounts(async (account) => {
-    const databaseEntityType = "azure_cosmosdb_???";
-    const newDatabaseEntities: EntityFromIntegration[] = [];
+  await cosmosDBClient.iterateAccounts(async (account) => {
+    const newDBAccountEntity = createAccountEntity(webLinker, account);
 
-    await cosmosDBClient.iterateCosmosDBs(account, (database) => {
-      const entity = createIntegrationEntity({
-        entityData: {
-          source: database,
-          assign: {
-            _key: database.id,
-            _type: databaseEntityType,
-            _class: AZURE_DATABASE_ENTITY_CLASS,
+    const newDBEntities: EntityFromIntegration[] = [];
+    const newAccountDatabaseRelationships: IntegrationRelationship[] = [];
+    await cosmosDBClient.iterateSQLDatabases(account, (database) => {
+      const newDBEntity = createSQLDatabaseEntity(webLinker, account, database);
+      newDBEntities.push(newDBEntity);
+      newAccountDatabaseRelationships.push(
+        createIntegrationRelationship({
+          _class: DataModel.RelationshipClass.HAS,
+          from: newDBAccountEntity,
+          to: newDBEntity,
+          properties: {
             dbAccountId: account.id,
-            webLink: webLinker.portalResourceUrl(database.id),
-            encrypted: true, // Cosmos DB's are always encrypted, it cannot be turned off
-            classification: null,
-            resourceGroup: resourceGroupName(database.id),
           },
-        },
-      });
-      newDatabaseEntities.push(entity);
+        }),
+      );
     });
 
-    const oldDatabaseEntities = await graph.findEntitiesByType(
-      databaseEntityType,
+    const oldDBEntities = await graph.findEntitiesByType(
+      "azure_cosmosdb_sql_database",
+      {
+        dbAccountId: account.id, // allows subset synchronization
+      },
+    );
+
+    const oldAccountDBRelationships = await graph.findRelationshipsByType(
+      generateRelationshipType(
+        DataModel.RelationshipClass.HAS,
+        "azure_cosmosdb_account",
+        "azure_cosmosdb_sql_database",
+      ),
       {
         dbAccountId: account.id,
       },
     );
 
+    const oldDBAccountEntities = await graph.findEntitiesByType(
+      "azure_cosmosdb_account",
+      { id: account.id },
+    );
+
     operationsResults.push(
-      await persister.publishEntityOperations(
-        persister.processEntities(oldDatabaseEntities, newDatabaseEntities),
-      ),
+      await persister.publishPersisterOperations([
+        [
+          ...persister.processEntities(oldDBAccountEntities, [
+            newDBAccountEntity,
+          ]),
+          ...persister.processEntities(oldDBEntities, newDBEntities),
+        ],
+        persister.processRelationships(
+          oldAccountDBRelationships,
+          newAccountDatabaseRelationships,
+        ),
+      ]),
     );
   });
 

@@ -13,7 +13,7 @@ import {
 import { resourceGroupName } from "../../azure/utils";
 
 export class CosmosDBClient extends Client {
-  public async iterateCosmosDBAccounts(
+  public async iterateAccounts(
     callback: (
       resource: DatabaseAccountGetResults,
       serviceClient: CosmosDBManagementClient,
@@ -31,7 +31,7 @@ export class CosmosDBClient extends Client {
     });
   }
 
-  public async iterateCosmosDBs(
+  public async iterateSQLDatabases(
     dbAccount: DatabaseAccountGetResults,
     callback: (
       resource: SqlDatabaseResource,

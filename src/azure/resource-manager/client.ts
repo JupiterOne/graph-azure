@@ -241,7 +241,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
       );
 
       for (const e of response) {
-        callback(e, serviceClient);
+        await callback(e, serviceClient);
       }
 
       nextLink = response.nextLink;

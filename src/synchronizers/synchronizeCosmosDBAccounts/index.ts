@@ -30,11 +30,11 @@ export default async function synchronizeCosmosDBAccounts(
 
   const operationsResults: PersisterOperationsResult[] = [];
 
-  cosmosDBClient.iterateCosmosDBAccounts(async (account) => {
+  await cosmosDBClient.iterateCosmosDBAccounts(async (account) => {
     const databaseEntityType = "azure_cosmosdb_???";
     const newDatabaseEntities: EntityFromIntegration[] = [];
 
-    cosmosDBClient.iterateCosmosDBs(account, (database) => {
+    await cosmosDBClient.iterateCosmosDBs(account, (database) => {
       const entity = createIntegrationEntity({
         entityData: {
           source: database,

@@ -23,7 +23,7 @@ export class CosmosDBClient extends Client {
       CosmosDBManagementClient,
     );
 
-    iterateAllResources({
+    return iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.databaseAccounts,
@@ -45,7 +45,7 @@ export class CosmosDBClient extends Client {
     const groupName = resourceGroupName(dbAccount.id, true)!;
     const accountName = dbAccount.name!;
 
-    iterateAllResources({
+    return iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {

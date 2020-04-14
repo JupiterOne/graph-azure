@@ -9,8 +9,9 @@ import {
   AD_SYNC_GROUPS,
   AD_SYNC_USERS,
   RM_SYNC_COMPUTE,
-  RM_SYNC_STORAGE,
+  RM_SYNC_COSMOSDB,
   RM_SYNC_DATABASES,
+  RM_SYNC_STORAGE,
   stepFunctionsInvocationConfig,
 } from "./index";
 
@@ -28,19 +29,20 @@ describe("getStepStartStates", () => {
       [RM_SYNC_COMPUTE]: { disabled: true },
       [RM_SYNC_STORAGE]: { disabled: true },
       [RM_SYNC_DATABASES]: { disabled: true },
+      [RM_SYNC_COSMOSDB]: { disabled: true },
     });
 
     // Verify all but account and cleanup steps (the rest are AD or RM steps)
     // have disable state, to catch failure to add new steps that should be
     // accounted for in determining disablement based on integration config.
     const stepIds = stepFunctionsInvocationConfig
-      .integrationStepPhases!.map(phase => phase.steps.map(s => s.id))
+      .integrationStepPhases!.map((phase) => phase.steps.map((s) => s.id))
       .reduce((a, phaseStepIds) => {
         // replace with flatMap() when available
         a.push(...phaseStepIds);
         return a;
       }, [])
-      .filter(e => !/(account|cleanup)/.exec(e));
+      .filter((e) => !/(account|cleanup)/.exec(e));
     expect(Object.keys(states)).toEqual(expect.arrayContaining(stepIds));
   });
 
@@ -53,6 +55,7 @@ describe("getStepStartStates", () => {
       [RM_SYNC_COMPUTE]: { disabled: true },
       [RM_SYNC_STORAGE]: { disabled: true },
       [RM_SYNC_DATABASES]: { disabled: true },
+      [RM_SYNC_COSMOSDB]: { disabled: true },
     });
   });
 

@@ -11,6 +11,15 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
+"@azure/arm-cosmosdb@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-cosmosdb/-/arm-cosmosdb-7.0.0.tgz#fe81b23254b233e7244c03981e55da0e11495b73"
+  integrity sha512-SFyTnFWoQedkDkrJRmEcLlYMghUZM4mktWIhAnTw59se79Y7GP8uqi9rqz4em0waUx+nDBlLfE3sl+u91tPuyw==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-mariadb@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-mariadb/-/arm-mariadb-1.4.0.tgz#a049e0b35a1f8411df0ce483b8d704fe4d7ec599"

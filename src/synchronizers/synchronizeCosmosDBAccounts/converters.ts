@@ -47,6 +47,7 @@ export function createSQLDatabaseEntity(
         encrypted: true, // Cosmos DB's are always encrypted, it cannot be turned off
         classification: null,
         resourceGroup: resourceGroupName(data.id),
+        region: dbAccount.location,
       },
     },
   });

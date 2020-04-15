@@ -59,6 +59,8 @@ describe("createStorageAccountEntity", () => {
       _type: "azure_storage_blob_service",
       _class: ["Service"],
       _rawData: [{ name: "default", rawData: data }],
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev",
       name: "j1dev",
       displayName: "j1dev (blob)",
       region: "eastus",
@@ -84,6 +86,8 @@ describe("createStorageAccountEntity", () => {
       _type: "azure_storage_file_service",
       _class: ["Service"],
       _rawData: [{ name: "default", rawData: data }],
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev",
       name: "j1dev",
       displayName: "j1dev (file)",
       region: "eastus",
@@ -109,6 +113,8 @@ describe("createStorageAccountEntity", () => {
       _type: "azure_storage_queue_service",
       _class: ["Service"],
       _rawData: [{ name: "default", rawData: data }],
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev",
       name: "j1dev",
       displayName: "j1dev (queue)",
       region: "eastus",
@@ -136,6 +142,8 @@ describe("createStorageAccountEntity", () => {
       _type: "azure_storage_table_service",
       _class: ["Service"],
       _rawData: [{ name: "default", rawData: data }],
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev",
       name: "j1dev",
       displayName: "j1dev (table)",
       region: "eastus",
@@ -178,6 +186,9 @@ describe("createStorageBlobContainerEntity", () => {
     _type: "azure_storage_container",
     _class: ["DataStore"],
     _rawData: [{ name: "default", rawData: data }],
+    createdOn: undefined,
+    id:
+      "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
     name: "bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
     displayName: "bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752",
     webLink: webLinker.portalResourceUrl(

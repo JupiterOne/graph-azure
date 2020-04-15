@@ -342,6 +342,9 @@ describe("createNetworkSecurityGroupEntity", () => {
     _type: "azure_security_group",
     _class: ["Firewall"],
     _rawData: [{ name: "default", rawData: data }],
+    createdOn: undefined,
+    id:
+      "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
     name: "j1dev",
     displayName: "j1dev",
     resourceGroup: "j1dev",
@@ -425,6 +428,9 @@ describe("createVirtualNetworkEntity", () => {
       _type: "azure_vnet",
       _class: ["Network"],
       _rawData: [{ name: "default", rawData: data }],
+      createdOn: undefined,
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
       name: "j1dev",
       displayName: "j1dev (10.0.0.0/16)",
       resourceGroup: "j1dev",
@@ -494,6 +500,9 @@ describe("createSubnetEntity", () => {
       _type: "azure_subnet",
       _class: ["Network"],
       _rawData: [{ name: "default", rawData: data }],
+      createdOn: undefined,
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
       name: "j1dev",
       displayName: "j1dev (10.0.2.0/24)",
       resourceGroup: "j1dev",

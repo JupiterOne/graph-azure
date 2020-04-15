@@ -1,6 +1,6 @@
 import {
   DatabaseAccountGetResults,
-  SqlDatabaseResource,
+  SqlDatabaseGetResults,
 } from "@azure/arm-cosmosdb/esm/models";
 import {
   createIntegrationEntity,
@@ -24,6 +24,10 @@ export function createAccountEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         region: data.location,
         resourceGroup: resourceGroupName(data.id),
+        enableAutomaticFailover: data.enableAutomaticFailover,
+        enableMultipleWriteLocations: data.enableMultipleWriteLocations,
+        isVirtualNetworkFilterEnabled: data.isVirtualNetworkFilterEnabled,
+        ipRangeFilter: data.ipRangeFilter,
       },
       tagProperties: ["environment"],
     },
@@ -33,11 +37,11 @@ export function createAccountEntity(
 export function createSQLDatabaseEntity(
   webLinker: AzureWebLinker,
   dbAccount: DatabaseAccountGetResults,
-  data: SqlDatabaseResource,
+  data: SqlDatabaseGetResults,
 ): EntityFromIntegration {
   return createIntegrationEntity({
     entityData: {
-      source: data,
+      source: { ...data, tags: dbAccount.tags },
       assign: {
         _key: data.id,
         _type: "azure_cosmosdb_sql_database",
@@ -45,10 +49,10 @@ export function createSQLDatabaseEntity(
         dbAccountId: dbAccount.id, // Maintained for synchronization subset
         webLink: webLinker.portalResourceUrl(data.id),
         encrypted: true, // Cosmos DB's are always encrypted, it cannot be turned off
-        classification: null,
         resourceGroup: resourceGroupName(data.id),
         region: dbAccount.location,
       },
+      tagProperties: ["environment"],
     },
   });
 }

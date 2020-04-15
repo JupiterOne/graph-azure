@@ -1,6 +1,6 @@
 import {
   DatabaseAccountGetResults,
-  SqlDatabaseResource,
+  SqlDatabaseGetResults,
 } from "@azure/arm-cosmosdb/esm/models";
 import { createTestLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 import { Polly } from "@pollyjs/core";
@@ -50,7 +50,7 @@ describe("iterateSQLDatabases", () => {
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.DocumentDB/databaseAccounts/j1dev",
     };
 
-    const resources: SqlDatabaseResource[] = [];
+    const resources: SqlDatabaseGetResults[] = [];
     await client.iterateSQLDatabases(dbAccount, (e) => {
       resources.push(e);
     });

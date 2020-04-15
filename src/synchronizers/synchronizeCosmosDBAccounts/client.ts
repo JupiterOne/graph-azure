@@ -1,8 +1,7 @@
 import { CosmosDBManagementClient } from "@azure/arm-cosmosdb";
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   DatabaseAccountGetResults,
-  SqlDatabaseResource,
+  SqlDatabaseGetResults,
 } from "@azure/arm-cosmosdb/esm/models";
 
 import {
@@ -31,10 +30,11 @@ export class CosmosDBClient extends Client {
     });
   }
 
+  /* eslint-disable @typescript-eslint/no-non-null-assertion */
   public async iterateSQLDatabases(
     dbAccount: DatabaseAccountGetResults,
     callback: (
-      resource: SqlDatabaseResource,
+      resource: SqlDatabaseGetResults,
       serviceClient: CosmosDBManagementClient,
     ) => void | Promise<void>,
   ): Promise<void> {

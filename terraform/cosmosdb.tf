@@ -17,13 +17,22 @@ resource "azurerm_cosmosdb_account" "j1dev" {
     location          = azurerm_resource_group.j1dev.location
     failover_priority = 0
   }
+
+  tags = {
+    environment = local.j1env
+  }
 }
 
 resource "azurerm_cosmosdb_sql_database" "j1dev" {
-  count = azurerm_cosmosdb_sql_databases
+  count = var.azurerm_cosmosdb_sql_databases
 
   name                = "j1dev"
   resource_group_name = azurerm_resource_group.j1dev.name
   account_name        = azurerm_cosmosdb_account.j1dev.name
   throughput          = 400
+
+  # Unsupported by the resource
+  # tags = {
+  #   environment = local.j1env
+  # }
 }

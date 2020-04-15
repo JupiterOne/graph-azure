@@ -10,10 +10,10 @@ resource "azurerm_virtual_network" "j1dev" {
 }
 
 resource "azurerm_subnet" "j1dev" {
-  name                      = "j1dev"
-  resource_group_name       = azurerm_resource_group.j1dev.name
-  virtual_network_name      = azurerm_virtual_network.j1dev.name
-  address_prefix            = "10.0.2.0/24"
+  name                 = "j1dev"
+  resource_group_name  = azurerm_resource_group.j1dev.name
+  virtual_network_name = azurerm_virtual_network.j1dev.name
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurerm_subnet_network_security_group_association" "j1dev" {
@@ -22,10 +22,10 @@ resource "azurerm_subnet_network_security_group_association" "j1dev" {
 }
 
 resource "azurerm_public_ip" "j1dev" {
-  name                         = "j1dev"
-  location                     = "eastus"
-  resource_group_name          = azurerm_resource_group.j1dev.name
-  allocation_method            = "Dynamic"
+  name                = "j1dev"
+  location            = "eastus"
+  resource_group_name = azurerm_resource_group.j1dev.name
+  allocation_method   = "Dynamic"
 
   tags = {
     environment = "${local.j1env}"
@@ -38,15 +38,15 @@ resource "azurerm_network_security_group" "j1dev" {
   resource_group_name = azurerm_resource_group.j1dev.name
 
   security_rule {
-      name                       = "SSH"
-      priority                   = 1001
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "22"
-      source_address_prefix      = "*"
-      destination_address_prefix = "*"
+    name                       = "SSH"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
   }
 
   tags = {
@@ -77,6 +77,8 @@ resource "azurerm_network_interface_security_group_association" "j1dev" {
 }
 
 resource "azurerm_virtual_machine" "j1dev" {
+  count = var.azurerm_compute_virtual_machines
+
   name                  = "j1dev"
   location              = "eastus"
   resource_group_name   = azurerm_resource_group.j1dev.name

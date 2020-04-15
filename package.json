@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@azure/arm-compute": "^14.0.0",
+    "@azure/arm-cosmosdb": "^7.0.0",
     "@azure/arm-mariadb": "^1.4.0",
     "@azure/arm-mysql": "^3.3.0",
     "@azure/arm-network": "^20.0.0",

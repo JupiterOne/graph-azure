@@ -18,6 +18,7 @@ import {
 import initializeContext from "./initializeContext";
 import invocationValidator from "./invocationValidator";
 import synchronizeAccount from "./synchronizers/synchronizeAccount";
+import synchronizeCosmosDBAccounts from "./synchronizers/synchronizeCosmosDBAccounts";
 import synchronizeGroupMembers from "./synchronizers/synchronizeGroupMembers";
 import synchronizeGroups from "./synchronizers/synchronizeGroups";
 import synchronizeStorageAccounts from "./synchronizers/synchronizeStorageAccounts";
@@ -38,6 +39,7 @@ export const CLEANUP = "cleanup";
 export const RM_SYNC_COMPUTE = "sync-rm-compute";
 export const RM_SYNC_STORAGE = "sync-rm-storage";
 export const RM_SYNC_DATABASES = "sync-rm-databases";
+export const RM_SYNC_COSMOSDB = "sync-rm-cosmosdb";
 
 export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   instanceConfigFields: {
@@ -96,6 +98,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
         [RM_SYNC_COMPUTE]: resourceManager,
         [RM_SYNC_STORAGE]: resourceManager,
         [RM_SYNC_DATABASES]: resourceManager,
+        [RM_SYNC_COSMOSDB]: resourceManager,
       };
     }
 
@@ -211,6 +214,17 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
             executionContext: IntegrationStepExecutionContext,
           ): Promise<IntegrationExecutionResult> => {
             return synchronizeDatabaseResources(
+              initializeContext(executionContext),
+            );
+          },
+        },
+        {
+          id: RM_SYNC_COSMOSDB,
+          name: "Synchronize Cosmos DB",
+          executionHandler: async (
+            executionContext: IntegrationStepExecutionContext,
+          ): Promise<IntegrationExecutionResult> => {
+            return synchronizeCosmosDBAccounts(
               initializeContext(executionContext),
             );
           },

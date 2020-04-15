@@ -1,9 +1,9 @@
 resource "azurerm_storage_account" "j1dev" {
-  name                = "j1dev"
-  resource_group_name = azurerm_resource_group.j1dev.name
-  location            = "eastus"
+  name                     = "j1dev"
+  resource_group_name      = azurerm_resource_group.j1dev.name
+  location                 = "eastus"
   account_replication_type = "LRS"
-  account_tier = "Standard"
+  account_tier             = "Standard"
 
   tags = {
     environment = "${local.j1env}"
@@ -11,11 +11,13 @@ resource "azurerm_storage_account" "j1dev" {
 }
 
 resource "azurerm_storage_container" "j1dev" {
-  name = "j1dev"
+  name                 = "j1dev"
   storage_account_name = azurerm_storage_account.j1dev.name
 }
 
 resource "azurerm_sql_server" "j1dev" {
+  count = var.azurerm_storage_sql_servers
+
   name                         = "j1dev-sqlserver"
   resource_group_name          = azurerm_resource_group.j1dev.name
   location                     = "eastus"
@@ -29,10 +31,12 @@ resource "azurerm_sql_server" "j1dev" {
 }
 
 resource "azurerm_sql_database" "j1dev" {
+  count = var.azurerm_storage_sql_databases
+
   name                = "j1dev-sqldatabase"
   resource_group_name = azurerm_resource_group.j1dev.name
   location            = "eastus"
-  server_name         = azurerm_sql_server.j1dev.name
+  server_name         = azurerm_sql_server.j1dev[count.index].name
 
   tags = {
     environment = "${local.j1env}"
@@ -40,6 +44,8 @@ resource "azurerm_sql_database" "j1dev" {
 }
 
 resource "azurerm_mysql_server" "j1dev" {
+  count = var.azurerm_storage_mysql_servers
+
   name                = "j1dev-mysqlserver"
   location            = azurerm_resource_group.j1dev.location
   resource_group_name = azurerm_resource_group.j1dev.name
@@ -63,9 +69,11 @@ resource "azurerm_mysql_server" "j1dev" {
 }
 
 resource "azurerm_mysql_database" "j1dev" {
+  count = var.azurerm_storage_mysql_databases
+
   name                = "j1dev-mysqldb"
   resource_group_name = azurerm_resource_group.j1dev.name
-  server_name         = azurerm_mysql_server.j1dev.name
+  server_name         = azurerm_mysql_server.j1dev[count.index].name
   charset             = "utf8"
   collation           = "utf8_unicode_ci"
 
@@ -76,12 +84,12 @@ resource "azurerm_mysql_database" "j1dev" {
 }
 
 resource "random_string" "administrator_login" {
-  length = 13
-  special = true
+  length           = 13
+  special          = true
   override_special = "_"
 }
 
 resource "random_password" "administrator_password" {
-  length = 16
+  length  = 16
   special = true
 }

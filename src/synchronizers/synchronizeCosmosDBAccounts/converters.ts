@@ -20,7 +20,7 @@ export function createAccountEntity(
       assign: {
         _key: data.id,
         _type: "azure_cosmosdb_account",
-        _class: ["Account"],
+        _class: ["Account", "Service"],
         webLink: webLinker.portalResourceUrl(data.id),
         region: data.location,
         resourceGroup: resourceGroupName(data.id),

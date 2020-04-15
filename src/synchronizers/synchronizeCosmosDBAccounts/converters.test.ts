@@ -83,7 +83,7 @@ const dbAccount: DatabaseAccountGetResults = {
 describe("createAccountEntity", () => {
   test("properties", () => {
     expect(createAccountEntity(webLinker, dbAccount)).toEqual({
-      _class: ["Account"],
+      _class: ["Account", "Service"],
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.DocumentDB/databaseAccounts/j1dev",
       _rawData: [
@@ -93,6 +93,8 @@ describe("createAccountEntity", () => {
         },
       ],
       _type: "azure_cosmosdb_account",
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.DocumentDB/databaseAccounts/j1dev",
       createdOn: undefined,
       displayName: "j1dev",
       name: "j1dev",
@@ -141,6 +143,8 @@ describe("createSQLDatabaseEntity", () => {
         },
       ],
       _type: "azure_cosmosdb_sql_database",
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.DocumentDB/databaseAccounts/j1dev/sqlDatabases/j1dev",
       createdOn: undefined,
       dbAccountId:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.DocumentDB/databaseAccounts/j1dev",

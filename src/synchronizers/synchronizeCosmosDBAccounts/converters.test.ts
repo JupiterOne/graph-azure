@@ -110,6 +110,8 @@ describe("createAccountEntity", () => {
       enableMultipleWriteLocations: false,
       isVirtualNetworkFilterEnabled: false,
       ipRangeFilter: "",
+      category: ["infrastructure"],
+      endpoints: ["https://j1dev-eastus.documents.azure.com:443/"],
     });
   });
 });
@@ -159,6 +161,14 @@ describe("createSQLDatabaseEntity", () => {
       classification: "production",
       webLink:
         "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.DocumentDB/databaseAccounts/j1dev/sqlDatabases/j1dev",
+    });
+  });
+
+  test("no classification", () => {
+    expect(
+      createSQLDatabaseEntity(webLinker, { ...dbAccount, tags: {} }, database),
+    ).toMatchObject({
+      classification: null,
     });
   });
 });

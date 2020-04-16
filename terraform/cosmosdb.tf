@@ -31,8 +31,6 @@ resource "azurerm_cosmosdb_sql_database" "j1dev" {
   account_name        = azurerm_cosmosdb_account.j1dev.name
   throughput          = 400
 
-  # Unsupported by the resource
-  # tags = {
-  #   environment = local.j1env
-  # }
+  # Tags cannot be added to Cosmos DB databases. They will inherit the tags from
+  # the account when ingested to the graph.
 }

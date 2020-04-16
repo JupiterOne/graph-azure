@@ -28,6 +28,10 @@ export function createAccountEntity(
         enableMultipleWriteLocations: data.enableMultipleWriteLocations,
         isVirtualNetworkFilterEnabled: data.isVirtualNetworkFilterEnabled,
         ipRangeFilter: data.ipRangeFilter,
+        category: ["infrastructure"],
+        endpoints: data.readLocations
+          ?.map((e) => e.documentEndpoint)
+          .filter((e) => !!e),
       },
       tagProperties: ["environment"],
     },
@@ -51,6 +55,7 @@ export function createSQLDatabaseEntity(
         encrypted: true, // Cosmos DB's are always encrypted, it cannot be turned off
         resourceGroup: resourceGroupName(data.id),
         region: dbAccount.location,
+        classification: null, // If it isn't in tags, we don't know what the value should be
       },
       tagProperties: ["environment"],
     },

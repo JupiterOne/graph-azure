@@ -1068,19 +1068,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@jupiterone/data-model@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@jupiterone/data-model/-/data-model-0.2.1.tgz#6a91ec8a52101a42817c0174c2d302414b261534"
-  integrity sha512-mx7iWYbhe/ckDTKYMDZ8PSkIrWIFw8PR9utZmhlF1rdOWobpz38xsA2A/GaFuyxf9JXCBDe9POk8aJiJqLSMfQ==
-  dependencies:
-    ajv "^6.12.0"
-
-"@jupiterone/jupiter-managed-integration-sdk@33.7.2":
-  version "33.7.2"
-  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-33.7.2.tgz#f116366ed5579c12ecdc1a2ed1847c512cfc7bf3"
-  integrity sha512-rABp7ZevHIgJ4VaCymXQYvyzlSKKe5i3NPgrZJyaiuNdgSQiO1Wj88Op9IlYw+1NJrezWsA/xrl61/GhEBgrRA==
-  dependencies:
-    "@jupiterone/data-model" "^0.2.1"
+"@jupiterone/jupiter-managed-integration-sdk@33.7.3-288-4.0":
+  version "33.7.3-288-4.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-33.7.3-288-4.0.tgz#f9c93c27de9b1ef2910e5ea247ba44514cc45dc0"
+  integrity sha512-fJqNgeUaHgJon5roN3vHLMUi28OR4ANBHKwI+VRu887uVQrscTVjHEwdHAsPvPEzJPu43EYzoc6kXNlHh0Al1g==
 
 "@lifeomic/attempt@^3.0.0":
   version "3.0.0"
@@ -1531,7 +1522,7 @@ adal-node@^0.1.28:
     xmldom ">= 0.1.x"
     xpath.js "~1.1.0"
 
-ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.0, ajv@^6.5.5:
+ajv@^6.10.0, ajv@^6.10.2, ajv@^6.5.5:
   version "6.12.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.0.tgz#06d60b96d87b8454a5adaba86e7854da629db4b7"
   integrity sha512-D6gFiFA0RRLyUbvijN74DWAjXSFxWKaWP7mldxkVhyhAV3+SWA9HEJPHQ2c9soIeTFJqcSdFDGFgdqs1iUU2Hw==

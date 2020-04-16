@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.12.0 - 2020-04-16
+
+### Added
+
+- Storage resources: `azure_storage_file_service`, `azure_storage_share`
+
 ## 3.11.0 - 2020-04-15
 
 ### Added

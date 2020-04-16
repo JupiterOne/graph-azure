@@ -1075,10 +1075,10 @@
   dependencies:
     ajv "^6.12.0"
 
-"@jupiterone/jupiter-managed-integration-sdk@33.7.1":
-  version "33.7.1"
-  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-33.7.1.tgz#68e496d5162cf8c4a55615411ad62448e196efd4"
-  integrity sha512-dyQvo12l52bNjrhMHm44Ynhga+ZMOR+WFHaRcNmBDVjXRRMOzuRMDboXLQS4h2l6G8QbyLYH67RNYHsLHCaL2w==
+"@jupiterone/jupiter-managed-integration-sdk@33.7.2":
+  version "33.7.2"
+  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-33.7.2.tgz#f116366ed5579c12ecdc1a2ed1847c512cfc7bf3"
+  integrity sha512-rABp7ZevHIgJ4VaCymXQYvyzlSKKe5i3NPgrZJyaiuNdgSQiO1Wj88Op9IlYw+1NJrezWsA/xrl61/GhEBgrRA==
   dependencies:
     "@jupiterone/data-model" "^0.2.1"
 

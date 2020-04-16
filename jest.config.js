@@ -1,5 +1,7 @@
 const { defaults } = require("jest-config");
 
+process.env.ENABLE_GRAPH_OBJECT_SCHEMA_VALIDATION = 1;
+
 module.exports = {
   transform: {
     "^.+\\.ts?$": "ts-jest",

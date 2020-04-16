@@ -1,4 +1,8 @@
-import { StorageAccount, BlobContainer } from "@azure/arm-storage/esm/models";
+import {
+  StorageAccount,
+  BlobContainer,
+  FileShare,
+} from "@azure/arm-storage/esm/models";
 import {
   createIntegrationEntity,
   EntityFromIntegration,
@@ -17,6 +21,8 @@ import {
   STORAGE_TABLE_SERVICE_ENTITY_TYPE,
   STORAGE_CONTAINER_ENTITY_TYPE,
   STORAGE_CONTAINER_ENTITY_CLASS,
+  STORAGE_FILE_SHARE_ENTITY_TYPE,
+  STORAGE_FILE_SHARE_ENTITY_CLASS,
 } from "../../jupiterone";
 
 type StorageAccountServiceConfig = {
@@ -113,6 +119,33 @@ export function createStorageContainerEntity(
           data.publicAccess && /(container|blob)/i.test(data.publicAccess)
         ),
         publicAccess: data.publicAccess,
+        classification: null,
+        encrypted: !!account.encryption?.services?.blob?.enabled,
+      },
+    },
+  });
+}
+
+/**
+ * Creates an integration entity for a Files service file share.
+ *
+ * * Files are considered to be encrypted when the storage account is
+ *   configured as encrypted. See
+ *   https://azure.microsoft.com/en-us/blog/announcing-default-encryption-for-azure-blobs-files-table-and-queue-storage/
+ */
+export function createStorageFileShareEntity(
+  webLinker: AzureWebLinker,
+  account: StorageAccount,
+  data: FileShare,
+): EntityFromIntegration {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _type: STORAGE_FILE_SHARE_ENTITY_TYPE,
+        _class: STORAGE_FILE_SHARE_ENTITY_CLASS,
+        webLink: webLinker.portalResourceUrl(data.id),
+        resourceGroup: resourceGroupName(data.id),
         classification: null,
         encrypted: !!account.encryption?.services?.blob?.enabled,
       },

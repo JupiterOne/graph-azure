@@ -4,6 +4,7 @@ export const ACCOUNT_ENTITY_TYPE = "azure_account";
 export const ACCOUNT_ENTITY_CLASS = "Account";
 
 export interface AccountEntity extends EntityFromIntegration {
+  id: string;
   organizationName: string | undefined;
   defaultDomain: string | undefined;
   verifiedDomains: string[] | undefined;
@@ -149,6 +150,9 @@ export const STORAGE_CONTAINER_ENTITY_CLASS = "DataStore";
 
 export const STORAGE_FILE_SERVICE_ENTITY_TYPE = "azure_storage_file_service";
 export const STORAGE_FILE_SERVICE_ENTITY_CLASS = "Service";
+
+export const STORAGE_FILE_SHARE_ENTITY_TYPE = "azure_storage_share";
+export const STORAGE_FILE_SHARE_ENTITY_CLASS = "DataStore";
 
 export const STORAGE_QUEUE_SERVICE_ENTITY_TYPE = "azure_storage_queue_service";
 export const STORAGE_QUEUE_SERVICE_ENTITY_CLASS = "Service";

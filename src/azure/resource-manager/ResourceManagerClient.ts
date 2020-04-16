@@ -34,8 +34,6 @@ import {
   Database as SQLDatabase,
   Server as SQLServer,
 } from "@azure/arm-sql/esm/models";
-import { StorageManagementClient } from "@azure/arm-storage";
-import { BlobContainer, StorageAccount } from "@azure/arm-storage/esm/models";
 
 import { resourceGroupName } from "../utils";
 import { Client, iterateAllResources, ListResourcesEndpoint } from "./client";
@@ -152,49 +150,6 @@ export default class ResourceManagerClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.publicIPAddresses,
-      callback,
-    });
-  }
-
-  //// Storage ////
-
-  public async iterateStorageAccounts(
-    callback: (sa: StorageAccount) => void | Promise<void>,
-  ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      StorageManagementClient,
-    );
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: serviceClient.storageAccounts,
-      callback,
-    });
-  }
-
-  public async iterateStorageBlobContainers(
-    storageAccount: StorageAccount,
-    callback: (e: BlobContainer) => void | Promise<void>,
-  ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      StorageManagementClient,
-    );
-    const resourceGroup = resourceGroupName(storageAccount.id, true)!;
-    const accountName = storageAccount.name!;
-
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.blobContainers.list(resourceGroup, accountName);
-        },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.blobContainers.listNext(nextLink);
-        },
-      } as ListResourcesEndpoint,
       callback,
     });
   }

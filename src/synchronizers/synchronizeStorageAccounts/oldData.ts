@@ -1,16 +1,18 @@
-import { PersistedObjectAssignable } from "@jupiterone/jupiter-managed-integration-sdk/jupiter-types";
 import {
   EntityFromIntegration,
   generateRelationshipType,
-  IntegrationRelationship,
   GraphClient,
+  IntegrationRelationship,
+  PersisterOperationsResult,
 } from "@jupiterone/jupiter-managed-integration-sdk";
+import { PersistedObjectAssignable } from "@jupiterone/jupiter-managed-integration-sdk/jupiter-types";
 
 import {
   AccountEntity,
   STORAGE_BLOB_SERVICE_ENTITY_TYPE,
   STORAGE_CONTAINER_ENTITY_TYPE,
 } from "../../jupiterone";
+import { AzureExecutionContext } from "../../types";
 
 type EntityOrRelationship = EntityFromIntegration | IntegrationRelationship;
 
@@ -28,6 +30,11 @@ interface OldDataMaps {
 }
 
 export type OldData = OldDataMaps & OldDataMeta;
+
+export interface OldDataExecutionContext extends AzureExecutionContext {
+  oldData: OldData;
+  operationsResults: PersisterOperationsResult[];
+}
 
 export async function fetchOldData(
   graph: GraphClient,
@@ -59,7 +66,7 @@ export async function fetchOldData(
     EntityFromIntegration[],
     IntegrationRelationship[],
     EntityFromIntegration[],
-    IntegrationRelationship[]
+    IntegrationRelationship[],
   ];
 
   return {
@@ -86,7 +93,7 @@ function createObjectByKeyMap<T extends PersistedObjectAssignable>(
   objects: T[],
 ): Record<string, T> {
   const map: Record<string, T> = {};
-  objects.forEach(obj => {
+  objects.forEach((obj) => {
     map[obj._key] = obj;
   });
   return map;

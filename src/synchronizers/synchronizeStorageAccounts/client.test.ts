@@ -31,6 +31,16 @@ describe("iterateStorageAccounts", () => {
       expect.objectContaining({
         id: expect.any(String),
         name: "j1dev",
+        kind: "StorageV2",
+        tags: expect.objectContaining({
+          environment: "j1dev",
+        }),
+      }),
+      expect.objectContaining({
+        id: expect.any(String),
+        name: "j1devblobstorage",
+        kind: "BlobStorage",
+        enableHttpsTrafficOnly: true,
         tags: expect.objectContaining({
           environment: "j1dev",
         }),

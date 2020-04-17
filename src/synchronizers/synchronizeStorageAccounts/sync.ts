@@ -11,16 +11,16 @@ import {
 
 import { AzureWebLinker } from "../../azure";
 import {
-  createStorageFileShareEntity,
-  createStorageServiceEntity,
-} from "../../converters/resources/storage";
-import {
   AccountEntity,
   STORAGE_FILE_SERVICE_ENTITY_TYPE,
   STORAGE_FILE_SHARE_ENTITY_TYPE,
 } from "../../jupiterone";
 import { AzureExecutionContext } from "../../types";
 import { StorageClient } from "./client";
+import {
+  createStorageFileShareEntity,
+  createStorageServiceEntity,
+} from "./converters";
 
 export async function synchronizeStorageAccount(
   context: AzureExecutionContext,

@@ -20,6 +20,9 @@ and this project adheres to
   would crash Compute synchronization. Virtual network sync is skipped in this
   case so other synchronization carries on.
 
+- `_type` for images and disks was incorrect so that ingestion may have been
+  unstable.
+
 ## 3.13.0 - 2020-04-17
 
 ### Added

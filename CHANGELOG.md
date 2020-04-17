@@ -8,7 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
-- Key Vault resources: `azure_keyvault_service`
+### Added
+
+- Set `azure_managed_disk.encrypted` based on presence of `encryption.type`
+
+- Key Vault resources: `azure_keyvault_service` (not yet loading keys, certs)
+
+### Fixed
+
+- Virtual networks listing sometimes produces a `502` server response. This
+  would crash Compute synchronization. Virtual network sync is skipped in this
+  case so other synchronization carries on.
 
 ## 3.13.0 - 2020-04-17
 

@@ -74,6 +74,7 @@ though the `Account` entity will always be ingested.
 | Compute              | `azure_vm`                    | `Host`                          |
 |                      | `azure_image`                 | `Image`                         |
 |                      | `azure_managed_disk`          | `DataStore`, `Disk`             |
+| Key Vault            | `azure_keyvault_service`      | `Service`                       |
 | Load Balancer        | `azure_lb`                    | `Gateway`                       |
 | Virtual Network      | `azure_vnet`                  | `Network`                       |
 | Subnet               | `azure_subnet`                | `Network`                       |
@@ -101,6 +102,7 @@ The following relationships are created/mapped:
 | ---------------------------- | ------------ | ----------------------------- |
 | `azure_account`              | **HAS**      | `azure_user`                  |
 | `azure_account`              | **HAS**      | `azure_user_group`            |
+| `azure_account`              | **HAS**      | `azure_keyvault_service`      |
 | `azure_account`              | **HAS**      | `azure_storage_blob_service`  |
 | `azure_user_group`           | **HAS**      | `azure_user`                  |
 | `azure_user_group`           | **HAS**      | `azure_user_group`            |

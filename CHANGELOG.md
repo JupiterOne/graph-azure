@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Key Vault resources: `azure_keyvault_service`
+
 ## 3.13.0 - 2020-04-17
 
 ### Added

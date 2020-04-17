@@ -1,3 +1,4 @@
+import { ClientSecretCredential } from "@azure/identity";
 import {
   exponentialRetryPolicy,
   HttpResponse,
@@ -47,6 +48,15 @@ export abstract class Client {
     readonly logger: IntegrationLogger,
     readonly noRetryPolicy = false,
   ) {}
+
+  // TODO cache and document
+  getClientSecretCredentials(): ClientSecretCredential {
+    return new ClientSecretCredential(
+      this.config.directoryId,
+      this.config.clientId,
+      this.config.clientSecret,
+    );
+  }
 
   /**
    * Authenticates with Azure identity service to obtain an API token and caches

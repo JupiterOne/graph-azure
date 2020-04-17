@@ -21,6 +21,7 @@ import synchronizeAccount from "./synchronizers/synchronizeAccount";
 import synchronizeCosmosDBAccounts from "./synchronizers/synchronizeCosmosDBAccounts";
 import synchronizeGroupMembers from "./synchronizers/synchronizeGroupMembers";
 import synchronizeGroups from "./synchronizers/synchronizeGroups";
+import synchronizeKeyVaults from "./synchronizers/synchronizeKeyVault";
 import synchronizeStorageAccounts from "./synchronizers/synchronizeStorageAccounts";
 import synchronizeComputeResources from "./synchronizers/syncronizeComputeResources";
 import synchronizeDatabaseResources from "./synchronizers/syncronizeDatabaseResources";
@@ -37,6 +38,7 @@ export const AD_SYNC_USERS = "sync-users";
 export const CLEANUP = "cleanup";
 
 export const RM_SYNC_COMPUTE = "sync-rm-compute";
+export const RM_SYNC_KEYVAULT = "sync-rm-keyvault";
 export const RM_SYNC_STORAGE = "sync-rm-storage";
 export const RM_SYNC_DATABASES = "sync-rm-databases";
 export const RM_SYNC_COSMOSDB = "sync-rm-cosmosdb";
@@ -96,6 +98,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
       states = {
         ...states,
         [RM_SYNC_COMPUTE]: resourceManager,
+        [RM_SYNC_KEYVAULT]: resourceManager,
         [RM_SYNC_STORAGE]: resourceManager,
         [RM_SYNC_DATABASES]: resourceManager,
         [RM_SYNC_COSMOSDB]: resourceManager,
@@ -194,6 +197,15 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
             return synchronizeComputeResources(
               initializeContext(executionContext),
             );
+          },
+        },
+        {
+          id: RM_SYNC_KEYVAULT,
+          name: "Synchronize Key Vault",
+          executionHandler: async (
+            executionContext: IntegrationStepExecutionContext,
+          ): Promise<IntegrationExecutionResult> => {
+            return synchronizeKeyVaults(initializeContext(executionContext));
           },
         },
         {

@@ -8,7 +8,7 @@ import {
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { AzureWebLinker } from "../../azure";
-import { resourceGroupName } from "../../azure/utils";
+import { normalizeLocation, resourceGroupName } from "../../azure/utils";
 
 export function createAccountEntity(
   webLinker: AzureWebLinker,
@@ -22,7 +22,7 @@ export function createAccountEntity(
         _type: "azure_cosmosdb_account",
         _class: ["Account", "Service"],
         webLink: webLinker.portalResourceUrl(data.id),
-        region: data.location,
+        region: normalizeLocation(data.location),
         resourceGroup: resourceGroupName(data.id),
         enableAutomaticFailover: data.enableAutomaticFailover,
         enableMultipleWriteLocations: data.enableMultipleWriteLocations,
@@ -54,7 +54,7 @@ export function createSQLDatabaseEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         encrypted: true, // Cosmos DB's are always encrypted, it cannot be turned off
         resourceGroup: resourceGroupName(data.id),
-        region: dbAccount.location,
+        region: normalizeLocation(dbAccount.location),
         classification: null, // If it isn't in tags, we don't know what the value should be
       },
       tagProperties: ["environment"],

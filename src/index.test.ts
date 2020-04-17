@@ -13,6 +13,7 @@ import {
   RM_SYNC_DATABASES,
   RM_SYNC_STORAGE,
   stepFunctionsInvocationConfig,
+  RM_SYNC_KEYVAULT,
 } from "./index";
 
 describe("getStepStartStates", () => {
@@ -26,6 +27,7 @@ describe("getStepStartStates", () => {
       [AD_SYNC_GROUPS]: { disabled: true },
       [AD_SYNC_GROUP_MEMBERS]: { disabled: true },
       [AD_SYNC_USERS]: { disabled: true },
+      [RM_SYNC_KEYVAULT]: { disabled: true },
       [RM_SYNC_COMPUTE]: { disabled: true },
       [RM_SYNC_STORAGE]: { disabled: true },
       [RM_SYNC_DATABASES]: { disabled: true },
@@ -53,6 +55,7 @@ describe("getStepStartStates", () => {
     const states = stepFunctionsInvocationConfig.getStepStartStates!(context);
     expect(states).toEqual({
       [RM_SYNC_COMPUTE]: { disabled: true },
+      [RM_SYNC_KEYVAULT]: { disabled: true },
       [RM_SYNC_STORAGE]: { disabled: true },
       [RM_SYNC_DATABASES]: { disabled: true },
       [RM_SYNC_COSMOSDB]: { disabled: true },

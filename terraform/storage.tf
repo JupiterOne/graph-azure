@@ -3,6 +3,20 @@ resource "azurerm_storage_account" "j1dev" {
   resource_group_name      = azurerm_resource_group.j1dev.name
   location                 = "eastus"
   account_replication_type = "LRS"
+  account_kind             = "StorageV2"
+  account_tier             = "Standard"
+
+  tags = {
+    environment = "${local.j1env}"
+  }
+}
+
+resource "azurerm_storage_account" "j1dev_blobstorage" {
+  name                     = "j1devblobstorage"
+  resource_group_name      = azurerm_resource_group.j1dev.name
+  location                 = "eastus"
+  account_replication_type = "LRS"
+  account_kind             = "BlobStorage"
   account_tier             = "Standard"
 
   tags = {

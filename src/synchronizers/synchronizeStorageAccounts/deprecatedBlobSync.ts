@@ -8,12 +8,13 @@ import {
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { AzureWebLinker } from "../../azure";
+import { AccountEntity } from "../../jupiterone";
+import { AzureExecutionContext } from "../../types";
+import { StorageClient } from "./client";
 import {
   createStorageContainerEntity,
   createStorageServiceEntity,
-} from "../../converters/resources/storage";
-import { AccountEntity } from "../../jupiterone";
-import { AzureExecutionContext } from "../../types";
+} from "./converters";
 import {
   fetchOldData,
   OldDataExecutionContext,
@@ -22,7 +23,6 @@ import {
   popOldServiceContainerRelationship,
   popOldStorageServiceEntity,
 } from "./oldData";
-import { StorageClient } from "./client";
 
 /**
  * Synchronize the storage accounts, only the Blob service, using an approach

@@ -1,4 +1,4 @@
-import { VirtualMachine } from "@azure/arm-compute/esm/models";
+import { VirtualMachine, Disk } from "@azure/arm-compute/esm/models";
 import { MySQLManagementModels } from "@azure/arm-mysql";
 import {
   NetworkInterface,
@@ -365,6 +365,29 @@ describe("iterateVirtualNetworks", () => {
       expect.objectContaining({
         id: expect.any(String),
         name: "j1dev",
+        tags: expect.objectContaining({
+          environment: "j1dev",
+        }),
+      }),
+    ]);
+  });
+});
+
+describe("iterateVirtualMachineDisks", () => {
+  test("all", async () => {
+    p = polly(__dirname, "iterateVirtualMachineDisks");
+
+    const client = new ResourceManagerClient(config, createTestLogger());
+
+    const resources: Disk[] = [];
+    await client.iterateVirtualMachineDisks((e) => {
+      resources.push(e);
+    });
+
+    expect(resources).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: "j1devOsDisk",
         tags: expect.objectContaining({
           environment: "j1dev",
         }),

@@ -84,7 +84,6 @@ export default class ResourceManagerClient extends Client {
     });
   }
 
-  /* istanbul ignore next: core functionality covered by other tests */
   public async iterateVirtualMachineDisks(
     callback: (d: Disk) => void | Promise<void>,
   ): Promise<void> {

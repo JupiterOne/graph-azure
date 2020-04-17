@@ -7,7 +7,7 @@ resource "azurerm_storage_account" "j1dev" {
   account_tier             = "Standard"
 
   tags = {
-    environment = "${local.j1env}"
+    environment = local.j1env
   }
 }
 
@@ -20,7 +20,7 @@ resource "azurerm_storage_account" "j1dev_blobstorage" {
   account_tier             = "Standard"
 
   tags = {
-    environment = "${local.j1env}"
+    environment = local.j1env
   }
 }
 
@@ -46,7 +46,7 @@ resource "azurerm_sql_server" "j1dev" {
   administrator_login_password = random_password.administrator_password.result
 
   tags = {
-    environment = "${local.j1env}"
+    environment = local.j1env
   }
 }
 
@@ -59,7 +59,7 @@ resource "azurerm_sql_database" "j1dev" {
   server_name         = azurerm_sql_server.j1dev[count.index].name
 
   tags = {
-    environment = "${local.j1env}"
+    environment = local.j1env
   }
 }
 
@@ -84,7 +84,7 @@ resource "azurerm_mysql_server" "j1dev" {
   ssl_enforcement              = "Enabled"
 
   tags = {
-    environment = "${local.j1env}"
+    environment = local.j1env
   }
 }
 
@@ -99,7 +99,7 @@ resource "azurerm_mysql_database" "j1dev" {
 
   # Unsupported by resource at this time 😢
   # tags = {
-  #   environment = "${local.j1env}"
+  #   environment = local.j1env
   # }
 }
 

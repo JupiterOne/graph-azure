@@ -11,6 +11,6 @@ resource "azurerm_resource_group" "j1dev" {
   location = "eastus"
 
   tags = {
-    environment = "${local.j1env}"
+    environment = local.j1env
   }
 }

@@ -75,6 +75,7 @@ export function createDiskEntity(
     resourceGroup: resourceGroupName(data.id),
     createdOn: getTime(data.timeCreated),
     webLink: webLinker.portalResourceUrl(data.id),
+    encrypted: !!data.encryption?.type,
   };
 
   assignTags(entity, data.tags);

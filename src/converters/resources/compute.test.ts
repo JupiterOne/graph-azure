@@ -113,66 +113,61 @@ describe("createVirtualMachineEntity", () => {
 
 describe("createDiskEntity", () => {
   test("properties transferred", () => {
-    const data: Disk[] = [
-      {
-        creationData: {
-          createOption: "FromImage",
-          imageReference: {
-            id:
-              "/Subscriptions/655737a7-e4fa-4f19-8c60-194cc7a2ca11/Providers/Microsoft.Compute/Locations/eastus/Publishers/canonical/ArtifactTypes/VMImage/Offers/ubuntuserver/Skus/18.04-lts/Versions/18.04.202002080",
-            lun: undefined,
-          },
-          sourceResourceId: undefined,
-          sourceUniqueId: undefined,
-          sourceUri: undefined,
-          storageAccountId: undefined,
-          uploadSizeBytes: undefined,
-        },
-        diskIOPSReadWrite: 120,
-        diskMBpsReadWrite: 25,
-        diskSizeBytes: 32213303296,
-        diskSizeGB: 30,
-        diskState: "Attached",
-        encryptionSettingsCollection: undefined,
-        hyperVGeneration: "V1",
-        id:
-          "/subscriptions/47189c37-a117-483e-b343-0fc4ed6e0d23/resourceGroups/XTEST/providers/Microsoft.Compute/disks/j1_disk1_766d195cebab4c24819e73a732fa221b",
-        location: "eastus",
-        managedBy:
-          "/subscriptions/47189c37-a117-483e-b343-0fc4ed6e0d23/resourceGroups/xtest/providers/Microsoft.Compute/virtualMachines/j1",
-        name: "j1_disk1_766d195cebab4c24819e73a732fa221b",
-        osType: "Linux",
-        provisioningState: "Succeeded",
-        sku: {
-          name: "StandardSSD_LRS",
-          tier: "Standard",
-        },
-        tags: undefined,
-        timeCreated: new Date("2020-02-13T14:06:15.012935+00:00"),
-        type: "Microsoft.Compute/disks",
-        uniqueId: "766d195c-ebab-4c24-819e-73a732fa221b",
-        zones: undefined,
-      },
-    ];
-
-    const entity: AzureRegionalEntity = {
-      ...convertProperties(data[0]),
-      _key:
-        "/subscriptions/47189c37-a117-483e-b343-0fc4ed6e0d23/resourceGroups/XTEST/providers/Microsoft.Compute/disks/j1_disk1_766d195cebab4c24819e73a732fa221b",
-      _type: "azure_managed_disk",
-      _class: ["DataStore", "Disk"],
-      _rawData: [{ name: "default", rawData: data[0] }],
-      displayName: "j1_disk1_766d195cebab4c24819e73a732fa221b",
-      resourceGroup: "xtest",
-      uniqueId: "766d195c-ebab-4c24-819e-73a732fa221b",
+    const data: Disk = {
+      name: "j1devOsDisk",
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1devOsDisk",
       type: "Microsoft.Compute/disks",
-      region: "eastus",
-      createdOn: new Date("2020-02-13T14:06:15.012935+00:00").getTime(),
-      webLink: webLinker.portalResourceUrl(
-        "/subscriptions/47189c37-a117-483e-b343-0fc4ed6e0d23/resourceGroups/XTEST/providers/Microsoft.Compute/disks/j1_disk1_766d195cebab4c24819e73a732fa221b",
-      ),
+      location: "eastus",
+      tags: {
+        environment: "j1dev",
+      },
+      sku: {
+        name: "Premium_LRS",
+        tier: "Premium",
+      },
+      osType: "Linux",
+      hyperVGeneration: "V1",
+      creationData: {
+        createOption: "FromImage",
+        imageReference: {
+          id:
+            "/Subscriptions/45231f81-377d-441c-af2b-e409bd355507/Providers/Microsoft.Compute/Locations/eastus/Publishers/canonical/ArtifactTypes/VMImage/Offers/ubuntuserver/Skus/16.04.0-lts/Versions/16.04.201912170",
+        },
+      },
+      diskSizeGB: 30,
+      diskIOPSReadWrite: 120,
+      diskMBpsReadWrite: 25,
+      encryption: {
+        type: "EncryptionAtRestWithPlatformKey",
+      },
+      timeCreated: new Date("2020-01-06T19:24:46.3139845+00:00"),
+      provisioningState: "Succeeded",
+      diskState: "Unattached",
+      diskSizeBytes: 32213303296,
+      uniqueId: "d113289a-e22c-4660-8e82-0f191d72a98b",
     };
 
-    expect(createDiskEntity(webLinker, data[0])).toEqual(entity);
+    const entity: AzureRegionalEntity = {
+      ...convertProperties(data),
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1devOsDisk",
+      _type: "azure_managed_disk",
+      _class: ["DataStore", "Disk"],
+      _rawData: [{ name: "default", rawData: data }],
+      displayName: "j1devOsDisk",
+      resourceGroup: "j1dev",
+      uniqueId: "d113289a-e22c-4660-8e82-0f191d72a98b",
+      type: "Microsoft.Compute/disks",
+      region: "eastus",
+      createdOn: new Date("2020-01-06T19:24:46.3139845+00:00").getTime(),
+      webLink: webLinker.portalResourceUrl(
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1devOsDisk",
+      ),
+      "tag.environment": "j1dev",
+      encrypted: true,
+    };
+
+    expect(createDiskEntity(webLinker, data)).toEqual(entity);
   });
 });

@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.14.0 - 2020-04-17
+
 ### Added
 
 - Set `azure_managed_disk.encrypted` based on presence of `encryption.type`

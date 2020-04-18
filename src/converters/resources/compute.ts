@@ -1,4 +1,4 @@
-import { VirtualMachine, Disk, Image } from "@azure/arm-compute/esm/models";
+import { Disk, Image, VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   assignTags,
   convertProperties,
@@ -8,12 +8,14 @@ import {
 import { AzureWebLinker } from "../../azure";
 import { resourceGroupName } from "../../azure/utils";
 import {
+  AzureRegionalEntity,
+  DISK_ENTITY_CLASS,
+  DISK_ENTITY_TYPE,
   VIRTUAL_MACHINE_ENTITY_CLASS,
   VIRTUAL_MACHINE_ENTITY_TYPE,
+  VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
+  VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
   VirtualMachineEntity,
-  DISK_ENTITY_TYPE,
-  DISK_ENTITY_CLASS,
-  AzureRegionalEntity,
 } from "../../jupiterone";
 
 export function createVirtualMachineEntity(
@@ -90,8 +92,8 @@ export function createImageEntity(
   const entity = {
     ...convertProperties(data),
     _key: data.id as string,
-    _type: DISK_ENTITY_TYPE,
-    _class: DISK_ENTITY_CLASS,
+    _type: VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
+    _class: VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: data }],
     displayName: data.name,
     region: data.location,

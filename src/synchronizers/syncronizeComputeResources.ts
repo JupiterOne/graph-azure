@@ -68,6 +68,8 @@ import {
   VIRTUAL_NETWORK_ENTITY_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
   VirtualMachineEntity,
+  VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
+  DISK_ENTITY_TYPE,
 } from "../jupiterone";
 import { AzureExecutionContext } from "../types";
 
@@ -102,12 +104,12 @@ export default async function synchronizeComputeResources(
   ])) as [EntityFromIntegration[], VirtualMachineEntity[]];
 
   const [oldImages, newImages] = await Promise.all([
-    graph.findEntitiesByType(VIRTUAL_MACHINE_ENTITY_TYPE),
+    graph.findEntitiesByType(VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS),
     fetchVirtualMachineImages(azrm, webLinker),
   ]);
 
   const [oldDisks, newDisks] = await Promise.all([
-    graph.findEntitiesByType(VIRTUAL_MACHINE_ENTITY_TYPE),
+    graph.findEntitiesByType(DISK_ENTITY_TYPE),
     fetchVirtualMachineDisks(azrm, webLinker),
   ]);
 

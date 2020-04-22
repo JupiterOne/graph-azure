@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Users are not related to groups of which they are a member.
+
 ## 3.14.0 - 2020-04-17
 
 ### Added

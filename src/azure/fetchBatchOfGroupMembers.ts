@@ -32,7 +32,7 @@ export default async function fetchBatchOfGroupMembers(
   let fetchError: AzureClientError | undefined;
 
   await groupsCache.forEach(
-    async e => {
+    async (e) => {
       const groupEntry = e.entry;
       const groupEntryIndex = e.entryIndex;
       const group = groupEntry.data as Group;
@@ -72,10 +72,12 @@ export default async function fetchBatchOfGroupMembers(
         return true;
       } else {
         // update the cached group to include members loaded during this invocation
-        await cache.putEntry({
-          key: groupEntry.key,
-          data: { ...groupEntry.data, members: groupMembers },
-        });
+        await groupsCache.putEntries([
+          {
+            key: groupEntry.key,
+            data: { ...groupEntry.data, members: groupMembers },
+          },
+        ]);
 
         // move to the next group if there are no more members in this group
         if (!nextLink) {

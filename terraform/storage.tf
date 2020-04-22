@@ -58,6 +58,8 @@ resource "azurerm_sql_database" "j1dev" {
   location            = "eastus"
   server_name         = azurerm_sql_server.j1dev[count.index].name
 
+  edition = "Free"
+
   tags = {
     environment = local.j1env
   }

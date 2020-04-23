@@ -25,12 +25,6 @@ module.exports = {
       functions: 100,
       lines: 100,
     },
-    "src/azure/graph": {
-      statements: 100,
-      branches: 100,
-      functions: 100,
-      lines: 100,
-    },
     "src/azure/resource-manager": {
       statements: 100,
       branches: 100,

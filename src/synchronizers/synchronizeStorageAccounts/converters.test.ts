@@ -77,6 +77,7 @@ describe("createStorageAccountEntity Storage (Classic)", () => {
       category: ["infrastructure"],
       endpoints: ["https://j1dev.blob.core.windows.net/"],
       createdOn: new Date("2020-04-10T15:43:34.2993802Z").getTime(),
+      encrypted: true,
       "tag.environment": "j1dev",
     };
 
@@ -105,6 +106,7 @@ describe("createStorageAccountEntity Storage (Classic)", () => {
       category: ["infrastructure"],
       endpoints: ["https://j1dev.queue.core.windows.net/"],
       createdOn: new Date("2020-04-10T15:43:34.2993802Z").getTime(),
+      encrypted: false,
       "tag.environment": "j1dev",
     };
 
@@ -135,6 +137,7 @@ describe("createStorageAccountEntity Storage (Classic)", () => {
       category: ["infrastructure"],
       endpoints: ["https://j1dev.table.core.windows.net/"],
       createdOn: new Date("2020-04-10T15:43:34.2993802Z").getTime(),
+      encrypted: false,
       "tag.environment": "j1dev",
     };
 
@@ -220,6 +223,7 @@ describe("createStorageAccountEntity StorageV2", () => {
       category: ["infrastructure"],
       endpoints: ["https://j1dev.blob.core.windows.net/"],
       createdOn: new Date("2020-04-10T15:43:34.2993802Z").getTime(),
+      encrypted: true,
       "tag.environment": "j1dev",
     };
 
@@ -248,6 +252,7 @@ describe("createStorageAccountEntity StorageV2", () => {
       category: ["infrastructure"],
       endpoints: ["https://j1dev.file.core.windows.net/"],
       createdOn: new Date("2020-04-10T15:43:34.2993802Z").getTime(),
+      encrypted: true,
       "tag.environment": "j1dev",
     };
 
@@ -329,6 +334,7 @@ describe("createStorageAccountEntity BlobStorage", () => {
       endpoints: ["https://j1devblobstorage.blob.core.windows.net/"],
       createdOn: new Date("2020-04-17T13:22:05.030Z").getTime(),
       enableHttpsTrafficOnly: true,
+      encrypted: true,
       "tag.environment": "j1dev",
     };
 

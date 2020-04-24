@@ -2,6 +2,7 @@ import {
   StorageAccount,
   BlobContainer,
   FileShare,
+  EncryptionServices,
 } from "@azure/arm-storage/esm/models";
 import {
   createIntegrationEntity,
@@ -68,7 +69,7 @@ const storageAccountServiceConfig: StorageAccountServiceConfigMap = {
 export function createStorageServiceEntity(
   webLinker: AzureWebLinker,
   data: StorageAccount,
-  service: keyof StorageAccountServiceConfigMap,
+  service: keyof EncryptionServices,
 ): EntityFromIntegration {
   const config = storageAccountServiceConfig[service];
   const endpoint = data.primaryEndpoints![service];
@@ -89,6 +90,7 @@ export function createStorageServiceEntity(
         endpoints: [endpoint],
         enableHttpsTrafficOnly: data.enableHttpsTrafficOnly,
         category: ["infrastructure"],
+        encrypted: !!data.encryption?.services?.[service]?.enabled,
       },
       tagProperties: ["environment"],
     },

@@ -12,6 +12,10 @@ and this project adheres to
 
 - Users are not related to groups of which they are a member.
 
+### Added
+
+- `encrypted` property on storage services (`azure_storage_*blob*_service`).
+
 ## 3.14.0 - 2020-04-17
 
 ### Added

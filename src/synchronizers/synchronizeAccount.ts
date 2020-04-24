@@ -1,11 +1,10 @@
 import {
-  IntegrationExecutionResult,
   EntityFromIntegration,
+  IntegrationExecutionResult,
   IntegrationInstanceAuthorizationError,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
-import createGraphClient from "../azure/graph/createGraphClient";
-import fetchOrganization from "../azure/graph/fetchOrganization";
+import { createGraphClient } from "../azure/graph/client";
 import {
   createAccountEntity,
   createAccountEntityWithOrganization,
@@ -17,18 +16,19 @@ export default async function synchronizeAccount(
   executionContext: AzureExecutionContext,
 ): Promise<IntegrationExecutionResult> {
   const {
+    logger,
     instance,
     graph,
     persister,
     instance: { config },
   } = executionContext;
 
-  const graphClient = createGraphClient(config);
+  const graphClient = createGraphClient(logger, config);
 
   let newAccount: EntityFromIntegration;
   let fetchOrganizationError;
   try {
-    const organization = await fetchOrganization(graphClient);
+    const organization = await graphClient.fetchOrganization();
     newAccount = createAccountEntityWithOrganization(instance, organization);
   } catch (err) {
     fetchOrganizationError = err;

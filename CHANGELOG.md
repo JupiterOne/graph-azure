@@ -16,7 +16,7 @@ and this project adheres to
 
 ### Added
 
-- `encrypted` property on storage services (`azure_storage_*blob*_service`).
+- `encrypted` property on storage services (`azure_storage_*_service`).
 
 ## 3.14.0 - 2020-04-17
 

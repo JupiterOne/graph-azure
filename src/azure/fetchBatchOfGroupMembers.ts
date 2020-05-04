@@ -13,7 +13,7 @@ export default async function fetchBatchOfGroupMembers(
   executionContext: AzureExecutionContext,
   iterationState: IntegrationStepIterationState,
 ): Promise<IntegrationStepIterationState> {
-  const { azure } = executionContext;
+  const { azure, logger } = executionContext;
   const cache = executionContext.clients.getCache();
   const groupsCache = cache.iterableCache<
     IntegrationCacheEntry,
@@ -31,6 +31,11 @@ export default async function fetchBatchOfGroupMembers(
   let totalGroups = 0;
   let fetchError: AzureClientError | undefined;
 
+  logger.info(
+    { totalGroups, groupIndex },
+    "Starting group iteration for members fetch",
+  );
+
   await groupsCache.forEach(
     async (e) => {
       const groupEntry = e.entry;
@@ -42,6 +47,11 @@ export default async function fetchBatchOfGroupMembers(
       // load up accumulated list of members
       const groupMembers: GroupMember[] =
         (group.members as GroupMember[]) || [];
+
+      logger.info(
+        { totalGroups, groupEntryIndex, groupIndex },
+        "Starting group members fetch loop",
+      );
 
       // fetch members for group
       do {
@@ -64,6 +74,11 @@ export default async function fetchBatchOfGroupMembers(
         pagesProcessed++;
       } while (!fetchError && pagesProcessed < batchPages && nextLink);
 
+      logger.info(
+        { fetchError, nextLink, pagesProcessed },
+        "Completed group members fetch loop",
+      );
+
       if (fetchError) {
         // Stop iterating groups altogether until we learn more about the errors.
         // Are there some groups we don't have access to, so that we should skip
@@ -85,14 +100,29 @@ export default async function fetchBatchOfGroupMembers(
         }
 
         // stop iteration when pagesProcessed reaches invocation limit
-        return pagesProcessed === batchPages;
+        return pagesProcessed >= batchPages;
       }
     },
     { skip: groupIndex },
   );
 
   const groupMembersFetchCompleted =
-    typeof nextLink !== "string" && groupIndex === totalGroups;
+    typeof nextLink !== "string" && groupIndex >= totalGroups;
+
+  const finished = !!fetchError || groupMembersFetchCompleted;
+
+  logger.info(
+    {
+      fetchError,
+      nextLink,
+      pagesProcessed,
+      totalGroups,
+      groupIndex,
+      groupMembersFetchCompleted,
+      finished,
+    },
+    "Completed group iteration for members fetch",
+  );
 
   await groupsCache.putState({
     groupMembersFetchCompleted: !fetchError && groupMembersFetchCompleted,
@@ -101,7 +131,7 @@ export default async function fetchBatchOfGroupMembers(
 
   return {
     ...iterationState,
-    finished: !!fetchError || groupMembersFetchCompleted,
+    finished,
     state: {
       nextLink,
       limit,

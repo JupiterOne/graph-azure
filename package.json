@@ -17,6 +17,7 @@
     "start:containers": "docker-compose up -d",
     "stop:containers": "docker-compose down",
     "restart:containers": "docker-compose restart",
+    "prepublishOnly": "yarn build",
     "prebuild": "yarn test",
     "build": "rm -rf dist/* && yarn build:types && yarn build:src && yarn build:docs",
     "build:src": "babel src --extensions '.ts' --out-dir dist",

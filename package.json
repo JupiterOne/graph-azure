@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-azure",
-  "version": "3.15.0",
+  "version": "3.15.1",
   "description": "A graph conversion tool for https://azure.microsoft.com/.",
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/graph-azure",
@@ -17,6 +17,7 @@
     "start:containers": "docker-compose up -d",
     "stop:containers": "docker-compose down",
     "restart:containers": "docker-compose restart",
+    "prepublishOnly": "yarn build",
     "prebuild": "yarn test",
     "build": "rm -rf dist/* && yarn build:types && yarn build:src && yarn build:docs",
     "build:src": "babel src --extensions '.ts' --out-dir dist",

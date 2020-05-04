@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.15.1 - 2020-05-04
+
+### Fixed
+
+- NPM package for 3.15.0 has no `dist` directory, cannot import code.
+
 ## 3.15.0 - 2020-04-24
 
 ### Fixed

@@ -32,7 +32,7 @@ export default async function fetchBatchOfGroupMembers(
   let fetchError: AzureClientError | undefined;
 
   logger.info(
-    { totalGroups, groupIndex },
+    { groupIndex, membersCount, nextLink },
     "Starting group iteration for members fetch",
   );
 

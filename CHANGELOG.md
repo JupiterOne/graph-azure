@@ -8,6 +8,19 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.15.3 - 2020-05-04
+
+### Fixed
+
+- SDK bug in `IntegrationCache.putEntries` that would duplicate keys and
+  continually expand the keyspace, leading to infinite looping.
+
+## 3.15.2 - 2020-05-04
+
+### Added
+
+- Log more details during group member fetching, group iteration.
+
 ## 3.15.1 - 2020-05-04
 
 ### Fixed

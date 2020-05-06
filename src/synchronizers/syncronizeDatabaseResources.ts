@@ -59,16 +59,9 @@ async function synchronize(
   const serverEntityType = `azure_${dbType}_server`;
   const serverDatabaseRelationshipType = `azure_${dbType}_server_has_database`;
 
-  const { graph, persister } = executionContext;
+  const { logger, graph, persister } = executionContext;
 
-  const [oldDatabaseEntities, oldServerEntities] = await Promise.all([
-    graph.findEntitiesByType(databaseEntityType),
-    graph.findEntitiesByType(serverEntityType),
-  ]);
-
-  const oldServerDbRelationships = await graph.findRelationshipsByType(
-    serverDatabaseRelationshipType,
-  );
+  logger.info({ dbType }, "Synchronizing databases...");
 
   const newServerEntities = await fetchDbServers(
     executionContext,
@@ -106,7 +99,16 @@ async function synchronize(
     }
   }
 
-  return await persister.publishPersisterOperations([
+  const [oldDatabaseEntities, oldServerEntities] = await Promise.all([
+    graph.findEntitiesByType(databaseEntityType),
+    graph.findEntitiesByType(serverEntityType),
+  ]);
+
+  const oldServerDbRelationships = await graph.findRelationshipsByType(
+    serverDatabaseRelationshipType,
+  );
+
+  const result = await persister.publishPersisterOperations([
     [
       ...persister.processEntities(oldServerEntities, newServerEntities),
       ...persister.processEntities(oldDatabaseEntities, newDatabaseEntities),
@@ -118,6 +120,13 @@ async function synchronize(
       ),
     ],
   ]);
+
+  logger.info(
+    { dbType, operations: result },
+    "Synchronizing databases completed.",
+  );
+
+  return result;
 }
 
 async function fetchDbServers(
@@ -125,21 +134,30 @@ async function fetchDbServers(
   webLinker: AzureWebLinker,
   dbType: string,
 ): Promise<EntityFromIntegration[]> {
-  const { azrm } = executionContext;
+  const { logger, azrm } = executionContext;
   const serverEntityType = `azure_${dbType}_server`;
   const entities: EntityFromIntegration[] = [];
+
+  logger.info({ dbType }, "Fetching database servers...");
+
   switch (dbType) {
     case DatabaseType.MySQL:
-      await azrm.iterateMySqlServers(e => {
+      await azrm.iterateMySqlServers((e) => {
         entities.push(createDbServerEntity(webLinker, e, serverEntityType));
       });
       break;
     case DatabaseType.SQL:
-      await azrm.iterateSqlServers(e => {
+      await azrm.iterateSqlServers((e) => {
         entities.push(createDbServerEntity(webLinker, e, serverEntityType));
       });
       break;
   }
+
+  logger.info(
+    { dbType, count: entities.length },
+    "Fetching database servers completed.",
+  );
+
   return entities;
 }
 
@@ -153,12 +171,14 @@ async function fetchDatabases(
 ): Promise<EntityFromIntegration[] | undefined> {
   const { azrm, logger } = executionContext;
 
+  logger.info({ dbType, server: server.id }, "Fetching databases...");
+
   const databaseEntityType = `azure_${dbType}_database`;
   const entities: EntityFromIntegration[] = [];
   switch (dbType) {
     case DatabaseType.MySQL:
       try {
-        await azrm.iterateMySqlDatabases(server as MySQLServer, e => {
+        await azrm.iterateMySqlDatabases(server as MySQLServer, (e) => {
           const encrypted = null;
           entities.push(
             createDatabaseEntity(webLinker, e, databaseEntityType, encrypted),
@@ -215,5 +235,11 @@ async function fetchDatabases(
       );
       break;
   }
+
+  logger.info(
+    { dbType, server: server.id, count: entities.length },
+    "Fetching databases completed.",
+  );
+
   return entities;
 }

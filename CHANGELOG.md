@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.15.4 - 2020-05-06
+
+### Added
+
+- Logging in DB synchronization code, since there is so much going on in one
+  step, cannot see how far it gets before failing.
+
 ## 3.15.3 - 2020-05-04
 
 ### Fixed

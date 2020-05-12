@@ -24,12 +24,19 @@ import {
 
 import { REDACTED_VALUE } from "../../utils/constants";
 
-export function createDatabaseEntity(
-  webLinker: AzureWebLinker,
-  data: MySQLDatabase | SQLDatabase,
-  _type: string,
-  encrypted: boolean | null,
-): EntityFromIntegration {
+export function createDatabaseEntity({
+  webLinker,
+  server,
+  data,
+  _type,
+  encrypted,
+}: {
+  webLinker: AzureWebLinker;
+  server: MySQLServer | SQLServer;
+  data: MySQLDatabase | SQLDatabase;
+  _type: string;
+  encrypted: boolean | null;
+}): EntityFromIntegration {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -37,6 +44,7 @@ export function createDatabaseEntity(
         ...convertProperties(data),
         _type,
         _class: AZURE_DATABASE_ENTITY_CLASS,
+        serverId: server.id,
         displayName: data.name || data.id || "unnamed",
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),

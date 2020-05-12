@@ -63,15 +63,30 @@ async function synchronize(
 
   logger.info({ dbType }, "Synchronizing databases...");
 
+  const results: PersisterOperationsResult[] = [];
+
   const newServerEntities = await fetchDbServers(
     executionContext,
     webLinker,
     dbType,
   );
 
-  const newDatabaseEntities: EntityFromIntegration[] = [];
-  const newServerDbRelationships: IntegrationRelationship[] = [];
+  const oldServerEntities = await graph.findEntitiesByType(serverEntityType);
+  results.push(
+    await persister.publishEntityOperations(
+      persister.processEntities(oldServerEntities, newServerEntities),
+    ),
+  );
+
   for (const serverEntity of newServerEntities) {
+    const newDatabaseEntities: EntityFromIntegration[] = [];
+    const newServerDbRelationships: IntegrationRelationship[] = [];
+
+    logger.info(
+      { dbType, server: serverEntity._key },
+      "Synchronizing server databases...",
+    );
+
     const serverData = getRawData(serverEntity);
     const databaseEntities = await fetchDatabases(
       executionContext,
@@ -81,10 +96,8 @@ async function synchronize(
     );
 
     // No databaseEntities means there was a failure fetching them for this
-    // server. In the case this is a transient failure, ideally we would avoid
-    // deleting previously ingested databases for this server. That would
-    // require that we process each server independently, fetching the databases
-    // and relationships that are scoped to this one server.
+    // server. Currently, it is assumed that this is a transient failure, so
+    // no deletions are performed.
     if (databaseEntities) {
       for (const databaseEntity of databaseEntities) {
         newServerDbRelationships.push(
@@ -96,37 +109,61 @@ async function synchronize(
         );
         newDatabaseEntities.push(databaseEntity);
       }
+
+      const oldDatabaseEntities = await graph.findEntitiesByType(
+        databaseEntityType,
+        { serverId: serverEntity._key },
+      );
+
+      const oldServerDbRelationships = await graph.findRelationshipsByType(
+        serverDatabaseRelationshipType,
+        { _fromEntityKey: serverEntity._key },
+      );
+
+      const result = await persister.publishPersisterOperations([
+        persister.processEntities(oldDatabaseEntities, newDatabaseEntities),
+        persister.processRelationships(
+          oldServerDbRelationships,
+          newServerDbRelationships,
+        ),
+      ]);
+
+      logger.info(
+        { dbType, server: serverEntity._key, operations: result },
+        "Synchronizing server databases completed.",
+      );
+
+      results.push(result);
     }
   }
 
-  const [oldDatabaseEntities, oldServerEntities] = await Promise.all([
-    graph.findEntitiesByType(databaseEntityType),
-    graph.findEntitiesByType(serverEntityType),
-  ]);
+  // TODO delete databases that don't have a serverId (all of them when the run starts), OR ...
+  //  1. add serverId to database entities in one release
+  //  2. maintenance job too add serverId to databases that don't have it
+  //  3. refactor this code
+  // const orphanedDatabaseEntities = await graph.findEntitiesByType(
+  //   databaseEntityType,
+  //   undefined,
+  //   ["serverId"],
+  // );
 
-  const oldServerDbRelationships = await graph.findRelationshipsByType(
-    serverDatabaseRelationshipType,
-  );
+  // results.push(
+  //   await persister.publishEntityOperations(
+  //     persister.processEntities(orphanedDatabaseEntities, []),
+  //   ),
+  // );
 
-  const result = await persister.publishPersisterOperations([
-    [
-      ...persister.processEntities(oldServerEntities, newServerEntities),
-      ...persister.processEntities(oldDatabaseEntities, newDatabaseEntities),
-    ],
-    [
-      ...persister.processRelationships(
-        oldServerDbRelationships,
-        newServerDbRelationships,
-      ),
-    ],
-  ]);
+  const summarizedResults = summarizePersisterOperationsResults(...results);
 
   logger.info(
-    { dbType, operations: result },
+    {
+      dbType,
+      operations: summarizedResults,
+    },
     "Synchronizing databases completed.",
   );
 
-  return result;
+  return summarizedResults;
 }
 
 async function fetchDbServers(
@@ -175,65 +212,73 @@ async function fetchDatabases(
 
   const databaseEntityType = `azure_${dbType}_database`;
   const entities: EntityFromIntegration[] = [];
-  switch (dbType) {
-    case DatabaseType.MySQL:
-      try {
+
+  try {
+    switch (dbType) {
+      case DatabaseType.MySQL:
         await azrm.iterateMySqlDatabases(server as MySQLServer, (e) => {
           const encrypted = null;
           entities.push(
-            createDatabaseEntity(webLinker, e, databaseEntityType, encrypted),
+            createDatabaseEntity({
+              webLinker,
+              server,
+              data: e,
+              _type: databaseEntityType,
+              encrypted,
+            }),
           );
         });
-      } catch (err) {
-        logger.warn(
-          { err, server: { id: server.id, type: server.type } },
-          "Failure requesting databases for server",
-        );
-        return undefined;
-      }
-      break;
-    case DatabaseType.SQL:
-      await azrm.iterateSqlDatabases(
-        server as SQLServer,
-        async (database, serviceClient) => {
-          let encrypted: boolean | null = null;
+        break;
+      case DatabaseType.SQL:
+        await azrm.iterateSqlDatabases(
+          server as SQLServer,
+          async (database, serviceClient) => {
+            let encrypted: boolean | null = null;
 
-          try {
-            const encryption = await serviceClient.transparentDataEncryptions.get(
-              resourceGroupName(server.id, true)!,
-              server.name!,
-              database.name!,
-            );
+            try {
+              const encryption = await serviceClient.transparentDataEncryptions.get(
+                resourceGroupName(server.id, true)!,
+                server.name!,
+                database.name!,
+              );
 
-            // There is something broken with deserializing this response...
-            const status =
-              encryption.status ||
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (encryption as any).content["m:properties"]["d:properties"][
-                "d:status"
-              ];
+              // There is something broken with deserializing this response...
+              const status =
+                encryption.status ||
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (encryption as any).content["m:properties"]["d:properties"][
+                  "d:status"
+                ];
 
-            if (status) {
-              encrypted = ENCRYPTION_ENABLED_PATTERN.test(status);
+              if (status) {
+                encrypted = ENCRYPTION_ENABLED_PATTERN.test(status);
+              }
+            } catch (err) {
+              logger.warn(
+                { err, server: server.id, database: database.id },
+                "Failed to obtain transparentDataEncryptions for database",
+              );
             }
-          } catch (err) {
-            logger.warn(
-              { err, server: server.id, database: database.id },
-              "Failed to obtain transparentDataEncryptions for database",
-            );
-          }
 
-          entities.push(
-            createDatabaseEntity(
-              webLinker,
-              database,
-              databaseEntityType,
-              encrypted,
-            ),
-          );
-        },
-      );
-      break;
+            entities.push(
+              createDatabaseEntity({
+                webLinker,
+                server,
+                data: database,
+                _type: databaseEntityType,
+                encrypted,
+              }),
+            );
+          },
+        );
+        break;
+    }
+  } catch (err) {
+    logger.warn(
+      { err, server: { id: server.id, type: server.type } },
+      "Failure requesting databases for server",
+    );
+    return undefined;
   }
 
   logger.info(

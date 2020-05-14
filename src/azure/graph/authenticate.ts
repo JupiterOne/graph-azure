@@ -1,12 +1,12 @@
 import { IntegrationError } from "@jupiterone/jupiter-managed-integration-sdk";
 
-import { AzureIntegrationInstanceConfig } from "../../types";
+import { IntegrationConfig } from "../../types";
 
 /**
  * Obtain API credentials for Microsoft Graph API.
  */
 export default async function authenticate(
-  config: AzureIntegrationInstanceConfig,
+  config: IntegrationConfig,
 ): Promise<string> {
   const response = await fetch(
     `https://login.microsoftonline.com/${config.directoryId}/oauth2/v2.0/token`,

@@ -3,18 +3,20 @@ import {
   Client,
 } from "@microsoft/microsoft-graph-client";
 
-import { AzureIntegrationInstanceConfig } from "../../types";
+import { IntegrationConfig } from "../../types";
 import authenticate from "./authenticate";
 import {
   Organization,
   DirectoryRole,
   DirectoryObject,
+  User,
+  Group,
 } from "@microsoft/microsoft-graph-types";
 import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 
 export function createGraphClient(
   logger: IntegrationLogger,
-  config: AzureIntegrationInstanceConfig,
+  config: IntegrationConfig,
 ): GraphClient {
   return new GraphClient(
     logger,
@@ -90,6 +92,20 @@ export class GraphClient {
     return this.iterateResources(`/directoryRoles/${roleId}/members`, callback);
   }
 
+  // https://docs.microsoft.com/en-us/graph/api/group-list?view=graph-rest-1.0&tabs=http
+  public async iterateGroups(
+    callback: (user: Group) => void | Promise<void>,
+  ): Promise<void> {
+    return this.iterateResources("/groups", callback);
+  }
+
+  // https://docs.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http
+  public async iterateUsers(
+    callback: (user: User) => void | Promise<void>,
+  ): Promise<void> {
+    return this.iterateResources("/users", callback);
+  }
+
   // Not using PageIterator because it doesn't allow async callback
   private async iterateResources<T>(
     resourceUrl: string,
@@ -121,7 +137,7 @@ export class GraphClient {
 class GraphAuthenticationProvider implements AuthenticationProvider {
   private accessToken: string | undefined;
 
-  constructor(readonly config: AzureIntegrationInstanceConfig) {}
+  constructor(readonly config: IntegrationConfig) {}
 
   /**
    * Obtains an accessToken (in case of success) or rejects with error (in case

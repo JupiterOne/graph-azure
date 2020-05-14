@@ -2,6 +2,8 @@ import { createTestLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 import {
   DirectoryObject,
   DirectoryRole,
+  User,
+  Group,
 } from "@microsoft/microsoft-graph-types";
 import { Polly } from "@pollyjs/core";
 
@@ -47,6 +49,42 @@ test("fetchOrganization", async () => {
         name: expect.any(String),
       }),
     ],
+  });
+});
+
+test("iterateGroups", async () => {
+  p = polly(__dirname, "iterateGroups");
+
+  const client = createGraphClient(logger, config);
+
+  const resources: Group[] = [];
+  await client.iterateGroups((e) => {
+    resources.push(e);
+  });
+
+  expect(resources.length).toBeGreaterThan(0);
+  resources.forEach((r) => {
+    expect(r).toMatchObject({
+      displayName: expect.any(String),
+    });
+  });
+});
+
+test("iterateUsers", async () => {
+  p = polly(__dirname, "iterateUsers");
+
+  const client = createGraphClient(logger, config);
+
+  const resources: User[] = [];
+  await client.iterateUsers((e) => {
+    resources.push(e);
+  });
+
+  expect(resources.length).toBeGreaterThan(0);
+  resources.forEach((r) => {
+    expect(r).toMatchObject({
+      id: expect.any(String),
+    });
   });
 });
 

@@ -35,6 +35,7 @@ export interface FetchResourcesResponse<T extends microsoftgraph.Entity> {
   err?: AzureClientError;
 }
 
+// TODO Rename to MSGraphClient
 export default class AzureClient {
   private clientId: string;
   private clientSecret: string;
@@ -56,7 +57,7 @@ export default class AzureClient {
     this.logger = logger;
   }
 
-  public async authenticate() {
+  public async authenticate(): Promise<void> {
     this.accessToken = await authenticate({
       clientId: this.clientId,
       clientSecret: this.clientSecret,
@@ -67,7 +68,7 @@ export default class AzureClient {
   public async fetchUsers(
     options?: PaginationOptions,
   ): Promise<FetchResourcesResponse<User>> {
-    return this.fetchResources({
+    return this.fetchResources<User>({
       url: this.resourceUrl({ path: "/users", ...options }),
     });
   }
@@ -98,6 +99,7 @@ export default class AzureClient {
     try {
       this.logger.trace({ url: input.url }, "Fetching Azure resources");
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = await this.makeRequest<any>(input.url, Method.GET);
 
       return {
@@ -162,7 +164,7 @@ export default class AzureClient {
     if (options.nextLink) {
       return options.nextLink;
     } else {
-      const queryParams: { [key: string]: any } = {};
+      const queryParams: { [key: string]: string | number } = {};
 
       if (options.limit) {
         queryParams.$top = options.limit;

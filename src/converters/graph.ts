@@ -2,9 +2,9 @@ import map from "lodash.map";
 
 import {
   createIntegrationEntity,
-  EntityFromIntegration,
+  Entity,
   IntegrationInstance,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+} from "@jupiterone/integration-sdk";
 import { Organization } from "@microsoft/microsoft-graph-types";
 
 import { Group, User } from "../azure";
@@ -21,9 +21,7 @@ import {
 import { generateEntityKey } from "../utils/generateKeys";
 import getTime from "../utils/getTime";
 
-export function createAccountEntity(
-  instance: IntegrationInstance,
-): EntityFromIntegration {
+export function createAccountEntity(instance: IntegrationInstance): Entity {
   return createIntegrationEntity({
     entityData: {
       source: {},
@@ -41,9 +39,9 @@ export function createAccountEntity(
 export function createAccountEntityWithOrganization(
   instance: IntegrationInstance,
   organization: Organization,
-): EntityFromIntegration {
+): Entity {
   let defaultDomain: string | undefined;
-  const verifiedDomains = map(organization.verifiedDomains, e => {
+  const verifiedDomains = map(organization.verifiedDomains, (e) => {
     if (e.isDefault) {
       defaultDomain = e.name;
     }

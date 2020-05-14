@@ -1,7 +1,7 @@
 import { ServiceClientCredentials } from "@azure/ms-rest-js";
 import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
 
-import { AzureIntegrationInstanceConfig } from "../../types";
+import { IntegrationConfig } from "../../types";
 import { AzureManagementClientCredentials } from "./types";
 
 /**
@@ -10,7 +10,7 @@ import { AzureManagementClientCredentials } from "./types";
  * reading Azure Resources within a Subscription.
  */
 export default async function authenticate(
-  config: AzureIntegrationInstanceConfig,
+  config: IntegrationConfig,
 ): Promise<AzureManagementClientCredentials> {
   if (!config.subscriptionId) {
     throw new Error(
@@ -29,7 +29,7 @@ export default async function authenticate(
 
   if (
     !response.subscriptions ||
-    !response.subscriptions.find(s => s.id === config.subscriptionId)
+    !response.subscriptions.find((s) => s.id === config.subscriptionId)
   ) {
     throw new Error(
       "subscriptionId not found in tenant specified by directoryId",

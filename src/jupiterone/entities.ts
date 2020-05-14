@@ -1,9 +1,9 @@
-import { EntityFromIntegration } from "@jupiterone/jupiter-managed-integration-sdk";
+import { Entity } from "@jupiterone/integration-sdk";
 
 export const ACCOUNT_ENTITY_TYPE = "azure_account";
 export const ACCOUNT_ENTITY_CLASS = "Account";
 
-export interface AccountEntity extends EntityFromIntegration {
+export interface AccountEntity extends Entity {
   id: string;
   organizationName: string | undefined;
   defaultDomain: string | undefined;
@@ -13,7 +13,7 @@ export interface AccountEntity extends EntityFromIntegration {
 export const GROUP_ENTITY_TYPE = "azure_user_group";
 export const GROUP_ENTITY_CLASS = "UserGroup";
 
-export interface GroupEntity extends EntityFromIntegration {
+export interface GroupEntity extends Entity {
   id: string;
   createdOn: number | undefined;
   deletedOn: number | undefined;
@@ -31,7 +31,7 @@ export interface GroupEntity extends EntityFromIntegration {
 export const USER_ENTITY_TYPE = "azure_user";
 export const USER_ENTITY_CLASS = "User";
 
-export interface UserEntity extends EntityFromIntegration {
+export interface UserEntity extends Entity {
   id: string;
   displayName: string | undefined;
   givenName: string | undefined;
@@ -63,7 +63,7 @@ export const GROUP_MEMBER_ENTITY_CLASS = "User";
  * The entity representing a group member which is not one of the ingested
  * directory objects.
  */
-export interface GroupMemberEntity extends EntityFromIntegration {
+export interface GroupMemberEntity extends Entity {
   displayName: string | undefined;
   jobTitle: string | undefined;
   mail: string | undefined;
@@ -78,15 +78,13 @@ export const SECURITY_GROUP_ENTITY_CLASS = "Firewall";
 export const SUBNET_ENTITY_TYPE = "azure_subnet";
 export const SUBNET_ENTITY_CLASS = "Network";
 
-export interface AzureRegionalEntity extends EntityFromIntegration {
+export interface AzureRegionalEntity extends Entity {
   type: string | undefined;
   resourceGroup: string | undefined;
   region: string | undefined;
 }
 
-export interface VirtualMachineEntity
-  extends EntityFromIntegration,
-    AzureRegionalEntity {
+export interface VirtualMachineEntity extends Entity, AzureRegionalEntity {
   /**
    * The `vmId` property of the `VirtualMachine`. This is distinct from the `id`.
    */
@@ -103,7 +101,7 @@ export const VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS = "Image";
 export const DISK_ENTITY_TYPE = "azure_managed_disk";
 export const DISK_ENTITY_CLASS = ["DataStore", "Disk"];
 
-export interface PublicIPAddressEntity extends EntityFromIntegration {
+export interface PublicIPAddressEntity extends Entity {
   type: string | undefined;
   resourceGuid: string | undefined;
   resourceGroup: string | undefined;
@@ -117,7 +115,7 @@ export interface PublicIPAddressEntity extends EntityFromIntegration {
 export const PUBLIC_IP_ADDRESS_ENTITY_TYPE = "azure_public_ip";
 export const PUBLIC_IP_ADDRESS_ENTITY_CLASS = "IpAddress";
 
-export interface NetworkInterfaceEntity extends EntityFromIntegration {
+export interface NetworkInterfaceEntity extends Entity {
   type: string | undefined;
   resourceGuid: string | undefined;
   resourceGroup: string | undefined;
@@ -166,6 +164,6 @@ export const AZURE_DB_SERVER_ENTITY_CLASS = ["Database", "DataStore", "Host"];
 export const SQL_DATABASE_ENTITY_TYPE = "azure_sql_database";
 export const SQL_SERVER_ENTITY_TYPE = "azure_sql_server";
 
-export interface SQLDatabaseEntity extends EntityFromIntegration {
+export interface SQLDatabaseEntity extends Entity {
   location: string | undefined;
 }

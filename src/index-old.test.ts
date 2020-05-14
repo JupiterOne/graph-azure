@@ -14,7 +14,7 @@ import {
   RM_SYNC_STORAGE,
   stepFunctionsInvocationConfig,
   RM_SYNC_KEYVAULT,
-} from "./index";
+} from "./index-old";
 
 describe("getStepStartStates", () => {
   test("empty config", () => {

@@ -1,6 +1,6 @@
-import { AzureIntegrationInstanceConfig } from "../src/types";
+import { IntegrationConfig } from "../src/types";
 
-const config: AzureIntegrationInstanceConfig = {
+const config: IntegrationConfig = {
   clientId: process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_ID || "clientId",
   clientSecret:
     process.env.AZURE_CLOUD_LOCAL_EXECUTION_CLIENT_SECRET || "clientSecret",

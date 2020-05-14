@@ -1,32 +1,20 @@
-import "cross-fetch/polyfill";
-
 import {
-  IntegrationError,
   IntegrationExecutionContext,
-  IntegrationExecutionResult,
   IntegrationInvocationConfig,
   IntegrationStepExecutionContext,
-  IntegrationStepIterationState,
   IntegrationStepStartStates,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+} from "@jupiterone/integration-sdk";
 
+import { AzureClient } from "./azure";
 import {
-  fetchBatchOfGroupMembers,
-  fetchBatchOfGroups,
-  fetchBatchOfUsers,
-} from "./azure";
-import initializeContext from "./initializeContext";
-import invocationValidator from "./invocationValidator";
-import synchronizeAccount from "./synchronizers/synchronizeAccount";
-import synchronizeCosmosDBAccounts from "./synchronizers/synchronizeCosmosDBAccounts";
-import synchronizeGroupMembers from "./synchronizers/synchronizeGroupMembers";
-import synchronizeGroups from "./synchronizers/synchronizeGroups";
-import synchronizeKeyVaults from "./synchronizers/synchronizeKeyVault";
-import synchronizeStorageAccounts from "./synchronizers/synchronizeStorageAccounts";
-import synchronizeComputeResources from "./synchronizers/syncronizeComputeResources";
-import synchronizeDatabaseResources from "./synchronizers/syncronizeDatabaseResources";
-import synchronizeUsers from "./synchronizers/syncronizeUsers";
-import { AzureIntegrationInstanceConfig } from "./types";
+  ACCOUNT_ENTITY_TYPE,
+  GROUP_ENTITY_TYPE,
+  USER_ENTITY_TYPE,
+} from "./jupiterone";
+import fetchAccount from "./steps/fetchAccount";
+import fetchUsers from "./steps/fetchUsers";
+import { IntegrationConfig, IntegrationStepContext } from "./types";
+import validateInvocation from "./validateInvocation";
 
 export const AD_FETCH_GROUPS = "fetch-groups";
 export const AD_FETCH_GROUP_MEMBERS = "fetch-group-members";
@@ -43,7 +31,7 @@ export const RM_SYNC_STORAGE = "sync-rm-storage";
 export const RM_SYNC_DATABASES = "sync-rm-databases";
 export const RM_SYNC_COSMOSDB = "sync-rm-cosmosdb";
 
-export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
+export const invocationConfig: IntegrationInvocationConfig = {
   instanceConfigFields: {
     clientId: {
       type: "string",
@@ -66,14 +54,13 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
       mask: false,
     },
   },
-
-  invocationValidator,
+  validateInvocation,
 
   getStepStartStates: (
     executionContext: IntegrationExecutionContext,
   ): IntegrationStepStartStates => {
     const config = (executionContext.instance.config ||
-      {}) as AzureIntegrationInstanceConfig;
+      {}) as IntegrationConfig;
 
     const activeDirectory = { disabled: !config.ingestActiveDirectory };
     const resourceManager = {
@@ -108,163 +95,66 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     return states;
   },
 
-  integrationStepPhases: [
+  integrationSteps: [
     {
-      steps: [
-        {
-          id: "account",
-          name: "Synchronize Account",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeAccount(initializeContext(executionContext));
-          },
-        },
-      ],
+      id: "account",
+      name: "Synchronize Account",
+      types: [ACCOUNT_ENTITY_TYPE],
+      executionHandler: executionHandlerWithAzureContext(fetchAccount),
     },
     {
-      steps: [
-        {
-          id: AD_FETCH_USERS,
-          name: "Fetch Users",
-          iterates: true,
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationStepIterationState> => {
-            const iterationState = getIterationState(executionContext);
-            return fetchBatchOfUsers(
-              initializeContext(executionContext),
-              iterationState,
-            );
-          },
-        },
-        {
-          id: AD_FETCH_GROUPS,
-          name: "Fetch Groups",
-          iterates: true,
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationStepIterationState> => {
-            const iterationState = getIterationState(executionContext);
-            return fetchBatchOfGroups(
-              initializeContext(executionContext),
-              iterationState,
-            );
-          },
-        },
-      ],
+      id: AD_FETCH_USERS,
+      name: "Fetch Users",
+      types: [USER_ENTITY_TYPE],
+      executionHandler: executionHandlerWithAzureContext(fetchUsers),
     },
     {
-      steps: [
-        {
-          id: AD_FETCH_GROUP_MEMBERS,
-          name: "Fetch Group Members",
-          iterates: true,
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationStepIterationState> => {
-            const iterationState = getIterationState(executionContext);
-            return fetchBatchOfGroupMembers(
-              initializeContext(executionContext),
-              iterationState,
-            );
-          },
-        },
-        {
-          id: AD_SYNC_USERS,
-          name: "Synchronize Users",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeUsers(initializeContext(executionContext));
-          },
-        },
-        {
-          id: AD_SYNC_GROUPS,
-          name: "Synchronize Groups",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeGroups(initializeContext(executionContext));
-          },
-        },
-        {
-          id: RM_SYNC_COMPUTE,
-          name: "Synchronize Compute",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeComputeResources(
-              initializeContext(executionContext),
-            );
-          },
-        },
-        {
-          id: RM_SYNC_KEYVAULT,
-          name: "Synchronize Key Vault",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeKeyVaults(initializeContext(executionContext));
-          },
-        },
-        {
-          id: RM_SYNC_STORAGE,
-          name: "Synchronize Storage",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeStorageAccounts(
-              initializeContext(executionContext),
-            );
-          },
-        },
-        {
-          id: RM_SYNC_DATABASES,
-          name: "Synchronize Databases",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeDatabaseResources(
-              initializeContext(executionContext),
-            );
-          },
-        },
-        {
-          id: RM_SYNC_COSMOSDB,
-          name: "Synchronize Cosmos DB",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeCosmosDBAccounts(
-              initializeContext(executionContext),
-            );
-          },
-        },
-      ],
-    },
-    {
-      steps: [
-        {
-          id: AD_SYNC_GROUP_MEMBERS,
-          name: "Synchronize Group Members",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeGroupMembers(initializeContext(executionContext));
-          },
-        },
-      ],
+      id: AD_FETCH_GROUPS,
+      name: "Fetch Groups",
+      types: [GROUP_ENTITY_TYPE],
+      executionHandler: executionHandlerWithAzureContext(fetchGroups),
     },
   ],
 };
 
-function getIterationState(
-  executionContext: IntegrationStepExecutionContext,
-): IntegrationStepIterationState {
-  const iterationState = executionContext.event.iterationState;
-  if (!iterationState) {
-    throw new IntegrationError("Expected iterationState not found in event!");
-  }
-  return iterationState;
+type IntegrationHandlerFunc = (
+  executionContext: IntegrationStepContext,
+) => Promise<void>;
+
+function executionHandlerWithAzureContext(
+  handlerFunc: IntegrationHandlerFunc,
+): Function {
+  return async (
+    executionContext: IntegrationStepExecutionContext<IntegrationConfig>,
+  ): Promise<void> => {
+    await handlerFunc(createIntegrationStepContext(executionContext));
+  };
+}
+
+// TODO need a semaphore on that azureClient
+function createIntegrationStepContext(
+  executionContext: IntegrationStepExecutionContext<IntegrationConfig>,
+): IntegrationStepContext {
+  const {
+    clientId,
+    clientSecret,
+    directoryId,
+  } = executionContext.instance.config;
+
+  let azureClient: AzureClient;
+
+  return {
+    ...executionContext,
+    getAzureClient: (): AzureClient => {
+      if (!azureClient) {
+        azureClient = new AzureClient(
+          clientId,
+          clientSecret,
+          directoryId,
+          executionContext.logger,
+        );
+      }
+      return azureClient;
+    },
+  };
 }

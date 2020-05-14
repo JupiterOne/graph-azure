@@ -12,7 +12,7 @@ import {
 } from "@jupiterone/jupiter-managed-integration-sdk";
 import { retry } from "@lifeomic/attempt";
 
-import { AzureIntegrationInstanceConfig } from "../../types";
+import { IntegrationConfig } from "../../types";
 import authenticate from "./authenticate";
 import { bunyanLogPolicy } from "./BunyanLogPolicy";
 import { AzureManagementClientCredentials } from "./types";
@@ -44,7 +44,7 @@ export abstract class Client {
   private auth: AzureManagementClientCredentials;
 
   constructor(
-    private config: AzureIntegrationInstanceConfig,
+    private config: IntegrationConfig,
     readonly logger: IntegrationLogger,
     readonly noRetryPolicy = false,
   ) {}

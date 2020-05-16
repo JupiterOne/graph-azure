@@ -5,23 +5,22 @@ import {
   Entity,
   IntegrationInstance,
 } from "@jupiterone/integration-sdk";
-import { Organization } from "@microsoft/microsoft-graph-types";
+import { Group, Organization, User } from "@microsoft/microsoft-graph-types";
 
-import { Group, User } from "../azure";
 import {
   ACCOUNT_ENTITY_CLASS,
   ACCOUNT_ENTITY_TYPE,
   GROUP_ENTITY_CLASS,
   GROUP_ENTITY_TYPE,
-  GroupEntity,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
-  UserEntity,
 } from "../jupiterone";
 import { generateEntityKey } from "../utils/generateKeys";
 import getTime from "../utils/getTime";
 
-export function createAccountEntity(instance: IntegrationInstance): Entity {
+export function createAccountEntity(
+  instance: IntegrationInstance,
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: {},
@@ -65,7 +64,7 @@ export function createAccountEntityWithOrganization(
   });
 }
 
-export function createGroupEntity(d: Group): GroupEntity {
+export function createGroupEntity(d: Group): Entity {
   return {
     _class: GROUP_ENTITY_CLASS,
     _key: generateEntityKey(GROUP_ENTITY_TYPE, d.id),
@@ -85,7 +84,7 @@ export function createGroupEntity(d: Group): GroupEntity {
   };
 }
 
-export function createUserEntity(data: User): UserEntity {
+export function createUserEntity(data: User): Entity {
   return {
     _class: USER_ENTITY_CLASS,
     _key: generateEntityKey(USER_ENTITY_TYPE, data.id),

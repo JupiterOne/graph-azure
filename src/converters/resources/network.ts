@@ -13,8 +13,8 @@ import {
 import {
   assignTags,
   createIntegrationEntity,
-  EntityFromIntegration,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+  Entity,
+} from "@jupiterone/integration-sdk";
 
 import { AzureWebLinker } from "../../azure";
 import { resourceGroupName } from "../../azure/utils";
@@ -23,10 +23,8 @@ import {
   LOAD_BALANCER_ENTITY_TYPE,
   NETWORK_INTERFACE_ENTITY_CLASS,
   NETWORK_INTERFACE_ENTITY_TYPE,
-  NetworkInterfaceEntity,
   PUBLIC_IP_ADDRESS_ENTITY_CLASS,
   PUBLIC_IP_ADDRESS_ENTITY_TYPE,
-  PublicIPAddressEntity,
   SECURITY_GROUP_ENTITY_CLASS,
   SECURITY_GROUP_ENTITY_TYPE,
   SUBNET_ENTITY_CLASS,
@@ -38,7 +36,7 @@ import {
 export function createLoadBalancerEntity(
   webLinker: AzureWebLinker,
   data: LoadBalancer,
-): EntityFromIntegration {
+): Entity {
   const publicIp = publicIpAddresses(data.frontendIPConfigurations);
   const privateIp = privateIpAddresses(data.frontendIPConfigurations);
 
@@ -68,14 +66,15 @@ export function createLoadBalancerEntity(
 export function createNetworkInterfaceEntity(
   webLinker: AzureWebLinker,
   data: NetworkInterface,
-): NetworkInterfaceEntity {
+): Entity {
   const privateIps = privateIpAddresses(data.ipConfigurations);
 
-  const entity: NetworkInterfaceEntity = {
+  const entity = {
     _key: data.id as string,
     _type: NETWORK_INTERFACE_ENTITY_TYPE,
     _class: NETWORK_INTERFACE_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: data }],
+    id: data.id,
     resourceGuid: data.resourceGuid,
     resourceGroup: resourceGroupName(data.id),
     displayName: data.name,
@@ -100,12 +99,13 @@ export function createNetworkInterfaceEntity(
 export function createPublicIPAddressEntity(
   webLinker: AzureWebLinker,
   data: PublicIPAddress,
-): PublicIPAddressEntity {
+): Entity {
   const entity = {
     _key: data.id as string,
     _type: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
     _class: PUBLIC_IP_ADDRESS_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: data }],
+    id: data.id,
     resourceGuid: data.resourceGuid,
     resourceGroup: resourceGroupName(data.id),
     displayName: data.name,
@@ -127,7 +127,7 @@ export function createSubnetEntity(
   webLinker: AzureWebLinker,
   vnet: VirtualNetwork,
   data: Subnet,
-): EntityFromIntegration {
+): Entity {
   const CIDR = data.addressPrefix as string;
 
   return createIntegrationEntity({
@@ -152,7 +152,7 @@ export function createSubnetEntity(
 export function createNetworkSecurityGroupEntity(
   webLinker: AzureWebLinker,
   data: NetworkSecurityGroup,
-): EntityFromIntegration {
+): Entity {
   const category: string[] = [];
   if (data.subnets && data.subnets.length > 0) {
     category.push("network");
@@ -180,7 +180,7 @@ export function createNetworkSecurityGroupEntity(
 export function createVirtualNetworkEntity(
   webLinker: AzureWebLinker,
   data: VirtualNetwork,
-): EntityFromIntegration {
+): Entity {
   const CIDR =
     data.addressSpace &&
     data.addressSpace.addressPrefixes &&
@@ -210,10 +210,10 @@ function publicIpAddresses(
   ipConfigurations: IPConfiguration[] | FrontendIPConfiguration[] | undefined,
 ): string[] {
   const configs =
-    ipConfigurations && ipConfigurations.filter(c => c.publicIPAddress);
+    ipConfigurations && ipConfigurations.filter((c) => c.publicIPAddress);
   return map(
     configs,
-    a => a.publicIPAddress && a.publicIPAddress.ipAddress,
+    (a) => a.publicIPAddress && a.publicIPAddress.ipAddress,
   ) as string[];
 }
 
@@ -221,6 +221,6 @@ function privateIpAddresses(
   ipConfigurations: IPConfiguration[] | FrontendIPConfiguration[] | undefined,
 ): string[] {
   const configs =
-    ipConfigurations && ipConfigurations.filter(c => c.privateIPAddress);
-  return map(configs, a => a.privateIPAddress) as string[];
+    ipConfigurations && ipConfigurations.filter((c) => c.privateIPAddress);
+  return map(configs, (a) => a.privateIPAddress) as string[];
 }

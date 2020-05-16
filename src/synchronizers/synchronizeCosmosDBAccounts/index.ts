@@ -43,7 +43,7 @@ export default async function synchronizeCosmosDBAccounts(
       newDBEntities.push(newDBEntity);
       newAccountDatabaseRelationships.push(
         createIntegrationRelationship({
-          _class: DataModel.RelationshipClass.HAS,
+          _class: 'HAS',
           from: newDBAccountEntity,
           to: newDBEntity,
           properties: {
@@ -62,7 +62,7 @@ export default async function synchronizeCosmosDBAccounts(
 
     const oldAccountDBRelationships = await graph.findRelationshipsByType(
       generateRelationshipType(
-        DataModel.RelationshipClass.HAS,
+        'HAS',
         "azure_cosmosdb_account",
         "azure_cosmosdb_sql_database",
       ),

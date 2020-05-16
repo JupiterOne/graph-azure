@@ -160,7 +160,7 @@ async function synchronizeFileStorage(
 
   const oldServiceFileShareRelationships = await graph.findRelationshipsByType(
     generateRelationshipType(
-      DataModel.RelationshipClass.HAS,
+      'HAS',
       STORAGE_FILE_SERVICE_ENTITY_TYPE,
       STORAGE_FILE_SHARE_ENTITY_TYPE,
     ),

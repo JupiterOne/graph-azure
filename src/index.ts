@@ -3,19 +3,26 @@ import {
   IntegrationInvocationConfig,
   IntegrationStepExecutionContext,
   IntegrationStepStartStates,
+  StepExecutionHandlerFunction,
 } from "@jupiterone/integration-sdk";
 
-import { AzureClient } from "./azure";
+import { createGraphClient } from "./azure/graph/client";
 import {
   ACCOUNT_ENTITY_TYPE,
   GROUP_ENTITY_TYPE,
+  GROUP_MEMBER_ENTITY_TYPE,
   USER_ENTITY_TYPE,
 } from "./jupiterone";
-import fetchAccount from "./steps/fetchAccount";
-import fetchUsers from "./steps/fetchUsers";
+import {
+  fetchAccount,
+  fetchGroupMembers,
+  fetchGroups,
+  fetchUsers,
+} from "./steps";
 import { IntegrationConfig, IntegrationStepContext } from "./types";
 import validateInvocation from "./validateInvocation";
 
+export const AD_FETCH_ACCOUNT = "fetch-account";
 export const AD_FETCH_GROUPS = "fetch-groups";
 export const AD_FETCH_GROUP_MEMBERS = "fetch-group-members";
 export const AD_FETCH_USERS = "fetch-users";
@@ -31,7 +38,7 @@ export const RM_SYNC_STORAGE = "sync-rm-storage";
 export const RM_SYNC_DATABASES = "sync-rm-databases";
 export const RM_SYNC_COSMOSDB = "sync-rm-cosmosdb";
 
-export const invocationConfig: IntegrationInvocationConfig = {
+export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
     clientId: {
       type: "string",
@@ -57,7 +64,7 @@ export const invocationConfig: IntegrationInvocationConfig = {
   validateInvocation,
 
   getStepStartStates: (
-    executionContext: IntegrationExecutionContext,
+    executionContext: IntegrationExecutionContext<IntegrationConfig>,
   ): IntegrationStepStartStates => {
     const config = (executionContext.instance.config ||
       {}) as IntegrationConfig;
@@ -97,7 +104,7 @@ export const invocationConfig: IntegrationInvocationConfig = {
 
   integrationSteps: [
     {
-      id: "account",
+      id: AD_FETCH_ACCOUNT,
       name: "Synchronize Account",
       types: [ACCOUNT_ENTITY_TYPE],
       executionHandler: executionHandlerWithAzureContext(fetchAccount),
@@ -106,6 +113,7 @@ export const invocationConfig: IntegrationInvocationConfig = {
       id: AD_FETCH_USERS,
       name: "Fetch Users",
       types: [USER_ENTITY_TYPE],
+      dependsOn: [AD_FETCH_ACCOUNT],
       executionHandler: executionHandlerWithAzureContext(fetchUsers),
     },
     {
@@ -114,6 +122,13 @@ export const invocationConfig: IntegrationInvocationConfig = {
       types: [GROUP_ENTITY_TYPE],
       executionHandler: executionHandlerWithAzureContext(fetchGroups),
     },
+    {
+      id: AD_FETCH_GROUP_MEMBERS,
+      name: "Fetch Group Members",
+      types: [GROUP_MEMBER_ENTITY_TYPE],
+      dependsOn: [AD_FETCH_GROUPS],
+      executionHandler: executionHandlerWithAzureContext(fetchGroupMembers),
+    },
   ],
 };
 
@@ -121,9 +136,10 @@ type IntegrationHandlerFunc = (
   executionContext: IntegrationStepContext,
 ) => Promise<void>;
 
+// TODO Create a single instance for use across steps, depends on https://github.com/JupiterOne/integration-sdk/issues/163
 function executionHandlerWithAzureContext(
   handlerFunc: IntegrationHandlerFunc,
-): Function {
+): StepExecutionHandlerFunction<IntegrationConfig> {
   return async (
     executionContext: IntegrationStepExecutionContext<IntegrationConfig>,
   ): Promise<void> => {
@@ -131,30 +147,14 @@ function executionHandlerWithAzureContext(
   };
 }
 
-// TODO need a semaphore on that azureClient
 function createIntegrationStepContext(
   executionContext: IntegrationStepExecutionContext<IntegrationConfig>,
 ): IntegrationStepContext {
-  const {
-    clientId,
-    clientSecret,
-    directoryId,
-  } = executionContext.instance.config;
-
-  let azureClient: AzureClient;
+  const { logger, instance } = executionContext;
+  const graphClient = createGraphClient(logger, instance.config);
 
   return {
     ...executionContext,
-    getAzureClient: (): AzureClient => {
-      if (!azureClient) {
-        azureClient = new AzureClient(
-          clientId,
-          clientSecret,
-          directoryId,
-          executionContext.logger,
-        );
-      }
-      return azureClient;
-    },
+    graphClient,
   };
 }

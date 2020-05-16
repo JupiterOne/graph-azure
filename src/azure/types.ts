@@ -5,22 +5,13 @@ export enum MemberType {
   GROUP = "#microsoft.graph.group",
 }
 
-export interface Group extends MicrosoftGraph.Group {
-  id: string;
-}
-
-export interface User extends MicrosoftGraph.User {
-  id: string;
-}
-
 /**
- * The data answered by a request for group members. The properties are those
- * requested. Additional properties need to be added here and in
- * `fetchBatchOfGroupMembers`.
+ * A type tracking the selected data answered by a request for group members.
+ * The properties are those requested. Additional properties should be added
+ * here and in `iterateGroupMembers` to communicate what we're requesting.
  */
 export interface GroupMember extends MicrosoftGraph.DirectoryObject {
   "@odata.type": string;
-  id: string;
   displayName?: string;
   mail?: string | null;
   jobTitle?: string | null;

@@ -8,10 +8,6 @@ import {
 
 import { createAzureWebLinker } from "../../azure";
 import {
-  NetworkInterfaceEntity,
-  PublicIPAddressEntity,
-} from "../../jupiterone";
-import {
   createNetworkInterfaceEntity,
   createNetworkSecurityGroupEntity,
   createPublicIPAddressEntity,
@@ -78,12 +74,14 @@ describe("createNetworkInterfaceEntity", () => {
       type: "Microsoft.Network/networkInterfaces",
     };
 
-    const entity: NetworkInterfaceEntity = {
+    expect(createNetworkInterfaceEntity(webLinker, data)).toEqual({
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
       _type: "azure_nic",
       _class: "NetworkInterface",
       _rawData: [{ name: "default", rawData: data }],
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
       resourceGuid: "ab964820-ee40-4f8d-bfd9-0349b8b4f316",
       resourceGroup: "j1dev",
       displayName: "j1dev",
@@ -102,10 +100,6 @@ describe("createNetworkInterfaceEntity", () => {
       webLink: webLinker.portalResourceUrl(
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
       ),
-    };
-
-    expect(createNetworkInterfaceEntity(webLinker, data)).toEqual({
-      ...entity,
       "tag.environment": "j1dev",
     });
   });
@@ -139,12 +133,14 @@ describe("createPublicIPAddressEntity", () => {
       },
     };
 
-    const entity: PublicIPAddressEntity = {
+    expect(createPublicIPAddressEntity(webLinker, data)).toEqual({
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
       _type: "azure_public_ip",
       _class: "IpAddress",
       _rawData: [{ name: "default", rawData: data }],
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
       resourceGuid: "d908c31d-c93a-4359-987f-8cfdd1b65a61",
       resourceGroup: "j1dev",
       displayName: "j1dev",
@@ -157,10 +153,6 @@ describe("createPublicIPAddressEntity", () => {
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev",
       ),
       sku: "Basic",
-    };
-
-    expect(createPublicIPAddressEntity(webLinker, data)).toEqual({
-      ...entity,
       "tag.environment": "j1dev",
     });
   });

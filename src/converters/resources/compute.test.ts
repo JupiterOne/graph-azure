@@ -1,9 +1,8 @@
 import { Disk, VirtualMachine } from "@azure/arm-compute/esm/models";
+import { convertProperties } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { createAzureWebLinker } from "../../azure";
-import { VirtualMachineEntity, AzureRegionalEntity } from "../../jupiterone";
-import { createVirtualMachineEntity, createDiskEntity } from "./compute";
-import { convertProperties } from "@jupiterone/jupiter-managed-integration-sdk";
+import { createDiskEntity, createVirtualMachineEntity } from "./compute";
 
 const webLinker = createAzureWebLinker("something.onmicrosoft.com");
 
@@ -81,7 +80,7 @@ describe("createVirtualMachineEntity", () => {
       vmId: "2ed98ec3-b9a4-4126-926e-081889e3bc3a",
     };
 
-    const entity: VirtualMachineEntity = {
+    expect(createVirtualMachineEntity(webLinker, data)).toEqual({
       ...convertProperties(data),
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
@@ -102,10 +101,6 @@ describe("createVirtualMachineEntity", () => {
       webLink: webLinker.portalResourceUrl(
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev",
       ),
-    };
-
-    expect(createVirtualMachineEntity(webLinker, data)).toEqual({
-      ...entity,
       "tag.environment": "j1dev",
     });
   });
@@ -148,7 +143,7 @@ describe("createDiskEntity", () => {
       uniqueId: "d113289a-e22c-4660-8e82-0f191d72a98b",
     };
 
-    const entity: AzureRegionalEntity = {
+    expect(createDiskEntity(webLinker, data)).toEqual({
       ...convertProperties(data),
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1devOsDisk",
@@ -166,8 +161,6 @@ describe("createDiskEntity", () => {
       ),
       "tag.environment": "j1dev",
       encrypted: true,
-    };
-
-    expect(createDiskEntity(webLinker, data)).toEqual(entity);
+    });
   });
 });

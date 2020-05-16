@@ -1,23 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Server as MySQLServer } from "@azure/arm-mysql/esm/models";
 import { Server as SQLServer } from "@azure/arm-sql/esm/models";
-import {
-  createIntegrationRelationship,
-  DataModel,
-  EntityFromIntegration,
-  getRawData,
-  IntegrationError,
-  IntegrationExecutionResult,
-  IntegrationRelationship,
-  PersisterOperationsResult,
-  summarizePersisterOperationsResults,
-} from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { AzureWebLinker, createAzureWebLinker } from "../azure";
 import { resourceGroupName } from "../azure/utils";
 import { createDatabaseEntity, createDbServerEntity } from "../converters";
-import { AccountEntity } from "../jupiterone";
-import { AzureExecutionContext } from "../types";
 
 enum DatabaseType {
   MariaDB = "mariadb",
@@ -89,7 +76,7 @@ async function synchronize(
       for (const databaseEntity of databaseEntities) {
         newServerDbRelationships.push(
           createIntegrationRelationship({
-            _class: DataModel.RelationshipClass.HAS,
+            _class: 'HAS',
             from: serverEntity,
             to: databaseEntity,
           }),

@@ -41,7 +41,7 @@ export default async function synchronizeKeyVaults(
     );
 
     const newAccountServiceRelationship = createIntegrationRelationship({
-      _class: DataModel.RelationshipClass.HAS,
+      _class: 'HAS',
       from: accountEntity,
       to: newVaultEntity,
     });

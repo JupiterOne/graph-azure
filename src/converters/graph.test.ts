@@ -1,7 +1,3 @@
-import {
-  IntegrationInstance,
-  EntityFromIntegration,
-} from "@jupiterone/jupiter-managed-integration-sdk";
 import { Organization } from "@microsoft/microsoft-graph-types";
 
 import {
@@ -9,6 +5,7 @@ import {
   createUserEntity,
   createAccountEntityWithOrganization,
 } from "./graph";
+import { IntegrationInstance } from "@jupiterone/integration-sdk";
 
 describe("createAccountEntityWithOrganization", () => {
   test("properties transferred", () => {
@@ -35,12 +32,7 @@ describe("createAccountEntityWithOrganization", () => {
       organization,
     );
 
-    const expected: EntityFromIntegration & {
-      name: string;
-      defaultDomain: string;
-      organizationName: string;
-      verifiedDomains: string[];
-    } = {
+    expect(accountEntity).toEqual({
       _class: ["Account"],
       _key: "azure_account_the-instance-id",
       _type: "azure_account",
@@ -53,9 +45,7 @@ describe("createAccountEntityWithOrganization", () => {
         "whatever.onmicrosoft.com",
         "something.onmicrosoft.com",
       ],
-    };
-
-    expect(accountEntity).toEqual(expected);
+    });
   });
 });
 

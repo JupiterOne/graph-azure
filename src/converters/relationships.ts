@@ -8,17 +8,16 @@ import {
 } from "@azure/arm-network/esm/models";
 import {
   createIntegrationRelationship,
-  IntegrationRelationship,
+  Entity,
+  Relationship,
   RelationshipDirection,
-  EntityFromIntegration,
-  DataModel,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+} from "@jupiterone/integration-sdk";
 
-import { Group, GroupMember, MemberType, User } from "../azure";
+import { GroupMember, MemberType } from "../azure";
 import {
   ACCOUNT_ENTITY_TYPE,
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
-  AccountEntity,
+  DISK_ENTITY_TYPE,
   GROUP_ENTITY_CLASS,
   GROUP_ENTITY_TYPE,
   GROUP_MEMBER_ENTITY_CLASS,
@@ -33,7 +32,6 @@ import {
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
   VIRTUAL_NETWORK_ENTITY_TYPE,
-  DISK_ENTITY_TYPE,
 } from "../jupiterone";
 import {
   generateEntityKey,
@@ -41,14 +39,14 @@ import {
 } from "../utils/generateKeys";
 
 export function createAccountGroupRelationship(
-  account: AccountEntity,
-  group: Group,
-): IntegrationRelationship {
+  account: Entity,
+  group: Entity,
+): Relationship {
   const parentKey = account._key;
   const childKey = generateEntityKey(GROUP_ENTITY_TYPE, group.id);
 
   return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.HAS,
+    _class: "HAS",
     fromKey: parentKey,
     fromType: ACCOUNT_ENTITY_TYPE,
     toKey: childKey,
@@ -60,14 +58,14 @@ export function createAccountGroupRelationship(
 }
 
 export function createAccountUserRelationship(
-  account: AccountEntity,
-  user: User,
-): IntegrationRelationship {
+  account: Entity,
+  user: Entity,
+): Relationship {
   const fromKey = account._key;
   const toKey = generateEntityKey(USER_ENTITY_TYPE, user.id);
 
   return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.HAS,
+    _class: "HAS",
     fromType: ACCOUNT_ENTITY_TYPE,
     fromKey,
     toType: USER_ENTITY_TYPE,
@@ -76,23 +74,25 @@ export function createAccountUserRelationship(
 }
 
 export function createGroupMemberRelationship(
-  group: Group,
+  group: Entity,
   member: GroupMember,
-): IntegrationRelationship {
+): Relationship {
   const memberEntityType = getGroupMemberEntityType(member);
   const memberEntityClass = getGroupMemberEntityClass(member);
 
   const groupKey = generateEntityKey(GROUP_ENTITY_TYPE, group.id);
   const memberKey = generateEntityKey(memberEntityType, member.id);
 
+  // TODO Check with Phil about how moving an integration to the new SDK will
+  // handle the mapped relationships.
   return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.HAS,
+    _class: "HAS",
+    _key: memberKey,
     _mapping: {
       relationshipDirection: RelationshipDirection.FORWARD,
       sourceEntityKey: groupKey,
       targetFilterKeys: [["_type", "_key"]],
       targetEntity: {
-        _key: memberKey,
         _type: memberEntityType,
         _class: memberEntityClass,
         displayName: member.displayName,
@@ -135,9 +135,9 @@ function getGroupMemberEntityClass(member: GroupMember): string {
 export function createNetworkSecurityGroupNicRelationship(
   securityGroup: NetworkSecurityGroup,
   nic: NetworkInterface,
-): IntegrationRelationship {
+): Relationship {
   return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.PROTECTS,
+    _class: "PROTECTS",
     fromKey: securityGroup.id as string,
     fromType: SECURITY_GROUP_ENTITY_TYPE,
     toKey: nic.id as string,
@@ -148,9 +148,9 @@ export function createNetworkSecurityGroupNicRelationship(
 export function createNetworkSecurityGroupSubnetRelationship(
   securityGroup: NetworkSecurityGroup,
   subnet: Subnet,
-): IntegrationRelationship {
+): Relationship {
   return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.PROTECTS,
+    _class: "PROTECTS",
     fromKey: securityGroup.id as string,
     fromType: SECURITY_GROUP_ENTITY_TYPE,
     toKey: subnet.id as string,
@@ -161,9 +161,9 @@ export function createNetworkSecurityGroupSubnetRelationship(
 export function createSubnetVirtualMachineRelationship(
   subnet: Subnet,
   vm: VirtualMachine,
-): IntegrationRelationship {
+): Relationship {
   return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.HAS,
+    _class: "HAS",
     fromKey: subnet.id as string,
     fromType: SUBNET_ENTITY_TYPE,
     toKey: vm.id as string,
@@ -174,9 +174,9 @@ export function createSubnetVirtualMachineRelationship(
 export function createVirtualNetworkSubnetRelationship(
   vnet: VirtualNetwork,
   subnet: Subnet,
-): IntegrationRelationship {
+): Relationship {
   return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.CONTAINS,
+    _class: "CONTAINS",
     fromKey: vnet.id as string,
     fromType: VIRTUAL_NETWORK_ENTITY_TYPE,
     toKey: subnet.id as string,
@@ -187,9 +187,9 @@ export function createVirtualNetworkSubnetRelationship(
 export function createVirtualMachinePublicIPAddressRelationship(
   vm: VirtualMachine,
   ipAddress: PublicIPAddress,
-): IntegrationRelationship {
+): Relationship {
   return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.USES,
+    _class: "USES",
     fromKey: vm.id as string,
     fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
     toKey: ipAddress.id as string,
@@ -203,9 +203,9 @@ export function createVirtualMachinePublicIPAddressRelationship(
 export function createVirtualMachineNetworkInterfaceRelationship(
   vm: VirtualMachine,
   nic: NetworkInterface,
-): IntegrationRelationship {
+): Relationship {
   return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.USES,
+    _class: "USES",
     fromKey: vm.id as string,
     fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
     toKey: nic.id as string,
@@ -219,14 +219,14 @@ export function createVirtualMachineNetworkInterfaceRelationship(
 
 export function createVirtualMachineDiskRelationships(
   vm: VirtualMachine,
-): IntegrationRelationship[] {
-  const relationships: IntegrationRelationship[] = [];
+): Relationship[] {
+  const relationships: Relationship[] = [];
 
   if (vm.storageProfile) {
     if (vm.storageProfile.osDisk && vm.storageProfile.osDisk.managedDisk) {
       relationships.push(
         createIntegrationRelationship({
-          _class: DataModel.RelationshipClass.USES,
+          _class: "USES",
           fromKey: vm.id as string,
           fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
           toKey: vm.storageProfile.osDisk.managedDisk.id as string,
@@ -242,7 +242,7 @@ export function createVirtualMachineDiskRelationships(
       if (disk.managedDisk) {
         relationships.push(
           createIntegrationRelationship({
-            _class: DataModel.RelationshipClass.USES,
+            _class: "USES",
             fromKey: vm.id as string,
             fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
             toKey: disk.managedDisk.id as string,
@@ -260,11 +260,11 @@ export function createVirtualMachineDiskRelationships(
 }
 
 export function createLoadBalancerBackendNicRelationship(
-  lb: EntityFromIntegration,
+  lb: Entity,
   nicId: string,
-): IntegrationRelationship {
+): Relationship {
   return createIntegrationRelationship({
-    _class: DataModel.RelationshipClass.CONNECTS,
+    _class: "CONNECTS",
     fromKey: lb._key,
     fromType: lb._type,
     toKey: nicId,

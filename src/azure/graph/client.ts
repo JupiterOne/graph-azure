@@ -1,18 +1,19 @@
+import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 import {
   AuthenticationProvider,
   Client,
 } from "@microsoft/microsoft-graph-client";
+import {
+  DirectoryObject,
+  DirectoryRole,
+  Group,
+  Organization,
+  User,
+} from "@microsoft/microsoft-graph-types";
 
 import { IntegrationConfig } from "../../types";
+import { GroupMember } from "../types";
 import authenticate from "./authenticate";
-import {
-  Organization,
-  DirectoryRole,
-  DirectoryObject,
-  User,
-  Group,
-} from "@microsoft/microsoft-graph-types";
-import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 
 export function createGraphClient(
   logger: IntegrationLogger,
@@ -41,6 +42,8 @@ export interface PaginationOptions {
    */
   select?: string | string[];
 }
+
+export type QueryParams = string | { [key: string]: string | number };
 
 export class ClientError extends Error {
   private static generateMessage(response: Response): string {
@@ -81,7 +84,7 @@ export class GraphClient {
   public async iterateDirectoryRoles(
     callback: (role: DirectoryRole) => void | Promise<void>,
   ): Promise<void> {
-    return this.iterateResources("/directoryRoles", callback);
+    return this.iterateResources({ resourceUrl: "/directoryRoles", callback });
   }
 
   // https://docs.microsoft.com/en-us/graph/api/directoryrole-list-members?view=graph-rest-1.0&tabs=http
@@ -89,32 +92,69 @@ export class GraphClient {
     roleId: string,
     callback: (member: DirectoryObject) => void | Promise<void>,
   ): Promise<void> {
-    return this.iterateResources(`/directoryRoles/${roleId}/members`, callback);
+    return this.iterateResources({
+      resourceUrl: `/directoryRoles/${roleId}/members`,
+      callback,
+    });
   }
 
   // https://docs.microsoft.com/en-us/graph/api/group-list?view=graph-rest-1.0&tabs=http
   public async iterateGroups(
     callback: (user: Group) => void | Promise<void>,
   ): Promise<void> {
-    return this.iterateResources("/groups", callback);
+    return this.iterateResources({ resourceUrl: "/groups", callback });
+  }
+
+  // https://docs.microsoft.com/en-us/graph/api/group-list-members?view=graph-rest-1.0&tabs=http
+  public async iterateGroupMembers(
+    input: {
+      groupId: string;
+      /**
+       * The property names for `$select` query param.
+       */
+      select?: string | string[];
+    },
+    callback: (user: GroupMember) => void | Promise<void>,
+  ): Promise<void> {
+    const $select = input.select
+      ? Array.isArray(input.select)
+        ? input.select.join(",")
+        : input.select
+      : undefined;
+
+    return this.iterateResources({
+      resourceUrl: `/groups/${input.groupId}/members`,
+      query: $select ? { $select } : undefined,
+      callback,
+    });
   }
 
   // https://docs.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http
   public async iterateUsers(
     callback: (user: User) => void | Promise<void>,
   ): Promise<void> {
-    return this.iterateResources("/users", callback);
+    return this.iterateResources({ resourceUrl: "/users", callback });
   }
 
   // Not using PageIterator because it doesn't allow async callback
-  private async iterateResources<T>(
-    resourceUrl: string,
-    callback: (item: T) => void | Promise<void>,
-  ): Promise<void> {
+  private async iterateResources<T>({
+    resourceUrl,
+    query,
+    callback,
+  }: {
+    resourceUrl: string;
+    query?: QueryParams;
+    callback: (item: T) => void | Promise<void>;
+  }): Promise<void> {
     try {
       let nextLink: string | undefined;
       do {
-        const response = await this.client.api(nextLink || resourceUrl).get();
+        let api = this.client.api(nextLink || resourceUrl);
+        if (query) {
+          api = api.query(query);
+        }
+
+        const response = await api.get();
         if (response) {
           nextLink = response["@odata.nextLink"];
           for (const value of response.value) {

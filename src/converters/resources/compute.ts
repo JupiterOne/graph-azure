@@ -1,4 +1,5 @@
 import { Disk, Image, VirtualMachine } from "@azure/arm-compute/esm/models";
+import { Entity } from "@jupiterone/integration-sdk";
 import {
   assignTags,
   convertProperties,
@@ -8,20 +9,18 @@ import {
 import { AzureWebLinker } from "../../azure";
 import { resourceGroupName } from "../../azure/utils";
 import {
-  AzureRegionalEntity,
   DISK_ENTITY_CLASS,
   DISK_ENTITY_TYPE,
   VIRTUAL_MACHINE_ENTITY_CLASS,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
   VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-  VirtualMachineEntity,
 } from "../../jupiterone";
 
 export function createVirtualMachineEntity(
   webLinker: AzureWebLinker,
   data: VirtualMachine,
-): VirtualMachineEntity {
+): Entity {
   const osProperties = {};
   if (data.storageProfile) {
     Object.assign(osProperties, {
@@ -65,7 +64,7 @@ export function createVirtualMachineEntity(
 export function createDiskEntity(
   webLinker: AzureWebLinker,
   data: Disk,
-): AzureRegionalEntity {
+): Entity {
   const entity = {
     ...convertProperties(data),
     _key: data.id as string,
@@ -88,7 +87,7 @@ export function createDiskEntity(
 export function createImageEntity(
   webLinker: AzureWebLinker,
   data: Image,
-): AzureRegionalEntity {
+): Entity {
   const entity = {
     ...convertProperties(data),
     _key: data.id as string,

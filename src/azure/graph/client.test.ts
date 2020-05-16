@@ -2,14 +2,15 @@ import { createTestLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 import {
   DirectoryObject,
   DirectoryRole,
-  User,
   Group,
+  User,
 } from "@microsoft/microsoft-graph-types";
 import { Polly } from "@pollyjs/core";
 
 import polly from "../../../test/helpers/polly";
 import config from "../../../test/integrationInstanceConfig";
-import { createGraphClient } from "./client";
+import { GroupMember } from "../types";
+import { createGraphClient, GraphClient } from "./client";
 
 const logger = createTestLogger();
 
@@ -70,20 +71,116 @@ test("iterateGroups", async () => {
   });
 });
 
-test("iterateUsers", async () => {
-  p = polly(__dirname, "iterateUsers");
+describe("iterateGroupMembers", () => {
+  let client: GraphClient;
 
-  const client = createGraphClient(logger, config);
-
-  const resources: User[] = [];
-  await client.iterateUsers((e) => {
-    resources.push(e);
+  beforeEach(() => {
+    client = createGraphClient(logger, config);
   });
 
-  expect(resources.length).toBeGreaterThan(0);
-  resources.forEach((r) => {
-    expect(r).toMatchObject({
-      id: expect.any(String),
+  test("single selected property", async () => {
+    p = polly(__dirname, "iterateGroupMembersSelectProperty");
+
+    const resources: GroupMember[] = [];
+    await client.iterateGroupMembers(
+      {
+        groupId: "1c417feb-b04f-46c9-a747-614d6d03f348",
+        select: "id",
+      },
+      (e) => {
+        resources.push(e);
+      },
+    );
+
+    expect(resources.length).toBeGreaterThan(0);
+    resources.forEach((r) => {
+      expect(r).toMatchObject({
+        id: expect.any(String),
+      });
+    });
+
+    const resource = resources[0];
+    expect(resource.displayName).toBeUndefined();
+  });
+
+  test("multiple selected properties", async () => {
+    p = polly(__dirname, "iterateGroupMembersSelectProperties");
+
+    const resources: GroupMember[] = [];
+    await client.iterateGroupMembers(
+      {
+        groupId: "1c417feb-b04f-46c9-a747-614d6d03f348",
+        select: ["id", "displayName"],
+      },
+      (e) => {
+        resources.push(e);
+      },
+    );
+
+    expect(resources.length).toBeGreaterThan(0);
+    resources.forEach((r) => {
+      expect(r).toMatchObject({
+        id: expect.any(String),
+        displayName: expect.any(String),
+      });
+    });
+  });
+
+  test("iterateGroupMembers", async () => {
+    p = polly(__dirname, "iterateGroupMembers");
+
+    const resources: GroupMember[] = [];
+    await client.iterateGroupMembers(
+      { groupId: "58e48aba-cd45-440f-a851-2bf9715fadc1" },
+      (e) => {
+        resources.push(e);
+      },
+    );
+
+    expect(resources.length).toBeGreaterThan(0);
+    resources.forEach((r) => {
+      expect(r).toMatchObject({
+        displayName: expect.any(String),
+      });
+    });
+  });
+});
+
+describe("iterateUsers", () => {
+  test("404 answers empty collection", async () => {
+    p = polly(__dirname, "iterateUsers404");
+
+    const client = createGraphClient(logger, config);
+
+    p.server
+      .get("https://graph.microsoft.com/v1.0/users")
+      .intercept((_req, res) => {
+        res.status(404);
+      });
+
+    const resources: User[] = [];
+    await client.iterateUsers((e) => {
+      resources.push(e);
+    });
+
+    expect(resources.length).toEqual(0);
+  });
+
+  test("provides expected data", async () => {
+    p = polly(__dirname, "iterateUsers");
+
+    const client = createGraphClient(logger, config);
+
+    const resources: User[] = [];
+    await client.iterateUsers((e) => {
+      resources.push(e);
+    });
+
+    expect(resources.length).toBeGreaterThan(0);
+    resources.forEach((r) => {
+      expect(r).toMatchObject({
+        id: expect.any(String),
+      });
     });
   });
 });

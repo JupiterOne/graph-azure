@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.16.0 - 2020-05-18
+
+### Added
+
+- SQL Server and Database auditing status and properties.
+
 ## 3.15.7 - 2020-05-17
 
 ### Added

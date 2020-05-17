@@ -176,6 +176,7 @@ async function fetchDbServers(
             Object.assign(entity, {
               auditingEnabled: ENABLED_PATTERN.test(auditStatus),
               auditLogDestination: auditing.storageEndpoint,
+              auditActionsAndGroups: auditing.auditActionsAndGroups,
               auditLogAccessKey: auditing.storageAccountAccessKey,
               auditLogRetentionDays: auditing.retentionDays,
               auditLogMonitorEnabled: auditing.isAzureMonitorTargetEnabled,
@@ -286,6 +287,7 @@ async function fetchDatabases(
             if (auditStatus) {
               Object.assign(entity, {
                 auditingEnabled: ENABLED_PATTERN.test(auditStatus),
+                auditActionsAndGroups: auditing.auditActionsAndGroups,
                 auditLogDestination: auditing.storageEndpoint,
                 auditLogAccessKey: auditing.storageAccountAccessKey,
                 auditLogRetentionDays: auditing.retentionDays,

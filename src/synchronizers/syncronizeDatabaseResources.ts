@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Server as MySQLServer } from "@azure/arm-mysql/esm/models";
 import { Server as SQLServer } from "@azure/arm-sql/esm/models";
@@ -11,6 +12,7 @@ import {
   IntegrationRelationship,
   PersisterOperationsResult,
   summarizePersisterOperationsResults,
+  setRawData,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { AzureWebLinker, createAzureWebLinker } from "../azure";
@@ -147,8 +149,44 @@ async function fetchDbServers(
       });
       break;
     case DatabaseType.SQL:
-      await azrm.iterateSqlServers((e) => {
-        entities.push(createDbServerEntity(webLinker, e, serverEntityType));
+      await azrm.iterateSqlServers(async (server, serviceClient) => {
+        const entity = createDbServerEntity(
+          webLinker,
+          server,
+          serverEntityType,
+        );
+
+        try {
+          const auditing = await serviceClient.serverBlobAuditingPolicies.get(
+            resourceGroupName(server.id, true)!,
+            server.name!,
+          );
+
+          setRawData(entity, { name: "auditing", rawData: auditing });
+
+          const auditStatus =
+            auditing.state ||
+            (auditing as any).content["m:properties"]["d:properties"][
+              "d:state"
+            ];
+
+          if (auditStatus) {
+            Object.assign(entity, {
+              auditingEnabled: ENCRYPTION_ENABLED_PATTERN.test(status),
+              auditLogDestination: auditing.storageEndpoint,
+              auditLogAccessKey: auditing.storageAccountAccessKey,
+              auditLogRetentionDays: auditing.retentionDays,
+              auditLogMonitorEnabled: auditing.isAzureMonitorTargetEnabled,
+            });
+          }
+        } catch (err) {
+          logger.warn(
+            { err, server: server.id },
+            "Failed to obtain databaseBlobAuditingPolicies for server",
+          );
+        }
+
+        entities.push(entity);
       });
       break;
   }
@@ -198,6 +236,13 @@ async function fetchDatabases(
         async (database, serviceClient) => {
           let encrypted: boolean | null = null;
 
+          const entity = createDatabaseEntity(
+            webLinker,
+            database,
+            databaseEntityType,
+            encrypted,
+          );
+
           try {
             const encryption = await serviceClient.transparentDataEncryptions.get(
               resourceGroupName(server.id, true)!,
@@ -206,15 +251,15 @@ async function fetchDatabases(
             );
 
             // There is something broken with deserializing this response...
-            const status =
+            const encryptionStatus =
               encryption.status ||
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (encryption as any).content["m:properties"]["d:properties"][
                 "d:status"
               ];
 
-            if (status) {
+            if (encryptionStatus) {
               encrypted = ENCRYPTION_ENABLED_PATTERN.test(status);
+              (entity as any).encrypted = encrypted;
             }
           } catch (err) {
             logger.warn(
@@ -223,14 +268,38 @@ async function fetchDatabases(
             );
           }
 
-          entities.push(
-            createDatabaseEntity(
-              webLinker,
-              database,
-              databaseEntityType,
-              encrypted,
-            ),
-          );
+          try {
+            const auditing = await serviceClient.databaseBlobAuditingPolicies.get(
+              resourceGroupName(server.id, true)!,
+              server.name!,
+              database.name!,
+            );
+
+            setRawData(entity, { name: "auditing", rawData: auditing });
+
+            const auditStatus =
+              auditing.state ||
+              (auditing as any).content["m:properties"]["d:properties"][
+                "d:state"
+              ];
+
+            if (auditStatus) {
+              Object.assign(entity, {
+                auditingEnabled: ENCRYPTION_ENABLED_PATTERN.test(status),
+                auditLogDestination: auditing.storageEndpoint,
+                auditLogAccessKey: auditing.storageAccountAccessKey,
+                auditLogRetentionDays: auditing.retentionDays,
+                auditLogMonitorEnabled: auditing.isAzureMonitorTargetEnabled,
+              });
+            }
+          } catch (err) {
+            logger.warn(
+              { err, server: server.id, database: database.id },
+              "Failed to obtain databaseBlobAuditingPolicies for database",
+            );
+          }
+
+          entities.push(entity);
         },
       );
       break;

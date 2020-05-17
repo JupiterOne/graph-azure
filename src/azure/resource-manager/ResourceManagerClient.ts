@@ -156,7 +156,10 @@ export default class ResourceManagerClient extends Client {
   //// Databases ////
 
   public async iterateSqlServers(
-    callback: (s: SQLServer) => void | Promise<void>,
+    callback: (
+      s: SQLServer,
+      serviceClient: SqlManagementClient,
+    ) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,

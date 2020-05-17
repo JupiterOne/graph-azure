@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.15.7 - 2020-05-17
+
+### Added
+
+- `attached` boolean and `state` property on `azure_managed_disk` entities.
+
 ## 3.15.6 - 2020-05-17
 
 ### Fixed

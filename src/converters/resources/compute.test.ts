@@ -166,6 +166,8 @@ describe("createDiskEntity", () => {
       ),
       "tag.environment": "j1dev",
       encrypted: true,
+      state: "unattached",
+      attached: false,
     };
 
     expect(createDiskEntity(webLinker, data)).toEqual(entity);

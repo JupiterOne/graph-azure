@@ -166,7 +166,7 @@ describe("createDiskEntity", () => {
       ),
       "tag.environment": "j1dev",
       encrypted: true,
-      state: "Unattached",
+      state: "unattached",
       attached: false,
     };
 

@@ -185,7 +185,39 @@ async function fetchDbServers(
         } catch (err) {
           logger.warn(
             { err, server: server.id },
-            "Failed to obtain databaseBlobAuditingPolicies for server",
+            "Failed to obtain serverBlobAuditingPolicies for server",
+          );
+        }
+
+        try {
+          const alerting = await serviceClient.serverSecurityAlertPolicies.get(
+            resourceGroupName(server.id, true)!,
+            server.name!,
+          );
+
+          setRawData(entity, { name: "alerting", rawData: alerting });
+
+          const alertStatus =
+            alerting.state ||
+            (alerting as any).content["m:properties"]["d:properties"][
+              "d:state"
+            ];
+
+          if (alertStatus) {
+            Object.assign(entity, {
+              alertingEnabled: ENABLED_PATTERN.test(alertStatus),
+              alertAdmins: alerting.emailAccountAdmins,
+              alertEmails: alerting.emailAddresses,
+              alertsDisabled: alerting.disabledAlerts,
+              alertAll: alerting.disabledAlerts
+                ? alerting.disabledAlerts.length === 0
+                : true,
+            });
+          }
+        } catch (err) {
+          logger.warn(
+            { err, server: server.id },
+            "Failed to obtain serverSecurityAlertPolicies for server",
           );
         }
 

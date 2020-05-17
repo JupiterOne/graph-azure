@@ -13,6 +13,7 @@ and this project adheres to
 ### Added
 
 - SQL Server and Database auditing status and properties.
+- SQL Server alerting status and properties.
 
 ## 3.15.7 - 2020-05-17
 

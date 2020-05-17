@@ -131,6 +131,8 @@ async function synchronize(
   return result;
 }
 
+const ENABLED_PATTERN = /enabled/i;
+
 async function fetchDbServers(
   executionContext: AzureExecutionContext,
   webLinker: AzureWebLinker,
@@ -172,7 +174,7 @@ async function fetchDbServers(
 
           if (auditStatus) {
             Object.assign(entity, {
-              auditingEnabled: ENCRYPTION_ENABLED_PATTERN.test(status),
+              auditingEnabled: ENABLED_PATTERN.test(auditStatus),
               auditLogDestination: auditing.storageEndpoint,
               auditLogAccessKey: auditing.storageAccountAccessKey,
               auditLogRetentionDays: auditing.retentionDays,
@@ -198,8 +200,6 @@ async function fetchDbServers(
 
   return entities;
 }
-
-const ENCRYPTION_ENABLED_PATTERN = /enabled/i;
 
 async function fetchDatabases(
   executionContext: AzureExecutionContext,
@@ -258,7 +258,7 @@ async function fetchDatabases(
               ];
 
             if (encryptionStatus) {
-              encrypted = ENCRYPTION_ENABLED_PATTERN.test(status);
+              encrypted = ENABLED_PATTERN.test(encryptionStatus);
               (entity as any).encrypted = encrypted;
             }
           } catch (err) {
@@ -285,7 +285,7 @@ async function fetchDatabases(
 
             if (auditStatus) {
               Object.assign(entity, {
-                auditingEnabled: ENCRYPTION_ENABLED_PATTERN.test(status),
+                auditingEnabled: ENABLED_PATTERN.test(auditStatus),
                 auditLogDestination: auditing.storageEndpoint,
                 auditLogAccessKey: auditing.storageAccountAccessKey,
                 auditLogRetentionDays: auditing.retentionDays,

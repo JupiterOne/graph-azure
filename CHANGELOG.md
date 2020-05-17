@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.15.5 - 2020-05-17
+
+### Fixed
+
+- Incorrect parsing the `targetPortRanges` (`fromPort` and `toPort`) of an Azure
+  Security Group rule.
+
 ## 3.15.4 - 2020-05-06
 
 ### Added

@@ -120,10 +120,10 @@ export function processSecurityGroupRule(
 ): Rule[] {
   const rules: Rule[] = [];
 
-  const targetPortRanges =
-    rule.direction === "Inbound"
-      ? [rule.sourcePortRange, ...(rule.sourcePortRanges || [])]
-      : [rule.destinationPortRange, ...(rule.destinationPortRanges || [])];
+  const targetPortRanges = [
+    rule.destinationPortRange,
+    ...(rule.destinationPortRanges || []),
+  ];
 
   for (const portRange of targetPortRanges) {
     if (!portRange) {
@@ -265,7 +265,7 @@ export function findAnyAnyRule(
   access: "Deny" | "Allow",
 ): SecurityRule | undefined {
   return rules.find(
-    r =>
+    (r) =>
       r.destinationAddressPrefix === "*" &&
       r.destinationPortRange === "*" &&
       r.sourcePortRange === "*" &&

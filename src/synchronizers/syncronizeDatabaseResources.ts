@@ -216,14 +216,15 @@ async function fetchDbServers(
             ];
 
           if (alertStatus) {
+            const alertingEnabled = ENABLED_PATTERN.test(alertStatus);
+            const hasDisabledAlerts =
+              alerting.disabledAlerts && alerting.disabledAlerts.length > 0;
             Object.assign(entity, {
-              alertingEnabled: ENABLED_PATTERN.test(alertStatus),
+              alertingEnabled,
               alertAdmins: alerting.emailAccountAdmins,
               alertEmails: alerting.emailAddresses,
               alertsDisabled: alerting.disabledAlerts,
-              alertAll: alerting.disabledAlerts
-                ? alerting.disabledAlerts.length === 0
-                : true,
+              alertAll: alertingEnabled && !hasDisabledAlerts,
             });
           }
         } catch (err) {

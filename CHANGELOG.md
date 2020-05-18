@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.16.1 - 2020-05-18
+
+### Changed
+
+- Set SQL server `alertAll: alertingEnabled && !hasDisabledAlerts`.
+
 ## 3.16.0 - 2020-05-18
 
 ### Added

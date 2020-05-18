@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Server as MariaDBServer } from "@azure/arm-mariadb/esm/models";
 import { Server as MySQLServer } from "@azure/arm-mysql/esm/models";
+import { Server as PostgreSQLServer } from "@azure/arm-postgresql/esm/models";
 import { Server as SQLServer } from "@azure/arm-sql/esm/models";
 import {
   createIntegrationRelationship,
@@ -145,8 +147,18 @@ async function fetchDbServers(
   logger.info({ dbType }, "Fetching database servers...");
 
   switch (dbType) {
+    case DatabaseType.MariaDB:
+      await azrm.iterateMariaDbServers((e) => {
+        entities.push(createDbServerEntity(webLinker, e, serverEntityType));
+      });
+      break;
     case DatabaseType.MySQL:
       await azrm.iterateMySqlServers((e) => {
+        entities.push(createDbServerEntity(webLinker, e, serverEntityType));
+      });
+      break;
+    case DatabaseType.PostgreSQL:
+      await azrm.iteratePostgreSqlServers((e) => {
         entities.push(createDbServerEntity(webLinker, e, serverEntityType));
       });
       break;
@@ -247,6 +259,22 @@ async function fetchDatabases(
   const databaseEntityType = `azure_${dbType}_database`;
   const entities: EntityFromIntegration[] = [];
   switch (dbType) {
+    case DatabaseType.MariaDB:
+      try {
+        await azrm.iterateMariaDbDatabases(server as MariaDBServer, (e) => {
+          const encrypted = null;
+          entities.push(
+            createDatabaseEntity(webLinker, e, databaseEntityType, encrypted),
+          );
+        });
+      } catch (err) {
+        logger.warn(
+          { err, server: { id: server.id, type: server.type } },
+          "Failure requesting databases for server",
+        );
+        return undefined;
+      }
+      break;
     case DatabaseType.MySQL:
       try {
         await azrm.iterateMySqlDatabases(server as MySQLServer, (e) => {
@@ -255,6 +283,25 @@ async function fetchDatabases(
             createDatabaseEntity(webLinker, e, databaseEntityType, encrypted),
           );
         });
+      } catch (err) {
+        logger.warn(
+          { err, server: { id: server.id, type: server.type } },
+          "Failure requesting databases for server",
+        );
+        return undefined;
+      }
+      break;
+    case DatabaseType.PostgreSQL:
+      try {
+        await azrm.iteratePostgreSqlDatabases(
+          server as PostgreSQLServer,
+          (e) => {
+            const encrypted = null;
+            entities.push(
+              createDatabaseEntity(webLinker, e, databaseEntityType, encrypted),
+            );
+          },
+        );
       } catch (err) {
         logger.warn(
           { err, server: { id: server.id, type: server.type } },

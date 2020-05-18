@@ -261,7 +261,7 @@ export default class ResourceManagerClient extends Client {
 
   /* istanbul ignore next: core functionality covered by other tests */
   public async iterateMariaDbDatabases(
-    server: PostgreSQLServer,
+    server: MariaDBServer,
     callback: (
       d: MariaDBDatabase,
       serviceClient: MariaDBManagementClient,

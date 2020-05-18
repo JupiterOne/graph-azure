@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.16.3 - 2020-05-18
+
+### Changed
+
+- Filter out empty string in array list returned by Azure API on SQL Server
+  auditing and alerting settings.
+
 ## 3.16.2 - 2020-05-18
 
 ### Changed

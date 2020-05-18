@@ -188,7 +188,9 @@ async function fetchDbServers(
             Object.assign(entity, {
               auditingEnabled: ENABLED_PATTERN.test(auditStatus),
               auditLogDestination: auditing.storageEndpoint,
-              auditActionsAndGroups: auditing.auditActionsAndGroups,
+              auditActionsAndGroups: auditing.auditActionsAndGroups?.filter(
+                (e) => e !== "",
+              ),
               auditLogAccessKey: auditing.storageAccountAccessKey,
               auditLogRetentionDays: auditing.retentionDays,
               auditLogMonitorEnabled: auditing.isAzureMonitorTargetEnabled,
@@ -217,13 +219,19 @@ async function fetchDbServers(
 
           if (alertStatus) {
             const alertingEnabled = ENABLED_PATTERN.test(alertStatus);
+            const alertEmails = alerting.emailAddresses?.filter(
+              (e) => e !== "",
+            );
+            const alertsDisabled = alerting.disabledAlerts?.filter(
+              (e) => e !== "",
+            );
             const hasDisabledAlerts =
-              alerting.disabledAlerts && alerting.disabledAlerts.length > 0;
+              alertsDisabled && alertsDisabled.length > 0;
             Object.assign(entity, {
               alertingEnabled,
               alertAdmins: alerting.emailAccountAdmins,
-              alertEmails: alerting.emailAddresses,
-              alertsDisabled: alerting.disabledAlerts,
+              alertEmails,
+              alertsDisabled,
               alertOnAllThreats: alertingEnabled && !hasDisabledAlerts,
             });
           }

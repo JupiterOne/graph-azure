@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.16.2 - 2020-05-18
+
+### Changed
+
+- Changed SQL server `alertAll` property to `alertOnAllThreats`.
+
 ## 3.16.1 - 2020-05-18
 
 ### Changed

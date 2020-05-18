@@ -224,7 +224,7 @@ async function fetchDbServers(
               alertAdmins: alerting.emailAccountAdmins,
               alertEmails: alerting.emailAddresses,
               alertsDisabled: alerting.disabledAlerts,
-              alertAll: alertingEnabled && !hasDisabledAlerts,
+              alertOnAllThreats: alertingEnabled && !hasDisabledAlerts,
             });
           }
         } catch (err) {

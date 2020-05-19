@@ -1,15 +1,13 @@
-import { AzureWebLinker } from "../../azure";
 import { Vault } from "@azure/arm-keyvault/esm/models";
-import {
-  EntityFromIntegration,
-  createIntegrationEntity,
-} from "@jupiterone/jupiter-managed-integration-sdk";
-import { resourceGroupName, normalizeLocation } from "../../azure/utils";
+import { createIntegrationEntity, Entity } from "@jupiterone/integration-sdk";
+
+import { AzureWebLinker } from "../../../azure";
+import { normalizeLocation, resourceGroupName } from "../../../azure/utils";
 
 export function createKeyVaultEntity(
   webLinker: AzureWebLinker,
   data: Vault,
-): EntityFromIntegration {
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -20,7 +18,7 @@ export function createKeyVaultEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         region: normalizeLocation(data.location),
         resourceGroup: resourceGroupName(data.id),
-        endpoints: [data.properties.vaultUri],
+        endpoints: data.properties.vaultUri && [data.properties.vaultUri],
         category: ["infrastructure"],
       },
       tagProperties: ["environment"],

@@ -1,31 +1,18 @@
 import "cross-fetch/polyfill";
 
 import {
-  IntegrationError,
   IntegrationExecutionContext,
   IntegrationExecutionResult,
   IntegrationInvocationConfig,
   IntegrationStepExecutionContext,
-  IntegrationStepIterationState,
   IntegrationStepStartStates,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
-import {
-  fetchBatchOfGroupMembers,
-  fetchBatchOfGroups,
-  fetchBatchOfUsers,
-} from "./azure";
-import initializeContext from "./initializeContext";
 import invocationValidator from "./validateInvocation";
-import fetchAccount from "./steps/fetchAccount";
 import synchronizeCosmosDBAccounts from "./synchronizers/synchronizeCosmosDBAccounts";
-import synchronizeGroupMembers from "./synchronizers/synchronizeGroupMembers";
-import synchronizeGroups from "./synchronizers/synchronizeGroups";
-import synchronizeKeyVaults from "./synchronizers/synchronizeKeyVault";
 import synchronizeStorageAccounts from "./synchronizers/synchronizeStorageAccounts";
 import synchronizeComputeResources from "./synchronizers/syncronizeComputeResources";
 import synchronizeDatabaseResources from "./synchronizers/syncronizeDatabaseResources";
-import synchronizeUsers from "./synchronizers/syncronizeUsers";
 import { IntegrationConfig } from "./types";
 
 export const AD_FETCH_GROUPS = "fetch-groups";
@@ -109,85 +96,85 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   },
 
   integrationStepPhases: [
+    // {
+    //   steps: [
+    //     {
+    //       id: "account",
+    //       name: "Synchronize Account",
+    //       executionHandler: async (
+    //         executionContext: IntegrationStepExecutionContext,
+    //       ): Promise<IntegrationExecutionResult> => {
+    //         return fetchAccount(initializeContext(executionContext));
+    //       },
+    //     },
+    //   ],
+    // },
+    // {
+    //   steps: [
+    //     {
+    //       id: AD_FETCH_USERS,
+    //       name: "Fetch Users",
+    //       iterates: true,
+    //       executionHandler: async (
+    //         executionContext: IntegrationStepExecutionContext,
+    //       ): Promise<IntegrationStepIterationState> => {
+    //         const iterationState = getIterationState(executionContext);
+    //         return fetchBatchOfUsers(
+    //           initializeContext(executionContext),
+    //           iterationState,
+    //         );
+    //       },
+    //     },
+    //     {
+    //       id: AD_FETCH_GROUPS,
+    //       name: "Fetch Groups",
+    //       iterates: true,
+    //       executionHandler: async (
+    //         executionContext: IntegrationStepExecutionContext,
+    //       ): Promise<IntegrationStepIterationState> => {
+    //         const iterationState = getIterationState(executionContext);
+    //         return fetchBatchOfGroups(
+    //           initializeContext(executionContext),
+    //           iterationState,
+    //         );
+    //       },
+    //     },
+    //   ],
+    // },
     {
       steps: [
-        {
-          id: "account",
-          name: "Synchronize Account",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return fetchAccount(initializeContext(executionContext));
-          },
-        },
-      ],
-    },
-    {
-      steps: [
-        {
-          id: AD_FETCH_USERS,
-          name: "Fetch Users",
-          iterates: true,
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationStepIterationState> => {
-            const iterationState = getIterationState(executionContext);
-            return fetchBatchOfUsers(
-              initializeContext(executionContext),
-              iterationState,
-            );
-          },
-        },
-        {
-          id: AD_FETCH_GROUPS,
-          name: "Fetch Groups",
-          iterates: true,
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationStepIterationState> => {
-            const iterationState = getIterationState(executionContext);
-            return fetchBatchOfGroups(
-              initializeContext(executionContext),
-              iterationState,
-            );
-          },
-        },
-      ],
-    },
-    {
-      steps: [
-        {
-          id: AD_FETCH_GROUP_MEMBERS,
-          name: "Fetch Group Members",
-          iterates: true,
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationStepIterationState> => {
-            const iterationState = getIterationState(executionContext);
-            return fetchBatchOfGroupMembers(
-              initializeContext(executionContext),
-              iterationState,
-            );
-          },
-        },
-        {
-          id: AD_SYNC_USERS,
-          name: "Synchronize Users",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeUsers(initializeContext(executionContext));
-          },
-        },
-        {
-          id: AD_SYNC_GROUPS,
-          name: "Synchronize Groups",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeGroups(initializeContext(executionContext));
-          },
-        },
+        // {
+        //   id: AD_FETCH_GROUP_MEMBERS,
+        //   name: "Fetch Group Members",
+        //   iterates: true,
+        //   executionHandler: async (
+        //     executionContext: IntegrationStepExecutionContext,
+        //   ): Promise<IntegrationStepIterationState> => {
+        //     const iterationState = getIterationState(executionContext);
+        //     return fetchBatchOfGroupMembers(
+        //       initializeContext(executionContext),
+        //       iterationState,
+        //     );
+        //   },
+        // },
+        // {
+        //   id: AD_SYNC_USERS,
+        //   name: "Synchronize Users",
+        //   executionHandler: async (
+        //     executionContext: IntegrationStepExecutionContext,
+        //   ): Promise<IntegrationExecutionResult> => {
+        //     return synchronizeUsers(initializeContext(executionContext));
+        //   },
+        // },
+        // {
+        //   id: AD_SYNC_GROUPS,
+        //   name: "Synchronize Groups",
+        //   executionHandler: async (
+        //     executionContext: IntegrationStepExecutionContext,
+        //   ): Promise<IntegrationExecutionResult> => {
+        //     return synchronizeGroups(initializeContext(executionContext));
+        //   },
+        // },
         {
           id: RM_SYNC_COMPUTE,
           name: "Synchronize Compute",
@@ -199,15 +186,15 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
             );
           },
         },
-        {
-          id: RM_SYNC_KEYVAULT,
-          name: "Synchronize Key Vault",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeKeyVaults(initializeContext(executionContext));
-          },
-        },
+        // {
+        //   id: RM_SYNC_KEYVAULT,
+        //   name: "Synchronize Key Vault",
+        //   executionHandler: async (
+        //     executionContext: IntegrationStepExecutionContext,
+        //   ): Promise<IntegrationExecutionResult> => {
+        //     return synchronizeKeyVaults(initializeContext(executionContext));
+        //   },
+        // },
         {
           id: RM_SYNC_STORAGE,
           name: "Synchronize Storage",
@@ -243,28 +230,18 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
         },
       ],
     },
-    {
-      steps: [
-        {
-          id: AD_SYNC_GROUP_MEMBERS,
-          name: "Synchronize Group Members",
-          executionHandler: async (
-            executionContext: IntegrationStepExecutionContext,
-          ): Promise<IntegrationExecutionResult> => {
-            return synchronizeGroupMembers(initializeContext(executionContext));
-          },
-        },
-      ],
-    },
+    // {
+    //   steps: [
+    //     {
+    //       id: AD_SYNC_GROUP_MEMBERS,
+    //       name: "Synchronize Group Members",
+    //       executionHandler: async (
+    //         executionContext: IntegrationStepExecutionContext,
+    //       ): Promise<IntegrationExecutionResult> => {
+    //         return synchronizeGroupMembers(initializeContext(executionContext));
+    //       },
+    //     },
+    //   ],
+    // },
   ],
 };
-
-function getIterationState(
-  executionContext: IntegrationStepExecutionContext,
-): IntegrationStepIterationState {
-  const iterationState = executionContext.event.iterationState;
-  if (!iterationState) {
-    throw new IntegrationError("Expected iterationState not found in event!");
-  }
-  return iterationState;
-}

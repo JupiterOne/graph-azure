@@ -6,16 +6,13 @@ import {
   systemErrorRetryPolicy,
   throttlingRetryPolicy,
 } from "@azure/ms-rest-js";
-import {
-  IntegrationError,
-  IntegrationLogger,
-} from "@jupiterone/jupiter-managed-integration-sdk";
 import { retry } from "@lifeomic/attempt";
 
 import { IntegrationConfig } from "../../types";
 import authenticate from "./authenticate";
 import { bunyanLogPolicy } from "./BunyanLogPolicy";
 import { AzureManagementClientCredentials } from "./types";
+import { IntegrationLogger, IntegrationProviderAPIError } from "@jupiterone/integration-sdk";
 
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
@@ -206,12 +203,14 @@ export function createClient<T>(
 export async function iterateAllResources<ServiceClientType, ResourceType>({
   serviceClient,
   resourceEndpoint,
+  resourceDescription,
   callback,
   logger,
   endpointRatePeriod = 5 * 60 * 1000,
 }: {
   serviceClient: ServiceClientType;
   resourceEndpoint: ListAllResourcesEndpoint | ListResourcesEndpoint;
+  resourceDescription: string,
   callback: (
     resource: ResourceType,
     serviceClient: ServiceClientType,
@@ -261,8 +260,11 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
     if (err.statusCode === 404) {
       logger.warn({ err }, "Resources not found");
     } else {
-      throw new IntegrationError("Failed to list resources", err, {
-        expose: true,
+      throw new IntegrationProviderAPIError({
+        cause: err,
+        endpoint: resourceDescription,
+        status: err.statusCode,
+        statusText: err.statusText,
       });
     }
   }

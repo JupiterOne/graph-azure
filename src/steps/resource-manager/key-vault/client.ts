@@ -5,8 +5,8 @@ import { KeyClient, KeyProperties } from "@azure/keyvault-keys";
 import {
   Client,
   iterateAllResources,
-} from "../../azure/resource-manager/client";
-import { resourceGroupName, resourceName } from "../../azure/utils";
+} from "../../../azure/resource-manager/client";
+import { resourceGroupName, resourceName } from "../../../azure/utils";
 
 export class KeyVaultClient extends Client {
   public async iterateKeyVaults(
@@ -23,6 +23,7 @@ export class KeyVaultClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.vaults,
+      resourceDescription: "keyVaults",
       callback: async (vault: Vault, client) => {
         const vaultWithProperties = await client.vaults.get(
           resourceGroupName(vault.id, true),

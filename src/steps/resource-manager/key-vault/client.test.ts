@@ -1,22 +1,31 @@
 import { Vault } from "@azure/arm-keyvault/esm/models";
-import { createTestLogger } from "@jupiterone/jupiter-managed-integration-sdk";
-import { Polly } from "@pollyjs/core";
+import { createMockIntegrationLogger } from "@jupiterone/integration-sdk/testing";
 
-import polly from "../../../test/helpers/polly";
-import config from "../../../test/integrationInstanceConfig";
+import {
+  Recording,
+  setupAzureRecording,
+} from "../../../../test/helpers/recording";
+import config from "../../../../test/integrationInstanceConfig";
 import { KeyVaultClient } from "./client";
 
-let p: Polly;
+let recording: Recording;
 
 afterEach(async () => {
-  await p.stop();
+  await recording.stop();
 });
 
 describe("iterateKeyVaults", () => {
   test("all", async () => {
-    p = polly(__dirname, "iterateKeyVaults");
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: "iterateKeyVaults",
+    });
 
-    const client = new KeyVaultClient(config, createTestLogger(), true);
+    const client = new KeyVaultClient(
+      config,
+      createMockIntegrationLogger(),
+      true,
+    );
 
     const resources: Vault[] = [];
     await client.iterateKeyVaults((e) => {
@@ -37,8 +46,12 @@ describe("iterateKeyVaults", () => {
 
 describe("iterateKeys", () => {
   test("listing forbidden does not invoke the callback", async () => {
-    p = polly(__dirname, "iterateKeysListForbidden", {
-      recordFailedRequests: true,
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: "iterateKeysListForbidden",
+      options: {
+        recordFailedRequests: true,
+      },
     });
 
     const vault = {
@@ -46,7 +59,11 @@ describe("iterateKeys", () => {
         vaultUri: "https://j1dev.vault.azure.net/",
       },
     } as Vault;
-    const client = new KeyVaultClient(config, createTestLogger(), true);
+    const client = new KeyVaultClient(
+      config,
+      createMockIntegrationLogger(),
+      true,
+    );
 
     const callback = jest.fn();
     await client.iterateKeys(vault, callback);

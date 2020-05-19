@@ -9,8 +9,11 @@ import {
 import { createGraphClient } from "./azure/graph/client";
 import {
   ACCOUNT_ENTITY_TYPE,
+  ACCOUNT_GROUP_RELATIONSHIP_TYPE,
+  ACCOUNT_USER_RELATIONSHIP_TYPE,
   GROUP_ENTITY_TYPE,
   GROUP_MEMBER_ENTITY_TYPE,
+  GROUP_MEMBER_RELATIONSHIP_TYPE,
   USER_ENTITY_TYPE,
 } from "./jupiterone";
 import {
@@ -18,22 +21,22 @@ import {
   fetchGroupMembers,
   fetchGroups,
   fetchUsers,
-} from "./steps";
+} from "./steps/active-directory";
+import {
+  ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
+  fetchKeyVaults,
+  KEY_VAULT_SERVICE_ENTITY_TYPE,
+} from "./steps/resource-manager/key-vault";
 import { IntegrationConfig, IntegrationStepContext } from "./types";
 import validateInvocation from "./validateInvocation";
 
-export const AD_FETCH_ACCOUNT = "fetch-account";
-export const AD_FETCH_GROUPS = "fetch-groups";
-export const AD_FETCH_GROUP_MEMBERS = "fetch-group-members";
-export const AD_FETCH_USERS = "fetch-users";
-export const AD_SYNC_GROUPS = "sync-groups";
-export const AD_SYNC_GROUP_MEMBERS = "sync-group-members";
-export const AD_SYNC_USERS = "sync-users";
+export const AD_FETCH_ACCOUNT = "ad-fetch-account";
+export const AD_FETCH_GROUPS = "ad-fetch-groups";
+export const AD_FETCH_GROUP_MEMBERS = "ad-fetch-group-members";
+export const AD_FETCH_USERS = "ad-fetch-users";
 
-export const CLEANUP = "cleanup";
-
+export const RM_FETCH_KEYVAULT = "rm-fetch-keyvault";
 export const RM_SYNC_COMPUTE = "sync-rm-compute";
-export const RM_SYNC_KEYVAULT = "sync-rm-keyvault";
 export const RM_SYNC_STORAGE = "sync-rm-storage";
 export const RM_SYNC_DATABASES = "sync-rm-databases";
 export const RM_SYNC_COSMOSDB = "sync-rm-cosmosdb";
@@ -66,8 +69,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
   getStepStartStates: (
     executionContext: IntegrationExecutionContext<IntegrationConfig>,
   ): IntegrationStepStartStates => {
-    const config = (executionContext.instance.config ||
-      {}) as IntegrationConfig;
+    const config = executionContext.instance.config || {};
 
     const activeDirectory = { disabled: !config.ingestActiveDirectory };
     const resourceManager = {
@@ -82,9 +84,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
         [AD_FETCH_GROUPS]: activeDirectory,
         [AD_FETCH_GROUP_MEMBERS]: activeDirectory,
         [AD_FETCH_USERS]: activeDirectory,
-        [AD_SYNC_GROUPS]: activeDirectory,
-        [AD_SYNC_GROUP_MEMBERS]: activeDirectory,
-        [AD_SYNC_USERS]: activeDirectory,
       };
     }
 
@@ -92,7 +91,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
       states = {
         ...states,
         [RM_SYNC_COMPUTE]: resourceManager,
-        [RM_SYNC_KEYVAULT]: resourceManager,
+        [RM_FETCH_KEYVAULT]: resourceManager,
         [RM_SYNC_STORAGE]: resourceManager,
         [RM_SYNC_DATABASES]: resourceManager,
         [RM_SYNC_COSMOSDB]: resourceManager,
@@ -105,29 +104,40 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
   integrationSteps: [
     {
       id: AD_FETCH_ACCOUNT,
-      name: "Synchronize Account",
+      name: "Fetch Directory Info",
       types: [ACCOUNT_ENTITY_TYPE],
       executionHandler: executionHandlerWithAzureContext(fetchAccount),
     },
     {
       id: AD_FETCH_USERS,
-      name: "Fetch Users",
-      types: [USER_ENTITY_TYPE],
+      name: "Fetch AD Users",
+      types: [USER_ENTITY_TYPE, ACCOUNT_USER_RELATIONSHIP_TYPE],
       dependsOn: [AD_FETCH_ACCOUNT],
       executionHandler: executionHandlerWithAzureContext(fetchUsers),
     },
     {
       id: AD_FETCH_GROUPS,
-      name: "Fetch Groups",
-      types: [GROUP_ENTITY_TYPE],
+      name: "Fetch AD Groups",
+      types: [GROUP_ENTITY_TYPE, ACCOUNT_GROUP_RELATIONSHIP_TYPE],
+      dependsOn: [AD_FETCH_ACCOUNT],
       executionHandler: executionHandlerWithAzureContext(fetchGroups),
     },
     {
       id: AD_FETCH_GROUP_MEMBERS,
-      name: "Fetch Group Members",
-      types: [GROUP_MEMBER_ENTITY_TYPE],
+      name: "Fetch AD Group Members",
+      types: [GROUP_MEMBER_ENTITY_TYPE, GROUP_MEMBER_RELATIONSHIP_TYPE],
       dependsOn: [AD_FETCH_GROUPS],
       executionHandler: executionHandlerWithAzureContext(fetchGroupMembers),
+    },
+    {
+      id: RM_FETCH_KEYVAULT,
+      name: "Fetch Key Vaults",
+      types: [
+        KEY_VAULT_SERVICE_ENTITY_TYPE,
+        ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
+      ],
+      dependsOn: [AD_FETCH_ACCOUNT],
+      executionHandler: executionHandlerWithAzureContext(fetchKeyVaults),
     },
   ],
 };

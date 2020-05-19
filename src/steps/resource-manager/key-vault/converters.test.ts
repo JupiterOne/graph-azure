@@ -1,4 +1,4 @@
-import { createAzureWebLinker } from "../../azure";
+import { createAzureWebLinker } from "../../../azure";
 import { createKeyVaultEntity } from "./converters";
 import { Vault } from "@azure/arm-keyvault/esm/models";
 

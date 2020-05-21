@@ -132,19 +132,6 @@ function getGroupMemberEntityClass(member: GroupMember): string {
   }
 }
 
-export function createNetworkSecurityGroupNicRelationship(
-  securityGroup: NetworkSecurityGroup,
-  nic: NetworkInterface,
-): Relationship {
-  return createIntegrationRelationship({
-    _class: "PROTECTS",
-    fromKey: securityGroup.id as string,
-    fromType: SECURITY_GROUP_ENTITY_TYPE,
-    toKey: nic.id as string,
-    toType: NETWORK_INTERFACE_ENTITY_TYPE,
-  });
-}
-
 export function createNetworkSecurityGroupSubnetRelationship(
   securityGroup: NetworkSecurityGroup,
   subnet: Subnet,
@@ -257,17 +244,4 @@ export function createVirtualMachineDiskRelationships(
   }
 
   return relationships;
-}
-
-export function createLoadBalancerBackendNicRelationship(
-  lb: Entity,
-  nicId: string,
-): Relationship {
-  return createIntegrationRelationship({
-    _class: "CONNECTS",
-    fromKey: lb._key,
-    fromType: lb._type,
-    toKey: nicId,
-    toType: NETWORK_INTERFACE_ENTITY_TYPE,
-  });
 }

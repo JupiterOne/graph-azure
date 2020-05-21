@@ -14,6 +14,9 @@ import {
   GROUP_ENTITY_TYPE,
   GROUP_MEMBER_ENTITY_TYPE,
   GROUP_MEMBER_RELATIONSHIP_TYPE,
+  LOAD_BALANCER_ENTITY_TYPE,
+  NETWORK_INTERFACE_ENTITY_TYPE,
+  PUBLIC_IP_ADDRESS_ENTITY_TYPE,
   USER_ENTITY_TYPE,
 } from "./jupiterone";
 import {
@@ -27,6 +30,11 @@ import {
   fetchKeyVaults,
   KEY_VAULT_SERVICE_ENTITY_TYPE,
 } from "./steps/resource-manager/key-vault";
+import {
+  fetchLoadBalancers,
+  fetchNetworkInterfaces,
+  fetchPublicIPAddresses,
+} from "./steps/resource-manager/network";
 import { IntegrationConfig, IntegrationStepContext } from "./types";
 import validateInvocation from "./validateInvocation";
 
@@ -36,6 +44,10 @@ export const AD_FETCH_GROUP_MEMBERS = "ad-fetch-group-members";
 export const AD_FETCH_USERS = "ad-fetch-users";
 
 export const RM_FETCH_KEYVAULT = "rm-fetch-keyvault";
+export const RM_FETCH_PUBLIC_IP_ADDRESSES = "rm-fetch-ip-addresses";
+export const RM_FETCH_NETWORK_INTERFACES = "rm-fetch-network-interfaces";
+export const RM_FETCH_LOAD_BALANCERS = "rm-fetch-load-balancers";
+
 export const RM_SYNC_COMPUTE = "sync-rm-compute";
 export const RM_SYNC_STORAGE = "sync-rm-storage";
 export const RM_SYNC_DATABASES = "sync-rm-databases";
@@ -138,6 +150,31 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
       ],
       dependsOn: [AD_FETCH_ACCOUNT],
       executionHandler: executionHandlerWithAzureContext(fetchKeyVaults),
+    },
+    {
+      id: RM_FETCH_PUBLIC_IP_ADDRESSES,
+      name: "Fetch Public IP Addresses",
+      types: [PUBLIC_IP_ADDRESS_ENTITY_TYPE],
+      dependsOn: [AD_FETCH_ACCOUNT],
+      executionHandler: executionHandlerWithAzureContext(
+        fetchPublicIPAddresses,
+      ),
+    },
+    {
+      id: RM_FETCH_NETWORK_INTERFACES,
+      name: "Fetch Network Interfaces",
+      types: [NETWORK_INTERFACE_ENTITY_TYPE],
+      dependsOn: [AD_FETCH_ACCOUNT, RM_FETCH_PUBLIC_IP_ADDRESSES],
+      executionHandler: executionHandlerWithAzureContext(
+        fetchNetworkInterfaces,
+      ),
+    },
+    {
+      id: RM_FETCH_LOAD_BALANCERS,
+      name: "Fetch Load Balancers",
+      types: [LOAD_BALANCER_ENTITY_TYPE],
+      dependsOn: [AD_FETCH_ACCOUNT],
+      executionHandler: executionHandlerWithAzureContext(fetchLoadBalancers),
     },
   ],
 };

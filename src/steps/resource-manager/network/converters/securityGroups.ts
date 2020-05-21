@@ -4,20 +4,13 @@ import {
   SecurityRule,
   NetworkSecurityGroup,
 } from "@azure/arm-network/esm/models";
-import {
-  FirewallRuleProperties,
-  IntegrationRelationship,
-  RelationshipMapping,
-  createIntegrationRelationship,
-  DataModel,
-  RelationshipDirection,
-  convertProperties,
-} from "@jupiterone/jupiter-managed-integration-sdk";
-import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../jupiterone";
 
-interface SecurityGroupRelationship extends IntegrationRelationship {
-  _mapping?: RelationshipMapping;
-}
+import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../../../../jupiterone";
+import { Relationship, FirewallRuleProperties, RelationshipDirection, createIntegrationRelationship } from "@jupiterone/integration-sdk";
+
+// interface SecurityGroupRelationship extends Relationship {
+//   _mapping?: RelationshipMapping;
+// }
 
 interface RuleTargetEntity {
   _key?: string;
@@ -47,8 +40,8 @@ interface Rule {
 export function createSecurityGroupRuleRelationships(
   sg: NetworkSecurityGroup,
   _integrationInstanceId: string,
-): SecurityGroupRelationship[] {
-  const relationships: SecurityGroupRelationship[] = [];
+): Relationship[] {
+  const relationships: Relationship[] = [];
   const rules = processSecurityGroupRules(sg, _integrationInstanceId);
   for (const rule of rules) {
     relationships.push(
@@ -62,8 +55,8 @@ export function createSecurityGroupRuleRelationships(
 export function createSecurityGroupRuleRelationshipsFromRule(
   sgId: string,
   rule: Rule,
-): SecurityGroupRelationship[] {
-  const relationships: SecurityGroupRelationship[] = [];
+): Relationship[] {
+  const relationships: Relationship[] = [];
 
   const _class = rule.access === "Allow" ? "ALLOWS" : "DENIES";
   const relationshipDirection = rule.properties.ingress

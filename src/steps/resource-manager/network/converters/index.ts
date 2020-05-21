@@ -13,11 +13,13 @@ import {
 import {
   assignTags,
   createIntegrationEntity,
+  createIntegrationRelationship,
   Entity,
+  Relationship,
 } from "@jupiterone/integration-sdk";
 
-import { AzureWebLinker } from "../../azure";
-import { resourceGroupName } from "../../azure/utils";
+import { AzureWebLinker } from "../../../../azure";
+import { resourceGroupName } from "../../../../azure/utils";
 import {
   LOAD_BALANCER_ENTITY_CLASS,
   LOAD_BALANCER_ENTITY_TYPE,
@@ -31,7 +33,9 @@ import {
   SUBNET_ENTITY_TYPE,
   VIRTUAL_NETWORK_ENTITY_CLASS,
   VIRTUAL_NETWORK_ENTITY_TYPE,
-} from "../../jupiterone";
+} from "../../../../jupiterone";
+
+export * from "./securityGroups";
 
 export function createLoadBalancerEntity(
   webLinker: AzureWebLinker,
@@ -66,6 +70,7 @@ export function createLoadBalancerEntity(
 export function createNetworkInterfaceEntity(
   webLinker: AzureWebLinker,
   data: NetworkInterface,
+  publicIps: string[] | undefined,
 ): Entity {
   const privateIps = privateIpAddresses(data.ipConfigurations);
 
@@ -81,8 +86,8 @@ export function createNetworkInterfaceEntity(
     virtualMachineId: data.virtualMachine && data.virtualMachine.id,
     type: data.type,
     region: data.location,
-    publicIp: undefined,
-    publicIpAddress: undefined,
+    publicIp: publicIps,
+    publicIpAddress: publicIps,
     privateIp: privateIps,
     privateIpAddress: privateIps,
     macAddress: data.macAddress,
@@ -152,6 +157,7 @@ export function createSubnetEntity(
 export function createNetworkSecurityGroupEntity(
   webLinker: AzureWebLinker,
   data: NetworkSecurityGroup,
+  isWideOpen: boolean
 ): Entity {
   const category: string[] = [];
   if (data.subnets && data.subnets.length > 0) {
@@ -171,6 +177,7 @@ export function createNetworkSecurityGroupEntity(
         region: data.location,
         resourceGroup: resourceGroupName(data.id),
         category,
+        isWideOpen,
       },
       tagProperties: ["environment"],
     },
@@ -203,6 +210,32 @@ export function createVirtualNetworkEntity(
       },
       tagProperties: ["environment"],
     },
+  });
+}
+
+export function createLoadBalancerBackendNicRelationship(
+  lb: Entity,
+  nicId: string,
+): Relationship {
+  return createIntegrationRelationship({
+    _class: "CONNECTS",
+    fromKey: lb._key,
+    fromType: lb._type,
+    toKey: nicId,
+    toType: NETWORK_INTERFACE_ENTITY_TYPE,
+  });
+}
+
+export function createNetworkSecurityGroupNicRelationship(
+  securityGroup: NetworkSecurityGroup,
+  nic: NetworkInterface,
+): Relationship {
+  return createIntegrationRelationship({
+    _class: "PROTECTS",
+    fromKey: securityGroup.id as string,
+    fromType: SECURITY_GROUP_ENTITY_TYPE,
+    toKey: nic.id as string,
+    toType: NETWORK_INTERFACE_ENTITY_TYPE,
   });
 }
 

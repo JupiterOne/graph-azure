@@ -1,16 +1,165 @@
+import {
+  LoadBalancer,
+  NetworkInterfaceIPConfiguration,
+  PublicIPAddress,
+} from "@azure/arm-network/esm/models";
+import { Entity, Relationship } from "@jupiterone/integration-sdk";
 
+import { createAzureWebLinker } from "../../../azure";
+import { ACCOUNT_ENTITY_TYPE } from "../../../jupiterone";
+import { IntegrationStepContext } from "../../../types";
+import { NetworkClient } from "./client";
+import {
+  createLoadBalancerBackendNicRelationship,
+  createLoadBalancerEntity,
+  createNetworkInterfaceEntity,
+  createNetworkSecurityGroupEntity,
+  createNetworkSecurityGroupNicRelationship,
+  createPublicIPAddressEntity,
+  isWideOpen,
+  createSecurityGroupRuleRelationships,
+} from "./converters";
 
-async function fetchPublicIPAddresses(
-  client: ResourceManagerClient,
-  webLinker: AzureWebLinker,
-): Promise<PublicIPAddressEntity[]> {
-  const entities: PublicIPAddressEntity[] = [];
-  await client.iteratePublicIPAddresses((e) => {
-    entities.push(createPublicIPAddressEntity(webLinker, e));
-  });
-  return entities;
+/**
+ * Depends on having loaded the public IP addresses.
+ */
+export async function fetchNetworkInterfaces(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
+
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  const publicIpAddresses = await jobState.getData<PublicIPAddress[]>(
+    "publicIPAddresses",
+  );
+
+  const findPublicIPAddresses = (
+    ipConfigs: NetworkInterfaceIPConfiguration[] | undefined,
+  ): string[] | undefined => {
+    if (ipConfigs) {
+      const addressesForNIC: string[] = [];
+      for (const ipConfig of ipConfigs) {
+        const ipAddress = publicIpAddresses.find(
+          (i) =>
+            i.id === (ipConfig.publicIPAddress && ipConfig.publicIPAddress.id),
+        );
+        if (ipAddress && ipAddress.ipAddress) {
+          addressesForNIC.push(ipAddress.ipAddress);
+        }
+      }
+      return addressesForNIC;
+    }
+  };
+
+  await client.iterateNetworkInterfaces((e) =>
+    jobState.addEntity(
+      createNetworkInterfaceEntity(
+        webLinker,
+        e,
+        findPublicIPAddresses(e.ipConfigurations),
+      ),
+    ),
+  );
 }
 
+export async function fetchPublicIPAddresses(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
+
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  const publicIpAddresses: PublicIPAddress[] = [];
+  await client.iteratePublicIPAddresses(async (e) => {
+    publicIpAddresses.push(e);
+    await jobState.addEntity(createPublicIPAddressEntity(webLinker, e));
+  });
+
+  await jobState.setData("publicIPAddresses", publicIpAddresses);
+}
+
+export async function fetchLoadBalancers(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
+
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  const createLoadBalancerBackendNicRelationships = (
+    lb: LoadBalancer,
+  ): Relationship[] | undefined => {
+    if (lb.backendAddressPools) {
+      const relationships: Relationship[] = [];
+      lb.backendAddressPools.forEach((backend) => {
+        if (backend.backendIPConfigurations) {
+          backend.backendIPConfigurations.forEach((ip) => {
+            if (ip.id) {
+              /**
+               * Need to remove the extra `/ipConfigurations/*` path from the nicId,
+               * so that they can be mapped to the `_key` on the `azure_nic` entity.
+               * For example:
+               * "id": "/subscriptions/<uuid>/resourceGroups/xtest/providers/Microsoft.Network/networkInterfaces/j1234/ipConfigurations/ipconfig1",
+               */
+              const nicId = ip.id.split("/ipConfigurations")[0];
+              relationships.push(
+                createLoadBalancerBackendNicRelationship(lb, nicId),
+              );
+            }
+          });
+        }
+      });
+      return relationships;
+    }
+  };
+
+  await client.iterateLoadBalancers(async (e) => {
+    await jobState.addEntity(createLoadBalancerEntity(webLinker, e));
+    const nicRelationships = createLoadBalancerBackendNicRelationships(e);
+    if (nicRelationships) {
+      await jobState.addRelationships(nicRelationships);
+    }
+  });
+}
+
+async function fetchNetworkSecurityGroups(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
+
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  await client.iterateNetworkSecurityGroups(async (sg) => {
+    if (sg.networkInterfaces) {
+      await jobState.addRelationships(
+        sg.networkInterfaces.map((i) =>
+          createNetworkSecurityGroupNicRelationship(sg, i),
+        ),
+      );
+    }
+
+    await jobState.addRelationships(
+      createSecurityGroupRuleRelationships(sg, executionContext.instance.id),
+    );
+
+    const rules = [
+      ...(sg.defaultSecurityRules || []),
+      ...(sg.securityRules || []),
+    ];
+
+    await jobState.addEntity(
+      createNetworkSecurityGroupEntity(webLinker, sg, isWideOpen(rules)),
+    );
+  });
+}
 
 async function synchronizeNetworkResources(
   executionContext: AzureExecutionContext,
@@ -19,40 +168,6 @@ async function synchronizeNetworkResources(
   const { graph, logger, persister, azrm } = executionContext;
 
   const results: PersisterOperationsResult[] = [];
-
-  const [oldAddresses, newAddresses] = await Promise.all([
-    graph.findEntitiesByType(PUBLIC_IP_ADDRESS_ENTITY_TYPE),
-    fetchPublicIPAddresses(azrm, webLinker),
-  ]);
-
-  const [oldNics, newNics] = (await Promise.all([
-    graph.findEntitiesByType(NETWORK_INTERFACE_ENTITY_TYPE),
-    fetchNetworkInterfaces(azrm, webLinker),
-  ])) as [EntityFromIntegration[], NetworkInterfaceEntity[]];
-
-  const [oldLoadBalancers, newLoadBalancers] = (await Promise.all([
-    graph.findEntitiesByType(LOAD_BALANCER_ENTITY_TYPE),
-    fetchLoadBalaners(azrm, webLinker),
-  ])) as [EntityFromIntegration[], EntityFromIntegration[]];
-
-  for (const nic of newNics) {
-    const nicData = getRawData(
-      nic as EntityFromIntegration,
-    ) as NetworkInterface;
-    const publicIp: string[] = [];
-    for (const c of nicData.ipConfigurations || []) {
-      const ipAddress = newAddresses.find(
-        (i) => i._key === (c.publicIPAddress && c.publicIPAddress.id),
-      ) as PublicIPAddressEntity;
-      if (ipAddress && ipAddress.publicIp) {
-        publicIp.push(ipAddress.publicIp);
-      }
-    }
-    Object.assign(nic, {
-      publicIp,
-      publicIpAddress: publicIp,
-    });
-  }
 
   const [
     oldLoadBalancerBackendNicRelationships,
@@ -73,13 +188,6 @@ async function synchronizeNetworkResources(
     IntegrationRelationship[],
     EntityFromIntegration[],
   ];
-
-  const newLoadBalancerBackendNicRelationships = [];
-  for (const lb of newLoadBalancers) {
-    newLoadBalancerBackendNicRelationships.push(
-      ...processLoadBalancerBackends(lb),
-    );
-  }
 
   const subnetSecurityGroupMap: {
     [subnetId: string]: NetworkSecurityGroup;

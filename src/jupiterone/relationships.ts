@@ -26,4 +26,4 @@ export const VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE = "azure_vm_uses_disk";
 export const SQL_SERVER_DATABASE_RELATIONSHIP_TYPE =
   "azure_sql_server_has_database";
 
-export const LB_BACKEND_NIC_RELATIONSHIP_TYPE = "azure_lb_connects_nic";
+export const LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE = "azure_lb_connects_nic";

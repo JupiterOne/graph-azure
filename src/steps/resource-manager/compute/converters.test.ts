@@ -1,8 +1,13 @@
 import { Disk, VirtualMachine } from "@azure/arm-compute/esm/models";
+import { createIntegrationRelationship } from "@jupiterone/integration-sdk";
 import { convertProperties } from "@jupiterone/jupiter-managed-integration-sdk";
 
-import { createAzureWebLinker } from "../../azure";
-import { createDiskEntity, createVirtualMachineEntity } from "./compute";
+import { createAzureWebLinker } from "../../../azure";
+import {
+  createDiskEntity,
+  createVirtualMachineDiskRelationships,
+  createVirtualMachineEntity,
+} from "./converters";
 
 const webLinker = createAzureWebLinker("something.onmicrosoft.com");
 
@@ -162,5 +167,53 @@ describe("createDiskEntity", () => {
       "tag.environment": "j1dev",
       encrypted: true,
     });
+  });
+});
+
+describe("createVirtualMachineDiskRelationships", () => {
+  test("properties transferred", () => {
+    const vm: Partial<VirtualMachine> = {
+      id:
+        "/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/j1",
+      storageProfile: {
+        imageReference: {
+          publisher: "Canonical",
+          offer: "UbuntuServer",
+          sku: "18.04-LTS",
+          version: "latest",
+          exactVersion: "18.04.202002080",
+        },
+        osDisk: {
+          osType: "Linux",
+          name: "j1_disk1_xyz",
+          caching: "ReadWrite",
+          createOption: "FromImage",
+          diskSizeGB: 30,
+          managedDisk: {
+            id:
+              "/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/disks/j1_disk1_xyz",
+            storageAccountType: "StandardSSD_LRS",
+          },
+        },
+        dataDisks: [],
+      },
+    };
+
+    expect(createVirtualMachineDiskRelationships(vm as VirtualMachine)).toEqual(
+      [
+        createIntegrationRelationship({
+          _class: "USES",
+          fromKey:
+            "/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/j1",
+          fromType: "azure_vm",
+          toKey:
+            "/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/disks/j1_disk1_xyz",
+          toType: "azure_managed_disk",
+          properties: {
+            osDisk: true,
+          },
+        }),
+      ],
+    );
   });
 });

@@ -1,17 +1,15 @@
-import { ComputeManagementClient } from "@azure/arm-compute";
-import {
-  Disk,
-  VirtualMachine,
-  VirtualMachineImage,
-} from "@azure/arm-compute/esm/models";
-import { IntegrationStepContext } from "../../../types";
+import { Entity } from "@jupiterone/integration-sdk";
 
-export const KEY_VAULT_SERVICE_ENTITY_TYPE = "azure_keyvault_service";
-export const ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE = generateRelationshipType(
-  "HAS",
-  ACCOUNT_ENTITY_TYPE,
-  KEY_VAULT_SERVICE_ENTITY_TYPE,
-);
+import { createAzureWebLinker } from "../../../azure";
+import { ACCOUNT_ENTITY_TYPE } from "../../../jupiterone";
+import { IntegrationStepContext } from "../../../types";
+import { ComputeClient } from "./client";
+import {
+  createDiskEntity,
+  createImageEntity,
+  createVirtualMachineDiskRelationships,
+  createVirtualMachineEntity,
+} from "./converters";
 
 export async function fetchVirtualMachines(
   executionContext: IntegrationStepContext,
@@ -20,17 +18,42 @@ export async function fetchVirtualMachines(
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
 
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
-  const client = new KeyVaultClient(instance.config, logger);
+  const client = new ComputeClient(instance.config, logger);
 
-  await client.iterateKeyVaults(async (vault) => {
-    const vaultEntity = createKeyVaultEntity(webLinker, vault);
-    await jobState.addEntity(vaultEntity);
-    await jobState.addRelationship(
-      createIntegrationRelationship({
-        _class: "HAS",
-        from: accountEntity,
-        to: vaultEntity,
-      }),
-    );
+  await client.iterateVirtualMachines(async (vm) => {
+    await jobState.addEntity(createVirtualMachineEntity(webLinker, vm));
+    if (vm.storageProfile) {
+      await jobState.addRelationships(
+        createVirtualMachineDiskRelationships(vm),
+      );
+    }
   });
+}
+
+export async function fetchVirtualMachineImages(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new ComputeClient(instance.config, logger);
+
+  await client.iterateVirtualMachineImages(async (vm) =>
+    jobState.addEntity(createImageEntity(webLinker, vm)),
+  );
+}
+
+export async function fetchVirtualMachineDisks(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new ComputeClient(instance.config, logger);
+
+  await client.iterateVirtualMachineDisks(async (data) =>
+    jobState.addEntity(createDiskEntity(webLinker, data)),
+  );
 }

@@ -4,6 +4,7 @@ import {
   NetworkInterface,
   NetworkSecurityGroup,
   PublicIPAddress,
+  VirtualNetwork,
 } from "@azure/arm-network/esm/models";
 
 import {
@@ -22,7 +23,7 @@ export class NetworkClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.networkInterfaces,
-      resourceDescription: "networkInterfaces",
+      resourceDescription: "network.networkInterfaces",
       callback,
     });
   }
@@ -37,7 +38,7 @@ export class NetworkClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.publicIPAddresses,
-      resourceDescription: "publicIPAddresses",
+      resourceDescription: "network.publicIPAddresses",
       callback,
     });
   }
@@ -53,7 +54,7 @@ export class NetworkClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.loadBalancers,
-      resourceDescription: "loadBalancers",
+      resourceDescription: "network.loadBalancers",
       callback,
     });
   }
@@ -68,7 +69,22 @@ export class NetworkClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.networkSecurityGroups,
-      resourceDescription: "networkSecurityGroups",
+      resourceDescription: "network.networkSecurityGroups",
+      callback,
+    });
+  }
+
+  public async iterateVirtualNetworks(
+    callback: (vnet: VirtualNetwork) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: serviceClient.virtualNetworks,
+      resourceDescription: "network.virtualNetworks",
       callback,
     });
   }

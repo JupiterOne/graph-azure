@@ -7,7 +7,7 @@ import {
 } from "@azure/arm-network/esm/models";
 import { Relationship } from "@jupiterone/integration-sdk";
 
-import { createAzureWebLinker } from "../../../azure";
+import { createAzureWebLinker } from "../../../../azure";
 import {
   createNetworkInterfaceEntity,
   createNetworkSecurityGroupEntity,
@@ -15,7 +15,8 @@ import {
   createPublicIPAddressEntity,
   createSubnetEntity,
   createVirtualNetworkEntity,
-} from "./converters";
+  createVirtualNetworkSubnetRelationship,
+} from "./index";
 
 const webLinker = createAzureWebLinker("something.onmicrosoft.com");
 
@@ -76,7 +77,9 @@ describe("createNetworkInterfaceEntity", () => {
       type: "Microsoft.Network/networkInterfaces",
     };
 
-    expect(createNetworkInterfaceEntity(webLinker, data, ["192.168.0.1"])).toEqual({
+    expect(
+      createNetworkInterfaceEntity(webLinker, data, ["192.168.0.1"]),
+    ).toEqual({
       _key:
         "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev",
       _type: "azure_nic",
@@ -348,25 +351,36 @@ describe("createNetworkSecurityGroupEntity", () => {
       "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
     ),
     category: ["network", "host"],
+    isWideOpen: false,
     "tag.environment": "j1dev",
   };
 
   test("properties transferred", () => {
-    expect(createNetworkSecurityGroupEntity(webLinker, data)).toEqual(entity);
+    expect(createNetworkSecurityGroupEntity(webLinker, data, false)).toEqual(
+      entity,
+    );
   });
 
   test("category when only networkInterfaces", () => {
     expect(
-      createNetworkSecurityGroupEntity(webLinker, { ...data, subnets: [] }),
+      createNetworkSecurityGroupEntity(
+        webLinker,
+        { ...data, subnets: [] },
+        false,
+      ),
     ).toMatchObject({ category: ["host"] });
   });
 
   test("category when only subnets", () => {
     expect(
-      createNetworkSecurityGroupEntity(webLinker, {
-        ...data,
-        networkInterfaces: [],
-      }),
+      createNetworkSecurityGroupEntity(
+        webLinker,
+        {
+          ...data,
+          networkInterfaces: [],
+        },
+        false,
+      ),
     ).toMatchObject({ category: ["network"] });
   });
 });
@@ -539,6 +553,66 @@ describe("createNetworkSecurityGroupNicRelationship", () => {
     };
 
     expect(createNetworkSecurityGroupNicRelationship(sg, nic)).toEqual(
+      relationship,
+    );
+  });
+});
+
+describe("createVirtualNetworkSubnetRelationship", () => {
+  test("properties transferred", () => {
+    const subnet: Subnet = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+    };
+
+    const vnet: VirtualNetwork = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+    };
+
+    const relationship: Relationship = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev|contains|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      _type: "azure_vnet_contains_subnet",
+      _class: "CONTAINS",
+      _fromEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev",
+      _toEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      displayName: "CONTAINS",
+    };
+
+    expect(createVirtualNetworkSubnetRelationship(vnet, subnet)).toEqual(
+      relationship,
+    );
+  });
+});
+
+describe("createSecurityGroupSubnetRelationship", () => {
+  test("properties transferred", () => {
+    const sg: NetworkSecurityGroup = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+    };
+
+    const subnet: Subnet = {
+      id:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+    };
+
+    const relationship: Relationship = {
+      _key:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|protects|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      _type: "azure_security_group_protects_subnet",
+      _class: "PROTECTS",
+      _fromEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev",
+      _toEntityKey:
+        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev",
+      displayName: "PROTECTS",
+    };
+
+    expect(createNetworkSecurityGroupSubnetRelationship(sg, subnet)).toEqual(
       relationship,
     );
   });

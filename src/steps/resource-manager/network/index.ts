@@ -1,6 +1,7 @@
 import {
   LoadBalancer,
   NetworkInterfaceIPConfiguration,
+  NetworkSecurityGroup,
   PublicIPAddress,
 } from "@azure/arm-network/esm/models";
 import { Entity, Relationship } from "@jupiterone/integration-sdk";
@@ -15,14 +16,19 @@ import {
   createNetworkInterfaceEntity,
   createNetworkSecurityGroupEntity,
   createNetworkSecurityGroupNicRelationship,
+  createNetworkSecurityGroupSubnetRelationship,
   createPublicIPAddressEntity,
-  isWideOpen,
   createSecurityGroupRuleRelationships,
+  createSubnetEntity,
+  createVirtualNetworkEntity,
+  createVirtualNetworkSubnetRelationship,
+  isWideOpen,
 } from "./converters";
 
-/**
- * Depends on having loaded the public IP addresses.
- */
+type SubnetSecurityGroupMap = {
+  [subnetId: string]: NetworkSecurityGroup;
+};
+
 export async function fetchNetworkInterfaces(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -80,6 +86,9 @@ export async function fetchPublicIPAddresses(
     await jobState.addEntity(createPublicIPAddressEntity(webLinker, e));
   });
 
+  // A simple way to make the set available to dependent steps. Assumes dataset
+  // is relatively small. Ideally, we could easily find the stored entity by any
+  // property.
   await jobState.setData("publicIPAddresses", publicIpAddresses);
 }
 
@@ -128,7 +137,7 @@ export async function fetchLoadBalancers(
   });
 }
 
-async function fetchNetworkSecurityGroups(
+export async function fetchNetworkSecurityGroups(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
@@ -137,6 +146,8 @@ async function fetchNetworkSecurityGroups(
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
+  const subnetSecurityGroupMap: SubnetSecurityGroupMap = {};
+
   await client.iterateNetworkSecurityGroups(async (sg) => {
     if (sg.networkInterfaces) {
       await jobState.addRelationships(
@@ -144,6 +155,12 @@ async function fetchNetworkSecurityGroups(
           createNetworkSecurityGroupNicRelationship(sg, i),
         ),
       );
+    }
+
+    if (sg.subnets) {
+      for (const s of sg.subnets) {
+        subnetSecurityGroupMap[s.id as string] = sg;
+      }
     }
 
     await jobState.addRelationships(
@@ -159,164 +176,43 @@ async function fetchNetworkSecurityGroups(
       createNetworkSecurityGroupEntity(webLinker, sg, isWideOpen(rules)),
     );
   });
+
+  await jobState.setData("subnetSecurityGroupMap", subnetSecurityGroupMap);
 }
 
-async function synchronizeNetworkResources(
-  executionContext: AzureExecutionContext,
-  webLinker: AzureWebLinker,
-): Promise<NetworkSynchronizationResults> {
-  const { graph, logger, persister, azrm } = executionContext;
+export async function fetchVirtualNetworks(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
 
-  const results: PersisterOperationsResult[] = [];
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
-  const [
-    oldLoadBalancerBackendNicRelationships,
-    oldSecurityGroups,
-    oldSecurityGroupNicRelationships,
-    oldSecurityGroupRuleRelationships,
-    newSecurityGroups,
-  ] = (await Promise.all([
-    graph.findRelationshipsByType(LB_BACKEND_NIC_RELATIONSHIP_TYPE),
-    graph.findEntitiesByType(SECURITY_GROUP_ENTITY_TYPE),
-    graph.findRelationshipsByType(SECURITY_GROUP_NIC_RELATIONSHIP_TYPE),
-    graph.findRelationshipsByType(SECURITY_GROUP_RULE_RELATIONSHIP_TYPE),
-    fetchNetworkSecurityGroups(azrm, webLinker),
-  ])) as [
-    IntegrationRelationship[],
-    EntityFromIntegration[],
-    IntegrationRelationship[],
-    IntegrationRelationship[],
-    EntityFromIntegration[],
-  ];
+  const subnetSecurityGroupMap = await jobState.getData<SubnetSecurityGroupMap>(
+    "subnetSecurityGroupMap",
+  );
 
-  const subnetSecurityGroupMap: {
-    [subnetId: string]: NetworkSecurityGroup;
-  } = {};
-  const newSecurityGroupNicRelationships: IntegrationRelationship[] = [];
-  const newSecurityGroupRuleRelationships: IntegrationRelationship[] = [];
-
-  for (const sge of newSecurityGroups) {
-    const sg = getRawData(sge) as NetworkSecurityGroup;
-    if (sg.subnets) {
-      for (const s of sg.subnets) {
-        subnetSecurityGroupMap[s.id as string] = sg;
-      }
-    }
-    if (sg.networkInterfaces) {
-      for (const i of sg.networkInterfaces) {
-        newSecurityGroupNicRelationships.push(
-          createNetworkSecurityGroupNicRelationship(sg, i),
+  await client.iterateVirtualNetworks(async (vnet) => {
+    if (vnet.subnets) {
+      const subnetEntities: Entity[] = [];
+      const subnetRelationships: Relationship[] = [];
+      for (const subnet of vnet.subnets) {
+        const subnetEntity = createSubnetEntity(webLinker, vnet, subnet);
+        subnetEntities.push(subnetEntity);
+        subnetRelationships.push(
+          createVirtualNetworkSubnetRelationship(vnet, subnet),
         );
-      }
-    }
-
-    const rules = [
-      ...(sg.defaultSecurityRules || []),
-      ...(sg.securityRules || []),
-    ];
-
-    Object.assign(sge, {
-      wideOpen: isWideOpen(rules),
-    });
-
-    newSecurityGroupRuleRelationships.push(
-      ...createSecurityGroupRuleRelationships(sg, executionContext.instance.id),
-    );
-  }
-
-  results.push(
-    await persister.publishPersisterOperations([
-      [
-        ...persister.processEntities(oldSecurityGroups, newSecurityGroups),
-        ...persister.processEntities(oldAddresses, newAddresses),
-        ...persister.processEntities(oldNics, newNics),
-        ...persister.processEntities(oldLoadBalancers, newLoadBalancers),
-      ],
-      [
-        ...persister.processRelationships(
-          oldLoadBalancerBackendNicRelationships,
-          newLoadBalancerBackendNicRelationships,
-        ),
-        ...persister.processRelationships(
-          oldSecurityGroupNicRelationships,
-          newSecurityGroupNicRelationships,
-        ),
-        ...persister.processRelationships(
-          oldSecurityGroupRuleRelationships,
-          newSecurityGroupRuleRelationships,
-        ),
-      ],
-    ]),
-  );
-
-  const newVirtualNetworks = await fetchVirtualNetworks(
-    logger,
-    azrm,
-    webLinker,
-  );
-  if (newVirtualNetworks) {
-    const newSubnets: EntityFromIntegration[] = [];
-    const newVnetSubnetRelationships: IntegrationRelationship[] = [];
-    const newSecurityGroupSubnetRelationships: IntegrationRelationship[] = [];
-
-    for (const vnetEntity of newVirtualNetworks) {
-      const vnet = getRawData(vnetEntity) as VirtualNetwork;
-      if (vnet.subnets) {
-        for (const s of vnet.subnets) {
-          const subnetEntity = createSubnetEntity(webLinker, vnet, s);
-          newSubnets.push(subnetEntity);
-          newVnetSubnetRelationships.push(
-            createVirtualNetworkSubnetRelationship(vnet, s),
+        const sg = subnetSecurityGroupMap[subnet.id as string];
+        if (sg) {
+          subnetRelationships.push(
+            createNetworkSecurityGroupSubnetRelationship(sg, subnet),
           );
-          const sg = subnetSecurityGroupMap[s.id as string];
-          if (sg) {
-            newSecurityGroupSubnetRelationships.push(
-              createNetworkSecurityGroupSubnetRelationship(sg, s),
-            );
-          }
         }
       }
+      await jobState.addEntities(subnetEntities);
+      await jobState.addRelationships(subnetRelationships);
     }
-
-    const [
-      oldSubnets,
-      oldVirtualNetworks,
-      oldVnetSubnetRelationships,
-      oldSecurityGroupSubnetRelationships,
-    ] = (await Promise.all([
-      graph.findEntitiesByType(SUBNET_ENTITY_TYPE),
-      graph.findEntitiesByType(VIRTUAL_NETWORK_ENTITY_TYPE),
-      graph.findRelationshipsByType(VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE),
-      graph.findRelationshipsByType(SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE),
-    ])) as [
-      EntityFromIntegration[],
-      EntityFromIntegration[],
-      IntegrationRelationship[],
-      IntegrationRelationship[],
-    ];
-
-    results.push(
-      await persister.publishPersisterOperations([
-        [
-          ...persister.processEntities(oldVirtualNetworks, newVirtualNetworks),
-          ...persister.processEntities(oldSubnets, newSubnets),
-        ],
-        [
-          ...persister.processRelationships(
-            oldVnetSubnetRelationships,
-            newVnetSubnetRelationships,
-          ),
-          ...persister.processRelationships(
-            oldSecurityGroupSubnetRelationships,
-            newSecurityGroupSubnetRelationships,
-          ),
-        ],
-      ]),
-    );
-  }
-
-  return {
-    nics: newNics.map((e) => getRawData(e)),
-    operationsResult: summarizePersisterOperationsResults(...results),
-  };
+    await jobState.addEntity(createVirtualNetworkEntity(webLinker, vnet));
+  });
 }

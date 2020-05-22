@@ -1,13 +1,13 @@
 import { Disk, Image, VirtualMachine } from "@azure/arm-compute/esm/models";
-import { Entity } from "@jupiterone/integration-sdk";
 import {
   assignTags,
   convertProperties,
+  Entity,
   getTime,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+} from "@jupiterone/integration-sdk";
 
-import { AzureWebLinker } from "../../azure";
-import { resourceGroupName } from "../../azure/utils";
+import { AzureWebLinker } from "../../../azure";
+import { resourceGroupName } from "../../../azure/utils";
 import {
   DISK_ENTITY_CLASS,
   DISK_ENTITY_TYPE,
@@ -15,7 +15,7 @@ import {
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
   VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-} from "../../jupiterone";
+} from "../../../jupiterone";
 
 export function createVirtualMachineEntity(
   webLinker: AzureWebLinker,

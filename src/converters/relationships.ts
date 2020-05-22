@@ -158,19 +158,6 @@ export function createSubnetVirtualMachineRelationship(
   });
 }
 
-export function createVirtualNetworkSubnetRelationship(
-  vnet: VirtualNetwork,
-  subnet: Subnet,
-): Relationship {
-  return createIntegrationRelationship({
-    _class: "CONTAINS",
-    fromKey: vnet.id as string,
-    fromType: VIRTUAL_NETWORK_ENTITY_TYPE,
-    toKey: subnet.id as string,
-    toType: SUBNET_ENTITY_TYPE,
-  });
-}
-
 export function createVirtualMachinePublicIPAddressRelationship(
   vm: VirtualMachine,
   ipAddress: PublicIPAddress,

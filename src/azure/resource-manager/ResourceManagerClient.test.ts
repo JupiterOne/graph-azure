@@ -1,11 +1,4 @@
-import { VirtualMachine, Disk } from "@azure/arm-compute/esm/models";
 import { MySQLManagementModels } from "@azure/arm-mysql";
-import {
-  NetworkInterface,
-  NetworkSecurityGroup,
-  PublicIPAddress,
-  VirtualNetwork,
-} from "@azure/arm-network/esm/models";
 import {
   Database as SQLDatabase,
   Server as SQLServer,
@@ -47,81 +40,6 @@ test("client accessToken fetched once and used across resources", async () => {
     client.iterateVirtualMachines(() => undefined),
   ).resolves.toBeUndefined();
   expect(requests).toEqual(5);
-});
-
-describe("iterateNetworkInterfaces", () => {
-  test("all", async () => {
-    p = polly(__dirname, "iterateNetworkInterfaces");
-
-    const client = new ResourceManagerClient(config, createTestLogger());
-
-    const vms: NetworkInterface[] = [];
-    await client.iterateNetworkInterfaces((e) => {
-      vms.push(e);
-    });
-
-    expect(vms).toEqual([
-      expect.objectContaining({
-        id: expect.any(String),
-        name: "j1dev",
-        tags: expect.objectContaining({
-          environment: "j1dev",
-        }),
-      }),
-    ]);
-  });
-});
-
-describe("iterateNetworkSecurityGroups", () => {
-  test("all", async () => {
-    p = polly(__dirname, "iterateNetworkSecurityGroups");
-
-    const client = new ResourceManagerClient(config, createTestLogger());
-
-    const securityGroups: NetworkSecurityGroup[] = [];
-    await client.iterateNetworkSecurityGroups((e) => {
-      securityGroups.push(e);
-    });
-
-    expect(securityGroups).toEqual([
-      expect.objectContaining({
-        id: expect.any(String),
-        name: "j1dev",
-        tags: expect.objectContaining({
-          environment: "j1dev",
-        }),
-        // ensure subnet references come back
-        subnets: expect.arrayContaining([
-          expect.objectContaining({
-            id: expect.any(String),
-          }),
-        ]),
-      }),
-    ]);
-  });
-});
-
-describe("iteratePublicIPAddresses", () => {
-  test("all", async () => {
-    p = polly(__dirname, "iteratePublicIPAddresses");
-
-    const client = new ResourceManagerClient(config, createTestLogger());
-
-    const addresses: PublicIPAddress[] = [];
-    await client.iteratePublicIPAddresses((e) => {
-      addresses.push(e);
-    });
-
-    expect(addresses).toEqual([
-      expect.objectContaining({
-        id: expect.any(String),
-        name: "j1dev",
-        tags: expect.objectContaining({
-          environment: "j1dev",
-        }),
-      }),
-    ]);
-  });
 });
 
 describe("iterateMySqlServers", () => {
@@ -324,74 +242,5 @@ describe("iterateSqlDatabases", () => {
     );
 
     expect(iteratee).not.toHaveBeenCalled();
-  });
-});
-
-describe("iterateVirtualMachines", () => {
-  test("all", async () => {
-    p = polly(__dirname, "iterateVirtualMachines");
-
-    const client = new ResourceManagerClient(config, createTestLogger());
-
-    const vms: VirtualMachine[] = [];
-    await client.iterateVirtualMachines((e) => {
-      vms.push(e);
-    });
-
-    expect(vms).toEqual([
-      expect.objectContaining({
-        id: expect.any(String),
-        name: "j1dev",
-        tags: expect.objectContaining({
-          environment: "j1dev",
-        }),
-      }),
-    ]);
-  });
-});
-
-describe("iterateVirtualNetworks", () => {
-  test("all", async () => {
-    p = polly(__dirname, "iterateVirtualNetworks");
-
-    const client = new ResourceManagerClient(config, createTestLogger());
-
-    const vms: VirtualNetwork[] = [];
-    await client.iterateVirtualNetworks((e) => {
-      vms.push(e);
-    });
-
-    expect(vms).toEqual([
-      expect.objectContaining({
-        id: expect.any(String),
-        name: "j1dev",
-        tags: expect.objectContaining({
-          environment: "j1dev",
-        }),
-      }),
-    ]);
-  });
-});
-
-describe("iterateVirtualMachineDisks", () => {
-  test("all", async () => {
-    p = polly(__dirname, "iterateVirtualMachineDisks");
-
-    const client = new ResourceManagerClient(config, createTestLogger());
-
-    const resources: Disk[] = [];
-    await client.iterateVirtualMachineDisks((e) => {
-      resources.push(e);
-    });
-
-    expect(resources).toEqual([
-      expect.objectContaining({
-        id: expect.any(String),
-        name: "j1devOsDisk",
-        tags: expect.objectContaining({
-          environment: "j1dev",
-        }),
-      }),
-    ]);
   });
 });

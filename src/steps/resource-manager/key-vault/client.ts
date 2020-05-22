@@ -23,7 +23,7 @@ export class KeyVaultClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.vaults,
-      resourceDescription: "keyVaults",
+      resourceDescription: "keyvault.vaults",
       callback: async (vault: Vault, client) => {
         const vaultWithProperties = await client.vaults.get(
           resourceGroupName(vault.id, true),

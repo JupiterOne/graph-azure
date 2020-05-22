@@ -157,7 +157,7 @@ export function createSubnetEntity(
 export function createNetworkSecurityGroupEntity(
   webLinker: AzureWebLinker,
   data: NetworkSecurityGroup,
-  isWideOpen: boolean
+  isWideOpen: boolean,
 ): Entity {
   const category: string[] = [];
   if (data.subnets && data.subnets.length > 0) {
@@ -214,13 +214,13 @@ export function createVirtualNetworkEntity(
 }
 
 export function createLoadBalancerBackendNicRelationship(
-  lb: Entity,
+  lb: LoadBalancer,
   nicId: string,
 ): Relationship {
   return createIntegrationRelationship({
     _class: "CONNECTS",
-    fromKey: lb._key,
-    fromType: lb._type,
+    fromKey: lb.id as string,
+    fromType: LOAD_BALANCER_ENTITY_TYPE,
     toKey: nicId,
     toType: NETWORK_INTERFACE_ENTITY_TYPE,
   });
@@ -236,6 +236,32 @@ export function createNetworkSecurityGroupNicRelationship(
     fromType: SECURITY_GROUP_ENTITY_TYPE,
     toKey: nic.id as string,
     toType: NETWORK_INTERFACE_ENTITY_TYPE,
+  });
+}
+
+export function createVirtualNetworkSubnetRelationship(
+  vnet: VirtualNetwork,
+  subnet: Subnet,
+): Relationship {
+  return createIntegrationRelationship({
+    _class: "CONTAINS",
+    fromKey: vnet.id as string,
+    fromType: VIRTUAL_NETWORK_ENTITY_TYPE,
+    toKey: subnet.id as string,
+    toType: SUBNET_ENTITY_TYPE,
+  });
+}
+
+export function createNetworkSecurityGroupSubnetRelationship(
+  securityGroup: NetworkSecurityGroup,
+  subnet: Subnet,
+): Relationship {
+  return createIntegrationRelationship({
+    _class: "PROTECTS",
+    fromKey: securityGroup.id as string,
+    fromType: SECURITY_GROUP_ENTITY_TYPE,
+    toKey: subnet.id as string,
+    toType: SUBNET_ENTITY_TYPE,
   });
 }
 

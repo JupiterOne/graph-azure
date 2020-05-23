@@ -6,7 +6,13 @@ import {
 } from "@azure/arm-network/esm/models";
 
 import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../../../../jupiterone";
-import { Relationship, FirewallRuleProperties, RelationshipDirection, createIntegrationRelationship } from "@jupiterone/integration-sdk";
+import {
+  Relationship,
+  FirewallRuleProperties,
+  RelationshipDirection,
+  createIntegrationRelationship,
+  convertProperties,
+} from "@jupiterone/integration-sdk";
 
 // interface SecurityGroupRelationship extends Relationship {
 //   _mapping?: RelationshipMapping;
@@ -113,10 +119,10 @@ export function processSecurityGroupRule(
 ): Rule[] {
   const rules: Rule[] = [];
 
-  const targetPortRanges =
-    rule.direction === "Inbound"
-      ? [rule.sourcePortRange, ...(rule.sourcePortRanges || [])]
-      : [rule.destinationPortRange, ...(rule.destinationPortRanges || [])];
+  const targetPortRanges = [
+    rule.destinationPortRange,
+    ...(rule.destinationPortRanges || []),
+  ];
 
   for (const portRange of targetPortRanges) {
     if (!portRange) {
@@ -258,7 +264,7 @@ export function findAnyAnyRule(
   access: "Deny" | "Allow",
 ): SecurityRule | undefined {
   return rules.find(
-    r =>
+    (r) =>
       r.destinationAddressPrefix === "*" &&
       r.destinationPortRange === "*" &&
       r.sourcePortRange === "*" &&

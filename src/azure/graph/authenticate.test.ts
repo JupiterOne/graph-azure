@@ -1,25 +1,28 @@
-import { IntegrationError } from "@jupiterone/jupiter-managed-integration-sdk";
-import { Polly } from "@pollyjs/core";
+import { IntegrationProviderAPIError } from "@jupiterone/integration-sdk";
+import { Recording, setupRecording } from "@jupiterone/integration-sdk/testing";
 
-import polly from "../../../test/helpers/polly";
 import config from "../../../test/integrationInstanceConfig";
 import authenticate from "./authenticate";
 
-let p: Polly;
+let recording: Recording;
 
 afterEach(async () => {
-  await p.stop();
+  await recording.stop();
 });
 
 test("authenticate", async () => {
-  p = polly(__dirname, "authenticate");
+  recording = setupRecording({ directory: __dirname, name: "authenticate" });
   const token = await authenticate(config);
   expect(token).toBeDefined();
 });
 
 test("authenticate invalid credentials", async () => {
-  p = polly(__dirname, "authenticate invalid", { recordFailedRequests: true });
+  recording = setupRecording({
+    directory: __dirname,
+    name: "authenticate invalid",
+    options: { recordFailedRequests: true },
+  });
   await expect(
     authenticate({ ...config, clientSecret: "somejunkfortest" }),
-  ).rejects.toThrow(IntegrationError);
+  ).rejects.toThrow(IntegrationProviderAPIError);
 });

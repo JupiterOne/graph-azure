@@ -2,8 +2,10 @@ import { Disk, Image, VirtualMachine } from "@azure/arm-compute/esm/models";
 import {
   assignTags,
   convertProperties,
+  createIntegrationRelationship,
   Entity,
   getTime,
+  Relationship,
 } from "@jupiterone/integration-sdk";
 
 import { AzureWebLinker } from "../../../azure";
@@ -77,6 +79,8 @@ export function createDiskEntity(
     createdOn: getTime(data.timeCreated),
     webLink: webLinker.portalResourceUrl(data.id),
     encrypted: !!data.encryption?.type,
+    state: data.diskState?.toLowerCase(),
+    attached: data.diskState === "Attached",
   };
 
   assignTags(entity, data.tags);
@@ -103,4 +107,46 @@ export function createImageEntity(
   assignTags(entity, data.tags);
 
   return entity;
+}
+
+export function createVirtualMachineDiskRelationships(
+  vm: VirtualMachine,
+): Relationship[] {
+  const relationships: Relationship[] = [];
+
+  if (vm.storageProfile) {
+    if (vm.storageProfile.osDisk && vm.storageProfile.osDisk.managedDisk) {
+      relationships.push(
+        createIntegrationRelationship({
+          _class: "USES",
+          fromKey: vm.id as string,
+          fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
+          toKey: vm.storageProfile.osDisk.managedDisk.id as string,
+          toType: DISK_ENTITY_TYPE,
+          properties: {
+            osDisk: true,
+          },
+        }),
+      );
+    }
+
+    for (const disk of vm.storageProfile.dataDisks || []) {
+      if (disk.managedDisk) {
+        relationships.push(
+          createIntegrationRelationship({
+            _class: "USES",
+            fromKey: vm.id as string,
+            fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
+            toKey: disk.managedDisk.id as string,
+            toType: DISK_ENTITY_TYPE,
+            properties: {
+              dataDisk: true,
+            },
+          }),
+        );
+      }
+    }
+  }
+
+  return relationships;
 }

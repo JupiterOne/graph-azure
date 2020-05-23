@@ -3,12 +3,9 @@ import {
   IntegrationStepExecutionContext,
 } from "@jupiterone/integration-sdk";
 
-import { GraphClient } from "./azure/graph/client";
-
-export interface IntegrationStepContext
-  extends IntegrationStepExecutionContext<IntegrationConfig> {
-  graphClient: GraphClient;
-}
+export type IntegrationStepContext = IntegrationStepExecutionContext<
+  IntegrationConfig
+>;
 
 /**
  * Properties provided by the `IntegrationInstance.config`. Values identifying

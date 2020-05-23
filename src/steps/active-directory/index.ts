@@ -8,14 +8,16 @@ import {
   createGroupEntity,
   createGroupMemberRelationship,
   createUserEntity,
-} from "../../converters";
+} from "./converters";
 import { ACCOUNT_ENTITY_TYPE, GROUP_ENTITY_TYPE } from "../../jupiterone";
 import { IntegrationStepContext } from "../../types";
+import { DirectoryGraphClient } from "./client";
 
 export async function fetchAccount(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { instance, graphClient, jobState } = executionContext;
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
 
   let accountEntity: Entity;
   try {
@@ -33,7 +35,9 @@ export async function fetchAccount(
 export async function fetchUsers(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { graphClient, jobState } = executionContext;
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
+
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
   await graphClient.iterateUsers(async (user) => {
     const userEntity = createUserEntity(user);
@@ -47,7 +51,9 @@ export async function fetchUsers(
 export async function fetchGroups(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { graphClient, jobState } = executionContext;
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
+
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
   await graphClient.iterateGroups(async (group) => {
     const groupEntity = createGroupEntity(group);
@@ -61,7 +67,9 @@ export async function fetchGroups(
 export async function fetchGroupMembers(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { graphClient, jobState } = executionContext;
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
+
   await jobState.iterateEntities(
     { _type: GROUP_ENTITY_TYPE },
     async (groupEntity) => {

@@ -1,12 +1,9 @@
 import {
   IntegrationExecutionContext,
   IntegrationInvocationConfig,
-  IntegrationStepExecutionContext,
   IntegrationStepStartStates,
-  StepExecutionHandlerFunction,
 } from "@jupiterone/integration-sdk";
 
-import { createGraphClient } from "./azure/graph/client";
 import {
   ACCOUNT_ENTITY_TYPE,
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
@@ -31,6 +28,7 @@ import {
   VIRTUAL_NETWORK_ENTITY_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
+  DISK_ENTITY_TYPE,
 } from "./jupiterone";
 import {
   fetchAccount,
@@ -38,7 +36,11 @@ import {
   fetchGroups,
   fetchUsers,
 } from "./steps/active-directory";
-import { fetchVirtualMachines, fetchVirtualMachineImages } from "./steps/resource-manager/compute";
+import {
+  fetchVirtualMachines,
+  fetchVirtualMachineImages,
+  fetchVirtualMachineDisks,
+} from "./steps/resource-manager/compute";
 import { buildComputeNetworkRelationships } from "./steps/resource-manager/interservice";
 import {
   ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
@@ -52,7 +54,7 @@ import {
   fetchPublicIPAddresses,
   fetchVirtualNetworks,
 } from "./steps/resource-manager/network";
-import { IntegrationConfig, IntegrationStepContext } from "./types";
+import { IntegrationConfig } from "./types";
 import validateInvocation from "./validateInvocation";
 
 export const AD_ACCOUNT = "ad-account";
@@ -68,7 +70,10 @@ export const RM_NETWORK_SECURITY_GROUPS = "rm-network-security-groups";
 export const RM_NETWORK_VIRTUAL_NETWORKS = "rm-network-virtual-networks";
 export const RM_NETWORK_LOAD_BALANCERS = "rm-network-load-balancers";
 
-export const RM_COMPUTE_VIRTUAL_MACHINE_IMAGES = "rm-compute-virtual-machine-images"
+export const RM_COMPUTE_VIRTUAL_MACHINE_IMAGES =
+  "rm-compute-virtual-machine-images";
+export const RM_COMPUTE_VIRTUAL_MACHINE_DISKS =
+  "rm-compute-virutal-machine-disks";
 export const RM_COMPUTE_VIRTUAL_MACHINES = "rm-compute-virtual-machines";
 
 export const RM_COMPUTE_NETWORK_RELATIONSHIPS =
@@ -142,28 +147,28 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
       id: AD_ACCOUNT,
       name: "Active Directory Info",
       types: [ACCOUNT_ENTITY_TYPE],
-      executionHandler: executionHandlerWithAzureContext(fetchAccount),
+      executionHandler: fetchAccount,
     },
     {
       id: AD_USERS,
       name: "Active Directory Users",
       types: [USER_ENTITY_TYPE, ACCOUNT_USER_RELATIONSHIP_TYPE],
       dependsOn: [AD_ACCOUNT],
-      executionHandler: executionHandlerWithAzureContext(fetchUsers),
+      executionHandler: fetchUsers,
     },
     {
       id: AD_GROUPS,
       name: "Active Directory Groups",
       types: [GROUP_ENTITY_TYPE, ACCOUNT_GROUP_RELATIONSHIP_TYPE],
       dependsOn: [AD_ACCOUNT],
-      executionHandler: executionHandlerWithAzureContext(fetchGroups),
+      executionHandler: fetchGroups,
     },
     {
       id: AD_GROUP_MEMBERS,
       name: "Active Directory Group Members",
       types: [GROUP_MEMBER_ENTITY_TYPE, GROUP_MEMBER_RELATIONSHIP_TYPE],
       dependsOn: [AD_GROUPS],
-      executionHandler: executionHandlerWithAzureContext(fetchGroupMembers),
+      executionHandler: fetchGroupMembers,
     },
     {
       id: RM_KEYVAULT_VAULTS,
@@ -173,25 +178,21 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
         ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
       ],
       dependsOn: [AD_ACCOUNT],
-      executionHandler: executionHandlerWithAzureContext(fetchKeyVaults),
+      executionHandler: fetchKeyVaults,
     },
     {
       id: RM_NETWORK_PUBLIC_IP_ADDRESSES,
       name: "Public IP Addresses",
       types: [PUBLIC_IP_ADDRESS_ENTITY_TYPE],
       dependsOn: [AD_ACCOUNT],
-      executionHandler: executionHandlerWithAzureContext(
-        fetchPublicIPAddresses,
-      ),
+      executionHandler: fetchPublicIPAddresses,
     },
     {
       id: RM_NETWORK_INTERFACES,
       name: "Network Interfaces",
       types: [NETWORK_INTERFACE_ENTITY_TYPE],
       dependsOn: [AD_ACCOUNT, RM_NETWORK_PUBLIC_IP_ADDRESSES],
-      executionHandler: executionHandlerWithAzureContext(
-        fetchNetworkInterfaces,
-      ),
+      executionHandler: fetchNetworkInterfaces,
     },
     {
       id: RM_NETWORK_VIRTUAL_NETWORKS,
@@ -203,7 +204,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
         SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
       ],
       dependsOn: [AD_ACCOUNT],
-      executionHandler: executionHandlerWithAzureContext(fetchVirtualNetworks),
+      executionHandler: fetchVirtualNetworks,
     },
     {
       id: RM_NETWORK_SECURITY_GROUPS,
@@ -214,9 +215,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
         SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
       ],
       dependsOn: [AD_ACCOUNT, RM_NETWORK_INTERFACES],
-      executionHandler: executionHandlerWithAzureContext(
-        fetchNetworkSecurityGroups,
-      ),
+      executionHandler: fetchNetworkSecurityGroups,
     },
     {
       id: RM_NETWORK_LOAD_BALANCERS,
@@ -226,16 +225,21 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
         LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE,
       ],
       dependsOn: [AD_ACCOUNT],
-      executionHandler: executionHandlerWithAzureContext(fetchLoadBalancers),
+      executionHandler: fetchLoadBalancers,
     },
     {
       id: RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
       name: "Virtual Machine Disk Images",
-      types: [
-        VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-      ],
+      types: [VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE],
       dependsOn: [AD_ACCOUNT],
-      executionHandler: executionHandlerWithAzureContext(fetchVirtualMachineImages),
+      executionHandler: fetchVirtualMachineImages,
+    },
+    {
+      id: RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
+      name: "Virtual Machine Disks",
+      types: [DISK_ENTITY_TYPE],
+      dependsOn: [AD_ACCOUNT],
+      executionHandler: fetchVirtualMachineDisks,
     },
     {
       id: RM_COMPUTE_VIRTUAL_MACHINES,
@@ -245,7 +249,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
         LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE,
       ],
       dependsOn: [AD_ACCOUNT, RM_COMPUTE_VIRTUAL_MACHINE_IMAGES],
-      executionHandler: executionHandlerWithAzureContext(fetchVirtualMachines),
+      executionHandler: fetchVirtualMachines,
     },
     {
       id: RM_COMPUTE_NETWORK_RELATIONSHIPS,
@@ -260,36 +264,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
         RM_NETWORK_INTERFACES,
         RM_NETWORK_PUBLIC_IP_ADDRESSES,
       ],
-      executionHandler: executionHandlerWithAzureContext(
-        buildComputeNetworkRelationships,
-      ),
+      executionHandler: buildComputeNetworkRelationships,
     },
   ],
 };
-
-type IntegrationHandlerFunc = (
-  executionContext: IntegrationStepContext,
-) => Promise<void>;
-
-// TODO Create a single instance for use across steps, depends on https://github.com/JupiterOne/integration-sdk/issues/163
-function executionHandlerWithAzureContext(
-  handlerFunc: IntegrationHandlerFunc,
-): StepExecutionHandlerFunction<IntegrationConfig> {
-  return async (
-    executionContext: IntegrationStepExecutionContext<IntegrationConfig>,
-  ): Promise<void> => {
-    await handlerFunc(createIntegrationStepContext(executionContext));
-  };
-}
-
-function createIntegrationStepContext(
-  executionContext: IntegrationStepExecutionContext<IntegrationConfig>,
-): IntegrationStepContext {
-  const { logger, instance } = executionContext;
-  const graphClient = createGraphClient(logger, instance.config);
-
-  return {
-    ...executionContext,
-    graphClient,
-  };
-}

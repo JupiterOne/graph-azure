@@ -12,7 +12,10 @@ import { IntegrationConfig } from "../../types";
 import authenticate from "./authenticate";
 import { bunyanLogPolicy } from "./BunyanLogPolicy";
 import { AzureManagementClientCredentials } from "./types";
-import { IntegrationLogger, IntegrationProviderAPIError } from "@jupiterone/integration-sdk";
+import {
+  IntegrationLogger,
+  IntegrationProviderAPIError,
+} from "@jupiterone/integration-sdk";
 
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
@@ -46,8 +49,14 @@ export abstract class Client {
     readonly noRetryPolicy = false,
   ) {}
 
-  // TODO cache and document
+  /**
+   * Provides `ClientSecretCredentials` for data access clients. Resource
+   * Manager clients are authenticated using `ServiceClientCredentials`.
+   *
+   * @see authenticate
+   */
   getClientSecretCredentials(): ClientSecretCredential {
+    // TODO cache this?
     return new ClientSecretCredential(
       this.config.directoryId,
       this.config.clientId,
@@ -210,7 +219,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
 }: {
   serviceClient: ServiceClientType;
   resourceEndpoint: ListAllResourcesEndpoint | ListResourcesEndpoint;
-  resourceDescription: string,
+  resourceDescription: string;
   callback: (
     resource: ResourceType,
     serviceClient: ServiceClientType,

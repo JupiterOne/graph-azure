@@ -10,7 +10,7 @@ import {
   RelationshipDirection,
   DataModel,
 } from "@jupiterone/jupiter-managed-integration-sdk";
-import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../jupiterone";
+import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../../../../jupiterone";
 import {
   SecurityRule,
   NetworkSecurityGroup,
@@ -120,17 +120,15 @@ describe("build mapped relationships from security group rules", () => {
         ...convertProperties(inboundRuleFromSingleIpToSubnet, {
           stringifyArray: true,
         }),
-        _key: `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${
-          inboundRuleFromSingleIpToSubnet.id
-        }:*:Host:4.3.2.1:4.3.2.1`,
+        _key: `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${inboundRuleFromSingleIpToSubnet.id}:8080:Host:4.3.2.1:4.3.2.1`,
         _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
         ingress: true,
         inbound: true,
         egress: false,
         outbound: false,
-        portRange: "*",
-        fromPort: 0,
-        toPort: 65535,
+        portRange: "8080",
+        fromPort: 8080,
+        toPort: 8080,
         protocol: "*",
         ipProtocol: "*",
         priority: 100,
@@ -153,9 +151,7 @@ describe("build mapped relationships from security group rules", () => {
         ...convertProperties(outboundRuleFromHighPortsToMultiplePortRanges, {
           stringifyArray: true,
         }),
-        _key: `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${
-          outboundRuleFromHighPortsToMultiplePortRanges.id
-        }:8080-8082:internet`,
+        _key: `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${outboundRuleFromHighPortsToMultiplePortRanges.id}:8080-8082:internet`,
         _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
         ingress: false,
         inbound: false,
@@ -183,9 +179,7 @@ describe("build mapped relationships from security group rules", () => {
         ...convertProperties(outboundRuleFromHighPortsToMultiplePortRanges, {
           stringifyArray: true,
         }),
-        _key: `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${
-          outboundRuleFromHighPortsToMultiplePortRanges.id
-        }:7070-7071:internet`,
+        _key: `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${outboundRuleFromHighPortsToMultiplePortRanges.id}:7070-7071:internet`,
         _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
         ingress: false,
         inbound: false,
@@ -220,9 +214,7 @@ describe("build mapped relationships from security group rules", () => {
         ...convertProperties(inboundRuleFromAllVMsInVNET, {
           stringifyArray: true,
         }),
-        _key: `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${
-          inboundRuleFromAllVMsInVNET.id
-        }:*:Service:azure_virtual_network:VirtualNetwork`,
+        _key: `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${inboundRuleFromAllVMsInVNET.id}:*:Service:azure_virtual_network:VirtualNetwork`,
         _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
         ingress: true,
         inbound: true,

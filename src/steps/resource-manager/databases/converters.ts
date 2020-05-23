@@ -1,35 +1,38 @@
 import {
-  createIntegrationEntity,
-  EntityFromIntegration,
-  convertProperties,
-} from "@jupiterone/jupiter-managed-integration-sdk";
-
+  Database as MariaDBDatabase,
+  Server as MariaDBServer,
+} from "@azure/arm-mariadb/esm/models";
 import {
-  Server as MySQLServer,
   Database as MySQLDatabase,
+  Server as MySQLServer,
 } from "@azure/arm-mysql/esm/models";
-
 import {
-  Server as SQLServer,
+  Database as PostgreSQLDatabase,
+  Server as PostgreSQLServer,
+} from "@azure/arm-postgresql/esm/models";
+import {
   Database as SQLDatabase,
+  Server as SQLServer,
 } from "@azure/arm-sql/esm/models";
+import {
+  convertProperties,
+  createIntegrationEntity,
+  Entity,
+} from "@jupiterone/integration-sdk";
 
-import { AzureWebLinker } from "../../azure";
-import { resourceGroupName } from "../../azure/utils";
-
+import { AzureWebLinker } from "../../../azure";
+import { resourceGroupName } from "../../../azure/utils";
 import {
   AZURE_DATABASE_ENTITY_CLASS,
   AZURE_DB_SERVER_ENTITY_CLASS,
-} from "../../jupiterone";
-
-import { REDACTED_VALUE } from "../../utils/constants";
+} from "../../../jupiterone";
+import { REDACTED_VALUE } from "../../../utils/constants";
 
 export function createDatabaseEntity(
   webLinker: AzureWebLinker,
-  data: MySQLDatabase | SQLDatabase,
+  data: MySQLDatabase | SQLDatabase | MariaDBDatabase | PostgreSQLDatabase,
   _type: string,
-  encrypted: boolean | null,
-): EntityFromIntegration {
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -41,7 +44,7 @@ export function createDatabaseEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
         classification: null,
-        encrypted,
+        encrypted: null,
       },
     },
   });
@@ -49,16 +52,18 @@ export function createDatabaseEntity(
 
 export function createDbServerEntity(
   webLinker: AzureWebLinker,
-  data: MySQLServer | SQLServer,
+  data: MySQLServer | SQLServer | MariaDBServer | PostgreSQLServer,
   _type: string,
-): EntityFromIntegration {
+): Entity {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const anyServer = data as any;
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
         ...convertProperties(data),
-        ...convertProperties((data as any).sku, { prefix: "sku" }),
-        ...convertProperties((data as any).storageProfile),
+        ...convertProperties(anyServer.sku, { prefix: "sku" }),
+        ...convertProperties(anyServer.storageProfile),
         _type,
         _class: AZURE_DB_SERVER_ENTITY_CLASS,
         displayName:

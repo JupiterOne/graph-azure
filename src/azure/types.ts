@@ -1,22 +1,3 @@
-import * as MicrosoftGraph from "@microsoft/microsoft-graph-types";
-
-export enum MemberType {
-  USER = "#microsoft.graph.user",
-  GROUP = "#microsoft.graph.group",
-}
-
-/**
- * A type tracking the selected data answered by a request for group members.
- * The properties are those requested. Additional properties should be added
- * here and in `iterateGroupMembers` to communicate what we're requesting.
- */
-export interface GroupMember extends MicrosoftGraph.DirectoryObject {
-  "@odata.type": string;
-  displayName?: string;
-  mail?: string | null;
-  jobTitle?: string | null;
-}
-
 /**
  * Builds web links to Azure things.
  *

@@ -1,18 +1,24 @@
 import snakeCase from "lodash.snakecase";
 
 import {
-  SecurityRule,
   NetworkSecurityGroup,
+  SecurityRule,
 } from "@azure/arm-network/esm/models";
+import {
+  convertProperties,
+  createIntegrationRelationship,
+  Entity,
+  FirewallRuleProperties,
+  INTERNET,
+  isHost,
+  isInternet,
+  isIpv4,
+  isPublicIp,
+  Relationship,
+  RelationshipDirection,
+} from "@jupiterone/integration-sdk";
 
 import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../../../../jupiterone";
-import {
-  Relationship,
-  FirewallRuleProperties,
-  RelationshipDirection,
-  createIntegrationRelationship,
-  convertProperties,
-} from "@jupiterone/integration-sdk";
 
 // interface SecurityGroupRelationship extends Relationship {
 //   _mapping?: RelationshipMapping;
@@ -73,7 +79,7 @@ export function createSecurityGroupRuleRelationshipsFromRule(
     const targetFilterKeys = target.internet
       ? [["_key"]]
       : [Object.keys(target)];
-    const targetEntity = target.internet ? DataModel.INTERNET : (target as any);
+    const targetEntity = target.internet ? INTERNET : (target as Entity);
 
     relationships.push(
       createIntegrationRelationship({
@@ -157,14 +163,14 @@ export function processSecurityGroupRule(
       if (targetPrefix === "Internet" || targetPrefix === "*") {
         // Target is the Internet
         targets.push({ internet: true });
-      } else if (targetPrefix && DataModel.ipUtil.isIpv4(targetPrefix)) {
+      } else if (targetPrefix && isIpv4(targetPrefix)) {
         // Target is an IPv4 address
-        if (DataModel.ipUtil.isInternet(targetPrefix)) {
+        if (isInternet(targetPrefix)) {
           // Target is 0.0.0.0/0 (Internet)
           targets.push({ internet: true });
-        } else if (DataModel.ipUtil.isHost(targetPrefix)) {
+        } else if (isHost(targetPrefix)) {
           // Target is a host IP
-          const publicIpAddress = DataModel.ipUtil.isPublicIp(targetPrefix)
+          const publicIpAddress = isPublicIp(targetPrefix)
             ? targetPrefix.replace("/32", "")
             : undefined;
           targets.push({
@@ -172,7 +178,7 @@ export function processSecurityGroupRule(
             ipAddress: targetPrefix.replace("/32", ""),
             publicIpAddress,
           });
-        } else if (DataModel.ipUtil.isPublicIp(targetPrefix)) {
+        } else if (isPublicIp(targetPrefix)) {
           // Target is a public network IP
           targets.push({
             _class: "Network",

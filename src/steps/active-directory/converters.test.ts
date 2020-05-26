@@ -16,7 +16,13 @@ import {
   createUserEntity,
   createAccountEntityWithOrganization,
 } from "./converters";
-import { IntegrationInstance } from "@jupiterone/integration-sdk";
+import { IntegrationInstance, Entity } from "@jupiterone/integration-sdk";
+import {
+  GROUP_ENTITY_CLASS,
+  GROUP_ENTITY_TYPE,
+  USER_ENTITY_TYPE,
+  USER_ENTITY_CLASS,
+} from "../../jupiterone";
 
 describe("createAccountEntityWithOrganization", () => {
   test("properties transferred", () => {
@@ -153,6 +159,9 @@ describe("createAccountGroupRelationship", () => {
   test("properties transferred", () => {
     expect(
       createAccountGroupRelationship(account, {
+        _key: "89fac263-2430-48fd-9278-dacfdfc89792",
+        _class: GROUP_ENTITY_CLASS,
+        _type: GROUP_ENTITY_TYPE,
         id: "89fac263-2430-48fd-9278-dacfdfc89792",
         deletedDateTime: undefined,
         classification: undefined,
@@ -188,6 +197,9 @@ describe("createAccountUserRelationship", () => {
   test("properties transferred", () => {
     expect(
       createAccountUserRelationship(account, {
+        _key: "abf00eda-02d6-4053-a077-eef036e1a4c8",
+        _class: USER_ENTITY_CLASS,
+        _type: USER_ENTITY_TYPE,
         businessPhones: ["+1 2223334444"],
         displayName: "Andrew Kulakov",
         givenName: "Andrew",
@@ -214,8 +226,11 @@ describe("createAccountUserRelationship", () => {
 });
 
 describe("createGroupMemberRelationship", () => {
-  const group: Group = {
+  const groupEntity: Entity = {
     id: "89fac263-2430-48fd-9278-dacfdfc89792",
+    _key: "89fac263-2430-48fd-9278-dacfdfc89792",
+    _type: GROUP_ENTITY_TYPE,
+    _class: GROUP_ENTITY_CLASS,
   };
 
   test("properties transferred for users", () => {
@@ -256,7 +271,9 @@ describe("createGroupMemberRelationship", () => {
       displayName: "HAS",
     };
 
-    expect(createGroupMemberRelationship(group, member)).toEqual(relationship);
+    expect(createGroupMemberRelationship(groupEntity, member)).toEqual(
+      relationship,
+    );
   });
 
   test("properties transferred for groups", () => {
@@ -297,7 +314,9 @@ describe("createGroupMemberRelationship", () => {
       displayName: "HAS",
     };
 
-    expect(createGroupMemberRelationship(group, member)).toEqual(relationship);
+    expect(createGroupMemberRelationship(groupEntity, member)).toEqual(
+      relationship,
+    );
   });
 
   test("properties transferred for other", () => {
@@ -337,6 +356,8 @@ describe("createGroupMemberRelationship", () => {
       displayName: "HAS",
     };
 
-    expect(createGroupMemberRelationship(group, member)).toEqual(relationship);
+    expect(createGroupMemberRelationship(groupEntity, member)).toEqual(
+      relationship,
+    );
   });
 });

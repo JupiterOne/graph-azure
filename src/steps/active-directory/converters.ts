@@ -172,6 +172,7 @@ export function createGroupMemberRelationship(
       targetEntity: {
         _type: memberEntityType,
         _class: memberEntityClass,
+        _key: memberKey,
         displayName: member.displayName,
         jobTitle: member.jobTitle,
         email: member.mail,

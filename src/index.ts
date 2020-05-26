@@ -1,7 +1,7 @@
 import {
   IntegrationExecutionContext,
   IntegrationInvocationConfig,
-  IntegrationStepStartStates,
+  StepStartStates,
 } from "@jupiterone/integration-sdk";
 
 import {
@@ -106,7 +106,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
 
   getStepStartStates: (
     executionContext: IntegrationExecutionContext<IntegrationConfig>,
-  ): IntegrationStepStartStates => {
+  ): StepStartStates => {
     const config = executionContext.instance.config || {};
 
     const activeDirectory = { disabled: !config.ingestActiveDirectory };
@@ -114,7 +114,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
       disabled: typeof config.subscriptionId !== "string",
     };
 
-    let states: IntegrationStepStartStates = {};
+    let states: StepStartStates = {};
 
     if (activeDirectory.disabled) {
       states = {

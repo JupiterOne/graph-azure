@@ -12,6 +12,7 @@ import {
   createNetworkInterfaceEntity,
   createNetworkSecurityGroupEntity,
   createNetworkSecurityGroupNicRelationship,
+  createNetworkSecurityGroupSubnetRelationship,
   createPublicIPAddressEntity,
   createSubnetEntity,
   createVirtualNetworkEntity,

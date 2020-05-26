@@ -1,20 +1,21 @@
 import {
-  getPortsFromRange,
-  createSecurityGroupRuleRelationshipsFromRule,
-  processSecurityGroupRule,
-  createSecurityGroupRuleRelationships,
-} from "./securityGroups";
+  NetworkSecurityGroup,
+  SecurityRule,
+} from "@azure/arm-network/esm/models";
 import {
   convertProperties,
   createIntegrationRelationship,
+  INTERNET,
   RelationshipDirection,
-  DataModel,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+} from "@jupiterone/integration-sdk";
+
 import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../../../../jupiterone";
 import {
-  SecurityRule,
-  NetworkSecurityGroup,
-} from "@azure/arm-network/esm/models";
+  createSecurityGroupRuleRelationships,
+  createSecurityGroupRuleRelationshipsFromRule,
+  getPortsFromRange,
+  processSecurityGroupRule,
+} from "./securityGroups";
 
 describe("build mapped relationships from security group rules", () => {
   const _integrationInstanceId = "1234567890abcd";
@@ -144,7 +145,7 @@ describe("build mapped relationships from security group rules", () => {
         relationshipDirection: RelationshipDirection.FORWARD,
         sourceEntityKey: securityGroup.id as string,
         targetFilterKeys: [["_key"]],
-        targetEntity: DataModel.INTERNET,
+        targetEntity: INTERNET,
         skipTargetCreation: false,
       },
       properties: {
@@ -172,7 +173,7 @@ describe("build mapped relationships from security group rules", () => {
         relationshipDirection: RelationshipDirection.FORWARD,
         sourceEntityKey: securityGroup.id as string,
         targetFilterKeys: [["_key"]],
-        targetEntity: DataModel.INTERNET,
+        targetEntity: INTERNET,
         skipTargetCreation: false,
       },
       properties: {

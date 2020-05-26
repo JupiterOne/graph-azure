@@ -8,6 +8,7 @@ import {
   ACCOUNT_ENTITY_TYPE,
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
   ACCOUNT_USER_RELATIONSHIP_TYPE,
+  DISK_ENTITY_TYPE,
   GROUP_ENTITY_TYPE,
   GROUP_MEMBER_ENTITY_TYPE,
   GROUP_MEMBER_RELATIONSHIP_TYPE,
@@ -23,12 +24,11 @@ import {
   SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
   USER_ENTITY_TYPE,
   VIRTUAL_MACHINE_ENTITY_TYPE,
+  VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
   VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
   VIRTUAL_NETWORK_ENTITY_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
-  VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-  DISK_ENTITY_TYPE,
 } from "./jupiterone";
 import {
   fetchAccount,
@@ -37,9 +37,9 @@ import {
   fetchUsers,
 } from "./steps/active-directory";
 import {
-  fetchVirtualMachines,
-  fetchVirtualMachineImages,
   fetchVirtualMachineDisks,
+  fetchVirtualMachineImages,
+  fetchVirtualMachines,
 } from "./steps/resource-manager/compute";
 import { buildComputeNetworkRelationships } from "./steps/resource-manager/interservice";
 import {
@@ -114,34 +114,22 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
       disabled: typeof config.subscriptionId !== "string",
     };
 
-    let states: StepStartStates = {};
-
-    if (activeDirectory.disabled) {
-      states = {
-        ...states,
-        [AD_GROUPS]: activeDirectory,
-        [AD_GROUP_MEMBERS]: activeDirectory,
-        [AD_USERS]: activeDirectory,
-      };
-    }
-
-    if (resourceManager.disabled) {
-      states = {
-        ...states,
-        [RM_KEYVAULT_VAULTS]: resourceManager,
-        [RM_NETWORK_VIRTUAL_NETWORKS]: resourceManager,
-        [RM_NETWORK_SECURITY_GROUPS]: resourceManager,
-        [RM_NETWORK_INTERFACES]: resourceManager,
-        [RM_NETWORK_PUBLIC_IP_ADDRESSES]: resourceManager,
-        [RM_NETWORK_LOAD_BALANCERS]: resourceManager,
-        [RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: resourceManager,
-        [RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: resourceManager,
-        [RM_COMPUTE_VIRTUAL_MACHINES]: resourceManager,
-        [RM_COMPUTE_NETWORK_RELATIONSHIPS]: resourceManager,
-      };
-    }
-
-    return states;
+    return {
+      [AD_ACCOUNT]: { disabled: false },
+      [AD_GROUPS]: activeDirectory,
+      [AD_GROUP_MEMBERS]: activeDirectory,
+      [AD_USERS]: activeDirectory,
+      [RM_KEYVAULT_VAULTS]: resourceManager,
+      [RM_NETWORK_VIRTUAL_NETWORKS]: resourceManager,
+      [RM_NETWORK_SECURITY_GROUPS]: resourceManager,
+      [RM_NETWORK_INTERFACES]: resourceManager,
+      [RM_NETWORK_PUBLIC_IP_ADDRESSES]: resourceManager,
+      [RM_NETWORK_LOAD_BALANCERS]: resourceManager,
+      [RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: resourceManager,
+      [RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: resourceManager,
+      [RM_COMPUTE_VIRTUAL_MACHINES]: resourceManager,
+      [RM_COMPUTE_NETWORK_RELATIONSHIPS]: resourceManager,
+    };
   },
 
   integrationSteps: [

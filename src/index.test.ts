@@ -17,6 +17,7 @@ import {
   RM_NETWORK_PUBLIC_IP_ADDRESSES,
   RM_NETWORK_SECURITY_GROUPS,
   RM_NETWORK_VIRTUAL_NETWORKS,
+  AD_ACCOUNT,
 } from "./index";
 import { IntegrationConfig } from "./types";
 
@@ -25,6 +26,7 @@ describe("getStepStartStates", () => {
     const context = createMockExecutionContext<IntegrationConfig>();
     const states = invocationConfig.getStepStartStates!(context);
     expect(states).toEqual({
+      [AD_ACCOUNT]: { disabled: false },
       [AD_GROUPS]: { disabled: true },
       [AD_GROUP_MEMBERS]: { disabled: true },
       [AD_USERS]: { disabled: true },
@@ -55,6 +57,10 @@ describe("getStepStartStates", () => {
     });
     const states = invocationConfig.getStepStartStates!(context);
     expect(states).toEqual({
+      [AD_ACCOUNT]: { disabled: false },
+      [AD_GROUPS]: { disabled: false },
+      [AD_GROUP_MEMBERS]: { disabled: false },
+      [AD_USERS]: { disabled: false },
       [RM_KEYVAULT_VAULTS]: { disabled: true },
       [RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
@@ -74,9 +80,20 @@ describe("getStepStartStates", () => {
     });
     const states = invocationConfig.getStepStartStates!(context);
     expect(states).toEqual({
+      [AD_ACCOUNT]: { disabled: false },
       [AD_GROUPS]: { disabled: true },
       [AD_GROUP_MEMBERS]: { disabled: true },
       [AD_USERS]: { disabled: true },
+      [RM_KEYVAULT_VAULTS]: { disabled: false },
+      [RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: false },
+      [RM_NETWORK_SECURITY_GROUPS]: { disabled: false },
+      [RM_NETWORK_INTERFACES]: { disabled: false },
+      [RM_NETWORK_LOAD_BALANCERS]: { disabled: false },
+      [RM_NETWORK_PUBLIC_IP_ADDRESSES]: { disabled: false },
+      [RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: false },
+      [RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: false },
+      [RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: false },
+      [RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: false },
     });
   });
 });

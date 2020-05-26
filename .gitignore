@@ -1,4 +1,5 @@
 node_modules/
+.j1-integration/
 build/
 coverage/
 dist/

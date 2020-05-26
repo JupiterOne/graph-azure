@@ -3,7 +3,6 @@
 import { createMockExecutionContext } from "@jupiterone/integration-sdk/testing";
 
 import {
-  AD_ACCOUNT,
   AD_GROUP_MEMBERS,
   AD_GROUPS,
   AD_USERS,
@@ -26,7 +25,6 @@ describe("getStepStartStates", () => {
     const context = createMockExecutionContext<IntegrationConfig>();
     const states = invocationConfig.getStepStartStates!(context);
     expect(states).toEqual({
-      [AD_ACCOUNT]: { disabled: false },
       [AD_GROUPS]: { disabled: true },
       [AD_GROUP_MEMBERS]: { disabled: true },
       [AD_USERS]: { disabled: true },

@@ -134,6 +134,8 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
         [RM_NETWORK_INTERFACES]: resourceManager,
         [RM_NETWORK_PUBLIC_IP_ADDRESSES]: resourceManager,
         [RM_NETWORK_LOAD_BALANCERS]: resourceManager,
+        [RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: resourceManager,
+        [RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: resourceManager,
         [RM_COMPUTE_VIRTUAL_MACHINES]: resourceManager,
         [RM_COMPUTE_NETWORK_RELATIONSHIPS]: resourceManager,
       };

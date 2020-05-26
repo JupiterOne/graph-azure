@@ -33,15 +33,15 @@ test("client accessToken fetched once and used across resources", async () => {
   await expect(
     client.getAuthenticatedServiceClient(NetworkManagementClient),
   ).resolves.toBeInstanceOf(NetworkManagementClient);
-  expect(requests).toEqual(1);
+  expect(requests).toEqual(2);
 
   await expect(
     client.getAuthenticatedServiceClient(NetworkManagementClient),
   ).resolves.toBeInstanceOf(NetworkManagementClient);
-  expect(requests).toEqual(1);
+  expect(requests).toEqual(2);
 
   await expect(
     client.getAuthenticatedServiceClient(SqlManagementClient),
   ).resolves.toBeInstanceOf(SqlManagementClient);
-  expect(requests).toEqual(1);
+  expect(requests).toEqual(2);
 });

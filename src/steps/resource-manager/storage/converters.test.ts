@@ -4,7 +4,7 @@ import {
   StorageAccount,
 } from "@azure/arm-storage/esm/models";
 
-import { createAzureWebLinker } from "../../azure";
+import { createAzureWebLinker } from "../../../azure";
 import {
   createStorageContainerEntity,
   createStorageFileShareEntity,

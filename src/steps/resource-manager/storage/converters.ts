@@ -4,13 +4,9 @@ import {
   FileShare,
   EncryptionServices,
 } from "@azure/arm-storage/esm/models";
-import {
-  createIntegrationEntity,
-  EntityFromIntegration,
-} from "@jupiterone/jupiter-managed-integration-sdk";
 
-import { AzureWebLinker } from "../../azure";
-import { resourceGroupName } from "../../azure/utils";
+import { AzureWebLinker } from "../../../azure";
+import { resourceGroupName } from "../../../azure/utils";
 import {
   STORAGE_BLOB_SERVICE_ENTITY_CLASS,
   STORAGE_BLOB_SERVICE_ENTITY_TYPE,
@@ -24,7 +20,8 @@ import {
   STORAGE_CONTAINER_ENTITY_CLASS,
   STORAGE_FILE_SHARE_ENTITY_TYPE,
   STORAGE_FILE_SHARE_ENTITY_CLASS,
-} from "../../jupiterone";
+} from "../../../jupiterone";
+import { Entity, createIntegrationEntity } from "@jupiterone/integration-sdk";
 
 type StorageAccountServiceConfig = {
   type: string;
@@ -70,10 +67,9 @@ export function createStorageServiceEntity(
   webLinker: AzureWebLinker,
   data: StorageAccount,
   service: keyof EncryptionServices,
-): EntityFromIntegration {
+): Entity {
   const config = storageAccountServiceConfig[service];
-  const endpoint = data.primaryEndpoints![service];
-
+  const endpoint = data.primaryEndpoints?.[service];
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -87,7 +83,7 @@ export function createStorageServiceEntity(
         resourceGroup: resourceGroupName(data.id),
         kind: data.kind,
         sku: data.sku?.name,
-        endpoints: [endpoint],
+        endpoints: endpoint ? [endpoint] : undefined,
         enableHttpsTrafficOnly: data.enableHttpsTrafficOnly,
         category: ["infrastructure"],
         encrypted: !!data.encryption?.services?.[service]?.enabled,
@@ -110,7 +106,7 @@ export function createStorageContainerEntity(
   webLinker: AzureWebLinker,
   account: StorageAccount,
   data: BlobContainer,
-): EntityFromIntegration {
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -141,7 +137,7 @@ export function createStorageFileShareEntity(
   webLinker: AzureWebLinker,
   account: StorageAccount,
   data: FileShare,
-): EntityFromIntegration {
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,

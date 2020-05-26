@@ -3,7 +3,7 @@ import {
   SqlDatabaseGetResults,
 } from "@azure/arm-cosmosdb/esm/models";
 
-import { createAzureWebLinker } from "../../azure";
+import { createAzureWebLinker } from "../../../azure";
 import { createAccountEntity, createSQLDatabaseEntity } from "./converters";
 
 const webLinker = createAzureWebLinker("something.onmicrosoft.com");

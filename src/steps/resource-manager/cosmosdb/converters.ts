@@ -2,18 +2,15 @@ import {
   DatabaseAccountGetResults,
   SqlDatabaseGetResults,
 } from "@azure/arm-cosmosdb/esm/models";
-import {
-  createIntegrationEntity,
-  EntityFromIntegration,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+import { createIntegrationEntity, Entity } from "@jupiterone/integration-sdk";
 
-import { AzureWebLinker } from "../../azure";
-import { normalizeLocation, resourceGroupName } from "../../azure/utils";
+import { AzureWebLinker } from "../../../azure";
+import { normalizeLocation, resourceGroupName } from "../../../azure/utils";
 
 export function createAccountEntity(
   webLinker: AzureWebLinker,
   data: DatabaseAccountGetResults,
-): EntityFromIntegration {
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -31,7 +28,7 @@ export function createAccountEntity(
         category: ["infrastructure"],
         endpoints: data.readLocations
           ?.map((e) => e.documentEndpoint)
-          .filter((e) => !!e),
+          .filter((e) => !!e) as string[],
       },
       tagProperties: ["environment"],
     },
@@ -42,7 +39,7 @@ export function createSQLDatabaseEntity(
   webLinker: AzureWebLinker,
   dbAccount: DatabaseAccountGetResults,
   data: SqlDatabaseGetResults,
-): EntityFromIntegration {
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: { ...data, tags: dbAccount.tags },

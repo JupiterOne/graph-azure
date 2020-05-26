@@ -1,26 +1,31 @@
-import { createTestLogger } from "@jupiterone/jupiter-managed-integration-sdk";
-import { Polly } from "@pollyjs/core";
-
-import polly from "../../../test/helpers/polly";
-import config from "../../../test/integrationInstanceConfig";
-import { StorageClient } from "./client";
 import {
   BlobContainer,
-  StorageAccount,
   FileShare,
+  StorageAccount,
 } from "@azure/arm-storage/esm/models";
+import {
+  createMockIntegrationLogger,
+  Recording,
+  setupRecording,
+} from "@jupiterone/integration-sdk/testing";
 
-let p: Polly;
+import config from "../../../../test/integrationInstanceConfig";
+import { StorageClient } from "./client";
+
+let recording: Recording;
 
 afterEach(async () => {
-  await p.stop();
+  await recording.stop();
 });
 
 describe("iterateStorageAccounts", () => {
   test("all", async () => {
-    p = polly(__dirname, "iterateStorageAccounts");
+    recording = setupRecording({
+      directory: __dirname,
+      name: "iterateStorageAccounts",
+    });
 
-    const client = new StorageClient(config, createTestLogger());
+    const client = new StorageClient(config, createMockIntegrationLogger());
 
     const sa: StorageAccount[] = [];
     await client.iterateStorageAccounts((e) => {
@@ -51,9 +56,12 @@ describe("iterateStorageAccounts", () => {
 
 describe("iterateStorageBlobContainers", () => {
   test("all", async () => {
-    p = polly(__dirname, "iterateStorageBlobContainers");
+    recording = setupRecording({
+      directory: __dirname,
+      name: "iterateStorageBlobContainers",
+    });
 
-    const client = new StorageClient(config, createTestLogger());
+    const client = new StorageClient(config, createMockIntegrationLogger());
 
     const containers: BlobContainer[] = [];
     await client.iterateStorageBlobContainers(
@@ -90,11 +98,13 @@ describe("iterateStorageBlobContainers", () => {
     async () => {
       // jest.useFakeTimers();
 
-      p = polly(__dirname, "iterateStorageBlobContainersRetry", {
-        recordFailedRequests: true,
+      recording = setupRecording({
+        directory: __dirname,
+        name: "iterateStorageBlobContainersRetry",
+        options: { recordFailedRequests: true },
       });
 
-      const client = new StorageClient(config, createTestLogger());
+      const client = new StorageClient(config, createMockIntegrationLogger());
 
       let containers: BlobContainer[] = [];
 
@@ -128,9 +138,12 @@ describe("iterateStorageBlobContainers", () => {
 
 describe("iterateFileShares", () => {
   test("all", async () => {
-    p = polly(__dirname, "iterateFileShares");
+    recording = setupRecording({
+      directory: __dirname,
+      name: "iterateFileShares",
+    });
 
-    const client = new StorageClient(config, createTestLogger());
+    const client = new StorageClient(config, createMockIntegrationLogger());
 
     const resources: FileShare[] = [];
     await client.iterateFileShares(

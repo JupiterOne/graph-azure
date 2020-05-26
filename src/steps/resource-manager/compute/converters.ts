@@ -17,7 +17,7 @@ import {
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
   VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-} from "../../../jupiterone";
+} from "./constants";
 
 export function createVirtualMachineEntity(
   webLinker: AzureWebLinker,

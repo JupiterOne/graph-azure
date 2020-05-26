@@ -22,11 +22,11 @@ import {
 
 import { AzureWebLinker } from "../../../azure";
 import { resourceGroupName } from "../../../azure/utils";
-import {
-  AZURE_DATABASE_ENTITY_CLASS,
-  AZURE_DB_SERVER_ENTITY_CLASS,
-} from "../../../jupiterone";
 import { REDACTED_VALUE } from "../../../utils/constants";
+import {
+  RM_DATABASE_ENTITY_CLASS,
+  RM_DATABASE_SERVER_ENTITY_CLASS,
+} from "./constants";
 
 export function createDatabaseEntity(
   webLinker: AzureWebLinker,
@@ -39,7 +39,7 @@ export function createDatabaseEntity(
       assign: {
         ...convertProperties(data),
         _type,
-        _class: AZURE_DATABASE_ENTITY_CLASS,
+        _class: RM_DATABASE_ENTITY_CLASS,
         displayName: data.name || data.id || "unnamed",
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
@@ -65,7 +65,7 @@ export function createDbServerEntity(
         ...convertProperties(anyServer.sku, { prefix: "sku" }),
         ...convertProperties(anyServer.storageProfile),
         _type,
-        _class: AZURE_DB_SERVER_ENTITY_CLASS,
+        _class: RM_DATABASE_SERVER_ENTITY_CLASS,
         displayName:
           data.name || data.fullyQualifiedDomainName || data.id || "unnamed",
         webLink: webLinker.portalResourceUrl(data.id),

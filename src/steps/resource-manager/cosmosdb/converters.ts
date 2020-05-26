@@ -6,6 +6,12 @@ import { createIntegrationEntity, Entity } from "@jupiterone/integration-sdk";
 
 import { AzureWebLinker } from "../../../azure";
 import { normalizeLocation, resourceGroupName } from "../../../azure/utils";
+import {
+  RM_COSMOSDB_ACCOUNT_ENTITY_CLASS,
+  RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
+  RM_COSMOSDB_SQL_DATABASE_ENTITY_CLASS,
+  RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
+} from "./constants";
 
 export function createAccountEntity(
   webLinker: AzureWebLinker,
@@ -16,8 +22,8 @@ export function createAccountEntity(
       source: data,
       assign: {
         _key: data.id,
-        _type: "azure_cosmosdb_account",
-        _class: ["Account", "Service"],
+        _type: RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
+        _class: RM_COSMOSDB_ACCOUNT_ENTITY_CLASS,
         webLink: webLinker.portalResourceUrl(data.id),
         region: normalizeLocation(data.location),
         resourceGroup: resourceGroupName(data.id),
@@ -45,8 +51,8 @@ export function createSQLDatabaseEntity(
       source: { ...data, tags: dbAccount.tags },
       assign: {
         _key: data.id,
-        _type: "azure_cosmosdb_sql_database",
-        _class: ["Database", "DataStore"],
+        _type: RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
+        _class: RM_COSMOSDB_SQL_DATABASE_ENTITY_CLASS,
         dbAccountId: dbAccount.id, // Maintained for synchronization subset
         webLink: webLinker.portalResourceUrl(data.id),
         encrypted: true, // Cosmos DB's are always encrypted, it cannot be turned off

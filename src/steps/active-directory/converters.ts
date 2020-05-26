@@ -1,15 +1,23 @@
+import map from "lodash.map";
+
 import {
+  createIntegrationEntity,
   createIntegrationRelationship,
   Entity,
+  getTime,
+  IntegrationInstance,
   Relationship,
   RelationshipDirection,
-  IntegrationInstance,
-  createIntegrationEntity,
-  getTime,
 } from "@jupiterone/integration-sdk";
+import { Group, Organization, User } from "@microsoft/microsoft-graph-types";
 
+import {
+  generateEntityKey,
+  generateRelationshipKey,
+} from "../../utils/generateKeys";
 import { GroupMember, MemberType } from "./client";
 import {
+  ACCOUNT_ENTITY_CLASS,
   ACCOUNT_ENTITY_TYPE,
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
   GROUP_ENTITY_CLASS,
@@ -19,16 +27,7 @@ import {
   GROUP_MEMBER_RELATIONSHIP_TYPE,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
-  ACCOUNT_ENTITY_CLASS,
-} from "../../jupiterone";
-import {
-  generateEntityKey,
-  generateRelationshipKey,
-} from "../../utils/generateKeys";
-
-import map from "lodash.map";
-
-import { Group, Organization, User } from "@microsoft/microsoft-graph-types";
+} from "./constants";
 
 export function createAccountEntity(instance: IntegrationInstance): Entity {
   return createIntegrationEntity({

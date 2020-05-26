@@ -9,13 +9,13 @@ import {
   Relationship,
 } from "@jupiterone/integration-sdk";
 
+import { VIRTUAL_MACHINE_ENTITY_TYPE } from "../compute";
 import {
   NETWORK_INTERFACE_ENTITY_TYPE,
   PUBLIC_IP_ADDRESS_ENTITY_TYPE,
   SUBNET_ENTITY_TYPE,
-  VIRTUAL_MACHINE_ENTITY_TYPE,
-  VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
-} from "../../../jupiterone";
+} from "../network";
+import { VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE } from "./constants";
 
 export function createVirtualMachineNetworkInterfaceRelationship(
   vm: VirtualMachine,

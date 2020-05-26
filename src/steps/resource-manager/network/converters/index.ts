@@ -33,7 +33,7 @@ import {
   SUBNET_ENTITY_TYPE,
   VIRTUAL_NETWORK_ENTITY_CLASS,
   VIRTUAL_NETWORK_ENTITY_TYPE,
-} from "../../../../jupiterone";
+} from "../constants";
 
 export * from "./securityGroups";
 

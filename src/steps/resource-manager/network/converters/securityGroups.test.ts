@@ -9,7 +9,7 @@ import {
   RelationshipDirection,
 } from "@jupiterone/integration-sdk";
 
-import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../../../../jupiterone";
+import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../constants";
 import {
   createSecurityGroupRuleRelationships,
   createSecurityGroupRuleRelationshipsFromRule,

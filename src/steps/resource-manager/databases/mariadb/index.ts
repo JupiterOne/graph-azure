@@ -1,24 +1,21 @@
 import {
   createIntegrationRelationship,
   Entity,
-  generateRelationshipType,
 } from "@jupiterone/integration-sdk";
 
 import { createAzureWebLinker } from "../../../../azure";
-import { ACCOUNT_ENTITY_TYPE } from "../../../../jupiterone";
 import { IntegrationStepContext } from "../../../../types";
+import { ACCOUNT_ENTITY_TYPE } from "../../../active-directory";
 import { createDatabaseEntity, createDbServerEntity } from "../converters";
 import { MariaDBClient } from "./client";
-
-export const RM_MARIADB_SERVER_ENTITY_TYPE = "azure_mariadb_server";
-export const RM_MARIADB_DATABASE_ENTITY_TYPE = "azure_mariadb_database";
-export const RM_MARIADB_SERVER_DATABASE_RELATIONSHIP_TYPE = generateRelationshipType(
-  "HAS",
-  RM_MARIADB_SERVER_ENTITY_TYPE,
+import {
   RM_MARIADB_DATABASE_ENTITY_TYPE,
-);
+  RM_MARIADB_SERVER_ENTITY_TYPE,
+} from "./constants";
 
-export async function fetchMySQLDatabases(
+export * from "./constants";
+
+export async function fetchMariaDBDatabases(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;

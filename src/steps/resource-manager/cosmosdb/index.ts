@@ -4,12 +4,17 @@ import {
 } from "@jupiterone/integration-sdk";
 
 import { createAzureWebLinker } from "../../../azure";
-import { ACCOUNT_ENTITY_TYPE } from "../../../jupiterone";
 import { IntegrationStepContext } from "../../../types";
+import { ACCOUNT_ENTITY_TYPE, AD_ACCOUNT } from "../../active-directory";
 import { CosmosDBClient } from "./client";
+import {
+  RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
+  RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
+  RM_COSMOSDB_SQL_DATABASES,
+} from "./constants";
 import { createAccountEntity, createSQLDatabaseEntity } from "./converters";
 
-export async function fetchStorageResources(
+export async function fetchCosmosDBSqlDatabases(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
@@ -37,3 +42,16 @@ export async function fetchStorageResources(
     });
   });
 }
+
+export const cosmosdbSteps = [
+  {
+    id: RM_COSMOSDB_SQL_DATABASES,
+    name: "CosmosDB SQL Databases",
+    types: [
+      RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
+      RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
+    ],
+    dependsOn: [AD_ACCOUNT],
+    executionHandler: fetchCosmosDBSqlDatabases,
+  },
+];

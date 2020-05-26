@@ -9,11 +9,20 @@ import {
   Relationship,
 } from "@jupiterone/integration-sdk";
 
+import { IntegrationStepContext } from "../../../types";
+import { AD_ACCOUNT } from "../../active-directory";
+import { VIRTUAL_MACHINE_ENTITY_TYPE } from "../compute";
 import {
   NETWORK_INTERFACE_ENTITY_TYPE,
-  VIRTUAL_MACHINE_ENTITY_TYPE,
-} from "../../../jupiterone";
-import { IntegrationStepContext } from "../../../types";
+  RM_NETWORK_INTERFACES,
+  RM_NETWORK_PUBLIC_IP_ADDRESSES,
+} from "../network";
+import {
+  RM_COMPUTE_NETWORK_RELATIONSHIPS,
+  SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
+  VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+  VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+} from "./constants";
 import {
   createSubnetVirtualMachineRelationship,
   createVirtualMachineNetworkInterfaceRelationship,
@@ -86,3 +95,21 @@ function findVirtualMachineNetworkInterfaces(
   }
   return vmNics;
 }
+
+export const interserviceSteps = [
+  {
+    id: RM_COMPUTE_NETWORK_RELATIONSHIPS,
+    name: "Compute Network Relationships",
+    types: [
+      SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
+      VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+      VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+    ],
+    dependsOn: [
+      AD_ACCOUNT,
+      RM_NETWORK_INTERFACES,
+      RM_NETWORK_PUBLIC_IP_ADDRESSES,
+    ],
+    executionHandler: buildComputeNetworkRelationships,
+  },
+];

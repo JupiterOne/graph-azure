@@ -1,27 +1,27 @@
 import {
-  StorageAccount,
   BlobContainer,
-  FileShare,
   EncryptionServices,
+  FileShare,
+  StorageAccount,
 } from "@azure/arm-storage/esm/models";
+import { createIntegrationEntity, Entity } from "@jupiterone/integration-sdk";
 
 import { AzureWebLinker } from "../../../azure";
 import { resourceGroupName } from "../../../azure/utils";
 import {
   STORAGE_BLOB_SERVICE_ENTITY_CLASS,
   STORAGE_BLOB_SERVICE_ENTITY_TYPE,
+  STORAGE_CONTAINER_ENTITY_CLASS,
+  STORAGE_CONTAINER_ENTITY_TYPE,
   STORAGE_FILE_SERVICE_ENTITY_CLASS,
   STORAGE_FILE_SERVICE_ENTITY_TYPE,
+  STORAGE_FILE_SHARE_ENTITY_CLASS,
+  STORAGE_FILE_SHARE_ENTITY_TYPE,
   STORAGE_QUEUE_SERVICE_ENTITY_CLASS,
   STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
   STORAGE_TABLE_SERVICE_ENTITY_CLASS,
   STORAGE_TABLE_SERVICE_ENTITY_TYPE,
-  STORAGE_CONTAINER_ENTITY_TYPE,
-  STORAGE_CONTAINER_ENTITY_CLASS,
-  STORAGE_FILE_SHARE_ENTITY_TYPE,
-  STORAGE_FILE_SHARE_ENTITY_CLASS,
-} from "../../../jupiterone";
-import { Entity, createIntegrationEntity } from "@jupiterone/integration-sdk";
+} from "./constants";
 
 type StorageAccountServiceConfig = {
   type: string;

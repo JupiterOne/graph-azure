@@ -1,28 +1,25 @@
+import { Entity, IntegrationInstance } from "@jupiterone/integration-sdk";
 import {
   MappedRelationshipFromIntegration,
   RelationshipDirection,
 } from "@jupiterone/jupiter-managed-integration-sdk";
+import { Organization } from "@microsoft/microsoft-graph-types";
 
 import { GroupMember } from "./client";
 import {
-  createAccountGroupRelationship,
-  createAccountUserRelationship,
-  createGroupMemberRelationship,
-} from "./converters";
-import { Organization } from "@microsoft/microsoft-graph-types";
-
-import {
-  createGroupEntity,
-  createUserEntity,
-  createAccountEntityWithOrganization,
-} from "./converters";
-import { IntegrationInstance, Entity } from "@jupiterone/integration-sdk";
-import {
   GROUP_ENTITY_CLASS,
   GROUP_ENTITY_TYPE,
-  USER_ENTITY_TYPE,
   USER_ENTITY_CLASS,
-} from "../../jupiterone";
+  USER_ENTITY_TYPE,
+} from "./constants";
+import {
+  createAccountEntityWithOrganization,
+  createAccountGroupRelationship,
+  createAccountUserRelationship,
+  createGroupEntity,
+  createGroupMemberRelationship,
+  createUserEntity,
+} from "./converters";
 
 describe("createAccountEntityWithOrganization", () => {
   test("properties transferred", () => {

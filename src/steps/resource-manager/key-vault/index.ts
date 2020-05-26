@@ -1,21 +1,20 @@
 import {
   createIntegrationRelationship,
   Entity,
-  generateRelationshipType,
 } from "@jupiterone/integration-sdk";
 
 import { createAzureWebLinker } from "../../../azure";
-import { ACCOUNT_ENTITY_TYPE } from "../../../jupiterone";
 import { IntegrationStepContext } from "../../../types";
+import { ACCOUNT_ENTITY_TYPE, AD_ACCOUNT } from "../../active-directory";
 import { KeyVaultClient } from "./client";
+import {
+  ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
+  KEY_VAULT_SERVICE_ENTITY_TYPE,
+  RM_KEYVAULT_VAULTS,
+} from "./constants";
 import { createKeyVaultEntity } from "./converters";
 
-export const KEY_VAULT_SERVICE_ENTITY_TYPE = "azure_keyvault_service";
-export const ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE = generateRelationshipType(
-  "HAS",
-  ACCOUNT_ENTITY_TYPE,
-  KEY_VAULT_SERVICE_ENTITY_TYPE,
-);
+export * from "./constants";
 
 export async function fetchKeyVaults(
   executionContext: IntegrationStepContext,
@@ -38,3 +37,13 @@ export async function fetchKeyVaults(
     );
   });
 }
+
+export const keyvaultSteps = [
+  {
+    id: RM_KEYVAULT_VAULTS,
+    name: "Key Vaults",
+    types: [KEY_VAULT_SERVICE_ENTITY_TYPE, ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE],
+    dependsOn: [AD_ACCOUNT],
+    executionHandler: fetchKeyVaults,
+  },
+];

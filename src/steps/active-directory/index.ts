@@ -1,5 +1,20 @@
 import { Entity } from "@jupiterone/integration-sdk";
 
+import { IntegrationStepContext } from "../../types";
+import { DirectoryGraphClient } from "./client";
+import {
+  ACCOUNT_ENTITY_TYPE,
+  ACCOUNT_GROUP_RELATIONSHIP_TYPE,
+  ACCOUNT_USER_RELATIONSHIP_TYPE,
+  AD_ACCOUNT,
+  AD_GROUP_MEMBERS,
+  AD_GROUPS,
+  AD_USERS,
+  GROUP_ENTITY_TYPE,
+  GROUP_MEMBER_ENTITY_TYPE,
+  GROUP_MEMBER_RELATIONSHIP_TYPE,
+  USER_ENTITY_TYPE,
+} from "./constants";
 import {
   createAccountEntity,
   createAccountEntityWithOrganization,
@@ -9,9 +24,8 @@ import {
   createGroupMemberRelationship,
   createUserEntity,
 } from "./converters";
-import { ACCOUNT_ENTITY_TYPE, GROUP_ENTITY_TYPE } from "../../jupiterone";
-import { IntegrationStepContext } from "../../types";
-import { DirectoryGraphClient } from "./client";
+
+export * from "./constants";
 
 export async function fetchAccount(
   executionContext: IntegrationStepContext,
@@ -84,3 +98,33 @@ export async function fetchGroupMembers(
     },
   );
 }
+
+export const activeDirectorySteps = [
+  {
+    id: AD_ACCOUNT,
+    name: "Active Directory Info",
+    types: [ACCOUNT_ENTITY_TYPE],
+    executionHandler: fetchAccount,
+  },
+  {
+    id: AD_USERS,
+    name: "Active Directory Users",
+    types: [USER_ENTITY_TYPE, ACCOUNT_USER_RELATIONSHIP_TYPE],
+    dependsOn: [AD_ACCOUNT],
+    executionHandler: fetchUsers,
+  },
+  {
+    id: AD_GROUPS,
+    name: "Active Directory Groups",
+    types: [GROUP_ENTITY_TYPE, ACCOUNT_GROUP_RELATIONSHIP_TYPE],
+    dependsOn: [AD_ACCOUNT],
+    executionHandler: fetchGroups,
+  },
+  {
+    id: AD_GROUP_MEMBERS,
+    name: "Active Directory Group Members",
+    types: [GROUP_MEMBER_ENTITY_TYPE, GROUP_MEMBER_RELATIONSHIP_TYPE],
+    dependsOn: [AD_GROUPS],
+    executionHandler: fetchGroupMembers,
+  },
+];

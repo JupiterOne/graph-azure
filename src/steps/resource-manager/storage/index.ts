@@ -5,9 +5,18 @@ import {
 } from "@jupiterone/integration-sdk";
 
 import { AzureWebLinker, createAzureWebLinker } from "../../../azure";
-import { ACCOUNT_ENTITY_TYPE } from "../../../jupiterone";
 import { IntegrationStepContext } from "../../../types";
+import { ACCOUNT_ENTITY_TYPE, AD_ACCOUNT } from "../../active-directory";
 import { StorageClient } from "./client";
+import {
+  RM_STORAGE_RESOURCES,
+  STORAGE_BLOB_SERVICE_ENTITY_TYPE,
+  STORAGE_CONTAINER_ENTITY_TYPE,
+  STORAGE_FILE_SERVICE_ENTITY_TYPE,
+  STORAGE_FILE_SHARE_ENTITY_TYPE,
+  STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
+  STORAGE_TABLE_SERVICE_ENTITY_TYPE,
+} from "./constants";
 import {
   createStorageContainerEntity,
   createStorageFileShareEntity,
@@ -190,3 +199,20 @@ async function synchronizeFileStorage(
     );
   });
 }
+
+export const storageSteps = [
+  {
+    id: RM_STORAGE_RESOURCES,
+    name: "Storage Resources",
+    types: [
+      STORAGE_BLOB_SERVICE_ENTITY_TYPE,
+      STORAGE_CONTAINER_ENTITY_TYPE,
+      STORAGE_FILE_SERVICE_ENTITY_TYPE,
+      STORAGE_FILE_SHARE_ENTITY_TYPE,
+      STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
+      STORAGE_TABLE_SERVICE_ENTITY_TYPE,
+    ],
+    dependsOn: [AD_ACCOUNT],
+    executionHandler: fetchStorageResources,
+  },
+];

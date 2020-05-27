@@ -6,7 +6,7 @@ import {
   RequestPolicyOptions,
   WebResource,
 } from "@azure/ms-rest-js";
-import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
+import { IntegrationLogger } from "@jupiterone/integration-sdk";
 
 export function bunyanLogPolicy(
   logger: IntegrationLogger,
@@ -34,7 +34,7 @@ export class BunyanLogPolicy extends BaseRequestPolicy {
   }
 
   public sendRequest(request: WebResource): Promise<HttpOperationResponse> {
-    return this._nextPolicy.sendRequest(request.clone()).then(response => {
+    return this._nextPolicy.sendRequest(request.clone()).then((response) => {
       const logData = {
         url: request.url,
         status: response.status,

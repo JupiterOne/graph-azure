@@ -1,4 +1,4 @@
-import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
+import { IntegrationLogger } from "@jupiterone/integration-sdk";
 import {
   AuthenticationProvider,
   Client,

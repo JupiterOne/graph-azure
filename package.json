@@ -48,7 +48,6 @@
     "@azure/keyvault-keys": "^4.0.2",
     "@azure/ms-rest-nodeauth": "^2.0.5",
     "@jupiterone/integration-sdk": "^3.0.1",
-    "@jupiterone/jupiter-managed-integration-sdk": "33.7.5",
     "@lifeomic/attempt": "^3.0.0",
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "cross-fetch": "^3.0.4",

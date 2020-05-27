@@ -1,8 +1,9 @@
-import { Entity, IntegrationInstance } from "@jupiterone/integration-sdk";
 import {
-  MappedRelationshipFromIntegration,
+  Entity,
+  IntegrationInstance,
+  MappedRelationship,
   RelationshipDirection,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+} from "@jupiterone/integration-sdk";
 import { Organization } from "@microsoft/microsoft-graph-types";
 
 import { GroupMember } from "./client";
@@ -239,7 +240,7 @@ describe("createGroupMemberRelationship", () => {
       mail: "user@example.com",
     };
 
-    const relationship: MappedRelationshipFromIntegration & {
+    const relationship: MappedRelationship & {
       groupId: string;
       memberId: string;
       memberType: string;
@@ -282,7 +283,7 @@ describe("createGroupMemberRelationship", () => {
       mail: null,
     };
 
-    const relationship: MappedRelationshipFromIntegration & {
+    const relationship: MappedRelationship & {
       groupId: string;
       memberId: string;
       memberType: string;
@@ -324,7 +325,7 @@ describe("createGroupMemberRelationship", () => {
       jobTitle: null,
     };
 
-    const relationship: MappedRelationshipFromIntegration & {
+    const relationship: MappedRelationship & {
       groupId: string;
       memberId: string;
       memberType: string;

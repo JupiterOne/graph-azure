@@ -39,7 +39,7 @@ credentials instead of User Principal credentials. [Create a Service
 Principal][2] using the Azure CLI.
 
 ```sh
-$ az account list --query "[].{name:name, subscriptionId:id, tenantId:tenantId}"
+az account list --query "[].{name:name, subscriptionId:id, tenantId:tenantId}"
 [
   {
     "name": "Microsoft Azure Standard",
@@ -48,7 +48,7 @@ $ az account list --query "[].{name:name, subscriptionId:id, tenantId:tenantId}"
   }
 ]
 
-$ az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/dccea..."
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/dccea..."
 Creating a role assignment under the scope of "/subscriptions/dccea..."
   Retrying role assignment creation: 1/36
   Retrying role assignment creation: 2/36
@@ -81,12 +81,12 @@ ARM_ENVIRONMENT=public
 ### Using `tfenv` on Mac
 
 ```sh
-$ brew install tfenv
-$ cat .terraform-version
-$ tfenv install <version>
-$ cd terraform
-$ env $(grep -v '^#' .env) terraform init
-$ env $(grep -v '^#' .env) terraform plan
+brew install tfenv
+cat .terraform-version
+tfenv install <version>
+cd terraform
+env `grep -v '^#' .env` terraform init
+env `grep -v '^#' .env` terraform plan
 ```
 
 ### Using Docker
@@ -94,11 +94,11 @@ $ env $(grep -v '^#' .env) terraform plan
 Initialize Terraform:
 
 ```sh
-$ docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light init
+docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light init
 ```
 
 ```sh
-$ docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light plan
+docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light plan
 ```
 
 [1]: https://docs.microsoft.com/en-us/graph/use-postman?view=graph-rest-1.0

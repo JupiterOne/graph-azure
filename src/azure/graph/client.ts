@@ -1,48 +1,14 @@
-import { IntegrationLogger } from "@jupiterone/integration-sdk";
+import { IntegrationLogger } from '@jupiterone/integration-sdk';
 import {
   AuthenticationProvider,
   Client,
-} from "@microsoft/microsoft-graph-client";
-import { Organization } from "@microsoft/microsoft-graph-types";
+} from '@microsoft/microsoft-graph-client';
+import { Organization } from '@microsoft/microsoft-graph-types';
 
-import { IntegrationConfig } from "../../types";
-import authenticate from "./authenticate";
-
-export interface FetchResourcesResponse<T extends microsoftgraph.Entity> {
-  nextLink: string | undefined;
-  resources: T[];
-  err?: ClientError;
-}
-
-export interface PaginationOptions {
-  limit?: number;
-  nextLink?: string;
-
-  /**
-   * The property names for `$select` query param.
-   */
-  select?: string | string[];
-}
+import { IntegrationConfig } from '../../types';
+import authenticate from './authenticate';
 
 export type QueryParams = string | { [key: string]: string | number };
-
-export class ClientError extends Error {
-  private static generateMessage(response: Response): string {
-    const intro = "Unexpected response from Azure API:";
-    const errorText = `'${response.status} - ${response.statusText}`;
-
-    return [intro, errorText].join(" ");
-  }
-
-  public status: number;
-  public statusText: string;
-
-  constructor(response: Response) {
-    super(ClientError.generateMessage(response));
-    this.status = response.status;
-    this.statusText = response.statusText;
-  }
-}
 
 /**
  * Pagination: https://docs.microsoft.com/en-us/graph/paging
@@ -62,11 +28,11 @@ export abstract class GraphClient {
   }
 
   public async fetchMetadata(): Promise<object> {
-    return this.client.api("/").get();
+    return this.client.api('/').get();
   }
 
   public async fetchOrganization(): Promise<Organization> {
-    const response = await this.client.api("/organization").get();
+    const response = await this.client.api('/organization').get();
     return response.value[0];
   }
 }

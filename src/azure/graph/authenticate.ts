@@ -1,6 +1,8 @@
-import { IntegrationProviderAPIError } from "@jupiterone/integration-sdk";
+import fetch from 'cross-fetch';
 
-import { IntegrationConfig } from "../../types";
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk';
+
+import { IntegrationConfig } from '../../types';
 
 /**
  * Obtain API credentials for Microsoft Graph API.
@@ -13,16 +15,16 @@ export default async function authenticate(
 ): Promise<string> {
   const endpoint = `https://login.microsoftonline.com/${config.directoryId}/oauth2/v2.0/token`;
   const response = await fetch(endpoint, {
-    method: "post",
+    method: 'post',
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: [
       `client_id=${encodeURIComponent(config.clientId)}`,
-      "grant_type=client_credentials",
+      'grant_type=client_credentials',
       `client_secret=${encodeURIComponent(config.clientSecret)}`,
-      "scope=https%3A%2F%2Fgraph.microsoft.com%2F.default",
-    ].join("&"),
+      'scope=https%3A%2F%2Fgraph.microsoft.com%2F.default',
+    ].join('&'),
   });
 
   const json = await response.json();

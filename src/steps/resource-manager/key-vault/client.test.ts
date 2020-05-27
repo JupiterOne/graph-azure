@@ -1,12 +1,12 @@
-import { Vault } from "@azure/arm-keyvault/esm/models";
-import { createMockIntegrationLogger } from "@jupiterone/integration-sdk/testing";
+import { Vault } from '@azure/arm-keyvault/esm/models';
+import { createMockIntegrationLogger } from '@jupiterone/integration-sdk/testing';
 
 import {
   Recording,
   setupAzureRecording,
-} from "../../../../test/helpers/recording";
-import config from "../../../../test/integrationInstanceConfig";
-import { KeyVaultClient } from "./client";
+} from '../../../../test/helpers/recording';
+import config from '../../../../test/integrationInstanceConfig';
+import { KeyVaultClient } from './client';
 
 let recording: Recording;
 
@@ -14,11 +14,11 @@ afterEach(async () => {
   await recording.stop();
 });
 
-describe("iterateKeyVaults", () => {
-  test("all", async () => {
+describe('iterateKeyVaults', () => {
+  test('all', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: "iterateKeyVaults",
+      name: 'iterateKeyVaults',
     });
 
     const client = new KeyVaultClient(
@@ -35,20 +35,20 @@ describe("iterateKeyVaults", () => {
     expect(resources).toEqual([
       expect.objectContaining({
         id: expect.any(String),
-        name: "j1dev",
+        name: 'j1dev',
         tags: expect.objectContaining({
-          environment: "j1dev",
+          environment: 'j1dev',
         }),
       }),
     ]);
   });
 });
 
-describe("iterateKeys", () => {
-  test("listing forbidden does not invoke the callback", async () => {
+describe('iterateKeys', () => {
+  test('listing forbidden does not invoke the callback', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: "iterateKeysListForbidden",
+      name: 'iterateKeysListForbidden',
       options: {
         recordFailedRequests: true,
       },
@@ -56,7 +56,7 @@ describe("iterateKeys", () => {
 
     const vault = {
       properties: {
-        vaultUri: "https://j1dev.vault.azure.net/",
+        vaultUri: 'https://j1dev.vault.azure.net/',
       },
     } as Vault;
     const client = new KeyVaultClient(

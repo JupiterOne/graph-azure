@@ -1,4 +1,4 @@
-import { SqlManagementClient } from "@azure/arm-sql";
+import { SqlManagementClient } from '@azure/arm-sql';
 import {
   Database,
   DatabaseBlobAuditingPoliciesGetResponse,
@@ -6,15 +6,15 @@ import {
   ServerBlobAuditingPoliciesGetResponse,
   ServerSecurityAlertPoliciesGetResponse,
   TransparentDataEncryptionsGetResponse,
-} from "@azure/arm-sql/esm/models";
-import { IntegrationProviderAPIError } from "@jupiterone/integration-sdk";
+} from '@azure/arm-sql/esm/models';
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk';
 
 import {
   Client,
   iterateAllResources,
   ListResourcesEndpoint,
-} from "../../../../azure/resource-manager/client";
-import { resourceGroupName } from "../../../../azure/utils";
+} from '../../../../azure/resource-manager/client';
+import { resourceGroupName } from '../../../../azure/utils';
 
 export class SQLClient extends Client {
   public async iterateServers(
@@ -30,7 +30,7 @@ export class SQLClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.servers,
-      resourceDescription: "sql.servers",
+      resourceDescription: 'sql.servers',
       callback,
     });
   }
@@ -59,7 +59,7 @@ export class SQLClient extends Client {
           );
         },
       } as ListResourcesEndpoint,
-      resourceDescription: "sql.databases",
+      resourceDescription: 'sql.databases',
       callback,
     });
   }
@@ -81,7 +81,7 @@ export class SQLClient extends Client {
       this.logger.warn(
         {
           err: new IntegrationProviderAPIError({
-            endpoint: "sql.transparentDataEncryptions",
+            endpoint: 'sql.transparentDataEncryptions',
             status: err.status,
             statusText: err.statusText,
             cause: err,
@@ -89,7 +89,7 @@ export class SQLClient extends Client {
           server: server.id,
           database: database.id,
         },
-        "Failed to obtain encryptions for database",
+        'Failed to obtain encryptions for database',
       );
     }
   }
@@ -110,14 +110,14 @@ export class SQLClient extends Client {
       this.logger.warn(
         {
           err: new IntegrationProviderAPIError({
-            endpoint: "sql.serverBlobAuditingPolicies",
+            endpoint: 'sql.serverBlobAuditingPolicies',
             status: err.status,
             statusText: err.statusText,
             cause: err,
           }),
           server: server.id,
         },
-        "Failed to obtain auditing for server",
+        'Failed to obtain auditing for server',
       );
     }
   }
@@ -140,7 +140,7 @@ export class SQLClient extends Client {
       this.logger.warn(
         {
           err: new IntegrationProviderAPIError({
-            endpoint: "sql.databaseBlobAuditingPolicies",
+            endpoint: 'sql.databaseBlobAuditingPolicies',
             status: err.status,
             statusText: err.statusText,
             cause: err,
@@ -148,7 +148,7 @@ export class SQLClient extends Client {
           server: server.id,
           database: database.id,
         },
-        "Failed to obtain auditing policies for database",
+        'Failed to obtain auditing policies for database',
       );
     }
   }
@@ -169,14 +169,14 @@ export class SQLClient extends Client {
       this.logger.warn(
         {
           err: new IntegrationProviderAPIError({
-            endpoint: "sql.serverSecurityAlertPolicies",
+            endpoint: 'sql.serverSecurityAlertPolicies',
             status: err.status,
             statusText: err.statusText,
             cause: err,
           }),
           server: server.id,
         },
-        "Failed to obtain security alert policies for server",
+        'Failed to obtain security alert policies for server',
       );
     }
   }

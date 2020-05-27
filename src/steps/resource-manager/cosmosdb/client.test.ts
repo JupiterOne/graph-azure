@@ -1,15 +1,15 @@
 import {
   DatabaseAccountGetResults,
   SqlDatabaseGetResults,
-} from "@azure/arm-cosmosdb/esm/models";
+} from '@azure/arm-cosmosdb/esm/models';
 import {
   createMockIntegrationLogger,
   Recording,
   setupRecording,
-} from "@jupiterone/integration-sdk/testing";
+} from '@jupiterone/integration-sdk/testing';
 
-import config from "../../../../test/integrationInstanceConfig";
-import { CosmosDBClient } from "./client";
+import config from '../../../../test/integrationInstanceConfig';
+import { CosmosDBClient } from './client';
 
 let recording: Recording;
 
@@ -17,11 +17,11 @@ afterEach(async () => {
   await recording.stop();
 });
 
-describe("iterateAccounts", () => {
-  test("all", async () => {
+describe('iterateAccounts', () => {
+  test('all', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: "iterateAccounts",
+      name: 'iterateAccounts',
     });
 
     const client = new CosmosDBClient(
@@ -37,20 +37,20 @@ describe("iterateAccounts", () => {
     expect(resources).toEqual([
       expect.objectContaining({
         id: expect.any(String),
-        name: "j1dev",
+        name: 'j1dev',
         tags: expect.objectContaining({
-          environment: "j1dev",
+          environment: 'j1dev',
         }),
       }),
     ]);
   });
 });
 
-describe("iterateSQLDatabases", () => {
-  test("all", async () => {
+describe('iterateSQLDatabases', () => {
+  test('all', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: "iterateSQLDatabases",
+      name: 'iterateSQLDatabases',
     });
 
     const client = new CosmosDBClient(
@@ -60,9 +60,9 @@ describe("iterateSQLDatabases", () => {
     );
 
     const dbAccount: DatabaseAccountGetResults = {
-      name: "j1dev",
+      name: 'j1dev',
       id:
-        "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.DocumentDB/databaseAccounts/j1dev",
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.DocumentDB/databaseAccounts/j1dev',
     };
 
     const resources: SqlDatabaseGetResults[] = [];
@@ -73,8 +73,8 @@ describe("iterateSQLDatabases", () => {
     expect(resources).toEqual([
       expect.objectContaining({
         id: expect.any(String),
-        name: "j1dev",
-        type: "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+        name: 'j1dev',
+        type: 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases',
       }),
     ]);
   });

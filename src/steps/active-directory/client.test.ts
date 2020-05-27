@@ -2,16 +2,16 @@ import {
   createMockIntegrationLogger,
   Recording,
   setupRecording,
-} from "@jupiterone/integration-sdk/testing";
+} from '@jupiterone/integration-sdk/testing';
 import {
   DirectoryObject,
   DirectoryRole,
   Group,
   User,
-} from "@microsoft/microsoft-graph-types";
+} from '@microsoft/microsoft-graph-types';
 
-import config from "../../../test/integrationInstanceConfig";
-import { DirectoryGraphClient, GroupMember } from "./client";
+import config from '../../../test/integrationInstanceConfig';
+import { DirectoryGraphClient, GroupMember } from './client';
 
 const logger = createMockIntegrationLogger();
 
@@ -23,8 +23,8 @@ afterEach(async () => {
   }
 });
 
-test("iterateGroups", async () => {
-  recording = setupRecording({ directory: __dirname, name: "iterateGroups" });
+test('iterateGroups', async () => {
+  recording = setupRecording({ directory: __dirname, name: 'iterateGroups' });
 
   const client = new DirectoryGraphClient(logger, config);
 
@@ -41,24 +41,24 @@ test("iterateGroups", async () => {
   });
 });
 
-describe("iterateGroupMembers", () => {
+describe('iterateGroupMembers', () => {
   let client: DirectoryGraphClient;
 
   beforeEach(() => {
     client = new DirectoryGraphClient(logger, config);
   });
 
-  test("single selected property", async () => {
+  test('single selected property', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: "iterateGroupMembersSelectProperty",
+      name: 'iterateGroupMembersSelectProperty',
     });
 
     const resources: GroupMember[] = [];
     await client.iterateGroupMembers(
       {
-        groupId: "1c417feb-b04f-46c9-a747-614d6d03f348",
-        select: "id",
+        groupId: '1c417feb-b04f-46c9-a747-614d6d03f348',
+        select: 'id',
       },
       (e) => {
         resources.push(e);
@@ -76,17 +76,17 @@ describe("iterateGroupMembers", () => {
     expect(resource.displayName).toBeUndefined();
   });
 
-  test("multiple selected properties", async () => {
+  test('multiple selected properties', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: "iterateGroupMembersSelectProperties",
+      name: 'iterateGroupMembersSelectProperties',
     });
 
     const resources: GroupMember[] = [];
     await client.iterateGroupMembers(
       {
-        groupId: "1c417feb-b04f-46c9-a747-614d6d03f348",
-        select: ["id", "displayName"],
+        groupId: '1c417feb-b04f-46c9-a747-614d6d03f348',
+        select: ['id', 'displayName'],
       },
       (e) => {
         resources.push(e);
@@ -102,15 +102,15 @@ describe("iterateGroupMembers", () => {
     });
   });
 
-  test("iterateGroupMembers", async () => {
+  test('iterateGroupMembers', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: "iterateGroupMembers",
+      name: 'iterateGroupMembers',
     });
 
     const resources: GroupMember[] = [];
     await client.iterateGroupMembers(
-      { groupId: "58e48aba-cd45-440f-a851-2bf9715fadc1" },
+      { groupId: '58e48aba-cd45-440f-a851-2bf9715fadc1' },
       (e) => {
         resources.push(e);
       },
@@ -125,17 +125,17 @@ describe("iterateGroupMembers", () => {
   });
 });
 
-describe("iterateUsers", () => {
-  test("404 answers empty collection", async () => {
+describe('iterateUsers', () => {
+  test('404 answers empty collection', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: "iterateUsers404",
+      name: 'iterateUsers404',
     });
 
     const client = new DirectoryGraphClient(logger, config);
 
     recording.server
-      .get("https://graph.microsoft.com/v1.0/users")
+      .get('https://graph.microsoft.com/v1.0/users')
       .intercept((_req, res) => {
         res.status(404);
       });
@@ -148,8 +148,8 @@ describe("iterateUsers", () => {
     expect(resources.length).toEqual(0);
   });
 
-  test("provides expected data", async () => {
-    recording = setupRecording({ directory: __dirname, name: "iterateUsers" });
+  test('provides expected data', async () => {
+    recording = setupRecording({ directory: __dirname, name: 'iterateUsers' });
 
     const client = new DirectoryGraphClient(logger, config);
 
@@ -167,10 +167,10 @@ describe("iterateUsers", () => {
   });
 });
 
-test("iterateDirectoryRoles", async () => {
+test('iterateDirectoryRoles', async () => {
   recording = setupRecording({
     directory: __dirname,
-    name: "iterateDirectoryRoles",
+    name: 'iterateDirectoryRoles',
   });
 
   const client = new DirectoryGraphClient(logger, config);
@@ -188,17 +188,17 @@ test("iterateDirectoryRoles", async () => {
   });
 });
 
-test("iterateDirectoryRoleMembers", async () => {
+test('iterateDirectoryRoleMembers', async () => {
   recording = setupRecording({
     directory: __dirname,
-    name: "iterateDirectoryRoleMembers",
+    name: 'iterateDirectoryRoleMembers',
   });
 
   const client = new DirectoryGraphClient(logger, config);
 
   const resources: DirectoryObject[] = [];
   await client.iterateDirectoryRoleMembers(
-    "9a4ba32c-28dd-4c30-bc99-f8137845d6bf",
+    '9a4ba32c-28dd-4c30-bc99-f8137845d6bf',
     (e) => {
       resources.push(e);
     },
@@ -207,7 +207,7 @@ test("iterateDirectoryRoleMembers", async () => {
   expect(resources.length).toBeGreaterThan(0);
   resources.forEach((r) => {
     expect(r).toMatchObject({
-      "@odata.type": "#microsoft.graph.user",
+      '@odata.type': '#microsoft.graph.user',
     });
   });
 });

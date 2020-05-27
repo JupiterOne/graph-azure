@@ -1,41 +1,41 @@
-import { STEP_AD_ACCOUNT } from "../../active-directory";
+import { STEP_AD_ACCOUNT } from '../../active-directory';
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MYSQL_DATABASES,
   STEP_RM_DATABASE_POSTGRESQL_DATABASES,
   STEP_RM_DATABASE_SQL_DATABASES,
-} from "./constants";
+} from './constants';
 import {
   fetchMariaDBDatabases,
   RM_MARIADB_DATABASE_ENTITY_TYPE,
   RM_MARIADB_SERVER_DATABASE_RELATIONSHIP_TYPE,
   RM_MARIADB_SERVER_ENTITY_TYPE,
-} from "./mariadb";
+} from './mariadb';
 import {
   fetchMySQLDatabases,
   RM_MYSQL_DATABASE_ENTITY_TYPE,
   RM_MYSQL_SERVER_DATABASE_RELATIONSHIP_TYPE,
   RM_MYSQL_SERVER_ENTITY_TYPE,
-} from "./mysql";
+} from './mysql';
 import {
   fetchPostgreSQLDatabases,
   RM_POSTGRESQL_DATABASE_ENTITY_TYPE,
   RM_POSTGRESQL_SERVER_DATABASE_RELATIONSHIP_TYPE,
   RM_POSTGRESQL_SERVER_ENTITY_TYPE,
-} from "./postgresql";
+} from './postgresql';
 import {
   fetchSQLDatabases,
   RM_SQL_DATABASE_ENTITY_TYPE,
   RM_SQL_SERVER_DATABASE_RELATIONSHIP_TYPE,
   RM_SQL_SERVER_ENTITY_TYPE,
-} from "./sql";
+} from './sql';
 
-export * from "./constants";
+export * from './constants';
 
 export const databaseSteps = [
   {
     id: STEP_RM_DATABASE_MARIADB_DATABASES,
-    name: "MariaDB Databases",
+    name: 'MariaDB Databases',
     types: [
       RM_MARIADB_SERVER_ENTITY_TYPE,
       RM_MARIADB_DATABASE_ENTITY_TYPE,
@@ -46,7 +46,7 @@ export const databaseSteps = [
   },
   {
     id: STEP_RM_DATABASE_MYSQL_DATABASES,
-    name: "MySQL Databases",
+    name: 'MySQL Databases',
     types: [
       RM_MYSQL_SERVER_ENTITY_TYPE,
       RM_MYSQL_DATABASE_ENTITY_TYPE,
@@ -57,7 +57,7 @@ export const databaseSteps = [
   },
   {
     id: STEP_RM_DATABASE_POSTGRESQL_DATABASES,
-    name: "PostgreSQL Databases",
+    name: 'PostgreSQL Databases',
     types: [
       RM_POSTGRESQL_SERVER_ENTITY_TYPE,
       RM_POSTGRESQL_DATABASE_ENTITY_TYPE,
@@ -68,7 +68,7 @@ export const databaseSteps = [
   },
   {
     id: STEP_RM_DATABASE_SQL_DATABASES,
-    name: "SQL Databases",
+    name: 'SQL Databases',
     types: [
       RM_SQL_SERVER_ENTITY_TYPE,
       RM_SQL_DATABASE_ENTITY_TYPE,

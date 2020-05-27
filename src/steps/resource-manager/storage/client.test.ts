@@ -2,15 +2,15 @@ import {
   BlobContainer,
   FileShare,
   StorageAccount,
-} from "@azure/arm-storage/esm/models";
+} from '@azure/arm-storage/esm/models';
 import {
   createMockIntegrationLogger,
   Recording,
   setupRecording,
-} from "@jupiterone/integration-sdk/testing";
+} from '@jupiterone/integration-sdk/testing';
 
-import config from "../../../../test/integrationInstanceConfig";
-import { StorageClient } from "./client";
+import config from '../../../../test/integrationInstanceConfig';
+import { StorageClient } from './client';
 
 let recording: Recording;
 
@@ -18,11 +18,11 @@ afterEach(async () => {
   await recording.stop();
 });
 
-describe("iterateStorageAccounts", () => {
-  test("all", async () => {
+describe('iterateStorageAccounts', () => {
+  test('all', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: "iterateStorageAccounts",
+      name: 'iterateStorageAccounts',
     });
 
     const client = new StorageClient(config, createMockIntegrationLogger());
@@ -35,30 +35,30 @@ describe("iterateStorageAccounts", () => {
     expect(sa).toEqual([
       expect.objectContaining({
         id: expect.any(String),
-        name: "j1dev",
-        kind: "StorageV2",
+        name: 'j1dev',
+        kind: 'StorageV2',
         tags: expect.objectContaining({
-          environment: "j1dev",
+          environment: 'j1dev',
         }),
       }),
       expect.objectContaining({
         id: expect.any(String),
-        name: "j1devblobstorage",
-        kind: "BlobStorage",
+        name: 'j1devblobstorage',
+        kind: 'BlobStorage',
         enableHttpsTrafficOnly: true,
         tags: expect.objectContaining({
-          environment: "j1dev",
+          environment: 'j1dev',
         }),
       }),
     ]);
   });
 });
 
-describe("iterateStorageBlobContainers", () => {
-  test("all", async () => {
+describe('iterateStorageBlobContainers', () => {
+  test('all', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: "iterateStorageBlobContainers",
+      name: 'iterateStorageBlobContainers',
     });
 
     const client = new StorageClient(config, createMockIntegrationLogger());
@@ -67,8 +67,8 @@ describe("iterateStorageBlobContainers", () => {
     await client.iterateStorageBlobContainers(
       {
         id:
-          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev",
-        name: "j1dev",
+          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
+        name: 'j1dev',
       } as StorageAccount,
       (e) => {
         containers.push(e);
@@ -85,8 +85,8 @@ describe("iterateStorageBlobContainers", () => {
         }),
         expect.objectContaining({
           id:
-            "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/j1dev",
-          name: "j1dev",
+            '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/j1dev',
+          name: 'j1dev',
         }),
       ]),
     );
@@ -94,13 +94,13 @@ describe("iterateStorageBlobContainers", () => {
 
   // skipped because jest.useFakeTimers() wouldn't work
   test.skip(
-    "retry",
+    'retry',
     async () => {
       // jest.useFakeTimers();
 
       recording = setupRecording({
         directory: __dirname,
-        name: "iterateStorageBlobContainersRetry",
+        name: 'iterateStorageBlobContainersRetry',
         options: { recordFailedRequests: true },
       });
 
@@ -114,8 +114,8 @@ describe("iterateStorageBlobContainers", () => {
         await client.iterateStorageBlobContainers(
           {
             id:
-              "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev",
-            name: "j1dev",
+              '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
+            name: 'j1dev',
           } as StorageAccount,
           (e) => {
             containers.push(e);
@@ -125,10 +125,10 @@ describe("iterateStorageBlobContainers", () => {
 
       expect(containers).toEqual([
         expect.objectContaining({
-          type: "Microsoft.Storage/storageAccounts/blobServices/containers",
+          type: 'Microsoft.Storage/storageAccounts/blobServices/containers',
         }),
         expect.objectContaining({
-          type: "Microsoft.Storage/storageAccounts/blobServices/containers",
+          type: 'Microsoft.Storage/storageAccounts/blobServices/containers',
         }),
       ]);
     },
@@ -136,11 +136,11 @@ describe("iterateStorageBlobContainers", () => {
   );
 });
 
-describe("iterateFileShares", () => {
-  test("all", async () => {
+describe('iterateFileShares', () => {
+  test('all', async () => {
     recording = setupRecording({
       directory: __dirname,
-      name: "iterateFileShares",
+      name: 'iterateFileShares',
     });
 
     const client = new StorageClient(config, createMockIntegrationLogger());
@@ -149,8 +149,8 @@ describe("iterateFileShares", () => {
     await client.iterateFileShares(
       {
         id:
-          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev",
-        name: "j1dev",
+          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
+        name: 'j1dev',
       } as StorageAccount,
       (e) => {
         resources.push(e);
@@ -160,8 +160,8 @@ describe("iterateFileShares", () => {
     expect(resources).toEqual([
       expect.objectContaining({
         id:
-          "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/fileServices/default/shares/j1dev",
-        name: "j1dev",
+          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/fileServices/default/shares/j1dev',
+        name: 'j1dev',
         shareQuota: 1,
       }),
     ]);

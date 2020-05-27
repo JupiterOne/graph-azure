@@ -1,4 +1,4 @@
-import map from "lodash.map";
+import map from 'lodash.map';
 
 import {
   createIntegrationEntity,
@@ -8,14 +8,14 @@ import {
   IntegrationInstance,
   Relationship,
   RelationshipDirection,
-} from "@jupiterone/integration-sdk";
-import { Group, Organization, User } from "@microsoft/microsoft-graph-types";
+} from '@jupiterone/integration-sdk';
+import { Group, Organization, User } from '@microsoft/microsoft-graph-types';
 
 import {
   generateEntityKey,
   generateRelationshipKey,
-} from "../../utils/generateKeys";
-import { GroupMember, MemberType } from "./client";
+} from '../../utils/generateKeys';
+import { GroupMember, MemberType } from './client';
 import {
   ACCOUNT_ENTITY_CLASS,
   ACCOUNT_ENTITY_TYPE,
@@ -27,7 +27,7 @@ import {
   GROUP_MEMBER_RELATIONSHIP_TYPE,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
-} from "./constants";
+} from './constants';
 
 export function createAccountEntity(instance: IntegrationInstance): Entity {
   return createIntegrationEntity({
@@ -122,7 +122,7 @@ export function createAccountGroupRelationship(
   const childKey = generateEntityKey(GROUP_ENTITY_TYPE, group.id);
 
   return createIntegrationRelationship({
-    _class: "HAS",
+    _class: 'HAS',
     fromKey: parentKey,
     fromType: ACCOUNT_ENTITY_TYPE,
     toKey: childKey,
@@ -141,7 +141,7 @@ export function createAccountUserRelationship(
   const toKey = generateEntityKey(USER_ENTITY_TYPE, user.id);
 
   return createIntegrationRelationship({
-    _class: "HAS",
+    _class: 'HAS',
     fromType: ACCOUNT_ENTITY_TYPE,
     fromKey,
     toType: USER_ENTITY_TYPE,
@@ -162,12 +162,12 @@ export function createGroupMemberRelationship(
   // TODO Check with Phil about how moving an integration to the new SDK will
   // handle the mapped relationships.
   return createIntegrationRelationship({
-    _class: "HAS",
+    _class: 'HAS',
     _key: memberKey,
     _mapping: {
       relationshipDirection: RelationshipDirection.FORWARD,
       sourceEntityKey: groupKey,
-      targetFilterKeys: [["_type", "_key"]],
+      targetFilterKeys: [['_type', '_key']],
       targetEntity: {
         _type: memberEntityType,
         _class: memberEntityClass,
@@ -182,13 +182,13 @@ export function createGroupMemberRelationship(
       _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
       groupId: group.id,
       memberId: member.id,
-      memberType: member["@odata.type"],
+      memberType: member['@odata.type'],
     },
   });
 }
 
 function getGroupMemberEntityType(member: GroupMember): string {
-  switch (member["@odata.type"]) {
+  switch (member['@odata.type']) {
     case MemberType.USER:
       return USER_ENTITY_TYPE;
     case MemberType.GROUP:
@@ -199,7 +199,7 @@ function getGroupMemberEntityType(member: GroupMember): string {
 }
 
 function getGroupMemberEntityClass(member: GroupMember): string {
-  switch (member["@odata.type"]) {
+  switch (member['@odata.type']) {
     case MemberType.USER:
       return USER_ENTITY_CLASS;
     case MemberType.GROUP:

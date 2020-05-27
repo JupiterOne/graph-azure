@@ -1,12 +1,12 @@
-import { MySQLManagementClient } from "@azure/arm-mysql";
-import { Database, Server } from "@azure/arm-mysql/esm/models";
+import { MySQLManagementClient } from '@azure/arm-mysql';
+import { Database, Server } from '@azure/arm-mysql/esm/models';
 
 import {
   Client,
   iterateAllResources,
   ListResourcesEndpoint,
-} from "../../../../azure/resource-manager/client";
-import { resourceGroupName } from "../../../../azure/utils";
+} from '../../../../azure/resource-manager/client';
+import { resourceGroupName } from '../../../../azure/utils';
 
 export class MySQLClient extends Client {
   public async iterateServers(
@@ -48,7 +48,7 @@ export class MySQLClient extends Client {
           );
         },
       } as ListResourcesEndpoint,
-      resourceDescription: "mysql.databases",
+      resourceDescription: 'mysql.databases',
       callback,
     });
   }

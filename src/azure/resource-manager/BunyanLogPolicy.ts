@@ -5,8 +5,8 @@ import {
   RequestPolicyFactory,
   RequestPolicyOptions,
   WebResource,
-} from "@azure/ms-rest-js";
-import { IntegrationLogger } from "@jupiterone/integration-sdk";
+} from '@azure/ms-rest-js';
+import { IntegrationLogger } from '@jupiterone/integration-sdk';
 
 export function bunyanLogPolicy(
   logger: IntegrationLogger,
@@ -42,7 +42,7 @@ export class BunyanLogPolicy extends BaseRequestPolicy {
         requestHeaders: Object.keys(response.request.headers.rawHeaders()),
       };
 
-      this.logger.info(logData, "Received response from Azure API");
+      this.logger.info(logData, 'Received response from Azure API');
 
       return response;
     });

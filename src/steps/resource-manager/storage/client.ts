@@ -1,16 +1,16 @@
-import { StorageManagementClient } from "@azure/arm-storage";
+import { StorageManagementClient } from '@azure/arm-storage';
 import {
   BlobContainer,
   FileShare,
   StorageAccount,
-} from "@azure/arm-storage/esm/models";
+} from '@azure/arm-storage/esm/models';
 
 import {
   Client,
   iterateAllResources,
   ListResourcesEndpoint,
-} from "../../../azure/resource-manager/client";
-import { resourceGroupName } from "../../../azure/utils";
+} from '../../../azure/resource-manager/client';
+import { resourceGroupName } from '../../../azure/utils';
 
 export class StorageClient extends Client {
   public async iterateStorageAccounts(
@@ -23,7 +23,7 @@ export class StorageClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.storageAccounts,
-      resourceDescription: "storage.storageAccounts",
+      resourceDescription: 'storage.storageAccounts',
       callback,
     });
   }
@@ -52,7 +52,7 @@ export class StorageClient extends Client {
           return serviceClient.blobContainers.listNext(nextLink);
         },
       } as ListResourcesEndpoint,
-      resourceDescription: "storage.blobContainers",
+      resourceDescription: 'storage.blobContainers',
       callback,
     });
   }
@@ -80,7 +80,7 @@ export class StorageClient extends Client {
           return serviceClient.fileShares.listNext(nextLink);
         },
       } as ListResourcesEndpoint,
-      resourceDescription: "storage.fileShares",
+      resourceDescription: 'storage.fileShares',
       callback,
     });
   }

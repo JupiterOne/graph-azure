@@ -1,15 +1,15 @@
-import { CosmosDBManagementClient } from "@azure/arm-cosmosdb";
+import { CosmosDBManagementClient } from '@azure/arm-cosmosdb';
 import {
   DatabaseAccountGetResults,
   SqlDatabaseGetResults,
-} from "@azure/arm-cosmosdb/esm/models";
+} from '@azure/arm-cosmosdb/esm/models';
 
 import {
   Client,
   iterateAllResources,
   ListResourcesEndpoint,
-} from "../../../azure/resource-manager/client";
-import { resourceGroupName } from "../../../azure/utils";
+} from '../../../azure/resource-manager/client';
+import { resourceGroupName } from '../../../azure/utils';
 
 export class CosmosDBClient extends Client {
   public async iterateAccounts(
@@ -26,7 +26,7 @@ export class CosmosDBClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.databaseAccounts,
-      resourceDescription: "cosmosdb.databaseAccounts",
+      resourceDescription: 'cosmosdb.databaseAccounts',
       callback,
     });
   }
@@ -57,7 +57,7 @@ export class CosmosDBClient extends Client {
           );
         },
       } as ListResourcesEndpoint,
-      resourceDescription: "cosmosdb.listSqlDatabases",
+      resourceDescription: 'cosmosdb.listSqlDatabases',
       callback,
     });
   }

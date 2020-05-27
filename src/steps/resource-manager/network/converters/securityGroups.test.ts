@@ -1,63 +1,63 @@
 import {
   NetworkSecurityGroup,
   SecurityRule,
-} from "@azure/arm-network/esm/models";
+} from '@azure/arm-network/esm/models';
 import {
   convertProperties,
   createIntegrationRelationship,
   INTERNET,
   RelationshipDirection,
-} from "@jupiterone/integration-sdk";
+} from '@jupiterone/integration-sdk';
 
-import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../constants";
+import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from '../constants';
 import {
   createSecurityGroupRuleRelationships,
   createSecurityGroupRuleRelationshipsFromRule,
   getPortsFromRange,
   processSecurityGroupRule,
-} from "./securityGroups";
+} from './securityGroups';
 
-describe("build mapped relationships from security group rules", () => {
-  const _integrationInstanceId = "1234567890abcd";
+describe('build mapped relationships from security group rules', () => {
+  const _integrationInstanceId = '1234567890abcd';
 
   const inboundRuleFromSingleIpToSubnet: SecurityRule = {
     id:
-      "/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/securityRules/Port_8080",
-    description: "Test 8080",
-    protocol: "*",
-    sourcePortRange: "*",
-    destinationPortRange: "8080",
-    sourceAddressPrefix: "4.3.2.1/32",
+      '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/securityRules/Port_8080',
+    description: 'Test 8080',
+    protocol: '*',
+    sourcePortRange: '*',
+    destinationPortRange: '8080',
+    sourceAddressPrefix: '4.3.2.1/32',
     sourceAddressPrefixes: [],
-    destinationAddressPrefix: "10.1.1.0/24",
+    destinationAddressPrefix: '10.1.1.0/24',
     destinationAddressPrefixes: [],
     sourcePortRanges: [],
     destinationPortRanges: [],
-    access: "Allow",
+    access: 'Allow',
     priority: 100,
-    direction: "Inbound",
-    provisioningState: "Succeeded",
-    name: "Port_8080",
-    etag: "",
+    direction: 'Inbound',
+    provisioningState: 'Succeeded',
+    name: 'Port_8080',
+    etag: '',
   };
 
   const outboundRuleFromHighPortsToMultiplePortRanges: SecurityRule = {
     id:
-      "/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/securityRules/Port_Ranges",
-    description: "Test port range",
-    protocol: "Tcp",
-    sourcePortRange: "1024-65535",
-    sourceAddressPrefix: "*",
+      '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/securityRules/Port_Ranges',
+    description: 'Test port range',
+    protocol: 'Tcp',
+    sourcePortRange: '1024-65535',
+    sourceAddressPrefix: '*',
     sourceAddressPrefixes: [],
-    destinationAddressPrefix: "*",
+    destinationAddressPrefix: '*',
     destinationAddressPrefixes: [],
     sourcePortRanges: [],
-    destinationPortRanges: ["8080-8082", "7070-7071"],
-    access: "Allow",
+    destinationPortRanges: ['8080-8082', '7070-7071'],
+    access: 'Allow',
     priority: 100,
-    direction: "Outbound",
-    provisioningState: "Succeeded",
-    name: "Port_Ranges",
+    direction: 'Outbound',
+    provisioningState: 'Succeeded',
+    name: 'Port_Ranges',
     etag: 'W/"908ac42c-c1a3-4079-9bfa-093449876fa8"',
   };
 
@@ -68,52 +68,52 @@ describe("build mapped relationships from security group rules", () => {
 
   const inboundRuleFromAllVMsInVNET: SecurityRule = {
     id:
-      "/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/defaultSecurityRules/AllowVnetInBound",
-    description: "Allow inbound traffic from all VMs in VNET",
-    protocol: "*",
-    sourcePortRange: "*",
-    destinationPortRange: "*",
-    sourceAddressPrefix: "VirtualNetwork",
+      '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/defaultSecurityRules/AllowVnetInBound',
+    description: 'Allow inbound traffic from all VMs in VNET',
+    protocol: '*',
+    sourcePortRange: '*',
+    destinationPortRange: '*',
+    sourceAddressPrefix: 'VirtualNetwork',
     sourceAddressPrefixes: [],
-    destinationAddressPrefix: "VirtualNetwork",
+    destinationAddressPrefix: 'VirtualNetwork',
     destinationAddressPrefixes: [],
     sourcePortRanges: [],
     destinationPortRanges: [],
-    access: "Allow",
+    access: 'Allow',
     priority: 65000,
-    direction: "Inbound",
-    provisioningState: "Succeeded",
-    name: "AllowVnetInBound",
-    etag: "",
+    direction: 'Inbound',
+    provisioningState: 'Succeeded',
+    name: 'AllowVnetInBound',
+    etag: '',
   };
 
   const defaultSecurityRules: SecurityRule[] = [inboundRuleFromAllVMsInVNET];
 
   const securityGroup: NetworkSecurityGroup = {
     id:
-      "/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh",
-    name: "test-ssh",
-    type: "Microsoft.Network/networkSecurityGroups",
-    location: "eastus2",
+      '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh',
+    name: 'test-ssh',
+    type: 'Microsoft.Network/networkSecurityGroups',
+    location: 'eastus2',
     tags: {},
     securityRules,
     defaultSecurityRules,
-    resourceGuid: "id",
-    provisioningState: "Succeeded",
-    etag: "",
+    resourceGuid: 'id',
+    provisioningState: 'Succeeded',
+    etag: '',
   };
 
   const inboundRuleFromSingleIpToSubnetRelationship = createIntegrationRelationship(
     {
-      _class: "ALLOWS",
+      _class: 'ALLOWS',
       _mapping: {
         relationshipDirection: RelationshipDirection.REVERSE,
         sourceEntityKey: securityGroup.id as string,
-        targetFilterKeys: [["_class", "ipAddress", "publicIpAddress"]],
+        targetFilterKeys: [['_class', 'ipAddress', 'publicIpAddress']],
         targetEntity: {
-          _class: "Host",
-          ipAddress: "4.3.2.1",
-          publicIpAddress: "4.3.2.1",
+          _class: 'Host',
+          ipAddress: '4.3.2.1',
+          publicIpAddress: '4.3.2.1',
         },
         skipTargetCreation: false,
       },
@@ -127,11 +127,11 @@ describe("build mapped relationships from security group rules", () => {
         inbound: true,
         egress: false,
         outbound: false,
-        portRange: "8080",
+        portRange: '8080',
         fromPort: 8080,
         toPort: 8080,
-        protocol: "*",
-        ipProtocol: "*",
+        protocol: '*',
+        ipProtocol: '*',
         priority: 100,
         ruleNumber: 100,
       },
@@ -140,11 +140,11 @@ describe("build mapped relationships from security group rules", () => {
 
   const outboundRuleFromHighPortsToMultiplePortRangesRelationships = [
     createIntegrationRelationship({
-      _class: "ALLOWS",
+      _class: 'ALLOWS',
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
         sourceEntityKey: securityGroup.id as string,
-        targetFilterKeys: [["_key"]],
+        targetFilterKeys: [['_key']],
         targetEntity: INTERNET,
         skipTargetCreation: false,
       },
@@ -158,21 +158,21 @@ describe("build mapped relationships from security group rules", () => {
         inbound: false,
         egress: true,
         outbound: true,
-        portRange: "8080-8082",
+        portRange: '8080-8082',
         fromPort: 8080,
         toPort: 8082,
-        protocol: "tcp",
-        ipProtocol: "tcp",
+        protocol: 'tcp',
+        ipProtocol: 'tcp',
         priority: 100,
         ruleNumber: 100,
       },
     }),
     createIntegrationRelationship({
-      _class: "ALLOWS",
+      _class: 'ALLOWS',
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
         sourceEntityKey: securityGroup.id as string,
-        targetFilterKeys: [["_key"]],
+        targetFilterKeys: [['_key']],
         targetEntity: INTERNET,
         skipTargetCreation: false,
       },
@@ -186,11 +186,11 @@ describe("build mapped relationships from security group rules", () => {
         inbound: false,
         egress: true,
         outbound: true,
-        portRange: "7070-7071",
+        portRange: '7070-7071',
         fromPort: 7070,
         toPort: 7071,
-        protocol: "tcp",
-        ipProtocol: "tcp",
+        protocol: 'tcp',
+        ipProtocol: 'tcp',
         priority: 100,
         ruleNumber: 100,
       },
@@ -199,15 +199,15 @@ describe("build mapped relationships from security group rules", () => {
 
   const inboundRuleFromAllVMsInVNETRelationship = createIntegrationRelationship(
     {
-      _class: "ALLOWS",
+      _class: 'ALLOWS',
       _mapping: {
         relationshipDirection: RelationshipDirection.REVERSE,
         sourceEntityKey: securityGroup.id as string,
-        targetFilterKeys: [["_class", "_type", "displayName"]],
+        targetFilterKeys: [['_class', '_type', 'displayName']],
         targetEntity: {
-          _class: "Service",
-          _type: "azure_virtual_network",
-          displayName: "VirtualNetwork",
+          _class: 'Service',
+          _type: 'azure_virtual_network',
+          displayName: 'VirtualNetwork',
         },
         skipTargetCreation: false,
       },
@@ -221,18 +221,18 @@ describe("build mapped relationships from security group rules", () => {
         inbound: true,
         egress: false,
         outbound: false,
-        portRange: "*",
+        portRange: '*',
         fromPort: 0,
         toPort: 65535,
-        protocol: "*",
-        ipProtocol: "*",
+        protocol: '*',
+        ipProtocol: '*',
         priority: 65000,
         ruleNumber: 65000,
       },
     },
   );
 
-  test("inbound rule from single IP to private subnet", () => {
+  test('inbound rule from single IP to private subnet', () => {
     const rules = processSecurityGroupRule(
       inboundRuleFromSingleIpToSubnet,
       _integrationInstanceId,
@@ -248,7 +248,7 @@ describe("build mapped relationships from security group rules", () => {
     ).toEqual([inboundRuleFromSingleIpToSubnetRelationship]);
   });
 
-  test("outbound rule from high source ports to multiple dest port ranges", () => {
+  test('outbound rule from high source ports to multiple dest port ranges', () => {
     const rules = processSecurityGroupRule(
       outboundRuleFromHighPortsToMultiplePortRanges,
       _integrationInstanceId,
@@ -271,7 +271,7 @@ describe("build mapped relationships from security group rules", () => {
     ).toEqual([outboundRuleFromHighPortsToMultiplePortRangesRelationships[1]]);
   });
 
-  test("inbound rule from all VMs in VNET", () => {
+  test('inbound rule from all VMs in VNET', () => {
     const rules = processSecurityGroupRule(
       inboundRuleFromAllVMsInVNET,
       _integrationInstanceId,
@@ -287,7 +287,7 @@ describe("build mapped relationships from security group rules", () => {
     ).toEqual([inboundRuleFromAllVMsInVNETRelationship]);
   });
 
-  test("create rules from security group", () => {
+  test('create rules from security group', () => {
     expect(
       createSecurityGroupRuleRelationships(
         securityGroup,
@@ -297,25 +297,25 @@ describe("build mapped relationships from security group rules", () => {
   });
 });
 
-describe("get port range from string", () => {
-  test("range", () => {
-    const portRange = "8080-8081";
+describe('get port range from string', () => {
+  test('range', () => {
+    const portRange = '8080-8081';
     expect(getPortsFromRange(portRange)).toEqual({
       fromPort: 8080,
       toPort: 8081,
     });
   });
 
-  test("single port", () => {
-    const portRange = "22";
+  test('single port', () => {
+    const portRange = '22';
     expect(getPortsFromRange(portRange)).toEqual({
       fromPort: 22,
       toPort: 22,
     });
   });
 
-  test("* => 0-65535", () => {
-    const portRange = "*";
+  test('* => 0-65535', () => {
+    const portRange = '*';
     expect(getPortsFromRange(portRange)).toEqual({
       fromPort: 0,
       toPort: 65535,

@@ -1,16 +1,16 @@
-import { NetworkManagementClient } from "@azure/arm-network";
+import { NetworkManagementClient } from '@azure/arm-network';
 import {
   LoadBalancer,
   NetworkInterface,
   NetworkSecurityGroup,
   PublicIPAddress,
   VirtualNetwork,
-} from "@azure/arm-network/esm/models";
+} from '@azure/arm-network/esm/models';
 
 import {
   Client,
   iterateAllResources,
-} from "../../../azure/resource-manager/client";
+} from '../../../azure/resource-manager/client';
 
 export class NetworkClient extends Client {
   public async iterateNetworkInterfaces(
@@ -23,7 +23,7 @@ export class NetworkClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.networkInterfaces,
-      resourceDescription: "network.networkInterfaces",
+      resourceDescription: 'network.networkInterfaces',
       callback,
     });
   }
@@ -38,7 +38,7 @@ export class NetworkClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.publicIPAddresses,
-      resourceDescription: "network.publicIPAddresses",
+      resourceDescription: 'network.publicIPAddresses',
       callback,
     });
   }
@@ -54,7 +54,7 @@ export class NetworkClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.loadBalancers,
-      resourceDescription: "network.loadBalancers",
+      resourceDescription: 'network.loadBalancers',
       callback,
     });
   }
@@ -69,7 +69,7 @@ export class NetworkClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.networkSecurityGroups,
-      resourceDescription: "network.networkSecurityGroups",
+      resourceDescription: 'network.networkSecurityGroups',
       callback,
     });
   }
@@ -84,7 +84,7 @@ export class NetworkClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.virtualNetworks,
-      resourceDescription: "network.virtualNetworks",
+      resourceDescription: 'network.virtualNetworks',
       callback,
     });
   }

@@ -1,12 +1,12 @@
-import { MariaDBManagementClient } from "@azure/arm-mariadb";
-import { Database, Server } from "@azure/arm-mariadb/esm/models";
+import { MariaDBManagementClient } from '@azure/arm-mariadb';
+import { Database, Server } from '@azure/arm-mariadb/esm/models';
 
 import {
   Client,
   iterateAllResources,
   ListResourcesEndpoint,
-} from "../../../../azure/resource-manager/client";
-import { resourceGroupName } from "../../../../azure/utils";
+} from '../../../../azure/resource-manager/client';
+import { resourceGroupName } from '../../../../azure/utils';
 
 export class MariaDBClient extends Client {
   public async iterateServers(
@@ -19,7 +19,7 @@ export class MariaDBClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.servers,
-      resourceDescription: "maria.servers",
+      resourceDescription: 'maria.servers',
       callback,
     });
   }
@@ -48,7 +48,7 @@ export class MariaDBClient extends Client {
           );
         },
       } as ListResourcesEndpoint,
-      resourceDescription: "maria.databases",
+      resourceDescription: 'maria.databases',
       callback,
     });
   }

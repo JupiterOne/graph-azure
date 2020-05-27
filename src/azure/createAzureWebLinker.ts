@@ -1,4 +1,4 @@
-import { AzureWebLinker } from "./types";
+import { AzureWebLinker } from './types';
 
 /**
  * Matches Blob storage service container ID, extracting:

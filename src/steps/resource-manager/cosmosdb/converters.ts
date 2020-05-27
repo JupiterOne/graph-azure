@@ -1,17 +1,17 @@
 import {
   DatabaseAccountGetResults,
   SqlDatabaseGetResults,
-} from "@azure/arm-cosmosdb/esm/models";
-import { createIntegrationEntity, Entity } from "@jupiterone/integration-sdk";
+} from '@azure/arm-cosmosdb/esm/models';
+import { createIntegrationEntity, Entity } from '@jupiterone/integration-sdk';
 
-import { AzureWebLinker } from "../../../azure";
-import { normalizeLocation, resourceGroupName } from "../../../azure/utils";
+import { AzureWebLinker } from '../../../azure';
+import { normalizeLocation, resourceGroupName } from '../../../azure/utils';
 import {
   RM_COSMOSDB_ACCOUNT_ENTITY_CLASS,
   RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
   RM_COSMOSDB_SQL_DATABASE_ENTITY_CLASS,
   RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
-} from "./constants";
+} from './constants';
 
 export function createAccountEntity(
   webLinker: AzureWebLinker,
@@ -31,12 +31,12 @@ export function createAccountEntity(
         enableMultipleWriteLocations: data.enableMultipleWriteLocations,
         isVirtualNetworkFilterEnabled: data.isVirtualNetworkFilterEnabled,
         ipRangeFilter: data.ipRangeFilter,
-        category: ["infrastructure"],
+        category: ['infrastructure'],
         endpoints: data.readLocations
           ?.map((e) => e.documentEndpoint)
           .filter((e) => !!e) as string[],
       },
-      tagProperties: ["environment"],
+      tagProperties: ['environment'],
     },
   });
 }
@@ -60,7 +60,7 @@ export function createSQLDatabaseEntity(
         region: normalizeLocation(dbAccount.location),
         classification: null, // If it isn't in tags, we don't know what the value should be
       },
-      tagProperties: ["environment"],
+      tagProperties: ['environment'],
     },
   });
 }

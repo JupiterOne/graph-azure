@@ -1,11 +1,11 @@
 import {
   IntegrationExecutionContext,
   IntegrationValidationError,
-} from "@jupiterone/integration-sdk";
+} from '@jupiterone/integration-sdk';
 
-import { default as authenticateGraph } from "./azure/graph/authenticate";
-import { default as authenticateResourceManager } from "./azure/resource-manager/authenticate";
-import { IntegrationConfig } from "./types";
+import { default as authenticateGraph } from './azure/graph/authenticate';
+import { default as authenticateResourceManager } from './azure/resource-manager/authenticate';
+import { IntegrationConfig } from './types';
 
 export default async function validateInvocation(
   validationContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -14,7 +14,7 @@ export default async function validateInvocation(
 
   if (!config.clientId || !config.clientSecret || !config.directoryId) {
     throw new IntegrationValidationError(
-      "Integration configuration requires all of {clentId, clientSecret, directoryId}",
+      'Integration configuration requires all of {clentId, clientSecret, directoryId}',
     );
   }
 

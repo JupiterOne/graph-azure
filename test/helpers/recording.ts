@@ -1,16 +1,16 @@
-import { gunzipSync } from "zlib";
+import { gunzipSync } from 'zlib';
 
 import {
   Recording,
   RecordingEntry,
   setupRecording,
   SetupRecordingInput,
-} from "@jupiterone/integration-sdk/testing";
+} from '@jupiterone/integration-sdk/testing';
 
 export { Recording };
 
 export function setupAzureRecording(
-  input: Omit<SetupRecordingInput, "mutateEntry">,
+  input: Omit<SetupRecordingInput, 'mutateEntry'>,
 ): Recording {
   return setupRecording({
     ...input,
@@ -25,21 +25,21 @@ function mutateRecordingEntry(entry: RecordingEntry): void {
   }
 
   const contentEncoding = entry.response.headers.find(
-    (e) => e.name === "content-encoding",
+    (e) => e.name === 'content-encoding',
   );
   const transferEncoding = entry.response.headers.find(
-    (e) => e.name === "transfer-encoding",
+    (e) => e.name === 'transfer-encoding',
   );
 
-  if (contentEncoding && contentEncoding.value === "gzip") {
+  if (contentEncoding && contentEncoding.value === 'gzip') {
     const chunkBuffers: Buffer[] = [];
     const hexChunks = JSON.parse(responseText) as string[];
     hexChunks.forEach((chunk) => {
-      const chunkBuffer = Buffer.from(chunk, "hex");
+      const chunkBuffer = Buffer.from(chunk, 'hex');
       chunkBuffers.push(chunkBuffer);
     });
 
-    responseText = gunzipSync(Buffer.concat(chunkBuffers)).toString("utf-8");
+    responseText = gunzipSync(Buffer.concat(chunkBuffers)).toString('utf-8');
 
     // Remove encoding/chunking since content is now unzipped
     entry.response.headers = entry.response.headers.filter(
@@ -52,7 +52,7 @@ function mutateRecordingEntry(entry: RecordingEntry): void {
 
   if (/login/.exec(entry.request.url) && entry.request.postData) {
     // Redact request body with secrets for authentication
-    entry.request.postData.text = "[REDACTED]";
+    entry.request.postData.text = '[REDACTED]';
 
     // Redact authentication response token
     if (responseJson.access_token) {
@@ -60,7 +60,7 @@ function mutateRecordingEntry(entry: RecordingEntry): void {
         {
           ...responseJson,
           /* eslint-disable-next-line @typescript-eslint/camelcase */
-          access_token: "[REDACTED]",
+          access_token: '[REDACTED]',
         },
         null,
         0,

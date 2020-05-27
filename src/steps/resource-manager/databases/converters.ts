@@ -1,32 +1,32 @@
 import {
   Database as MariaDBDatabase,
   Server as MariaDBServer,
-} from "@azure/arm-mariadb/esm/models";
+} from '@azure/arm-mariadb/esm/models';
 import {
   Database as MySQLDatabase,
   Server as MySQLServer,
-} from "@azure/arm-mysql/esm/models";
+} from '@azure/arm-mysql/esm/models';
 import {
   Database as PostgreSQLDatabase,
   Server as PostgreSQLServer,
-} from "@azure/arm-postgresql/esm/models";
+} from '@azure/arm-postgresql/esm/models';
 import {
   Database as SQLDatabase,
   Server as SQLServer,
-} from "@azure/arm-sql/esm/models";
+} from '@azure/arm-sql/esm/models';
 import {
   convertProperties,
   createIntegrationEntity,
   Entity,
-} from "@jupiterone/integration-sdk";
+} from '@jupiterone/integration-sdk';
 
-import { AzureWebLinker } from "../../../azure";
-import { resourceGroupName } from "../../../azure/utils";
-import { REDACTED_VALUE } from "../../../utils/constants";
+import { AzureWebLinker } from '../../../azure';
+import { resourceGroupName } from '../../../azure/utils';
+import { REDACTED_VALUE } from '../../../utils/constants';
 import {
   RM_DATABASE_ENTITY_CLASS,
   RM_DATABASE_SERVER_ENTITY_CLASS,
-} from "./constants";
+} from './constants';
 
 export function createDatabaseEntity(
   webLinker: AzureWebLinker,
@@ -40,7 +40,7 @@ export function createDatabaseEntity(
         ...convertProperties(data),
         _type,
         _class: RM_DATABASE_ENTITY_CLASS,
-        displayName: data.name || data.id || "unnamed",
+        displayName: data.name || data.id || 'unnamed',
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
         classification: null,
@@ -62,12 +62,12 @@ export function createDbServerEntity(
       source: data,
       assign: {
         ...convertProperties(data),
-        ...convertProperties(anyServer.sku, { prefix: "sku" }),
+        ...convertProperties(anyServer.sku, { prefix: 'sku' }),
         ...convertProperties(anyServer.storageProfile),
         _type,
         _class: RM_DATABASE_SERVER_ENTITY_CLASS,
         displayName:
-          data.name || data.fullyQualifiedDomainName || data.id || "unnamed",
+          data.name || data.fullyQualifiedDomainName || data.id || 'unnamed',
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
         fqdn: data.fullyQualifiedDomainName,

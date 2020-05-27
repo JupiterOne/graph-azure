@@ -1,35 +1,35 @@
-import map from "lodash.map";
+import map from 'lodash.map';
 
-import { VirtualMachine } from "@azure/arm-compute/esm/models";
-import { NetworkInterface } from "@azure/arm-network/esm/models";
+import { VirtualMachine } from '@azure/arm-compute/esm/models';
+import { NetworkInterface } from '@azure/arm-network/esm/models';
 import {
   Entity,
   getRawData,
   JobState,
   Relationship,
-} from "@jupiterone/integration-sdk";
+} from '@jupiterone/integration-sdk';
 
-import { IntegrationStepContext } from "../../../types";
-import { STEP_AD_ACCOUNT } from "../../active-directory";
-import { VIRTUAL_MACHINE_ENTITY_TYPE } from "../compute";
+import { IntegrationStepContext } from '../../../types';
+import { STEP_AD_ACCOUNT } from '../../active-directory';
+import { VIRTUAL_MACHINE_ENTITY_TYPE } from '../compute';
 import {
   NETWORK_INTERFACE_ENTITY_TYPE,
   STEP_RM_NETWORK_INTERFACES,
   STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
-} from "../network";
+} from '../network';
 import {
   STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,
   SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
-} from "./constants";
+} from './constants';
 import {
   createSubnetVirtualMachineRelationship,
   createVirtualMachineNetworkInterfaceRelationship,
   createVirtualMachinePublicIPAddressRelationship,
-} from "./converters";
+} from './converters';
 
-export * from "./constants";
+export * from './constants';
 
 export async function buildComputeNetworkRelationships(
   executionContext: IntegrationStepContext,
@@ -45,7 +45,7 @@ export async function buildComputeNetworkRelationships(
       const vmData = getRawData<VirtualMachine>(vmEntity);
       if (!vmData) {
         throw new Error(
-          "Iterating virtual machine entities, raw data is missing!",
+          'Iterating virtual machine entities, raw data is missing!',
         );
       }
 
@@ -101,7 +101,7 @@ function findVirtualMachineNetworkInterfaces(
 export const interserviceSteps = [
   {
     id: STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,
-    name: "Compute Network Relationships",
+    name: 'Compute Network Relationships',
     types: [
       SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
       VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,

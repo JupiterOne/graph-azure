@@ -3,11 +3,11 @@ import {
   EncryptionServices,
   FileShare,
   StorageAccount,
-} from "@azure/arm-storage/esm/models";
-import { createIntegrationEntity, Entity } from "@jupiterone/integration-sdk";
+} from '@azure/arm-storage/esm/models';
+import { createIntegrationEntity, Entity } from '@jupiterone/integration-sdk';
 
-import { AzureWebLinker } from "../../../azure";
-import { resourceGroupName } from "../../../azure/utils";
+import { AzureWebLinker } from '../../../azure';
+import { resourceGroupName } from '../../../azure/utils';
 import {
   STORAGE_BLOB_SERVICE_ENTITY_CLASS,
   STORAGE_BLOB_SERVICE_ENTITY_TYPE,
@@ -21,7 +21,7 @@ import {
   STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
   STORAGE_TABLE_SERVICE_ENTITY_CLASS,
   STORAGE_TABLE_SERVICE_ENTITY_TYPE,
-} from "./constants";
+} from './constants';
 
 type StorageAccountServiceConfig = {
   type: string;
@@ -40,22 +40,22 @@ const storageAccountServiceConfig: StorageAccountServiceConfigMap = {
   blob: {
     type: STORAGE_BLOB_SERVICE_ENTITY_TYPE,
     class: STORAGE_BLOB_SERVICE_ENTITY_CLASS,
-    pathSuffix: "/containersList",
+    pathSuffix: '/containersList',
   },
   file: {
     type: STORAGE_FILE_SERVICE_ENTITY_TYPE,
     class: STORAGE_FILE_SERVICE_ENTITY_CLASS,
-    pathSuffix: "/fileList",
+    pathSuffix: '/fileList',
   },
   queue: {
     type: STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
     class: STORAGE_QUEUE_SERVICE_ENTITY_CLASS,
-    pathSuffix: "/queueList",
+    pathSuffix: '/queueList',
   },
   table: {
     type: STORAGE_TABLE_SERVICE_ENTITY_TYPE,
     class: STORAGE_TABLE_SERVICE_ENTITY_CLASS,
-    pathSuffix: "/tableList",
+    pathSuffix: '/tableList',
   },
 };
 
@@ -85,10 +85,10 @@ export function createStorageServiceEntity(
         sku: data.sku?.name,
         endpoints: endpoint ? [endpoint] : undefined,
         enableHttpsTrafficOnly: data.enableHttpsTrafficOnly,
-        category: ["infrastructure"],
+        category: ['infrastructure'],
         encrypted: !!data.encryption?.services?.[service]?.enabled,
       },
-      tagProperties: ["environment"],
+      tagProperties: ['environment'],
     },
   });
 }

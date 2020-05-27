@@ -1,21 +1,21 @@
-import { ClientSecretCredential } from "@azure/identity";
+import { ClientSecretCredential } from '@azure/identity';
 import {
   exponentialRetryPolicy,
   HttpResponse,
   RequestPolicyFactory,
   systemErrorRetryPolicy,
   throttlingRetryPolicy,
-} from "@azure/ms-rest-js";
-import { retry } from "@lifeomic/attempt";
+} from '@azure/ms-rest-js';
+import { retry } from '@lifeomic/attempt';
 
-import { IntegrationConfig } from "../../types";
-import authenticate from "./authenticate";
-import { bunyanLogPolicy } from "./BunyanLogPolicy";
-import { AzureManagementClientCredentials } from "./types";
+import { IntegrationConfig } from '../../types';
+import authenticate from './authenticate';
+import { bunyanLogPolicy } from './BunyanLogPolicy';
+import { AzureManagementClientCredentials } from './types';
 import {
   IntegrationLogger,
   IntegrationProviderAPIError,
-} from "@jupiterone/integration-sdk";
+} from '@jupiterone/integration-sdk';
 
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
@@ -231,7 +231,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
   try {
     do {
       const response = await retryResourceRequest(async () => {
-        if ("listAllNext" in resourceEndpoint) {
+        if ('listAllNext' in resourceEndpoint) {
           return nextLink
             ? /* istanbul ignore next: testing iteration might be difficult */
               await resourceEndpoint.listAllNext<
@@ -255,7 +255,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
           resourceCount: response.length,
           resource: response._response.request.url,
         },
-        "Received resources for endpoint",
+        'Received resources for endpoint',
       );
 
       for (const e of response) {
@@ -267,7 +267,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
   } catch (err) {
     /* istanbul ignore else */
     if (err.statusCode === 404) {
-      logger.warn({ err }, "Resources not found");
+      logger.warn({ err }, 'Resources not found');
     } else {
       throw new IntegrationProviderAPIError({
         cause: err,

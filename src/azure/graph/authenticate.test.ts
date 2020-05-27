@@ -1,8 +1,8 @@
-import { IntegrationProviderAPIError } from "@jupiterone/integration-sdk";
-import { Recording, setupRecording } from "@jupiterone/integration-sdk/testing";
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk';
+import { Recording, setupRecording } from '@jupiterone/integration-sdk/testing';
 
-import config from "../../../test/integrationInstanceConfig";
-import authenticate from "./authenticate";
+import config from '../../../test/integrationInstanceConfig';
+import authenticate from './authenticate';
 
 let recording: Recording;
 
@@ -10,19 +10,19 @@ afterEach(async () => {
   await recording.stop();
 });
 
-test("authenticate", async () => {
-  recording = setupRecording({ directory: __dirname, name: "authenticate" });
+test('authenticate', async () => {
+  recording = setupRecording({ directory: __dirname, name: 'authenticate' });
   const token = await authenticate(config);
   expect(token).toBeDefined();
 });
 
-test("authenticate invalid credentials", async () => {
+test('authenticate invalid credentials', async () => {
   recording = setupRecording({
     directory: __dirname,
-    name: "authenticate invalid",
+    name: 'authenticate invalid',
     options: { recordFailedRequests: true },
   });
   await expect(
-    authenticate({ ...config, clientSecret: "somejunkfortest" }),
+    authenticate({ ...config, clientSecret: 'somejunkfortest' }),
   ).rejects.toThrow(IntegrationProviderAPIError);
 });

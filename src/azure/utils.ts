@@ -5,7 +5,7 @@
  */
 export function normalizeLocation(location?: string): string | undefined {
   if (location) {
-    return location.toLowerCase().replace(/\s+/, "");
+    return location.toLowerCase().replace(/\s+/, '');
   }
 }
 
@@ -22,7 +22,7 @@ export function resourceName(resource: { name?: string }): string {
   if (resource.name) {
     return resource.name;
   } else {
-    throw new Error("Resource name is undefined!");
+    throw new Error('Resource name is undefined!');
   }
 }
 

@@ -1,13 +1,13 @@
-import { StorageAccount } from "@azure/arm-storage/esm/models";
+import { StorageAccount } from '@azure/arm-storage/esm/models';
 import {
   createIntegrationRelationship,
   Entity,
-} from "@jupiterone/integration-sdk";
+} from '@jupiterone/integration-sdk';
 
-import { AzureWebLinker, createAzureWebLinker } from "../../../azure";
-import { IntegrationStepContext } from "../../../types";
-import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from "../../active-directory";
-import { StorageClient } from "./client";
+import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
+import { IntegrationStepContext } from '../../../types';
+import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
+import { StorageClient } from './client';
 import {
   ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_TYPE,
   ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_TYPE,
@@ -22,14 +22,14 @@ import {
   STORAGE_FILE_SHARE_ENTITY_TYPE,
   STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
   STORAGE_TABLE_SERVICE_ENTITY_TYPE,
-} from "./constants";
+} from './constants';
 import {
   createStorageContainerEntity,
   createStorageFileShareEntity,
   createStorageServiceEntity,
-} from "./converters";
+} from './converters';
 
-export * from "./constants";
+export * from './constants';
 
 export async function fetchStorageResources(
   executionContext: IntegrationStepContext,
@@ -73,7 +73,7 @@ async function synchronizeStorageAccount(
 
       const synchronizer = storageServiceSynchronizers[s];
       if (synchronizer) {
-        logger.info(logInfo, "Processing storage account service...");
+        logger.info(logInfo, 'Processing storage account service...');
         await synchronizer(
           context,
           accountEntity,
@@ -82,13 +82,13 @@ async function synchronizeStorageAccount(
           client,
         );
       } else {
-        logger.warn(logInfo, "Unhandled storage account service!");
+        logger.warn(logInfo, 'Unhandled storage account service!');
       }
     }
   } else {
     logger.info(
       storageAccountLogInfo,
-      "Storage account has no registered service endpoints, nothing to synchronize",
+      'Storage account has no registered service endpoints, nothing to synchronize',
     );
   }
 }
@@ -122,14 +122,14 @@ async function synchronizeBlobStorage(
   const serviceEntity = createStorageServiceEntity(
     webLinker,
     storageAccount,
-    "blob",
+    'blob',
   );
 
   await jobState.addEntity(serviceEntity);
 
   await jobState.addRelationship(
     createIntegrationRelationship({
-      _class: "HAS",
+      _class: 'HAS',
       from: accountEntity,
       to: serviceEntity,
     }),
@@ -148,7 +148,7 @@ async function synchronizeBlobStorage(
 
       await jobState.addRelationship(
         createIntegrationRelationship({
-          _class: "HAS",
+          _class: 'HAS',
           from: serviceEntity,
           to: containerEntity,
         }),
@@ -173,14 +173,14 @@ async function synchronizeFileStorage(
   const serviceEntity = createStorageServiceEntity(
     webLinker,
     storageAccount,
-    "file",
+    'file',
   );
 
   await jobState.addEntity(serviceEntity);
 
   await jobState.addRelationship(
     createIntegrationRelationship({
-      _class: "HAS",
+      _class: 'HAS',
       from: accountEntity,
       to: serviceEntity,
     }),
@@ -197,7 +197,7 @@ async function synchronizeFileStorage(
 
     await jobState.addRelationship(
       createIntegrationRelationship({
-        _class: "HAS",
+        _class: 'HAS',
         from: serviceEntity,
         to: fileShareEntity,
         properties: {
@@ -211,7 +211,7 @@ async function synchronizeFileStorage(
 export const storageSteps = [
   {
     id: STEP_RM_STORAGE_RESOURCES,
-    name: "Storage Resources",
+    name: 'Storage Resources',
     types: [
       STORAGE_BLOB_SERVICE_ENTITY_TYPE,
       STORAGE_CONTAINER_ENTITY_TYPE,

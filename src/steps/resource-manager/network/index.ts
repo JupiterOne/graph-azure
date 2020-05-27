@@ -3,13 +3,13 @@ import {
   NetworkInterfaceIPConfiguration,
   NetworkSecurityGroup,
   PublicIPAddress,
-} from "@azure/arm-network/esm/models";
-import { Entity, Relationship } from "@jupiterone/integration-sdk";
+} from '@azure/arm-network/esm/models';
+import { Entity, Relationship } from '@jupiterone/integration-sdk';
 
-import { createAzureWebLinker } from "../../../azure";
-import { IntegrationStepContext } from "../../../types";
-import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from "../../active-directory";
-import { NetworkClient } from "./client";
+import { createAzureWebLinker } from '../../../azure';
+import { IntegrationStepContext } from '../../../types';
+import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
+import { NetworkClient } from './client';
 import {
   LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE,
   LOAD_BALANCER_ENTITY_TYPE,
@@ -27,7 +27,7 @@ import {
   SUBNET_ENTITY_TYPE,
   VIRTUAL_NETWORK_ENTITY_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
-} from "./constants";
+} from './constants';
 import {
   createLoadBalancerBackendNicRelationship,
   createLoadBalancerEntity,
@@ -41,9 +41,9 @@ import {
   createVirtualNetworkEntity,
   createVirtualNetworkSubnetRelationship,
   isWideOpen,
-} from "./converters";
+} from './converters';
 
-export * from "./constants";
+export * from './constants';
 
 type SubnetSecurityGroupMap = {
   [subnetId: string]: NetworkSecurityGroup;
@@ -59,7 +59,7 @@ export async function fetchNetworkInterfaces(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   const publicIpAddresses = await jobState.getData<PublicIPAddress[]>(
-    "publicIPAddresses",
+    'publicIPAddresses',
   );
 
   const findPublicIPAddresses = (
@@ -109,7 +109,7 @@ export async function fetchPublicIPAddresses(
   // A simple way to make the set available to dependent steps. Assumes dataset
   // is relatively small. Ideally, we could easily find the stored entity by any
   // property.
-  await jobState.setData("publicIPAddresses", publicIpAddresses);
+  await jobState.setData('publicIPAddresses', publicIpAddresses);
 }
 
 export async function fetchLoadBalancers(
@@ -136,7 +136,7 @@ export async function fetchLoadBalancers(
                * For example:
                * "id": "/subscriptions/<uuid>/resourceGroups/xtest/providers/Microsoft.Network/networkInterfaces/j1234/ipConfigurations/ipconfig1",
                */
-              const nicId = ip.id.split("/ipConfigurations")[0];
+              const nicId = ip.id.split('/ipConfigurations')[0];
               relationships.push(
                 createLoadBalancerBackendNicRelationship(lb, nicId),
               );
@@ -197,7 +197,7 @@ export async function fetchNetworkSecurityGroups(
     );
   });
 
-  await jobState.setData("subnetSecurityGroupMap", subnetSecurityGroupMap);
+  await jobState.setData('subnetSecurityGroupMap', subnetSecurityGroupMap);
 }
 
 export async function fetchVirtualNetworks(
@@ -210,7 +210,7 @@ export async function fetchVirtualNetworks(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   const subnetSecurityGroupMap = await jobState.getData<SubnetSecurityGroupMap>(
-    "subnetSecurityGroupMap",
+    'subnetSecurityGroupMap',
   );
 
   await client.iterateVirtualNetworks(async (vnet) => {
@@ -240,21 +240,21 @@ export async function fetchVirtualNetworks(
 export const networkSteps = [
   {
     id: STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
-    name: "Public IP Addresses",
+    name: 'Public IP Addresses',
     types: [PUBLIC_IP_ADDRESS_ENTITY_TYPE],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchPublicIPAddresses,
   },
   {
     id: STEP_RM_NETWORK_INTERFACES,
-    name: "Network Interfaces",
+    name: 'Network Interfaces',
     types: [NETWORK_INTERFACE_ENTITY_TYPE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES],
     executionHandler: fetchNetworkInterfaces,
   },
   {
     id: STEP_RM_NETWORK_VIRTUAL_NETWORKS,
-    name: "Virtual Networks",
+    name: 'Virtual Networks',
     types: [
       VIRTUAL_NETWORK_ENTITY_TYPE,
       SUBNET_ENTITY_TYPE,
@@ -266,7 +266,7 @@ export const networkSteps = [
   },
   {
     id: STEP_RM_NETWORK_SECURITY_GROUPS,
-    name: "Network Security Groups",
+    name: 'Network Security Groups',
     types: [
       SECURITY_GROUP_ENTITY_TYPE,
       SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
@@ -277,7 +277,7 @@ export const networkSteps = [
   },
   {
     id: STEP_RM_NETWORK_LOAD_BALANCERS,
-    name: "Load Balancers",
+    name: 'Load Balancers',
     types: [
       LOAD_BALANCER_ENTITY_TYPE,
       LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE,

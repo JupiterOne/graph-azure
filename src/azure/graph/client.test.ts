@@ -2,10 +2,10 @@ import {
   createMockIntegrationLogger,
   Recording,
   setupRecording,
-} from "@jupiterone/integration-sdk/testing";
+} from '@jupiterone/integration-sdk/testing';
 
-import config from "../../../test/integrationInstanceConfig";
-import { GraphClient } from "./client";
+import config from '../../../test/integrationInstanceConfig';
+import { GraphClient } from './client';
 
 class AnyGraphClient extends GraphClient {}
 
@@ -17,33 +17,33 @@ afterEach(async () => {
   }
 });
 
-test("accessToken fetched and cached", async () => {
+test('accessToken fetched and cached', async () => {
   let requests = 0;
 
   recording = setupRecording({
     directory: __dirname,
-    name: "createGraphClient",
+    name: 'createGraphClient',
   });
-  recording.server.any().on("request", (_req) => {
+  recording.server.any().on('request', (_req) => {
     requests++;
   });
 
   const client = new AnyGraphClient(createMockIntegrationLogger(), config);
   await expect(client.fetchMetadata()).resolves.toMatchObject({
-    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata",
+    '@odata.context': 'https://graph.microsoft.com/v1.0/$metadata',
   });
   expect(requests).toEqual(2);
 
   await expect(client.fetchMetadata()).resolves.toMatchObject({
-    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata",
+    '@odata.context': 'https://graph.microsoft.com/v1.0/$metadata',
   });
   expect(requests).toEqual(3);
 });
 
-test("fetchOrganization", async () => {
+test('fetchOrganization', async () => {
   recording = setupRecording({
     directory: __dirname,
-    name: "fetchOrganization",
+    name: 'fetchOrganization',
   });
 
   const client = new AnyGraphClient(createMockIntegrationLogger(), config);

@@ -1,9 +1,9 @@
-import snakeCase from "lodash.snakecase";
+import snakeCase from 'lodash.snakecase';
 
 import {
   NetworkSecurityGroup,
   SecurityRule,
-} from "@azure/arm-network/esm/models";
+} from '@azure/arm-network/esm/models';
 import {
   convertProperties,
   createIntegrationRelationship,
@@ -16,9 +16,9 @@ import {
   isPublicIp,
   Relationship,
   RelationshipDirection,
-} from "@jupiterone/integration-sdk";
+} from '@jupiterone/integration-sdk';
 
-import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from "../constants";
+import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from '../constants';
 
 // interface SecurityGroupRelationship extends Relationship {
 //   _mapping?: RelationshipMapping;
@@ -70,14 +70,14 @@ export function createSecurityGroupRuleRelationshipsFromRule(
 ): Relationship[] {
   const relationships: Relationship[] = [];
 
-  const _class = rule.access === "Allow" ? "ALLOWS" : "DENIES";
+  const _class = rule.access === 'Allow' ? 'ALLOWS' : 'DENIES';
   const relationshipDirection = rule.properties.ingress
     ? RelationshipDirection.REVERSE
     : RelationshipDirection.FORWARD;
 
   for (const target of rule.targets) {
     const targetFilterKeys = target.internet
-      ? [["_key"]]
+      ? [['_key']]
       : [Object.keys(target)];
     const targetEntity = target.internet ? INTERNET : (target as Entity);
 
@@ -95,7 +95,7 @@ export function createSecurityGroupRuleRelationshipsFromRule(
           ...rule.properties,
           _key: `${rule.properties._type}:${rule.id}:${
             rule.properties.portRange
-          }:${target.internet ? "internet" : Object.values(target).join(":")}`,
+          }:${target.internet ? 'internet' : Object.values(target).join(':')}`,
         },
       }),
     );
@@ -138,10 +138,10 @@ export function processSecurityGroupRule(
     const properties = {
       ...convertProperties(rule, { stringifyArray: true }),
       _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
-      ingress: rule.direction === "Inbound",
-      inbound: rule.direction === "Inbound",
-      egress: rule.direction === "Outbound",
-      outbound: rule.direction === "Outbound",
+      ingress: rule.direction === 'Inbound',
+      inbound: rule.direction === 'Inbound',
+      egress: rule.direction === 'Outbound',
+      outbound: rule.direction === 'Outbound',
       portRange,
       fromPort: ports.fromPort,
       toPort: ports.toPort,
@@ -151,7 +151,7 @@ export function processSecurityGroupRule(
       ruleNumber: rule.priority,
     };
     const targetPrefixes =
-      rule.direction === "Inbound"
+      rule.direction === 'Inbound'
         ? [rule.sourceAddressPrefix, ...(rule.sourceAddressPrefixes || [])]
         : [
             rule.destinationAddressPrefix,
@@ -160,7 +160,7 @@ export function processSecurityGroupRule(
 
     const targets: RuleTargetEntity[] = [];
     for (const targetPrefix of targetPrefixes) {
-      if (targetPrefix === "Internet" || targetPrefix === "*") {
+      if (targetPrefix === 'Internet' || targetPrefix === '*') {
         // Target is the Internet
         targets.push({ internet: true });
       } else if (targetPrefix && isIpv4(targetPrefix)) {
@@ -171,24 +171,24 @@ export function processSecurityGroupRule(
         } else if (isHost(targetPrefix)) {
           // Target is a host IP
           const publicIpAddress = isPublicIp(targetPrefix)
-            ? targetPrefix.replace("/32", "")
+            ? targetPrefix.replace('/32', '')
             : undefined;
           targets.push({
-            _class: "Host",
-            ipAddress: targetPrefix.replace("/32", ""),
+            _class: 'Host',
+            ipAddress: targetPrefix.replace('/32', ''),
             publicIpAddress,
           });
         } else if (isPublicIp(targetPrefix)) {
           // Target is a public network IP
           targets.push({
-            _class: "Network",
+            _class: 'Network',
             CIDR: targetPrefix,
           });
         } else {
           // Target is a private network IP
           targets.push({
-            _class: "Network",
-            _type: "azure_subnet",
+            _class: 'Network',
+            _type: 'azure_subnet',
             _integrationInstanceId,
             CIDR: targetPrefix,
           });
@@ -197,10 +197,10 @@ export function processSecurityGroupRule(
         // Target is an Azure serviceTag (e.g. 'VirtualNetwork' or 'AzureLoadBalancer')
         // https://docs.microsoft.com/en-us/azure/virtual-network/security-overview#service-tags
         targets.push({
-          _class: "Service",
+          _class: 'Service',
           _type: `azure_${snakeCase(targetPrefix)}`.replace(
-            "azure_azure_",
-            "azure_",
+            'azure_azure_',
+            'azure_',
           ),
           displayName: targetPrefix,
         });
@@ -225,13 +225,13 @@ type portRange = {
 
 export function getPortsFromRange(portRange: string): portRange {
   if (portRange && portRange.length > 0) {
-    if (portRange === "*") {
+    if (portRange === '*') {
       return {
         fromPort: 0,
         toPort: 65535,
       };
     }
-    const ports = portRange.split("-");
+    const ports = portRange.split('-');
     const fromPort = parseInt(ports[0]);
     const toPort = parseInt(ports[1] || ports[0]);
     return { fromPort, toPort };
@@ -256,26 +256,26 @@ export function isWideOpen(rules: SecurityRule[]): boolean {
 export function findAllowAllRule(
   rules: SecurityRule[],
 ): SecurityRule | undefined {
-  return findAnyAnyRule(rules, "Allow");
+  return findAnyAnyRule(rules, 'Allow');
 }
 
 export function findDenyAllRule(
   rules: SecurityRule[],
 ): SecurityRule | undefined {
-  return findAnyAnyRule(rules, "Deny");
+  return findAnyAnyRule(rules, 'Deny');
 }
 
 export function findAnyAnyRule(
   rules: SecurityRule[],
-  access: "Deny" | "Allow",
+  access: 'Deny' | 'Allow',
 ): SecurityRule | undefined {
   return rules.find(
     (r) =>
-      r.destinationAddressPrefix === "*" &&
-      r.destinationPortRange === "*" &&
-      r.sourcePortRange === "*" &&
-      r.sourceAddressPrefix === "*" &&
-      r.protocol === "*" &&
+      r.destinationAddressPrefix === '*' &&
+      r.destinationPortRange === '*' &&
+      r.sourcePortRange === '*' &&
+      r.sourceAddressPrefix === '*' &&
+      r.protocol === '*' &&
       r.access === access,
   );
 }

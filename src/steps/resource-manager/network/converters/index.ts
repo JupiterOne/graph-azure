@@ -1,4 +1,4 @@
-import map from "lodash.map";
+import map from 'lodash.map';
 
 import {
   FrontendIPConfiguration,
@@ -9,17 +9,17 @@ import {
   PublicIPAddress,
   Subnet,
   VirtualNetwork,
-} from "@azure/arm-network/esm/models";
+} from '@azure/arm-network/esm/models';
 import {
   assignTags,
   createIntegrationEntity,
   createIntegrationRelationship,
   Entity,
   Relationship,
-} from "@jupiterone/integration-sdk";
+} from '@jupiterone/integration-sdk';
 
-import { AzureWebLinker } from "../../../../azure";
-import { resourceGroupName } from "../../../../azure/utils";
+import { AzureWebLinker } from '../../../../azure';
+import { resourceGroupName } from '../../../../azure/utils';
 import {
   LOAD_BALANCER_ENTITY_CLASS,
   LOAD_BALANCER_ENTITY_TYPE,
@@ -33,9 +33,9 @@ import {
   SUBNET_ENTITY_TYPE,
   VIRTUAL_NETWORK_ENTITY_CLASS,
   VIRTUAL_NETWORK_ENTITY_TYPE,
-} from "../constants";
+} from '../constants';
 
-export * from "./securityGroups";
+export * from './securityGroups';
 
 export function createLoadBalancerEntity(
   webLinker: AzureWebLinker,
@@ -51,8 +51,8 @@ export function createLoadBalancerEntity(
         _key: data.id as string,
         _type: LOAD_BALANCER_ENTITY_TYPE,
         _class: LOAD_BALANCER_ENTITY_CLASS,
-        category: ["network"],
-        function: ["load-balancing"],
+        category: ['network'],
+        function: ['load-balancing'],
         resourceGuid: data.resourceGuid,
         resourceGroup: resourceGroupName(data.id),
         displayName: data.name,
@@ -78,7 +78,7 @@ export function createNetworkInterfaceEntity(
     _key: data.id as string,
     _type: NETWORK_INTERFACE_ENTITY_TYPE,
     _class: NETWORK_INTERFACE_ENTITY_CLASS,
-    _rawData: [{ name: "default", rawData: data }],
+    _rawData: [{ name: 'default', rawData: data }],
     id: data.id,
     resourceGuid: data.resourceGuid,
     resourceGroup: resourceGroupName(data.id),
@@ -109,7 +109,7 @@ export function createPublicIPAddressEntity(
     _key: data.id as string,
     _type: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
     _class: PUBLIC_IP_ADDRESS_ENTITY_CLASS,
-    _rawData: [{ name: "default", rawData: data }],
+    _rawData: [{ name: 'default', rawData: data }],
     id: data.id,
     resourceGuid: data.resourceGuid,
     resourceGroup: resourceGroupName(data.id),
@@ -148,7 +148,7 @@ export function createSubnetEntity(
         internal: true,
         region: vnet.location,
         resourceGroup: resourceGroupName(data.id),
-        environment: vnet.tags && vnet.tags["environment"],
+        environment: vnet.tags && vnet.tags['environment'],
       },
     },
   });
@@ -161,10 +161,10 @@ export function createNetworkSecurityGroupEntity(
 ): Entity {
   const category: string[] = [];
   if (data.subnets && data.subnets.length > 0) {
-    category.push("network");
+    category.push('network');
   }
   if (data.networkInterfaces && data.networkInterfaces.length > 0) {
-    category.push("host");
+    category.push('host');
   }
 
   return createIntegrationEntity({
@@ -179,7 +179,7 @@ export function createNetworkSecurityGroupEntity(
         category,
         isWideOpen,
       },
-      tagProperties: ["environment"],
+      tagProperties: ['environment'],
     },
   });
 }
@@ -208,7 +208,7 @@ export function createVirtualNetworkEntity(
         region: data.location,
         resourceGroup: resourceGroupName(data.id),
       },
-      tagProperties: ["environment"],
+      tagProperties: ['environment'],
     },
   });
 }
@@ -218,7 +218,7 @@ export function createLoadBalancerBackendNicRelationship(
   nicId: string,
 ): Relationship {
   return createIntegrationRelationship({
-    _class: "CONNECTS",
+    _class: 'CONNECTS',
     fromKey: lb.id as string,
     fromType: LOAD_BALANCER_ENTITY_TYPE,
     toKey: nicId,
@@ -231,7 +231,7 @@ export function createNetworkSecurityGroupNicRelationship(
   nic: NetworkInterface,
 ): Relationship {
   return createIntegrationRelationship({
-    _class: "PROTECTS",
+    _class: 'PROTECTS',
     fromKey: securityGroup.id as string,
     fromType: SECURITY_GROUP_ENTITY_TYPE,
     toKey: nic.id as string,
@@ -244,7 +244,7 @@ export function createVirtualNetworkSubnetRelationship(
   subnet: Subnet,
 ): Relationship {
   return createIntegrationRelationship({
-    _class: "CONTAINS",
+    _class: 'CONTAINS',
     fromKey: vnet.id as string,
     fromType: VIRTUAL_NETWORK_ENTITY_TYPE,
     toKey: subnet.id as string,
@@ -257,7 +257,7 @@ export function createNetworkSecurityGroupSubnetRelationship(
   subnet: Subnet,
 ): Relationship {
   return createIntegrationRelationship({
-    _class: "PROTECTS",
+    _class: 'PROTECTS',
     fromKey: securityGroup.id as string,
     fromType: SECURITY_GROUP_ENTITY_TYPE,
     toKey: subnet.id as string,

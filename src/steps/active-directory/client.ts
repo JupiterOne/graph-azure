@@ -3,13 +3,13 @@ import {
   DirectoryRole,
   Group,
   User,
-} from "@microsoft/microsoft-graph-types";
+} from '@microsoft/microsoft-graph-types';
 
-import { GraphClient, QueryParams } from "../../azure/graph/client";
+import { GraphClient, QueryParams } from '../../azure/graph/client';
 
 export enum MemberType {
-  USER = "#microsoft.graph.user",
-  GROUP = "#microsoft.graph.group",
+  USER = '#microsoft.graph.user',
+  GROUP = '#microsoft.graph.group',
 }
 
 /**
@@ -18,7 +18,7 @@ export enum MemberType {
  * here and in `iterateGroupMembers` to communicate what we're requesting.
  */
 export interface GroupMember extends DirectoryObject {
-  "@odata.type": string;
+  '@odata.type': string;
   displayName?: string;
   mail?: string | null;
   jobTitle?: string | null;
@@ -29,7 +29,7 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateDirectoryRoles(
     callback: (role: DirectoryRole) => void | Promise<void>,
   ): Promise<void> {
-    return this.iterateResources({ resourceUrl: "/directoryRoles", callback });
+    return this.iterateResources({ resourceUrl: '/directoryRoles', callback });
   }
 
   // https://docs.microsoft.com/en-us/graph/api/directoryrole-list-members?view=graph-rest-1.0&tabs=http
@@ -47,7 +47,7 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateGroups(
     callback: (user: Group) => void | Promise<void>,
   ): Promise<void> {
-    return this.iterateResources({ resourceUrl: "/groups", callback });
+    return this.iterateResources({ resourceUrl: '/groups', callback });
   }
 
   // https://docs.microsoft.com/en-us/graph/api/group-list-members?view=graph-rest-1.0&tabs=http
@@ -63,7 +63,7 @@ export class DirectoryGraphClient extends GraphClient {
   ): Promise<void> {
     const $select = input.select
       ? Array.isArray(input.select)
-        ? input.select.join(",")
+        ? input.select.join(',')
         : input.select
       : undefined;
 
@@ -78,7 +78,7 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateUsers(
     callback: (user: User) => void | Promise<void>,
   ): Promise<void> {
-    return this.iterateResources({ resourceUrl: "/users", callback });
+    return this.iterateResources({ resourceUrl: '/users', callback });
   }
 
   // Not using PageIterator because it doesn't allow async callback
@@ -101,7 +101,7 @@ export class DirectoryGraphClient extends GraphClient {
 
         const response = await api.get();
         if (response) {
-          nextLink = response["@odata.nextLink"];
+          nextLink = response['@odata.nextLink'];
           for (const value of response.value) {
             await callback(value);
           }
@@ -111,7 +111,7 @@ export class DirectoryGraphClient extends GraphClient {
       } while (nextLink);
     } catch (err) {
       if (err.statusCode === 403) {
-        this.logger.warn({ err, resourceUrl }, "Forbidden");
+        this.logger.warn({ err, resourceUrl }, 'Forbidden');
       } else if (err.statusCode !== 404) {
         throw err;
       }

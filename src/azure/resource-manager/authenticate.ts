@@ -1,8 +1,8 @@
-import { ServiceClientCredentials } from "@azure/ms-rest-js";
-import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
+import { ServiceClientCredentials } from '@azure/ms-rest-js';
+import * as msRestNodeAuth from '@azure/ms-rest-nodeauth';
 
-import { IntegrationConfig } from "../../types";
-import { AzureManagementClientCredentials } from "./types";
+import { IntegrationConfig } from '../../types';
+import { AzureManagementClientCredentials } from './types';
 
 /**
  * Obtains API credentials for Azure Resource Manager API. This depends on the
@@ -14,7 +14,7 @@ export default async function authenticate(
 ): Promise<AzureManagementClientCredentials> {
   if (!config.subscriptionId) {
     throw new Error(
-      "Cannot use Azure Resource Manager APIs without subscriptionId",
+      'Cannot use Azure Resource Manager APIs without subscriptionId',
     );
   }
 
@@ -23,7 +23,7 @@ export default async function authenticate(
     config.clientSecret,
     config.directoryId,
     {
-      tokenAudience: "https://management.azure.com/",
+      tokenAudience: 'https://management.azure.com/',
     },
   );
 
@@ -32,7 +32,7 @@ export default async function authenticate(
     !response.subscriptions.find((s) => s.id === config.subscriptionId)
   ) {
     throw new Error(
-      "subscriptionId not found in tenant specified by directoryId",
+      'subscriptionId not found in tenant specified by directoryId',
     );
   }
 

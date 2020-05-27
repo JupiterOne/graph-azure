@@ -1,37 +1,37 @@
-import { IntegrationInvocationConfig } from "@jupiterone/integration-sdk";
+import { IntegrationInvocationConfig } from '@jupiterone/integration-sdk';
 
-import getStepStartStates from "./getStepStartStates";
-import { activeDirectorySteps } from "./steps/active-directory";
-import { computeSteps } from "./steps/resource-manager/compute";
-import { cosmosdbSteps } from "./steps/resource-manager/cosmosdb";
-import { databaseSteps } from "./steps/resource-manager/databases";
-import { interserviceSteps } from "./steps/resource-manager/interservice";
-import { keyvaultSteps } from "./steps/resource-manager/key-vault";
-import { networkSteps } from "./steps/resource-manager/network";
-import { IntegrationConfig } from "./types";
-import validateInvocation from "./validateInvocation";
-import { storageSteps } from "./steps/resource-manager/storage";
+import getStepStartStates from './getStepStartStates';
+import { activeDirectorySteps } from './steps/active-directory';
+import { computeSteps } from './steps/resource-manager/compute';
+import { cosmosdbSteps } from './steps/resource-manager/cosmosdb';
+import { databaseSteps } from './steps/resource-manager/databases';
+import { interserviceSteps } from './steps/resource-manager/interservice';
+import { keyvaultSteps } from './steps/resource-manager/key-vault';
+import { networkSteps } from './steps/resource-manager/network';
+import { IntegrationConfig } from './types';
+import validateInvocation from './validateInvocation';
+import { storageSteps } from './steps/resource-manager/storage';
 
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
     clientId: {
-      type: "string",
+      type: 'string',
       mask: false,
     },
     clientSecret: {
-      type: "string",
+      type: 'string',
       mask: true,
     },
     directoryId: {
-      type: "string",
+      type: 'string',
       mask: false,
     },
     subscriptionId: {
-      type: "string",
+      type: 'string',
       mask: false,
     },
     ingestActiveDirectory: {
-      type: "boolean",
+      type: 'boolean',
       mask: false,
     },
   },

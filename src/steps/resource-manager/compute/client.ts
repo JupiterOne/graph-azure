@@ -1,15 +1,15 @@
-import { ComputeManagementClient } from "@azure/arm-compute";
+import { ComputeManagementClient } from '@azure/arm-compute';
 import {
   Disk,
   VirtualMachine,
   VirtualMachineImage,
-} from "@azure/arm-compute/esm/models";
-import { IntegrationProviderAPIError } from "@jupiterone/integration-sdk";
+} from '@azure/arm-compute/esm/models';
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk';
 
 import {
   Client,
   iterateAllResources,
-} from "../../../azure/resource-manager/client";
+} from '../../../azure/resource-manager/client';
 
 export class ComputeClient extends Client {
   public async iterateVirtualMachines(
@@ -22,7 +22,7 @@ export class ComputeClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.virtualMachines,
-      resourceDescription: "compute.virtualMachines",
+      resourceDescription: 'compute.virtualMachines',
       callback,
     });
   }
@@ -41,11 +41,11 @@ export class ComputeClient extends Client {
     } catch (err) {
       /* istanbul ignore else */
       if (err.statusCode === 404) {
-        this.logger.warn({ err }, "Resources not found");
+        this.logger.warn({ err }, 'Resources not found');
       } else {
         throw new IntegrationProviderAPIError({
           cause: err,
-          endpoint: "compute.disks",
+          endpoint: 'compute.disks',
           status: err.statusCode,
           statusText: err.statusText,
         });
@@ -64,7 +64,7 @@ export class ComputeClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.images,
-      resourceDescription: "compute.images",
+      resourceDescription: 'compute.images',
       callback,
     });
   }

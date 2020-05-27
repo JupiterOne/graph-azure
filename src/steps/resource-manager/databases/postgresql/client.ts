@@ -1,12 +1,12 @@
-import { PostgreSQLManagementClient } from "@azure/arm-postgresql";
-import { Database, Server } from "@azure/arm-postgresql/esm/models";
+import { PostgreSQLManagementClient } from '@azure/arm-postgresql';
+import { Database, Server } from '@azure/arm-postgresql/esm/models';
 
 import {
   Client,
   iterateAllResources,
   ListResourcesEndpoint,
-} from "../../../../azure/resource-manager/client";
-import { resourceGroupName } from "../../../../azure/utils";
+} from '../../../../azure/resource-manager/client';
+import { resourceGroupName } from '../../../../azure/utils';
 
 export class PostgreSQLClient extends Client {
   public async iterateServers(
@@ -19,7 +19,7 @@ export class PostgreSQLClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.servers,
-      resourceDescription: "postgresql.servers",
+      resourceDescription: 'postgresql.servers',
       callback,
     });
   }
@@ -48,7 +48,7 @@ export class PostgreSQLClient extends Client {
           );
         },
       } as ListResourcesEndpoint,
-      resourceDescription: "postgresql.databases",
+      resourceDescription: 'postgresql.databases',
       callback,
     });
   }

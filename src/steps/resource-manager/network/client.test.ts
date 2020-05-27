@@ -3,15 +3,15 @@ import {
   NetworkSecurityGroup,
   PublicIPAddress,
   VirtualNetwork,
-} from "@azure/arm-network/esm/models";
-import { createMockIntegrationLogger } from "@jupiterone/integration-sdk/testing";
+} from '@azure/arm-network/esm/models';
+import { createMockIntegrationLogger } from '@jupiterone/integration-sdk/testing';
 
 import {
   Recording,
   setupAzureRecording,
-} from "../../../../test/helpers/recording";
-import config from "../../../../test/integrationInstanceConfig";
-import { NetworkClient } from "./client";
+} from '../../../../test/helpers/recording';
+import config from '../../../../test/integrationInstanceConfig';
+import { NetworkClient } from './client';
 
 let recording: Recording;
 
@@ -19,11 +19,11 @@ afterEach(async () => {
   await recording.stop();
 });
 
-describe("iterateNetworkInterfaces", () => {
-  test("all", async () => {
+describe('iterateNetworkInterfaces', () => {
+  test('all', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: "iterateNetworkInterfaces",
+      name: 'iterateNetworkInterfaces',
     });
 
     const client = new NetworkClient(
@@ -40,20 +40,20 @@ describe("iterateNetworkInterfaces", () => {
     expect(resources).toEqual([
       expect.objectContaining({
         id: expect.any(String),
-        name: "j1dev",
+        name: 'j1dev',
         tags: expect.objectContaining({
-          environment: "j1dev",
+          environment: 'j1dev',
         }),
       }),
     ]);
   });
 });
 
-describe("iterateNetworkSecurityGroups", () => {
-  test("all", async () => {
+describe('iterateNetworkSecurityGroups', () => {
+  test('all', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: "iterateNetworkSecurityGroups",
+      name: 'iterateNetworkSecurityGroups',
     });
 
     const client = new NetworkClient(
@@ -70,9 +70,9 @@ describe("iterateNetworkSecurityGroups", () => {
     expect(securityGroups).toEqual([
       expect.objectContaining({
         id: expect.any(String),
-        name: "j1dev",
+        name: 'j1dev',
         tags: expect.objectContaining({
-          environment: "j1dev",
+          environment: 'j1dev',
         }),
         // ensure subnet references come back
         subnets: expect.arrayContaining([
@@ -85,11 +85,11 @@ describe("iterateNetworkSecurityGroups", () => {
   });
 });
 
-describe("iteratePublicIPAddresses", () => {
-  test("all", async () => {
+describe('iteratePublicIPAddresses', () => {
+  test('all', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: "iteratePublicIPAddresses",
+      name: 'iteratePublicIPAddresses',
     });
 
     const client = new NetworkClient(
@@ -106,20 +106,20 @@ describe("iteratePublicIPAddresses", () => {
     expect(addresses).toEqual([
       expect.objectContaining({
         id: expect.any(String),
-        name: "j1dev",
+        name: 'j1dev',
         tags: expect.objectContaining({
-          environment: "j1dev",
+          environment: 'j1dev',
         }),
       }),
     ]);
   });
 });
 
-describe("iterateVirtualNetworks", () => {
-  test("all", async () => {
+describe('iterateVirtualNetworks', () => {
+  test('all', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: "iterateVirtualNetworks",
+      name: 'iterateVirtualNetworks',
     });
 
     const client = new NetworkClient(
@@ -136,9 +136,9 @@ describe("iterateVirtualNetworks", () => {
     expect(vms).toEqual([
       expect.objectContaining({
         id: expect.any(String),
-        name: "j1dev",
+        name: 'j1dev',
         tags: expect.objectContaining({
-          environment: "j1dev",
+          environment: 'j1dev',
         }),
       }),
     ]);

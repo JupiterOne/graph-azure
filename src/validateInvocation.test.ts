@@ -1,10 +1,10 @@
-import { IntegrationValidationError } from "@jupiterone/integration-sdk";
-import { createMockExecutionContext } from "@jupiterone/integration-sdk/testing";
+import { IntegrationValidationError } from '@jupiterone/integration-sdk';
+import { createMockExecutionContext } from '@jupiterone/integration-sdk/testing';
 
-import { IntegrationConfig } from "./types";
-import validateInvocation from "./validateInvocation";
+import { IntegrationConfig } from './types';
+import validateInvocation from './validateInvocation';
 
-it("should reject", async () => {
+it('should reject', async () => {
   const executionContext = createMockExecutionContext<IntegrationConfig>({
     instanceConfig: {} as IntegrationConfig,
   });
@@ -16,12 +16,12 @@ it("should reject", async () => {
   }
 });
 
-it("auth error", async () => {
+it('auth error', async () => {
   const executionContext = createMockExecutionContext({
     instanceConfig: {
-      clientId: "INVALID",
-      clientSecret: "INVALID",
-      directoryId: "INVALID",
+      clientId: 'INVALID',
+      clientSecret: 'INVALID',
+      directoryId: 'INVALID',
     },
   });
 

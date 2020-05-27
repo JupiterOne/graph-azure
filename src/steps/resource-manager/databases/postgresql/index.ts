@@ -1,19 +1,19 @@
 import {
   createIntegrationRelationship,
   Entity,
-} from "@jupiterone/integration-sdk";
+} from '@jupiterone/integration-sdk';
 
-import { createAzureWebLinker } from "../../../../azure";
-import { IntegrationStepContext } from "../../../../types";
-import { ACCOUNT_ENTITY_TYPE } from "../../../active-directory";
-import { createDatabaseEntity, createDbServerEntity } from "../converters";
-import { PostgreSQLClient } from "./client";
+import { createAzureWebLinker } from '../../../../azure';
+import { IntegrationStepContext } from '../../../../types';
+import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
+import { createDatabaseEntity, createDbServerEntity } from '../converters';
+import { PostgreSQLClient } from './client';
 import {
   RM_POSTGRESQL_DATABASE_ENTITY_TYPE,
   RM_POSTGRESQL_SERVER_ENTITY_TYPE,
-} from "./constants";
+} from './constants';
 
-export * from "./constants";
+export * from './constants';
 
 export async function fetchPostgreSQLDatabases(
   executionContext: IntegrationStepContext,
@@ -43,7 +43,7 @@ export async function fetchPostgreSQLDatabases(
         await jobState.addEntity(databaseEntity);
         await jobState.addRelationship(
           createIntegrationRelationship({
-            _class: "HAS",
+            _class: 'HAS',
             from: serverEntity,
             to: databaseEntity,
           }),
@@ -52,7 +52,7 @@ export async function fetchPostgreSQLDatabases(
     } catch (err) {
       logger.warn(
         { err, server: { id: server.id, type: server.type } },
-        "Failure fetching databases for server",
+        'Failure fetching databases for server',
       );
       // In the case this is a transient failure, ideally we would avoid
       // deleting previously ingested databases for this server. That would

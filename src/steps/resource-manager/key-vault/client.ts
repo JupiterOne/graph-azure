@@ -1,12 +1,12 @@
-import { KeyVaultManagementClient } from "@azure/arm-keyvault";
-import { Vault } from "@azure/arm-keyvault/esm/models";
-import { KeyClient, KeyProperties } from "@azure/keyvault-keys";
+import { KeyVaultManagementClient } from '@azure/arm-keyvault';
+import { Vault } from '@azure/arm-keyvault/esm/models';
+import { KeyClient, KeyProperties } from '@azure/keyvault-keys';
 
 import {
   Client,
   iterateAllResources,
-} from "../../../azure/resource-manager/client";
-import { resourceGroupName, resourceName } from "../../../azure/utils";
+} from '../../../azure/resource-manager/client';
+import { resourceGroupName, resourceName } from '../../../azure/utils';
 
 export class KeyVaultClient extends Client {
   public async iterateKeyVaults(
@@ -23,7 +23,7 @@ export class KeyVaultClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: serviceClient.vaults,
-      resourceDescription: "keyvault.vaults",
+      resourceDescription: 'keyvault.vaults',
       callback: async (vault: Vault, client) => {
         const vaultWithProperties = await client.vaults.get(
           resourceGroupName(vault.id, true),
@@ -40,7 +40,7 @@ export class KeyVaultClient extends Client {
   ): Promise<void> {
     const vaultUri = vault.properties.vaultUri;
     if (!vaultUri) {
-      throw new Error("Vault does not include vaultUri, cannot iterate keys");
+      throw new Error('Vault does not include vaultUri, cannot iterate keys');
     } else {
       const client = new KeyClient(vaultUri, this.getClientSecretCredentials());
       try {

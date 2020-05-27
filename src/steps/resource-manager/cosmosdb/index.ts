@@ -1,20 +1,20 @@
 import {
   createIntegrationRelationship,
   Entity,
-} from "@jupiterone/integration-sdk";
+} from '@jupiterone/integration-sdk';
 
-import { createAzureWebLinker } from "../../../azure";
-import { IntegrationStepContext } from "../../../types";
-import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from "../../active-directory";
-import { CosmosDBClient } from "./client";
+import { createAzureWebLinker } from '../../../azure';
+import { IntegrationStepContext } from '../../../types';
+import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
+import { CosmosDBClient } from './client';
 import {
   RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
   RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
   STEP_RM_COSMOSDB_SQL_DATABASES,
-} from "./constants";
-import { createAccountEntity, createSQLDatabaseEntity } from "./converters";
+} from './constants';
+import { createAccountEntity, createSQLDatabaseEntity } from './converters';
 
-export * from "./constants";
+export * from './constants';
 
 export async function fetchCosmosDBSqlDatabases(
   executionContext: IntegrationStepContext,
@@ -33,7 +33,7 @@ export async function fetchCosmosDBSqlDatabases(
       await jobState.addEntity(dbEntity);
       await jobState.addRelationship(
         createIntegrationRelationship({
-          _class: "HAS",
+          _class: 'HAS',
           from: dbAccountEntity,
           to: dbEntity,
           properties: {
@@ -48,7 +48,7 @@ export async function fetchCosmosDBSqlDatabases(
 export const cosmosdbSteps = [
   {
     id: STEP_RM_COSMOSDB_SQL_DATABASES,
-    name: "CosmosDB SQL Databases",
+    name: 'CosmosDB SQL Databases',
     types: [
       RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
       RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,

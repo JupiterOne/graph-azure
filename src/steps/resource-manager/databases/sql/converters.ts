@@ -3,8 +3,8 @@ import {
   ServerBlobAuditingPoliciesGetResponse,
   ServerSecurityAlertPoliciesGetResponse,
   TransparentDataEncryptionsGetResponse,
-} from "@azure/arm-sql/esm/models";
-import { Entity, setRawData } from "@jupiterone/integration-sdk";
+} from '@azure/arm-sql/esm/models';
+import { Entity, setRawData } from '@jupiterone/integration-sdk';
 
 const ENABLED_PATTERN = /enabled/i;
 
@@ -17,19 +17,19 @@ export function setAuditingStatus(
 ): void {
   if (!auditing) return;
 
-  setRawData(serverOrDatabaseEntity, { name: "auditing", rawData: auditing });
+  setRawData(serverOrDatabaseEntity, { name: 'auditing', rawData: auditing });
 
   const auditStatus =
     auditing.state ||
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (auditing as any).content["m:properties"]["d:properties"]["d:state"];
+    (auditing as any).content['m:properties']['d:properties']['d:state'];
 
   if (auditStatus) {
     Object.assign(serverOrDatabaseEntity, {
       auditingEnabled: ENABLED_PATTERN.test(auditStatus),
       auditLogDestination: auditing.storageEndpoint,
       auditActionsAndGroups: auditing.auditActionsAndGroups?.filter(
-        (e) => e !== "",
+        (e) => e !== '',
       ),
       auditLogAccessKey: auditing.storageAccountAccessKey,
       auditLogRetentionDays: auditing.retentionDays,
@@ -44,17 +44,17 @@ export function setServerSecurityAlerting(
 ): void {
   if (!alerting) return;
 
-  setRawData(serverEntity, { name: "alerting", rawData: alerting });
+  setRawData(serverEntity, { name: 'alerting', rawData: alerting });
 
   const alertStatus =
     alerting.state ||
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (alerting as any).content["m:properties"]["d:properties"]["d:state"];
+    (alerting as any).content['m:properties']['d:properties']['d:state'];
 
   if (alertStatus) {
     const alertingEnabled = ENABLED_PATTERN.test(alertStatus);
-    const alertEmails = alerting.emailAddresses?.filter((e) => e !== "");
-    const alertsDisabled = alerting.disabledAlerts?.filter((e) => e !== "");
+    const alertEmails = alerting.emailAddresses?.filter((e) => e !== '');
+    const alertsDisabled = alerting.disabledAlerts?.filter((e) => e !== '');
     const hasDisabledAlerts = alertsDisabled && alertsDisabled.length > 0;
     Object.assign(serverEntity, {
       alertingEnabled,
@@ -73,14 +73,14 @@ export function setDatabaseEncryption(
   if (!encryption) return;
 
   setRawData(databaseEntity, {
-    name: "encryption",
+    name: 'encryption',
     rawData: encryption,
   });
 
   const status =
     encryption.status ||
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (encryption as any).content["m:properties"]["d:properties"]["d:status"];
+    (encryption as any).content['m:properties']['d:properties']['d:status'];
 
   if (status) {
     databaseEntity.encrypted = ENABLED_PATTERN.test(status);

@@ -4,25 +4,33 @@ import {
 } from "@jupiterone/integration-sdk";
 
 import {
-  AD_ACCOUNT,
-  AD_GROUP_MEMBERS,
-  AD_GROUPS,
-  AD_USERS,
+  STEP_AD_ACCOUNT,
+  STEP_AD_GROUP_MEMBERS,
+  STEP_AD_GROUPS,
+  STEP_AD_USERS,
 } from "./steps/active-directory";
 import {
-  RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
-  RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
-  RM_COMPUTE_VIRTUAL_MACHINES,
+  STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
+  STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
+  STEP_RM_COMPUTE_VIRTUAL_MACHINES,
 } from "./steps/resource-manager/compute";
-import { RM_COMPUTE_NETWORK_RELATIONSHIPS } from "./steps/resource-manager/interservice/constants";
-import { RM_KEYVAULT_VAULTS } from "./steps/resource-manager/key-vault";
+import { STEP_RM_COSMOSDB_SQL_DATABASES } from "./steps/resource-manager/cosmosdb";
 import {
-  RM_NETWORK_INTERFACES,
-  RM_NETWORK_LOAD_BALANCERS,
-  RM_NETWORK_PUBLIC_IP_ADDRESSES,
-  RM_NETWORK_SECURITY_GROUPS,
-  RM_NETWORK_VIRTUAL_NETWORKS,
+  STEP_RM_DATABASE_MARIADB_DATABASES,
+  STEP_RM_DATABASE_MYSQL_DATABASES,
+  STEP_RM_DATABASE_POSTGRESQL_DATABASES,
+  STEP_RM_DATABASE_SQL_DATABASES,
+} from "./steps/resource-manager/databases";
+import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from "./steps/resource-manager/interservice/constants";
+import { STEP_RM_KEYVAULT_VAULTS } from "./steps/resource-manager/key-vault";
+import {
+  STEP_RM_NETWORK_INTERFACES,
+  STEP_RM_NETWORK_LOAD_BALANCERS,
+  STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
+  STEP_RM_NETWORK_SECURITY_GROUPS,
+  STEP_RM_NETWORK_VIRTUAL_NETWORKS,
 } from "./steps/resource-manager/network";
+import { STEP_RM_STORAGE_RESOURCES } from "./steps/resource-manager/storage";
 import { IntegrationConfig } from "./types";
 
 export default function getStepStartStates(
@@ -36,19 +44,25 @@ export default function getStepStartStates(
   };
 
   return {
-    [AD_ACCOUNT]: { disabled: false },
-    [AD_GROUPS]: activeDirectory,
-    [AD_GROUP_MEMBERS]: activeDirectory,
-    [AD_USERS]: activeDirectory,
-    [RM_KEYVAULT_VAULTS]: resourceManager,
-    [RM_NETWORK_VIRTUAL_NETWORKS]: resourceManager,
-    [RM_NETWORK_SECURITY_GROUPS]: resourceManager,
-    [RM_NETWORK_INTERFACES]: resourceManager,
-    [RM_NETWORK_PUBLIC_IP_ADDRESSES]: resourceManager,
-    [RM_NETWORK_LOAD_BALANCERS]: resourceManager,
-    [RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: resourceManager,
-    [RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: resourceManager,
-    [RM_COMPUTE_VIRTUAL_MACHINES]: resourceManager,
-    [RM_COMPUTE_NETWORK_RELATIONSHIPS]: resourceManager,
+    [STEP_AD_ACCOUNT]: { disabled: false },
+    [STEP_AD_GROUPS]: activeDirectory,
+    [STEP_AD_GROUP_MEMBERS]: activeDirectory,
+    [STEP_AD_USERS]: activeDirectory,
+    [STEP_RM_KEYVAULT_VAULTS]: resourceManager,
+    [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: resourceManager,
+    [STEP_RM_NETWORK_SECURITY_GROUPS]: resourceManager,
+    [STEP_RM_NETWORK_INTERFACES]: resourceManager,
+    [STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES]: resourceManager,
+    [STEP_RM_NETWORK_LOAD_BALANCERS]: resourceManager,
+    [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: resourceManager,
+    [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: resourceManager,
+    [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: resourceManager,
+    [STEP_RM_COSMOSDB_SQL_DATABASES]: resourceManager,
+    [STEP_RM_DATABASE_MARIADB_DATABASES]: resourceManager,
+    [STEP_RM_DATABASE_MYSQL_DATABASES]: resourceManager,
+    [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: resourceManager,
+    [STEP_RM_DATABASE_SQL_DATABASES]: resourceManager,
+    [STEP_RM_STORAGE_RESOURCES]: resourceManager,
+    [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: resourceManager,
   };
 }

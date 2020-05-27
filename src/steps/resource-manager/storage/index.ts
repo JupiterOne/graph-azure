@@ -6,10 +6,10 @@ import {
 
 import { AzureWebLinker, createAzureWebLinker } from "../../../azure";
 import { IntegrationStepContext } from "../../../types";
-import { ACCOUNT_ENTITY_TYPE, AD_ACCOUNT } from "../../active-directory";
+import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from "../../active-directory";
 import { StorageClient } from "./client";
 import {
-  RM_STORAGE_RESOURCES,
+  STEP_RM_STORAGE_RESOURCES,
   STORAGE_BLOB_SERVICE_ENTITY_TYPE,
   STORAGE_CONTAINER_ENTITY_TYPE,
   STORAGE_FILE_SERVICE_ENTITY_TYPE,
@@ -22,6 +22,8 @@ import {
   createStorageFileShareEntity,
   createStorageServiceEntity,
 } from "./converters";
+
+export * from "./constants";
 
 export async function fetchStorageResources(
   executionContext: IntegrationStepContext,
@@ -202,7 +204,7 @@ async function synchronizeFileStorage(
 
 export const storageSteps = [
   {
-    id: RM_STORAGE_RESOURCES,
+    id: STEP_RM_STORAGE_RESOURCES,
     name: "Storage Resources",
     types: [
       STORAGE_BLOB_SERVICE_ENTITY_TYPE,
@@ -212,7 +214,7 @@ export const storageSteps = [
       STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
       STORAGE_TABLE_SERVICE_ENTITY_TYPE,
     ],
-    dependsOn: [AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchStorageResources,
   },
 ];

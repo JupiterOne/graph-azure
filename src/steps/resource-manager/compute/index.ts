@@ -2,13 +2,13 @@ import { Entity } from "@jupiterone/integration-sdk";
 
 import { createAzureWebLinker } from "../../../azure";
 import { IntegrationStepContext } from "../../../types";
-import { ACCOUNT_ENTITY_TYPE, AD_ACCOUNT } from "../../active-directory";
+import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from "../../active-directory";
 import { ComputeClient } from "./client";
 import {
   DISK_ENTITY_TYPE,
-  RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
-  RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
-  RM_COMPUTE_VIRTUAL_MACHINES,
+  STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
+  STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
+  STEP_RM_COMPUTE_VIRTUAL_MACHINES,
   VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
@@ -71,27 +71,27 @@ export async function fetchVirtualMachineDisks(
 
 export const computeSteps = [
   {
-    id: RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
+    id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
     name: "Virtual Machine Disk Images",
     types: [VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE],
-    dependsOn: [AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchVirtualMachineImages,
   },
   {
-    id: RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
+    id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
     name: "Virtual Machine Disks",
     types: [DISK_ENTITY_TYPE],
-    dependsOn: [AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchVirtualMachineDisks,
   },
   {
-    id: RM_COMPUTE_VIRTUAL_MACHINES,
+    id: STEP_RM_COMPUTE_VIRTUAL_MACHINES,
     name: "Virtual Machines",
     types: [
       VIRTUAL_MACHINE_ENTITY_TYPE,
       VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
     ],
-    dependsOn: [AD_ACCOUNT, RM_COMPUTE_VIRTUAL_MACHINE_DISKS],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS],
     executionHandler: fetchVirtualMachines,
   },
 ];

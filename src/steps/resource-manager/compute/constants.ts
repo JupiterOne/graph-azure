@@ -1,9 +1,9 @@
 // Step IDs
-export const RM_COMPUTE_VIRTUAL_MACHINE_IMAGES =
+export const STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES =
   "rm-compute-virtual-machine-images";
-export const RM_COMPUTE_VIRTUAL_MACHINE_DISKS =
+export const STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS =
   "rm-compute-virutal-machine-disks";
-export const RM_COMPUTE_VIRTUAL_MACHINES = "rm-compute-virtual-machines";
+export const STEP_RM_COMPUTE_VIRTUAL_MACHINES = "rm-compute-virtual-machines";
 
 // Graph object
 export const VIRTUAL_MACHINE_ENTITY_TYPE = "azure_vm";

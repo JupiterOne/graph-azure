@@ -5,14 +5,16 @@ import {
 
 import { createAzureWebLinker } from "../../../azure";
 import { IntegrationStepContext } from "../../../types";
-import { ACCOUNT_ENTITY_TYPE, AD_ACCOUNT } from "../../active-directory";
+import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from "../../active-directory";
 import { CosmosDBClient } from "./client";
 import {
   RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
   RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
-  RM_COSMOSDB_SQL_DATABASES,
+  STEP_RM_COSMOSDB_SQL_DATABASES,
 } from "./constants";
 import { createAccountEntity, createSQLDatabaseEntity } from "./converters";
+
+export * from "./constants";
 
 export async function fetchCosmosDBSqlDatabases(
   executionContext: IntegrationStepContext,
@@ -45,13 +47,13 @@ export async function fetchCosmosDBSqlDatabases(
 
 export const cosmosdbSteps = [
   {
-    id: RM_COSMOSDB_SQL_DATABASES,
+    id: STEP_RM_COSMOSDB_SQL_DATABASES,
     name: "CosmosDB SQL Databases",
     types: [
       RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
       RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
     ],
-    dependsOn: [AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchCosmosDBSqlDatabases,
   },
 ];

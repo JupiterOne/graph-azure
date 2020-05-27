@@ -1,9 +1,9 @@
 // Step IDs
-export const RM_NETWORK_PUBLIC_IP_ADDRESSES = "rm-network-ip-addresses";
-export const RM_NETWORK_INTERFACES = "rm-network-interfaces";
-export const RM_NETWORK_SECURITY_GROUPS = "rm-network-security-groups";
-export const RM_NETWORK_VIRTUAL_NETWORKS = "rm-network-virtual-networks";
-export const RM_NETWORK_LOAD_BALANCERS = "rm-network-load-balancers";
+export const STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES = "rm-network-ip-addresses";
+export const STEP_RM_NETWORK_INTERFACES = "rm-network-interfaces";
+export const STEP_RM_NETWORK_SECURITY_GROUPS = "rm-network-security-groups";
+export const STEP_RM_NETWORK_VIRTUAL_NETWORKS = "rm-network-virtual-networks";
+export const STEP_RM_NETWORK_LOAD_BALANCERS = "rm-network-load-balancers";
 
 // Graph objects
 export const VIRTUAL_NETWORK_ENTITY_TYPE = "azure_vnet";

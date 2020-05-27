@@ -8,18 +8,18 @@ import { Entity, Relationship } from "@jupiterone/integration-sdk";
 
 import { createAzureWebLinker } from "../../../azure";
 import { IntegrationStepContext } from "../../../types";
-import { ACCOUNT_ENTITY_TYPE, AD_ACCOUNT } from "../../active-directory";
+import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from "../../active-directory";
 import { NetworkClient } from "./client";
 import {
   LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE,
   LOAD_BALANCER_ENTITY_TYPE,
   NETWORK_INTERFACE_ENTITY_TYPE,
   PUBLIC_IP_ADDRESS_ENTITY_TYPE,
-  RM_NETWORK_INTERFACES,
-  RM_NETWORK_LOAD_BALANCERS,
-  RM_NETWORK_PUBLIC_IP_ADDRESSES,
-  RM_NETWORK_SECURITY_GROUPS,
-  RM_NETWORK_VIRTUAL_NETWORKS,
+  STEP_RM_NETWORK_INTERFACES,
+  STEP_RM_NETWORK_LOAD_BALANCERS,
+  STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
+  STEP_RM_NETWORK_SECURITY_GROUPS,
+  STEP_RM_NETWORK_VIRTUAL_NETWORKS,
   SECURITY_GROUP_ENTITY_TYPE,
   SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
   SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
@@ -239,21 +239,21 @@ export async function fetchVirtualNetworks(
 
 export const networkSteps = [
   {
-    id: RM_NETWORK_PUBLIC_IP_ADDRESSES,
+    id: STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
     name: "Public IP Addresses",
     types: [PUBLIC_IP_ADDRESS_ENTITY_TYPE],
-    dependsOn: [AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchPublicIPAddresses,
   },
   {
-    id: RM_NETWORK_INTERFACES,
+    id: STEP_RM_NETWORK_INTERFACES,
     name: "Network Interfaces",
     types: [NETWORK_INTERFACE_ENTITY_TYPE],
-    dependsOn: [AD_ACCOUNT, RM_NETWORK_PUBLIC_IP_ADDRESSES],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES],
     executionHandler: fetchNetworkInterfaces,
   },
   {
-    id: RM_NETWORK_VIRTUAL_NETWORKS,
+    id: STEP_RM_NETWORK_VIRTUAL_NETWORKS,
     name: "Virtual Networks",
     types: [
       VIRTUAL_NETWORK_ENTITY_TYPE,
@@ -261,28 +261,28 @@ export const networkSteps = [
       VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
       SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
     ],
-    dependsOn: [AD_ACCOUNT, RM_NETWORK_SECURITY_GROUPS],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_NETWORK_SECURITY_GROUPS],
     executionHandler: fetchVirtualNetworks,
   },
   {
-    id: RM_NETWORK_SECURITY_GROUPS,
+    id: STEP_RM_NETWORK_SECURITY_GROUPS,
     name: "Network Security Groups",
     types: [
       SECURITY_GROUP_ENTITY_TYPE,
       SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
       SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
     ],
-    dependsOn: [AD_ACCOUNT, RM_NETWORK_INTERFACES],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_NETWORK_INTERFACES],
     executionHandler: fetchNetworkSecurityGroups,
   },
   {
-    id: RM_NETWORK_LOAD_BALANCERS,
+    id: STEP_RM_NETWORK_LOAD_BALANCERS,
     name: "Load Balancers",
     types: [
       LOAD_BALANCER_ENTITY_TYPE,
       LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE,
     ],
-    dependsOn: [AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchLoadBalancers,
   },
 ];

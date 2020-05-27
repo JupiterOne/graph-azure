@@ -1,5 +1,5 @@
 // Step IDs
-export const RM_COMPUTE_NETWORK_RELATIONSHIPS =
+export const STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS =
   "rm-compute-network-relationships";
 
 // Graph objects

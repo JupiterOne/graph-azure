@@ -10,15 +10,15 @@ import {
 } from "@jupiterone/integration-sdk";
 
 import { IntegrationStepContext } from "../../../types";
-import { AD_ACCOUNT } from "../../active-directory";
+import { STEP_AD_ACCOUNT } from "../../active-directory";
 import { VIRTUAL_MACHINE_ENTITY_TYPE } from "../compute";
 import {
   NETWORK_INTERFACE_ENTITY_TYPE,
-  RM_NETWORK_INTERFACES,
-  RM_NETWORK_PUBLIC_IP_ADDRESSES,
+  STEP_RM_NETWORK_INTERFACES,
+  STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
 } from "../network";
 import {
-  RM_COMPUTE_NETWORK_RELATIONSHIPS,
+  STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,
   SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
@@ -28,6 +28,8 @@ import {
   createVirtualMachineNetworkInterfaceRelationship,
   createVirtualMachinePublicIPAddressRelationship,
 } from "./converters";
+
+export * from "./constants";
 
 export async function buildComputeNetworkRelationships(
   executionContext: IntegrationStepContext,
@@ -98,7 +100,7 @@ function findVirtualMachineNetworkInterfaces(
 
 export const interserviceSteps = [
   {
-    id: RM_COMPUTE_NETWORK_RELATIONSHIPS,
+    id: STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,
     name: "Compute Network Relationships",
     types: [
       SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
@@ -106,9 +108,9 @@ export const interserviceSteps = [
       VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
     ],
     dependsOn: [
-      AD_ACCOUNT,
-      RM_NETWORK_INTERFACES,
-      RM_NETWORK_PUBLIC_IP_ADDRESSES,
+      STEP_AD_ACCOUNT,
+      STEP_RM_NETWORK_INTERFACES,
+      STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
     ],
     executionHandler: buildComputeNetworkRelationships,
   },

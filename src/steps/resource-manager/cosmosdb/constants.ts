@@ -1,5 +1,5 @@
 // Step IDs
-export const RM_COSMOSDB_SQL_DATABASES = "rm-cosmosdb-sql-databases";
+export const STEP_RM_COSMOSDB_SQL_DATABASES = "rm-cosmosdb-sql-databases";
 
 // Graph objects
 export const RM_COSMOSDB_ACCOUNT_ENTITY_TYPE = "azure_cosmosdb_account";

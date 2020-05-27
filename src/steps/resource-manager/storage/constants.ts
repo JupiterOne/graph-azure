@@ -1,5 +1,5 @@
 // Step IDs
-export const RM_STORAGE_RESOURCES = "rm-storage-resources";
+export const STEP_RM_STORAGE_RESOURCES = "rm-storage-resources";
 
 // Graph objects
 export const STORAGE_BLOB_SERVICE_ENTITY_TYPE = "azure_storage_blob_service";

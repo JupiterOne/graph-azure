@@ -1,8 +1,8 @@
 // Step IDs
-export const AD_ACCOUNT = "ad-account";
-export const AD_GROUPS = "ad-groups";
-export const AD_GROUP_MEMBERS = "ad-group-members";
-export const AD_USERS = "ad-users";
+export const STEP_AD_ACCOUNT = "ad-account";
+export const STEP_AD_GROUPS = "ad-groups";
+export const STEP_AD_GROUP_MEMBERS = "ad-group-members";
+export const STEP_AD_USERS = "ad-users";
 
 // Graph objects
 export const ACCOUNT_ENTITY_TYPE = "azure_account";

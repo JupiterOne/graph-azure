@@ -1,3 +1,5 @@
+import { generateRelationshipType } from '@jupiterone/integration-sdk';
+
 // Step IDs
 export const STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES =
   'rm-compute-virtual-machine-images';
@@ -15,4 +17,8 @@ export const VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS = 'Image';
 export const DISK_ENTITY_TYPE = 'azure_managed_disk';
 export const DISK_ENTITY_CLASS = ['DataStore', 'Disk'];
 
-export const VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE = 'azure_vm_uses_disk';
+export const VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE = generateRelationshipType(
+  'USES',
+  VIRTUAL_MACHINE_ENTITY_TYPE,
+  DISK_ENTITY_TYPE,
+);

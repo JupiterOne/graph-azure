@@ -28,6 +28,7 @@ export async function fetchCosmosDBSqlDatabases(
 
   await client.iterateAccounts(async (account) => {
     const dbAccountEntity = createAccountEntity(webLinker, account);
+    await jobState.addEntity(dbAccountEntity);
 
     await client.iterateSQLDatabases(account, async (database) => {
       const dbEntity = createSQLDatabaseEntity(webLinker, account, database);

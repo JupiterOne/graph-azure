@@ -115,13 +115,13 @@ export function createVirtualMachineDiskRelationships(
   const relationships: Relationship[] = [];
 
   if (vm.storageProfile) {
-    if (vm.storageProfile.osDisk && vm.storageProfile.osDisk.managedDisk) {
+    if (vm.storageProfile.osDisk?.managedDisk?.id) {
       relationships.push(
         createIntegrationRelationship({
           _class: 'USES',
           fromKey: vm.id as string,
           fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
-          toKey: vm.storageProfile.osDisk.managedDisk.id as string,
+          toKey: vm.storageProfile.osDisk.managedDisk.id,
           toType: DISK_ENTITY_TYPE,
           properties: {
             osDisk: true,
@@ -131,13 +131,13 @@ export function createVirtualMachineDiskRelationships(
     }
 
     for (const disk of vm.storageProfile.dataDisks || []) {
-      if (disk.managedDisk) {
+      if (disk.managedDisk?.id) {
         relationships.push(
           createIntegrationRelationship({
             _class: 'USES',
             fromKey: vm.id as string,
             fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
-            toKey: disk.managedDisk.id as string,
+            toKey: disk.managedDisk.id,
             toType: DISK_ENTITY_TYPE,
             properties: {
               dataDisk: true,

@@ -220,4 +220,35 @@ describe('createVirtualMachineDiskRelationships', () => {
       ],
     );
   });
+
+  test('unattached disk produces no relationship', () => {
+    const vm: Partial<VirtualMachine> = {
+      id:
+        '/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/j1',
+      storageProfile: {
+        imageReference: {
+          publisher: 'Canonical',
+          offer: 'UbuntuServer',
+          sku: '18.04-LTS',
+          version: 'latest',
+          exactVersion: '18.04.202002080',
+        },
+        osDisk: {
+          osType: 'Linux',
+          name: 'j1_disk1_xyz',
+          caching: 'ReadWrite',
+          createOption: 'FromImage',
+          diskSizeGB: 30,
+          managedDisk: {
+            storageAccountType: 'StandardSSD_LRS',
+          },
+        },
+        dataDisks: [],
+      },
+    };
+
+    expect(createVirtualMachineDiskRelationships(vm as VirtualMachine)).toEqual(
+      [],
+    );
+  });
 });

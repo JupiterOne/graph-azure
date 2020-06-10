@@ -1,5 +1,5 @@
 import { Database, Server } from '@azure/arm-sql/esm/models';
-import { createMockIntegrationLogger } from '@jupiterone/integration-sdk/testing';
+import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
   Recording,

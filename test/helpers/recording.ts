@@ -5,7 +5,7 @@ import {
   RecordingEntry,
   setupRecording,
   SetupRecordingInput,
-} from '@jupiterone/integration-sdk/testing';
+} from '@jupiterone/integration-sdk-testing';
 
 export { Recording };
 

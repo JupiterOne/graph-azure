@@ -2,7 +2,7 @@ import {
   createMockIntegrationLogger,
   Recording,
   setupRecording,
-} from '@jupiterone/integration-sdk/testing';
+} from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../test/integrationInstanceConfig';
 import { GraphClient } from './client';

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { createMockExecutionContext } from '@jupiterone/integration-sdk/testing';
+import { createMockExecutionContext } from '@jupiterone/integration-sdk-testing';
 
 import getStepStartStates from './getStepStartStates';
 import { invocationConfig } from './index';

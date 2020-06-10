@@ -1,5 +1,5 @@
 import { MySQLManagementModels } from '@azure/arm-mysql';
-import { createMockIntegrationLogger } from '@jupiterone/integration-sdk/testing';
+import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
   Recording,

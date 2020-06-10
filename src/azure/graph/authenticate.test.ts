@@ -1,5 +1,5 @@
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
-import { Recording, setupRecording } from '@jupiterone/integration-sdk/testing';
+import { Recording, setupRecording } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../test/integrationInstanceConfig';
 import authenticate from './authenticate';

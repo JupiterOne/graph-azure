@@ -1,4 +1,4 @@
-import { createMockIntegrationLogger } from '@jupiterone/integration-sdk/testing';
+import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
   Recording,

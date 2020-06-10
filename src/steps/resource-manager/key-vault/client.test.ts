@@ -1,5 +1,5 @@
 import { Vault } from '@azure/arm-keyvault/esm/models';
-import { createMockIntegrationLogger } from '@jupiterone/integration-sdk/testing';
+import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
   Recording,

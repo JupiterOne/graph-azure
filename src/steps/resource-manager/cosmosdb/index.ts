@@ -9,6 +9,7 @@ import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
 import { CosmosDBClient } from './client';
 import {
   RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
+  RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_TYPE,
   RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
   STEP_RM_COSMOSDB_SQL_DATABASES,
 } from './constants';
@@ -52,6 +53,7 @@ export const cosmosdbSteps = [
     types: [
       RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
       RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
+      RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_TYPE,
     ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchCosmosDBSqlDatabases,

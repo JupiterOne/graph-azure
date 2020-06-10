@@ -89,7 +89,6 @@ resource "azurerm_virtual_machine" "j1dev" {
     name              = "j1devOsDisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "Premium_LRS"
   }
 
   storage_image_reference {

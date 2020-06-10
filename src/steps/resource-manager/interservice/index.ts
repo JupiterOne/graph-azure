@@ -1,5 +1,3 @@
-import map from 'lodash.map';
-
 import { VirtualMachine } from '@azure/arm-compute/esm/models';
 import { NetworkInterface } from '@azure/arm-network/esm/models';
 import {
@@ -11,7 +9,10 @@ import {
 
 import { IntegrationStepContext } from '../../../types';
 import { STEP_AD_ACCOUNT } from '../../active-directory';
-import { VIRTUAL_MACHINE_ENTITY_TYPE } from '../compute';
+import {
+  STEP_RM_COMPUTE_VIRTUAL_MACHINES,
+  VIRTUAL_MACHINE_ENTITY_TYPE,
+} from '../compute';
 import {
   NETWORK_INTERFACE_ENTITY_TYPE,
   STEP_RM_NETWORK_INTERFACES,
@@ -36,12 +37,15 @@ export async function buildComputeNetworkRelationships(
 ): Promise<void> {
   const { jobState } = executionContext;
 
-  const networkInterfaces: NetworkInterface[] = loadNetworkInterfaces(jobState);
-  const relationships: Relationship[] = [];
+  const networkInterfaces: NetworkInterface[] = await loadNetworkInterfaces(
+    jobState,
+  );
 
   await jobState.iterateEntities(
     { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
-    (vmEntity: Entity) => {
+    async (vmEntity: Entity) => {
+      const relationships: Relationship[] = [];
+
       const vmData = getRawData<VirtualMachine>(vmEntity);
       if (!vmData) {
         throw new Error(
@@ -73,15 +77,26 @@ export async function buildComputeNetworkRelationships(
           }
         }
       }
+
+      await jobState.addRelationships(relationships);
     },
   );
 }
 
-function loadNetworkInterfaces(jobState: JobState): NetworkInterface[] {
+async function loadNetworkInterfaces(
+  jobState: JobState,
+): Promise<NetworkInterface[]> {
   const networkInterfaces: NetworkInterface[] = [];
-  jobState.iterateEntities({ _type: NETWORK_INTERFACE_ENTITY_TYPE }, (nic) => {
-    networkInterfaces.push(nic);
-  });
+  await jobState.iterateEntities(
+    { _type: NETWORK_INTERFACE_ENTITY_TYPE },
+    (nic) => {
+      const nicRawData = getRawData<NetworkInterface>(nic);
+      if (!nicRawData) {
+        throw new Error('Iterating network interfaces, raw data is missing!');
+      }
+      networkInterfaces.push(nicRawData);
+    },
+  );
   return networkInterfaces;
 }
 
@@ -90,11 +105,13 @@ function findVirtualMachineNetworkInterfaces(
   nics: NetworkInterface[],
 ): NetworkInterface[] {
   const vmNics: NetworkInterface[] = [];
-  if (vm.networkProfile) {
-    map(vm.networkProfile.networkInterfaces, (n) =>
-      nics.find((e) => e.id === n.id),
-    ).forEach((e) => e && vmNics.push(e));
-  }
+  vm.networkProfile?.networkInterfaces?.forEach((nic) => {
+    const match = nics.find((e) => !!e.id && e.id === nic.id);
+    if (match) {
+      vmNics.push(match);
+    }
+  });
+  console.log(JSON.stringify(vmNics, null, 2));
   return vmNics;
 }
 
@@ -109,6 +126,7 @@ export const interserviceSteps = [
     ],
     dependsOn: [
       STEP_AD_ACCOUNT,
+      STEP_RM_COMPUTE_VIRTUAL_MACHINES,
       STEP_RM_NETWORK_INTERFACES,
       STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
     ],

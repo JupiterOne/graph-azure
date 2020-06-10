@@ -1,7 +1,7 @@
 import {
   createIntegrationRelationship,
   Entity,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../../azure';
 import { IntegrationStepContext } from '../../../../types';

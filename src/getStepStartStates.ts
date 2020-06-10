@@ -1,7 +1,7 @@
 import {
   IntegrationExecutionContext,
   StepStartStates,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import {
   STEP_AD_ACCOUNT,

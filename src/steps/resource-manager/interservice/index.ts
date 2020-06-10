@@ -7,7 +7,7 @@ import {
   getRawData,
   JobState,
   Relationship,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { IntegrationStepContext } from '../../../types';
 import { STEP_AD_ACCOUNT } from '../../active-directory';

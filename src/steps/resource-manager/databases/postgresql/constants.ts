@@ -1,4 +1,4 @@
-import { generateRelationshipType } from '@jupiterone/integration-sdk';
+import { generateRelationshipType } from '@jupiterone/integration-sdk-core';
 
 export const RM_POSTGRESQL_SERVER_ENTITY_TYPE = 'azure_postgresql_server';
 export const RM_POSTGRESQL_DATABASE_ENTITY_TYPE = 'azure_postgresql_database';

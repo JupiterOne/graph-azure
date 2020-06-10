@@ -1,4 +1,4 @@
-import { generateRelationshipType } from '@jupiterone/integration-sdk';
+import { generateRelationshipType } from '@jupiterone/integration-sdk-core';
 
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 

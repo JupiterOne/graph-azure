@@ -1,4 +1,4 @@
-import { generateRelationshipType } from '@jupiterone/integration-sdk';
+import { generateRelationshipType } from '@jupiterone/integration-sdk-core';
 
 // Step IDs
 export const STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES =

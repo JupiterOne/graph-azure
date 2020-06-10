@@ -4,25 +4,20 @@ import {
   NetworkSecurityGroup,
   SecurityRule,
 } from '@azure/arm-network/esm/models';
+import { FirewallRuleProperties, INTERNET } from '@jupiterone/data-model';
 import {
   convertProperties,
   createIntegrationRelationship,
   Entity,
-  FirewallRuleProperties,
-  INTERNET,
   isHost,
   isInternet,
   isIpv4,
   isPublicIp,
   Relationship,
   RelationshipDirection,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from '../constants';
-
-// interface SecurityGroupRelationship extends Relationship {
-//   _mapping?: RelationshipMapping;
-// }
 
 interface RuleTargetEntity {
   _key?: string;

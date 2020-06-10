@@ -1,4 +1,4 @@
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk';
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 import { Recording, setupRecording } from '@jupiterone/integration-sdk/testing';
 
 import config from '../../../test/integrationInstanceConfig';

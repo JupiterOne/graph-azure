@@ -1,4 +1,4 @@
-import { generateRelationshipType } from '@jupiterone/integration-sdk';
+import { generateRelationshipType } from '@jupiterone/integration-sdk-core';
 
 // Graph objects
 export const RM_SQL_SERVER_ENTITY_TYPE = 'azure_sql_server';

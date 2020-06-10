@@ -1,7 +1,7 @@
 import {
   IntegrationExecutionContext,
   IntegrationValidationError,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { default as authenticateGraph } from './azure/graph/authenticate';
 import { default as authenticateResourceManager } from './azure/resource-manager/authenticate';

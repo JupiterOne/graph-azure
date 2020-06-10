@@ -19,10 +19,11 @@
     "lint:md": "remark .",
     "lint:es": "eslint . --cache --fix --ext .ts,.tsx",
     "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc",
     "test": "jest --passWithNoTests",
     "test:ci": "yarn lint && yarn type-check && yarn test",
     "prebuild": "yarn test:ci",
+    "prepush": "yarn lint && yarn type-check && yarn test",
     "build": "tsc -p tsconfig.dist.json --declaration",
     "prepack": "yarn build",
     "tf:init": "docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light init",
@@ -43,7 +44,7 @@
     "@azure/identity": "^1.0.2",
     "@azure/keyvault-keys": "^4.0.2",
     "@azure/ms-rest-nodeauth": "^2.0.5",
-    "@jupiterone/integration-sdk": "^3.0.1",
+    "@jupiterone/data-model": "^0.6.4",
     "@lifeomic/attempt": "^3.0.0",
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "cross-fetch": "^3.0.4",
@@ -56,6 +57,9 @@
     "@azure/ms-rest-js": "^2.0.0"
   },
   "devDependencies": {
+    "@jupiterone/integration-sdk-core": "^1.1.0",
+    "@jupiterone/integration-sdk-dev-tools": "^1.1.0",
+    "@jupiterone/integration-sdk-testing": "^1.1.0",
     "@microsoft/microsoft-graph-types": "^1.10.0",
     "@types/fs-extra": "^5.0.5",
     "@types/jest": "^25.2.1",
@@ -81,5 +85,8 @@
     "ts-jest": "^25.3.1",
     "ts-node": "^8.8.2",
     "typescript": "^3.8.3"
+  },
+  "peerDependencies": {
+    "@jupiterone/integration-sdk-core": "^1.1.0"
   }
 }

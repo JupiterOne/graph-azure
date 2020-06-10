@@ -2,12 +2,12 @@ import {
   NetworkSecurityGroup,
   SecurityRule,
 } from '@azure/arm-network/esm/models';
+import { INTERNET } from '@jupiterone/data-model';
 import {
   convertProperties,
   createIntegrationRelationship,
-  INTERNET,
   RelationshipDirection,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from '../constants';
 import {

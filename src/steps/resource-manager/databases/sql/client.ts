@@ -7,7 +7,7 @@ import {
   ServerSecurityAlertPoliciesGetResponse,
   TransparentDataEncryptionsGetResponse,
 } from '@azure/arm-sql/esm/models';
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk';
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 
 import {
   Client,

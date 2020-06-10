@@ -4,7 +4,7 @@ import {
   VirtualMachine,
   VirtualMachineImage,
 } from '@azure/arm-compute/esm/models';
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk';
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 
 import {
   Client,

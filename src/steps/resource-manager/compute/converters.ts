@@ -6,7 +6,7 @@ import {
   Entity,
   getTime,
   Relationship,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
 import { resourceGroupName } from '../../../azure/utils';

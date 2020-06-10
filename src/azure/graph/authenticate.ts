@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk';
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from '../../types';
 

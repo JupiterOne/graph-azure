@@ -7,7 +7,7 @@ import {
 import {
   createIntegrationRelationship,
   Relationship,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { VIRTUAL_MACHINE_ENTITY_TYPE } from '../compute';
 import {

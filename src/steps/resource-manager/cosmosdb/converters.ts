@@ -2,7 +2,10 @@ import {
   DatabaseAccountGetResults,
   SqlDatabaseGetResults,
 } from '@azure/arm-cosmosdb/esm/models';
-import { createIntegrationEntity, Entity } from '@jupiterone/integration-sdk';
+import {
+  createIntegrationEntity,
+  Entity,
+} from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
 import { normalizeLocation, resourceGroupName } from '../../../azure/utils';

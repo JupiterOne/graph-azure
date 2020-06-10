@@ -4,7 +4,7 @@ import {
   ServerSecurityAlertPoliciesGetResponse,
   TransparentDataEncryptionsGetResponse,
 } from '@azure/arm-sql/esm/models';
-import { Entity, setRawData } from '@jupiterone/integration-sdk';
+import { Entity, setRawData } from '@jupiterone/integration-sdk-core';
 
 const ENABLED_PATTERN = /enabled/i;
 

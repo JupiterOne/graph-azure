@@ -15,7 +15,7 @@ import { AzureManagementClientCredentials } from './types';
 import {
   IntegrationLogger,
   IntegrationProviderAPIError,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.

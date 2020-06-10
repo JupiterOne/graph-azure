@@ -4,7 +4,7 @@ import {
   NetworkSecurityGroup,
   PublicIPAddress,
 } from '@azure/arm-network/esm/models';
-import { Entity, Relationship } from '@jupiterone/integration-sdk';
+import { Entity, Relationship } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';

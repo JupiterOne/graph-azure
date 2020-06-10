@@ -3,7 +3,7 @@ import {
   IntegrationInstance,
   MappedRelationship,
   RelationshipDirection,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 import { Organization } from '@microsoft/microsoft-graph-types';
 
 import { GroupMember } from './client';

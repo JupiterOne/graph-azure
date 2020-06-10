@@ -5,7 +5,7 @@ import {
   Subnet,
   VirtualNetwork,
 } from '@azure/arm-network/esm/models';
-import { Relationship } from '@jupiterone/integration-sdk';
+import { Relationship } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../../azure';
 import {

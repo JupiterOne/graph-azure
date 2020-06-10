@@ -8,7 +8,7 @@ import {
   IntegrationInstance,
   Relationship,
   RelationshipDirection,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 import { Group, Organization, User } from '@microsoft/microsoft-graph-types';
 
 import {
@@ -159,11 +159,10 @@ export function createGroupMemberRelationship(
   const groupKey = generateEntityKey(GROUP_ENTITY_TYPE, group.id);
   const memberKey = generateEntityKey(memberEntityType, member.id);
 
-  // TODO Check with Phil about how moving an integration to the new SDK will
-  // handle the mapped relationships.
   return createIntegrationRelationship({
     _class: 'HAS',
-    _key: memberKey,
+    _key: generateRelationshipKey(groupKey, memberKey),
+    _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
     _mapping: {
       relationshipDirection: RelationshipDirection.FORWARD,
       sourceEntityKey: groupKey,
@@ -178,8 +177,6 @@ export function createGroupMemberRelationship(
       },
     },
     properties: {
-      _key: generateRelationshipKey(groupKey, memberKey),
-      _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
       groupId: group.id,
       memberId: member.id,
       memberType: member['@odata.type'],

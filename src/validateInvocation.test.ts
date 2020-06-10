@@ -1,5 +1,5 @@
-import { IntegrationValidationError } from '@jupiterone/integration-sdk';
-import { createMockExecutionContext } from '@jupiterone/integration-sdk/testing';
+import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
+import { createMockExecutionContext } from '@jupiterone/integration-sdk-testing';
 
 import { IntegrationConfig } from './types';
 import validateInvocation from './validateInvocation';

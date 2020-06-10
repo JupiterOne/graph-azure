@@ -4,7 +4,7 @@ import {
   PublicIPAddress,
   Subnet,
 } from '@azure/arm-network/esm/models';
-import { Relationship } from '@jupiterone/integration-sdk';
+import { Relationship } from '@jupiterone/integration-sdk-core';
 
 import {
   createSubnetVirtualMachineRelationship,

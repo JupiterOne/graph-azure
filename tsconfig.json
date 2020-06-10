@@ -1,18 +1,7 @@
 {
+  "extends": "./node_modules/@jupiterone/integration-sdk-dev-tools/config/typescript",
   "compilerOptions": {
-    "outDir": "dist",
-    "target": "es2018",
-    "lib": ["es2018"],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noUnusedLocals": true,
-    "pretty": true,
-    "esModuleInterop": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "allowJs": false
+    "outDir": "dist"
   },
   "exclude": ["dist"]
 }

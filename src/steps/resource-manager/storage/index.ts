@@ -2,7 +2,7 @@ import { StorageAccount } from '@azure/arm-storage/esm/models';
 import {
   createIntegrationRelationship,
   Entity,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';

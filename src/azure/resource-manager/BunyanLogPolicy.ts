@@ -6,7 +6,7 @@ import {
   RequestPolicyOptions,
   WebResource,
 } from '@azure/ms-rest-js';
-import { IntegrationLogger } from '@jupiterone/integration-sdk';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 export function bunyanLogPolicy(
   logger: IntegrationLogger,

@@ -2,7 +2,7 @@ import { Disk, VirtualMachine } from '@azure/arm-compute/esm/models';
 import {
   convertProperties,
   createIntegrationRelationship,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
 import {

@@ -1,4 +1,4 @@
-import { Entity } from '@jupiterone/integration-sdk';
+import { Entity } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationStepContext } from '../../types';
 import { DirectoryGraphClient } from './client';

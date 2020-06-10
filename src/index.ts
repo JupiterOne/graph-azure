@@ -1,4 +1,4 @@
-import { IntegrationInvocationConfig } from '@jupiterone/integration-sdk';
+import { IntegrationInvocationConfig } from '@jupiterone/integration-sdk-core';
 
 import getStepStartStates from './getStepStartStates';
 import { activeDirectorySteps } from './steps/active-directory';

@@ -6,16 +6,16 @@ import {
   systemErrorRetryPolicy,
   throttlingRetryPolicy,
 } from '@azure/ms-rest-js';
+import {
+  IntegrationLogger,
+  IntegrationProviderAPIError,
+} from '@jupiterone/integration-sdk-core';
 import { retry } from '@lifeomic/attempt';
 
 import { IntegrationConfig } from '../../types';
 import authenticate from './authenticate';
 import { bunyanLogPolicy } from './BunyanLogPolicy';
 import { AzureManagementClientCredentials } from './types';
-import {
-  IntegrationLogger,
-  IntegrationProviderAPIError,
-} from '@jupiterone/integration-sdk-core';
 
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
@@ -228,9 +228,11 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
   endpointRatePeriod?: number;
 }): Promise<void> {
   let nextLink: string | undefined;
-  try {
-    do {
-      const response = await retryResourceRequest(async () => {
+  do {
+    let response: ResourceListResponse<ResourceType> | undefined;
+
+    try {
+      response = await retryResourceRequest(async () => {
         if ('listAllNext' in resourceEndpoint) {
           return nextLink
             ? /* istanbul ignore next: testing iteration might be difficult */
@@ -249,7 +251,21 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
             : await resourceEndpoint.list<ResourceListResponse<ResourceType>>();
         }
       }, endpointRatePeriod);
+    } catch (err) {
+      /* istanbul ignore else */
+      if (err.statusCode === 404) {
+        logger.warn({ err }, 'Resources not found');
+      } else {
+        throw new IntegrationProviderAPIError({
+          cause: err,
+          endpoint: resourceDescription,
+          status: err.statusCode,
+          statusText: err.statusText,
+        });
+      }
+    }
 
+    if (response) {
       logger.info(
         {
           resourceCount: response.length,
@@ -263,18 +279,6 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
       }
 
       nextLink = response.nextLink;
-    } while (nextLink);
-  } catch (err) {
-    /* istanbul ignore else */
-    if (err.statusCode === 404) {
-      logger.warn({ err }, 'Resources not found');
-    } else {
-      throw new IntegrationProviderAPIError({
-        cause: err,
-        endpoint: resourceDescription,
-        status: err.statusCode,
-        statusText: err.statusText,
-      });
     }
-  }
+  } while (nextLink);
 }

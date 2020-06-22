@@ -8,7 +8,7 @@ import { IntegrationConfig } from '../../types';
  * Obtain API credentials for Microsoft Graph API.
  *
  * TODO Can this be replaced by `import { ClientSecretCredential } from
- * "@azure/identity";`?
+ * "@azure/identity";`? YES! See Microsoft 365 integration.
  */
 export default async function authenticate(
   config: IntegrationConfig,

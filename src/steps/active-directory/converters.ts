@@ -1,6 +1,7 @@
 import map from 'lodash.map';
 
 import {
+  convertProperties,
   createIntegrationEntity,
   createIntegrationRelationship,
   Entity,
@@ -73,45 +74,39 @@ export function createAccountEntityWithOrganization(
   });
 }
 
-export function createGroupEntity(d: Group): Entity {
-  return {
-    _class: GROUP_ENTITY_CLASS,
-    _key: generateEntityKey(GROUP_ENTITY_TYPE, d.id),
-    _type: GROUP_ENTITY_TYPE,
-    displayName: d.displayName,
-    id: d.id,
-    deletedOn: getTime(d.deletedDateTime),
-    classification: d.classification,
-    createdOn: getTime(d.createdDateTime),
-    description: d.description,
-    email: d.mail,
-    mail: d.mail,
-    mailEnabled: d.mailEnabled,
-    mailNickname: d.mailNickname,
-    renewedOn: getTime(d.renewedDateTime),
-    securityEnabled: d.securityEnabled,
-  };
+export function createGroupEntity(data: Group): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        ...convertProperties(data, { parseTime: true }),
+        _key: generateEntityKey(GROUP_ENTITY_TYPE, data.id),
+        _class: GROUP_ENTITY_CLASS,
+        _type: GROUP_ENTITY_TYPE,
+        deletedOn: getTime(data.deletedDateTime),
+        createdOn: getTime(data.createdDateTime),
+        email: data.mail,
+        renewedOn: getTime(data.renewedDateTime),
+      },
+    },
+  });
 }
 
 export function createUserEntity(data: User): Entity {
-  return {
-    _class: USER_ENTITY_CLASS,
-    _key: generateEntityKey(USER_ENTITY_TYPE, data.id),
-    _type: USER_ENTITY_TYPE,
-    displayName: data.displayName,
-    givenName: data.givenName,
-    firstName: data.givenName,
-    jobTitle: data.jobTitle,
-    email: data.mail,
-    mail: data.mail,
-    mobilePhone: data.mobilePhone,
-    officeLocation: data.officeLocation,
-    preferredLanguage: data.preferredLanguage,
-    surname: data.surname,
-    lastName: data.surname,
-    userPrincipalName: data.userPrincipalName,
-    id: data.id,
-  };
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        ...convertProperties(data),
+        _key: generateEntityKey(USER_ENTITY_TYPE, data.id),
+        _class: USER_ENTITY_CLASS,
+        _type: USER_ENTITY_TYPE,
+        email: data.mail,
+        firstName: data.givenName,
+        lastName: data.surname,
+      },
+    },
+  });
 }
 
 export function createAccountGroupRelationship(

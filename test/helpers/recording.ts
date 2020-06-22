@@ -45,6 +45,8 @@ function mutateRecordingEntry(entry: RecordingEntry): void {
     entry.response.headers = entry.response.headers.filter(
       (e) => e && e !== contentEncoding && e !== transferEncoding,
     );
+    // Remove recording binary marker
+    delete (entry.response.content as any)._isBinary;
     entry.response.content.text = responseText;
   }
 

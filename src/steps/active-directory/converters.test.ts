@@ -88,20 +88,21 @@ describe('createGroupEntity', () => {
         onPremisesProvisioningErrors: [],
       }),
     ).toEqual({
-      _class: 'UserGroup',
+      _class: ['UserGroup'],
       _key: 'azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792',
       _type: 'azure_user_group',
-      classification: undefined,
+      _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: 1556042765000,
+      createdDateTime: 1556042765000,
       deletedOn: undefined,
       description: 'descr',
       displayName: 'test group',
       id: '89fac263-2430-48fd-9278-dacfdfc89792',
       email: undefined,
-      mail: undefined,
       mailEnabled: false,
       mailNickname: '8bb2d1c34',
       renewedOn: 1556042765000,
+      renewedDateTime: 1556042765000,
       securityEnabled: true,
     });
   });
@@ -109,35 +110,34 @@ describe('createGroupEntity', () => {
 
 describe('createUserEntity', () => {
   test('properties transferred', () => {
-    expect(
-      createUserEntity({
-        businessPhones: ['+1 2223334444'],
-        displayName: 'Andrew Kulakov',
-        givenName: 'Andrew',
-        jobTitle: 'test title',
-        mail: undefined,
-        mobilePhone: '+1 2223334444',
-        officeLocation: 'DBP',
-        preferredLanguage: undefined,
-        surname: 'Kulakov',
-        userPrincipalName:
-          'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
-        id: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
-      }),
-    ).toEqual({
-      _class: 'User',
+    const data = {
+      businessPhones: ['+1 2223334444'],
+      displayName: 'Andrew Kulakov',
+      givenName: 'Andrew',
+      jobTitle: 'test title',
+      mail: undefined,
+      mobilePhone: '+1 2223334444',
+      officeLocation: 'DBP',
+      preferredLanguage: undefined,
+      surname: 'Kulakov',
+      userPrincipalName:
+        'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
+      id: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
+    };
+    expect(createUserEntity(data)).toEqual({
+      _class: ['User'],
       _key: 'azure_user_abf00eda-02d6-4053-a077-eef036e1a4c8',
       _type: 'azure_user',
+      _rawData: [{ name: 'default', rawData: data }],
+      createdOn: undefined,
       displayName: 'Andrew Kulakov',
       givenName: 'Andrew',
       firstName: 'Andrew',
       id: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
       jobTitle: 'test title',
-      mail: undefined,
-      email: undefined,
+      businessPhones: ['+1 2223334444'],
       mobilePhone: '+1 2223334444',
       officeLocation: 'DBP',
-      preferredLanguage: undefined,
       surname: 'Kulakov',
       lastName: 'Kulakov',
       userPrincipalName:

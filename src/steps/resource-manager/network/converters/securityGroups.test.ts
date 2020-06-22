@@ -109,11 +109,14 @@ describe('build mapped relationships from security group rules', () => {
       _mapping: {
         relationshipDirection: RelationshipDirection.REVERSE,
         sourceEntityKey: securityGroup.id as string,
-        targetFilterKeys: [['_class', 'ipAddress', 'publicIpAddress']],
+        targetFilterKeys: [
+          ['_class', 'ipAddress', 'publicIpAddress', 'displayName'],
+        ],
         targetEntity: {
           _class: 'Host',
           ipAddress: '4.3.2.1',
           publicIpAddress: '4.3.2.1',
+          displayName: '4.3.2.1',
         },
         skipTargetCreation: false,
       },
@@ -121,7 +124,7 @@ describe('build mapped relationships from security group rules', () => {
         ...convertProperties(inboundRuleFromSingleIpToSubnet, {
           stringifyArray: true,
         }),
-        _key: `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${inboundRuleFromSingleIpToSubnet.id}:8080:Host:4.3.2.1:4.3.2.1`,
+        _key: `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${inboundRuleFromSingleIpToSubnet.id}:8080:Host:4.3.2.1:4.3.2.1:4.3.2.1`,
         _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
         ingress: true,
         inbound: true,

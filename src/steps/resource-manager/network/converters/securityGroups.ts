@@ -168,10 +168,12 @@ export function processSecurityGroupRule(
           const publicIpAddress = isPublicIp(targetPrefix)
             ? targetPrefix.replace('/32', '')
             : undefined;
+          const hostIpAddress = targetPrefix.replace('/32', '');
           targets.push({
             _class: 'Host',
-            ipAddress: targetPrefix.replace('/32', ''),
+            ipAddress: hostIpAddress,
             publicIpAddress,
+            displayName: hostIpAddress,
           });
         } else if (isPublicIp(targetPrefix)) {
           // Target is a public network IP

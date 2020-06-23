@@ -1,4 +1,7 @@
-import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
+import {
+  IntegrationProviderAuthenticationError,
+  IntegrationValidationError,
+} from '@jupiterone/integration-sdk-core';
 import { createMockExecutionContext } from '@jupiterone/integration-sdk-testing';
 
 import { IntegrationConfig } from './types';
@@ -28,6 +31,6 @@ it('auth error', async () => {
   try {
     await validateInvocation(executionContext);
   } catch (e) {
-    expect(e instanceof IntegrationValidationError).toBe(true);
+    expect(e instanceof IntegrationProviderAuthenticationError).toBe(true);
   }
 });

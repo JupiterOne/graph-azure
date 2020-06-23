@@ -1,5 +1,6 @@
 import {
   IntegrationExecutionContext,
+  IntegrationProviderAuthenticationError,
   IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 
@@ -24,7 +25,6 @@ export default async function validateInvocation(
       await authenticateResourceManager(config);
     }
   } catch (err) {
-    // TODO Use IntegrationProviderAuthenticationError
-    throw new IntegrationValidationError(err);
+    throw new IntegrationProviderAuthenticationError(err);
   }
 }

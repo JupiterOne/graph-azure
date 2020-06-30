@@ -8,6 +8,51 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.16.3 - 2020-05-18
+
+### Changed
+
+- Filter out empty string in array list returned by Azure API on SQL Server
+  auditing and alerting settings.
+
+## 3.16.2 - 2020-05-18
+
+### Changed
+
+- Changed SQL server `alertAll` property to `alertOnAllThreats`.
+
+## 3.16.1 - 2020-05-18
+
+### Changed
+
+- Set SQL server `alertAll: alertingEnabled && !hasDisabledAlerts`.
+
+## 3.16.0 - 2020-05-18
+
+### Added
+
+- SQL Server and Database auditing status and properties.
+- SQL Server alerting status and properties.
+
+## 3.15.7 - 2020-05-17
+
+### Added
+
+- `attached` boolean and `state` property on `azure_managed_disk` entities.
+
+## 3.15.6 - 2020-05-17
+
+### Fixed
+
+- Incorrect parsing the `targetPortRanges` (`fromPort` and `toPort`) of an Azure
+  Security Group rule.
+
+## 3.15.5 - 2020-05-06
+
+### Changed
+
+- Upgrade `@jupiterone/integration-sdk` to version `33.7.5`.
+
 ## 3.15.4 - 2020-05-06
 
 ### Added

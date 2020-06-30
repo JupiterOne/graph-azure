@@ -8,6 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
+This release is a complete restructuring of the program to move to the new
+JupiterOne integration SDK. Benefits are numerous, including:
+
+- Use the latest patterns and allow for much easier advancement of the
+  integration in all the ways intended by the new SDK
+- Break work into more atomic steps, particularly helpful for database ingestion
+- Allow for ingesting as much data as possible even when some data cannot be
+  retrieved (partial sets)
+- Significantly better error reporting, and statistics are collected
+- Designed to run as a single process, dramatically simplifying deployments
+
 ## 3.16.3 - 2020-05-18
 
 ### Changed

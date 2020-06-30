@@ -1,4 +1,4 @@
-import { ServiceClientCredentials } from "@azure/ms-rest-js";
+import { ServiceClientCredentials } from '@azure/ms-rest-js';
 
 /**
  * Credentials obtained for accessing Azure Resource Manager APIs.

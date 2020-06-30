@@ -1,21 +1,21 @@
-import { ClientSecretCredential } from "@azure/identity";
+import { ClientSecretCredential } from '@azure/identity';
 import {
   exponentialRetryPolicy,
   HttpResponse,
   RequestPolicyFactory,
   systemErrorRetryPolicy,
   throttlingRetryPolicy,
-} from "@azure/ms-rest-js";
+} from '@azure/ms-rest-js';
 import {
-  IntegrationError,
   IntegrationLogger,
-} from "@jupiterone/jupiter-managed-integration-sdk";
-import { retry } from "@lifeomic/attempt";
+  IntegrationProviderAPIError,
+} from '@jupiterone/integration-sdk-core';
+import { retry } from '@lifeomic/attempt';
 
-import { AzureIntegrationInstanceConfig } from "../../types";
-import authenticate from "./authenticate";
-import { bunyanLogPolicy } from "./BunyanLogPolicy";
-import { AzureManagementClientCredentials } from "./types";
+import { IntegrationConfig } from '../../types';
+import authenticate from './authenticate';
+import { bunyanLogPolicy } from './BunyanLogPolicy';
+import { AzureManagementClientCredentials } from './types';
 
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
@@ -44,13 +44,19 @@ export abstract class Client {
   private auth: AzureManagementClientCredentials;
 
   constructor(
-    private config: AzureIntegrationInstanceConfig,
+    private config: IntegrationConfig,
     readonly logger: IntegrationLogger,
     readonly noRetryPolicy = false,
   ) {}
 
-  // TODO cache and document
+  /**
+   * Provides `ClientSecretCredentials` for data access clients. Resource
+   * Manager clients are authenticated using `ServiceClientCredentials`.
+   *
+   * @see authenticate
+   */
   getClientSecretCredentials(): ClientSecretCredential {
+    // TODO cache this?
     return new ClientSecretCredential(
       this.config.directoryId,
       this.config.clientId,
@@ -206,12 +212,14 @@ export function createClient<T>(
 export async function iterateAllResources<ServiceClientType, ResourceType>({
   serviceClient,
   resourceEndpoint,
+  resourceDescription,
   callback,
   logger,
   endpointRatePeriod = 5 * 60 * 1000,
 }: {
   serviceClient: ServiceClientType;
   resourceEndpoint: ListAllResourcesEndpoint | ListResourcesEndpoint;
+  resourceDescription: string;
   callback: (
     resource: ResourceType,
     serviceClient: ServiceClientType,
@@ -220,10 +228,12 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
   endpointRatePeriod?: number;
 }): Promise<void> {
   let nextLink: string | undefined;
-  try {
-    do {
-      const response = await retryResourceRequest(async () => {
-        if ("listAllNext" in resourceEndpoint) {
+  do {
+    let response: ResourceListResponse<ResourceType> | undefined;
+
+    try {
+      response = await retryResourceRequest(async () => {
+        if ('listAllNext' in resourceEndpoint) {
           return nextLink
             ? /* istanbul ignore next: testing iteration might be difficult */
               await resourceEndpoint.listAllNext<
@@ -241,13 +251,27 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
             : await resourceEndpoint.list<ResourceListResponse<ResourceType>>();
         }
       }, endpointRatePeriod);
+    } catch (err) {
+      /* istanbul ignore else */
+      if (err.statusCode === 404) {
+        logger.warn({ err }, 'Resources not found');
+      } else {
+        throw new IntegrationProviderAPIError({
+          cause: err,
+          endpoint: resourceDescription,
+          status: err.statusCode,
+          statusText: err.statusText,
+        });
+      }
+    }
 
+    if (response) {
       logger.info(
         {
           resourceCount: response.length,
           resource: response._response.request.url,
         },
-        "Received resources for endpoint",
+        'Received resources for endpoint',
       );
 
       for (const e of response) {
@@ -255,15 +279,6 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
       }
 
       nextLink = response.nextLink;
-    } while (nextLink);
-  } catch (err) {
-    /* istanbul ignore else */
-    if (err.statusCode === 404) {
-      logger.warn({ err }, "Resources not found");
-    } else {
-      throw new IntegrationError("Failed to list resources", err, {
-        expose: true,
-      });
     }
-  }
+  } while (nextLink);
 }

@@ -1,11 +1,11 @@
 import {
-  GraphClient,
-  IntegrationExecutionContext,
-  PersisterClient,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+  IntegrationInstanceConfig,
+  IntegrationStepExecutionContext,
+} from '@jupiterone/integration-sdk-core';
 
-import { AzureClient, ResourceManagerClient } from "./azure";
-import AzureClientError from "./azure/AzureClientError";
+export type IntegrationStepContext = IntegrationStepExecutionContext<
+  IntegrationConfig
+>;
 
 /**
  * Properties provided by the `IntegrationInstance.config`. Values identifying
@@ -15,7 +15,7 @@ import AzureClientError from "./azure/AzureClientError";
  * Resource Manager API invocations. The user must grant the Principal access
  * to necessary Graph and Azure resources.
  */
-export interface AzureIntegrationInstanceConfig {
+export interface IntegrationConfig extends IntegrationInstanceConfig {
   /**
    * The Service Principal client identifier used to obtain API access tokens.
    */
@@ -59,21 +59,3 @@ export interface AzureIntegrationInstanceConfig {
    */
   ingestActiveDirectory?: boolean;
 }
-
-export interface AzureExecutionContext extends IntegrationExecutionContext {
-  graph: GraphClient;
-  persister: PersisterClient;
-  azure: AzureClient;
-  azrm: ResourceManagerClient;
-}
-
-export interface ResourceCacheState {
-  resourceFetchCompleted?: boolean;
-}
-
-export interface GroupsCacheState extends ResourceCacheState {
-  groupMembersFetchCompleted?: boolean;
-  fetchError?: AzureClientError;
-}
-
-export type UsersCacheState = ResourceCacheState;

@@ -5,8 +5,8 @@ import {
   RequestPolicyFactory,
   RequestPolicyOptions,
   WebResource,
-} from "@azure/ms-rest-js";
-import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
+} from '@azure/ms-rest-js';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 export function bunyanLogPolicy(
   logger: IntegrationLogger,
@@ -34,7 +34,7 @@ export class BunyanLogPolicy extends BaseRequestPolicy {
   }
 
   public sendRequest(request: WebResource): Promise<HttpOperationResponse> {
-    return this._nextPolicy.sendRequest(request.clone()).then(response => {
+    return this._nextPolicy.sendRequest(request.clone()).then((response) => {
       const logData = {
         url: request.url,
         status: response.status,
@@ -42,7 +42,7 @@ export class BunyanLogPolicy extends BaseRequestPolicy {
         requestHeaders: Object.keys(response.request.headers.rawHeaders()),
       };
 
-      this.logger.info(logData, "Received response from Azure API");
+      this.logger.info(logData, 'Received response from Azure API');
 
       return response;
     });

@@ -1,1 +1,1 @@
-export const REDACTED_VALUE = "****REDACTED****";
+export const REDACTED_VALUE = '****REDACTED****';

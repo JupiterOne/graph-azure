@@ -1,4 +1,4 @@
-import { AzureWebLinker } from "./types";
+import { AzureWebLinker } from './types';
 
 /**
  * Matches Blob storage service container ID, extracting:
@@ -16,7 +16,7 @@ export default function createAzureWebLinker(
   defaultDomain: string | undefined,
 ): AzureWebLinker {
   return {
-    portalResourceUrl: path => {
+    portalResourceUrl: (path): string | undefined => {
       if (defaultDomain && path) {
         const m = blobStorageId.exec(path);
 

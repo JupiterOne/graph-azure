@@ -1,28 +1,31 @@
-import { IntegrationError } from "@jupiterone/jupiter-managed-integration-sdk";
+import fetch from 'cross-fetch';
 
-import { AzureIntegrationInstanceConfig } from "../../types";
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
+
+import { IntegrationConfig } from '../../types';
 
 /**
  * Obtain API credentials for Microsoft Graph API.
+ *
+ * TODO Can this be replaced by `import { ClientSecretCredential } from
+ * "@azure/identity";`? YES! See Microsoft 365 integration.
  */
 export default async function authenticate(
-  config: AzureIntegrationInstanceConfig,
+  config: IntegrationConfig,
 ): Promise<string> {
-  const response = await fetch(
-    `https://login.microsoftonline.com/${config.directoryId}/oauth2/v2.0/token`,
-    {
-      method: "post",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: [
-        `client_id=${encodeURIComponent(config.clientId)}`,
-        "grant_type=client_credentials",
-        `client_secret=${encodeURIComponent(config.clientSecret)}`,
-        "scope=https%3A%2F%2Fgraph.microsoft.com%2F.default",
-      ].join("&"),
+  const endpoint = `https://login.microsoftonline.com/${config.directoryId}/oauth2/v2.0/token`;
+  const response = await fetch(endpoint, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
-  );
+    body: [
+      `client_id=${encodeURIComponent(config.clientId)}`,
+      'grant_type=client_credentials',
+      `client_secret=${encodeURIComponent(config.clientSecret)}`,
+      'scope=https%3A%2F%2Fgraph.microsoft.com%2F.default',
+    ].join('&'),
+  });
 
   const json = await response.json();
 
@@ -38,7 +41,12 @@ export default async function authenticate(
       errorUri: errorResponse.error_uri,
     });
 
-    throw new IntegrationError("Graph API authentication failed", error);
+    throw new IntegrationProviderAPIError({
+      cause: error,
+      endpoint,
+      status: errorResponse.error,
+      statusText: errorResponse.error_description,
+    });
   } else {
     const tokenResponse = json as TokenResponse;
     return tokenResponse.access_token;

@@ -57,15 +57,25 @@ export async function buildComputeNetworkRelationships(
         vmData,
         networkInterfaces,
       );
+
+      // A nic with multiple ipConfigurations in the same subnet should not
+      // generate more than one subnet -> vm relationship.
+      const subnetVmRelationshipKeys = new Set<string>();
+
       for (const nic of nicData) {
         relationships.push(
           createVirtualMachineNetworkInterfaceRelationship(vmData, nic),
         );
         for (const c of nic.ipConfigurations || []) {
           if (c.subnet) {
-            relationships.push(
-              createSubnetVirtualMachineRelationship(c.subnet, vmData),
+            const subnetVmRelationship = createSubnetVirtualMachineRelationship(
+              c.subnet,
+              vmData,
             );
+            if (!subnetVmRelationshipKeys.has(subnetVmRelationship._key)) {
+              relationships.push(subnetVmRelationship);
+              subnetVmRelationshipKeys.add(subnetVmRelationship._key);
+            }
           }
           if (c.publicIPAddress) {
             relationships.push(

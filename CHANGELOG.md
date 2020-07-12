@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Duplicate subnet -> vm relationships would cause the step to crash.
+
+## 4.0.0 - 2020-06-30
+
 This release is a complete restructuring of the program to move to the new
 JupiterOne integration SDK. Benefits are numerous, including:
 

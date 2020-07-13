@@ -40,7 +40,6 @@ import {
   createSubnetEntity,
   createVirtualNetworkEntity,
   createVirtualNetworkSubnetRelationship,
-  isWideOpen,
 } from './converters';
 
 export * from './constants';
@@ -202,14 +201,7 @@ export async function fetchNetworkSecurityGroups(
       createSecurityGroupRuleRelationships(sg, executionContext.instance.id),
     );
 
-    const rules = [
-      ...(sg.defaultSecurityRules || []),
-      ...(sg.securityRules || []),
-    ];
-
-    await jobState.addEntity(
-      createNetworkSecurityGroupEntity(webLinker, sg, isWideOpen(rules)),
-    );
+    await jobState.addEntity(createNetworkSecurityGroupEntity(webLinker, sg));
   });
 
   await jobState.setData('subnetSecurityGroupMap', subnetSecurityGroupMap);

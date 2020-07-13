@@ -18,12 +18,13 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from '../constants';
+import parseSecurityRulePortRange from './parseSecurityRulePortRange';
+import { SecurityRulePortRange } from './types';
 
 interface RuleTargetEntity {
   _key?: string;
   _type?: string;
   _class?: string;
-  _integrationInstanceId?: string;
   displayName?: string;
   internet?: boolean;
   ipAddress?: string;
@@ -31,16 +32,49 @@ interface RuleTargetEntity {
   CIDR?: string;
 }
 
+/**
+ * Data representing one of N relationships defined by a single security group
+ * `SecurityRule`, determined by the number of `destinationPortRanges`.
+ *
+ * For each port range specified on the `SecurityRule`, a set of target entities
+ * is generated based on the rule's source or destination address prefixes. This
+ * allows for relationships between the security group and network/host to
+ * express the port range in a numeric fasion, allowing for queries such as
+ * `fromPort > 1024`.
+ *
+ * Each of these `Rule` objects will be converted to a number of relationships
+ * for the graph. Targets that are in private network ranges will be defined as
+ * direct relationships within the integration instance, while other targets
+ * will be expressed as mapped relationships to allow for references outside the
+ * integration instance.
+ */
 interface Rule {
-  id: string;
-  access: string;
+  /**
+   * The id of the `SecurityRule` that produced this `Rule`.
+   */
+  id: SecurityRule['id'];
+
+  /**
+   * The network traffic is allowed or denied. Possible values include: 'Allow',
+   * 'Deny'
+   */
+  access: SecurityRule['access'];
+
+  /**
+   * Each of the entities that the security group serves as a firewall.
+   */
   targets: RuleTargetEntity[];
+
+  /**
+   * Properties for the security group -> target network/host relationship
+   * represented by this rule.
+   */
   properties: FirewallRuleProperties & {
     _type: string;
-    srcPortRange?: string;
-    srcPortRanges?: string;
-    dstPortRange?: string;
-    dstPortRanges?: string;
+    // srcPortRange?: string;
+    // srcPortRanges?: string;
+    // dstPortRange?: string;
+    // dstPortRanges?: string;
   };
 }
 
@@ -49,6 +83,7 @@ export function createSecurityGroupRuleRelationships(
   _integrationInstanceId: string,
 ): Relationship[] {
   const relationships: Relationship[] = [];
+
   const rules = processSecurityGroupRules(sg, _integrationInstanceId);
   for (const rule of rules) {
     relationships.push(
@@ -120,38 +155,11 @@ export function processSecurityGroupRule(
 ): Rule[] {
   const rules: Rule[] = [];
 
-  const targetPortRanges = [
-    rule.destinationPortRange,
-    ...(rule.destinationPortRanges || []),
-  ];
+  const targetPortRanges = parsePortRanges(rule);
+  const targetPrefixes = getDirectionalRulePrefixes(rule);
 
   for (const portRange of targetPortRanges) {
-    if (!portRange) {
-      continue;
-    }
-    const ports = getPortsFromRange(portRange);
-    const properties = {
-      ...convertProperties(rule, { stringifyArray: true }),
-      _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
-      ingress: rule.direction === 'Inbound',
-      inbound: rule.direction === 'Inbound',
-      egress: rule.direction === 'Outbound',
-      outbound: rule.direction === 'Outbound',
-      portRange,
-      fromPort: ports.fromPort,
-      toPort: ports.toPort,
-      protocol: rule.protocol.toLowerCase(),
-      ipProtocol: rule.protocol.toLowerCase(),
-      priority: rule.priority,
-      ruleNumber: rule.priority,
-    };
-    const targetPrefixes =
-      rule.direction === 'Inbound'
-        ? [rule.sourceAddressPrefix, ...(rule.sourceAddressPrefixes || [])]
-        : [
-            rule.destinationAddressPrefix,
-            ...(rule.destinationAddressPrefixes || []),
-          ];
+    const properties = buildRulePropertiesForPortRange(rule, portRange);
 
     const targets: RuleTargetEntity[] = [];
     for (const targetPrefix of targetPrefixes) {
@@ -186,7 +194,6 @@ export function processSecurityGroupRule(
           targets.push({
             _class: 'Network',
             _type: 'azure_subnet',
-            _integrationInstanceId,
             CIDR: targetPrefix,
           });
         }
@@ -215,64 +222,54 @@ export function processSecurityGroupRule(
   return rules;
 }
 
-type portRange = {
-  fromPort?: number;
-  toPort?: number;
-};
-
-export function getPortsFromRange(portRange: string): portRange {
-  if (portRange && portRange.length > 0) {
-    if (portRange === '*') {
-      return {
-        fromPort: 0,
-        toPort: 65535,
-      };
-    }
-    const ports = portRange.split('-');
-    const fromPort = parseInt(ports[0]);
-    const toPort = parseInt(ports[1] || ports[0]);
-    return { fromPort, toPort };
-  } else {
-    return {};
-  }
+function parsePortRanges(rule: SecurityRule): SecurityRulePortRange[] {
+  const definedRule = (e: string | undefined) => !!e;
+  return ([
+    rule.destinationPortRange,
+    ...(rule.destinationPortRanges || []),
+  ].filter(definedRule) as string[]).map(parseSecurityRulePortRange);
 }
 
-export function isWideOpen(rules: SecurityRule[]): boolean {
-  const allowAllRule = findAllowAllRule(rules);
-  const denyAllRule = findDenyAllRule(rules);
-
-  if (allowAllRule && allowAllRule.priority) {
-    if (denyAllRule && denyAllRule.priority) {
-      return allowAllRule.priority < denyAllRule.priority;
-    }
-    return true;
-  }
-  return false;
+/**
+ * @returns address prefixes based on a `SecurityRule`'s direction (source for
+ * Inbound, destination otherwise)
+ *
+ * @param rule a security group rule
+ */
+function getDirectionalRulePrefixes(rule: SecurityRule) {
+  return rule.direction === 'Inbound'
+    ? [rule.sourceAddressPrefix, ...(rule.sourceAddressPrefixes || [])]
+    : [
+        rule.destinationAddressPrefix,
+        ...(rule.destinationAddressPrefixes || []),
+      ];
 }
 
-export function findAllowAllRule(
-  rules: SecurityRule[],
-): SecurityRule | undefined {
-  return findAnyAnyRule(rules, 'Allow');
-}
-
-export function findDenyAllRule(
-  rules: SecurityRule[],
-): SecurityRule | undefined {
-  return findAnyAnyRule(rules, 'Deny');
-}
-
-export function findAnyAnyRule(
-  rules: SecurityRule[],
-  access: 'Deny' | 'Allow',
-): SecurityRule | undefined {
-  return rules.find(
-    (r) =>
-      r.destinationAddressPrefix === '*' &&
-      r.destinationPortRange === '*' &&
-      r.sourcePortRange === '*' &&
-      r.sourceAddressPrefix === '*' &&
-      r.protocol === '*' &&
-      r.access === access,
-  );
+/**
+ * @returns properties for the relationships between a security group entity and
+ * the network/host entities referenced by the rule's address prefixes, within a
+ * particular `portRange`
+ *
+ * @param rule a security group rule
+ * @param portRange the security group rule port range
+ */
+function buildRulePropertiesForPortRange(
+  rule: SecurityRule,
+  portRange: SecurityRulePortRange,
+) {
+  return {
+    ...convertProperties(rule, { stringifyArray: true }),
+    _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+    ingress: rule.direction === 'Inbound',
+    inbound: rule.direction === 'Inbound',
+    egress: rule.direction === 'Outbound',
+    outbound: rule.direction === 'Outbound',
+    portRange: portRange.portRange,
+    fromPort: portRange.fromPort,
+    toPort: portRange.toPort,
+    protocol: rule.protocol.toLowerCase(),
+    ipProtocol: rule.protocol.toLowerCase(),
+    priority: rule.priority,
+    ruleNumber: rule.priority,
+  };
 }

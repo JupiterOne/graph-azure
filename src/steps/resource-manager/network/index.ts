@@ -121,6 +121,10 @@ export async function fetchLoadBalancers(
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
+  // A load balancer with multiple ip addresses through a single nic should not
+  // produce more than one lb -> nic relationship.
+  const loadBalancerNicRelationshipKeys = new Set<string>();
+
   const createLoadBalancerBackendNicRelationships = (
     lb: LoadBalancer,
   ): Relationship[] | undefined => {
@@ -137,9 +141,20 @@ export async function fetchLoadBalancers(
                * "id": "/subscriptions/<uuid>/resourceGroups/xtest/providers/Microsoft.Network/networkInterfaces/j1234/ipConfigurations/ipconfig1",
                */
               const nicId = ip.id.split('/ipConfigurations')[0];
-              relationships.push(
-                createLoadBalancerBackendNicRelationship(lb, nicId),
+              const loadBalancerNicRelationship = createLoadBalancerBackendNicRelationship(
+                lb,
+                nicId,
               );
+              if (
+                !loadBalancerNicRelationshipKeys.has(
+                  loadBalancerNicRelationship._key,
+                )
+              ) {
+                relationships.push(loadBalancerNicRelationship);
+                loadBalancerNicRelationshipKeys.add(
+                  loadBalancerNicRelationship._key,
+                );
+              }
             }
           });
         }

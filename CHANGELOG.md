@@ -12,6 +12,7 @@ and this project adheres to
 
 - Duplicate subnet -> vm relationships would cause the step to crash.
 - Duplicate load balancer -> nic relationships would cause the step to crash.
+- Illegal property `_integrationInstanceId` caused persister to reject uploads.
 
 ## 4.0.0 - 2020-06-30
 

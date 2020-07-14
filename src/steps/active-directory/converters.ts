@@ -98,6 +98,7 @@ export function createUserEntity(data: User): Entity {
     entityData: {
       source: data,
       assign: {
+        username: null,
         ...convertProperties(data),
         _key: generateEntityKey(USER_ENTITY_TYPE, data.id),
         _class: USER_ENTITY_CLASS,

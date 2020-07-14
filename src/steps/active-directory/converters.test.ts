@@ -131,6 +131,7 @@ describe('createUserEntity', () => {
       _type: 'azure_user',
       _rawData: [{ name: 'default', rawData: data }],
       createdOn: undefined,
+      username: null,
       name: 'Andrew Kulakov',
       displayName: 'Andrew Kulakov',
       givenName: 'Andrew',

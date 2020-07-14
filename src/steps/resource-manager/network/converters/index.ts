@@ -34,6 +34,7 @@ import {
   VIRTUAL_NETWORK_ENTITY_CLASS,
   VIRTUAL_NETWORK_ENTITY_TYPE,
 } from '../constants';
+import isWideOpenSecurityGroup from './isWideOpenSecurityGroup';
 
 export * from './securityGroups';
 
@@ -157,7 +158,6 @@ export function createSubnetEntity(
 export function createNetworkSecurityGroupEntity(
   webLinker: AzureWebLinker,
   data: NetworkSecurityGroup,
-  isWideOpen: boolean,
 ): Entity {
   const category: string[] = [];
   if (data.subnets && data.subnets.length > 0) {
@@ -177,7 +177,7 @@ export function createNetworkSecurityGroupEntity(
         region: data.location,
         resourceGroup: resourceGroupName(data.id),
         category,
-        isWideOpen,
+        isWideOpen: isWideOpenSecurityGroup(data),
       },
       tagProperties: ['environment'],
     },

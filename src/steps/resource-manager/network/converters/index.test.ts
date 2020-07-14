@@ -357,31 +357,21 @@ describe('createNetworkSecurityGroupEntity', () => {
   };
 
   test('properties transferred', () => {
-    expect(createNetworkSecurityGroupEntity(webLinker, data, false)).toEqual(
-      entity,
-    );
+    expect(createNetworkSecurityGroupEntity(webLinker, data)).toEqual(entity);
   });
 
   test('category when only networkInterfaces', () => {
     expect(
-      createNetworkSecurityGroupEntity(
-        webLinker,
-        { ...data, subnets: [] },
-        false,
-      ),
+      createNetworkSecurityGroupEntity(webLinker, { ...data, subnets: [] }),
     ).toMatchObject({ category: ['host'] });
   });
 
   test('category when only subnets', () => {
     expect(
-      createNetworkSecurityGroupEntity(
-        webLinker,
-        {
-          ...data,
-          networkInterfaces: [],
-        },
-        false,
-      ),
+      createNetworkSecurityGroupEntity(webLinker, {
+        ...data,
+        networkInterfaces: [],
+      }),
     ).toMatchObject({ category: ['network'] });
   });
 });

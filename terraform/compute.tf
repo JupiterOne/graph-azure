@@ -1,3 +1,5 @@
+#### VPC default, eastus
+
 resource "azurerm_virtual_network" "j1dev" {
   name                = "j1dev"
   address_space       = ["10.0.0.0/16"]
@@ -14,6 +16,13 @@ resource "azurerm_subnet" "j1dev" {
   resource_group_name  = azurerm_resource_group.j1dev.name
   virtual_network_name = azurerm_virtual_network.j1dev.name
   address_prefix       = "10.0.2.0/24"
+}
+
+resource "azurerm_subnet" "j1dev_priv_one" {
+  name                 = "j1dev_priv_one"
+  resource_group_name  = azurerm_resource_group.j1dev.name
+  virtual_network_name = azurerm_virtual_network.j1dev.name
+  address_prefix       = "10.0.3.0/24"
 }
 
 resource "azurerm_subnet_network_security_group_association" "j1dev" {
@@ -46,6 +55,20 @@ resource "azurerm_network_security_group" "j1dev" {
     source_port_range          = "*"
     destination_port_range     = "22"
     source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  # This rule will match any private subnet matching the source address prefix,
+  # including those in other virtual networks across regions.
+  security_rule {
+    name                       = "priv_one"
+    priority                   = 1002
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "10.0.3.0/24"
     destination_address_prefix = "*"
   }
 
@@ -109,4 +132,27 @@ resource "azurerm_linux_virtual_machine" "j1dev" {
   tags = {
     environment = local.j1env
   }
+}
+
+#### VPC default, westus
+
+# Another private network, having the same address_space as that in eastus, for
+# the purpose of proving various compute/network ingest processes.
+
+resource "azurerm_virtual_network" "j1dev_two" {
+  name                = "j1dev_two"
+  address_space       = ["10.0.0.0/16"]
+  location            = "westus"
+  resource_group_name = azurerm_resource_group.j1dev.name
+
+  tags = {
+    environment = local.j1env
+  }
+}
+
+resource "azurerm_subnet" "j1dev_priv_two" {
+  name                 = "j1dev_priv_two"
+  resource_group_name  = azurerm_resource_group.j1dev.name
+  virtual_network_name = azurerm_virtual_network.j1dev_two.name
+  address_prefix       = "10.0.3.0/24"
 }

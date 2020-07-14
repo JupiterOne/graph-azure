@@ -11,15 +11,12 @@ import {
 
 import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from '../constants';
 import {
-  createSecurityGroupRuleRelationships,
-  createSecurityGroupRuleRelationshipsFromRule,
-  getPortsFromRange,
+  createSecurityGroupRuleMappedRelationship,
   processSecurityGroupRule,
+  processSecurityGroupRules,
 } from './securityGroups';
 
 describe('build mapped relationships from security group rules', () => {
-  const _integrationInstanceId = '1234567890abcd';
-
   const inboundRuleFromSingleIpToSubnet: SecurityRule = {
     id:
       '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/securityRules/Port_8080',
@@ -236,92 +233,67 @@ describe('build mapped relationships from security group rules', () => {
   );
 
   test('inbound rule from single IP to private subnet', () => {
-    const rules = processSecurityGroupRule(
-      inboundRuleFromSingleIpToSubnet,
-      _integrationInstanceId,
-    );
+    const rules = processSecurityGroupRule(inboundRuleFromSingleIpToSubnet);
 
     expect(rules.length).toEqual(1);
+    expect(rules[0].targets.length).toEqual(1);
+
+    const rule = rules[0];
+    const targetEntity = rule.targets[0];
 
     expect(
-      createSecurityGroupRuleRelationshipsFromRule(
-        securityGroup.id as string,
-        rules[0],
+      createSecurityGroupRuleMappedRelationship(
+        securityGroup,
+        rule,
+        targetEntity,
       ),
-    ).toEqual([inboundRuleFromSingleIpToSubnetRelationship]);
+    ).toEqual(inboundRuleFromSingleIpToSubnetRelationship);
   });
 
   test('outbound rule from high source ports to multiple dest port ranges', () => {
     const rules = processSecurityGroupRule(
       outboundRuleFromHighPortsToMultiplePortRanges,
-      _integrationInstanceId,
     );
 
     expect(rules.length).toEqual(2);
 
-    expect(
-      createSecurityGroupRuleRelationshipsFromRule(
-        securityGroup.id as string,
-        rules[0],
-      ),
-    ).toEqual([outboundRuleFromHighPortsToMultiplePortRangesRelationships[0]]);
+    const [portRange0Rule, portRange1Rule] = rules;
+    expect(portRange0Rule.targets.length).toEqual(1);
+    expect(portRange1Rule.targets.length).toEqual(1);
 
     expect(
-      createSecurityGroupRuleRelationshipsFromRule(
-        securityGroup.id as string,
-        rules[1],
+      createSecurityGroupRuleMappedRelationship(
+        securityGroup,
+        portRange0Rule,
+        portRange0Rule.targets[0],
       ),
-    ).toEqual([outboundRuleFromHighPortsToMultiplePortRangesRelationships[1]]);
+    ).toEqual(outboundRuleFromHighPortsToMultiplePortRangesRelationships[0]);
+
+    expect(
+      createSecurityGroupRuleMappedRelationship(
+        securityGroup,
+        portRange1Rule,
+        portRange1Rule.targets[0],
+      ),
+    ).toEqual(outboundRuleFromHighPortsToMultiplePortRangesRelationships[1]);
   });
 
   test('inbound rule from all VMs in VNET', () => {
-    const rules = processSecurityGroupRule(
-      inboundRuleFromAllVMsInVNET,
-      _integrationInstanceId,
-    );
+    const rules = processSecurityGroupRule(inboundRuleFromAllVMsInVNET);
 
     expect(rules.length).toEqual(1);
+    expect(rules[0].targets.length).toEqual(1);
 
     expect(
-      createSecurityGroupRuleRelationshipsFromRule(
-        securityGroup.id as string,
+      createSecurityGroupRuleMappedRelationship(
+        securityGroup,
         rules[0],
+        rules[0].targets[0],
       ),
-    ).toEqual([inboundRuleFromAllVMsInVNETRelationship]);
+    ).toEqual(inboundRuleFromAllVMsInVNETRelationship);
   });
 
   test('create rules from security group', () => {
-    expect(
-      createSecurityGroupRuleRelationships(
-        securityGroup,
-        _integrationInstanceId,
-      ).length,
-    ).toEqual(4);
-  });
-});
-
-describe('get port range from string', () => {
-  test('range', () => {
-    const portRange = '8080-8081';
-    expect(getPortsFromRange(portRange)).toEqual({
-      fromPort: 8080,
-      toPort: 8081,
-    });
-  });
-
-  test('single port', () => {
-    const portRange = '22';
-    expect(getPortsFromRange(portRange)).toEqual({
-      fromPort: 22,
-      toPort: 22,
-    });
-  });
-
-  test('* => 0-65535', () => {
-    const portRange = '*';
-    expect(getPortsFromRange(portRange)).toEqual({
-      fromPort: 0,
-      toPort: 65535,
-    });
+    expect(processSecurityGroupRules(securityGroup).length).toEqual(4);
   });
 });

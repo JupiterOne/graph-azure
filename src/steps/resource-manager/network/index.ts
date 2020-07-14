@@ -255,7 +255,7 @@ export async function buildSecurityGroupRuleRelationships(
 ): Promise<void> {
   const { jobState, logger } = executionContext;
 
-  const findSubnet = async (cidr?: string) => {
+  const findSubnetsForCIDR = async (cidr?: string) => {
     if (!cidr) return null;
 
     const subnets: Subnet[] = [];
@@ -270,15 +270,7 @@ export async function buildSecurityGroupRuleRelationships(
       },
     );
 
-    if (subnets.length > 0) {
-      if (subnets.length > 1) {
-        logger.warn(
-          { subnets: subnets.length, cidr },
-          'Multiple subnets matching CIDR!',
-        );
-      }
-      return subnets[0];
-    }
+    return subnets;
   };
 
   await jobState.iterateEntities(
@@ -293,15 +285,17 @@ export async function buildSecurityGroupRuleRelationships(
             target._class === SUBNET_ENTITY_CLASS &&
             target._type === SUBNET_ENTITY_TYPE
           ) {
-            const subnet = await findSubnet(target.CIDR as string);
-            if (subnet) {
-              await jobState.addRelationship(
-                createSecurityGroupRuleSubnetRelationship(sg, rule, subnet),
+            const subnets = await findSubnetsForCIDR(target.CIDR as string);
+            if (subnets?.length) {
+              await jobState.addRelationships(
+                subnets.map((subnet) =>
+                  createSecurityGroupRuleSubnetRelationship(sg, rule, subnet),
+                ),
               );
             } else {
               logger.warn(
                 { securityGroup: sg.id, rule: rule.id, cidr: target.CIDR },
-                'Rule target thought to be a private subnet, not found!',
+                'Rule target thought to be a private subnet, none found matching CIDR!',
               );
             }
           } else {

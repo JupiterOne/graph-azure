@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Added `User.username` for AD users, having the value of `userPrincipalName`,
+  to satisfy the data model User schema requirement.
+
 ### Fixed
 
 - Duplicate subnet -> vm relationships would cause the step to crash.

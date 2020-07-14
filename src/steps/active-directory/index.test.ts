@@ -54,7 +54,6 @@ test('active directory steps', async () => {
       _type: 'azure_user',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: undefined,
-      username: null,
       name: 'Adam Williams',
       displayName: 'Adam Williams',
       firstName: 'Adam',
@@ -65,6 +64,7 @@ test('active directory steps', async () => {
       preferredLanguage: 'en',
       surname: 'Williams',
       userPrincipalName: 'admin@adamjupiteronehotmailcom.onmicrosoft.com',
+      username: 'admin@adamjupiteronehotmailcom.onmicrosoft.com',
     },
     {
       _class: ['User'],
@@ -72,7 +72,6 @@ test('active directory steps', async () => {
       _type: 'azure_user',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: undefined,
-      username: null,
       name: 'adam',
       displayName: 'adam',
       firstName: null,
@@ -82,6 +81,8 @@ test('active directory steps', async () => {
       mail: 'adam@thewilliams.ws',
       userPrincipalName:
         'adam_thewilliams.ws#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
+      username:
+        'adam_thewilliams.ws#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
     },
     {
       _class: ['User'],
@@ -89,7 +90,6 @@ test('active directory steps', async () => {
       _type: 'azure_user',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: undefined,
-      username: null,
       name: 'Erkang Zheng',
       displayName: 'Erkang Zheng',
       email: 'erkang@gmail.com',
@@ -100,6 +100,8 @@ test('active directory steps', async () => {
       mail: 'erkang@gmail.com',
       surname: 'Zheng',
       userPrincipalName:
+        'erkang_gmail.com#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
+      username:
         'erkang_gmail.com#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
     },
     {

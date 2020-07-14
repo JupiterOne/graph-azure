@@ -3,8 +3,13 @@ import {
   NetworkInterfaceIPConfiguration,
   NetworkSecurityGroup,
   PublicIPAddress,
+  Subnet,
 } from '@azure/arm-network/esm/models';
-import { Entity, Relationship } from '@jupiterone/integration-sdk-core';
+import {
+  Entity,
+  getRawData,
+  Relationship,
+} from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';
@@ -15,15 +20,17 @@ import {
   LOAD_BALANCER_ENTITY_TYPE,
   NETWORK_INTERFACE_ENTITY_TYPE,
   PUBLIC_IP_ADDRESS_ENTITY_TYPE,
-  STEP_RM_NETWORK_INTERFACES,
-  STEP_RM_NETWORK_LOAD_BALANCERS,
-  STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
-  STEP_RM_NETWORK_SECURITY_GROUPS,
-  STEP_RM_NETWORK_VIRTUAL_NETWORKS,
   SECURITY_GROUP_ENTITY_TYPE,
   SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
   SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
   SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
+  STEP_RM_NETWORK_INTERFACES,
+  STEP_RM_NETWORK_LOAD_BALANCERS,
+  STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
+  STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
+  STEP_RM_NETWORK_SECURITY_GROUPS,
+  STEP_RM_NETWORK_VIRTUAL_NETWORKS,
+  SUBNET_ENTITY_CLASS,
   SUBNET_ENTITY_TYPE,
   VIRTUAL_NETWORK_ENTITY_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
@@ -36,10 +43,12 @@ import {
   createNetworkSecurityGroupNicRelationship,
   createNetworkSecurityGroupSubnetRelationship,
   createPublicIPAddressEntity,
-  createSecurityGroupRuleRelationships,
+  createSecurityGroupRuleMappedRelationship,
+  createSecurityGroupRuleSubnetRelationship,
   createSubnetEntity,
   createVirtualNetworkEntity,
   createVirtualNetworkSubnetRelationship,
+  processSecurityGroupRules,
 } from './converters';
 
 export * from './constants';
@@ -183,6 +192,9 @@ export async function fetchNetworkSecurityGroups(
   const subnetSecurityGroupMap: SubnetSecurityGroupMap = {};
 
   await client.iterateNetworkSecurityGroups(async (sg) => {
+    const sgEntity = createNetworkSecurityGroupEntity(webLinker, sg);
+    await jobState.addEntity(sgEntity);
+
     if (sg.networkInterfaces) {
       await jobState.addRelationships(
         sg.networkInterfaces.map((i) =>
@@ -196,12 +208,6 @@ export async function fetchNetworkSecurityGroups(
         subnetSecurityGroupMap[s.id as string] = sg;
       }
     }
-
-    await jobState.addRelationships(
-      createSecurityGroupRuleRelationships(sg, executionContext.instance.id),
-    );
-
-    await jobState.addEntity(createNetworkSecurityGroupEntity(webLinker, sg));
   });
 
   await jobState.setData('subnetSecurityGroupMap', subnetSecurityGroupMap);
@@ -242,6 +248,71 @@ export async function fetchVirtualNetworks(
     }
     await jobState.addEntity(createVirtualNetworkEntity(webLinker, vnet));
   });
+}
+
+export async function buildSecurityGroupRuleRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState, logger } = executionContext;
+
+  const findSubnet = async (cidr?: string) => {
+    if (!cidr) return null;
+
+    const subnets: Subnet[] = [];
+
+    await jobState.iterateEntities(
+      { _type: SUBNET_ENTITY_TYPE },
+      (subnetEntity) => {
+        const subnet = getRawData(subnetEntity) as Subnet;
+        if (subnet.addressPrefix === cidr) {
+          subnets.push(subnet);
+        }
+      },
+    );
+
+    if (subnets.length > 0) {
+      if (subnets.length > 1) {
+        logger.warn(
+          { subnets: subnets.length, cidr },
+          'Multiple subnets matching CIDR!',
+        );
+      }
+      return subnets[0];
+    }
+  };
+
+  await jobState.iterateEntities(
+    { _type: SECURITY_GROUP_ENTITY_TYPE },
+    async (sgEntity) => {
+      const sg = getRawData(sgEntity) as NetworkSecurityGroup;
+
+      const rules = processSecurityGroupRules(sg);
+      for (const rule of rules) {
+        for (const target of rule.targets) {
+          if (
+            target._class === SUBNET_ENTITY_CLASS &&
+            target._type === SUBNET_ENTITY_TYPE
+          ) {
+            const subnet = await findSubnet(target.CIDR as string);
+            if (subnet) {
+              await jobState.addRelationship(
+                createSecurityGroupRuleSubnetRelationship(sg, rule, subnet),
+              );
+            } else {
+              logger.warn(
+                { securityGroup: sg.id, rule: rule.id, cidr: target.CIDR },
+                'Rule target thought to be a private subnet, not found!',
+              );
+            }
+          } else {
+            await jobState.addRelationship(
+              createSecurityGroupRuleMappedRelationship(sg, rule, target),
+            );
+          }
+        }
+      }
+    },
+  );
 }
 
 export const networkSteps = [
@@ -290,6 +361,17 @@ export const networkSteps = [
       LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE,
     ],
     dependsOn: [STEP_AD_ACCOUNT],
+    executionHandler: fetchLoadBalancers,
+  },
+  {
+    id: STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
+    name: 'Network Security Group Rules',
+    types: [SECURITY_GROUP_RULE_RELATIONSHIP_TYPE],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_NETWORK_SECURITY_GROUPS,
+      STEP_RM_NETWORK_VIRTUAL_NETWORKS,
+    ],
     executionHandler: fetchLoadBalancers,
   },
 ];

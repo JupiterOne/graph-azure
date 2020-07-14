@@ -3,6 +3,7 @@ import snakeCase from 'lodash.snakecase';
 import {
   NetworkSecurityGroup,
   SecurityRule,
+  Subnet,
 } from '@azure/arm-network/esm/models';
 import { FirewallRuleProperties, INTERNET } from '@jupiterone/data-model';
 import {
@@ -17,10 +18,21 @@ import {
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 
-import { SECURITY_GROUP_RULE_RELATIONSHIP_TYPE } from '../constants';
+import {
+  SECURITY_GROUP_ENTITY_TYPE,
+  SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+  SUBNET_ENTITY_CLASS,
+  SUBNET_ENTITY_TYPE,
+} from '../constants';
 import parseSecurityRulePortRange from './parseSecurityRulePortRange';
 import { SecurityRulePortRange } from './types';
 
+/**
+ * The description of an entity that a security group rule references, used to
+ * construct relationships between the security group and the entity it
+ * protects. In cases where a direct relationship cannot be determined, a mapped
+ * relationship will be produced.
+ */
 interface RuleTargetEntity {
   _key?: string;
   _type?: string;
@@ -69,97 +81,104 @@ interface Rule {
    * Properties for the security group -> target network/host relationship
    * represented by this rule.
    */
-  properties: FirewallRuleProperties & {
-    _type: string;
-    // srcPortRange?: string;
-    // srcPortRanges?: string;
-    // dstPortRange?: string;
-    // dstPortRanges?: string;
-  };
+  properties: FirewallRuleProperties;
 }
 
-export function createSecurityGroupRuleRelationships(
-  sg: NetworkSecurityGroup,
-  _integrationInstanceId: string,
-): Relationship[] {
-  const relationships: Relationship[] = [];
-
-  const rules = processSecurityGroupRules(sg, _integrationInstanceId);
-  for (const rule of rules) {
-    relationships.push(
-      ...createSecurityGroupRuleRelationshipsFromRule(sg.id as string, rule),
-    );
-  }
-
-  return relationships;
+function securityGroupRuleRelationshipClass(rule: Rule): string {
+  return rule.access === 'Allow' ? 'ALLOWS' : 'DENIES';
 }
 
-export function createSecurityGroupRuleRelationshipsFromRule(
-  sgId: string,
+function securityGroupRuleRelationshipDirection(
   rule: Rule,
-): Relationship[] {
-  const relationships: Relationship[] = [];
-
-  const _class = rule.access === 'Allow' ? 'ALLOWS' : 'DENIES';
-  const relationshipDirection = rule.properties.ingress
+): RelationshipDirection {
+  return rule.properties.ingress
     ? RelationshipDirection.REVERSE
     : RelationshipDirection.FORWARD;
-
-  for (const target of rule.targets) {
-    const targetFilterKeys = target.internet
-      ? [['_key']]
-      : [Object.keys(target)];
-    const targetEntity = target.internet ? INTERNET : (target as Entity);
-
-    relationships.push(
-      createIntegrationRelationship({
-        _class,
-        _mapping: {
-          relationshipDirection,
-          sourceEntityKey: sgId,
-          targetFilterKeys,
-          targetEntity,
-          skipTargetCreation: !!target._key,
-        },
-        properties: {
-          ...rule.properties,
-          _key: `${rule.properties._type}:${rule.id}:${
-            rule.properties.portRange
-          }:${target.internet ? 'internet' : Object.values(target).join(':')}`,
-        },
-      }),
-    );
-  }
-
-  return relationships;
 }
 
-export function processSecurityGroupRules(
+function securityGroupRuleRelationshipKeyPrefix(rule: Rule): string {
+  return `${SECURITY_GROUP_RULE_RELATIONSHIP_TYPE}:${rule.id}:${rule.properties.portRange}`;
+}
+
+export function createSecurityGroupRuleSubnetRelationship(
   sg: NetworkSecurityGroup,
-  _integrationInstanceId: string,
-): Rule[] {
+  rule: Rule,
+  subnet: Subnet,
+): Relationship {
+  const direction = securityGroupRuleRelationshipDirection(rule);
+  const directionalProperties =
+    direction === RelationshipDirection.FORWARD
+      ? {
+          fromType: SECURITY_GROUP_ENTITY_TYPE,
+          fromKey: sg.id as string,
+          toType: SUBNET_ENTITY_TYPE,
+          toKey: subnet.id as string,
+        }
+      : {
+          fromType: SUBNET_ENTITY_TYPE,
+          fromKey: subnet.id as string,
+          toType: SECURITY_GROUP_ENTITY_TYPE,
+          toKey: sg.id as string,
+        };
+
+  return createIntegrationRelationship({
+    _class: securityGroupRuleRelationshipClass(rule),
+    ...directionalProperties,
+    properties: {
+      ...rule.properties,
+      _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+      _key: `${securityGroupRuleRelationshipKeyPrefix(rule)}:${subnet.id}`,
+    },
+  });
+}
+
+export function createSecurityGroupRuleMappedRelationship(
+  sg: NetworkSecurityGroup,
+  rule: Rule,
+  target: RuleTargetEntity,
+): Relationship {
+  const targetFilterKeys = target.internet ? [['_key']] : [Object.keys(target)];
+  const targetEntity = target.internet ? INTERNET : (target as Entity);
+
+  return createIntegrationRelationship({
+    _class: securityGroupRuleRelationshipClass(rule),
+    _mapping: {
+      relationshipDirection: securityGroupRuleRelationshipDirection(rule),
+      sourceEntityKey: sg.id as string,
+      targetFilterKeys,
+      targetEntity,
+      skipTargetCreation: !!target._key,
+    },
+    properties: {
+      ...rule.properties,
+      _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+      _key: `${securityGroupRuleRelationshipKeyPrefix(rule)}:${
+        target.internet ? 'internet' : Object.values(target).join(':')
+      }`,
+    },
+  });
+}
+
+export function processSecurityGroupRules(sg: NetworkSecurityGroup): Rule[] {
   const results: Rule[] = [];
   const rules = [
     ...(sg.defaultSecurityRules || []),
     ...(sg.securityRules || []),
   ];
   for (const rule of rules) {
-    results.push(...processSecurityGroupRule(rule, _integrationInstanceId));
+    results.push(...processSecurityGroupRule(rule));
   }
   return results;
 }
 
-export function processSecurityGroupRule(
-  rule: SecurityRule,
-  _integrationInstanceId: string,
-): Rule[] {
+export function processSecurityGroupRule(rule: SecurityRule): Rule[] {
   const rules: Rule[] = [];
 
   const targetPortRanges = parsePortRanges(rule);
   const targetPrefixes = getDirectionalRulePrefixes(rule);
 
   for (const portRange of targetPortRanges) {
-    const properties = buildRulePropertiesForPortRange(rule, portRange);
+    const properties = buildFirewallRulePropertiesForPortRange(rule, portRange);
 
     const targets: RuleTargetEntity[] = [];
     for (const targetPrefix of targetPrefixes) {
@@ -192,8 +211,8 @@ export function processSecurityGroupRule(
         } else {
           // Target is a private network IP
           targets.push({
-            _class: 'Network',
-            _type: 'azure_subnet',
+            _class: SUBNET_ENTITY_CLASS,
+            _type: SUBNET_ENTITY_TYPE,
             CIDR: targetPrefix,
           });
         }
@@ -253,13 +272,12 @@ function getDirectionalRulePrefixes(rule: SecurityRule) {
  * @param rule a security group rule
  * @param portRange the security group rule port range
  */
-function buildRulePropertiesForPortRange(
+function buildFirewallRulePropertiesForPortRange(
   rule: SecurityRule,
   portRange: SecurityRulePortRange,
-) {
+): FirewallRuleProperties {
   return {
     ...convertProperties(rule, { stringifyArray: true }),
-    _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
     ingress: rule.direction === 'Inbound',
     inbound: rule.direction === 'Inbound',
     egress: rule.direction === 'Outbound',

@@ -30,6 +30,7 @@ import {
   STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
   STEP_RM_NETWORK_SECURITY_GROUPS,
   STEP_RM_NETWORK_VIRTUAL_NETWORKS,
+  STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
 } from './steps/resource-manager/network';
 import { STEP_RM_STORAGE_RESOURCES } from './steps/resource-manager/storage';
 import { IntegrationConfig } from './types';
@@ -53,6 +54,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
+      [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_INTERFACES]: { disabled: true },
       [STEP_RM_NETWORK_LOAD_BALANCERS]: { disabled: true },
       [STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES]: { disabled: true },
@@ -82,6 +84,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
+      [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_INTERFACES]: { disabled: true },
       [STEP_RM_NETWORK_LOAD_BALANCERS]: { disabled: true },
       [STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES]: { disabled: true },
@@ -111,6 +114,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: false },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: false },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: false },
+      [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: false },
       [STEP_RM_NETWORK_INTERFACES]: { disabled: false },
       [STEP_RM_NETWORK_LOAD_BALANCERS]: { disabled: false },
       [STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES]: { disabled: false },

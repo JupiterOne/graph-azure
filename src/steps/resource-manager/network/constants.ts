@@ -2,6 +2,8 @@
 export const STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES = 'rm-network-ip-addresses';
 export const STEP_RM_NETWORK_INTERFACES = 'rm-network-interfaces';
 export const STEP_RM_NETWORK_SECURITY_GROUPS = 'rm-network-security-groups';
+export const STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS =
+  'rm-network-security-group-rules';
 export const STEP_RM_NETWORK_VIRTUAL_NETWORKS = 'rm-network-virtual-networks';
 export const STEP_RM_NETWORK_LOAD_BALANCERS = 'rm-network-load-balancers';
 

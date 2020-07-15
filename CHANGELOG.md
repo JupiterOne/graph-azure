@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Security group rules step had wrong step function assigned, duplicated load
+  balancer ingestion.
+
 ## 4.0.1 - 2020-07-14
 
 ### Changed

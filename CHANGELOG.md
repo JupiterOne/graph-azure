@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 4.0.1 - 2020-07-14
+
 ### Changed
 
 - Added `User.username` for AD users, having the value of `userPrincipalName`,

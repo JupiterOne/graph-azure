@@ -366,6 +366,6 @@ export const networkSteps = [
       STEP_RM_NETWORK_SECURITY_GROUPS,
       STEP_RM_NETWORK_VIRTUAL_NETWORKS,
     ],
-    executionHandler: fetchLoadBalancers,
+    executionHandler: buildSecurityGroupRuleRelationships,
   },
 ];

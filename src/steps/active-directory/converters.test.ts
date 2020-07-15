@@ -22,6 +22,14 @@ import {
   createUserEntity,
 } from './converters';
 
+beforeAll(() => {
+  process.env.ENABLE_GRAPH_OBJECT_SCHEMA_VALIDATION = '1';
+});
+
+afterAll(() => {
+  delete process.env.ENABLE_GRAPH_OBJECT_SCHEMA_VALIDATION;
+});
+
 describe('createAccountEntityWithOrganization', () => {
   test('properties transferred', () => {
     const instance = {
@@ -96,6 +104,7 @@ describe('createGroupEntity', () => {
       createdDateTime: 1556042765000,
       deletedOn: undefined,
       description: 'descr',
+      name: 'test group',
       displayName: 'test group',
       id: '89fac263-2430-48fd-9278-dacfdfc89792',
       email: undefined,
@@ -115,7 +124,7 @@ describe('createUserEntity', () => {
       displayName: 'Andrew Kulakov',
       givenName: 'Andrew',
       jobTitle: 'test title',
-      mail: undefined,
+      mail: 'admin_test@dualboot.com',
       mobilePhone: '+1 2223334444',
       officeLocation: 'DBP',
       preferredLanguage: undefined,
@@ -130,6 +139,11 @@ describe('createUserEntity', () => {
       _type: 'azure_user',
       _rawData: [{ name: 'default', rawData: data }],
       createdOn: undefined,
+      email: 'admin_test@dualboot.com',
+      mail: 'admin_test@dualboot.com',
+      username:
+        'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
+      name: 'Andrew Kulakov',
       displayName: 'Andrew Kulakov',
       givenName: 'Andrew',
       firstName: 'Andrew',

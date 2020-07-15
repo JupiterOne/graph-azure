@@ -54,6 +54,7 @@ test('active directory steps', async () => {
       _type: 'azure_user',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: undefined,
+      name: 'Adam Williams',
       displayName: 'Adam Williams',
       firstName: 'Adam',
       givenName: 'Adam',
@@ -63,6 +64,7 @@ test('active directory steps', async () => {
       preferredLanguage: 'en',
       surname: 'Williams',
       userPrincipalName: 'admin@adamjupiteronehotmailcom.onmicrosoft.com',
+      username: 'admin@adamjupiteronehotmailcom.onmicrosoft.com',
     },
     {
       _class: ['User'],
@@ -70,6 +72,7 @@ test('active directory steps', async () => {
       _type: 'azure_user',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: undefined,
+      name: 'adam',
       displayName: 'adam',
       firstName: null,
       lastName: null,
@@ -78,6 +81,8 @@ test('active directory steps', async () => {
       mail: 'adam@thewilliams.ws',
       userPrincipalName:
         'adam_thewilliams.ws#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
+      username:
+        'adam_thewilliams.ws#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
     },
     {
       _class: ['User'],
@@ -85,6 +90,7 @@ test('active directory steps', async () => {
       _type: 'azure_user',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: undefined,
+      name: 'Erkang Zheng',
       displayName: 'Erkang Zheng',
       email: 'erkang@gmail.com',
       firstName: 'Erkang',
@@ -94,6 +100,8 @@ test('active directory steps', async () => {
       mail: 'erkang@gmail.com',
       surname: 'Zheng',
       userPrincipalName:
+        'erkang_gmail.com#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
+      username:
         'erkang_gmail.com#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
     },
     {
@@ -105,6 +113,7 @@ test('active directory steps', async () => {
       createdDateTime: 1567782403000,
       deletedOn: undefined,
       description: 'Developers working on the JupiterOne Azure Integration',
+      name: 'Integration Developers',
       displayName: 'Integration Developers',
       id: '1c417feb-b04f-46c9-a747-614d6d03f348',
       email: null,
@@ -124,6 +133,7 @@ test('active directory steps', async () => {
       createdDateTime: 1567617474000,
       deletedOn: undefined,
       description: 'Users authorized to managed things (test)',
+      name: 'Managers',
       displayName: 'Managers',
       id: '58e48aba-cd45-440f-a851-2bf9715fadc1',
       email: null,

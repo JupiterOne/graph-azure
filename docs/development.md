@@ -74,6 +74,12 @@ ARM_TENANT_ID=your_tenant_id
 
 # Not needed for public, required for usgovernment, german, china
 ARM_ENVIRONMENT=public
+
+# developer_id is used to prefix azure resources that are globally unique.
+# requirements:
+#  - l/t or equal to 8 characters
+#  - ONLY lowercase letters or numbers
+TF_VAR_developer_id=ndowmon1
 ```
 
 ## Terraforming for Development

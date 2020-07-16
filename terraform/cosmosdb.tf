@@ -1,5 +1,5 @@
 resource "azurerm_cosmosdb_account" "j1dev" {
-  name                = "j1dev"
+  name                = "${var.developer_id}-j1dev"
   location            = azurerm_resource_group.j1dev.location
   resource_group_name = azurerm_resource_group.j1dev.name
   offer_type          = "Standard"

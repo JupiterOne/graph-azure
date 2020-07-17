@@ -5,10 +5,9 @@ There are a few steps to take to setup Azure integration development:
 1. Identify an Azure account for local development. It is highly recommended
    that you avoid targeting a production Active Directory or Subscription,
    because tests rely on Polly.js recordings for playback in CI/CD environments.
-   JupiterOne staff developers each have their own Azure Subscription.
 1. Create credentials with write permissions to configure
    `<graph-azure>/terraform/.env`. The Terraform Azure provider client needs a
-   lot more permissions than the integration itself
+   lot more permissions than the integration itself.
 1. Create an App Registration with read permissions to configure
    `<graph-azure>/.env`. The integration Azure client will use this for
    ingesting information about the targeted Active Directory and Azure
@@ -37,11 +36,10 @@ Once you have an Azure account and Subscription, you'll need credentials for the
 Terraform provider to use that allow for creating and destroying resources. In
 Azure API parlance, Terraform is considered a script that needs to authenticate
 with the Resource Manager API. Scripts run using Service Principal credentials
-instead of User Principal credentials. [Create a Service Principal][2] using the
+instead of User Principal credentials. [Create a Service Principal][1] using the
 Azure CLI.
 
-First, install the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) and
-login to be sure that works.
+First, install the [Azure CLI][2] and login to be sure that works.
 
 On a Mac:
 
@@ -158,9 +156,7 @@ env `grep -v '^#' .env` terraform plan
 
 ### Using Docker
 
-You may prefer to use the
-[Terraform Docker Container](https://hub.docker.com/r/hashicorp/terraform/) to
-run Terraform.
+You may prefer to use the [Terraform Docker Container][3] to run Terraform.
 
 Initialize Terraform:
 
@@ -191,6 +187,21 @@ their own Azure setup the request matching will fail.
 
 TODO: Make request matching ignore some deets
 
-[1]: https://docs.microsoft.com/en-us/graph/use-postman?view=graph-rest-1.0
-[2]:
+## Learn About Microsoft APIs
+
+Azure Active Directory is authenticated and accessed through the [Microsoft
+Graph API][5]. Azure Resource Manager is authenticated and accessed through
+[Resource Manager APIs][6]. Notice that the code is structured to highlight this
+distinction.
+
+Working with the Microsoft Graph is made easier by setting up the [Postman
+collection][4].
+
+[1]:
   https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest
+[2]: https://docs.microsoft.com/en-us/cli/azure/
+[3]: https://hub.docker.com/r/hashicorp/terraform/
+[4]: https://docs.microsoft.com/en-us/graph/use-postman?view=graph-rest-1.0
+[5]: https://docs.microsoft.com/en-us/graph/auth-v2-service
+[6]:
+  https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-api-authentication

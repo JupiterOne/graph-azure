@@ -143,7 +143,8 @@ Example Azure resources are maintained with Terraform to allow for easy setup
 and teardown, and to avoid unnecessary expenses between development cycles. See
 Terraform code where `count` is used to force a decision about which resources
 to build. Once an integration step has a recording made, those resources can be
-set back to count `0`.
+set back to count `0`. Consider using `<graph-azure>/terraform/.env` to set
+`TF_VAR_azurerm_compute_virtual_machines=1`, overriding the default of `0`.
 
 Note that Terraform state will be kept on your local development machine, in
 `<graph-azure>/terraform/terraform.tfstate`, and `.gitignore` has a `*.tfstate`

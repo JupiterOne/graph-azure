@@ -133,7 +133,7 @@ SUBSCRIPTION_ID=development_subscription_id
 INGEST_ACTIVE_DIRECTORY=true
 ```
 
-You should not be able to [execute the integration](#execute-the-integration)
+You should now be able to [execute the integration](#execute-the-integration)
 with these credentials. Note that [running the tests](#running-tests) requires
 more attention.
 

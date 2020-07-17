@@ -33,9 +33,9 @@ Directory and Subscription with billing that rolls up to the company.
 ### Azure Setup for Terraform
 
 Once you have an Azure account and Subscription, you'll need credentials for the
-Terraform provider to use that allow for creating and destroying resources. In
-Azure API parlance, Terraform is considered a script that needs to authenticate
-with the Resource Manager API. Scripts run using Service Principal credentials
+Terraform provider to use that for creating and destroying resources. In Azure
+API parlance, Terraform is considered a script that needs to authenticate with
+the Resource Manager API. Scripts run using Service Principal credentials
 instead of User Principal credentials. [Create a Service Principal][1] using the
 Azure CLI.
 
@@ -100,18 +100,19 @@ credentials.
 
 ### Azure Setup for Integration
 
-The integration is in essence itself just another script. It needs only enough
-permissions to read information from the target Active Directory and Azure
-Subscription. The Service Principal created for Terraform _must not be used_ as
-it will lead to problems in production, where the script will most certainly NOT
-have such permissive credentials.
+The integration is in essence itself just another script, so it too needs a
+Service Principal, though one with only enough permissions to read information
+from the target Active Directory and Azure Subscription. The Service Principal
+created for Terraform _must not be used_ as it will lead to problems in
+production, where the script will most certainly NOT have such permissive
+credentials.
 
 Currently, customers are asked to create an App Registration for JupiterOne in
-their own Active Directory. You will
+their own Active Directory, which produces a Service Principal. You will
 _[take the same steps](jupiterone.md#integration-instance-configuration)_ in
 your development Active Directory to create an App Registration, granting it
-consent to access certain APIs, and using the App Registration credentials to
-execute the integration on your local machine.
+consent to access certain APIs, and using the App Registration Service Principal
+credentials to execute the integration on your local machine.
 
 Using the Application (client) ID, Directory (tenant) ID, and generated secret
 from the App Registration, create `<graph-azure>/.env` to establish

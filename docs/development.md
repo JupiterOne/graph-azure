@@ -77,8 +77,10 @@ Creating a role assignment under the scope of "/subscriptions/dccea..."
 Using the Service Principal credentials created above, create
 `<graph-azure>/terraform/.env` to establish authentication values for the Azure
 Terraform provider. This file is already in `.gitignore`, and is distinct from
-the `<graph-azure>/.env` file read by the integration, which will have
-different, read-only credentials from the App Registration.
+the `<graph-azure>/.env` file read by the integration.
+
+The `DIRECTORY_ID` and `SUBSCRIPTION_ID` values are the same for Terrform and
+the integration, but _they do not share the same `CLIENT_ID/SECRET`_.
 
 ```txt
 ARM_CLIENT_ID=terraform_service_principal_appId
@@ -119,6 +121,9 @@ from the App Registration, create `<graph-azure>/.env` to establish
 authentication values for the integration API clients. This file is already in
 `.gitignore`, and is distinct from the `<graph-azure>/terraform/.env` file read
 by Terraform.
+
+The `DIRECTORY_ID` and `SUBSCRIPTION_ID` values are the same for Terrform and
+the integration, but again, _this is not the same `CLIENT_ID/SECRET`_.
 
 ```txt
 CLIENT_ID=app_registration_service_principal_client_id

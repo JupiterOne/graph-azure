@@ -81,8 +81,8 @@ the `<graph-azure>/.env` file read by the integration, which will have
 different, read-only credentials from the App Registration.
 
 ```txt
-ARM_CLIENT_ID=service_principal_appId
-ARM_CLIENT_SECRET=service_principal_password
+ARM_CLIENT_ID=terraform_service_principal_appId
+ARM_CLIENT_SECRET=terraform_service_principal_password
 ARM_TENANT_ID=development_directory_tenant_id
 ARM_SUBSCRIPTION_ID=development_subscription_id
 
@@ -121,8 +121,8 @@ authentication values for the integration API clients. This file is already in
 by Terraform.
 
 ```txt
-CLIENT_ID=app_registration_client_id
-CLIENT_SECRET=app_registration_client_secret
+CLIENT_ID=app_registration_service_principal_client_id
+CLIENT_SECRET=app_registration_service_principal_client_secret
 DIRECTORY_ID=development_directory_id
 SUBSCRIPTION_ID=development_subscription_id
 INGEST_ACTIVE_DIRECTORY=true

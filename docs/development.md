@@ -94,7 +94,10 @@ ARM_ENVIRONMENT=public
 # Used to ensure unique resource IDs in global infrastructure, such as databases
 # and containers, which have URLs that are based on those IDs and must remain
 # unique across all of Azure.
-TF_VAR_developer_id=<your github handle up to 8 chars>
+#  - l/t or equal to 8 characters
+#  - ONLY lowercase letters or numbers
+#  - consider using your github handle up to 8 chars
+TF_VAR_developer_id=8charmax
 ```
 
 You should now be able to [execute Terraform](#executing-terraform) with these

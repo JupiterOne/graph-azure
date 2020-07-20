@@ -27,3 +27,8 @@ variable "azurerm_storage_mysql_databases" {
   type    = number
   default = 0
 }
+
+variable "developer_id" {
+  type    = string
+  default = ""
+}

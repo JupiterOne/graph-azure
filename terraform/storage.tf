@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "j1dev" {
-  name                     = "j1dev"
+  name                     = "${var.developer_id}j1dev"
   resource_group_name      = azurerm_resource_group.j1dev.name
   location                 = "eastus"
   account_replication_type = "LRS"
@@ -12,7 +12,7 @@ resource "azurerm_storage_account" "j1dev" {
 }
 
 resource "azurerm_storage_account" "j1dev_blobstorage" {
-  name                     = "j1devblobstorage"
+  name                     = "${var.developer_id}j1devblobstorage"
   resource_group_name      = azurerm_resource_group.j1dev.name
   location                 = "eastus"
   account_replication_type = "LRS"

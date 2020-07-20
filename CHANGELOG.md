@@ -12,6 +12,8 @@ and this project adheres to
 
 - Security group rules step had wrong step function assigned, duplicated load
   balancer ingestion.
+- Prefix globally unique terraform resources using `developer_id` environment
+  variable.
 
 ## 4.0.1 - 2020-07-14
 

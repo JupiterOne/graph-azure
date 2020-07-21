@@ -12,7 +12,7 @@ You may use use Node to execute directly on your machine.
 
 Prerequisites:
 
-1.  Install Docker and Docker Compose (both included in Docker for Mac installs)
+1.  Install terraform and tfenv (see [Development](development.md))
 1.  Provide credentials in `.env` (see
     [Environment Variable](#environment-variables))
 

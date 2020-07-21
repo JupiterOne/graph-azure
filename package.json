@@ -26,10 +26,7 @@
     "prepush": "yarn lint && yarn type-check && yarn test",
     "build": "tsc -p tsconfig.dist.json --declaration",
     "prepack": "yarn build",
-    "tf:init": "docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light init",
-    "tf:plan": "docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light plan",
-    "tf:apply": "docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light apply",
-    "tf:destroy": "docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light destroy"
+    "tf": "cd terraform && env `grep -v '^#' .env` terraform $1"
   },
   "dependencies": {
     "@azure/arm-compute": "^14.0.0",

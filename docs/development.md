@@ -164,18 +164,14 @@ env `grep -v '^#' .env` terraform init
 env `grep -v '^#' .env` terraform plan
 ```
 
-### Using Docker
-
-You may prefer to use the [Terraform Docker Container][3] to run Terraform.
-
-Initialize Terraform:
+Developers can use the `tf` script in `package.json` to execute terraform
+commands in the project.
 
 ```sh
-docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light init
-```
-
-```sh
-docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light plan
+yarn tf init
+yarn tf plan
+yarn tf apply
+yarn tf destroy
 ```
 
 ## Execute the Integration
@@ -210,7 +206,6 @@ collection][4].
 [1]:
   https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest
 [2]: https://docs.microsoft.com/en-us/cli/azure/
-[3]: https://hub.docker.com/r/hashicorp/terraform/
 [4]: https://docs.microsoft.com/en-us/graph/use-postman?view=graph-rest-1.0
 [5]: https://docs.microsoft.com/en-us/graph/auth-v2-service
 [6]:

@@ -14,7 +14,7 @@
   },
   "scripts": {
     "start": "j1-integration collect",
-    "graph": "j1-integration visualize",
+    "graph": "j1-integration visualize && open .j1-integration/graph/index.html",
     "lint": "yarn lint:es && yarn lint:md",
     "lint:md": "remark .",
     "lint:es": "eslint . --cache --fix --ext .ts,.tsx",
@@ -32,6 +32,7 @@
     "tf:destroy": "docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure hashicorp/terraform:light destroy"
   },
   "dependencies": {
+    "@azure/arm-authorization": "^8.3.2",
     "@azure/arm-compute": "^14.0.0",
     "@azure/arm-cosmosdb": "^7.0.0",
     "@azure/arm-keyvault": "^1.2.1",

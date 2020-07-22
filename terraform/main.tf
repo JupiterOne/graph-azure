@@ -14,3 +14,6 @@ resource "azurerm_resource_group" "j1dev" {
     environment = local.j1env
   }
 }
+
+data "azurerm_subscription" "j1dev" {
+}

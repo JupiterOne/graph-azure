@@ -9,6 +9,15 @@
   dependencies:
     tslib "^1.9.3"
 
+"@azure/arm-authorization@^8.3.2":
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/@azure/arm-authorization/-/arm-authorization-8.3.2.tgz#c48dc3fdd205b0fe63bb94913100a2eabb3b3e5f"
+  integrity sha512-r6no60jLO4dEJeerZ9/cfSp1ci0nx+EfDYTH87YLrWVwR4lDoT4nt4BOUPGlU4ayxUmAqm7RmS6LUj2uJZsGeA==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.0"
+    "@azure/ms-rest-js" "^2.0.3"
+    tslib "^1.9.3"
+
 "@azure/arm-compute@^14.0.0":
   version "14.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-compute/-/arm-compute-14.0.0.tgz#792b79e19102230733f3d81b3507b62e4a7326df"
@@ -210,7 +219,7 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
-"@azure/ms-rest-js@^1.8.1", "@azure/ms-rest-js@^1.8.13", "@azure/ms-rest-js@^2.0.0", "@azure/ms-rest-js@^2.0.4":
+"@azure/ms-rest-js@^1.8.1", "@azure/ms-rest-js@^1.8.13", "@azure/ms-rest-js@^2.0.0", "@azure/ms-rest-js@^2.0.3", "@azure/ms-rest-js@^2.0.4":
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/@azure/ms-rest-js/-/ms-rest-js-2.0.7.tgz#3165bb7068387bf36c4c43db85d3662c916fd581"
   integrity sha512-rQpNxDhyOIyS4E+4sUCBMvjrtbNwB32wH06cC2SFoQM4TR29bIKaTlIC1tMe0K07w9c5tNk/2uUHs6/ld/Z3+A==

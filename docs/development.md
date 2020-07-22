@@ -60,7 +60,7 @@ az account list --query "[].{name:name, subscriptionId:id, tenantId:tenantId}"
   }
 ]
 
-az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/dccea..."
+az ad sp create-for-rbac --role="Owner" --scopes="/subscriptions/dccea..."
 Creating a role assignment under the scope of "/subscriptions/dccea..."
   Retrying role assignment creation: 1/36
   Retrying role assignment creation: 2/36
@@ -180,7 +180,7 @@ docker run --env-file terraform/.env -i -t -v `pwd`/terraform:/azure -w /azure h
 
 ## Execute the Integration
 
-With `<graph-azure>/.env` in place, simpy run `yarn start`!
+With `<graph-azure>/.env` in place, simply run `yarn start`!
 
 ## Running Tests
 

@@ -5,10 +5,7 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { AuthorizationClient } from './client';
-import {
-  RoleDefinition,
-  RoleAssignment,
-} from '@azure/arm-authorization/esm/models';
+import { RoleAssignment } from '@azure/arm-authorization/esm/models';
 import { IntegrationConfig } from '../../../types';
 
 // developer used different creds than ~/test/integrationInstanceConfig
@@ -26,10 +23,10 @@ afterEach(async () => {
 });
 
 describe('iterateRoleDefinitions', () => {
-  test('all', async () => {
+  test('CustomRole', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: 'iterateRoleDefinitions',
+      name: 'iterateRoleDefinitions-custom',
     });
 
     const client = new AuthorizationClient(
@@ -38,18 +35,40 @@ describe('iterateRoleDefinitions', () => {
       true,
     );
 
-    const resources: RoleDefinition[] = [];
-    await client.iterateRoleDefinitions((e) => {
-      if (e.roleName === 'Owner') {
-        resources.push(e);
-      }
+    const customRole = await client.getRoleDefinition(
+      '/providers/Microsoft.Authorization/roleDefinitions/8bfcfc94-cf28-d595-8e3d-851a1eb7c8fa',
+    );
+
+    expect(customRole).toMatchObject(
+      expect.objectContaining({
+        roleName: 'j1dev-subscription',
+        roleType: 'CustomRole',
+      }),
+    );
+  });
+
+  test('BuiltInRole', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateRoleDefinitions-builtIn',
     });
 
-    expect(resources).toMatchObject([
+    const client = new AuthorizationClient(
+      config,
+      createMockIntegrationLogger(),
+      true,
+    );
+
+    const builtInRole = await client.getRoleDefinition(
+      '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+    );
+
+    expect(builtInRole).toMatchObject(
       expect.objectContaining({
-        roleName: 'Owner',
+        roleName: 'Contributor',
+        roleType: 'BuiltInRole',
       }),
-    ]);
+    );
   });
 });
 

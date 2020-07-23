@@ -49,12 +49,22 @@ export async function fetchRoleDefinitions(
     ),
   );
 
-  await client.iterateRoleDefinitions(async (rd) => {
-    if (roleDefinitionsUsedInAssignments.has(rd.id as string)) {
-      const roleDefinitionEntity = createRoleDefinitionEntity(webLinker, rd);
+  for (const roleDefinitionId of roleDefinitionsUsedInAssignments) {
+    console.log(roleDefinitionId);
+    const roleDefinition = await client.getRoleDefinition(roleDefinitionId);
+    if (roleDefinition !== undefined) {
+      const roleDefinitionEntity = createRoleDefinitionEntity(
+        webLinker,
+        roleDefinition,
+      );
       await jobState.addEntity(roleDefinitionEntity);
+    } else {
+      logger.warn(
+        { roleDefinitionId },
+        'AuthorizationClient.getRoleDefinition returned "undefined" for roleDefinitionId.',
+      );
     }
-  });
+  }
 }
 
 export const authorizationSteps = [

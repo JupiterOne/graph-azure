@@ -71,27 +71,10 @@ describe('iterateRoleAssignments', () => {
       resources.push(e);
     });
 
-    expect(resources).toEqual([
+    expect(resources).toContainEqual(
       expect.objectContaining({
-        id: expect.any(String),
-        name: 'ac643838-a3d9-c5ac-b2f6-60baaa7451c8',
+        name: '10000000-0000-0000-0000-000000000000',
       }),
-      expect.objectContaining({
-        id: expect.any(String),
-        name: '46a0fbc6-e68f-4668-a9d2-76b7cc16134b',
-      }),
-      expect.objectContaining({
-        id: expect.any(String),
-        name: 'c967042a-aad6-4e3b-8485-1c85d5e6f9e8',
-      }),
-      expect.objectContaining({
-        id: expect.any(String),
-        name: '41c65a1f-1d8f-450f-b8c5-f56fd3b10302',
-      }),
-      expect.objectContaining({
-        id: expect.any(String),
-        name: '1f0b8507-2f08-467b-8347-f5ca0554d696',
-      }),
-    ]);
+    );
   });
 });

@@ -18,7 +18,13 @@ describe('createRoleDefinitionEntity', () => {
       roleType: 'BuiltInRole',
       permissions: [
         {
-          actions: ['*'],
+          actions: ['*', 'other-action'],
+          notActions: ['not-action'],
+          dataActions: [],
+          notDataActions: [],
+        },
+        {
+          actions: ['a-third-action'],
           notActions: [],
           dataActions: [],
           notDataActions: [],
@@ -40,12 +46,10 @@ describe('createRoleDefinitionEntity', () => {
         '/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635',
       ),
       rules: [
-        {
-          actions: ['*'],
-          dataActions: [],
-          notActions: [],
-          notDataActions: [],
-        },
+        'actions = *',
+        'actions = other-action',
+        'notActions = not-action',
+        'actions = a-third-action',
       ],
     });
   });

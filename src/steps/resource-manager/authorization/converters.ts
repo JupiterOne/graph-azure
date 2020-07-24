@@ -1,10 +1,23 @@
-import { RoleDefinition } from '@azure/arm-authorization/esm/models';
-import { convertProperties, Entity } from '@jupiterone/integration-sdk-core';
+import {
+  RoleDefinition,
+  PrincipalType,
+  RoleAssignment,
+} from '@azure/arm-authorization/esm/models';
+import {
+  Entity,
+  Relationship,
+  RelationshipDirection,
+  convertProperties,
+  createIntegrationRelationship,
+} from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
 import {
   ROLE_DEFINITION_ENTITY_CLASS,
   ROLE_DEFINITION_ENTITY_TYPE,
+  getJupiterTypeForPrincipalType,
+  ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
+  createRoleAssignmentRelationshipType,
 } from './constants';
 
 export function createRoleDefinitionEntity(
@@ -34,4 +47,34 @@ export function createRoleDefinitionEntity(
     webLink: webLinker.portalResourceUrl(data.id),
   };
   return entity;
+}
+
+export function createRoleAssignmentRelationship(
+  webLinker: AzureWebLinker,
+  roleAssignment: RoleAssignment,
+): Relationship {
+  const targetType = getJupiterTypeForPrincipalType(
+    roleAssignment.principalType as PrincipalType,
+  );
+  const roleDefinitionKey = (roleAssignment.roleDefinitionId as string).replace(
+    roleAssignment.scope as string,
+    '',
+  );
+  return createIntegrationRelationship({
+    _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
+    _type: createRoleAssignmentRelationshipType(targetType),
+    properties: {
+      ...convertProperties(roleAssignment),
+      webLink: webLinker.portalResourceUrl(roleAssignment.id),
+    },
+    _mapping: {
+      relationshipDirection: RelationshipDirection.FORWARD,
+      sourceEntityKey: roleDefinitionKey,
+      targetFilterKeys: ['id'],
+      targetEntity: {
+        id: roleAssignment.principalId,
+      },
+      skipTargetCreation: false,
+    },
+  });
 }

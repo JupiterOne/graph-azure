@@ -9,8 +9,14 @@ import {
   STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
   ROLE_ASSIGNMENT_DATA_KEY,
   STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
+  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_RELATIONSHIPS,
+  ROLE_ASSIGNMENT_RELATIONSHIP_TYPES,
+  ROLE_ASSIGNMENT_DEPENDS_ON,
 } from './constants';
-import { createRoleDefinitionEntity } from './converters';
+import {
+  createRoleDefinitionEntity,
+  createRoleAssignmentRelationship,
+} from './converters';
 import { RoleAssignment } from '@azure/arm-authorization/esm/models';
 
 export * from './constants';
@@ -66,6 +72,27 @@ export async function fetchRoleDefinitions(
   }
 }
 
+export async function buildRoleAssignmentRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  const roleAssignments = await jobState.getData<RoleAssignment[]>(
+    ROLE_ASSIGNMENT_DATA_KEY,
+  );
+
+  for (const roleAssignment of roleAssignments) {
+    const relationship = createRoleAssignmentRelationship(
+      webLinker,
+      roleAssignment,
+    );
+    await jobState.addRelationship(relationship);
+  }
+}
+
 export const authorizationSteps = [
   {
     id: STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
@@ -80,5 +107,16 @@ export const authorizationSteps = [
     types: [ROLE_DEFINITION_ENTITY_TYPE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS],
     executionHandler: fetchRoleDefinitions,
+  },
+  {
+    id: STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_RELATIONSHIPS,
+    name: 'Role Assignment Relationships',
+    types: ROLE_ASSIGNMENT_RELATIONSHIP_TYPES,
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
+      ...ROLE_ASSIGNMENT_DEPENDS_ON,
+    ],
+    executionHandler: buildRoleAssignmentRelationships,
   },
 ];

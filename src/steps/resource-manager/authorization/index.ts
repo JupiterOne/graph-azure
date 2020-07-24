@@ -50,7 +50,6 @@ export async function fetchRoleDefinitions(
   );
 
   for (const roleDefinitionId of roleDefinitionsUsedInAssignments) {
-    console.log(roleDefinitionId);
     const roleDefinition = await client.getRoleDefinition(roleDefinitionId);
     if (roleDefinition !== undefined) {
       const roleDefinitionEntity = createRoleDefinitionEntity(

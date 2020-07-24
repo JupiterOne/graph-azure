@@ -1,7 +1,4 @@
-import {
-  RoleDefinition,
-  Permission,
-} from '@azure/arm-authorization/esm/models';
+import { RoleDefinition } from '@azure/arm-authorization/esm/models';
 import { convertProperties, Entity } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
@@ -9,27 +6,6 @@ import {
   ROLE_DEFINITION_ENTITY_CLASS,
   ROLE_DEFINITION_ENTITY_TYPE,
 } from './constants';
-
-export function convertPermissionsToRulesList(
-  permissions: Permission[] | undefined,
-): string[] {
-  const rules: string[] = [];
-  // [{ actions: ['*'], notActions: [], dataActions: [], notDataActions: [] }]
-  if (permissions) {
-    // { actions: ['*'], notActions: [], dataActions: [], notDataActions [] }
-    for (const permission of permissions) {
-      // actions || notActions || dataActions || notDataActions
-      for (const actionKey of Object.keys(permission)) {
-        // '*'
-        for (const action of permission[actionKey]) {
-          // 'actions = *'
-          rules.push(`${actionKey} = ${action}`);
-        }
-      }
-    }
-  }
-  return rules;
-}
 
 export function createRoleDefinitionEntity(
   webLinker: AzureWebLinker,
@@ -43,7 +19,18 @@ export function createRoleDefinitionEntity(
     _rawData: [{ name: 'default', rawData: data }],
     displayName: data.roleName,
     description: data.description,
-    rules: convertPermissionsToRulesList(data.permissions),
+    actions: ([] as string[]).concat(
+      ...(data.permissions?.map((p) => p.actions || []) || []),
+    ),
+    notActions: ([] as string[]).concat(
+      ...(data.permissions?.map((p) => p.notActions || []) || []),
+    ),
+    dataActions: ([] as string[]).concat(
+      ...(data.permissions?.map((p) => p.dataActions || []) || []),
+    ),
+    notDataActions: ([] as string[]).concat(
+      ...(data.permissions?.map((p) => p.notDataActions || []) || []),
+    ),
     webLink: webLinker.portalResourceUrl(data.id),
   };
   return entity;

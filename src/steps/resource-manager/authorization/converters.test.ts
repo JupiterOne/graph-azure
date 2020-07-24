@@ -45,12 +45,10 @@ describe('createRoleDefinitionEntity', () => {
       webLink: webLinker.portalResourceUrl(
         '/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635',
       ),
-      rules: [
-        'actions = *',
-        'actions = other-action',
-        'notActions = not-action',
-        'actions = a-third-action',
-      ],
+      actions: ['*', 'other-action', 'a-third-action'],
+      notActions: ['not-action'],
+      dataActions: [],
+      notDataActions: [],
     });
   });
 });

@@ -29,6 +29,7 @@
     "tf": "cd terraform && env `grep -v '^#' .env` terraform $1"
   },
   "dependencies": {
+    "@azure/arm-authorization": "^8.3.2",
     "@azure/arm-compute": "^14.0.0",
     "@azure/arm-cosmosdb": "^7.0.0",
     "@azure/arm-keyvault": "^1.2.1",

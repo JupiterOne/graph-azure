@@ -10,6 +10,10 @@ import {
   STEP_AD_USERS,
 } from './steps/active-directory';
 import {
+  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
+  STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
+} from './steps/resource-manager/authorization';
+import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
   STEP_RM_COMPUTE_VIRTUAL_MACHINES,
@@ -66,5 +70,7 @@ export default function getStepStartStates(
     [STEP_RM_DATABASE_SQL_DATABASES]: resourceManager,
     [STEP_RM_STORAGE_RESOURCES]: resourceManager,
     [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: resourceManager,
+    [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: resourceManager,
+    [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: resourceManager,
   };
 }

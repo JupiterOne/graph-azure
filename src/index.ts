@@ -8,6 +8,7 @@ import { databaseSteps } from './steps/resource-manager/databases';
 import { interserviceSteps } from './steps/resource-manager/interservice';
 import { keyvaultSteps } from './steps/resource-manager/key-vault';
 import { networkSteps } from './steps/resource-manager/network';
+import { authorizationSteps } from './steps/resource-manager/authorization';
 import { IntegrationConfig } from './types';
 import validateInvocation from './validateInvocation';
 import { storageSteps } from './steps/resource-manager/storage';
@@ -48,5 +49,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...networkSteps,
     ...storageSteps,
     ...interserviceSteps,
+    ...authorizationSteps,
   ],
 };

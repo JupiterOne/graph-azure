@@ -7,21 +7,14 @@ import {
 } from '../../active-directory';
 import { generateRelationshipType } from '@jupiterone/integration-sdk-core';
 
-// Fetch Role Assignments
-export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS =
-  'rm-authorization-role-assignments';
-export const ROLE_ASSIGNMENT_DATA_KEY = 'role-assignments-data';
+// Fetch Role Assignments & Definitions
+export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS =
+  'rm-authorization-role-assignments-and-definitions';
 
-// Fetch Role Definitions
-export const STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS =
-  'rm-authorization-role-definitions';
 export const ROLE_DEFINITION_ENTITY_TYPE = 'azure_role_definition';
 export const ROLE_DEFINITION_ENTITY_CLASS = ['AccessRole', 'AccessPolicy'];
 
-// Create Role Assignment Relationships
-export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_RELATIONSHIPS =
-  'rm-authorization-role-assignment-relationships';
-export const ROLE_ASSIGNMENT_RELATIONSHIP_CLASS = 'TRUSTS';
+export const ROLE_ASSIGNMENT_RELATIONSHIP_CLASS = 'ASSIGNED';
 
 interface RoleAssignmentMap {
   principalType: PrincipalType;
@@ -32,27 +25,27 @@ interface RoleAssignmentMap {
 export const ROLE_ASSIGNMENT_TYPES_MAP: RoleAssignmentMap[] = [
   {
     principalType: 'Application',
-    type: 'azure_application_placeholder',
+    type: 'azure_application',
     dependsOn: [],
   },
   {
     principalType: 'DirectoryObjectOrGroup',
-    type: 'azure_directory_placeholder',
+    type: 'azure_directory',
     dependsOn: [],
   },
   {
     principalType: 'DirectoryRoleTemplate',
-    type: 'azure_directory_role_template_placeholder',
+    type: 'azure_directory_role_template',
     dependsOn: [],
   },
   {
     principalType: 'Everyone',
-    type: 'azure_everyone_placeholder',
+    type: 'azure_everyone',
     dependsOn: [],
   },
   {
     principalType: 'ForeignGroup',
-    type: 'azure_foreign_group_placeholder',
+    type: 'azure_foreign_group',
     dependsOn: [],
   },
   {
@@ -62,17 +55,17 @@ export const ROLE_ASSIGNMENT_TYPES_MAP: RoleAssignmentMap[] = [
   },
   {
     principalType: 'MSI',
-    type: 'azure_msi_placeholder',
+    type: 'azure_msi',
     dependsOn: [],
   },
   {
     principalType: 'ServicePrincipal',
-    type: 'azure_service_principal_placeholder',
+    type: 'azure_service_principal',
     dependsOn: [],
   },
   {
     principalType: 'Unknown',
-    type: 'azure_unknown_placeholder',
+    type: 'azure_unknown',
     dependsOn: [],
   },
   {
@@ -92,7 +85,7 @@ export const ROLE_ASSIGNMENT_TARGET_ENTITY_TYPES = ([] as string[]).concat(
 );
 
 export function getJupiterTypeForPrincipalType(
-  principalType: PrincipalType,
+  principalType: PrincipalType | undefined,
 ): string {
   return (
     ROLE_ASSIGNMENT_TYPES_MAP.find((t) => t.principalType === principalType)

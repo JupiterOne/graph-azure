@@ -1,4 +1,8 @@
-import { Entity } from '@jupiterone/integration-sdk-core';
+import {
+  Entity,
+  createDirectRelationship,
+  createMappedRelationship,
+} from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';
@@ -6,26 +10,44 @@ import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
 import { AuthorizationClient } from './client';
 import {
   ROLE_DEFINITION_ENTITY_TYPE,
-  STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
-  ROLE_ASSIGNMENT_DATA_KEY,
-  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
-  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_RELATIONSHIPS,
-  ROLE_ASSIGNMENT_RELATIONSHIP_TYPES,
+  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS,
   ROLE_ASSIGNMENT_DEPENDS_ON,
+  getJupiterTypeForPrincipalType,
+  ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
+  ROLE_ASSIGNMENT_RELATIONSHIP_TYPES,
 } from './constants';
 import {
   createRoleDefinitionEntity,
-  createRoleAssignmentRelationship,
+  getRoleAssignmentRelationshipProperties,
 } from './converters';
 import { RoleAssignment } from '@azure/arm-authorization/esm/models';
+import { generateEntityKey } from '../../../utils/generateKeys';
 
 export * from './constants';
 
-export async function fetchRoleAssignments(
+function getRoleDefinitionFromRoleAssignment(
+  roleAssignment: RoleAssignment,
+): string {
+  const fullyQualifiedRoleDefinitionId = roleAssignment.roleDefinitionId as string;
+  return fullyQualifiedRoleDefinitionId.replace(
+    roleAssignment.scope as string,
+    '',
+  );
+}
+
+function getUniqueRoleDefinitionIdsFromRoleAssignments(
+  roleAssignments: RoleAssignment[],
+): Set<string> {
+  return new Set(roleAssignments.map(getRoleDefinitionFromRoleAssignment));
+}
+
+export async function fetchRoleAssignmentsAndDefinitions(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
 
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new AuthorizationClient(instance.config, logger);
 
   const roleAssignments: RoleAssignment[] = [];
@@ -33,36 +55,14 @@ export async function fetchRoleAssignments(
     roleAssignments.push(ra);
   });
 
-  await jobState.setData(ROLE_ASSIGNMENT_DATA_KEY, roleAssignments);
-}
-
-export async function fetchRoleDefinitions(
-  executionContext: IntegrationStepContext,
-): Promise<void> {
-  const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
-
-  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
-  const client = new AuthorizationClient(instance.config, logger);
-
-  const roleAssignments = await jobState.getData<RoleAssignment[]>(
-    ROLE_ASSIGNMENT_DATA_KEY,
-  );
-
-  const roleDefinitionsUsedInAssignments = new Set(
-    roleAssignments.map(
-      (ra) => ra.roleDefinitionId?.replace(ra.scope as string, '') as string,
-    ),
-  );
-
-  for (const roleDefinitionId of roleDefinitionsUsedInAssignments) {
+  for (const roleDefinitionId of getUniqueRoleDefinitionIdsFromRoleAssignments(
+    roleAssignments,
+  )) {
     const roleDefinition = await client.getRoleDefinition(roleDefinitionId);
     if (roleDefinition !== undefined) {
-      const roleDefinitionEntity = createRoleDefinitionEntity(
-        webLinker,
-        roleDefinition,
+      await jobState.addEntity(
+        createRoleDefinitionEntity(webLinker, roleDefinition),
       );
-      await jobState.addEntity(roleDefinitionEntity);
     } else {
       logger.warn(
         { roleDefinitionId },
@@ -70,53 +70,67 @@ export async function fetchRoleDefinitions(
       );
     }
   }
-}
-
-export async function buildRoleAssignmentRelationships(
-  executionContext: IntegrationStepContext,
-): Promise<void> {
-  const { jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
-
-  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
-
-  const roleAssignments = await jobState.getData<RoleAssignment[]>(
-    ROLE_ASSIGNMENT_DATA_KEY,
-  );
 
   for (const roleAssignment of roleAssignments) {
-    const relationship = createRoleAssignmentRelationship(
+    const roleDefinitionId = getRoleDefinitionFromRoleAssignment(
+      roleAssignment,
+    );
+    const roleDefinitionKey = generateEntityKey(
+      ROLE_DEFINITION_ENTITY_TYPE,
+      roleDefinitionId,
+    );
+    let roleDefinitionEntity: Entity;
+    try {
+      roleDefinitionEntity = await jobState.getEntity({
+        _type: ROLE_DEFINITION_ENTITY_TYPE,
+        _key: roleDefinitionKey,
+      });
+    } catch (err) {
+      logger.warn({ err }, 'Entity not found in job state');
+      continue;
+    }
+
+    const targetType = getJupiterTypeForPrincipalType(
+      roleAssignment.principalType,
+    );
+    const targetKey = generateEntityKey(targetType, roleAssignment.principalId);
+    const properties = getRoleAssignmentRelationshipProperties(
       webLinker,
       roleAssignment,
     );
-    await jobState.addRelationship(relationship);
+    try {
+      const targetEntity = await jobState.getEntity({
+        _type: targetType,
+        _key: targetKey,
+      });
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
+          from: roleDefinitionEntity,
+          to: targetEntity,
+          properties,
+        }),
+      );
+    } catch (err) {
+      // target entity does not need to exist for mapped relationships
+      await jobState.addRelationship(
+        createMappedRelationship({
+          _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
+          source: roleDefinitionEntity,
+          target: { _type: targetType, _key: targetKey },
+          properties,
+        }),
+      );
+    }
   }
 }
 
 export const authorizationSteps = [
   {
-    id: STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
-    name: 'Role Assignments',
-    types: [],
-    dependsOn: [STEP_AD_ACCOUNT],
-    executionHandler: fetchRoleAssignments,
-  },
-  {
-    id: STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
-    name: 'Role Definitions',
-    types: [ROLE_DEFINITION_ENTITY_TYPE],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS],
-    executionHandler: fetchRoleDefinitions,
-  },
-  {
-    id: STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_RELATIONSHIPS,
-    name: 'Role Assignment Relationships',
-    types: ROLE_ASSIGNMENT_RELATIONSHIP_TYPES,
-    dependsOn: [
-      STEP_AD_ACCOUNT,
-      STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
-      ...ROLE_ASSIGNMENT_DEPENDS_ON,
-    ],
-    executionHandler: buildRoleAssignmentRelationships,
+    id: STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS,
+    name: 'Role Assignments & Definitions',
+    types: [ROLE_DEFINITION_ENTITY_TYPE, ...ROLE_ASSIGNMENT_RELATIONSHIP_TYPES],
+    dependsOn: [STEP_AD_ACCOUNT, ...ROLE_ASSIGNMENT_DEPENDS_ON],
+    executionHandler: fetchRoleAssignmentsAndDefinitions,
   },
 ];

@@ -1,24 +1,24 @@
 import {
   RoleDefinition,
-  PrincipalType,
   RoleAssignment,
 } from '@azure/arm-authorization/esm/models';
 import {
   Entity,
   Relationship,
-  RelationshipDirection,
   convertProperties,
-  createIntegrationRelationship,
+  ExplicitRelationship,
+  createDirectRelationship,
+  createMappedRelationship,
+  MappedRelationship,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
 import {
   ROLE_DEFINITION_ENTITY_CLASS,
   ROLE_DEFINITION_ENTITY_TYPE,
-  getJupiterTypeForPrincipalType,
   ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
-  createRoleAssignmentRelationshipType,
 } from './constants';
+import { generateEntityKey } from '../../../utils/generateKeys';
 
 export function createRoleDefinitionEntity(
   webLinker: AzureWebLinker,
@@ -26,7 +26,7 @@ export function createRoleDefinitionEntity(
 ): Entity {
   const entity = {
     ...convertProperties(data),
-    _key: data.id as string,
+    _key: generateEntityKey(ROLE_DEFINITION_ENTITY_TYPE, data.id),
     _type: ROLE_DEFINITION_ENTITY_TYPE,
     _class: ROLE_DEFINITION_ENTITY_CLASS,
     _rawData: [{ name: 'default', rawData: data }],
@@ -49,32 +49,60 @@ export function createRoleDefinitionEntity(
   return entity;
 }
 
-export function createRoleAssignmentRelationship(
+interface CreateRoleAssignmentDirectRelationshipOptions {
+  webLinker: AzureWebLinker;
+  roleAssignment: RoleAssignment;
+  from: Entity;
+  to: Entity;
+}
+
+export function createRoleAssignmentDirectRelationship({
+  webLinker,
+  roleAssignment,
+  from,
+  to,
+}: CreateRoleAssignmentDirectRelationshipOptions): ExplicitRelationship {
+  return createDirectRelationship({
+    _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
+    from,
+    to,
+    properties: getRoleAssignmentRelationshipProperties(
+      webLinker,
+      roleAssignment,
+    ),
+  });
+}
+
+interface CreateRoleAssignmentMappedRelationshipOptions {
+  webLinker: AzureWebLinker;
+  roleAssignment: RoleAssignment;
+  source: Entity;
+  target: Partial<Entity> & { _type: string; _key: string };
+}
+
+export function createRoleAssignmentMappedRelationship({
+  webLinker,
+  roleAssignment,
+  source,
+  target,
+}: CreateRoleAssignmentMappedRelationshipOptions): MappedRelationship {
+  return createMappedRelationship({
+    _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
+    source,
+    target,
+    properties: getRoleAssignmentRelationshipProperties(
+      webLinker,
+      roleAssignment,
+    ),
+  });
+}
+
+export function getRoleAssignmentRelationshipProperties(
   webLinker: AzureWebLinker,
   roleAssignment: RoleAssignment,
 ): Relationship {
-  const targetType = getJupiterTypeForPrincipalType(
-    roleAssignment.principalType as PrincipalType,
-  );
-  const roleDefinitionKey = (roleAssignment.roleDefinitionId as string).replace(
-    roleAssignment.scope as string,
-    '',
-  );
-  return createIntegrationRelationship({
-    _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
-    _type: createRoleAssignmentRelationshipType(targetType),
-    properties: {
-      ...convertProperties(roleAssignment),
-      webLink: webLinker.portalResourceUrl(roleAssignment.id),
-    },
-    _mapping: {
-      relationshipDirection: RelationshipDirection.FORWARD,
-      sourceEntityKey: roleDefinitionKey,
-      targetFilterKeys: ['id'],
-      targetEntity: {
-        id: roleAssignment.principalId,
-      },
-      skipTargetCreation: false,
-    },
-  });
+  return {
+    ...convertProperties(roleAssignment),
+    webLink: webLinker.portalResourceUrl(roleAssignment.id),
+  };
 }

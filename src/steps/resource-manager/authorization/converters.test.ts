@@ -43,7 +43,7 @@ describe('createRoleDefinitionEntity', () => {
     expect(createRoleDefinitionEntity(webLinker, data)).toEqual({
       ...convertProperties(data),
       _key:
-        'azure_role_definition_/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635',
+        '/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635',
       _type: 'azure_role_definition',
       _class: ['AccessRole', 'AccessPolicy'],
       _rawData: [{ name: 'default', rawData: data }],

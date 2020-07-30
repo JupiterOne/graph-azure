@@ -18,7 +18,6 @@ import {
   ROLE_DEFINITION_ENTITY_TYPE,
   ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
 } from './constants';
-import { generateEntityKey } from '../../../utils/generateKeys';
 
 export function createRoleDefinitionEntity(
   webLinker: AzureWebLinker,
@@ -26,7 +25,7 @@ export function createRoleDefinitionEntity(
 ): Entity {
   const entity = {
     ...convertProperties(data),
-    _key: generateEntityKey(ROLE_DEFINITION_ENTITY_TYPE, data.id),
+    _key: data.id as string,
     _type: ROLE_DEFINITION_ENTITY_TYPE,
     _class: ROLE_DEFINITION_ENTITY_CLASS,
     _rawData: [{ name: 'default', rawData: data }],

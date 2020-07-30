@@ -2,9 +2,10 @@ import {
   Entity,
   createDirectRelationship,
   createMappedRelationship,
+  IntegrationError,
 } from '@jupiterone/integration-sdk-core';
 
-import { createAzureWebLinker } from '../../../azure';
+import { createAzureWebLinker, AzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
 import { AuthorizationClient } from './client';
@@ -25,7 +26,7 @@ import { generateEntityKey } from '../../../utils/generateKeys';
 
 export * from './constants';
 
-function getRoleDefinitionFromRoleAssignment(
+function getRoleDefinitionKeyFromRoleAssignment(
   roleAssignment: RoleAssignment,
 ): string {
   const fullyQualifiedRoleDefinitionId = roleAssignment.roleDefinitionId as string;
@@ -35,10 +36,93 @@ function getRoleDefinitionFromRoleAssignment(
   );
 }
 
-function getUniqueRoleDefinitionIdsFromRoleAssignments(
-  roleAssignments: RoleAssignment[],
-): Set<string> {
-  return new Set(roleAssignments.map(getRoleDefinitionFromRoleAssignment));
+type PlaceholderEntity = { _type: string; _key: string };
+
+/**
+ * Tries to fetch the role definition from the present job state.
+ * If the definition is not in the job state, calls Azure client and builds entity
+ * If Azure client doesn't return a role definition, throws Integration Error.
+ * @throws IntegrationError
+ */
+async function findOrCreateRoleDefinitionEntity(
+  executionContext: IntegrationStepContext,
+  options: {
+    client: AuthorizationClient;
+    webLinker: AzureWebLinker;
+    roleAssignment: RoleAssignment;
+  },
+): Promise<Entity> {
+  const { jobState, logger } = executionContext;
+  const { client, webLinker, roleAssignment } = options;
+  const roleDefinitionKey = getRoleDefinitionKeyFromRoleAssignment(
+    roleAssignment,
+  );
+  let roleDefinitionEntity: Entity;
+  try {
+    roleDefinitionEntity = await jobState.getEntity({
+      _type: ROLE_DEFINITION_ENTITY_TYPE,
+      _key: roleDefinitionKey,
+    });
+  } catch (err) {
+    // entity does not already exist in job state - create it.
+    const roleDefinition = await client.getRoleDefinition(roleDefinitionKey);
+    if (roleDefinition !== undefined) {
+      roleDefinitionEntity = createRoleDefinitionEntity(
+        webLinker,
+        roleDefinition,
+      );
+      await jobState.addEntity(roleDefinitionEntity);
+    } else {
+      logger.warn(
+        { roleAssignment },
+        'AuthorizationClient.getRoleDefinition returned "undefined" for roleDefinitionId.',
+      );
+      throw new IntegrationError({
+        message:
+          'AuthorizationClient.getRoleDefinition returned "undefined" for roleDefinitionId.',
+        code: 'AZURE_ROLE_DEFINITION_MISSING',
+      });
+    }
+  }
+  return roleDefinitionEntity;
+}
+
+/**
+ * Tries to fetch the target entity from the job state.
+ * If the entity is not in the job state, returns {_key, _type} for mapper.
+ */
+async function findOrBuildTargetEntityForRoleDefinition(
+  executionContext: IntegrationStepContext,
+  options: {
+    roleAssignment: RoleAssignment;
+  },
+): Promise<Entity | PlaceholderEntity> {
+  const { jobState } = executionContext;
+  const { roleAssignment } = options;
+  const targetType = getJupiterTypeForPrincipalType(
+    roleAssignment.principalType,
+  );
+  const targetKey = generateEntityKey(targetType, roleAssignment.principalId);
+  let targetEntity: Entity | PlaceholderEntity;
+  try {
+    targetEntity = await jobState.getEntity({
+      _type: targetType,
+      _key: targetKey,
+    });
+  } catch (err) {
+    // target entity does not need to exist for mapped relationship
+    targetEntity = {
+      _type: targetType,
+      _key: targetKey,
+    };
+  }
+  return targetEntity;
+}
+
+function isPlaceholderEntity(
+  targetEntity: Entity | PlaceholderEntity,
+): targetEntity is PlaceholderEntity {
+  return (targetEntity as any)._class === undefined;
 }
 
 export async function fetchRoleAssignmentsAndDefinitions(
@@ -50,79 +134,53 @@ export async function fetchRoleAssignmentsAndDefinitions(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new AuthorizationClient(instance.config, logger);
 
-  const roleAssignments: RoleAssignment[] = [];
-  await client.iterateRoleAssignments(async (ra) => {
-    roleAssignments.push(ra);
-  });
-
-  for (const roleDefinitionId of getUniqueRoleDefinitionIdsFromRoleAssignments(
-    roleAssignments,
-  )) {
-    const roleDefinition = await client.getRoleDefinition(roleDefinitionId);
-    if (roleDefinition !== undefined) {
-      await jobState.addEntity(
-        createRoleDefinitionEntity(webLinker, roleDefinition),
-      );
-    } else {
-      logger.warn(
-        { roleDefinitionId },
-        'AuthorizationClient.getRoleDefinition returned "undefined" for roleDefinitionId.',
-      );
-    }
-  }
-
-  for (const roleAssignment of roleAssignments) {
-    const roleDefinitionId = getRoleDefinitionFromRoleAssignment(
-      roleAssignment,
-    );
-    const roleDefinitionKey = generateEntityKey(
-      ROLE_DEFINITION_ENTITY_TYPE,
-      roleDefinitionId,
-    );
+  await client.iterateRoleAssignments(async (roleAssignment) => {
     let roleDefinitionEntity: Entity;
     try {
-      roleDefinitionEntity = await jobState.getEntity({
-        _type: ROLE_DEFINITION_ENTITY_TYPE,
-        _key: roleDefinitionKey,
-      });
+      roleDefinitionEntity = await findOrCreateRoleDefinitionEntity(
+        executionContext,
+        { webLinker, roleAssignment, client },
+      );
     } catch (err) {
-      logger.warn({ err }, 'Entity not found in job state');
-      continue;
+      logger.warn(
+        {
+          err,
+          roleAssignment,
+        },
+        'Could not find or create Azure Role Definition.',
+      );
+      return;
     }
-
-    const targetType = getJupiterTypeForPrincipalType(
-      roleAssignment.principalType,
+    const targetEntity = await findOrBuildTargetEntityForRoleDefinition(
+      executionContext,
+      { roleAssignment },
     );
-    const targetKey = generateEntityKey(targetType, roleAssignment.principalId);
-    const properties = getRoleAssignmentRelationshipProperties(
+
+    const relationshipProperties = getRoleAssignmentRelationshipProperties(
       webLinker,
       roleAssignment,
     );
-    try {
-      const targetEntity = await jobState.getEntity({
-        _type: targetType,
-        _key: targetKey,
-      });
+
+    if (isPlaceholderEntity(targetEntity)) {
+      await jobState.addRelationship(
+        createMappedRelationship({
+          _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
+          source: roleDefinitionEntity,
+          target: targetEntity,
+          properties: relationshipProperties,
+        }),
+      );
+    } else {
       await jobState.addRelationship(
         createDirectRelationship({
           _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
           from: roleDefinitionEntity,
           to: targetEntity,
-          properties,
-        }),
-      );
-    } catch (err) {
-      // target entity does not need to exist for mapped relationships
-      await jobState.addRelationship(
-        createMappedRelationship({
-          _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
-          source: roleDefinitionEntity,
-          target: { _type: targetType, _key: targetKey },
-          properties,
+          properties: relationshipProperties,
         }),
       );
     }
-  }
+  });
 }
 
 export const authorizationSteps = [

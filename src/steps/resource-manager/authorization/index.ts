@@ -26,7 +26,7 @@ import { generateEntityKey } from '../../../utils/generateKeys';
 
 export * from './constants';
 
-function getRoleDefinitionKeyFromRoleAssignment(
+export function getRoleDefinitionKeyFromRoleAssignment(
   roleAssignment: RoleAssignment,
 ): string {
   const fullyQualifiedRoleDefinitionId = roleAssignment.roleDefinitionId as string;
@@ -44,7 +44,7 @@ type PlaceholderEntity = { _type: string; _key: string };
  * If Azure client doesn't return a role definition, throws Integration Error.
  * @throws IntegrationError
  */
-async function findOrCreateRoleDefinitionEntity(
+export async function findOrCreateRoleDefinitionEntity(
   executionContext: IntegrationStepContext,
   options: {
     client: AuthorizationClient;

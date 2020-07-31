@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_role_definition` entities
+- Added `azure_role_definition_assigned_<type>` relationships
+
 ### Fixed
 
 - Security group rules step had wrong step function assigned, duplicated load

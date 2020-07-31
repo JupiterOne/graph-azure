@@ -93,35 +93,45 @@ though the `Account` entity will always be ingested.
 |                      | `azure_sql_server`            | `Database`, `DataStore`, `Host` |
 | Cosmos DB            | `azure_cosmosdb_account`      | `Account`                       |
 |                      | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
+| Role Definition      | `azure_role_definition`       | `AccessRole`, `AccessPolicy`    |
 
 ## Relationships
 
 The following relationships are created/mapped:
 
-| From                         | Edge         | To                            |
-| ---------------------------- | ------------ | ----------------------------- |
-| `azure_account`              | **HAS**      | `azure_user`                  |
-| `azure_account`              | **HAS**      | `azure_user_group`            |
-| `azure_account`              | **HAS**      | `azure_keyvault_service`      |
-| `azure_account`              | **HAS**      | `azure_storage_blob_service`  |
-| `azure_user_group`           | **HAS**      | `azure_user`                  |
-| `azure_user_group`           | **HAS**      | `azure_user_group`            |
-| `azure_user_group`           | **HAS**      | `azure_group_member`          |
-| `azure_vnet`                 | **CONTAINS** | `azure_subnet`                |
-| `azure_subnet`               | **HAS**      | `azure_vm`                    |
-| `azure_security_group`       | **PROTECTS** | `azure_subnet`                |
-| `azure_security_group`       | **PROTECTS** | `azure_nic`                   |
-| `azure_vm`                   | **USES**     | `azure_nic`                   |
-| `azure_vm`                   | **USES**     | `azure_managed_disk`          |
-| `azure_vm`                   | **USES**     | `azure_public_ip`             |
-| `azure_lb`                   | **CONNECTS** | `azure_nic`                   |
-| `azure_storage_blob_service` | **HAS**      | `azure_storage_container`     |
-| `azure_storage_file_service` | **HAS**      | `azure_storage_share`         |
-| `azure_mariadb_server`       | **HAS**      | `azure_mariadb_database`      |
-| `azure_mysql_server`         | **HAS**      | `azure_mysql_database`        |
-| `azure_postgresql_server`    | **HAS**      | `azure_postgresql_database`   |
-| `azure_sql_server`           | **HAS**      | `azure_sql_database`          |
-| `azure_cosmosdb_account`     | **HAS**      | `azure_cosmosdb_sql_database` |
+| From                         | Edge         | To                              |
+| ---------------------------- | ------------ | ------------------------------- |
+| `azure_account`              | **HAS**      | `azure_user`                    |
+| `azure_account`              | **HAS**      | `azure_user_group`              |
+| `azure_account`              | **HAS**      | `azure_keyvault_service`        |
+| `azure_account`              | **HAS**      | `azure_storage_blob_service`    |
+| `azure_user_group`           | **HAS**      | `azure_user`                    |
+| `azure_user_group`           | **HAS**      | `azure_user_group`              |
+| `azure_user_group`           | **HAS**      | `azure_group_member`            |
+| `azure_vnet`                 | **CONTAINS** | `azure_subnet`                  |
+| `azure_subnet`               | **HAS**      | `azure_vm`                      |
+| `azure_security_group`       | **PROTECTS** | `azure_subnet`                  |
+| `azure_security_group`       | **PROTECTS** | `azure_nic`                     |
+| `azure_vm`                   | **USES**     | `azure_nic`                     |
+| `azure_vm`                   | **USES**     | `azure_managed_disk`            |
+| `azure_vm`                   | **USES**     | `azure_public_ip`               |
+| `azure_lb`                   | **CONNECTS** | `azure_nic`                     |
+| `azure_storage_blob_service` | **HAS**      | `azure_storage_container`       |
+| `azure_storage_file_service` | **HAS**      | `azure_storage_share`           |
+| `azure_mariadb_server`       | **HAS**      | `azure_mariadb_database`        |
+| `azure_mysql_server`         | **HAS**      | `azure_mysql_database`          |
+| `azure_postgresql_server`    | **HAS**      | `azure_postgresql_database`     |
+| `azure_sql_server`           | **HAS**      | `azure_sql_database`            |
+| `azure_cosmosdb_account`     | **HAS**      | `azure_cosmosdb_sql_database`   |
+| `azure_role_definition`      | **ASSIGNED** | `azure_user`                    |
+| `azure_role_definition`      | **ASSIGNED** | `azure_group`                   |
+| `azure_role_definition`      | **ASSIGNED** | `azure_application`             |
+| `azure_role_definition`      | **ASSIGNED** | `azure_directory`               |
+| `azure_role_definition`      | **ASSIGNED** | `azure_directory_role_template` |
+| `azure_role_definition`      | **ASSIGNED** | `azure_everyone`                |
+| `azure_role_definition`      | **ASSIGNED** | `azure_foreign_group`           |
+| `azure_role_definition`      | **ASSIGNED** | `azure_msi`                     |
+| `azure_role_definition`      | **ASSIGNED** | `azure_unknown`                 |
 
 [1]: https://docs.microsoft.com/en-us/graph/auth-v2-service
 [2]:

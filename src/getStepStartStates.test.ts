@@ -34,10 +34,7 @@ import {
 } from './steps/resource-manager/network';
 import { STEP_RM_STORAGE_RESOURCES } from './steps/resource-manager/storage';
 import { IntegrationConfig } from './types';
-import {
-  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
-  STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
-} from './steps/resource-manager/authorization';
+import { STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS } from './steps/resource-manager/authorization';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -72,8 +69,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: true },
       [STEP_RM_STORAGE_RESOURCES]: { disabled: true },
       [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: true },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: { disabled: true },
-      [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: true },
+      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS]: {
+        disabled: true,
+      },
     });
   });
 
@@ -104,8 +102,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: true },
       [STEP_RM_STORAGE_RESOURCES]: { disabled: true },
       [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: true },
-      [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: true },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: { disabled: true },
+      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS]: {
+        disabled: true,
+      },
     });
   });
 
@@ -136,8 +135,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: false },
       [STEP_RM_STORAGE_RESOURCES]: { disabled: false },
       [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: false },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: { disabled: false },
-      [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: false },
+      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS]: {
+        disabled: false,
+      },
     });
   });
 });

@@ -1,6 +1,7 @@
 import {
   findOrCreateRoleDefinitionEntity,
   getRoleDefinitionKeyFromRoleAssignment,
+  findOrBuildTargetEntityForRoleDefinition,
 } from '.';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
 import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
@@ -10,11 +11,13 @@ import { Entity } from '@jupiterone/integration-sdk-core';
 import {
   ROLE_DEFINITION_ENTITY_TYPE,
   ROLE_DEFINITION_ENTITY_CLASS,
+  getJupiterTypeForPrincipalType,
 } from './constants';
 import {
   PrincipalType,
   RoleAssignment,
 } from '@azure/arm-authorization/esm/models';
+import { generateEntityKey } from '../../../utils/generateKeys';
 
 describe('#findOrCreateRoleDefinitionEntity', () => {
   test('should find entity that exists in the job state', async () => {
@@ -171,5 +174,73 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
     );
 
     expect(loggerWarnMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('#findOrBuildTargetEntityForRoleDefinition', () => {
+  test('should find target entity that exists in the job state', async () => {
+    const principalId = 'user-1';
+    const principalType = 'User' as PrincipalType;
+    const entityType = getJupiterTypeForPrincipalType(principalType);
+    const targetEntity: Entity = {
+      _class: 'User',
+      _type: entityType,
+      _key: generateEntityKey(entityType, principalId),
+    };
+
+    const roleAssignment: RoleAssignment = {
+      roleDefinitionId:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleDefinitions/role-definition-id',
+      id:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
+      name: 'role-assignment-name',
+      type: 'Microsoft.Authorization/roleAssignments',
+      scope: '/subscriptions/subscription-id',
+      principalId,
+      principalType,
+    };
+
+    const context = createMockStepExecutionContext<IntegrationConfig>({
+      instanceConfig,
+      entities: [targetEntity],
+    });
+
+    const response = await findOrBuildTargetEntityForRoleDefinition(context, {
+      roleAssignment,
+    });
+
+    expect(response).toBe(targetEntity);
+  });
+
+  test('should build placeholder entity that does not exist in the job state', async () => {
+    const principalId = 'user-1';
+    const principalType = 'User' as PrincipalType;
+    const entityType = getJupiterTypeForPrincipalType(principalType);
+
+    const roleAssignment: RoleAssignment = {
+      roleDefinitionId:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleDefinitions/role-definition-id',
+      id:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
+      name: 'role-assignment-name',
+      type: 'Microsoft.Authorization/roleAssignments',
+      scope: '/subscriptions/subscription-id',
+      principalId,
+      principalType,
+    };
+
+    const context = createMockStepExecutionContext<IntegrationConfig>({
+      instanceConfig,
+      entities: [],
+    });
+
+    const response = await findOrBuildTargetEntityForRoleDefinition(context, {
+      roleAssignment,
+    });
+
+    expect(response).toEqual({
+      _type: entityType,
+      _key: generateEntityKey(entityType, principalId),
+    });
   });
 });

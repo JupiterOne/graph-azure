@@ -91,7 +91,7 @@ export async function findOrCreateRoleDefinitionEntity(
  * Tries to fetch the target entity from the job state.
  * If the entity is not in the job state, returns {_key, _type} for mapper.
  */
-async function findOrBuildTargetEntityForRoleDefinition(
+export async function findOrBuildTargetEntityForRoleDefinition(
   executionContext: IntegrationStepContext,
   options: {
     roleAssignment: RoleAssignment;

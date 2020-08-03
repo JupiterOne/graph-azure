@@ -81,6 +81,16 @@ export class DirectoryGraphClient extends GraphClient {
     return this.iterateResources({ resourceUrl: '/users', callback });
   }
 
+  // https://docs.microsoft.com/en-us/graph/api/serviceprincipal-list?view=graph-rest-1.0&tabs=http
+  public async iterateServicePrincipals(
+    callback: (a: any) => void | Promise<void>,
+  ): Promise<void> {
+    return this.iterateResources({
+      resourceUrl: '/servicePrincipals',
+      callback,
+    });
+  }
+
   // Not using PageIterator because it doesn't allow async callback
   private async iterateResources<T>({
     resourceUrl,

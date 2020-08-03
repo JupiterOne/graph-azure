@@ -9,6 +9,7 @@ import {
   IntegrationInstance,
   Relationship,
   RelationshipDirection,
+  assignTags,
 } from '@jupiterone/integration-sdk-core';
 import { Group, Organization, User } from '@microsoft/microsoft-graph-types';
 
@@ -28,6 +29,8 @@ import {
   GROUP_MEMBER_RELATIONSHIP_TYPE,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
+  SERVICE_PRINCIPAL_ENTITY_CLASS,
+  SERVICE_PRINCIPAL_ENTITY_TYPE,
 } from './constants';
 
 export function createAccountEntity(instance: IntegrationInstance): Entity {
@@ -110,6 +113,30 @@ export function createUserEntity(data: User): Entity {
       },
     },
   });
+}
+
+export function createServicePrincipalEntity(data: any): Entity {
+  const entity = createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: generateEntityKey(SERVICE_PRINCIPAL_ENTITY_TYPE, data.id),
+        _class: SERVICE_PRINCIPAL_ENTITY_CLASS,
+        _type: SERVICE_PRINCIPAL_ENTITY_TYPE,
+        userType: 'service',
+        category: ['infrastructure'],
+        name: data.displayName,
+        displayName: data.displayName,
+        appDisplayName: data.appDisplayName,
+        appId: data.appId,
+        servicePrincipalType: data.servicePrincipalType,
+        servicePrincipalNames: data.servicePrincipalNames,
+      },
+    },
+  });
+
+  assignTags(entity, data.tags);
+  return entity;
 }
 
 export function createAccountGroupRelationship(

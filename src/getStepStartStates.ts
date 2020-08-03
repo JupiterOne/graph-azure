@@ -8,6 +8,7 @@ import {
   STEP_AD_GROUP_MEMBERS,
   STEP_AD_GROUPS,
   STEP_AD_USERS,
+  STEP_AD_SERVICE_PRINCIPALS,
 } from './steps/active-directory';
 import { STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS } from './steps/resource-manager/authorization';
 import {
@@ -50,6 +51,7 @@ export default function getStepStartStates(
     [STEP_AD_GROUPS]: activeDirectory,
     [STEP_AD_GROUP_MEMBERS]: activeDirectory,
     [STEP_AD_USERS]: activeDirectory,
+    [STEP_AD_SERVICE_PRINCIPALS]: activeDirectory,
     [STEP_RM_KEYVAULT_VAULTS]: resourceManager,
     [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: resourceManager,
     [STEP_RM_NETWORK_SECURITY_GROUPS]: resourceManager,

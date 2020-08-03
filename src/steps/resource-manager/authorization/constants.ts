@@ -4,6 +4,8 @@ import {
   STEP_AD_GROUPS,
   USER_ENTITY_TYPE,
   STEP_AD_USERS,
+  SERVICE_PRINCIPAL_ENTITY_TYPE,
+  STEP_AD_SERVICE_PRINCIPALS,
 } from '../../active-directory';
 import { generateRelationshipType } from '@jupiterone/integration-sdk-core';
 
@@ -60,8 +62,8 @@ export const ROLE_ASSIGNMENT_TYPES_MAP: RoleAssignmentMap[] = [
   },
   {
     principalType: 'ServicePrincipal',
-    type: 'azure_service_principal',
-    dependsOn: [],
+    type: SERVICE_PRINCIPAL_ENTITY_TYPE,
+    dependsOn: [STEP_AD_SERVICE_PRINCIPALS],
   },
   {
     principalType: 'Unknown',

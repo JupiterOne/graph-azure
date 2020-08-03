@@ -94,6 +94,7 @@ though the `Account` entity will always be ingested.
 | Cosmos DB            | `azure_cosmosdb_account`      | `Account`                       |
 |                      | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
 | Role Definition      | `azure_role_definition`       | `AccessRole`, `AccessPolicy`    |
+| Service Principal    | `azure_service_principal`     | `Service`                       |
 
 ## Relationships
 
@@ -131,6 +132,7 @@ The following relationships are created/mapped:
 | `azure_role_definition`      | **ASSIGNED** | `azure_everyone`                |
 | `azure_role_definition`      | **ASSIGNED** | `azure_foreign_group`           |
 | `azure_role_definition`      | **ASSIGNED** | `azure_msi`                     |
+| `azure_role_definition`      | **ASSIGNED** | `azure_service_principal`       |
 | `azure_role_definition`      | **ASSIGNED** | `azure_unknown`                 |
 
 [1]: https://docs.microsoft.com/en-us/graph/auth-v2-service

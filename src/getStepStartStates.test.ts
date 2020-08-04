@@ -9,6 +9,7 @@ import {
   STEP_AD_GROUP_MEMBERS,
   STEP_AD_GROUPS,
   STEP_AD_USERS,
+  STEP_AD_SERVICE_PRINCIPALS,
 } from './steps/active-directory';
 import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
@@ -52,6 +53,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_GROUPS]: { disabled: true },
       [STEP_AD_GROUP_MEMBERS]: { disabled: true },
       [STEP_AD_USERS]: { disabled: true },
+      [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
@@ -85,6 +87,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_GROUPS]: { disabled: false },
       [STEP_AD_GROUP_MEMBERS]: { disabled: false },
       [STEP_AD_USERS]: { disabled: false },
+      [STEP_AD_SERVICE_PRINCIPALS]: { disabled: false },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
@@ -118,6 +121,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_GROUPS]: { disabled: true },
       [STEP_AD_GROUP_MEMBERS]: { disabled: true },
       [STEP_AD_USERS]: { disabled: true },
+      [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: false },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: false },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: false },

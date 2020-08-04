@@ -12,6 +12,7 @@ import {
 
 import config from '../../../test/integrationInstanceConfig';
 import { DirectoryGraphClient, GroupMember } from './client';
+import { IntegrationConfig } from '../../types';
 
 const logger = createMockIntegrationLogger();
 
@@ -208,6 +209,34 @@ test('iterateDirectoryRoleMembers', async () => {
   resources.forEach((r) => {
     expect(r).toMatchObject({
       '@odata.type': '#microsoft.graph.user',
+    });
+  });
+});
+
+test('iterateServicePrincipals', async () => {
+  const config: IntegrationConfig = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+  };
+
+  recording = setupRecording({
+    directory: __dirname,
+    name: 'iterateServicePrincipals',
+  });
+
+  const client = new DirectoryGraphClient(logger, config);
+
+  const resources: any[] = [];
+  await client.iterateServicePrincipals((e) => {
+    resources.push(e);
+  });
+
+  expect(resources.length).toBeGreaterThan(0);
+  resources.forEach((r) => {
+    expect(r).toMatchObject({
+      servicePrincipalType: expect.any(String),
     });
   });
 });

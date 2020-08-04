@@ -14,6 +14,8 @@ import {
   GROUP_MEMBER_ENTITY_TYPE,
   GROUP_MEMBER_RELATIONSHIP_TYPE,
   USER_ENTITY_TYPE,
+  STEP_AD_SERVICE_PRINCIPALS,
+  SERVICE_PRINCIPAL_ENTITY_TYPE,
 } from './constants';
 import {
   createAccountEntity,
@@ -23,6 +25,7 @@ import {
   createGroupEntity,
   createGroupMemberRelationship,
   createUserEntity,
+  createServicePrincipalEntity,
 } from './converters';
 
 export * from './constants';
@@ -99,6 +102,18 @@ export async function fetchGroupMembers(
   );
 }
 
+export async function fetchServicePrincipals(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
+
+  await graphClient.iterateServicePrincipals(async (sp) => {
+    const servicePrincipalEntity = createServicePrincipalEntity(sp);
+    await jobState.addEntity(servicePrincipalEntity);
+  });
+}
+
 export const activeDirectorySteps = [
   {
     id: STEP_AD_ACCOUNT,
@@ -126,5 +141,12 @@ export const activeDirectorySteps = [
     types: [GROUP_MEMBER_ENTITY_TYPE, GROUP_MEMBER_RELATIONSHIP_TYPE],
     dependsOn: [STEP_AD_GROUPS],
     executionHandler: fetchGroupMembers,
+  },
+  {
+    id: STEP_AD_SERVICE_PRINCIPALS,
+    name: 'Active Directory Service Principals',
+    types: [SERVICE_PRINCIPAL_ENTITY_TYPE],
+    dependsOn: [STEP_AD_ACCOUNT],
+    executionHandler: fetchServicePrincipals,
   },
 ];

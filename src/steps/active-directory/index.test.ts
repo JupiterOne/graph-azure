@@ -11,6 +11,7 @@ import {
   fetchGroupMembers,
   fetchGroups,
   fetchUsers,
+  fetchServicePrincipals,
 } from './index';
 
 let recording: Recording;
@@ -289,4 +290,52 @@ test('active directory steps', async () => {
       memberType: '#microsoft.graph.user',
     },
   ]);
+});
+
+test('active directory step - service principals', async () => {
+  const instanceConfig: IntegrationConfig = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+  };
+
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'active-directory-step-service-principals',
+  });
+
+  const context = createMockStepExecutionContext<IntegrationConfig>({
+    instanceConfig,
+  });
+
+  await fetchServicePrincipals(context);
+
+  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+    _class: 'Service',
+    schema: {
+      additionalProperties: false,
+      properties: {
+        _type: { const: 'azure_service_principal' },
+        userType: { const: 'service' },
+        username: { type: 'string' },
+        name: { type: 'string' },
+        displayName: { type: 'string' },
+        appDisplayName: { type: ['string', 'null'] },
+        appId: { type: 'string' },
+        servicePrincipalType: {
+          type: 'string',
+          enum: ['Application', 'SocialIdp'],
+        },
+        servicePrincipalNames: {
+          type: 'array',
+          items: { type: 'string' },
+        },
+        _rawData: {
+          type: 'array',
+          items: { type: 'object' },
+        },
+      },
+    },
+  });
 });

@@ -20,6 +20,7 @@ import {
   createGroupEntity,
   createGroupMemberRelationship,
   createUserEntity,
+  createServicePrincipalEntity,
 } from './converters';
 
 beforeAll(() => {
@@ -156,6 +157,61 @@ describe('createUserEntity', () => {
       lastName: 'Kulakov',
       userPrincipalName:
         'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
+    });
+  });
+});
+
+describe('createServicePrincipalEntity', () => {
+  test('properties transferred', () => {
+    const data = {
+      id: 'service-principal-id',
+      appDisplayName: 'app-display-name',
+      appId: 'app-id',
+      displayName: 'O365 LinkedIn Connection',
+      servicePrincipalNames: [
+        'app-id',
+        'urn:linkedin:appurn:urn:li:developerApplication:id',
+        'urn:linkedin:clientid:client-id',
+      ],
+      servicePrincipalType: 'SocialIdp',
+      tags: ['tag 1'],
+    };
+    expect(createServicePrincipalEntity(data)).toEqual({
+      _class: ['Service'],
+      _key: 'azure_service_principal_service-principal-id',
+      _rawData: [
+        {
+          name: 'default',
+          rawData: {
+            appDisplayName: 'app-display-name',
+            appId: 'app-id',
+            displayName: 'O365 LinkedIn Connection',
+            id: 'service-principal-id',
+            servicePrincipalNames: [
+              'app-id',
+              'urn:linkedin:appurn:urn:li:developerApplication:id',
+              'urn:linkedin:clientid:client-id',
+            ],
+            servicePrincipalType: 'SocialIdp',
+            tags: ['tag 1'],
+          },
+        },
+      ],
+      _type: 'azure_service_principal',
+      appDisplayName: 'app-display-name',
+      appId: 'app-id',
+      category: ['infrastructure'],
+      displayName: 'O365 LinkedIn Connection',
+      id: 'service-principal-id',
+      name: 'O365 LinkedIn Connection',
+      servicePrincipalNames: [
+        'app-id',
+        'urn:linkedin:appurn:urn:li:developerApplication:id',
+        'urn:linkedin:clientid:client-id',
+      ],
+      servicePrincipalType: 'SocialIdp',
+      tags: ['tag 1'],
+      userType: 'service',
     });
   });
 });

@@ -111,3 +111,13 @@ export const ROLE_ASSIGNMENT_RELATIONSHIP_TYPES = [
     createRoleAssignmentRelationshipType,
   ),
 ];
+
+// Fetch Classic Administrators
+export const STEP_RM_CLASSIC_ADMINISTRATORS =
+  'rm-authorization-classic-administrators';
+
+export const CLASSIC_ADMINISTRATOR_ENTITY_KEY = 'azure_classic_admin_group';
+export const CLASSIC_ADMINISTRATOR_ENTITY_TYPE = 'azure_classic_admin_group';
+export const CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE =
+  'azure_classic_admin_group_has_user';
+export const CLASSIC_ADMINISTRATOR_ENTITY_CLASS = 'UserGroup';

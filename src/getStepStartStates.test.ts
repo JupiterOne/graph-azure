@@ -35,7 +35,10 @@ import {
 } from './steps/resource-manager/network';
 import { STEP_RM_STORAGE_RESOURCES } from './steps/resource-manager/storage';
 import { IntegrationConfig } from './types';
-import { STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS } from './steps/resource-manager/authorization';
+import {
+  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS,
+  STEP_RM_CLASSIC_ADMINISTRATORS,
+} from './steps/resource-manager/authorization';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -74,6 +77,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS]: {
         disabled: true,
       },
+      [STEP_RM_CLASSIC_ADMINISTRATORS]: { disabled: true },
     });
   });
 
@@ -108,6 +112,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS]: {
         disabled: true,
       },
+      [STEP_RM_CLASSIC_ADMINISTRATORS]: { disabled: true },
     });
   });
 
@@ -142,6 +147,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS]: {
         disabled: false,
       },
+      [STEP_RM_CLASSIC_ADMINISTRATORS]: { disabled: false },
     });
   });
 });

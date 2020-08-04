@@ -2,9 +2,13 @@ import {
   findOrCreateRoleDefinitionEntity,
   getRoleDefinitionKeyFromRoleAssignment,
   findOrBuildTargetEntityForRoleDefinition,
+  fetchClassicAdministrators,
 } from '.';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
-import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
+import {
+  createMockStepExecutionContext,
+  Recording,
+} from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { AuthorizationClient } from './client';
 import { Entity } from '@jupiterone/integration-sdk-core';
@@ -18,6 +22,15 @@ import {
   RoleAssignment,
 } from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
+import { setupAzureRecording } from '../../../../test/helpers/recording';
+
+let recording: Recording;
+
+afterEach(async () => {
+  if (recording) {
+    await recording.stop();
+  }
+});
 
 describe('#findOrCreateRoleDefinitionEntity', () => {
   test('should find entity that exists in the job state', async () => {
@@ -243,4 +256,97 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
       _key: generateEntityKey(entityType, principalId),
     });
   });
+});
+
+test('active directory step - classic administrators', async () => {
+  const instanceConfig: IntegrationConfig = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+  };
+
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'active-directory-step-classic-administrators',
+  });
+
+  const context = createMockStepExecutionContext<IntegrationConfig>({
+    instanceConfig,
+  });
+
+  context.jobState.getData = jest.fn().mockResolvedValue({
+    defaultDomain: 'www.fake-domain.com',
+  });
+
+  await fetchClassicAdministrators(context);
+
+  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+    _class: 'UserGroup',
+    schema: {
+      additionalProperties: false,
+      properties: {
+        _type: { const: 'azure_classic_admin_group' },
+        _key: { const: 'azure_classic_admin_group' },
+        _class: { type: 'array', items: { const: 'UserGroup' } },
+        name: { const: 'Azure Classic Administrator' },
+        displayName: { const: 'Azure Classic Administrator' },
+        _rawData: { type: 'array', items: { type: 'object' } },
+      },
+    },
+  });
+
+  expect(context.jobState.collectedRelationships).toEqual([
+    {
+      _class: 'HAS',
+      _mapping: {
+        relationshipDirection: 'FORWARD',
+        sourceEntityKey: 'azure_classic_admin_group',
+        sourceEntityType: 'azure_classic_admin_group',
+        targetFilterKeys: [['_type', 'userPrincipalName']],
+        targetEntity: {
+          _type: 'azure_user',
+          userPrincipalName: '',
+        },
+      },
+      displayName: 'HAS',
+      id:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/classicAdministrators/',
+      name: '',
+      type: 'Microsoft.Authorization/classicAdministrators',
+      emailAddress: '',
+      role: 'ServiceAdministrator;AccountAdministrator',
+      webLink:
+        'https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/classicAdministrators/',
+      _key:
+        'azure_classic_admin_group|has|FORWARD:_type=azure_user:userPrincipalName=',
+      _type: 'azure_classic_admin_group_has_user',
+    },
+    {
+      _class: 'HAS',
+      _mapping: {
+        relationshipDirection: 'FORWARD',
+        sourceEntityKey: 'azure_classic_admin_group',
+        sourceEntityType: 'azure_classic_admin_group',
+        targetFilterKeys: [['_type', 'userPrincipalName']],
+        targetEntity: {
+          _type: 'azure_user',
+          userPrincipalName:
+            'ndowmon_gmail.com#EXT#@ndowmongmail.onmicrosoft.com',
+        },
+      },
+      displayName: 'HAS',
+      id:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/classicAdministrators/00030000D25AEAF7',
+      name: '00030000D25AEAF7',
+      type: 'Microsoft.Authorization/classicAdministrators',
+      emailAddress: 'ndowmon_gmail.com#EXT#@ndowmongmail.onmicrosoft.com',
+      role: 'CoAdministrator',
+      webLink:
+        'https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/classicAdministrators/00030000D25AEAF7',
+      _key:
+        'azure_classic_admin_group|has|FORWARD:_type=azure_user:userPrincipalName=ndowmon_gmail.com#EXT#@ndowmongmail.onmicrosoft.com',
+      _type: 'azure_classic_admin_group_has_user',
+    },
+  ]);
 });

@@ -7,7 +7,11 @@ import {
 
 import { createAzureWebLinker, AzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
+import {
+  ACCOUNT_ENTITY_TYPE,
+  STEP_AD_ACCOUNT,
+  STEP_AD_USERS,
+} from '../../active-directory';
 import { AuthorizationClient } from './client';
 import {
   ROLE_DEFINITION_ENTITY_TYPE,
@@ -16,10 +20,15 @@ import {
   getJupiterTypeForPrincipalType,
   ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
   ROLE_ASSIGNMENT_RELATIONSHIP_TYPES,
+  STEP_RM_CLASSIC_ADMINISTRATORS,
+  CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
+  CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE,
 } from './constants';
 import {
   createRoleDefinitionEntity,
   getRoleAssignmentRelationshipProperties,
+  createClassicAdministratorEntity as createClassicAdministratorGroupEntity,
+  createClassicAdministratorHasUserRelationship,
 } from './converters';
 import { RoleAssignment } from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
@@ -183,6 +192,29 @@ export async function fetchRoleAssignmentsAndDefinitions(
   });
 }
 
+export async function fetchClassicAdministrators(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new AuthorizationClient(instance.config, logger);
+
+  const classicAdministratorGroupEntity = createClassicAdministratorGroupEntity();
+  await jobState.addEntity(classicAdministratorGroupEntity);
+
+  await client.iterateClassicAdministrators(async (ca) => {
+    await jobState.addRelationship(
+      createClassicAdministratorHasUserRelationship({
+        webLinker,
+        classicAdministratorGroupEntity,
+        data: ca,
+      }),
+    );
+  });
+}
+
 export const authorizationSteps = [
   {
     id: STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS,
@@ -190,5 +222,15 @@ export const authorizationSteps = [
     types: [ROLE_DEFINITION_ENTITY_TYPE, ...ROLE_ASSIGNMENT_RELATIONSHIP_TYPES],
     dependsOn: [STEP_AD_ACCOUNT, ...ROLE_ASSIGNMENT_DEPENDS_ON],
     executionHandler: fetchRoleAssignmentsAndDefinitions,
+  },
+  {
+    id: STEP_RM_CLASSIC_ADMINISTRATORS,
+    name: 'Classic Administrators',
+    types: [
+      CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
+      CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE,
+    ],
+    dependsOn: [STEP_AD_USERS],
+    executionHandler: fetchClassicAdministrators,
   },
 ];

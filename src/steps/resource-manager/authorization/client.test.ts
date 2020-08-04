@@ -5,7 +5,10 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { AuthorizationClient } from './client';
-import { RoleAssignment } from '@azure/arm-authorization/esm/models';
+import {
+  RoleAssignment,
+  ClassicAdministrator,
+} from '@azure/arm-authorization/esm/models';
 import { IntegrationConfig } from '../../../types';
 
 // developer used different creds than ~/test/integrationInstanceConfig
@@ -22,7 +25,7 @@ afterEach(async () => {
   await recording.stop();
 });
 
-describe('iterateRoleDefinitions', () => {
+describe('getRoleDefinition', () => {
   test('CustomRole', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
@@ -95,5 +98,36 @@ describe('iterateRoleAssignments', () => {
         name: '10000000-0000-0000-0000-000000000000',
       }),
     );
+  });
+});
+
+describe('iterateClassicAdministrators', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateClassicAdministrators',
+    });
+
+    const client = new AuthorizationClient(
+      config,
+      createMockIntegrationLogger(),
+      true,
+    );
+
+    const resources: ClassicAdministrator[] = [];
+    await client.iterateClassicAdministrators((e) => {
+      resources.push(e);
+    });
+
+    expect(resources).toEqual([
+      expect.objectContaining({
+        name: '',
+        role: 'ServiceAdministrator;AccountAdministrator',
+      }),
+      expect.objectContaining({
+        name: '00030000D25AEAF7',
+        role: 'CoAdministrator',
+      }),
+    ]);
   });
 });

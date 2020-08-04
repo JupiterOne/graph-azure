@@ -5,10 +5,13 @@ import {
   createRoleDefinitionEntity,
   createRoleAssignmentDirectRelationship,
   createRoleAssignmentMappedRelationship,
+  createClassicAdministratorEntity,
+  createClassicAdministratorHasUserRelationship,
 } from './converters';
 import {
   RoleDefinition,
   RoleAssignment,
+  ClassicAdministrator,
 } from '@azure/arm-authorization/esm/models';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
@@ -173,6 +176,66 @@ describe('createRoleAssignmentMappedRelationship', () => {
       type: 'Microsoft.Authorization/roleAssignments',
       webLink:
         'https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/roleAssignments/c967042a-aad6-4e3b-8485-1c85d5e6f9e8',
+    });
+  });
+});
+
+describe('createClassicAdministratorEntity', () => {
+  test('classicAdministratorEntity created', () => {
+    expect(createClassicAdministratorEntity()).toEqual({
+      _key: 'azure_classic_admin_group',
+      _class: ['UserGroup'],
+      _rawData: [],
+      _type: 'azure_classic_admin_group',
+      createdOn: undefined,
+      displayName: 'Azure Classic Administrator',
+      name: 'Azure Classic Administrator',
+    });
+  });
+});
+
+describe('createClassicAdministratorHasUserRelationship', () => {
+  test('properties transferred', () => {
+    const classicAdministratorGroupEntity = createClassicAdministratorEntity();
+    const classicAdministrator: ClassicAdministrator = {
+      id:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/classicAdministrators/id',
+      name: 'id',
+      type: 'Microsoft.Authorization/classicAdministrators',
+      emailAddress: 'user-principal-name',
+      role: 'CoAdministrator',
+    };
+
+    expect(
+      createClassicAdministratorHasUserRelationship({
+        webLinker,
+        classicAdministratorGroupEntity,
+        data: classicAdministrator,
+      }),
+    ).toEqual({
+      _class: 'HAS',
+      _key:
+        'azure_classic_admin_group|has|FORWARD:_type=azure_user:userPrincipalName=user-principal-name',
+      _type: 'azure_classic_admin_group_has_user',
+      _mapping: {
+        relationshipDirection: 'FORWARD',
+        sourceEntityKey: 'azure_classic_admin_group',
+        sourceEntityType: 'azure_classic_admin_group',
+        targetEntity: {
+          _type: 'azure_user',
+          userPrincipalName: 'user-principal-name',
+        },
+        targetFilterKeys: [['_type', 'userPrincipalName']],
+      },
+      displayName: 'HAS',
+      emailAddress: 'user-principal-name',
+      id:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/classicAdministrators/id',
+      name: 'id',
+      role: 'CoAdministrator',
+      type: 'Microsoft.Authorization/classicAdministrators',
+      webLink:
+        'https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/subscription-id/providers/Microsoft.Authorization/classicAdministrators/id',
     });
   });
 });

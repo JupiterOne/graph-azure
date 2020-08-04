@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Changed `generateEntityKey()` from `<_type>_<id>` to simply `<id>`
+
 ## 4.1.0 - 2020-08-04
 
 ### Added
@@ -15,7 +19,7 @@ and this project adheres to
 - Added `azure_role_definition` entities
 - Added `azure_role_definition|assigned|<type>` relationships
 - Added `azure_classic_admin_group` singleton entity
-- Added `azure_classic_admin_group|has|azure_user` relatinoships
+- Added `azure_classic_admin_group|has|azure_user` relationships
 - Added `azuer_service_principal` entities
 
 ### Fixed

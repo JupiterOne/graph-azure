@@ -38,7 +38,7 @@ test('active directory steps', async () => {
   expect(context.jobState.collectedEntities).toEqual([
     {
       _class: ['Account'],
-      _key: 'azure_account_local-integration-instance',
+      _key: 'local-integration-instance',
       _type: 'azure_account',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: undefined,
@@ -51,7 +51,7 @@ test('active directory steps', async () => {
     },
     {
       _class: ['User'],
-      _key: 'azure_user_d0e84358-ed79-4ae0-9157-83d3a0ef9b78',
+      _key: 'd0e84358-ed79-4ae0-9157-83d3a0ef9b78',
       _type: 'azure_user',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: undefined,
@@ -69,7 +69,7 @@ test('active directory steps', async () => {
     },
     {
       _class: ['User'],
-      _key: 'azure_user_1bc373cb-36d4-4fd9-8996-b77d3544a380',
+      _key: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
       _type: 'azure_user',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: undefined,
@@ -87,7 +87,7 @@ test('active directory steps', async () => {
     },
     {
       _class: ['User'],
-      _key: 'azure_user_894a1974-e9fa-4bcc-a560-91b58d1a224f',
+      _key: '894a1974-e9fa-4bcc-a560-91b58d1a224f',
       _type: 'azure_user',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: undefined,
@@ -107,7 +107,7 @@ test('active directory steps', async () => {
     },
     {
       _class: ['UserGroup'],
-      _key: 'azure_user_group_1c417feb-b04f-46c9-a747-614d6d03f348',
+      _key: '1c417feb-b04f-46c9-a747-614d6d03f348',
       _type: 'azure_user_group',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: 1567782403000,
@@ -127,7 +127,7 @@ test('active directory steps', async () => {
     },
     {
       _class: ['UserGroup'],
-      _key: 'azure_user_group_58e48aba-cd45-440f-a851-2bf9715fadc1',
+      _key: '58e48aba-cd45-440f-a851-2bf9715fadc1',
       _type: 'azure_user_group',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: 1567617474000,
@@ -150,60 +150,59 @@ test('active directory steps', async () => {
   expect(context.jobState.collectedRelationships).toEqual([
     {
       _class: 'HAS',
-      _fromEntityKey: 'azure_account_local-integration-instance',
+      _fromEntityKey: 'local-integration-instance',
       _key:
-        'azure_account_local-integration-instance|has|azure_user_d0e84358-ed79-4ae0-9157-83d3a0ef9b78',
-      _toEntityKey: 'azure_user_d0e84358-ed79-4ae0-9157-83d3a0ef9b78',
+        'local-integration-instance|has|d0e84358-ed79-4ae0-9157-83d3a0ef9b78',
+      _toEntityKey: 'd0e84358-ed79-4ae0-9157-83d3a0ef9b78',
       _type: 'azure_account_has_user',
       displayName: 'HAS',
     },
     {
       _class: 'HAS',
-      _fromEntityKey: 'azure_account_local-integration-instance',
+      _fromEntityKey: 'local-integration-instance',
       _key:
-        'azure_account_local-integration-instance|has|azure_user_1bc373cb-36d4-4fd9-8996-b77d3544a380',
-      _toEntityKey: 'azure_user_1bc373cb-36d4-4fd9-8996-b77d3544a380',
+        'local-integration-instance|has|1bc373cb-36d4-4fd9-8996-b77d3544a380',
+      _toEntityKey: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
       _type: 'azure_account_has_user',
       displayName: 'HAS',
     },
     {
       _class: 'HAS',
-      _fromEntityKey: 'azure_account_local-integration-instance',
+      _fromEntityKey: 'local-integration-instance',
       _key:
-        'azure_account_local-integration-instance|has|azure_user_894a1974-e9fa-4bcc-a560-91b58d1a224f',
-      _toEntityKey: 'azure_user_894a1974-e9fa-4bcc-a560-91b58d1a224f',
+        'local-integration-instance|has|894a1974-e9fa-4bcc-a560-91b58d1a224f',
+      _toEntityKey: '894a1974-e9fa-4bcc-a560-91b58d1a224f',
       _type: 'azure_account_has_user',
       displayName: 'HAS',
     },
     {
       _class: 'HAS',
-      _fromEntityKey: 'azure_account_local-integration-instance',
+      _fromEntityKey: 'local-integration-instance',
       _key:
-        'azure_account_local-integration-instance|has|azure_user_group_1c417feb-b04f-46c9-a747-614d6d03f348',
-      _toEntityKey: 'azure_user_group_1c417feb-b04f-46c9-a747-614d6d03f348',
+        'local-integration-instance|has|1c417feb-b04f-46c9-a747-614d6d03f348',
+      _toEntityKey: '1c417feb-b04f-46c9-a747-614d6d03f348',
       _type: 'azure_account_has_group',
       displayName: 'HAS',
     },
     {
       _class: 'HAS',
-      _fromEntityKey: 'azure_account_local-integration-instance',
+      _fromEntityKey: 'local-integration-instance',
       _key:
-        'azure_account_local-integration-instance|has|azure_user_group_58e48aba-cd45-440f-a851-2bf9715fadc1',
-      _toEntityKey: 'azure_user_group_58e48aba-cd45-440f-a851-2bf9715fadc1',
+        'local-integration-instance|has|58e48aba-cd45-440f-a851-2bf9715fadc1',
+      _toEntityKey: '58e48aba-cd45-440f-a851-2bf9715fadc1',
       _type: 'azure_account_has_group',
       displayName: 'HAS',
     },
     {
       _class: 'HAS',
       _key:
-        'azure_user_group_1c417feb-b04f-46c9-a747-614d6d03f348_azure_user_d0e84358-ed79-4ae0-9157-83d3a0ef9b78',
+        '1c417feb-b04f-46c9-a747-614d6d03f348_d0e84358-ed79-4ae0-9157-83d3a0ef9b78',
       _mapping: {
         relationshipDirection: 'FORWARD',
-        sourceEntityKey:
-          'azure_user_group_1c417feb-b04f-46c9-a747-614d6d03f348',
+        sourceEntityKey: '1c417feb-b04f-46c9-a747-614d6d03f348',
         targetEntity: {
           _class: 'User',
-          _key: 'azure_user_d0e84358-ed79-4ae0-9157-83d3a0ef9b78',
+          _key: 'd0e84358-ed79-4ae0-9157-83d3a0ef9b78',
           _type: 'azure_user',
           displayName: 'Adam Williams',
           email: null,
@@ -220,14 +219,13 @@ test('active directory steps', async () => {
     {
       _class: 'HAS',
       _key:
-        'azure_user_group_1c417feb-b04f-46c9-a747-614d6d03f348_azure_user_1bc373cb-36d4-4fd9-8996-b77d3544a380',
+        '1c417feb-b04f-46c9-a747-614d6d03f348_1bc373cb-36d4-4fd9-8996-b77d3544a380',
       _mapping: {
         relationshipDirection: 'FORWARD',
-        sourceEntityKey:
-          'azure_user_group_1c417feb-b04f-46c9-a747-614d6d03f348',
+        sourceEntityKey: '1c417feb-b04f-46c9-a747-614d6d03f348',
         targetEntity: {
           _class: 'User',
-          _key: 'azure_user_1bc373cb-36d4-4fd9-8996-b77d3544a380',
+          _key: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
           _type: 'azure_user',
           displayName: 'adam',
           email: 'adam@thewilliams.ws',
@@ -244,14 +242,13 @@ test('active directory steps', async () => {
     {
       _class: 'HAS',
       _key:
-        'azure_user_group_1c417feb-b04f-46c9-a747-614d6d03f348_azure_user_group_58e48aba-cd45-440f-a851-2bf9715fadc1',
+        '1c417feb-b04f-46c9-a747-614d6d03f348_58e48aba-cd45-440f-a851-2bf9715fadc1',
       _mapping: {
         relationshipDirection: 'FORWARD',
-        sourceEntityKey:
-          'azure_user_group_1c417feb-b04f-46c9-a747-614d6d03f348',
+        sourceEntityKey: '1c417feb-b04f-46c9-a747-614d6d03f348',
         targetEntity: {
           _class: 'UserGroup',
-          _key: 'azure_user_group_58e48aba-cd45-440f-a851-2bf9715fadc1',
+          _key: '58e48aba-cd45-440f-a851-2bf9715fadc1',
           _type: 'azure_user_group',
           displayName: 'Managers',
           email: null,
@@ -268,14 +265,13 @@ test('active directory steps', async () => {
     {
       _class: 'HAS',
       _key:
-        'azure_user_group_58e48aba-cd45-440f-a851-2bf9715fadc1_azure_user_1bc373cb-36d4-4fd9-8996-b77d3544a380',
+        '58e48aba-cd45-440f-a851-2bf9715fadc1_1bc373cb-36d4-4fd9-8996-b77d3544a380',
       _mapping: {
         relationshipDirection: 'FORWARD',
-        sourceEntityKey:
-          'azure_user_group_58e48aba-cd45-440f-a851-2bf9715fadc1',
+        sourceEntityKey: '58e48aba-cd45-440f-a851-2bf9715fadc1',
         targetEntity: {
           _class: 'User',
-          _key: 'azure_user_1bc373cb-36d4-4fd9-8996-b77d3544a380',
+          _key: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
           _type: 'azure_user',
           displayName: 'adam',
           email: 'adam@thewilliams.ws',

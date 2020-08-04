@@ -5,7 +5,7 @@ export function generateEntityKey(
   if (!id) {
     throw new Error('Cannot generate entity key with `undefined` id');
   }
-  return `${type}_${id}`;
+  return `${id}`;
 }
 
 export function generateRelationshipKey(

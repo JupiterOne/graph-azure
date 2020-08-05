@@ -8,10 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 4.1.0 - 2020-08-04
+
 ### Added
 
 - Added `azure_role_definition` entities
-- Added `azure_role_definition_assigned_<type>` relationships
+- Added `azure_role_definition|assigned|<type>` relationships
+- Added `azure_classic_admin_group` singleton entity
+- Added `azure_classic_admin_group|has|azure_user` relatinoships
+- Added `azuer_service_principal` entities
 
 ### Fixed
 

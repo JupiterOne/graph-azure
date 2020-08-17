@@ -39,7 +39,7 @@ export function createAccountEntity(instance: IntegrationInstance): Entity {
       source: {},
       assign: {
         _class: ACCOUNT_ENTITY_CLASS,
-        _key: generateEntityKey(ACCOUNT_ENTITY_TYPE, instance.id),
+        _key: generateEntityKey(instance.id),
         _type: ACCOUNT_ENTITY_TYPE,
         name: instance.name,
         displayName: instance.name,
@@ -65,7 +65,7 @@ export function createAccountEntityWithOrganization(
       source: organization,
       assign: {
         _class: ACCOUNT_ENTITY_CLASS,
-        _key: generateEntityKey(ACCOUNT_ENTITY_TYPE, instance.id),
+        _key: generateEntityKey(instance.id),
         _type: ACCOUNT_ENTITY_TYPE,
         name: organization.displayName,
         displayName: instance.name,
@@ -83,7 +83,7 @@ export function createGroupEntity(data: Group): Entity {
       source: data,
       assign: {
         ...convertProperties(data, { parseTime: true }),
-        _key: generateEntityKey(GROUP_ENTITY_TYPE, data.id),
+        _key: generateEntityKey(data.id),
         _class: GROUP_ENTITY_CLASS,
         _type: GROUP_ENTITY_TYPE,
         name: data.displayName,
@@ -102,7 +102,7 @@ export function createUserEntity(data: User): Entity {
       source: data,
       assign: {
         ...convertProperties(data),
-        _key: generateEntityKey(USER_ENTITY_TYPE, data.id),
+        _key: generateEntityKey(data.id),
         _class: USER_ENTITY_CLASS,
         _type: USER_ENTITY_TYPE,
         name: data.displayName,
@@ -120,7 +120,7 @@ export function createServicePrincipalEntity(data: any): Entity {
     entityData: {
       source: data,
       assign: {
-        _key: generateEntityKey(SERVICE_PRINCIPAL_ENTITY_TYPE, data.id),
+        _key: generateEntityKey(data.id),
         _class: SERVICE_PRINCIPAL_ENTITY_CLASS,
         _type: SERVICE_PRINCIPAL_ENTITY_TYPE,
         userType: 'service',
@@ -144,7 +144,7 @@ export function createAccountGroupRelationship(
   group: Entity,
 ): Relationship {
   const parentKey = account._key;
-  const childKey = generateEntityKey(GROUP_ENTITY_TYPE, group.id);
+  const childKey = generateEntityKey(group.id);
 
   return createIntegrationRelationship({
     _class: 'HAS',
@@ -163,7 +163,7 @@ export function createAccountUserRelationship(
   user: Entity,
 ): Relationship {
   const fromKey = account._key;
-  const toKey = generateEntityKey(USER_ENTITY_TYPE, user.id);
+  const toKey = generateEntityKey(user.id);
 
   return createIntegrationRelationship({
     _class: 'HAS',
@@ -181,8 +181,8 @@ export function createGroupMemberRelationship(
   const memberEntityType = getGroupMemberEntityType(member);
   const memberEntityClass = getGroupMemberEntityClass(member);
 
-  const groupKey = generateEntityKey(GROUP_ENTITY_TYPE, group.id);
-  const memberKey = generateEntityKey(memberEntityType, member.id);
+  const groupKey = generateEntityKey(group.id);
+  const memberKey = generateEntityKey(member.id);
 
   return createIntegrationRelationship({
     _class: 'HAS',

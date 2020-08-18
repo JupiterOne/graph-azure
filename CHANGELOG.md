@@ -22,7 +22,7 @@ and this project adheres to
 - Added `azure_role_definition|assigned|<type>` relationships
 - Added `azure_classic_admin_group` singleton entity
 - Added `azure_classic_admin_group|has|azure_user` relationships
-- Added `azuer_service_principal` entities
+- Added `azure_service_principal` entities
 
 ### Fixed
 

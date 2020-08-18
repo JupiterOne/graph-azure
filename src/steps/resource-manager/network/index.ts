@@ -88,15 +88,15 @@ export async function fetchNetworkInterfaces(
     }
   };
 
-  await client.iterateNetworkInterfaces((e) =>
-    jobState.addEntity(
+  await client.iterateNetworkInterfaces(async (e) => {
+    await jobState.addEntity(
       createNetworkInterfaceEntity(
         webLinker,
         e,
         findPublicIPAddresses(e.ipConfigurations),
       ),
-    ),
-  );
+    );
+  });
 }
 
 export async function fetchPublicIPAddresses(

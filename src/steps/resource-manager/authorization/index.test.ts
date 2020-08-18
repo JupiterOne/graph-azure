@@ -35,6 +35,7 @@ afterEach(async () => {
 describe('#findOrCreateRoleDefinitionEntity', () => {
   test('should find entity that exists in the job state', async () => {
     const client = ({
+      // eslint-disable-next-line @typescript-eslint/require-await
       getRoleDefinition: async () => {
         throw new Error(
           'should not have called client.getRoleDefinition if entity exists in job state!',

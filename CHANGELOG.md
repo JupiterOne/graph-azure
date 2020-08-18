@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Removed `sourceEntityType` bug from mapped relationships
+
 ## 4.1.0 - 2020-08-04
 
 ### Added

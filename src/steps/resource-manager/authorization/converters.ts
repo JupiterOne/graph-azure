@@ -50,7 +50,6 @@ export function createClassicAdministratorHasUserRelationship(options: {
     _mapping: {
       relationshipDirection: RelationshipDirection.FORWARD,
       sourceEntityKey: classicAdministratorGroupEntity._key,
-      sourceEntityType: classicAdministratorGroupEntity._type,
       targetFilterKeys: [['_type', 'userPrincipalName']],
       targetEntity: {
         _type: USER_ENTITY_TYPE,

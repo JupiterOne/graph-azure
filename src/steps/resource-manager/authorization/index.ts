@@ -20,7 +20,7 @@ import {
   getJupiterTypeForPrincipalType,
   ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
   ROLE_ASSIGNMENT_RELATIONSHIP_TYPES,
-  STEP_RM_CLASSIC_ADMINISTRATORS,
+  STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS,
   CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
   CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE,
 } from './constants';
@@ -224,7 +224,7 @@ export const authorizationSteps = [
     executionHandler: fetchRoleAssignmentsAndDefinitions,
   },
   {
-    id: STEP_RM_CLASSIC_ADMINISTRATORS,
+    id: STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS,
     name: 'Classic Administrators',
     types: [
       CLASSIC_ADMINISTRATOR_ENTITY_TYPE,

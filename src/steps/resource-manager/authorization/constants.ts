@@ -113,7 +113,7 @@ export const ROLE_ASSIGNMENT_RELATIONSHIP_TYPES = [
 ];
 
 // Fetch Classic Administrators
-export const STEP_RM_CLASSIC_ADMINISTRATORS =
+export const STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS =
   'rm-authorization-classic-administrators';
 
 export const CLASSIC_ADMINISTRATOR_ENTITY_KEY = 'azure_classic_admin_group';

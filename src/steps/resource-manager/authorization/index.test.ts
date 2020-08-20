@@ -199,7 +199,7 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
     const targetEntity: Entity = {
       _class: 'User',
       _type: entityType,
-      _key: generateEntityKey(entityType, principalId),
+      _key: generateEntityKey(principalId),
     };
 
     const roleAssignment: RoleAssignment = {
@@ -254,7 +254,7 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
 
     expect(response).toEqual({
       _type: entityType,
-      _key: generateEntityKey(entityType, principalId),
+      _key: generateEntityKey(principalId),
     });
   });
 });

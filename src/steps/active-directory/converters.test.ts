@@ -58,7 +58,7 @@ describe('createAccountEntityWithOrganization', () => {
 
     expect(accountEntity).toEqual({
       _class: ['Account'],
-      _key: 'azure_account_the-instance-id',
+      _key: 'the-instance-id',
       _type: 'azure_account',
       _rawData: [{ name: 'default', rawData: organization }],
       name: 'Org Display Name',
@@ -98,7 +98,7 @@ describe('createGroupEntity', () => {
       }),
     ).toEqual({
       _class: ['UserGroup'],
-      _key: 'azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792',
+      _key: '89fac263-2430-48fd-9278-dacfdfc89792',
       _type: 'azure_user_group',
       _rawData: [expect.objectContaining({ name: 'default' })],
       createdOn: 1556042765000,
@@ -136,7 +136,7 @@ describe('createUserEntity', () => {
     };
     expect(createUserEntity(data)).toEqual({
       _class: ['User'],
-      _key: 'azure_user_abf00eda-02d6-4053-a077-eef036e1a4c8',
+      _key: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
       _type: 'azure_user',
       _rawData: [{ name: 'default', rawData: data }],
       createdOn: undefined,
@@ -178,7 +178,7 @@ describe('createServicePrincipalEntity', () => {
     };
     expect(createServicePrincipalEntity(data)).toEqual({
       _class: ['Service'],
-      _key: 'azure_service_principal_service-principal-id',
+      _key: 'service-principal-id',
       _rawData: [
         {
           name: 'default',
@@ -252,9 +252,8 @@ describe('createAccountGroupRelationship', () => {
     ).toEqual({
       _class: 'HAS',
       _fromEntityKey: 'azure_account_id',
-      _key:
-        'azure_account_id|has|azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792',
-      _toEntityKey: 'azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792',
+      _key: 'azure_account_id|has|89fac263-2430-48fd-9278-dacfdfc89792',
+      _toEntityKey: '89fac263-2430-48fd-9278-dacfdfc89792',
       _type: 'azure_account_has_group',
       displayName: 'HAS',
     });
@@ -284,9 +283,8 @@ describe('createAccountUserRelationship', () => {
     ).toEqual({
       _class: 'HAS',
       _fromEntityKey: 'azure_account_id',
-      _key:
-        'azure_account_id|has|azure_user_abf00eda-02d6-4053-a077-eef036e1a4c8',
-      _toEntityKey: 'azure_user_abf00eda-02d6-4053-a077-eef036e1a4c8',
+      _key: 'azure_account_id|has|abf00eda-02d6-4053-a077-eef036e1a4c8',
+      _toEntityKey: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
       _type: 'azure_account_has_user',
       displayName: 'HAS',
     });
@@ -317,15 +315,14 @@ describe('createGroupMemberRelationship', () => {
     } = {
       _class: 'HAS',
       _key:
-        'azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792_azure_user_324e8daa-9c29-42a4-a74b-b9893e6d9750',
+        '89fac263-2430-48fd-9278-dacfdfc89792_324e8daa-9c29-42a4-a74b-b9893e6d9750',
       _type: 'azure_group_has_member',
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
-        sourceEntityKey:
-          'azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792',
+        sourceEntityKey: '89fac263-2430-48fd-9278-dacfdfc89792',
         targetFilterKeys: [['_type', '_key']],
         targetEntity: {
-          _key: 'azure_user_324e8daa-9c29-42a4-a74b-b9893e6d9750',
+          _key: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
           _type: 'azure_user',
           _class: 'User',
           displayName: 'User Name',
@@ -360,15 +357,14 @@ describe('createGroupMemberRelationship', () => {
     } = {
       _class: 'HAS',
       _key:
-        'azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792_azure_user_group_324e8daa-9c29-42a4-a74b-b9893e6d9750',
+        '89fac263-2430-48fd-9278-dacfdfc89792_324e8daa-9c29-42a4-a74b-b9893e6d9750',
       _type: 'azure_group_has_member',
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
-        sourceEntityKey:
-          'azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792',
+        sourceEntityKey: '89fac263-2430-48fd-9278-dacfdfc89792',
         targetFilterKeys: [['_type', '_key']],
         targetEntity: {
-          _key: 'azure_user_group_324e8daa-9c29-42a4-a74b-b9893e6d9750',
+          _key: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
           _type: 'azure_user_group',
           _class: 'UserGroup',
           displayName: 'Managers',
@@ -402,15 +398,14 @@ describe('createGroupMemberRelationship', () => {
     } = {
       _class: 'HAS',
       _key:
-        'azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792_azure_group_member_324e8daa-9c29-42a4-a74b-b9893e6d9750',
+        '89fac263-2430-48fd-9278-dacfdfc89792_324e8daa-9c29-42a4-a74b-b9893e6d9750',
       _type: 'azure_group_has_member',
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
-        sourceEntityKey:
-          'azure_user_group_89fac263-2430-48fd-9278-dacfdfc89792',
+        sourceEntityKey: '89fac263-2430-48fd-9278-dacfdfc89792',
         targetFilterKeys: [['_type', '_key']],
         targetEntity: {
-          _key: 'azure_group_member_324e8daa-9c29-42a4-a74b-b9893e6d9750',
+          _key: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
           _type: 'azure_group_member',
           _class: 'User',
           displayName: "Don't really know",

@@ -117,7 +117,7 @@ test('network steps', async () => {
   expect(context.jobState.collectedEntities).toContainOnlyGraphObjects(
     {
       _class: ['Account'],
-      _key: 'azure_account_local-integration-instance',
+      _key: 'local-integration-instance',
       _rawData: [expect.objectContaining({ name: 'default' })],
       _type: 'azure_account',
       createdOn: undefined,

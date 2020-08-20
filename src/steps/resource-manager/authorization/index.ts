@@ -111,7 +111,7 @@ export async function findOrBuildTargetEntityForRoleDefinition(
   const targetType = getJupiterTypeForPrincipalType(
     roleAssignment.principalType,
   );
-  const targetKey = generateEntityKey(targetType, roleAssignment.principalId);
+  const targetKey = generateEntityKey(roleAssignment.principalId);
   let targetEntity: Entity | PlaceholderEntity;
   try {
     targetEntity = await jobState.getEntity({

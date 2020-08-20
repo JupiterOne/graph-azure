@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Changed `generateEntityKey()` from `<_type>_<id>` to simply `<id>`
+
 ## 4.1.1 - 2020-08-18
 
 ### Changed

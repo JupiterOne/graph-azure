@@ -35,6 +35,7 @@ afterEach(async () => {
 describe('#findOrCreateRoleDefinitionEntity', () => {
   test('should find entity that exists in the job state', async () => {
     const client = ({
+      // eslint-disable-next-line @typescript-eslint/require-await
       getRoleDefinition: async () => {
         throw new Error(
           'should not have called client.getRoleDefinition if entity exists in job state!',
@@ -302,7 +303,6 @@ test('active directory step - classic administrators', async () => {
       _mapping: {
         relationshipDirection: 'FORWARD',
         sourceEntityKey: 'azure_classic_admin_group',
-        sourceEntityType: 'azure_classic_admin_group',
         targetFilterKeys: [['_type', 'userPrincipalName']],
         targetEntity: {
           _type: 'azure_user',
@@ -320,14 +320,13 @@ test('active directory step - classic administrators', async () => {
         'https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/classicAdministrators/',
       _key:
         'azure_classic_admin_group|has|FORWARD:_type=azure_user:userPrincipalName=',
-      _type: 'azure_classic_admin_group_has_user',
+      _type: 'mapping_source_has_azure_user',
     },
     {
       _class: 'HAS',
       _mapping: {
         relationshipDirection: 'FORWARD',
         sourceEntityKey: 'azure_classic_admin_group',
-        sourceEntityType: 'azure_classic_admin_group',
         targetFilterKeys: [['_type', 'userPrincipalName']],
         targetEntity: {
           _type: 'azure_user',
@@ -346,7 +345,7 @@ test('active directory step - classic administrators', async () => {
         'https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/classicAdministrators/00030000D25AEAF7',
       _key:
         'azure_classic_admin_group|has|FORWARD:_type=azure_user:userPrincipalName=ndowmon_gmail.com#EXT#@ndowmongmail.onmicrosoft.com',
-      _type: 'azure_classic_admin_group_has_user',
+      _type: 'mapping_source_has_azure_user',
     },
   ]);
 });

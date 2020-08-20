@@ -156,14 +156,13 @@ describe('createRoleAssignmentMappedRelationship', () => {
       _mapping: {
         relationshipDirection: 'FORWARD',
         sourceEntityKey: 'azure_role_definition-1',
-        sourceEntityType: 'azure_role_definition',
         targetEntity: {
           _key: 'azure_user-2',
           _type: 'azure_user',
         },
         targetFilterKeys: [['_type', '_key']],
       },
-      _type: 'azure_role_definition_assigned_user',
+      _type: 'mapping_source_assigned_azure_user',
       displayName: 'ASSIGNED',
       id:
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/roleAssignments/c967042a-aad6-4e3b-8485-1c85d5e6f9e8',
@@ -216,11 +215,10 @@ describe('createClassicAdministratorHasUserRelationship', () => {
       _class: 'HAS',
       _key:
         'azure_classic_admin_group|has|FORWARD:_type=azure_user:userPrincipalName=user-principal-name',
-      _type: 'azure_classic_admin_group_has_user',
+      _type: 'mapping_source_has_azure_user',
       _mapping: {
         relationshipDirection: 'FORWARD',
         sourceEntityKey: 'azure_classic_admin_group',
-        sourceEntityType: 'azure_classic_admin_group',
         targetEntity: {
           _type: 'azure_user',
           userPrincipalName: 'user-principal-name',

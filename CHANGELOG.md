@@ -12,6 +12,12 @@ and this project adheres to
 
 - Changed `generateEntityKey()` from `<_type>_<id>` to simply `<id>`
 
+## 4.1.1 - 2020-08-18
+
+### Changed
+
+- Removed `sourceEntityType` bug from mapped relationships
+
 ## 4.1.0 - 2020-08-04
 
 ### Added

@@ -50,9 +50,9 @@ export async function fetchVirtualMachineImages(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ComputeClient(instance.config, logger);
 
-  await client.iterateVirtualMachineImages(async (vm) =>
-    jobState.addEntity(createImageEntity(webLinker, vm)),
-  );
+  await client.iterateVirtualMachineImages(async (vm) => {
+    await jobState.addEntity(createImageEntity(webLinker, vm));
+  });
 }
 
 export async function fetchVirtualMachineDisks(
@@ -64,9 +64,9 @@ export async function fetchVirtualMachineDisks(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ComputeClient(instance.config, logger);
 
-  await client.iterateVirtualMachineDisks(async (data) =>
-    jobState.addEntity(createDiskEntity(webLinker, data)),
-  );
+  await client.iterateVirtualMachineDisks(async (data) => {
+    await jobState.addEntity(createDiskEntity(webLinker, data));
+  });
 }
 
 export const computeSteps = [

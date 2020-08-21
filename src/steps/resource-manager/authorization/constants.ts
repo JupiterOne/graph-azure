@@ -8,23 +8,28 @@ import {
   STEP_AD_SERVICE_PRINCIPALS,
 } from '../../active-directory';
 import { generateRelationshipType } from '@jupiterone/integration-sdk-core';
+import { RelationshipClass } from '@jupiterone/data-model';
 
-// Fetch Role Assignments & Definitions
-export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS_AND_DEFINITIONS =
-  'rm-authorization-role-assignments-and-definitions';
+// Fetch Role Assignments
+export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS =
+  'rm-authorization-role-assignments';
 
-export const ROLE_DEFINITION_ENTITY_TYPE = 'azure_role_definition';
-export const ROLE_DEFINITION_ENTITY_CLASS = ['AccessRole', 'AccessPolicy'];
+export const ROLE_ASSIGNMENT_ENTITY_TYPE = 'azure_role_assignment';
+export const ROLE_ASSIGNMENT_ENTITY_CLASS = ['AccessRole'];
 
-export const ROLE_ASSIGNMENT_RELATIONSHIP_CLASS = 'ASSIGNED';
+// Build Role Assignment to Principal Relationships
+export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS =
+  'rm-authorization-role-assignment-principal-relationships';
 
-interface RoleAssignmentMap {
+export const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS = 'ASSIGNED';
+
+interface RoleAssignmentPrincipalMap {
   principalType: PrincipalType;
   type: string;
   dependsOn: string[];
 }
 
-export const ROLE_ASSIGNMENT_TYPES_MAP: RoleAssignmentMap[] = [
+export const ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP: RoleAssignmentPrincipalMap[] = [
   {
     principalType: 'Application',
     type: 'azure_application',
@@ -77,40 +82,58 @@ export const ROLE_ASSIGNMENT_TYPES_MAP: RoleAssignmentMap[] = [
   },
 ];
 
-export const ROLE_ASSIGNMENT_DEFAULT_TYPE = 'azure_unknown_role_target';
+export const ROLE_ASSIGNMENT_DEFAULT_PRINCIPAL_TYPE =
+  'azure_unknown_principal_type';
 
-export const ROLE_ASSIGNMENT_DEPENDS_ON = ([] as string[]).concat(
-  ...ROLE_ASSIGNMENT_TYPES_MAP.map((t) => t.dependsOn),
+export const ROLE_ASSIGNMENT_PRINCIPAL_DEPENDS_ON = ([] as string[]).concat(
+  ...ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP.map((t) => t.dependsOn),
 );
-export const ROLE_ASSIGNMENT_TARGET_ENTITY_TYPES = ([] as string[]).concat(
-  ...ROLE_ASSIGNMENT_TYPES_MAP.map((t) => t.type),
+export const ROLE_ASSIGNMENT_PRINCIPAL_ENTITY_TYPES = ([] as string[]).concat(
+  ...ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP.map((t) => t.type),
 );
 
 export function getJupiterTypeForPrincipalType(
   principalType: PrincipalType | undefined,
 ): string {
   return (
-    ROLE_ASSIGNMENT_TYPES_MAP.find((t) => t.principalType === principalType)
-      ?.type || ROLE_ASSIGNMENT_DEFAULT_TYPE
+    ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP.find(
+      (t) => t.principalType === principalType,
+    )?.type || ROLE_ASSIGNMENT_DEFAULT_PRINCIPAL_TYPE
   );
 }
 
-export function createRoleAssignmentRelationshipType(
+export function createRoleAssignmentPrincipalRelationshipType(
   targetEntityType: string,
 ): string {
   return generateRelationshipType(
-    ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
-    ROLE_DEFINITION_ENTITY_TYPE,
+    ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS,
+    ROLE_ASSIGNMENT_ENTITY_TYPE,
     targetEntityType,
   );
 }
 
-export const ROLE_ASSIGNMENT_RELATIONSHIP_TYPES = [
-  createRoleAssignmentRelationshipType(ROLE_ASSIGNMENT_DEFAULT_TYPE),
-  ...ROLE_ASSIGNMENT_TARGET_ENTITY_TYPES.map(
-    createRoleAssignmentRelationshipType,
+export const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_TYPES = [
+  createRoleAssignmentPrincipalRelationshipType(
+    ROLE_ASSIGNMENT_DEFAULT_PRINCIPAL_TYPE,
+  ),
+  ...ROLE_ASSIGNMENT_PRINCIPAL_ENTITY_TYPES.map(
+    createRoleAssignmentPrincipalRelationshipType,
   ),
 ];
+
+// Fetch Role Definitions
+export const STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS =
+  'rm-authorization-role-definitions';
+
+export const ROLE_DEFINITION_ENTITY_TYPE = 'azure_role_definition';
+export const ROLE_DEFINITION_ENTITY_CLASS = ['AccessPolicy'];
+
+export const ROLE_DEFINITION_RELATIONSHIP_CLASS = RelationshipClass.HAS;
+export const ROLE_DEFINITION_RELATIONSHIP_TYPE = generateRelationshipType(
+  ROLE_DEFINITION_RELATIONSHIP_CLASS,
+  ROLE_ASSIGNMENT_ENTITY_TYPE,
+  ROLE_DEFINITION_ENTITY_TYPE,
+);
 
 // Fetch Classic Administrators
 export const STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS =

@@ -98,6 +98,16 @@ describe('iterateRoleAssignments', () => {
         name: '10000000-0000-0000-0000-000000000000',
       }),
     );
+    expect(resources).toContainEqual(
+      expect.objectContaining({
+        name: '20000000-0000-0000-0000-000000000000',
+      }),
+    );
+    expect(resources).toContainEqual(
+      expect.objectContaining({
+        name: '30000000-0000-0000-0000-000000000000',
+      }),
+    );
   });
 });
 

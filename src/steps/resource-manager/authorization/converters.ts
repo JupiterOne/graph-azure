@@ -6,8 +6,6 @@ import {
 import {
   Entity,
   convertProperties,
-  ExplicitRelationship,
-  createDirectRelationship,
   createMappedRelationship,
   MappedRelationship,
   createIntegrationEntity,
@@ -18,10 +16,11 @@ import { AzureWebLinker } from '../../../azure';
 import {
   ROLE_DEFINITION_ENTITY_CLASS,
   ROLE_DEFINITION_ENTITY_TYPE,
-  ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
   CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
   CLASSIC_ADMINISTRATOR_ENTITY_CLASS,
   CLASSIC_ADMINISTRATOR_ENTITY_KEY,
+  ROLE_ASSIGNMENT_ENTITY_TYPE,
+  ROLE_ASSIGNMENT_ENTITY_CLASS,
 } from './constants';
 import { USER_ENTITY_TYPE } from '../../active-directory';
 
@@ -67,6 +66,31 @@ export function createClassicAdministratorHasUserRelationship(options: {
   });
 }
 
+export function createRoleAssignmentEntity(
+  webLinker: AzureWebLinker,
+  data: RoleAssignment,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id as string,
+        _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
+        _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+        name: data.name,
+        displayName: data.name,
+        type: data.type,
+        scope: data.scope,
+        roleDefinitionId: data.roleDefinitionId,
+        principalId: data.principalId,
+        principalType: data.principalType,
+        canDelegate: data.canDelegate,
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+
 export function createRoleDefinitionEntity(
   webLinker: AzureWebLinker,
   data: RoleDefinition,
@@ -94,62 +118,4 @@ export function createRoleDefinitionEntity(
     webLink: webLinker.portalResourceUrl(data.id),
   };
   return entity;
-}
-
-interface CreateRoleAssignmentDirectRelationshipOptions {
-  webLinker: AzureWebLinker;
-  roleAssignment: RoleAssignment;
-  from: Entity;
-  to: Entity;
-}
-
-export function createRoleAssignmentDirectRelationship({
-  webLinker,
-  roleAssignment,
-  from,
-  to,
-}: CreateRoleAssignmentDirectRelationshipOptions): ExplicitRelationship {
-  return createDirectRelationship({
-    _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
-    from,
-    to,
-    properties: getRoleAssignmentRelationshipProperties(
-      webLinker,
-      roleAssignment,
-    ),
-  });
-}
-
-interface CreateRoleAssignmentMappedRelationshipOptions {
-  webLinker: AzureWebLinker;
-  roleAssignment: RoleAssignment;
-  source: Entity;
-  target: Partial<Entity> & { _type: string; _key: string };
-}
-
-export function createRoleAssignmentMappedRelationship({
-  webLinker,
-  roleAssignment,
-  source,
-  target,
-}: CreateRoleAssignmentMappedRelationshipOptions): MappedRelationship {
-  return createMappedRelationship({
-    _class: ROLE_ASSIGNMENT_RELATIONSHIP_CLASS,
-    source,
-    target,
-    properties: getRoleAssignmentRelationshipProperties(
-      webLinker,
-      roleAssignment,
-    ),
-  });
-}
-
-export function getRoleAssignmentRelationshipProperties(
-  webLinker: AzureWebLinker,
-  roleAssignment: RoleAssignment,
-): { [key: string]: any } {
-  return {
-    ...convertProperties(roleAssignment),
-    webLink: webLinker.portalResourceUrl(roleAssignment.id),
-  };
 }

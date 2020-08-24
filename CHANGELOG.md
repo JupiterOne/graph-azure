@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_role_assignment` entities; removed relationships
+- Added `azure_role_assignment|assigned|<principal>` relationships
+- Added `azure_role_assignment|has|azure_role_definition` relationships
+
 ### Changed
 
 - Changed `generateEntityKey()` from `<_type>_<id>` to simply `<id>`

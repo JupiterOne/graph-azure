@@ -93,7 +93,8 @@ though the `Account` entity will always be ingested.
 |                      | `azure_sql_server`            | `Database`, `DataStore`, `Host` |
 | Cosmos DB            | `azure_cosmosdb_account`      | `Account`                       |
 |                      | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
-| Role Definition      | `azure_role_definition`       | `AccessRole`, `AccessPolicy`    |
+| Role Definition      | `azure_role_definition`       | `AccessPolicy`                    |
+| Role Assignment      | `azure_role_assignment`       | `AccessRole`                    |
 | Service Principal    | `azure_service_principal`     | `Service`                       |
 | Classic Admin        | `azure_classic_admin_group`   | `UserGroup`                     |
 
@@ -125,16 +126,17 @@ The following relationships are created/mapped:
 | `azure_postgresql_server`    | **HAS**      | `azure_postgresql_database`     |
 | `azure_sql_server`           | **HAS**      | `azure_sql_database`            |
 | `azure_cosmosdb_account`     | **HAS**      | `azure_cosmosdb_sql_database`   |
-| `azure_role_definition`      | **ASSIGNED** | `azure_user`                    |
-| `azure_role_definition`      | **ASSIGNED** | `azure_group`                   |
-| `azure_role_definition`      | **ASSIGNED** | `azure_application`             |
-| `azure_role_definition`      | **ASSIGNED** | `azure_directory`               |
-| `azure_role_definition`      | **ASSIGNED** | `azure_directory_role_template` |
-| `azure_role_definition`      | **ASSIGNED** | `azure_everyone`                |
-| `azure_role_definition`      | **ASSIGNED** | `azure_foreign_group`           |
-| `azure_role_definition`      | **ASSIGNED** | `azure_msi`                     |
-| `azure_role_definition`      | **ASSIGNED** | `azure_service_principal`       |
-| `azure_role_definition`      | **ASSIGNED** | `azure_unknown`                 |
+| `azure_role_assignment`      | **HAS**      | `azure_role_definition`         |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_user`                    |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_group`                   |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_application`             |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_directory`               |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_directory_role_template` |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_everyone`                |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_foreign_group`           |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_msi`                     |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_service_principal`       |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_unknown`                 |
 | `azure_classic_admin_group`  | **HAS**      | `azure_user`                    |
 
 [1]: https://docs.microsoft.com/en-us/graph/auth-v2-service

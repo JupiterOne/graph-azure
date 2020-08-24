@@ -1,8 +1,10 @@
 import {
   findOrCreateRoleDefinitionEntity,
-  getRoleDefinitionKeyFromRoleAssignment,
   findOrBuildTargetEntityForRoleDefinition,
   fetchClassicAdministrators,
+  fetchRoleAssignments,
+  buildRoleAssignmentPrincipalRelationships,
+  fetchRoleDefinitions,
 } from '.';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
 import {
@@ -16,6 +18,8 @@ import {
   ROLE_DEFINITION_ENTITY_TYPE,
   ROLE_DEFINITION_ENTITY_CLASS,
   getJupiterTypeForPrincipalType,
+  ROLE_ASSIGNMENT_ENTITY_TYPE,
+  ROLE_ASSIGNMENT_ENTITY_CLASS,
 } from './constants';
 import {
   PrincipalType,
@@ -23,6 +27,7 @@ import {
 } from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
+import { USER_ENTITY_TYPE, USER_ENTITY_CLASS } from '../../active-directory';
 
 let recording: Recording;
 
@@ -64,7 +69,7 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
     };
 
     const roleDefinitionEntity: Entity = {
-      _key: getRoleDefinitionKeyFromRoleAssignment(roleAssignment),
+      _key: roleAssignment.roleDefinitionId as string,
       _type: ROLE_DEFINITION_ENTITY_TYPE,
       _class: ROLE_DEFINITION_ENTITY_CLASS,
     };
@@ -77,7 +82,7 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
     const result = await findOrCreateRoleDefinitionEntity(context, {
       client,
       webLinker,
-      roleAssignment,
+      roleDefinitionId: roleAssignment.roleDefinitionId as string,
     });
 
     expect(result).toBe(roleDefinitionEntity);
@@ -97,9 +102,7 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
       roleDefinitionId: fullyQualifiedRoleDefinitionId,
     };
 
-    const roleDefinitionId = getRoleDefinitionKeyFromRoleAssignment(
-      roleAssignment,
-    );
+    const roleDefinitionId = roleAssignment.roleDefinitionId as string;
     const getRoleDefinitionMock = jest.fn().mockResolvedValue({
       id: roleDefinitionId,
       name: 'role-definition-name',
@@ -125,7 +128,7 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
     const webLinker = { portalResourceUrl };
 
     const roleDefinitionEntity: Entity = {
-      _key: getRoleDefinitionKeyFromRoleAssignment(roleAssignment),
+      _key: roleAssignment.roleDefinitionId as string,
       _type: ROLE_DEFINITION_ENTITY_TYPE,
       _class: ROLE_DEFINITION_ENTITY_CLASS,
     };
@@ -138,7 +141,7 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
     const result = await findOrCreateRoleDefinitionEntity(context, {
       client,
       webLinker,
-      roleAssignment,
+      roleDefinitionId: roleAssignment.roleDefinitionId as string,
     });
 
     expect(getRoleDefinitionMock).toHaveBeenCalledTimes(1);
@@ -178,7 +181,7 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
             ),
           ),
       },
-      roleAssignment,
+      roleDefinitionId: roleAssignment.roleDefinitionId as string,
     };
 
     await expect(
@@ -220,7 +223,8 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
     });
 
     const response = await findOrBuildTargetEntityForRoleDefinition(context, {
-      roleAssignment,
+      principalId: roleAssignment.principalId as string,
+      principalType: roleAssignment.principalType as string,
     });
 
     expect(response).toBe(targetEntity);
@@ -249,7 +253,8 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
     });
 
     const response = await findOrBuildTargetEntityForRoleDefinition(context, {
-      roleAssignment,
+      principalId: roleAssignment.principalId as string,
+      principalType: roleAssignment.principalType as string,
     });
 
     expect(response).toEqual({
@@ -259,7 +264,232 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
   });
 });
 
-test('active directory step - classic administrators', async () => {
+test('step - role assignments', async () => {
+  const instanceConfig: IntegrationConfig = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+  };
+
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'active-directory-step-role-assignments',
+  });
+
+  const context = createMockStepExecutionContext<IntegrationConfig>({
+    instanceConfig,
+  });
+
+  context.jobState.getData = jest.fn().mockResolvedValue({
+    defaultDomain: 'www.fake-domain.com',
+  });
+
+  await fetchRoleAssignments(context);
+
+  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
+  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+    _class: 'AccessRole',
+    schema: {
+      additionalProperties: false,
+      properties: {
+        _type: { const: 'azure_role_assignment' },
+        _key: { type: 'string' },
+        _class: { type: 'array', items: { const: 'AccessRole' } },
+        id: { type: 'string' },
+        name: { type: 'string' },
+        displayName: { type: 'string' },
+        type: { const: 'Microsoft.Authorization/roleAssignments' },
+        scope: { type: 'string' },
+        roleDefinitionId: { type: 'string' },
+        principalId: { type: 'string' },
+        principalType: { type: 'string' },
+        webLink: { type: 'string' },
+        canDelegate: { type: 'boolean' },
+        _rawData: { type: 'array', items: { type: 'object' } },
+      },
+    },
+  });
+  expect(context.jobState.collectedRelationships.length).toBe(0);
+});
+
+test('step - role assignment principal relationships', async () => {
+  const instanceConfig: IntegrationConfig = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+  };
+
+  const userEntityId = 'principal-id';
+  const userEntity = {
+    _key: generateEntityKey(userEntityId),
+    _type: USER_ENTITY_TYPE,
+    _class: USER_ENTITY_CLASS,
+    principalId: 'principal-id',
+    principalType: 'User' as PrincipalType,
+  };
+
+  const roleAssignmentDirectEntity = {
+    _key:
+      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
+    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
+    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    principalId: userEntityId,
+    principalType: 'User' as PrincipalType,
+  };
+
+  const roleAssignmentMappedEntity = {
+    _key:
+      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
+    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
+    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    principalId: 'unknown-principal-id',
+    principalType: 'User' as PrincipalType,
+  };
+
+  const context = createMockStepExecutionContext<IntegrationConfig>({
+    instanceConfig,
+    entities: [
+      userEntity,
+      roleAssignmentDirectEntity,
+      roleAssignmentMappedEntity,
+    ],
+  });
+
+  context.jobState.getData = jest
+    .fn()
+    .mockRejectedValue(new Error('Should not call getData in this step!'));
+
+  await buildRoleAssignmentPrincipalRelationships(context);
+
+  expect(context.jobState.collectedEntities.length).toBe(0);
+  expect(context.jobState.collectedRelationships).toEqual([
+    {
+      _key:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id|assigned|principal-id',
+      _type: 'azure_role_assignment_assigned_user',
+      _class: 'ASSIGNED',
+      _fromEntityKey:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
+      _toEntityKey: 'principal-id',
+      displayName: 'ASSIGNED',
+    },
+    {
+      _class: 'ASSIGNED',
+      _mapping: {
+        relationshipDirection: 'FORWARD',
+        sourceEntityKey:
+          '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
+        targetEntity: {
+          _key: 'unknown-principal-id',
+          _type: 'azure_user',
+        },
+        targetFilterKeys: [['_type', '_key']],
+      },
+      displayName: 'ASSIGNED',
+      _key:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2|assigned|unknown-principal-id',
+      _type: 'mapping_source_assigned_azure_user',
+    },
+  ]);
+});
+
+test('step - role definitions', async () => {
+  const instanceConfig: IntegrationConfig = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+  };
+
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'active-directory-step-role-definitions',
+  });
+
+  const roleAssignmentEntity = {
+    _key:
+      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-1',
+    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
+    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    roleDefinitionId:
+      '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+  };
+
+  const roleAssignmentEntityTwo = {
+    _key:
+      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
+    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
+    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    roleDefinitionId:
+      '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+  };
+  const context = createMockStepExecutionContext<IntegrationConfig>({
+    instanceConfig,
+    entities: [roleAssignmentEntity, roleAssignmentEntityTwo],
+  });
+
+  context.jobState.getData = jest.fn().mockResolvedValue({
+    defaultDomain: 'www.fake-domain.com',
+  });
+
+  await fetchRoleDefinitions(context);
+
+  expect(context.jobState.collectedEntities.length).toBe(1);
+  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+    _class: 'AccessPolicy',
+    schema: {
+      additionalProperties: false,
+      properties: {
+        _type: { const: 'azure_role_definition' },
+        _key: { type: 'string' },
+        _class: { type: 'array', items: { const: 'AccessPolicy' } },
+        id: { type: 'string' },
+        name: { type: 'string' },
+        displayName: { type: 'string' },
+        type: { const: 'Microsoft.Authorization/roleDefinitions' },
+        roleName: { type: 'string' },
+        description: { type: 'string' },
+        roleType: { type: 'string', enum: ['BuiltInRole', 'CustomRole'] },
+        assignableScopes: { type: 'array', items: { type: 'string' } },
+        _rawData: { type: 'array', items: { type: 'object' } },
+        actions: { type: 'array', items: { type: 'string' } },
+        notActions: { type: 'array', items: { type: 'string' } },
+        dataActions: { type: 'array', items: { type: 'string' } },
+        notDataActions: { type: 'array', items: { type: 'string' } },
+        webLink: { type: 'string' },
+      },
+    },
+  });
+
+  expect(context.jobState.collectedRelationships).toEqual([
+    {
+      _key:
+        '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c|has|/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-1',
+      _type: 'azure_role_definition_has_assignment',
+      _class: 'HAS',
+      _fromEntityKey:
+        '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+      _toEntityKey:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-1',
+      displayName: 'HAS',
+    },
+    {
+      _key:
+        '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c|has|/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
+      _type: 'azure_role_definition_has_assignment',
+      _class: 'HAS',
+      _fromEntityKey:
+        '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+      _toEntityKey:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
+      displayName: 'HAS',
+    },
+  ]);
+});
+
+test('step - classic administrators', async () => {
   const instanceConfig: IntegrationConfig = {
     clientId: process.env.CLIENT_ID || 'clientId',
     clientSecret: process.env.CLIENT_SECRET || 'clientSecret',

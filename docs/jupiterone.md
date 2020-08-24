@@ -93,7 +93,7 @@ though the `Account` entity will always be ingested.
 |                      | `azure_sql_server`            | `Database`, `DataStore`, `Host` |
 | Cosmos DB            | `azure_cosmosdb_account`      | `Account`                       |
 |                      | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
-| Role Definition      | `azure_role_definition`       | `AccessRole`                    |
+| Role Definition      | `azure_role_definition`       | `AccessPolicy`                    |
 | Role Assignment      | `azure_role_assignment`       | `AccessRole`                    |
 | Service Principal    | `azure_service_principal`     | `Service`                       |
 | Classic Admin        | `azure_classic_admin_group`   | `UserGroup`                     |

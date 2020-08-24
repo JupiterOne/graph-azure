@@ -1,10 +1,12 @@
 import {
   findOrCreateRoleDefinitionEntity,
-  findOrBuildTargetEntityForRoleDefinition,
+  findOrBuildPrincipalEntityForRoleAssignment,
   fetchClassicAdministrators,
   fetchRoleAssignments,
   buildRoleAssignmentPrincipalRelationships,
   fetchRoleDefinitions,
+  findOrBuildScopeEntityForRoleAssignment,
+  buildRoleAssignmentScopeRelationships,
 } from '.';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
 import {
@@ -20,6 +22,7 @@ import {
   getJupiterTypeForPrincipalType,
   ROLE_ASSIGNMENT_ENTITY_TYPE,
   ROLE_ASSIGNMENT_ENTITY_CLASS,
+  getJupiterTypeForScope,
 } from './constants';
 import {
   PrincipalType,
@@ -28,6 +31,7 @@ import {
 import { generateEntityKey } from '../../../utils/generateKeys';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { USER_ENTITY_TYPE, USER_ENTITY_CLASS } from '../../active-directory';
+import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
 
 let recording: Recording;
 
@@ -222,10 +226,13 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
       entities: [targetEntity],
     });
 
-    const response = await findOrBuildTargetEntityForRoleDefinition(context, {
-      principalId: roleAssignment.principalId as string,
-      principalType: roleAssignment.principalType as string,
-    });
+    const response = await findOrBuildPrincipalEntityForRoleAssignment(
+      context,
+      {
+        principalId: roleAssignment.principalId as string,
+        principalType: roleAssignment.principalType as string,
+      },
+    );
 
     expect(response).toBe(targetEntity);
   });
@@ -252,14 +259,61 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
       entities: [],
     });
 
-    const response = await findOrBuildTargetEntityForRoleDefinition(context, {
-      principalId: roleAssignment.principalId as string,
-      principalType: roleAssignment.principalType as string,
-    });
+    const response = await findOrBuildPrincipalEntityForRoleAssignment(
+      context,
+      {
+        principalId: roleAssignment.principalId as string,
+        principalType: roleAssignment.principalType as string,
+      },
+    );
 
     expect(response).toEqual({
       _type: entityType,
       _key: generateEntityKey(principalId),
+    });
+  });
+});
+
+describe('#findOrBuildScopeEntityForRoleAssignment', () => {
+  test('should find scope entity that exists in the job state', async () => {
+    const scope =
+      '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
+    const entityType = getJupiterTypeForScope(scope);
+    const targetEntity: Entity = {
+      _class: ['Service'],
+      _type: entityType,
+      _key: scope,
+    };
+
+    const context = createMockStepExecutionContext<IntegrationConfig>({
+      instanceConfig,
+      entities: [targetEntity],
+    });
+
+    const response = await findOrBuildScopeEntityForRoleAssignment(context, {
+      scope,
+    });
+
+    expect(response).toBe(targetEntity);
+  });
+
+  test('should build placeholder scope entity that does not exist in the job state', async () => {
+    const scope =
+      '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
+    const entityType = getJupiterTypeForScope(scope);
+
+    const context = createMockStepExecutionContext<IntegrationConfig>({
+      instanceConfig,
+      entities: [],
+    });
+
+    const response = await findOrBuildScopeEntityForRoleAssignment(context, {
+      scope,
+    });
+
+    expect(response).toEqual({
+      _type: entityType,
+      _key: scope,
     });
   });
 });
@@ -391,6 +445,89 @@ test('step - role assignment principal relationships', async () => {
       _key:
         '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2|assigned|unknown-principal-id',
       _type: 'mapping_source_assigned_azure_user',
+    },
+  ]);
+});
+
+test('step - role assignment scope relationships', async () => {
+  const instanceConfig: IntegrationConfig = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+  };
+
+  const keyVaultPrefix =
+    '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/';
+  const keyVaultId = keyVaultPrefix + 'key-vault-id';
+
+  const keyVaultEntity = {
+    _key: keyVaultId,
+    _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
+    _class: ['Service'],
+  };
+
+  const roleAssignmentDirectEntity = {
+    _key:
+      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
+    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
+    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    scope: keyVaultId,
+  };
+
+  const roleAssignmentMappedEntity = {
+    _key:
+      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
+    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
+    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    scope: keyVaultPrefix + 'some-non-keyvault',
+  };
+
+  const context = createMockStepExecutionContext<IntegrationConfig>({
+    instanceConfig,
+    entities: [
+      keyVaultEntity,
+      roleAssignmentDirectEntity,
+      roleAssignmentMappedEntity,
+    ],
+  });
+
+  context.jobState.getData = jest
+    .fn()
+    .mockRejectedValue(new Error('Should not call getData in this step!'));
+
+  await buildRoleAssignmentScopeRelationships(context);
+
+  expect(context.jobState.collectedEntities.length).toBe(0);
+  expect(context.jobState.collectedRelationships).toEqual([
+    {
+      _key:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id|allows|/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id',
+      _type: 'azure_role_assignment_allows_keyvault_service',
+      _class: 'ALLOWS',
+      _fromEntityKey:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
+      _toEntityKey:
+        '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id',
+      displayName: 'ALLOWS',
+    },
+    {
+      _class: 'ALLOWS',
+      _mapping: {
+        relationshipDirection: 'FORWARD',
+        sourceEntityKey:
+          '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
+        targetEntity: {
+          _key:
+            '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/some-non-keyvault',
+          _type: 'azure_keyvault_service',
+        },
+        targetFilterKeys: [['_key']],
+      },
+      displayName: 'ALLOWS',
+      _key:
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2|allows|/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/some-non-keyvault',
+      _type: 'azure_role_assignment_allows_keyvault_service',
     },
   ]);
 });

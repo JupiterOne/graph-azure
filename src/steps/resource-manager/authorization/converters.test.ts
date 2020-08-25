@@ -47,7 +47,7 @@ describe('createRoleDefinitionEntity', () => {
       _key:
         '/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635',
       _type: 'azure_role_definition',
-      _class: ['AccessPolicy'],
+      _class: ['AccessRole'],
       _rawData: [{ name: 'default', rawData: data }],
       displayName: 'Owner',
       type: 'Microsoft.Authorization/roleDefinitions',
@@ -77,7 +77,7 @@ describe('createRoleAssignmentEntity', () => {
     };
 
     expect(createRoleAssignmentEntity(webLinker, data)).toEqual({
-      _class: ['AccessRole'],
+      _class: ['AccessPolicy'],
       _key:
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/roleAssignments/10000000-0000-0000-0000-000000000000',
       _rawData: [

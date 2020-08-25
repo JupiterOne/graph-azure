@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Updated classes on `azure_role_assignment-->azure_role_definition`
+  relationship
+
 ## 4.2.0 - 2020-08-25
 
 ### Added

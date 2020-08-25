@@ -289,7 +289,7 @@ test('step - role assignments', async () => {
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'AccessRole',
+    _class: 'AccessPolicy',
     schema: {
       additionalProperties: false,
       properties: {
@@ -438,7 +438,7 @@ test('step - role definitions', async () => {
 
   expect(context.jobState.collectedEntities.length).toBe(1);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'AccessPolicy',
+    _class: 'AccessRole',
     schema: {
       additionalProperties: false,
       properties: {
@@ -466,25 +466,25 @@ test('step - role definitions', async () => {
   expect(context.jobState.collectedRelationships).toEqual([
     {
       _key:
-        '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c|has|/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-1',
-      _type: 'azure_role_definition_has_assignment',
-      _class: 'HAS',
-      _fromEntityKey:
-        '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-1|uses|/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+      _type: 'azure_role_assignment_uses_definition',
+      _class: 'USES',
       _toEntityKey:
+        '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+      _fromEntityKey:
         '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-1',
-      displayName: 'HAS',
+      displayName: 'USES',
     },
     {
       _key:
-        '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c|has|/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
-      _type: 'azure_role_definition_has_assignment',
-      _class: 'HAS',
-      _fromEntityKey:
-        '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2|uses|/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+      _type: 'azure_role_assignment_uses_definition',
+      _class: 'USES',
       _toEntityKey:
+        '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+      _fromEntityKey:
         '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
-      displayName: 'HAS',
+      displayName: 'USES',
     },
   ]);
 });

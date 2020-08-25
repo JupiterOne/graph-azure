@@ -15,7 +15,7 @@ export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS =
   'rm-authorization-role-assignments';
 
 export const ROLE_ASSIGNMENT_ENTITY_TYPE = 'azure_role_assignment';
-export const ROLE_ASSIGNMENT_ENTITY_CLASS = ['AccessRole'];
+export const ROLE_ASSIGNMENT_ENTITY_CLASS = ['AccessPolicy'];
 
 // Build Role Assignment to Principal Relationships
 export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS =
@@ -126,9 +126,9 @@ export const STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS =
   'rm-authorization-role-definitions';
 
 export const ROLE_DEFINITION_ENTITY_TYPE = 'azure_role_definition';
-export const ROLE_DEFINITION_ENTITY_CLASS = ['AccessPolicy'];
+export const ROLE_DEFINITION_ENTITY_CLASS = ['AccessRole'];
 
-export const ROLE_DEFINITION_RELATIONSHIP_CLASS = RelationshipClass.HAS;
+export const ROLE_DEFINITION_RELATIONSHIP_CLASS = RelationshipClass.USES;
 export const ROLE_DEFINITION_RELATIONSHIP_TYPE = generateRelationshipType(
   ROLE_DEFINITION_RELATIONSHIP_CLASS,
   ROLE_ASSIGNMENT_ENTITY_TYPE,

@@ -214,8 +214,8 @@ export async function fetchRoleDefinitions(
       await jobState.addRelationship(
         createDirectRelationship({
           _class: ROLE_DEFINITION_RELATIONSHIP_CLASS,
-          from: roleDefinitionEntity,
-          to: roleAssignmentEntity,
+          from: roleAssignmentEntity,
+          to: roleDefinitionEntity,
         }),
       );
     },

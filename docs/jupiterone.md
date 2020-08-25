@@ -81,7 +81,9 @@ though the `Account` entity will always be ingested.
 | Security Group       | `azure_security_group`        | `Firewall`                      |
 | Network Interface    | `azure_nic`                   | `NetworkInterface`              |
 | Public IP Address    | `azure_public_ip`             | `IpAddress`                     |
+|                      | `azure_storage_blob_service`  | `Service`                       |
 | Blob (Storage)       | `azure_storage_container`     | `DataStore`                     |
+|                      | `azure_storage_file_service`  | `Service`                       |
 | File Share (Storage) | `azure_storage_share`         | `DataStore`                     |
 | Databases            | `azure_mariadb_database`      | `Database`, `DataStore`         |
 |                      | `azure_mariadb_server`        | `Database`, `DataStore`, `Host` |
@@ -91,10 +93,10 @@ though the `Account` entity will always be ingested.
 |                      | `azure_postgresql_server`     | `Database`, `DataStore`, `Host` |
 |                      | `azure_sql_database`          | `Database`, `DataStore`         |
 |                      | `azure_sql_server`            | `Database`, `DataStore`, `Host` |
-| Cosmos DB            | `azure_cosmosdb_account`      | `Account`                       |
+| Cosmos DB            | `azure_cosmosdb_account`      | `Account`, `Service`            |
 |                      | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
-| Role Definition      | `azure_role_definition`       | `AccessPolicy`                    |
-| Role Assignment      | `azure_role_assignment`       | `AccessRole`                    |
+| Role Definition      | `azure_role_definition`       | `AccessRole`                    |
+| Role Assignment      | `azure_role_assignment`       | `AccessPolicy`                  |
 | Service Principal    | `azure_service_principal`     | `Service`                       |
 | Classic Admin        | `azure_classic_admin_group`   | `UserGroup`                     |
 
@@ -108,6 +110,7 @@ The following relationships are created/mapped:
 | `azure_account`              | **HAS**      | `azure_user_group`              |
 | `azure_account`              | **HAS**      | `azure_keyvault_service`        |
 | `azure_account`              | **HAS**      | `azure_storage_blob_service`    |
+| `azure_account`              | **HAS**      | `azure_storage_file_service`    |
 | `azure_user_group`           | **HAS**      | `azure_user`                    |
 | `azure_user_group`           | **HAS**      | `azure_user_group`              |
 | `azure_user_group`           | **HAS**      | `azure_group_member`            |
@@ -115,6 +118,7 @@ The following relationships are created/mapped:
 | `azure_subnet`               | **HAS**      | `azure_vm`                      |
 | `azure_security_group`       | **PROTECTS** | `azure_subnet`                  |
 | `azure_security_group`       | **PROTECTS** | `azure_nic`                     |
+| `azure_security_group`       | **ALLOWS**   | `azure_subnet`                  |
 | `azure_vm`                   | **USES**     | `azure_nic`                     |
 | `azure_vm`                   | **USES**     | `azure_managed_disk`            |
 | `azure_vm`                   | **USES**     | `azure_public_ip`               |
@@ -126,9 +130,9 @@ The following relationships are created/mapped:
 | `azure_postgresql_server`    | **HAS**      | `azure_postgresql_database`     |
 | `azure_sql_server`           | **HAS**      | `azure_sql_database`            |
 | `azure_cosmosdb_account`     | **HAS**      | `azure_cosmosdb_sql_database`   |
-| `azure_role_assignment`      | **HAS**      | `azure_role_definition`         |
+| `azure_role_assignment`      | **USES**     | `azure_role_definition`         |
 | `azure_role_assignment`      | **ASSIGNED** | `azure_user`                    |
-| `azure_role_assignment`      | **ASSIGNED** | `azure_group`                   |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_user_group`              |
 | `azure_role_assignment`      | **ASSIGNED** | `azure_application`             |
 | `azure_role_assignment`      | **ASSIGNED** | `azure_directory`               |
 | `azure_role_assignment`      | **ASSIGNED** | `azure_directory_role_template` |
@@ -137,6 +141,7 @@ The following relationships are created/mapped:
 | `azure_role_assignment`      | **ASSIGNED** | `azure_msi`                     |
 | `azure_role_assignment`      | **ASSIGNED** | `azure_service_principal`       |
 | `azure_role_assignment`      | **ASSIGNED** | `azure_unknown`                 |
+| `azure_role_assignment`      | **ASSIGNED** | `azure_unknown_principal_type`  |
 | `azure_classic_admin_group`  | **HAS**      | `azure_user`                    |
 
 [1]: https://docs.microsoft.com/en-us/graph/auth-v2-service

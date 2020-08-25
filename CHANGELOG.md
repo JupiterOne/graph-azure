@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 4.2.0 - 2020-08-25
+
 ### Added
 
 - Added `azure_role_assignment` entities; removed relationships

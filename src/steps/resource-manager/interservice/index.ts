@@ -5,9 +5,11 @@ import {
   getRawData,
   JobState,
   Relationship,
+  Step,
+  IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-import { IntegrationStepContext } from '../../../types';
+import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { STEP_AD_ACCOUNT } from '../../active-directory';
 import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINES,
@@ -17,12 +19,17 @@ import {
   NETWORK_INTERFACE_ENTITY_TYPE,
   STEP_RM_NETWORK_INTERFACES,
   STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
+  SUBNET_ENTITY_TYPE,
+  PUBLIC_IP_ADDRESS_ENTITY_TYPE,
 } from '../network';
 import {
   STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,
   SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+  SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
+  VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
+  VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS,
 } from './constants';
 import {
   createSubnetVirtualMachineRelationship,
@@ -125,14 +132,32 @@ function findVirtualMachineNetworkInterfaces(
   return vmNics;
 }
 
-export const interserviceSteps = [
+export const interserviceSteps: Step<
+  IntegrationStepExecutionContext<IntegrationConfig>
+>[] = [
   {
     id: STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,
     name: 'Compute Network Relationships',
-    types: [
-      SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
-      VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
-      VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+    entities: [],
+    relationships: [
+      {
+        _type: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
+        sourceType: SUBNET_ENTITY_TYPE,
+        _class: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
+        targetType: VIRTUAL_MACHINE_ENTITY_TYPE,
+      },
+      {
+        _type: VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+        sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+        _class: VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
+        targetType: NETWORK_INTERFACE_ENTITY_TYPE,
+      },
+      {
+        _type: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+        sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+        _class: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS,
+        targetType: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
+      },
     ],
     dependsOn: [
       STEP_AD_ACCOUNT,

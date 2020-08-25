@@ -6,6 +6,10 @@ import {
 
 import { AzureWebLinker } from '../../../azure';
 import { normalizeLocation, resourceGroupName } from '../../../azure/utils';
+import {
+  KEY_VAULT_SERVICE_ENTITY_TYPE,
+  KEY_VAULT_SERVICE_ENTITY_CLASS,
+} from './constants';
 
 export function createKeyVaultEntity(
   webLinker: AzureWebLinker,
@@ -16,8 +20,8 @@ export function createKeyVaultEntity(
       source: data,
       assign: {
         _key: data.id,
-        _type: 'azure_keyvault_service',
-        _class: ['Service'],
+        _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
+        _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
         webLink: webLinker.portalResourceUrl(data.id),
         region: normalizeLocation(data.location),
         resourceGroup: resourceGroupName(data.id),

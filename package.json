@@ -55,9 +55,9 @@
     "@azure/ms-rest-js": "^2.0.0"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^2.10.1",
-    "@jupiterone/integration-sdk-dev-tools": "^2.10.1",
-    "@jupiterone/integration-sdk-testing": "^2.10.1",
+    "@jupiterone/integration-sdk-core": "^3.0.0",
+    "@jupiterone/integration-sdk-dev-tools": "^3.0.0",
+    "@jupiterone/integration-sdk-testing": "^3.0.0",
     "@microsoft/microsoft-graph-types": "^1.10.0",
     "@types/fs-extra": "^5.0.5",
     "@types/jest": "^25.2.1",
@@ -85,6 +85,6 @@
     "typescript": "^3.8.3"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^2.2.0"
+    "@jupiterone/integration-sdk-core": "^3.0.0"
   }
 }

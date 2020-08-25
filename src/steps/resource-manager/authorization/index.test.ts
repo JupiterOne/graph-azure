@@ -550,7 +550,7 @@ test('step - classic administrators', async () => {
         'https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/classicAdministrators/',
       _key:
         'azure_classic_admin_group|has|FORWARD:_type=azure_user:userPrincipalName=',
-      _type: 'mapping_source_has_azure_user',
+      _type: 'azure_classic_admin_group_has_user',
     },
     {
       _class: 'HAS',
@@ -575,7 +575,7 @@ test('step - classic administrators', async () => {
         'https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/classicAdministrators/00030000D25AEAF7',
       _key:
         'azure_classic_admin_group|has|FORWARD:_type=azure_user:userPrincipalName=ndowmon_gmail.com#EXT#@ndowmongmail.onmicrosoft.com',
-      _type: 'mapping_source_has_azure_user',
+      _type: 'azure_classic_admin_group_has_user',
     },
   ]);
 });

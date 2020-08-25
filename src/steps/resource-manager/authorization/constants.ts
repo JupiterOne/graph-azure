@@ -7,7 +7,10 @@ import {
   SERVICE_PRINCIPAL_ENTITY_TYPE,
   STEP_AD_SERVICE_PRINCIPALS,
 } from '../../active-directory';
-import { generateRelationshipType } from '@jupiterone/integration-sdk-core';
+import {
+  generateRelationshipType,
+  StepRelationshipMetadata,
+} from '@jupiterone/integration-sdk-core';
 import { RelationshipClass } from '@jupiterone/data-model';
 
 // Fetch Role Assignments
@@ -21,7 +24,8 @@ export const ROLE_ASSIGNMENT_ENTITY_CLASS = ['AccessPolicy'];
 export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS =
   'rm-authorization-role-assignment-principal-relationships';
 
-export const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS = 'ASSIGNED';
+export const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS =
+  RelationshipClass.ASSIGNED;
 
 interface RoleAssignmentPrincipalMap {
   principalType: PrincipalType;
@@ -104,12 +108,17 @@ export function getJupiterTypeForPrincipalType(
 
 export function createRoleAssignmentPrincipalRelationshipType(
   targetEntityType: string,
-): string {
-  return generateRelationshipType(
-    ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS,
-    ROLE_ASSIGNMENT_ENTITY_TYPE,
-    targetEntityType,
-  );
+): StepRelationshipMetadata {
+  return {
+    _type: generateRelationshipType(
+      ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS,
+      ROLE_ASSIGNMENT_ENTITY_TYPE,
+      targetEntityType,
+    ),
+    sourceType: ROLE_ASSIGNMENT_ENTITY_TYPE,
+    _class: ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS,
+    targetType: targetEntityType,
+  };
 }
 
 export const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_TYPES = [
@@ -141,6 +150,11 @@ export const STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS =
 
 export const CLASSIC_ADMINISTRATOR_ENTITY_KEY = 'azure_classic_admin_group';
 export const CLASSIC_ADMINISTRATOR_ENTITY_TYPE = 'azure_classic_admin_group';
-export const CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE =
-  'azure_classic_admin_group_has_user';
 export const CLASSIC_ADMINISTRATOR_ENTITY_CLASS = 'UserGroup';
+
+export const CLASSIC_ADMINISTRATOR_RELATIONSHIP_CLASS = RelationshipClass.HAS;
+export const CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE = generateRelationshipType(
+  CLASSIC_ADMINISTRATOR_RELATIONSHIP_CLASS,
+  CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
+  USER_ENTITY_TYPE,
+);

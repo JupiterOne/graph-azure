@@ -3,14 +3,17 @@ import {
   createDirectRelationship,
   createMappedRelationship,
   IntegrationError,
+  Step,
+  IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker, AzureWebLinker } from '../../../azure';
-import { IntegrationStepContext } from '../../../types';
+import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import {
   ACCOUNT_ENTITY_TYPE,
   STEP_AD_ACCOUNT,
   STEP_AD_USERS,
+  USER_ENTITY_TYPE,
 } from '../../active-directory';
 import { AuthorizationClient } from './client';
 import {
@@ -28,6 +31,10 @@ import {
   ROLE_DEFINITION_RELATIONSHIP_TYPE,
   ROLE_DEFINITION_RELATIONSHIP_CLASS,
   STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS,
+  ROLE_ASSIGNMENT_ENTITY_CLASS,
+  ROLE_DEFINITION_ENTITY_CLASS,
+  CLASSIC_ADMINISTRATOR_ENTITY_CLASS,
+  CLASSIC_ADMINISTRATOR_RELATIONSHIP_CLASS,
 } from './constants';
 import {
   createRoleDefinitionEntity,
@@ -58,13 +65,8 @@ export async function findOrCreateRoleDefinitionEntity(
 ): Promise<Entity> {
   const { jobState, logger } = executionContext;
   const { client, webLinker, roleDefinitionId } = options;
-  let roleDefinitionEntity: Entity;
-  try {
-    roleDefinitionEntity = await jobState.getEntity({
-      _type: ROLE_DEFINITION_ENTITY_TYPE,
-      _key: roleDefinitionId,
-    });
-  } catch (err) {
+  let roleDefinitionEntity = await jobState.findEntity(roleDefinitionId);
+  if (roleDefinitionEntity === null) {
     // entity does not already exist in job state - create it.
     const roleDefinition = await client.getRoleDefinition(roleDefinitionId);
     if (roleDefinition !== undefined) {
@@ -105,14 +107,12 @@ export async function findOrBuildTargetEntityForRoleDefinition(
     principalType as PrincipalType,
   );
   const targetKey = generateEntityKey(principalId);
-  let targetEntity: Entity | PlaceholderEntity;
-  try {
-    targetEntity = await jobState.getEntity({
-      _type: targetType,
-      _key: targetKey,
-    });
-  } catch (err) {
-    // target entity does not need to exist for mapped relationship
+  // let targetEntity: Entity | PlaceholderEntity;
+  let targetEntity:
+    | Entity
+    | PlaceholderEntity
+    | null = await jobState.findEntity(targetKey);
+  if (targetEntity === null) {
     targetEntity = {
       _type: targetType,
       _key: targetKey,
@@ -245,18 +245,28 @@ export async function fetchClassicAdministrators(
   });
 }
 
-export const authorizationSteps = [
+export const authorizationSteps: Step<
+  IntegrationStepExecutionContext<IntegrationConfig>
+>[] = [
   {
     id: STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
     name: 'Role Assignments',
-    types: [ROLE_ASSIGNMENT_ENTITY_TYPE],
+    entities: [
+      {
+        resourceName: '[RM] Role Assignment',
+        _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
+        _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+      },
+    ],
+    relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchRoleAssignments,
   },
   {
     id: STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS,
     name: 'Role Assignment to Principal Relationships',
-    types: ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_TYPES,
+    entities: [],
+    relationships: ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_TYPES,
     dependsOn: [
       STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
       ...ROLE_ASSIGNMENT_PRINCIPAL_DEPENDS_ON,
@@ -266,16 +276,41 @@ export const authorizationSteps = [
   {
     id: STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
     name: 'Role Definitions',
-    types: [ROLE_DEFINITION_ENTITY_TYPE, ROLE_DEFINITION_RELATIONSHIP_TYPE],
+    entities: [
+      {
+        resourceName: '[RM] Role Definition',
+        _type: ROLE_DEFINITION_ENTITY_TYPE,
+        _class: ROLE_DEFINITION_ENTITY_CLASS,
+      },
+    ],
+    relationships: [
+      {
+        _type: ROLE_DEFINITION_RELATIONSHIP_TYPE,
+        sourceType: ROLE_ASSIGNMENT_ENTITY_TYPE,
+        _class: ROLE_DEFINITION_RELATIONSHIP_CLASS,
+        targetType: ROLE_DEFINITION_ENTITY_TYPE,
+      },
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS],
     executionHandler: fetchRoleDefinitions,
   },
   {
     id: STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS,
     name: 'Classic Administrators',
-    types: [
-      CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
-      CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE,
+    entities: [
+      {
+        resourceName: '[RM] Classic Admin',
+        _type: CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
+        _class: CLASSIC_ADMINISTRATOR_ENTITY_CLASS,
+      },
+    ],
+    relationships: [
+      {
+        _type: CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE,
+        sourceType: CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
+        _class: CLASSIC_ADMINISTRATOR_RELATIONSHIP_CLASS,
+        targetType: USER_ENTITY_TYPE,
+      },
     ],
     dependsOn: [STEP_AD_USERS],
     executionHandler: fetchClassicAdministrators,

@@ -1,27 +1,33 @@
 import { StorageAccount } from '@azure/arm-storage/esm/models';
 import {
-  createIntegrationRelationship,
+  createDirectRelationship,
   Entity,
+  Step,
+  IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext } from '../../../types';
+import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
 import { StorageClient } from './client';
 import {
   ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_TYPE,
   ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_TYPE,
-  ACCOUNT_STORAGE_QUEUE_SERVICE_RELATIONSHIP_TYPE,
-  ACCOUNT_STORAGE_TABLE_SERVICE_RELATIONSHIP_TYPE,
   STEP_RM_STORAGE_RESOURCES,
-  STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP,
+  STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_TYPE,
   STORAGE_BLOB_SERVICE_ENTITY_TYPE,
   STORAGE_CONTAINER_ENTITY_TYPE,
   STORAGE_FILE_SERVICE_ENTITY_TYPE,
-  STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP,
+  STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP_TYPE,
   STORAGE_FILE_SHARE_ENTITY_TYPE,
-  STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
-  STORAGE_TABLE_SERVICE_ENTITY_TYPE,
+  STORAGE_BLOB_SERVICE_ENTITY_CLASS,
+  STORAGE_CONTAINER_ENTITY_CLASS,
+  ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_CLASS,
+  STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_CLASS,
+  STORAGE_FILE_SERVICE_ENTITY_CLASS,
+  STORAGE_FILE_SHARE_ENTITY_CLASS,
+  ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_CLASS,
+  STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP_CLASS,
 } from './constants';
 import {
   createStorageContainerEntity,
@@ -128,8 +134,8 @@ async function synchronizeBlobStorage(
   await jobState.addEntity(serviceEntity);
 
   await jobState.addRelationship(
-    createIntegrationRelationship({
-      _class: 'HAS',
+    createDirectRelationship({
+      _class: ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_CLASS,
       from: accountEntity,
       to: serviceEntity,
     }),
@@ -147,8 +153,8 @@ async function synchronizeBlobStorage(
       await jobState.addEntity(containerEntity);
 
       await jobState.addRelationship(
-        createIntegrationRelationship({
-          _class: 'HAS',
+        createDirectRelationship({
+          _class: STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_CLASS,
           from: serviceEntity,
           to: containerEntity,
         }),
@@ -179,8 +185,8 @@ async function synchronizeFileStorage(
   await jobState.addEntity(serviceEntity);
 
   await jobState.addRelationship(
-    createIntegrationRelationship({
-      _class: 'HAS',
+    createDirectRelationship({
+      _class: ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_CLASS,
       from: accountEntity,
       to: serviceEntity,
     }),
@@ -196,8 +202,8 @@ async function synchronizeFileStorage(
     await jobState.addEntity(fileShareEntity);
 
     await jobState.addRelationship(
-      createIntegrationRelationship({
-        _class: 'HAS',
+      createDirectRelationship({
+        _class: STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_CLASS,
         from: serviceEntity,
         to: fileShareEntity,
         properties: {
@@ -208,27 +214,66 @@ async function synchronizeFileStorage(
   });
 }
 
-export const storageSteps = [
+export const storageSteps: Step<
+  IntegrationStepExecutionContext<IntegrationConfig>
+>[] = [
   {
     id: STEP_RM_STORAGE_RESOURCES,
     name: 'Storage Resources',
-    types: [
-      STORAGE_BLOB_SERVICE_ENTITY_TYPE,
-      STORAGE_CONTAINER_ENTITY_TYPE,
-      ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_TYPE,
-      STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP,
-
-      STORAGE_FILE_SERVICE_ENTITY_TYPE,
-      STORAGE_FILE_SHARE_ENTITY_TYPE,
-      ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_TYPE,
-      STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP,
-
-      STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
-      ACCOUNT_STORAGE_QUEUE_SERVICE_RELATIONSHIP_TYPE,
-
-      STORAGE_TABLE_SERVICE_ENTITY_TYPE,
-      ACCOUNT_STORAGE_TABLE_SERVICE_RELATIONSHIP_TYPE,
+    entities: [
+      {
+        resourceName: '[RM] Blob Storage Service',
+        _type: STORAGE_BLOB_SERVICE_ENTITY_TYPE,
+        _class: STORAGE_BLOB_SERVICE_ENTITY_CLASS,
+      },
+      {
+        resourceName: '[RM] Blob Storage Container',
+        _type: STORAGE_CONTAINER_ENTITY_TYPE,
+        _class: STORAGE_CONTAINER_ENTITY_CLASS,
+      },
+      {
+        resourceName: '[RM] File Storage Service',
+        _type: STORAGE_FILE_SERVICE_ENTITY_TYPE,
+        _class: STORAGE_FILE_SERVICE_ENTITY_CLASS,
+      },
+      {
+        resourceName: '[RM] File Storage Share',
+        _type: STORAGE_FILE_SHARE_ENTITY_TYPE,
+        _class: STORAGE_FILE_SHARE_ENTITY_CLASS,
+      },
     ],
+    relationships: [
+      {
+        _type: ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_TYPE,
+        sourceType: ACCOUNT_ENTITY_TYPE,
+        _class: ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_CLASS,
+        targetType: STORAGE_BLOB_SERVICE_ENTITY_TYPE,
+      },
+      {
+        _type: STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_TYPE,
+        sourceType: STORAGE_BLOB_SERVICE_ENTITY_TYPE,
+        _class: STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_CLASS,
+        targetType: STORAGE_CONTAINER_ENTITY_TYPE,
+      },
+      {
+        _type: ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_TYPE,
+        sourceType: ACCOUNT_ENTITY_TYPE,
+        _class: ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_CLASS,
+        targetType: STORAGE_FILE_SERVICE_ENTITY_TYPE,
+      },
+      {
+        _type: STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP_TYPE,
+        sourceType: STORAGE_FILE_SERVICE_ENTITY_TYPE,
+        _class: STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP_CLASS,
+        targetType: STORAGE_FILE_SHARE_ENTITY_TYPE,
+      },
+    ],
+    // From what I can tell, the following are not yet implemented
+    // STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
+    // ACCOUNT_STORAGE_QUEUE_SERVICE_RELATIONSHIP_TYPE,
+
+    // STORAGE_TABLE_SERVICE_ENTITY_TYPE,
+    // ACCOUNT_STORAGE_TABLE_SERVICE_RELATIONSHIP_TYPE,
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchStorageResources,
   },

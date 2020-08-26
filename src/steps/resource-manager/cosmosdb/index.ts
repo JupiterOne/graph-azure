@@ -1,10 +1,13 @@
 import {
-  createIntegrationRelationship,
+  createDirectRelationship,
   Entity,
+  RelationshipClass,
+  Step,
+  IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext } from '../../../types';
+import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
 import { CosmosDBClient } from './client';
 import {
@@ -12,6 +15,9 @@ import {
   RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_TYPE,
   RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
   STEP_RM_COSMOSDB_SQL_DATABASES,
+  RM_COSMOSDB_ACCOUNT_ENTITY_CLASS,
+  RM_COSMOSDB_SQL_DATABASE_ENTITY_CLASS,
+  RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_CLASS,
 } from './constants';
 import { createAccountEntity, createSQLDatabaseEntity } from './converters';
 
@@ -34,8 +40,8 @@ export async function fetchCosmosDBSqlDatabases(
       const dbEntity = createSQLDatabaseEntity(webLinker, account, database);
       await jobState.addEntity(dbEntity);
       await jobState.addRelationship(
-        createIntegrationRelationship({
-          _class: 'HAS',
+        createDirectRelationship({
+          _class: RelationshipClass.HAS,
           from: dbAccountEntity,
           to: dbEntity,
           properties: {
@@ -47,14 +53,31 @@ export async function fetchCosmosDBSqlDatabases(
   });
 }
 
-export const cosmosdbSteps = [
+export const cosmosdbSteps: Step<
+  IntegrationStepExecutionContext<IntegrationConfig>
+>[] = [
   {
     id: STEP_RM_COSMOSDB_SQL_DATABASES,
     name: 'CosmosDB SQL Databases',
-    types: [
-      RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
-      RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
-      RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_TYPE,
+    entities: [
+      {
+        resourceName: '[RM] Cosmos DB Account',
+        _type: RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
+        _class: RM_COSMOSDB_ACCOUNT_ENTITY_CLASS,
+      },
+      {
+        resourceName: '[RM] Cosmos DB Database',
+        _type: RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
+        _class: RM_COSMOSDB_SQL_DATABASE_ENTITY_CLASS,
+      },
+    ],
+    relationships: [
+      {
+        _type: RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_TYPE,
+        sourceType: RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
+        _class: RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_CLASS,
+        targetType: RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
+      },
     ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchCosmosDBSqlDatabases,

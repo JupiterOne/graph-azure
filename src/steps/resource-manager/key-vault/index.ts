@@ -1,16 +1,21 @@
 import {
-  createIntegrationRelationship,
+  createDirectRelationship,
   Entity,
+  RelationshipClass,
+  Step,
+  IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext } from '../../../types';
+import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
 import { KeyVaultClient } from './client';
 import {
   ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   STEP_RM_KEYVAULT_VAULTS,
+  KEY_VAULT_SERVICE_ENTITY_CLASS,
+  ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
 } from './constants';
 import { createKeyVaultEntity } from './converters';
 
@@ -29,8 +34,8 @@ export async function fetchKeyVaults(
     const vaultEntity = createKeyVaultEntity(webLinker, vault);
     await jobState.addEntity(vaultEntity);
     await jobState.addRelationship(
-      createIntegrationRelationship({
-        _class: 'HAS',
+      createDirectRelationship({
+        _class: RelationshipClass.HAS,
         from: accountEntity,
         to: vaultEntity,
       }),
@@ -38,11 +43,27 @@ export async function fetchKeyVaults(
   });
 }
 
-export const keyvaultSteps = [
+export const keyvaultSteps: Step<
+  IntegrationStepExecutionContext<IntegrationConfig>
+>[] = [
   {
     id: STEP_RM_KEYVAULT_VAULTS,
     name: 'Key Vaults',
-    types: [KEY_VAULT_SERVICE_ENTITY_TYPE, ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE],
+    entities: [
+      {
+        resourceName: '[RM] Key Vault',
+        _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
+        _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
+      },
+    ],
+    relationships: [
+      {
+        _type: ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
+        sourceType: ACCOUNT_ENTITY_TYPE,
+        _class: ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
+        targetType: KEY_VAULT_SERVICE_ENTITY_TYPE,
+      },
+    ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchKeyVaults,
   },

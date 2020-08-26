@@ -9,10 +9,13 @@ import {
   Entity,
   getRawData,
   Relationship,
+  Step,
+  IntegrationStepExecutionContext,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext } from '../../../types';
+import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
 import { NetworkClient } from './client';
 import {
@@ -34,6 +37,15 @@ import {
   SUBNET_ENTITY_TYPE,
   VIRTUAL_NETWORK_ENTITY_TYPE,
   VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
+  PUBLIC_IP_ADDRESS_ENTITY_CLASS,
+  NETWORK_INTERFACE_ENTITY_CLASS,
+  VIRTUAL_NETWORK_ENTITY_CLASS,
+  VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS,
+  SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS,
+  SECURITY_GROUP_ENTITY_CLASS,
+  SECURITY_GROUP_NIC_RELATIONSHIP_CLASS,
+  LOAD_BALANCER_ENTITY_CLASS,
+  LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_CLASS,
 } from './constants';
 import {
   createLoadBalancerBackendNicRelationship,
@@ -287,11 +299,16 @@ export async function buildSecurityGroupRuleRelationships(
           ) {
             const subnets = await findSubnetsForCIDR(target.CIDR as string);
             if (subnets?.length) {
-              await jobState.addRelationships(
-                subnets.map((subnet) =>
-                  createSecurityGroupRuleSubnetRelationship(sg, rule, subnet),
-                ),
-              );
+              for (const subnet of subnets) {
+                const relationship = createSecurityGroupRuleSubnetRelationship(
+                  sg,
+                  rule,
+                  subnet,
+                );
+                if (relationship !== undefined) {
+                  await jobState.addRelationship(relationship);
+                }
+              }
             } else {
               logger.warn(
                 { securityGroup: sg.id, rule: rule.id, cidr: target.CIDR },
@@ -299,9 +316,14 @@ export async function buildSecurityGroupRuleRelationships(
               );
             }
           } else {
-            await jobState.addRelationship(
-              createSecurityGroupRuleMappedRelationship(sg, rule, target),
+            const relationship = createSecurityGroupRuleMappedRelationship(
+              sg,
+              rule,
+              target,
             );
+            if (relationship !== undefined) {
+              await jobState.addRelationship(relationship);
+            }
           }
         }
       }
@@ -309,29 +331,65 @@ export async function buildSecurityGroupRuleRelationships(
   );
 }
 
-export const networkSteps = [
+export const networkSteps: Step<
+  IntegrationStepExecutionContext<IntegrationConfig>
+>[] = [
   {
     id: STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
     name: 'Public IP Addresses',
-    types: [PUBLIC_IP_ADDRESS_ENTITY_TYPE],
+    entities: [
+      {
+        resourceName: '[RM] Public IP Address',
+        _type: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
+        _class: PUBLIC_IP_ADDRESS_ENTITY_CLASS,
+      },
+    ],
+    relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchPublicIPAddresses,
   },
   {
     id: STEP_RM_NETWORK_INTERFACES,
     name: 'Network Interfaces',
-    types: [NETWORK_INTERFACE_ENTITY_TYPE],
+    entities: [
+      {
+        resourceName: '[RM] Network Interface',
+        _type: NETWORK_INTERFACE_ENTITY_TYPE,
+        _class: NETWORK_INTERFACE_ENTITY_CLASS,
+      },
+    ],
+    relationships: [],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES],
     executionHandler: fetchNetworkInterfaces,
   },
   {
     id: STEP_RM_NETWORK_VIRTUAL_NETWORKS,
     name: 'Virtual Networks',
-    types: [
-      VIRTUAL_NETWORK_ENTITY_TYPE,
-      SUBNET_ENTITY_TYPE,
-      VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
-      SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
+    entities: [
+      {
+        resourceName: '[RM] Virtual Network',
+        _type: VIRTUAL_NETWORK_ENTITY_TYPE,
+        _class: VIRTUAL_NETWORK_ENTITY_CLASS,
+      },
+      {
+        resourceName: '[RM] Subnet',
+        _type: SUBNET_ENTITY_TYPE,
+        _class: SUBNET_ENTITY_CLASS,
+      },
+    ],
+    relationships: [
+      {
+        _type: VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE,
+        sourceType: VIRTUAL_NETWORK_ENTITY_TYPE,
+        _class: VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS,
+        targetType: SUBNET_ENTITY_TYPE,
+      },
+      {
+        _type: SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE,
+        sourceType: SECURITY_GROUP_ENTITY_TYPE,
+        _class: SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS,
+        targetType: SUBNET_ENTITY_TYPE,
+      },
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_NETWORK_SECURITY_GROUPS],
     executionHandler: fetchVirtualNetworks,
@@ -339,20 +397,42 @@ export const networkSteps = [
   {
     id: STEP_RM_NETWORK_SECURITY_GROUPS,
     name: 'Network Security Groups',
-    types: [
-      SECURITY_GROUP_ENTITY_TYPE,
-      SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
-      SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+    entities: [
+      {
+        resourceName: '[RM] Security Group',
+        _type: SECURITY_GROUP_ENTITY_TYPE,
+        _class: SECURITY_GROUP_ENTITY_CLASS,
+      },
     ],
+    relationships: [
+      {
+        _type: SECURITY_GROUP_NIC_RELATIONSHIP_TYPE,
+        sourceType: SECURITY_GROUP_ENTITY_TYPE,
+        _class: SECURITY_GROUP_NIC_RELATIONSHIP_CLASS,
+        targetType: NETWORK_INTERFACE_ENTITY_TYPE,
+      },
+    ],
+    // SECURITY_GROUP_RULE_RELATIONSHIP_TYPE doesn't seem to exist here.
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_NETWORK_INTERFACES],
     executionHandler: fetchNetworkSecurityGroups,
   },
   {
     id: STEP_RM_NETWORK_LOAD_BALANCERS,
     name: 'Load Balancers',
-    types: [
-      LOAD_BALANCER_ENTITY_TYPE,
-      LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE,
+    entities: [
+      {
+        resourceName: '[RM] Load Balancer',
+        _type: LOAD_BALANCER_ENTITY_TYPE,
+        _class: LOAD_BALANCER_ENTITY_CLASS,
+      },
+    ],
+    relationships: [
+      {
+        _type: LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE,
+        sourceType: LOAD_BALANCER_ENTITY_TYPE,
+        _class: LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_CLASS,
+        targetType: NETWORK_INTERFACE_ENTITY_TYPE,
+      },
     ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchLoadBalancers,
@@ -360,7 +440,22 @@ export const networkSteps = [
   {
     id: STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
     name: 'Network Security Group Rules',
-    types: [SECURITY_GROUP_RULE_RELATIONSHIP_TYPE],
+    entities: [],
+    relationships: [
+      // can go either way?
+      {
+        _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+        sourceType: SECURITY_GROUP_ENTITY_TYPE,
+        _class: RelationshipClass.ALLOWS,
+        targetType: SUBNET_ENTITY_TYPE,
+      },
+      {
+        _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+        sourceType: SUBNET_ENTITY_TYPE,
+        _class: RelationshipClass.ALLOWS,
+        targetType: SECURITY_GROUP_ENTITY_TYPE,
+      },
+    ],
     dependsOn: [
       STEP_AD_ACCOUNT,
       STEP_RM_NETWORK_SECURITY_GROUPS,

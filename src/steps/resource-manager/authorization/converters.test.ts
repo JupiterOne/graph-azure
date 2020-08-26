@@ -151,7 +151,7 @@ describe('createClassicAdministratorHasUserRelationship', () => {
       _class: 'HAS',
       _key:
         'azure_classic_admin_group|has|FORWARD:_type=azure_user:userPrincipalName=user-principal-name',
-      _type: 'mapping_source_has_azure_user',
+      _type: 'azure_classic_admin_group_has_user',
       _mapping: {
         relationshipDirection: 'FORWARD',
         sourceEntityKey: 'azure_classic_admin_group',

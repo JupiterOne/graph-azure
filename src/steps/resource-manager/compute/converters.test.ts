@@ -1,7 +1,8 @@
 import { Disk, VirtualMachine } from '@azure/arm-compute/esm/models';
 import {
   convertProperties,
-  createIntegrationRelationship,
+  createDirectRelationship,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -205,8 +206,8 @@ describe('createVirtualMachineDiskRelationships', () => {
 
     expect(createVirtualMachineDiskRelationships(vm as VirtualMachine)).toEqual(
       [
-        createIntegrationRelationship({
-          _class: 'USES',
+        createDirectRelationship({
+          _class: RelationshipClass.USES,
           fromKey:
             '/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/j1',
           fromType: 'azure_vm',

@@ -13,9 +13,10 @@ import {
 import {
   assignTags,
   createIntegrationEntity,
-  createIntegrationRelationship,
+  createDirectRelationship,
   Entity,
   Relationship,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../../azure';
@@ -217,8 +218,8 @@ export function createLoadBalancerBackendNicRelationship(
   lb: LoadBalancer,
   nicId: string,
 ): Relationship {
-  return createIntegrationRelationship({
-    _class: 'CONNECTS',
+  return createDirectRelationship({
+    _class: RelationshipClass.CONNECTS,
     fromKey: lb.id as string,
     fromType: LOAD_BALANCER_ENTITY_TYPE,
     toKey: nicId,
@@ -230,8 +231,8 @@ export function createNetworkSecurityGroupNicRelationship(
   securityGroup: NetworkSecurityGroup,
   nic: NetworkInterface,
 ): Relationship {
-  return createIntegrationRelationship({
-    _class: 'PROTECTS',
+  return createDirectRelationship({
+    _class: RelationshipClass.PROTECTS,
     fromKey: securityGroup.id as string,
     fromType: SECURITY_GROUP_ENTITY_TYPE,
     toKey: nic.id as string,
@@ -243,8 +244,8 @@ export function createVirtualNetworkSubnetRelationship(
   vnet: VirtualNetwork,
   subnet: Subnet,
 ): Relationship {
-  return createIntegrationRelationship({
-    _class: 'CONTAINS',
+  return createDirectRelationship({
+    _class: RelationshipClass.CONTAINS,
     fromKey: vnet.id as string,
     fromType: VIRTUAL_NETWORK_ENTITY_TYPE,
     toKey: subnet.id as string,
@@ -256,8 +257,8 @@ export function createNetworkSecurityGroupSubnetRelationship(
   securityGroup: NetworkSecurityGroup,
   subnet: Subnet,
 ): Relationship {
-  return createIntegrationRelationship({
-    _class: 'PROTECTS',
+  return createDirectRelationship({
+    _class: RelationshipClass.PROTECTS,
     fromKey: securityGroup.id as string,
     fromType: SECURITY_GROUP_ENTITY_TYPE,
     toKey: subnet.id as string,

@@ -5,8 +5,9 @@ import {
   Subnet,
 } from '@azure/arm-network/esm/models';
 import {
-  createIntegrationRelationship,
+  createDirectRelationship,
   Relationship,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { VIRTUAL_MACHINE_ENTITY_TYPE } from '../compute';
@@ -21,8 +22,8 @@ export function createVirtualMachineNetworkInterfaceRelationship(
   vm: VirtualMachine,
   nic: NetworkInterface,
 ): Relationship {
-  return createIntegrationRelationship({
-    _class: 'USES',
+  return createDirectRelationship({
+    _class: RelationshipClass.USES,
     fromKey: vm.id as string,
     fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
     toKey: nic.id as string,
@@ -38,8 +39,8 @@ export function createSubnetVirtualMachineRelationship(
   subnet: Subnet,
   vm: VirtualMachine,
 ): Relationship {
-  return createIntegrationRelationship({
-    _class: 'HAS',
+  return createDirectRelationship({
+    _class: RelationshipClass.HAS,
     fromKey: subnet.id as string,
     fromType: SUBNET_ENTITY_TYPE,
     toKey: vm.id as string,
@@ -51,8 +52,8 @@ export function createVirtualMachinePublicIPAddressRelationship(
   vm: VirtualMachine,
   ipAddress: PublicIPAddress,
 ): Relationship {
-  return createIntegrationRelationship({
-    _class: 'USES',
+  return createDirectRelationship({
+    _class: RelationshipClass.USES,
     fromKey: vm.id as string,
     fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
     toKey: ipAddress.id as string,

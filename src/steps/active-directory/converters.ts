@@ -3,13 +3,14 @@ import map from 'lodash.map';
 import {
   convertProperties,
   createIntegrationEntity,
-  createIntegrationRelationship,
+  createDirectRelationship,
   Entity,
   getTime,
   IntegrationInstance,
   Relationship,
   RelationshipDirection,
   assignTags,
+  createMappedRelationship,
 } from '@jupiterone/integration-sdk-core';
 import { Group, Organization, User } from '@microsoft/microsoft-graph-types';
 
@@ -32,6 +33,7 @@ import {
   SERVICE_PRINCIPAL_ENTITY_CLASS,
   SERVICE_PRINCIPAL_ENTITY_TYPE,
 } from './constants';
+import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 export function createAccountEntity(instance: IntegrationInstance): Entity {
   return createIntegrationEntity({
@@ -146,8 +148,8 @@ export function createAccountGroupRelationship(
   const parentKey = account._key;
   const childKey = generateEntityKey(group.id);
 
-  return createIntegrationRelationship({
-    _class: 'HAS',
+  return createDirectRelationship({
+    _class: RelationshipClass.HAS,
     fromKey: parentKey,
     fromType: ACCOUNT_ENTITY_TYPE,
     toKey: childKey,
@@ -165,8 +167,8 @@ export function createAccountUserRelationship(
   const fromKey = account._key;
   const toKey = generateEntityKey(user.id);
 
-  return createIntegrationRelationship({
-    _class: 'HAS',
+  return createDirectRelationship({
+    _class: RelationshipClass.HAS,
     fromType: ACCOUNT_ENTITY_TYPE,
     fromKey,
     toType: USER_ENTITY_TYPE,
@@ -184,8 +186,8 @@ export function createGroupMemberRelationship(
   const groupKey = generateEntityKey(group.id);
   const memberKey = generateEntityKey(member.id);
 
-  return createIntegrationRelationship({
-    _class: 'HAS',
+  return createMappedRelationship({
+    _class: RelationshipClass.HAS,
     _key: generateRelationshipKey(groupKey, memberKey),
     _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
     _mapping: {

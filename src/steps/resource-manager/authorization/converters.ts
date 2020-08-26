@@ -10,6 +10,7 @@ import {
   MappedRelationship,
   createIntegrationEntity,
   RelationshipDirection,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
@@ -21,6 +22,7 @@ import {
   CLASSIC_ADMINISTRATOR_ENTITY_KEY,
   ROLE_ASSIGNMENT_ENTITY_TYPE,
   ROLE_ASSIGNMENT_ENTITY_CLASS,
+  CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE,
 } from './constants';
 import { USER_ENTITY_TYPE } from '../../active-directory';
 
@@ -45,7 +47,8 @@ export function createClassicAdministratorHasUserRelationship(options: {
 }): MappedRelationship {
   const { webLinker, classicAdministratorGroupEntity, data } = options;
   return createMappedRelationship({
-    _class: 'HAS',
+    _class: RelationshipClass.HAS,
+    _type: CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE,
     _mapping: {
       relationshipDirection: RelationshipDirection.FORWARD,
       sourceEntityKey: classicAdministratorGroupEntity._key,

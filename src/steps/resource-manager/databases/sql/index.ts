@@ -1,6 +1,7 @@
 import {
-  createIntegrationRelationship,
+  createDirectRelationship,
   Entity,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../../azure';
@@ -67,8 +68,8 @@ export async function fetchSQLDatabases(
         await jobState.addEntity(databaseEntity);
 
         await jobState.addRelationship(
-          createIntegrationRelationship({
-            _class: 'HAS',
+          createDirectRelationship({
+            _class: RelationshipClass.HAS,
             from: serverEntity,
             to: databaseEntity,
           }),

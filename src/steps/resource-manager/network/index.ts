@@ -300,14 +300,9 @@ export async function buildSecurityGroupRuleRelationships(
             const subnets = await findSubnetsForCIDR(target.CIDR as string);
             if (subnets?.length) {
               for (const subnet of subnets) {
-                const relationship = createSecurityGroupRuleSubnetRelationship(
-                  sg,
-                  rule,
-                  subnet,
+                await jobState.addRelationship(
+                  createSecurityGroupRuleSubnetRelationship(sg, rule, subnet),
                 );
-                if (relationship !== undefined) {
-                  await jobState.addRelationship(relationship);
-                }
               }
             } else {
               logger.warn(
@@ -316,14 +311,9 @@ export async function buildSecurityGroupRuleRelationships(
               );
             }
           } else {
-            const relationship = createSecurityGroupRuleMappedRelationship(
-              sg,
-              rule,
-              target,
+            await jobState.addRelationship(
+              createSecurityGroupRuleMappedRelationship(sg, rule, target),
             );
-            if (relationship !== undefined) {
-              await jobState.addRelationship(relationship);
-            }
           }
         }
       }
@@ -442,7 +432,6 @@ export const networkSteps: Step<
     name: 'Network Security Group Rules',
     entities: [],
     relationships: [
-      // can go either way?
       {
         _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
         sourceType: SECURITY_GROUP_ENTITY_TYPE,
@@ -453,6 +442,18 @@ export const networkSteps: Step<
         _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
         sourceType: SUBNET_ENTITY_TYPE,
         _class: RelationshipClass.ALLOWS,
+        targetType: SECURITY_GROUP_ENTITY_TYPE,
+      },
+      {
+        _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+        sourceType: SECURITY_GROUP_ENTITY_TYPE,
+        _class: RelationshipClass.DENIES,
+        targetType: SUBNET_ENTITY_TYPE,
+      },
+      {
+        _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+        sourceType: SUBNET_ENTITY_TYPE,
+        _class: RelationshipClass.DENIES,
         targetType: SECURITY_GROUP_ENTITY_TYPE,
       },
     ],

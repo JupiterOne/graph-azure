@@ -86,10 +86,10 @@ interface Rule {
   properties: FirewallRuleProperties;
 }
 
-function securityGroupRuleRelationshipClass(
-  rule: Rule,
-): RelationshipClass | undefined {
-  return rule.access === 'Allow' ? RelationshipClass.ALLOWS : undefined; // TODO implement DENIES and return
+function securityGroupRuleRelationshipClass(rule: Rule): RelationshipClass {
+  return rule.access === 'Allow'
+    ? RelationshipClass.ALLOWS
+    : RelationshipClass.DENIES;
 }
 
 function securityGroupRuleRelationshipDirection(
@@ -108,7 +108,7 @@ export function createSecurityGroupRuleSubnetRelationship(
   sg: NetworkSecurityGroup,
   rule: Rule,
   subnet: Subnet,
-): Relationship | undefined {
+): Relationship {
   const direction = securityGroupRuleRelationshipDirection(rule);
   const directionalProperties =
     direction === RelationshipDirection.FORWARD
@@ -124,48 +124,42 @@ export function createSecurityGroupRuleSubnetRelationship(
           toType: SECURITY_GROUP_ENTITY_TYPE,
           toKey: sg.id as string,
         };
-  const _class = securityGroupRuleRelationshipClass(rule);
-  if (_class !== undefined) {
-    return createDirectRelationship({
-      _class,
-      ...directionalProperties,
-      properties: {
-        ...rule.properties,
-        _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
-        _key: `${securityGroupRuleRelationshipKeyPrefix(rule)}:${subnet.id}`,
-      },
-    });
-  }
+  return createDirectRelationship({
+    _class: securityGroupRuleRelationshipClass(rule),
+    ...directionalProperties,
+    properties: {
+      ...rule.properties,
+      _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+      _key: `${securityGroupRuleRelationshipKeyPrefix(rule)}:${subnet.id}`,
+    },
+  });
 }
 
 export function createSecurityGroupRuleMappedRelationship(
   sg: NetworkSecurityGroup,
   rule: Rule,
   target: RuleTargetEntity,
-): Relationship | undefined {
+): Relationship {
   const targetFilterKeys = target.internet ? [['_key']] : [Object.keys(target)];
   const targetEntity = target.internet ? INTERNET : (target as Entity);
 
-  const _class = securityGroupRuleRelationshipClass(rule);
-  if (_class !== undefined) {
-    return createMappedRelationship({
-      _class,
-      _mapping: {
-        relationshipDirection: securityGroupRuleRelationshipDirection(rule),
-        sourceEntityKey: sg.id as string,
-        targetFilterKeys,
-        targetEntity,
-        skipTargetCreation: !!target._key,
-      },
-      properties: {
-        ...rule.properties,
-        _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
-        _key: `${securityGroupRuleRelationshipKeyPrefix(rule)}:${
-          target.internet ? 'internet' : Object.values(target).join(':')
-        }`,
-      },
-    });
-  }
+  return createMappedRelationship({
+    _class: securityGroupRuleRelationshipClass(rule),
+    _mapping: {
+      relationshipDirection: securityGroupRuleRelationshipDirection(rule),
+      sourceEntityKey: sg.id as string,
+      targetFilterKeys,
+      targetEntity,
+      skipTargetCreation: !!target._key,
+    },
+    properties: {
+      ...rule.properties,
+      _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+      _key: `${securityGroupRuleRelationshipKeyPrefix(rule)}:${
+        target.internet ? 'internet' : Object.values(target).join(':')
+      }`,
+    },
+  });
 }
 
 export function processSecurityGroupRules(sg: NetworkSecurityGroup): Rule[] {

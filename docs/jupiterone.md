@@ -66,6 +66,7 @@ DOCUMENTATION FOR USAGE INFORMATION:
 https://github.com/JupiterOne/sdk/blob/master/docs/integrations/development.md
 ********************************************************************************
 -->
+
 ## Data Model
 
 ### Entities
@@ -106,6 +107,7 @@ The following entities are created:
 | [RM] Cosmos DB Database     | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
 | [RM] Role Definition        | `azure_role_definition`       | `AccessRole`                    |
 | [RM] Classic Admin          | `azure_classic_admin_group`   | `UserGroup`                     |
+| [RM] Resource Group         | `azure_resource_group`        | `Group`                         |
 
 ### Relationships
 
@@ -159,6 +161,7 @@ The following relationships are created/mapped:
 | `azure_role_assignment`      | **ALLOWS**            | `azure_cosmosdb_account`        |
 | `azure_role_assignment`      | **USES**              | `azure_role_definition`         |
 | `azure_classic_admin_group`  | **HAS**               | `azure_user`                    |
+
 <!--
 ********************************************************************************
 END OF GENERATED DOCUMENTATION AFTER BELOW MARKER

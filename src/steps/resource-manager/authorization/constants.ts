@@ -30,6 +30,10 @@ import {
   RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
   STEP_RM_COSMOSDB_SQL_DATABASES,
 } from '../cosmosdb';
+import {
+  RESOURCE_GROUP_ENTITY,
+  STEP_RM_RESOURCES_RESOURCE_GROUPS,
+} from '../resources';
 
 // Fetch Role Assignments
 export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS =
@@ -174,8 +178,8 @@ export const ROLE_ASSIGNMENT_SCOPE_TYPES_MAP: RoleAssignmentScopeMap[] = [
   },
   {
     scopeMatcher: new RegExp(RESOURCE_GROUP_MATCHER + EOL_MATCHER),
-    type: 'azure_resource_group',
-    dependsOn: [],
+    type: RESOURCE_GROUP_ENTITY._type,
+    dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
   },
   {
     scopeMatcher: new RegExp(

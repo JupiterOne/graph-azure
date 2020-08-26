@@ -102,12 +102,12 @@ The following entities are created:
 | [RM] Role Assignment        | `azure_role_assignment`       | `AccessPolicy`                  |
 | [AD] Service Principal      | `azure_service_principal`     | `Service`                       |
 | [AD] User                   | `azure_user`                  | `User`                          |
+| [RM] Resource Group         | `azure_resource_group`        | `Group`                         |
 | [RM] Key Vault              | `azure_keyvault_service`      | `Service`                       |
 | [RM] Cosmos DB Account      | `azure_cosmosdb_account`      | `Account`, `Service`            |
 | [RM] Cosmos DB Database     | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
 | [RM] Role Definition        | `azure_role_definition`       | `AccessRole`                    |
 | [RM] Classic Admin          | `azure_classic_admin_group`   | `UserGroup`                     |
-| [RM] Resource Group         | `azure_resource_group`        | `Group`                         |
 
 ### Relationships
 

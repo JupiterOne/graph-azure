@@ -11,7 +11,7 @@ import {
   generateRelationshipType,
   StepRelationshipMetadata,
 } from '@jupiterone/integration-sdk-core';
-import { RelationshipClass } from '@jupiterone/data-model';
+import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 // Fetch Role Assignments
 export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS =

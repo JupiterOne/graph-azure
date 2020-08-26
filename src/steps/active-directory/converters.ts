@@ -33,7 +33,7 @@ import {
   SERVICE_PRINCIPAL_ENTITY_CLASS,
   SERVICE_PRINCIPAL_ENTITY_TYPE,
 } from './constants';
-import { RelationshipClass } from '@jupiterone/data-model';
+import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 export function createAccountEntity(instance: IntegrationInstance): Entity {
   return createIntegrationEntity({

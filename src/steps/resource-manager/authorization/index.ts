@@ -5,6 +5,7 @@ import {
   IntegrationError,
   Step,
   IntegrationStepExecutionContext,
+  generateRelationshipType,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker, AzureWebLinker } from '../../../azure';
@@ -35,6 +36,11 @@ import {
   ROLE_DEFINITION_ENTITY_CLASS,
   CLASSIC_ADMINISTRATOR_ENTITY_CLASS,
   CLASSIC_ADMINISTRATOR_RELATIONSHIP_CLASS,
+  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,
+  ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_TYPES,
+  ROLE_ASSIGNMENT_SCOPE_DEPENDS_ON,
+  getJupiterTypeForScope,
+  ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
 } from './constants';
 import {
   createRoleDefinitionEntity,
@@ -91,10 +97,10 @@ export async function findOrCreateRoleDefinitionEntity(
 }
 
 /**
- * Tries to fetch the target entity from the job state.
+ * Tries to fetch the principal entity from the job state.
  * If the entity is not in the job state, returns {_key, _type} for mapper.
  */
-export async function findOrBuildTargetEntityForRoleDefinition(
+export async function findOrBuildPrincipalEntityForRoleAssignment(
   executionContext: IntegrationStepContext,
   options: {
     principalId: string;
@@ -153,7 +159,7 @@ export async function buildRoleAssignmentPrincipalRelationships(
   await jobState.iterateEntities(
     { _type: ROLE_ASSIGNMENT_ENTITY_TYPE },
     async (roleAssignmentEntity: Entity) => {
-      const targetEntity = await findOrBuildTargetEntityForRoleDefinition(
+      const targetEntity = await findOrBuildPrincipalEntityForRoleAssignment(
         executionContext,
         {
           principalId: roleAssignmentEntity.principalId as string,
@@ -173,6 +179,72 @@ export async function buildRoleAssignmentPrincipalRelationships(
         await jobState.addRelationship(
           createDirectRelationship({
             _class: ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS,
+            from: roleAssignmentEntity,
+            to: targetEntity,
+          }),
+        );
+      }
+    },
+  );
+}
+
+/**
+ * Tries to fetch the scope entity from the job state.
+ * If the entity is not in the job state, returns {_key, _type} for mapper.
+ */
+export async function findOrBuildScopeEntityForRoleAssignment(
+  executionContext: IntegrationStepContext,
+  options: {
+    scope: string;
+  },
+): Promise<Entity | PlaceholderEntity> {
+  const { jobState } = executionContext;
+  const { scope } = options;
+  const targetType = getJupiterTypeForScope(scope);
+  let targetEntity: Entity | PlaceholderEntity | null = await jobState.findEntity(scope);
+  if (targetEntity === null) {
+    targetEntity = {
+      _type: targetType,
+      _key: scope,
+    };
+  }
+  return targetEntity;
+}
+
+export async function buildRoleAssignmentScopeRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: ROLE_ASSIGNMENT_ENTITY_TYPE },
+    async (roleAssignmentEntity: Entity) => {
+      const targetEntity = await findOrBuildScopeEntityForRoleAssignment(
+        executionContext,
+        {
+          scope: roleAssignmentEntity.scope as string,
+        },
+      );
+
+      if (isPlaceholderEntity(targetEntity)) {
+        await jobState.addRelationship(
+          createMappedRelationship({
+            _class: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
+            _type: generateRelationshipType(
+              ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
+              ROLE_ASSIGNMENT_ENTITY_TYPE,
+              targetEntity._type,
+            ),
+            source: roleAssignmentEntity,
+            target: targetEntity,
+            targetFilterKeys: [['_key']],
+          }),
+        );
+      } else {
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
+
             from: roleAssignmentEntity,
             to: targetEntity,
           }),
@@ -272,6 +344,17 @@ export const authorizationSteps: Step<
       ...ROLE_ASSIGNMENT_PRINCIPAL_DEPENDS_ON,
     ],
     executionHandler: buildRoleAssignmentPrincipalRelationships,
+  },
+  {
+    id: STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,
+    name: 'Role Assignment to Scope Relationships',
+    entities: [],
+    relationships: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_TYPES,
+    dependsOn: [
+      STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
+      ...ROLE_ASSIGNMENT_SCOPE_DEPENDS_ON,
+    ],
+    executionHandler: buildRoleAssignmentScopeRelationships,
   },
   {
     id: STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,

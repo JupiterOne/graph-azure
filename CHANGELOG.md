@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_role_assignment|allows|<scope>` relationships
+
 ### Changed
 
 - Upgraded to SDK version 3

@@ -66,7 +66,6 @@ DOCUMENTATION FOR USAGE INFORMATION:
 https://github.com/JupiterOne/sdk/blob/master/docs/integrations/development.md
 ********************************************************************************
 -->
-
 ## Data Model
 
 ### Entities
@@ -79,8 +78,6 @@ The following entities are created:
 | [AD] Group                  | `azure_user_group`            | `UserGroup`                     |
 | [AD] Group Member           | `azure_group_member`          | `User`                          |
 | [RM] Image                  | `azure_image`                 | `Image`                         |
-| [RM] Cosmos DB Account      | `azure_cosmosdb_account`      | `Account`, `Service`            |
-| [RM] Cosmos DB Database     | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
 | [RM] MariaDB Server         | `azure_mariadb_server`        | `Database`, `DataStore`, `Host` |
 | [RM] MariaDB Database       | `azure_mariadb_database`      | `Database`, `DataStore`         |
 | [RM] MySQL Server           | `azure_mysql_server`          | `Database`, `DataStore`, `Host` |
@@ -89,7 +86,6 @@ The following entities are created:
 | [RM] PostgreSQL Database    | `azure_postgresql_database`   | `Database`, `DataStore`         |
 | [RM] SQL Server             | `azure_sql_server`            | `Database`, `DataStore`, `Host` |
 | [RM] SQL Database           | `azure_sql_database`          | `Database`, `DataStore`         |
-| [RM] Key Vault              | `azure_keyvault_service`      | `Service`                       |
 | [RM] Load Balancer          | `azure_lb`                    | `Gateway`                       |
 | [RM] Public IP Address      | `azure_public_ip`             | `IpAddress`                     |
 | [RM] Network Interface      | `azure_nic`                   | `NetworkInterface`              |
@@ -105,6 +101,9 @@ The following entities are created:
 | [RM] Role Assignment        | `azure_role_assignment`       | `AccessPolicy`                  |
 | [AD] Service Principal      | `azure_service_principal`     | `Service`                       |
 | [AD] User                   | `azure_user`                  | `User`                          |
+| [RM] Key Vault              | `azure_keyvault_service`      | `Service`                       |
+| [RM] Cosmos DB Account      | `azure_cosmosdb_account`      | `Account`, `Service`            |
+| [RM] Cosmos DB Database     | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
 | [RM] Role Definition        | `azure_role_definition`       | `AccessRole`                    |
 | [RM] Classic Admin          | `azure_classic_admin_group`   | `UserGroup`                     |
 
@@ -118,12 +117,10 @@ The following relationships are created/mapped:
 | `azure_user_group`           | **HAS**               | `azure_user`                    |
 | `azure_user_group`           | **HAS**               | `azure_user_group`              |
 | `azure_user_group`           | **HAS**               | `azure_group_member`            |
-| `azure_cosmosdb_account`     | **HAS**               | `azure_cosmosdb_sql_database`   |
 | `azure_mariadb_server`       | **HAS**               | `azure_mariadb_database`        |
 | `azure_mysql_server`         | **HAS**               | `azure_mysql_database`          |
 | `azure_postgresql_server`    | **HAS**               | `azure_postgresql_database`     |
 | `azure_sql_server`           | **HAS**               | `azure_sql_database`            |
-| `azure_account`              | **HAS**               | `azure_keyvault_service`        |
 | `azure_lb`                   | **CONNECTS**          | `azure_nic`                     |
 | `azure_security_group`       | **PROTECTS**          | `azure_nic`                     |
 | `azure_vnet`                 | **CONTAINS**          | `azure_subnet`                  |
@@ -149,9 +146,19 @@ The following relationships are created/mapped:
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_service_principal`       |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_unknown`                 |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_user`                    |
+| `azure_account`              | **HAS**               | `azure_keyvault_service`        |
+| `azure_cosmosdb_account`     | **HAS**               | `azure_cosmosdb_sql_database`   |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_unknown_resource_type`   |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_subscription`            |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_resource_group`          |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_keyvault_service`        |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_nic`                     |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_security_group`          |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_public_ip`               |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_vnet`                    |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_cosmosdb_account`        |
 | `azure_role_assignment`      | **USES**              | `azure_role_definition`         |
 | `azure_classic_admin_group`  | **HAS**               | `azure_user`                    |
-
 <!--
 ********************************************************************************
 END OF GENERATED DOCUMENTATION AFTER BELOW MARKER

@@ -40,6 +40,7 @@ import {
   STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS,
   STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS,
   STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
+  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,
 } from './steps/resource-manager/authorization';
 
 describe('getStepStartStates', () => {
@@ -80,6 +81,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS]: {
         disabled: true,
       },
+      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS]: {
+        disabled: true,
+      },
       [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: true },
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: true },
     });
@@ -117,6 +121,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS]: {
         disabled: true,
       },
+      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS]: {
+        disabled: true,
+      },
       [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: true },
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: true },
     });
@@ -152,6 +159,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: false },
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: { disabled: false },
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS]: {
+        disabled: false,
+      },
+      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS]: {
         disabled: false,
       },
       [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: false },

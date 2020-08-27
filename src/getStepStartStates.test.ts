@@ -42,6 +42,7 @@ import {
   STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
   STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,
 } from './steps/resource-manager/authorization';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -86,6 +87,7 @@ describe('getStepStartStates', () => {
       },
       [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: true },
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
     });
   });
 
@@ -126,6 +128,7 @@ describe('getStepStartStates', () => {
       },
       [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: true },
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
     });
   });
 
@@ -166,6 +169,7 @@ describe('getStepStartStates', () => {
       },
       [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: false },
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: false },
+      [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: false },
     });
   });
 });

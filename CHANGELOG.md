@@ -11,6 +11,7 @@ and this project adheres to
 ### Added
 
 - Added `azure_role_assignment|allows|<scope>` relationships
+- Added `azure_resource_group` entities
 
 ### Changed
 

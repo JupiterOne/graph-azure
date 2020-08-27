@@ -41,6 +41,7 @@ import {
 } from './steps/resource-manager/network';
 import { STEP_RM_STORAGE_RESOURCES } from './steps/resource-manager/storage';
 import { IntegrationConfig } from './types';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -80,5 +81,6 @@ export default function getStepStartStates(
     [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS]: resourceManager,
     [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: resourceManager,
     [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: resourceManager,
+    [STEP_RM_RESOURCES_RESOURCE_GROUPS]: resourceManager,
   };
 }

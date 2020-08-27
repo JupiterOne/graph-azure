@@ -30,9 +30,6 @@ import { generateEntityKey } from '../../../utils/generateKeys';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { USER_ENTITY_TYPE, USER_ENTITY_CLASS } from '../../active-directory';
 import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
-import findOrBuildResourceEntityFromResourceId, {
-  getJupiterTypeForResourceId,
-} from '../utils/findOrBuildResourceEntityFromResourceId';
 
 let recording: Recording;
 
@@ -271,49 +268,6 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
     expect(response).toEqual({
       _type: entityType,
       _key: generateEntityKey(principalId),
-    });
-  });
-});
-
-describe('#findOrBuildScopeEntityForRoleAssignment', () => {
-  test('should find scope entity that exists in the job state', async () => {
-    const scope =
-      '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
-    const targetEntity: Entity = {
-      _class: ['Service'],
-      _type: 'azure_key_vault',
-      _key: scope,
-    };
-
-    const context = createMockStepExecutionContext<IntegrationConfig>({
-      instanceConfig,
-      entities: [targetEntity],
-    });
-
-    const response = await findOrBuildResourceEntityFromResourceId(context, {
-      resourceId: scope,
-    });
-
-    expect(response).toBe(targetEntity);
-  });
-
-  test('should build placeholder scope entity that does not exist in the job state', async () => {
-    const scope =
-      '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
-    const entityType = getJupiterTypeForResourceId(scope);
-
-    const context = createMockStepExecutionContext<IntegrationConfig>({
-      instanceConfig,
-      entities: [],
-    });
-
-    const response = await findOrBuildResourceEntityFromResourceId(context, {
-      resourceId: scope,
-    });
-
-    expect(response).toEqual({
-      _type: entityType,
-      _key: scope,
     });
   });
 });

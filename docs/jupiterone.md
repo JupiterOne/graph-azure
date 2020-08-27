@@ -102,10 +102,10 @@ The following entities are created:
 | [RM] Role Assignment        | `azure_role_assignment`       | `AccessPolicy`                  |
 | [AD] Service Principal      | `azure_service_principal`     | `Service`                       |
 | [AD] User                   | `azure_user`                  | `User`                          |
-| [RM] Resource Group         | `azure_resource_group`        | `Group`                         |
 | [RM] Key Vault              | `azure_keyvault_service`      | `Service`                       |
 | [RM] Cosmos DB Account      | `azure_cosmosdb_account`      | `Account`, `Service`            |
 | [RM] Cosmos DB Database     | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
+| [RM] Resource Group         | `azure_resource_group`        | `Group`                         |
 | [RM] Role Definition        | `azure_role_definition`       | `AccessRole`                    |
 | [RM] Classic Admin          | `azure_classic_admin_group`   | `UserGroup`                     |
 
@@ -151,16 +151,23 @@ The following relationships are created/mapped:
 | `azure_account`              | **HAS**               | `azure_keyvault_service`        |
 | `azure_cosmosdb_account`     | **HAS**               | `azure_cosmosdb_sql_database`   |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_unknown_resource_type`   |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_subscription`            |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_resource_group`          |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_keyvault_service`        |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_nic`                     |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_security_group`          |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_public_ip`               |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_vnet`                    |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_cosmosdb_account`        |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_subscription`            |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_resource_group`          |
 | `azure_role_assignment`      | **USES**              | `azure_role_definition`         |
 | `azure_classic_admin_group`  | **HAS**               | `azure_user`                    |
+| `azure_resource_group`       | **HAS**               | `azure_unknown_resource_type`   |
+| `azure_resource_group`       | **HAS**               | `azure_keyvault_service`        |
+| `azure_resource_group`       | **HAS**               | `azure_nic`                     |
+| `azure_resource_group`       | **HAS**               | `azure_security_group`          |
+| `azure_resource_group`       | **HAS**               | `azure_public_ip`               |
+| `azure_resource_group`       | **HAS**               | `azure_vnet`                    |
+| `azure_resource_group`       | **HAS**               | `azure_cosmosdb_account`        |
 
 <!--
 ********************************************************************************

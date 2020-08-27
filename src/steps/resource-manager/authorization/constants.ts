@@ -13,23 +13,15 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 import {
-  KEY_VAULT_SERVICE_ENTITY_TYPE,
-  STEP_RM_KEYVAULT_VAULTS,
-} from '../key-vault';
-import {
-  NETWORK_INTERFACE_ENTITY_TYPE,
-  STEP_RM_NETWORK_INTERFACES,
-  SECURITY_GROUP_ENTITY_TYPE,
-  STEP_RM_NETWORK_SECURITY_GROUPS,
-  PUBLIC_IP_ADDRESS_ENTITY_TYPE,
-  STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
-  VIRTUAL_NETWORK_ENTITY_TYPE,
-  STEP_RM_NETWORK_VIRTUAL_NETWORKS,
-} from '../network';
-import {
-  RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
-  STEP_RM_COSMOSDB_SQL_DATABASES,
-} from '../cosmosdb';
+  DEFAULT_RESOURCE_TYPE,
+  ResourceIdMap,
+  RESOURCE_ID_TYPES_MAP,
+  SUBSCRIPTION_MATCHER,
+  EOL_MATCHER,
+  RESOURCE_GROUP_MATCHER,
+  makeMatcherDependsOn,
+  makeMatcherEntityTypes,
+} from '../utils/findOrBuildResourceEntityFromResourceId';
 import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
@@ -156,103 +148,27 @@ export const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_TYPES = [
 export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS =
   'rm-authorization-role-assignment-scope-relationships';
 
-export const ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS =
-  RelationshipClass.ALLOWS;
-
-interface RoleAssignmentScopeMap {
-  scopeMatcher: RegExp;
-  type: string;
-  dependsOn: string[];
-}
-
-const EOL_MATCHER = '$';
-
-const SUBSCRIPTION_MATCHER = '/subscriptions/[^/]+';
-const RESOURCE_GROUP_MATCHER = SUBSCRIPTION_MATCHER + '/resourceGroups/[^/]+';
-
-export const ROLE_ASSIGNMENT_SCOPE_TYPES_MAP: RoleAssignmentScopeMap[] = [
+export const SCOPE_TYPES_MAP: ResourceIdMap[] = [
+  ...RESOURCE_ID_TYPES_MAP,
   {
-    scopeMatcher: new RegExp(SUBSCRIPTION_MATCHER + EOL_MATCHER),
-    type: 'azure_subscription',
+    resourceIdMatcher: new RegExp(SUBSCRIPTION_MATCHER + EOL_MATCHER),
+    _type: 'azure_subscription',
     dependsOn: [],
   },
   {
-    scopeMatcher: new RegExp(RESOURCE_GROUP_MATCHER + EOL_MATCHER),
-    type: RESOURCE_GROUP_ENTITY._type,
+    resourceIdMatcher: new RegExp(RESOURCE_GROUP_MATCHER + EOL_MATCHER),
+    _type: RESOURCE_GROUP_ENTITY._type,
     dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
-  },
-  {
-    scopeMatcher: new RegExp(
-      RESOURCE_GROUP_MATCHER +
-        '/providers/Microsoft.KeyVault/vaults/[^/]+' +
-        EOL_MATCHER,
-    ),
-    type: KEY_VAULT_SERVICE_ENTITY_TYPE,
-    dependsOn: [STEP_RM_KEYVAULT_VAULTS],
-  },
-  {
-    scopeMatcher: new RegExp(
-      RESOURCE_GROUP_MATCHER +
-        '/providers/Microsoft.Network/networkInterfaces/[^/]+' +
-        EOL_MATCHER,
-    ),
-    type: NETWORK_INTERFACE_ENTITY_TYPE,
-    dependsOn: [STEP_RM_NETWORK_INTERFACES],
-  },
-  {
-    scopeMatcher: new RegExp(
-      RESOURCE_GROUP_MATCHER +
-        '/providers/Microsoft.Network/networkSecurityGroups/[^/]+' +
-        EOL_MATCHER,
-    ),
-    type: SECURITY_GROUP_ENTITY_TYPE,
-    dependsOn: [STEP_RM_NETWORK_SECURITY_GROUPS],
-  },
-  {
-    scopeMatcher: new RegExp(
-      RESOURCE_GROUP_MATCHER +
-        '/providers/Microsoft.Network/publicIPAddresses/[^/]+' +
-        EOL_MATCHER,
-    ),
-    type: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
-    dependsOn: [STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES],
-  },
-  {
-    scopeMatcher: new RegExp(
-      RESOURCE_GROUP_MATCHER +
-        '/providers/Microsoft.Network/virtualNetworks/[^/]+' +
-        EOL_MATCHER,
-    ),
-    type: VIRTUAL_NETWORK_ENTITY_TYPE,
-    dependsOn: [STEP_RM_NETWORK_VIRTUAL_NETWORKS],
-  },
-  {
-    scopeMatcher: new RegExp(
-      RESOURCE_GROUP_MATCHER +
-        '/providers/Microsoft.DocumentDB/databaseAccounts/[^/]+' +
-        EOL_MATCHER,
-    ),
-    type: RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
-    dependsOn: [STEP_RM_COSMOSDB_SQL_DATABASES],
   },
 ];
 
-export const ROLE_ASSIGNMENT_DEFAULT_RESOURCE_TYPE =
-  'azure_unknown_resource_type';
-
-export const ROLE_ASSIGNMENT_SCOPE_DEPENDS_ON = ([] as string[]).concat(
-  ...ROLE_ASSIGNMENT_SCOPE_TYPES_MAP.map((t) => t.dependsOn),
-);
-export const ROLE_ASSIGNMENT_SCOPE_ENTITY_TYPES = ([] as string[]).concat(
-  ...ROLE_ASSIGNMENT_SCOPE_TYPES_MAP.map((t) => t.type),
+export const SCOPE_MATCHER_DEPENDS_ON = makeMatcherDependsOn(SCOPE_TYPES_MAP);
+export const SCOPE_MATCHER_ENTITY_TYPES = makeMatcherEntityTypes(
+  SCOPE_TYPES_MAP,
 );
 
-export function getJupiterTypeForScope(scope: string): string {
-  return (
-    ROLE_ASSIGNMENT_SCOPE_TYPES_MAP.find((t) => t.scopeMatcher.test(scope))
-      ?.type || ROLE_ASSIGNMENT_DEFAULT_PRINCIPAL_TYPE
-  );
-}
+export const ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS =
+  RelationshipClass.ALLOWS;
 
 export function createRoleAssignmentScopeRelationshipType(
   targetEntityType: string,
@@ -270,12 +186,8 @@ export function createRoleAssignmentScopeRelationshipType(
 }
 
 export const ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_TYPES = [
-  createRoleAssignmentScopeRelationshipType(
-    ROLE_ASSIGNMENT_DEFAULT_RESOURCE_TYPE,
-  ),
-  ...ROLE_ASSIGNMENT_SCOPE_ENTITY_TYPES.map(
-    createRoleAssignmentScopeRelationshipType,
-  ),
+  createRoleAssignmentScopeRelationshipType(DEFAULT_RESOURCE_TYPE),
+  ...SCOPE_MATCHER_ENTITY_TYPES.map(createRoleAssignmentScopeRelationshipType),
 ];
 
 // Fetch Role Definitions

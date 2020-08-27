@@ -5,7 +5,6 @@ import {
   fetchRoleAssignments,
   buildRoleAssignmentPrincipalRelationships,
   fetchRoleDefinitions,
-  findOrBuildScopeEntityForRoleAssignment,
   buildRoleAssignmentScopeRelationships,
 } from '.';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
@@ -22,7 +21,6 @@ import {
   getJupiterTypeForPrincipalType,
   ROLE_ASSIGNMENT_ENTITY_TYPE,
   ROLE_ASSIGNMENT_ENTITY_CLASS,
-  getJupiterTypeForScope,
 } from './constants';
 import {
   PrincipalType,
@@ -32,6 +30,9 @@ import { generateEntityKey } from '../../../utils/generateKeys';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { USER_ENTITY_TYPE, USER_ENTITY_CLASS } from '../../active-directory';
 import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
+import findOrBuildResourceEntityFromResourceId, {
+  getJupiterTypeForResourceId,
+} from '../utils/findOrBuildResourceEntityFromResourceId';
 
 let recording: Recording;
 
@@ -278,10 +279,9 @@ describe('#findOrBuildScopeEntityForRoleAssignment', () => {
   test('should find scope entity that exists in the job state', async () => {
     const scope =
       '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
-    const entityType = getJupiterTypeForScope(scope);
     const targetEntity: Entity = {
       _class: ['Service'],
-      _type: entityType,
+      _type: 'azure_key_vault',
       _key: scope,
     };
 
@@ -290,8 +290,8 @@ describe('#findOrBuildScopeEntityForRoleAssignment', () => {
       entities: [targetEntity],
     });
 
-    const response = await findOrBuildScopeEntityForRoleAssignment(context, {
-      scope,
+    const response = await findOrBuildResourceEntityFromResourceId(context, {
+      resourceId: scope,
     });
 
     expect(response).toBe(targetEntity);
@@ -300,15 +300,15 @@ describe('#findOrBuildScopeEntityForRoleAssignment', () => {
   test('should build placeholder scope entity that does not exist in the job state', async () => {
     const scope =
       '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
-    const entityType = getJupiterTypeForScope(scope);
+    const entityType = getJupiterTypeForResourceId(scope);
 
     const context = createMockStepExecutionContext<IntegrationConfig>({
       instanceConfig,
       entities: [],
     });
 
-    const response = await findOrBuildScopeEntityForRoleAssignment(context, {
-      scope,
+    const response = await findOrBuildResourceEntityFromResourceId(context, {
+      resourceId: scope,
     });
 
     expect(response).toEqual({

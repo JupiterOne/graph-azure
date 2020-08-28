@@ -16,9 +16,6 @@ import {
   DEFAULT_RESOURCE_TYPE,
   ResourceIdMap,
   RESOURCE_ID_TYPES_MAP,
-  SUBSCRIPTION_MATCHER,
-  EOL_MATCHER,
-  RESOURCE_GROUP_MATCHER,
   makeMatcherDependsOn,
   makeMatcherEntityTypes,
 } from '../utils/findOrBuildResourceEntityFromResourceId';
@@ -26,6 +23,11 @@ import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
 } from '../resources';
+import {
+  SUBSCRIPTION_MATCHER,
+  EOL_MATCHER,
+  RESOURCE_GROUP_MATCHER,
+} from '../utils/matchers';
 
 // Fetch Role Assignments
 export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS =

@@ -40,6 +40,8 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 import { IntegrationConfig } from '../../../types';
+import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 
 export * from './constants';
 
@@ -68,8 +70,11 @@ export const databaseSteps: Step<
         _class: RM_MARIADB_SERVER_DATABASE_RELATIONSHIP_CLASS,
         targetType: RM_MARIADB_DATABASE_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        RM_MARIADB_SERVER_ENTITY_TYPE,
+      ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMariaDBDatabases,
   },
   {
@@ -94,8 +99,11 @@ export const databaseSteps: Step<
         _class: RM_MYSQL_SERVER_DATABASE_RELATIONSHIP_CLASS,
         targetType: RM_MYSQL_DATABASE_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        RM_MYSQL_SERVER_ENTITY_TYPE,
+      ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMySQLDatabases,
   },
   {
@@ -120,8 +128,11 @@ export const databaseSteps: Step<
         _class: RM_POSTGRESQL_SERVER_DATABASE_RELATIONSHIP_CLASS,
         targetType: RM_POSTGRESQL_DATABASE_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        RM_POSTGRESQL_SERVER_ENTITY_TYPE,
+      ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPostgreSQLDatabases,
   },
   {
@@ -146,8 +157,11 @@ export const databaseSteps: Step<
         _class: RM_SQL_SERVER_DATABASE_RELATIONSHIP_CLASS,
         targetType: RM_SQL_DATABASE_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        RM_SQL_SERVER_ENTITY_TYPE,
+      ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchSQLDatabases,
   },
 ];

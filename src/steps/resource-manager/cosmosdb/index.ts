@@ -20,6 +20,10 @@ import {
   RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_CLASS,
 } from './constants';
 import { createAccountEntity, createSQLDatabaseEntity } from './converters';
+import createResourceGroupResourceRelationship, {
+  createResourceGroupResourceRelationshipMetadata,
+} from '../utils/createResourceGroupResourceRelationship';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 
 export * from './constants';
 
@@ -35,6 +39,13 @@ export async function fetchCosmosDBSqlDatabases(
   await client.iterateAccounts(async (account) => {
     const dbAccountEntity = createAccountEntity(webLinker, account);
     await jobState.addEntity(dbAccountEntity);
+
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        dbAccountEntity,
+      ),
+    );
 
     await client.iterateSQLDatabases(account, async (database) => {
       const dbEntity = createSQLDatabaseEntity(webLinker, account, database);
@@ -78,8 +89,11 @@ export const cosmosdbSteps: Step<
         _class: RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_CLASS,
         targetType: RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
+      ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchCosmosDBSqlDatabases,
   },
 ];

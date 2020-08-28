@@ -18,6 +18,10 @@ import {
   ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
 } from './constants';
 import { createKeyVaultEntity } from './converters';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import createResourceGroupResourceRelationship, {
+  createResourceGroupResourceRelationshipMetadata,
+} from '../utils/createResourceGroupResourceRelationship';
 
 export * from './constants';
 
@@ -33,6 +37,12 @@ export async function fetchKeyVaults(
   await client.iterateKeyVaults(async (vault) => {
     const vaultEntity = createKeyVaultEntity(webLinker, vault);
     await jobState.addEntity(vaultEntity);
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        vaultEntity,
+      ),
+    );
     await jobState.addRelationship(
       createDirectRelationship({
         _class: RelationshipClass.HAS,
@@ -63,8 +73,11 @@ export const keyvaultSteps: Step<
         _class: ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
         targetType: KEY_VAULT_SERVICE_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        KEY_VAULT_SERVICE_ENTITY_TYPE,
+      ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,
   },
 ];

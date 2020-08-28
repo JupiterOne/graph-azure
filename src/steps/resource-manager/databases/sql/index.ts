@@ -18,6 +18,7 @@ import {
   setDatabaseEncryption,
   setServerSecurityAlerting,
 } from './converters';
+import createResourceGroupResourceRelationship from '../../utils/createResourceGroupResourceRelationship';
 
 export * from './constants';
 
@@ -47,6 +48,13 @@ export async function fetchSQLDatabases(
     );
 
     await jobState.addEntity(serverEntity);
+
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        serverEntity,
+      ),
+    );
 
     try {
       await client.iterateDatabases(server, async (database) => {

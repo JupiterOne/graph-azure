@@ -78,6 +78,7 @@ The following entities are created:
 | [AD] Account                | `azure_account`               | `Account`                       |
 | [AD] Group                  | `azure_user_group`            | `UserGroup`                     |
 | [AD] Group Member           | `azure_group_member`          | `User`                          |
+| [RM] Resource Group         | `azure_resource_group`        | `Group`                         |
 | [RM] Image                  | `azure_image`                 | `Image`                         |
 | [RM] MariaDB Server         | `azure_mariadb_server`        | `Database`, `DataStore`, `Host` |
 | [RM] MariaDB Database       | `azure_mariadb_database`      | `Database`, `DataStore`         |
@@ -105,7 +106,6 @@ The following entities are created:
 | [RM] Key Vault              | `azure_keyvault_service`      | `Service`                       |
 | [RM] Cosmos DB Account      | `azure_cosmosdb_account`      | `Account`, `Service`            |
 | [RM] Cosmos DB Database     | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
-| [RM] Resource Group         | `azure_resource_group`        | `Group`                         |
 | [RM] Role Definition        | `azure_role_definition`       | `AccessRole`                    |
 | [RM] Classic Admin          | `azure_classic_admin_group`   | `UserGroup`                     |
 
@@ -119,20 +119,34 @@ The following relationships are created/mapped:
 | `azure_user_group`           | **HAS**               | `azure_user`                    |
 | `azure_user_group`           | **HAS**               | `azure_user_group`              |
 | `azure_user_group`           | **HAS**               | `azure_group_member`            |
+| `azure_resource_group`       | **HAS**               | `azure_image`                   |
 | `azure_mariadb_server`       | **HAS**               | `azure_mariadb_database`        |
+| `azure_resource_group`       | **HAS**               | `azure_mariadb_server`          |
 | `azure_mysql_server`         | **HAS**               | `azure_mysql_database`          |
+| `azure_resource_group`       | **HAS**               | `azure_mysql_server`            |
 | `azure_postgresql_server`    | **HAS**               | `azure_postgresql_database`     |
+| `azure_resource_group`       | **HAS**               | `azure_postgresql_server`       |
 | `azure_sql_server`           | **HAS**               | `azure_sql_database`            |
+| `azure_resource_group`       | **HAS**               | `azure_sql_server`              |
 | `azure_lb`                   | **CONNECTS**          | `azure_nic`                     |
+| `azure_resource_group`       | **HAS**               | `azure_lb`                      |
+| `azure_resource_group`       | **HAS**               | `azure_public_ip`               |
+| `azure_resource_group`       | **HAS**               | `azure_nic`                     |
 | `azure_security_group`       | **PROTECTS**          | `azure_nic`                     |
+| `azure_resource_group`       | **HAS**               | `azure_security_group`          |
 | `azure_vnet`                 | **CONTAINS**          | `azure_subnet`                  |
 | `azure_security_group`       | **PROTECTS**          | `azure_subnet`                  |
+| `azure_resource_group`       | **HAS**               | `azure_vnet`                    |
 | `azure_security_group`       | **ALLOWS**            | `azure_subnet`                  |
 | `azure_account`              | **HAS**               | `azure_storage_blob_service`    |
+| `azure_resource_group`       | **HAS**               | `azure_storage_blob_service`    |
 | `azure_storage_blob_service` | **HAS**               | `azure_storage_container`       |
 | `azure_account`              | **HAS**               | `azure_storage_file_service`    |
+| `azure_resource_group`       | **HAS**               | `azure_storage_file_service`    |
 | `azure_storage_file_service` | **HAS**               | `azure_storage_share`           |
+| `azure_resource_group`       | **HAS**               | `azure_managed_disk`            |
 | `azure_vm`                   | **USES**              | `azure_managed_disk`            |
+| `azure_resource_group`       | **HAS**               | `azure_vm`                      |
 | `azure_subnet`               | **HAS**               | `azure_vm`                      |
 | `azure_vm`                   | **USES**              | `azure_nic`                     |
 | `azure_vm`                   | **USES**              | `azure_public_ip`               |
@@ -149,7 +163,9 @@ The following relationships are created/mapped:
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_unknown`                 |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_user`                    |
 | `azure_account`              | **HAS**               | `azure_keyvault_service`        |
+| `azure_resource_group`       | **HAS**               | `azure_keyvault_service`        |
 | `azure_cosmosdb_account`     | **HAS**               | `azure_cosmosdb_sql_database`   |
+| `azure_resource_group`       | **HAS**               | `azure_cosmosdb_account`        |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_unknown_resource_type`   |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_keyvault_service`        |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_nic`                     |
@@ -161,13 +177,6 @@ The following relationships are created/mapped:
 | `azure_role_assignment`      | **ALLOWS**            | `azure_resource_group`          |
 | `azure_role_assignment`      | **USES**              | `azure_role_definition`         |
 | `azure_classic_admin_group`  | **HAS**               | `azure_user`                    |
-| `azure_resource_group`       | **HAS**               | `azure_unknown_resource_type`   |
-| `azure_resource_group`       | **HAS**               | `azure_keyvault_service`        |
-| `azure_resource_group`       | **HAS**               | `azure_nic`                     |
-| `azure_resource_group`       | **HAS**               | `azure_security_group`          |
-| `azure_resource_group`       | **HAS**               | `azure_public_ip`               |
-| `azure_resource_group`       | **HAS**               | `azure_vnet`                    |
-| `azure_resource_group`       | **HAS**               | `azure_cosmosdb_account`        |
 
 <!--
 ********************************************************************************

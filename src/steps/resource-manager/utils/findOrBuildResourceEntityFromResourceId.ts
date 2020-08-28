@@ -18,6 +18,7 @@ import {
   RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
   STEP_RM_COSMOSDB_SQL_DATABASES,
 } from '../cosmosdb';
+import { RESOURCE_GROUP_MATCHER, EOL_MATCHER } from './matchers';
 
 export interface ResourceIdMap {
   resourceIdMatcher: RegExp;
@@ -25,12 +26,6 @@ export interface ResourceIdMap {
   _type: string;
   dependsOn: string[];
 }
-
-export const EOL_MATCHER = '$';
-
-export const SUBSCRIPTION_MATCHER = '/subscriptions/[^/]+';
-export const RESOURCE_GROUP_MATCHER =
-  SUBSCRIPTION_MATCHER + '/resourceGroups/[^/]+';
 
 export const RESOURCE_ID_TYPES_MAP: ResourceIdMap[] = [
   {

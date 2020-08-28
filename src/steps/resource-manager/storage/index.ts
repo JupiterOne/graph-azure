@@ -34,6 +34,10 @@ import {
   createStorageFileShareEntity,
   createStorageServiceEntity,
 } from './converters';
+import createResourceGroupResourceRelationship, {
+  createResourceGroupResourceRelationshipMetadata,
+} from '../utils/createResourceGroupResourceRelationship';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 
 export * from './constants';
 
@@ -141,6 +145,10 @@ async function synchronizeBlobStorage(
     }),
   );
 
+  await jobState.addRelationship(
+    await createResourceGroupResourceRelationship(context, serviceEntity),
+  );
+
   await client.iterateStorageBlobContainers(
     storageAccount,
     async (container) => {
@@ -190,6 +198,10 @@ async function synchronizeFileStorage(
       from: accountEntity,
       to: serviceEntity,
     }),
+  );
+
+  await jobState.addRelationship(
+    await createResourceGroupResourceRelationship(context, serviceEntity),
   );
 
   await client.iterateFileShares(storageAccount, async (e) => {
@@ -249,6 +261,9 @@ export const storageSteps: Step<
         _class: ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_CLASS,
         targetType: STORAGE_BLOB_SERVICE_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        STORAGE_BLOB_SERVICE_ENTITY_TYPE,
+      ),
       {
         _type: STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_TYPE,
         sourceType: STORAGE_BLOB_SERVICE_ENTITY_TYPE,
@@ -261,6 +276,9 @@ export const storageSteps: Step<
         _class: ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_CLASS,
         targetType: STORAGE_FILE_SERVICE_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        STORAGE_FILE_SERVICE_ENTITY_TYPE,
+      ),
       {
         _type: STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP_TYPE,
         sourceType: STORAGE_FILE_SERVICE_ENTITY_TYPE,
@@ -274,7 +292,7 @@ export const storageSteps: Step<
 
     // STORAGE_TABLE_SERVICE_ENTITY_TYPE,
     // ACCOUNT_STORAGE_TABLE_SERVICE_RELATIONSHIP_TYPE,
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchStorageResources,
   },
 ];

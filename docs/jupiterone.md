@@ -106,6 +106,7 @@ The following entities are created:
 | [RM] Key Vault              | `azure_keyvault_service`      | `Service`                       |
 | [RM] Cosmos DB Account      | `azure_cosmosdb_account`      | `Account`, `Service`            |
 | [RM] Cosmos DB Database     | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
+| [RM] Subscription           | `azure_subscription`          | `Account`                       |
 | [RM] Role Definition        | `azure_role_definition`       | `AccessRole`                    |
 | [RM] Classic Admin          | `azure_classic_admin_group`   | `UserGroup`                     |
 

@@ -14,6 +14,7 @@ and this project adheres to
 - Added `azure_resource_group` entities
 - Added `azure_resource_group|has|<resource>` relationships
 - Added `azure_subscription` entities
+- Added `azure_subscription|has|azure_resource_group` relationships
 
 ### Changed
 

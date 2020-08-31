@@ -72,10 +72,15 @@ export abstract class Client {
    *
    * @param ctor an AzureServiceClient constructor function
    */
-  async getAuthenticatedServiceClient<T>(ctor: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new (...args: any[]): T;
-  }): Promise<T> {
+  async getAuthenticatedServiceClient<T>(
+    ctor: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      new (...args: any[]): T;
+    },
+    options?: {
+      passSubscriptionId?: boolean;
+    },
+  ): Promise<T> {
     if (!this.auth) {
       this.auth = await authenticate(this.config);
     }
@@ -83,6 +88,10 @@ export abstract class Client {
       auth: this.auth,
       logger: this.logger,
       noRetryPolicy: this.noRetryPolicy,
+      passSubscriptionId:
+        options?.passSubscriptionId === undefined
+          ? true
+          : options.passSubscriptionId,
     });
     return client;
   }
@@ -167,12 +176,13 @@ export function createClient<T>(
     auth: AzureManagementClientCredentials;
     logger: IntegrationLogger;
     noRetryPolicy?: boolean;
+    passSubscriptionId: boolean;
   },
 ): T {
   // Builds a custom policy chain to address
   // https://github.com/Azure/azure-sdk-for-js/issues/7989
   // See also: https://docs.microsoft.com/en-us/azure/virtual-machines/troubleshooting/troubleshooting-throttling-errors
-  return new ctor(options.auth.credentials, options.auth.subscriptionId, {
+  const constructorOptions = {
     noRetryPolicy: true, // < -- This removes retry policies so they can be added after the Deserialization
     requestPolicyFactories: (
       defaultRequestPolicyFactories: RequestPolicyFactory[],
@@ -194,7 +204,19 @@ export function createClient<T>(
 
       return policyChain;
     },
-  });
+  };
+
+  let args: any[];
+  if (options.passSubscriptionId) {
+    args = [
+      options.auth.credentials,
+      options.auth.subscriptionId,
+      constructorOptions,
+    ];
+  } else {
+    args = [options.auth.credentials, constructorOptions];
+  }
+  return new ctor(...args);
 }
 
 /**

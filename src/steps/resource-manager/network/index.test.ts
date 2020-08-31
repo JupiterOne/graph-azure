@@ -314,8 +314,6 @@ test('network steps', async () => {
     },
   );
 
-  console.log(context.jobState.collectedRelationships);
-
   expect(context.jobState.collectedRelationships).toContainOnlyGraphObjects(
     // VPC default, eastus
     {

@@ -13,6 +13,7 @@ and this project adheres to
 - Added `azure_role_assignment|allows|<scope>` relationships
 - Added `azure_resource_group` entities
 - Added `azure_resource_group|has|<resource>` relationships
+- Added `azure_subscription` entities
 
 ### Changed
 

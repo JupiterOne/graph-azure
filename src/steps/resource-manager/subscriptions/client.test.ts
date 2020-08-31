@@ -22,7 +22,7 @@ afterEach(async () => {
   await recording.stop();
 });
 
-describe.skip('iterateSubscriptions', () => {
+describe('iterateSubscriptions', () => {
   test('all', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
@@ -45,7 +45,12 @@ describe.skip('iterateSubscriptions', () => {
 
     expect(resources).toContainEqual(
       expect.objectContaining({
-        name: 'j1dev',
+        authorizationSource: expect.any(String),
+        displayName: expect.any(String),
+        id: expect.any(String),
+        state: expect.any(String),
+        subscriptionId: expect.any(String),
+        subscriptionPolicies: expect.any(Object),
       }),
     );
   });

@@ -40,6 +40,7 @@ import {
   ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_TYPES,
   ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
   SCOPE_MATCHER_DEPENDS_ON,
+  SCOPE_TYPES_MAP,
 } from './constants';
 import {
   createRoleDefinitionEntity,
@@ -195,6 +196,7 @@ export async function buildRoleAssignmentScopeRelationships(
         executionContext,
         {
           resourceId: roleAssignmentEntity.scope as string,
+          resourceIdMap: SCOPE_TYPES_MAP,
         },
       );
 

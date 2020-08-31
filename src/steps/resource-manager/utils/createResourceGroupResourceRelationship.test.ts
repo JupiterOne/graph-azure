@@ -44,7 +44,7 @@ describe('#createResourceGroupResourceRelationship', () => {
     });
   });
 
-  test('should return mapped relationship when resourceGroup does not exist in jobState', async () => {
+  test('should throw when resourceGroup does not exist in jobState', async () => {
     const resourceGroupId =
       '/subscriptions/subscription-id/resourceGroups/resource-group-id';
 
@@ -60,29 +60,12 @@ describe('#createResourceGroupResourceRelationship', () => {
         resourceGroupId + '/providers/Microsoft/KeyVault/vaults/key-vault-id',
     };
 
-    const result = await createResourceGroupResourceRelationship(
-      context,
-      resourceEntity,
-    );
+    const exec = async () =>
+      createResourceGroupResourceRelationship(context, resourceEntity);
 
-    expect(result).toEqual({
-      _class: 'HAS',
-      _key:
-        '/subscriptions/subscription-id/resourceGroups/resource-group-id|has|/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft/KeyVault/vaults/key-vault-id',
-      _mapping: {
-        relationshipDirection: 'REVERSE',
-        sourceEntityKey:
-          '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft/KeyVault/vaults/key-vault-id',
-        targetEntity: {
-          _key:
-            '/subscriptions/subscription-id/resourceGroups/resource-group-id',
-          _type: 'azure_resource_group',
-        },
-        targetFilterKeys: [['_type', '_key']],
-      },
-      _type: 'azure_resource_group_has_keyvault_service',
-      displayName: 'HAS',
-    });
+    await expect(exec).rejects.toThrow(
+      'Could not find the resource group "/subscriptions/subscription-id/resourceGroups/resource-group-id" in this subscription',
+    );
   });
 
   test('should throw when resourceGroup cannot be extracted from entity _key', async () => {

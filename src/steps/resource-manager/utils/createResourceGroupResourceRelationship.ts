@@ -2,14 +2,11 @@ import {
   Entity,
   StepExecutionContext,
   createDirectRelationship,
-  createMappedRelationship,
-  Relationship,
-  RelationshipDirection,
   IntegrationError,
   RelationshipClass,
   StepRelationshipMetadata,
   generateRelationshipType,
-  generateRelationshipKey,
+  ExplicitRelationship,
 } from '@jupiterone/integration-sdk-core';
 import { RESOURCE_GROUP_ENTITY } from '../resources';
 import { RESOURCE_GROUP_MATCHER } from './matchers';
@@ -36,7 +33,7 @@ const resourceRegex = new RegExp(RESOURCE_GROUP_MATCHER);
 export async function createResourceGroupResourceRelationship(
   executionContext: StepExecutionContext,
   resourceEntity: Entity,
-): Promise<Relationship> {
+): Promise<ExplicitRelationship> {
   const resourceGroupIdMatch = resourceEntity._key.match(resourceRegex);
   if (!resourceGroupIdMatch) {
     throw new IntegrationError({
@@ -55,24 +52,9 @@ export async function createResourceGroupResourceRelationship(
       to: resourceEntity,
     });
   } else {
-    const relationshipMetadata = createResourceGroupResourceRelationshipMetadata(
-      resourceEntity._type,
-    );
-    return createMappedRelationship({
-      _key: generateRelationshipKey(
-        relationshipMetadata._class,
-        resourceGroupId,
-        resourceEntity._key,
-      ),
-      _type: relationshipMetadata._type,
-      _class: relationshipMetadata._class,
-      relationshipDirection: RelationshipDirection.REVERSE,
-      source: resourceEntity,
-      target: {
-        _type: RESOURCE_GROUP_ENTITY._type,
-        _key: resourceGroupId,
-      },
-      targetFilterKeys: [['_type', '_key']],
+    throw new IntegrationError({
+      message: `Could not find the resource group "${resourceGroupId}" in this subscription.`,
+      code: 'MISSING_RESOURCE_GROUP',
     });
   }
 }

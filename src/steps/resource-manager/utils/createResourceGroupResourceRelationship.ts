@@ -30,6 +30,12 @@ export function createResourceGroupResourceRelationshipMetadata(
 
 const resourceRegex = new RegExp(RESOURCE_GROUP_MATCHER);
 
+function lowercaseAfterLastParentheses(s: string): string {
+  const splitS = s.split('/');
+  const lastElement = splitS.pop() as string;
+  return [...splitS, lastElement.toLowerCase()].join('/');
+}
+
 export async function createResourceGroupResourceRelationship(
   executionContext: StepExecutionContext,
   resourceEntity: Entity,
@@ -44,7 +50,9 @@ export async function createResourceGroupResourceRelationship(
   const { jobState } = executionContext;
   const resourceGroupId = resourceGroupIdMatch[0];
 
-  const resourceGroupEntity = await jobState.findEntity(resourceGroupId);
+  const resourceGroupEntity = await jobState.findEntity(
+    lowercaseAfterLastParentheses(resourceGroupId),
+  );
   if (resourceGroupEntity) {
     return createDirectRelationship({
       _class: RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS,

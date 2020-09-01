@@ -1,7 +1,7 @@
 import {
   IntegrationExecutionContext,
-  IntegrationProviderAuthenticationError,
   IntegrationValidationError,
+  IntegrationError,
 } from '@jupiterone/integration-sdk-core';
 
 import { default as authenticateGraph } from './azure/graph/authenticate';
@@ -25,7 +25,10 @@ export default async function validateInvocation(
       await authenticateResourceManager(config);
     }
   } catch (err) {
-    validationContext.logger.error({ err });
-    throw new IntegrationProviderAuthenticationError(err);
+    if (!(err instanceof IntegrationError)) {
+      throw new IntegrationValidationError(err);
+    } else {
+      throw err;
+    }
   }
 }

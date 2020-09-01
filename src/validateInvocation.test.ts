@@ -1,7 +1,4 @@
-import {
-  IntegrationProviderAuthenticationError,
-  IntegrationValidationError,
-} from '@jupiterone/integration-sdk-core';
+import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import { createMockExecutionContext } from '@jupiterone/integration-sdk-testing';
 
 import { IntegrationConfig } from './types';
@@ -28,9 +25,11 @@ it('auth error', async () => {
     },
   });
 
-  try {
+  const exec = async () => {
     await validateInvocation(executionContext);
-  } catch (e) {
-    expect(e instanceof IntegrationProviderAuthenticationError).toBe(true);
-  }
+  };
+
+  await expect(exec).rejects.toThrow(
+    "Provider API failed at https://login.microsoftonline.com/INVALID/oauth2/v2.0/token: invalid_request AADSTS90002: Tenant 'invalid' not found. This may happen if there are no active subscriptions for the tenant. Check to make sure you have the correct tenant ID. Check with your subscription administrator.",
+  );
 });

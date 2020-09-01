@@ -25,6 +25,7 @@ export default async function validateInvocation(
       await authenticateResourceManager(config);
     }
   } catch (err) {
+    validationContext.logger.error({ err });
     throw new IntegrationProviderAuthenticationError(err);
   }
 }

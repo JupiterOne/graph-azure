@@ -8,7 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
-### 4.3.0 - 2020-09-01
+## 4.4.0 - 2020-09-01
+
+### Fixed
+
+- Fixed messaging for validateInvocation errors
+
+## 4.3.0 - 2020-09-01
 
 ### Added
 

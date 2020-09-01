@@ -78,6 +78,7 @@ The following entities are created:
 | [AD] Account                | `azure_account`               | `Account`                       |
 | [AD] Group                  | `azure_user_group`            | `UserGroup`                     |
 | [AD] Group Member           | `azure_group_member`          | `User`                          |
+| [RM] Subscription           | `azure_subscription`          | `Account`                       |
 | [RM] Resource Group         | `azure_resource_group`        | `Group`                         |
 | [RM] Image                  | `azure_image`                 | `Image`                         |
 | [RM] MariaDB Server         | `azure_mariadb_server`        | `Database`, `DataStore`, `Host` |
@@ -119,6 +120,7 @@ The following relationships are created/mapped:
 | `azure_user_group`           | **HAS**               | `azure_user`                    |
 | `azure_user_group`           | **HAS**               | `azure_user_group`              |
 | `azure_user_group`           | **HAS**               | `azure_group_member`            |
+| `azure_subscription`         | **HAS**               | `azure_resource_group`          |
 | `azure_resource_group`       | **HAS**               | `azure_image`                   |
 | `azure_mariadb_server`       | **HAS**               | `azure_mariadb_database`        |
 | `azure_resource_group`       | **HAS**               | `azure_mariadb_server`          |

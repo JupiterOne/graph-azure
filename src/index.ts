@@ -13,6 +13,7 @@ import { IntegrationConfig } from './types';
 import validateInvocation from './validateInvocation';
 import { storageSteps } from './steps/resource-manager/storage';
 import { resourcesSteps } from './steps/resource-manager/resources';
+import { subscriptionSteps } from './steps/resource-manager/subscriptions';
 
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
@@ -52,5 +53,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...interserviceSteps,
     ...authorizationSteps,
     ...resourcesSteps,
+    ...subscriptionSteps,
   ],
 };

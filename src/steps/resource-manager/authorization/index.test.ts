@@ -5,7 +5,6 @@ import {
   fetchRoleAssignments,
   buildRoleAssignmentPrincipalRelationships,
   fetchRoleDefinitions,
-  findOrBuildScopeEntityForRoleAssignment,
   buildRoleAssignmentScopeRelationships,
 } from '.';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
@@ -22,7 +21,6 @@ import {
   getJupiterTypeForPrincipalType,
   ROLE_ASSIGNMENT_ENTITY_TYPE,
   ROLE_ASSIGNMENT_ENTITY_CLASS,
-  getJupiterTypeForScope,
 } from './constants';
 import {
   PrincipalType,
@@ -270,50 +268,6 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
     expect(response).toEqual({
       _type: entityType,
       _key: generateEntityKey(principalId),
-    });
-  });
-});
-
-describe('#findOrBuildScopeEntityForRoleAssignment', () => {
-  test('should find scope entity that exists in the job state', async () => {
-    const scope =
-      '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
-    const entityType = getJupiterTypeForScope(scope);
-    const targetEntity: Entity = {
-      _class: ['Service'],
-      _type: entityType,
-      _key: scope,
-    };
-
-    const context = createMockStepExecutionContext<IntegrationConfig>({
-      instanceConfig,
-      entities: [targetEntity],
-    });
-
-    const response = await findOrBuildScopeEntityForRoleAssignment(context, {
-      scope,
-    });
-
-    expect(response).toBe(targetEntity);
-  });
-
-  test('should build placeholder scope entity that does not exist in the job state', async () => {
-    const scope =
-      '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
-    const entityType = getJupiterTypeForScope(scope);
-
-    const context = createMockStepExecutionContext<IntegrationConfig>({
-      instanceConfig,
-      entities: [],
-    });
-
-    const response = await findOrBuildScopeEntityForRoleAssignment(context, {
-      scope,
-    });
-
-    expect(response).toEqual({
-      _type: entityType,
-      _key: scope,
     });
   });
 });

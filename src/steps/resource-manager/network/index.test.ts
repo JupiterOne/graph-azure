@@ -101,8 +101,16 @@ test('network steps', async () => {
     name: 'network-steps',
   });
 
+  const resouceGroupEntity: Entity = {
+    _key:
+      '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
+    _type: 'azure_resource_group',
+    _class: ['Group'],
+  };
+
   const context = createMockStepExecutionContext<IntegrationConfig>({
     instanceConfig,
+    entities: [resouceGroupEntity],
   });
 
   // Simulates dependency order of execution
@@ -748,6 +756,63 @@ test('network steps', async () => {
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two',
       _type: 'azure_vnet_contains_subnet',
       displayName: 'CONTAINS',
+    },
+
+    // Resource Group
+    {
+      _key:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev|has|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      _type: 'azure_resource_group_has_nic',
+      _class: 'HAS',
+      _fromEntityKey:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
+      _toEntityKey:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      displayName: 'HAS',
+    },
+    {
+      _key:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev|has|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+      _type: 'azure_resource_group_has_public_ip',
+      _class: 'HAS',
+      _fromEntityKey:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
+      _toEntityKey:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+      displayName: 'HAS',
+    },
+    {
+      _key:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev|has|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      _type: 'azure_resource_group_has_security_group',
+      _class: 'HAS',
+      _fromEntityKey:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
+      _toEntityKey:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      displayName: 'HAS',
+    },
+    {
+      _key:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev|has|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      _type: 'azure_resource_group_has_vnet',
+      _class: 'HAS',
+      _fromEntityKey:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
+      _toEntityKey:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      displayName: 'HAS',
+    },
+    {
+      _key:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev|has|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two',
+      _type: 'azure_resource_group_has_vnet',
+      _class: 'HAS',
+      _fromEntityKey:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
+      _toEntityKey:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two',
+      displayName: 'HAS',
     },
   );
 }, 120000);

@@ -27,6 +27,10 @@ import {
   createVirtualMachineDiskRelationships,
   createVirtualMachineEntity,
 } from './converters';
+import createResourceGroupResourceRelationship, {
+  createResourceGroupResourceRelationshipMetadata,
+} from '../utils/createResourceGroupResourceRelationship';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 
 export * from './constants';
 
@@ -40,7 +44,16 @@ export async function fetchVirtualMachines(
   const client = new ComputeClient(instance.config, logger);
 
   await client.iterateVirtualMachines(async (vm) => {
-    await jobState.addEntity(createVirtualMachineEntity(webLinker, vm));
+    const virtualMachineEntity = createVirtualMachineEntity(webLinker, vm);
+    await jobState.addEntity(virtualMachineEntity);
+
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        virtualMachineEntity,
+      ),
+    );
+
     if (vm.storageProfile) {
       await jobState.addRelationships(
         createVirtualMachineDiskRelationships(vm),
@@ -59,7 +72,15 @@ export async function fetchVirtualMachineImages(
   const client = new ComputeClient(instance.config, logger);
 
   await client.iterateVirtualMachineImages(async (vm) => {
-    await jobState.addEntity(createImageEntity(webLinker, vm));
+    const imageEntity = createImageEntity(webLinker, vm);
+    await jobState.addEntity(imageEntity);
+
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        imageEntity,
+      ),
+    );
   });
 }
 
@@ -73,7 +94,15 @@ export async function fetchVirtualMachineDisks(
   const client = new ComputeClient(instance.config, logger);
 
   await client.iterateVirtualMachineDisks(async (data) => {
-    await jobState.addEntity(createDiskEntity(webLinker, data));
+    const diskEntity = createDiskEntity(webLinker, data);
+    await jobState.addEntity(diskEntity);
+
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        diskEntity,
+      ),
+    );
   });
 }
 
@@ -90,8 +119,12 @@ export const computeSteps: Step<
         _class: VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
       },
     ],
-    relationships: [],
-    dependsOn: [STEP_AD_ACCOUNT],
+    relationships: [
+      createResourceGroupResourceRelationshipMetadata(
+        VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
+      ),
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineImages,
   },
   {
@@ -104,8 +137,10 @@ export const computeSteps: Step<
         _class: DISK_ENTITY_CLASS,
       },
     ],
-    relationships: [],
-    dependsOn: [STEP_AD_ACCOUNT],
+    relationships: [
+      createResourceGroupResourceRelationshipMetadata(DISK_ENTITY_TYPE),
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineDisks,
   },
   {
@@ -125,8 +160,15 @@ export const computeSteps: Step<
         _class: VIRTUAL_MACHINE_DISK_RELATIONSHIP_CLASS,
         targetType: DISK_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        VIRTUAL_MACHINE_ENTITY_TYPE,
+      ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+    ],
     executionHandler: fetchVirtualMachines,
   },
 ];

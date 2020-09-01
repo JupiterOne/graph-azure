@@ -62,6 +62,10 @@ import {
   createVirtualNetworkSubnetRelationship,
   processSecurityGroupRules,
 } from './converters';
+import createResourceGroupResourceRelationship, {
+  createResourceGroupResourceRelationshipMetadata,
+} from '../utils/createResourceGroupResourceRelationship';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 
 export * from './constants';
 
@@ -101,11 +105,16 @@ export async function fetchNetworkInterfaces(
   };
 
   await client.iterateNetworkInterfaces(async (e) => {
-    await jobState.addEntity(
-      createNetworkInterfaceEntity(
-        webLinker,
-        e,
-        findPublicIPAddresses(e.ipConfigurations),
+    const networkInterfaceEntity = createNetworkInterfaceEntity(
+      webLinker,
+      e,
+      findPublicIPAddresses(e.ipConfigurations),
+    );
+    await jobState.addEntity(networkInterfaceEntity);
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        networkInterfaceEntity,
       ),
     );
   });
@@ -123,7 +132,14 @@ export async function fetchPublicIPAddresses(
   const publicIpAddresses: PublicIPAddress[] = [];
   await client.iteratePublicIPAddresses(async (e) => {
     publicIpAddresses.push(e);
-    await jobState.addEntity(createPublicIPAddressEntity(webLinker, e));
+    const publicIpAddressEntity = createPublicIPAddressEntity(webLinker, e);
+    await jobState.addEntity(publicIpAddressEntity);
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        publicIpAddressEntity,
+      ),
+    );
   });
 
   // A simple way to make the set available to dependent steps. Assumes dataset
@@ -184,7 +200,14 @@ export async function fetchLoadBalancers(
   };
 
   await client.iterateLoadBalancers(async (e) => {
-    await jobState.addEntity(createLoadBalancerEntity(webLinker, e));
+    const loadBalancerEntity = createLoadBalancerEntity(webLinker, e);
+    await jobState.addEntity(loadBalancerEntity);
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        loadBalancerEntity,
+      ),
+    );
     const nicRelationships = createLoadBalancerBackendNicRelationships(e);
     if (nicRelationships) {
       await jobState.addRelationships(nicRelationships);
@@ -206,6 +229,10 @@ export async function fetchNetworkSecurityGroups(
   await client.iterateNetworkSecurityGroups(async (sg) => {
     const sgEntity = createNetworkSecurityGroupEntity(webLinker, sg);
     await jobState.addEntity(sgEntity);
+
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(executionContext, sgEntity),
+    );
 
     if (sg.networkInterfaces) {
       await jobState.addRelationships(
@@ -258,7 +285,14 @@ export async function fetchVirtualNetworks(
       await jobState.addEntities(subnetEntities);
       await jobState.addRelationships(subnetRelationships);
     }
-    await jobState.addEntity(createVirtualNetworkEntity(webLinker, vnet));
+    const virtualNetworkEntity = createVirtualNetworkEntity(webLinker, vnet);
+    await jobState.addEntity(virtualNetworkEntity);
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        virtualNetworkEntity,
+      ),
+    );
   });
 }
 
@@ -334,8 +368,12 @@ export const networkSteps: Step<
         _class: PUBLIC_IP_ADDRESS_ENTITY_CLASS,
       },
     ],
-    relationships: [],
-    dependsOn: [STEP_AD_ACCOUNT],
+    relationships: [
+      createResourceGroupResourceRelationshipMetadata(
+        PUBLIC_IP_ADDRESS_ENTITY_TYPE,
+      ),
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPublicIPAddresses,
   },
   {
@@ -348,8 +386,16 @@ export const networkSteps: Step<
         _class: NETWORK_INTERFACE_ENTITY_CLASS,
       },
     ],
-    relationships: [],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES],
+    relationships: [
+      createResourceGroupResourceRelationshipMetadata(
+        NETWORK_INTERFACE_ENTITY_TYPE,
+      ),
+    ],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+    ],
     executionHandler: fetchNetworkInterfaces,
   },
   {
@@ -380,8 +426,15 @@ export const networkSteps: Step<
         _class: SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS,
         targetType: SUBNET_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        VIRTUAL_NETWORK_ENTITY_TYPE,
+      ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_NETWORK_SECURITY_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_NETWORK_SECURITY_GROUPS,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+    ],
     executionHandler: fetchVirtualNetworks,
   },
   {
@@ -401,9 +454,16 @@ export const networkSteps: Step<
         _class: SECURITY_GROUP_NIC_RELATIONSHIP_CLASS,
         targetType: NETWORK_INTERFACE_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        SECURITY_GROUP_ENTITY_TYPE,
+      ),
     ],
     // SECURITY_GROUP_RULE_RELATIONSHIP_TYPE doesn't seem to exist here.
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_NETWORK_INTERFACES],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_NETWORK_INTERFACES,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+    ],
     executionHandler: fetchNetworkSecurityGroups,
   },
   {
@@ -423,8 +483,11 @@ export const networkSteps: Step<
         _class: LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_CLASS,
         targetType: NETWORK_INTERFACE_ENTITY_TYPE,
       },
+      createResourceGroupResourceRelationshipMetadata(
+        LOAD_BALANCER_ENTITY_TYPE,
+      ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchLoadBalancers,
   },
   {

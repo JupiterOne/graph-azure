@@ -38,9 +38,9 @@ import {
   CLASSIC_ADMINISTRATOR_RELATIONSHIP_CLASS,
   STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,
   ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_TYPES,
-  ROLE_ASSIGNMENT_SCOPE_DEPENDS_ON,
-  getJupiterTypeForScope,
   ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
+  SCOPE_MATCHER_DEPENDS_ON,
+  SCOPE_TYPES_MAP,
 } from './constants';
 import {
   createRoleDefinitionEntity,
@@ -50,10 +50,12 @@ import {
 } from './converters';
 import { PrincipalType } from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
+import findOrBuildResourceEntityFromResourceId, {
+  PlaceholderEntity,
+  isPlaceholderEntity,
+} from '../utils/findOrBuildResourceEntityFromResourceId';
 
 export * from './constants';
-
-type PlaceholderEntity = { _type: string; _key: string };
 
 /**
  * Tries to fetch the role definition from the present job state.
@@ -127,12 +129,6 @@ export async function findOrBuildPrincipalEntityForRoleAssignment(
   return targetEntity;
 }
 
-function isPlaceholderEntity(
-  targetEntity: Entity | PlaceholderEntity,
-): targetEntity is PlaceholderEntity {
-  return (targetEntity as any)._class === undefined;
-}
-
 export async function fetchRoleAssignments(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -188,29 +184,6 @@ export async function buildRoleAssignmentPrincipalRelationships(
   );
 }
 
-/**
- * Tries to fetch the scope entity from the job state.
- * If the entity is not in the job state, returns {_key, _type} for mapper.
- */
-export async function findOrBuildScopeEntityForRoleAssignment(
-  executionContext: IntegrationStepContext,
-  options: {
-    scope: string;
-  },
-): Promise<Entity | PlaceholderEntity> {
-  const { jobState } = executionContext;
-  const { scope } = options;
-  const targetType = getJupiterTypeForScope(scope);
-  let targetEntity: Entity | PlaceholderEntity | null = await jobState.findEntity(scope);
-  if (targetEntity === null) {
-    targetEntity = {
-      _type: targetType,
-      _key: scope,
-    };
-  }
-  return targetEntity;
-}
-
 export async function buildRoleAssignmentScopeRelationships(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -219,10 +192,11 @@ export async function buildRoleAssignmentScopeRelationships(
   await jobState.iterateEntities(
     { _type: ROLE_ASSIGNMENT_ENTITY_TYPE },
     async (roleAssignmentEntity: Entity) => {
-      const targetEntity = await findOrBuildScopeEntityForRoleAssignment(
+      const targetEntity = await findOrBuildResourceEntityFromResourceId(
         executionContext,
         {
-          scope: roleAssignmentEntity.scope as string,
+          resourceId: roleAssignmentEntity.scope as string,
+          resourceIdMap: SCOPE_TYPES_MAP,
         },
       );
 
@@ -352,7 +326,7 @@ export const authorizationSteps: Step<
     relationships: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_TYPES,
     dependsOn: [
       STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
-      ...ROLE_ASSIGNMENT_SCOPE_DEPENDS_ON,
+      ...SCOPE_MATCHER_DEPENDS_ON,
     ],
     executionHandler: buildRoleAssignmentScopeRelationships,
   },

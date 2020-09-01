@@ -13,6 +13,7 @@ import {
   RM_POSTGRESQL_DATABASE_ENTITY_TYPE,
   RM_POSTGRESQL_SERVER_ENTITY_TYPE,
 } from './constants';
+import createResourceGroupResourceRelationship from '../../utils/createResourceGroupResourceRelationship';
 
 export * from './constants';
 
@@ -32,6 +33,13 @@ export async function fetchPostgreSQLDatabases(
       RM_POSTGRESQL_SERVER_ENTITY_TYPE,
     );
     await jobState.addEntity(serverEntity);
+
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        serverEntity,
+      ),
+    );
 
     try {
       await client.iterateDatabases(server, async (database) => {

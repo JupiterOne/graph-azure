@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+### 4.3.0 - 2020-09-01
+
 ### Added
 
 - Added `azure_role_assignment|allows|<scope>` relationships

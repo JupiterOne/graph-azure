@@ -1,7 +1,9 @@
 import { SubscriptionClient } from '@azure/arm-subscriptions';
 import { Subscription } from '@azure/arm-subscriptions/esm/models';
-import { Client } from '../../../azure/resource-manager/client';
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
+import {
+  Client,
+  iterateAllResources,
+} from '../../../azure/resource-manager/client';
 
 export class J1SubscriptionClient extends Client {
   public async iterateSubscriptions(
@@ -13,23 +15,12 @@ export class J1SubscriptionClient extends Client {
         passSubscriptionId: false,
       },
     );
-    try {
-      const items = await serviceClient.subscriptions.list();
-      for (const item of items) {
-        await callback(item);
-      }
-    } catch (err) {
-      /* istanbul ignore else */
-      if (err.statusCode === 404) {
-        this.logger.warn({ err }, 'Resources not found');
-      } else {
-        throw new IntegrationProviderAPIError({
-          cause: err,
-          endpoint: 'subscriptions.subscriptions',
-          status: err.statusCode,
-          statusText: err.statusText,
-        });
-      }
-    }
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: serviceClient.subscriptions,
+      resourceDescription: 'subscriptions',
+      callback,
+    });
   }
 }

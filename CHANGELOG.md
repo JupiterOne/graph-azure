@@ -10,7 +10,7 @@ and this project adheres to
 
 ### Removed
 
-- Removed mapped `role_assignment|allows|<scope>` relationships
+- Removed mapped `role_assignment|allows|<scope>` relationships to avoid creating `azure_unknown_resource_type` entities
 
 ### Changed
 

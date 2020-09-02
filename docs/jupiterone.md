@@ -86,7 +86,6 @@ The following entities are created:
 | [RM] Classic Admin          | `azure_classic_admin_group`   | `UserGroup`                     |
 | [RM] Cosmos DB Account      | `azure_cosmosdb_account`      | `Account`, `Service`            |
 | [RM] Cosmos DB Database     | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
-| [RM] File Storage Service   | `azure_storage_file_service`  | `Service`                       |
 | [RM] File Storage Share     | `azure_storage_share`         | `DataStore`                     |
 | [RM] Image                  | `azure_image`                 | `Image`                         |
 | [RM] Key Vault              | `azure_keyvault_service`      | `Service`                       |
@@ -118,8 +117,6 @@ The following relationships are created/mapped:
 | ---------------------------- | --------------------- | ------------------------------- |
 | `azure_account`              | **HAS**               | `azure_user_group`              |
 | `azure_account`              | **HAS**               | `azure_keyvault_service`        |
-| `azure_account`              | **HAS**               | `azure_storage_blob_service`    |
-| `azure_account`              | **HAS**               | `azure_storage_file_service`    |
 | `azure_account`              | **HAS**               | `azure_user`                    |
 | `azure_classic_admin_group`  | **HAS**               | `azure_user`                    |
 | `azure_cosmosdb_account`     | **HAS**               | `azure_cosmosdb_sql_database`   |
@@ -143,7 +140,6 @@ The following relationships are created/mapped:
 | `azure_resource_group`       | **HAS**               | `azure_security_group`          |
 | `azure_resource_group`       | **HAS**               | `azure_sql_server`              |
 | `azure_resource_group`       | **HAS**               | `azure_storage_blob_service`    |
-| `azure_resource_group`       | **HAS**               | `azure_storage_file_service`    |
 | `azure_resource_group`       | **HAS**               | `azure_vm`                      |
 | `azure_resource_group`       | **HAS**               | `azure_vnet`                    |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_cosmosdb_account`        |
@@ -171,7 +167,7 @@ The following relationships are created/mapped:
 | `azure_security_group`       | **ALLOWS**            | `azure_subnet`                  |
 | `azure_sql_server`           | **HAS**               | `azure_sql_database`            |
 | `azure_storage_blob_service` | **HAS**               | `azure_storage_container`       |
-| `azure_storage_file_service` | **HAS**               | `azure_storage_share`           |
+| `azure_storage_blob_service` | **HAS**               | `azure_storage_share`           |
 | `azure_subnet`               | **HAS**               | `azure_vm`                      |
 | `azure_subscription`         | **HAS**               | `azure_resource_group`          |
 | `azure_vm`                   | **USES**              | `azure_managed_disk`            |

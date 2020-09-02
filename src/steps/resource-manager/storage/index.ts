@@ -11,28 +11,18 @@ import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
 import { StorageClient } from './client';
 import {
-  ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_TYPE,
-  ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_TYPE,
   STEP_RM_STORAGE_RESOURCES,
-  STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_TYPE,
-  STORAGE_BLOB_SERVICE_ENTITY_TYPE,
-  STORAGE_CONTAINER_ENTITY_TYPE,
-  STORAGE_FILE_SERVICE_ENTITY_TYPE,
-  STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP_TYPE,
-  STORAGE_FILE_SHARE_ENTITY_TYPE,
-  STORAGE_BLOB_SERVICE_ENTITY_CLASS,
-  STORAGE_CONTAINER_ENTITY_CLASS,
-  ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_CLASS,
-  STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_CLASS,
-  STORAGE_FILE_SERVICE_ENTITY_CLASS,
-  STORAGE_FILE_SHARE_ENTITY_CLASS,
-  ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_CLASS,
-  STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP_CLASS,
+  STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_CLASS,
+  STORAGE_ACCOUNT_ENTITY_METADATA,
+  STORAGE_CONTAINER_ENTITY_METADATA,
+  STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_METADATA,
+  STORAGE_FILE_SHARE_ENTITY_METADATA,
+  STORAGE_ACCOUNT_FILE_SHARE_RELATIONSHIP_METADATA,
 } from './constants';
 import {
   createStorageContainerEntity,
   createStorageFileShareEntity,
-  createStorageServiceEntity,
+  createStorageAccountEntity,
 } from './converters';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
@@ -51,11 +41,22 @@ export async function fetchStorageResources(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await client.iterateStorageAccounts(async (storageAccount) => {
+    const storageAccountEntity = await jobState.addEntity(
+      createStorageAccountEntity(webLinker, storageAccount),
+    );
+    await jobState.addRelationship(
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        storageAccountEntity,
+      ),
+    );
+
     await synchronizeStorageAccount(
       executionContext,
       accountEntity,
       webLinker,
       storageAccount,
+      storageAccountEntity,
       client,
     );
   });
@@ -66,6 +67,7 @@ async function synchronizeStorageAccount(
   accountEntity: Entity,
   webLinker: AzureWebLinker,
   storageAccount: StorageAccount,
+  storageAccountEntity: Entity,
   client: StorageClient,
 ): Promise<void> {
   const { logger } = context;
@@ -89,6 +91,7 @@ async function synchronizeStorageAccount(
           accountEntity,
           webLinker,
           storageAccount,
+          storageAccountEntity,
           client,
         );
       } else {
@@ -109,6 +112,7 @@ const storageServiceSynchronizers: {
     accountEntity: Entity,
     webLinker: AzureWebLinker,
     storageAccount: StorageAccount,
+    storageAccountEntity: Entity,
     client: StorageClient,
   ) => Promise<void>;
 } = {
@@ -125,29 +129,10 @@ async function synchronizeBlobStorage(
   accountEntity: Entity,
   webLinker: AzureWebLinker,
   storageAccount: StorageAccount,
+  storageAccountEntity: Entity,
   client: StorageClient,
 ): Promise<void> {
   const { jobState } = context;
-
-  const serviceEntity = createStorageServiceEntity(
-    webLinker,
-    storageAccount,
-    'blob',
-  );
-
-  await jobState.addEntity(serviceEntity);
-
-  await jobState.addRelationship(
-    createDirectRelationship({
-      _class: ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_CLASS,
-      from: accountEntity,
-      to: serviceEntity,
-    }),
-  );
-
-  await jobState.addRelationship(
-    await createResourceGroupResourceRelationship(context, serviceEntity),
-  );
 
   await client.iterateStorageBlobContainers(
     storageAccount,
@@ -162,8 +147,8 @@ async function synchronizeBlobStorage(
 
       await jobState.addRelationship(
         createDirectRelationship({
-          _class: STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_CLASS,
-          from: serviceEntity,
+          _class: STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_CLASS,
+          from: storageAccountEntity,
           to: containerEntity,
         }),
       );
@@ -180,29 +165,10 @@ async function synchronizeFileStorage(
   accountEntity: Entity,
   webLinker: AzureWebLinker,
   storageAccount: StorageAccount,
+  storageAccountEntity: Entity,
   client: StorageClient,
 ): Promise<void> {
   const { jobState } = context;
-
-  const serviceEntity = createStorageServiceEntity(
-    webLinker,
-    storageAccount,
-    'file',
-  );
-
-  await jobState.addEntity(serviceEntity);
-
-  await jobState.addRelationship(
-    createDirectRelationship({
-      _class: ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_CLASS,
-      from: accountEntity,
-      to: serviceEntity,
-    }),
-  );
-
-  await jobState.addRelationship(
-    await createResourceGroupResourceRelationship(context, serviceEntity),
-  );
 
   await client.iterateFileShares(storageAccount, async (e) => {
     const fileShareEntity = createStorageFileShareEntity(
@@ -215,12 +181,9 @@ async function synchronizeFileStorage(
 
     await jobState.addRelationship(
       createDirectRelationship({
-        _class: STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_CLASS,
-        from: serviceEntity,
+        _class: STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_CLASS,
+        from: storageAccountEntity,
         to: fileShareEntity,
-        properties: {
-          storageAccountId: storageAccount.id,
-        },
       }),
     );
   });
@@ -233,58 +196,16 @@ export const storageSteps: Step<
     id: STEP_RM_STORAGE_RESOURCES,
     name: 'Storage Resources',
     entities: [
-      {
-        resourceName: '[RM] Blob Storage Service',
-        _type: STORAGE_BLOB_SERVICE_ENTITY_TYPE,
-        _class: STORAGE_BLOB_SERVICE_ENTITY_CLASS,
-      },
-      {
-        resourceName: '[RM] Blob Storage Container',
-        _type: STORAGE_CONTAINER_ENTITY_TYPE,
-        _class: STORAGE_CONTAINER_ENTITY_CLASS,
-      },
-      {
-        resourceName: '[RM] File Storage Service',
-        _type: STORAGE_FILE_SERVICE_ENTITY_TYPE,
-        _class: STORAGE_FILE_SERVICE_ENTITY_CLASS,
-      },
-      {
-        resourceName: '[RM] File Storage Share',
-        _type: STORAGE_FILE_SHARE_ENTITY_TYPE,
-        _class: STORAGE_FILE_SHARE_ENTITY_CLASS,
-      },
+      STORAGE_ACCOUNT_ENTITY_METADATA,
+      STORAGE_CONTAINER_ENTITY_METADATA,
+      STORAGE_FILE_SHARE_ENTITY_METADATA,
     ],
     relationships: [
-      {
-        _type: ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_TYPE,
-        sourceType: ACCOUNT_ENTITY_TYPE,
-        _class: ACCOUNT_STORAGE_BLOB_SERVICE_RELATIONSHIP_CLASS,
-        targetType: STORAGE_BLOB_SERVICE_ENTITY_TYPE,
-      },
       createResourceGroupResourceRelationshipMetadata(
-        STORAGE_BLOB_SERVICE_ENTITY_TYPE,
+        STORAGE_ACCOUNT_ENTITY_METADATA._type,
       ),
-      {
-        _type: STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_TYPE,
-        sourceType: STORAGE_BLOB_SERVICE_ENTITY_TYPE,
-        _class: STORAGE_BLOB_SERVICE_CONTAINER_RELATIONSHIP_CLASS,
-        targetType: STORAGE_CONTAINER_ENTITY_TYPE,
-      },
-      {
-        _type: ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_TYPE,
-        sourceType: ACCOUNT_ENTITY_TYPE,
-        _class: ACCOUNT_STORAGE_FILE_SERVICE_RELATIONSHIP_CLASS,
-        targetType: STORAGE_FILE_SERVICE_ENTITY_TYPE,
-      },
-      createResourceGroupResourceRelationshipMetadata(
-        STORAGE_FILE_SERVICE_ENTITY_TYPE,
-      ),
-      {
-        _type: STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP_TYPE,
-        sourceType: STORAGE_FILE_SERVICE_ENTITY_TYPE,
-        _class: STORAGE_FILE_SERVICE_SHARE_RELATIONSHIP_CLASS,
-        targetType: STORAGE_FILE_SHARE_ENTITY_TYPE,
-      },
+      STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_METADATA,
+      STORAGE_ACCOUNT_FILE_SHARE_RELATIONSHIP_METADATA,
     ],
     // From what I can tell, the following are not yet implemented
     // STORAGE_QUEUE_SERVICE_ENTITY_TYPE,

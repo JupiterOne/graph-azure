@@ -153,7 +153,6 @@ The following relationships are created/mapped:
 | `azure_role_assignment`      | **ALLOWS**            | `azure_resource_group`          |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_security_group`          |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_subscription`            |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_unknown_resource_type`   |
 | `azure_role_assignment`      | **ALLOWS**            | `azure_vnet`                    |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_application`             |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_directory`               |

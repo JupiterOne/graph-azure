@@ -5,7 +5,6 @@ import {
   IntegrationError,
   Step,
   IntegrationStepExecutionContext,
-  generateRelationshipType,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker, AzureWebLinker } from '../../../azure';
@@ -187,8 +186,9 @@ export async function buildRoleAssignmentPrincipalRelationships(
 export async function buildRoleAssignmentScopeRelationships(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { jobState } = executionContext;
+  const { jobState, logger } = executionContext;
 
+  const missingEntities: PlaceholderEntity[] = [];
   await jobState.iterateEntities(
     { _type: ROLE_ASSIGNMENT_ENTITY_TYPE },
     async (roleAssignmentEntity: Entity) => {
@@ -200,31 +200,27 @@ export async function buildRoleAssignmentScopeRelationships(
         },
       );
 
-      if (isPlaceholderEntity(targetEntity)) {
-        await jobState.addRelationship(
-          createMappedRelationship({
-            _class: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
-            _type: generateRelationshipType(
-              ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
-              ROLE_ASSIGNMENT_ENTITY_TYPE,
-              targetEntity._type,
-            ),
-            source: roleAssignmentEntity,
-            target: targetEntity,
-            targetFilterKeys: [['_key']],
-          }),
-        );
+      if (targetEntity === undefined) {
+        // Target entity not found in job state - OK
+      } else if (isPlaceholderEntity(targetEntity)) {
+        missingEntities.push(targetEntity);
       } else {
         await jobState.addRelationship(
           createDirectRelationship({
             _class: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
-
             from: roleAssignmentEntity,
             to: targetEntity,
           }),
         );
       }
     },
+  );
+
+  logger.info(
+    {
+      missingResourceIds: missingEntities.map((e) => e._key),
+    },
+    '[SKIP] Scopes in RoleAssignments do not match resources currently ingested.',
   );
 }
 

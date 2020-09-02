@@ -10,10 +10,13 @@ and this project adheres to
 
 ### Removed
 
-- Removed mapped `role_assignment|allows|<scope>` relationships to avoid creating `azure_unknown_resource_type` entities
+- Removed mapped `role_assignment|allows|<scope>` relationships to avoid
+  creating `azure_unknown_resource_type` entities
 
 ### Changed
 
+- Created `azure_storage_account` entities to replace
+  `azure_storage_blob_service` and `azure_storage_file_service`
 - Upgraded SDK to v3.2.0, ordered entity/relationship docs
 
 ## 4.4.1 - 2020-09-02

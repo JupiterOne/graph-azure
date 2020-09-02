@@ -483,7 +483,7 @@ describe('createStorageFileShareEntity', () => {
   const entity = {
     _key:
       '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/fileServices/default/shares/j1dev',
-    _type: 'azure_storage_share',
+    _type: 'azure_storage_file_share',
     _class: ['DataStore'],
     _rawData: [{ name: 'default', rawData: data }],
     createdOn: undefined,

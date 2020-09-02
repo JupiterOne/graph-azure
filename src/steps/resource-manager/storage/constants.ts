@@ -7,16 +7,22 @@ import {
 export const STEP_RM_STORAGE_RESOURCES = 'rm-storage-resources';
 
 // Graph objects
+/**
+ * azure_storage_account --HAS--> (azure_storage_container | azure_storage_queue | azure_storage_file_share | azure_storage_table)
+ * azure_storage_container --HAS--> azure_storage_blob
+ * azure_storage_file_share --HAS--> azure_storage_file_share_directory
+ * azure_storage_table --HAS--> azure_storage_table_entity
+ */
 export const STORAGE_ACCOUNT_ENTITY_METADATA = {
-  _type: 'azure_storage_blob_service',
+  _type: 'azure_storage_account',
   _class: ['Service'],
-  resourceName: '[RM] Blob Storage Service',
+  resourceName: '[RM] Storage Account',
 };
 
 export const STORAGE_CONTAINER_ENTITY_METADATA = {
   _type: 'azure_storage_container',
   _class: ['DataStore'],
-  resourceName: '[RM] Blob Storage Container',
+  resourceName: '[RM] Storage Container',
 };
 
 export const STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_CLASS =
@@ -33,9 +39,9 @@ export const STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_METADATA = {
 };
 
 export const STORAGE_FILE_SHARE_ENTITY_METADATA = {
-  _type: 'azure_storage_share',
+  _type: 'azure_storage_file_share',
   _class: ['DataStore'],
-  resourceName: '[RM] File Storage Share',
+  resourceName: '[RM] Storage File Share',
 };
 
 export const STORAGE_ACCOUNT_FILE_SHARE_RELATIONSHIP_CLASS =

@@ -87,4 +87,41 @@ describe('#createResourceGroupResourceRelationship', () => {
       'Could not identify a resource group ID in the entity _key: some-key-without-resource-group',
     );
   });
+
+  test('should lowercase & return direct relationship when case-insensitive resourceGroup exists in jobState', async () => {
+    const resourceGroupEntity: Entity = {
+      _class: ['Group'],
+      _type: 'azure_resource_group',
+      _key: '/subscriptions/subscription-id/resourceGroups/resource-group-id',
+    };
+
+    const context = createMockStepExecutionContext<IntegrationConfig>({
+      instanceConfig,
+      entities: [resourceGroupEntity],
+    });
+
+    const resourceEntity: Entity = {
+      _class: ['Service'],
+      _type: 'azure_keyvault_service',
+      _key:
+        '/subscriptions/subscription-id/resourceGroups/RESOURCE-GROUP-ID/providers/Microsoft/KeyVault/vaults/key-vault-id',
+    };
+
+    const result = await createResourceGroupResourceRelationship(
+      context,
+      resourceEntity,
+    );
+
+    expect(result).toEqual({
+      _class: 'HAS',
+      _fromEntityKey:
+        '/subscriptions/subscription-id/resourceGroups/resource-group-id',
+      _key:
+        '/subscriptions/subscription-id/resourceGroups/resource-group-id|has|/subscriptions/subscription-id/resourceGroups/RESOURCE-GROUP-ID/providers/Microsoft/KeyVault/vaults/key-vault-id',
+      _toEntityKey:
+        '/subscriptions/subscription-id/resourceGroups/RESOURCE-GROUP-ID/providers/Microsoft/KeyVault/vaults/key-vault-id',
+      _type: 'azure_resource_group_has_keyvault_service',
+      displayName: 'HAS',
+    });
+  });
 });

@@ -30,7 +30,7 @@ export function createResourceGroupResourceRelationshipMetadata(
 
 const resourceRegex = new RegExp(RESOURCE_GROUP_MATCHER);
 
-function lowercaseAfterLastParentheses(s: string): string {
+function lowercaseAfterLastForwardSlash(s: string): string {
   const splitS = s.split('/');
   const lastElement = splitS.pop() as string;
   return [...splitS, lastElement.toLowerCase()].join('/');
@@ -51,7 +51,7 @@ export async function createResourceGroupResourceRelationship(
   const resourceGroupId = resourceGroupIdMatch[0];
 
   const resourceGroupEntity = await jobState.findEntity(
-    lowercaseAfterLastParentheses(resourceGroupId),
+    lowercaseAfterLastForwardSlash(resourceGroupId),
   );
   if (resourceGroupEntity) {
     return createDirectRelationship({

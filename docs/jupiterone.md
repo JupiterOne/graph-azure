@@ -78,37 +78,37 @@ The following entities are created:
 | [AD] Account                | `azure_account`               | `Account`                       |
 | [AD] Group                  | `azure_user_group`            | `UserGroup`                     |
 | [AD] Group Member           | `azure_group_member`          | `User`                          |
-| [RM] Subscription           | `azure_subscription`          | `Account`                       |
-| [RM] Resource Group         | `azure_resource_group`        | `Group`                         |
-| [RM] Image                  | `azure_image`                 | `Image`                         |
-| [RM] MariaDB Server         | `azure_mariadb_server`        | `Database`, `DataStore`, `Host` |
-| [RM] MariaDB Database       | `azure_mariadb_database`      | `Database`, `DataStore`         |
-| [RM] MySQL Server           | `azure_mysql_server`          | `Database`, `DataStore`, `Host` |
-| [RM] MySQL Database         | `azure_mysql_database`        | `Database`, `DataStore`         |
-| [RM] PostgreSQL Server      | `azure_postgresql_server`     | `Database`, `DataStore`, `Host` |
-| [RM] PostgreSQL Database    | `azure_postgresql_database`   | `Database`, `DataStore`         |
-| [RM] SQL Server             | `azure_sql_server`            | `Database`, `DataStore`, `Host` |
-| [RM] SQL Database           | `azure_sql_database`          | `Database`, `DataStore`         |
-| [RM] Load Balancer          | `azure_lb`                    | `Gateway`                       |
-| [RM] Public IP Address      | `azure_public_ip`             | `IpAddress`                     |
-| [RM] Network Interface      | `azure_nic`                   | `NetworkInterface`              |
-| [RM] Security Group         | `azure_security_group`        | `Firewall`                      |
-| [RM] Virtual Network        | `azure_vnet`                  | `Network`                       |
-| [RM] Subnet                 | `azure_subnet`                | `Network`                       |
-| [RM] Blob Storage Service   | `azure_storage_blob_service`  | `Service`                       |
-| [RM] Blob Storage Container | `azure_storage_container`     | `DataStore`                     |
-| [RM] File Storage Service   | `azure_storage_file_service`  | `Service`                       |
-| [RM] File Storage Share     | `azure_storage_share`         | `DataStore`                     |
-| [RM] Azure Managed Disk     | `azure_managed_disk`          | `DataStore`, `Disk`             |
-| [RM] Virtual Machine        | `azure_vm`                    | `Host`                          |
-| [RM] Role Assignment        | `azure_role_assignment`       | `AccessPolicy`                  |
 | [AD] Service Principal      | `azure_service_principal`     | `Service`                       |
 | [AD] User                   | `azure_user`                  | `User`                          |
-| [RM] Key Vault              | `azure_keyvault_service`      | `Service`                       |
+| [RM] Azure Managed Disk     | `azure_managed_disk`          | `DataStore`, `Disk`             |
+| [RM] Blob Storage Container | `azure_storage_container`     | `DataStore`                     |
+| [RM] Blob Storage Service   | `azure_storage_blob_service`  | `Service`                       |
+| [RM] Classic Admin          | `azure_classic_admin_group`   | `UserGroup`                     |
 | [RM] Cosmos DB Account      | `azure_cosmosdb_account`      | `Account`, `Service`            |
 | [RM] Cosmos DB Database     | `azure_cosmosdb_sql_database` | `Database`, `DataStore`         |
+| [RM] File Storage Service   | `azure_storage_file_service`  | `Service`                       |
+| [RM] File Storage Share     | `azure_storage_share`         | `DataStore`                     |
+| [RM] Image                  | `azure_image`                 | `Image`                         |
+| [RM] Key Vault              | `azure_keyvault_service`      | `Service`                       |
+| [RM] Load Balancer          | `azure_lb`                    | `Gateway`                       |
+| [RM] MariaDB Database       | `azure_mariadb_database`      | `Database`, `DataStore`         |
+| [RM] MariaDB Server         | `azure_mariadb_server`        | `Database`, `DataStore`, `Host` |
+| [RM] MySQL Database         | `azure_mysql_database`        | `Database`, `DataStore`         |
+| [RM] MySQL Server           | `azure_mysql_server`          | `Database`, `DataStore`, `Host` |
+| [RM] Network Interface      | `azure_nic`                   | `NetworkInterface`              |
+| [RM] PostgreSQL Database    | `azure_postgresql_database`   | `Database`, `DataStore`         |
+| [RM] PostgreSQL Server      | `azure_postgresql_server`     | `Database`, `DataStore`, `Host` |
+| [RM] Public IP Address      | `azure_public_ip`             | `IpAddress`                     |
+| [RM] Resource Group         | `azure_resource_group`        | `Group`                         |
+| [RM] Role Assignment        | `azure_role_assignment`       | `AccessPolicy`                  |
 | [RM] Role Definition        | `azure_role_definition`       | `AccessRole`                    |
-| [RM] Classic Admin          | `azure_classic_admin_group`   | `UserGroup`                     |
+| [RM] SQL Database           | `azure_sql_database`          | `Database`, `DataStore`         |
+| [RM] SQL Server             | `azure_sql_server`            | `Database`, `DataStore`, `Host` |
+| [RM] Security Group         | `azure_security_group`        | `Firewall`                      |
+| [RM] Subnet                 | `azure_subnet`                | `Network`                       |
+| [RM] Subscription           | `azure_subscription`          | `Account`                       |
+| [RM] Virtual Machine        | `azure_vm`                    | `Host`                          |
+| [RM] Virtual Network        | `azure_vnet`                  | `Network`                       |
 
 ### Relationships
 
@@ -117,68 +117,68 @@ The following relationships are created/mapped:
 | Source Entity `_type`        | Relationship `_class` | Target Entity `_type`           |
 | ---------------------------- | --------------------- | ------------------------------- |
 | `azure_account`              | **HAS**               | `azure_user_group`              |
-| `azure_user_group`           | **HAS**               | `azure_user`                    |
+| `azure_account`              | **HAS**               | `azure_keyvault_service`        |
+| `azure_account`              | **HAS**               | `azure_storage_blob_service`    |
+| `azure_account`              | **HAS**               | `azure_storage_file_service`    |
+| `azure_account`              | **HAS**               | `azure_user`                    |
+| `azure_classic_admin_group`  | **HAS**               | `azure_user`                    |
+| `azure_cosmosdb_account`     | **HAS**               | `azure_cosmosdb_sql_database`   |
 | `azure_user_group`           | **HAS**               | `azure_user_group`              |
 | `azure_user_group`           | **HAS**               | `azure_group_member`            |
-| `azure_subscription`         | **HAS**               | `azure_resource_group`          |
-| `azure_resource_group`       | **HAS**               | `azure_image`                   |
-| `azure_mariadb_server`       | **HAS**               | `azure_mariadb_database`        |
-| `azure_resource_group`       | **HAS**               | `azure_mariadb_server`          |
-| `azure_mysql_server`         | **HAS**               | `azure_mysql_database`          |
-| `azure_resource_group`       | **HAS**               | `azure_mysql_server`            |
-| `azure_postgresql_server`    | **HAS**               | `azure_postgresql_database`     |
-| `azure_resource_group`       | **HAS**               | `azure_postgresql_server`       |
-| `azure_sql_server`           | **HAS**               | `azure_sql_database`            |
-| `azure_resource_group`       | **HAS**               | `azure_sql_server`              |
+| `azure_user_group`           | **HAS**               | `azure_user`                    |
 | `azure_lb`                   | **CONNECTS**          | `azure_nic`                     |
+| `azure_mariadb_server`       | **HAS**               | `azure_mariadb_database`        |
+| `azure_mysql_server`         | **HAS**               | `azure_mysql_database`          |
+| `azure_postgresql_server`    | **HAS**               | `azure_postgresql_database`     |
+| `azure_resource_group`       | **HAS**               | `azure_cosmosdb_account`        |
+| `azure_resource_group`       | **HAS**               | `azure_image`                   |
+| `azure_resource_group`       | **HAS**               | `azure_keyvault_service`        |
 | `azure_resource_group`       | **HAS**               | `azure_lb`                      |
-| `azure_resource_group`       | **HAS**               | `azure_public_ip`               |
-| `azure_resource_group`       | **HAS**               | `azure_nic`                     |
-| `azure_security_group`       | **PROTECTS**          | `azure_nic`                     |
-| `azure_resource_group`       | **HAS**               | `azure_security_group`          |
-| `azure_vnet`                 | **CONTAINS**          | `azure_subnet`                  |
-| `azure_security_group`       | **PROTECTS**          | `azure_subnet`                  |
-| `azure_resource_group`       | **HAS**               | `azure_vnet`                    |
-| `azure_security_group`       | **ALLOWS**            | `azure_subnet`                  |
-| `azure_account`              | **HAS**               | `azure_storage_blob_service`    |
-| `azure_resource_group`       | **HAS**               | `azure_storage_blob_service`    |
-| `azure_storage_blob_service` | **HAS**               | `azure_storage_container`       |
-| `azure_account`              | **HAS**               | `azure_storage_file_service`    |
-| `azure_resource_group`       | **HAS**               | `azure_storage_file_service`    |
-| `azure_storage_file_service` | **HAS**               | `azure_storage_share`           |
 | `azure_resource_group`       | **HAS**               | `azure_managed_disk`            |
-| `azure_vm`                   | **USES**              | `azure_managed_disk`            |
+| `azure_resource_group`       | **HAS**               | `azure_mariadb_server`          |
+| `azure_resource_group`       | **HAS**               | `azure_mysql_server`            |
+| `azure_resource_group`       | **HAS**               | `azure_nic`                     |
+| `azure_resource_group`       | **HAS**               | `azure_postgresql_server`       |
+| `azure_resource_group`       | **HAS**               | `azure_public_ip`               |
+| `azure_resource_group`       | **HAS**               | `azure_security_group`          |
+| `azure_resource_group`       | **HAS**               | `azure_sql_server`              |
+| `azure_resource_group`       | **HAS**               | `azure_storage_blob_service`    |
+| `azure_resource_group`       | **HAS**               | `azure_storage_file_service`    |
 | `azure_resource_group`       | **HAS**               | `azure_vm`                      |
-| `azure_subnet`               | **HAS**               | `azure_vm`                      |
-| `azure_vm`                   | **USES**              | `azure_nic`                     |
-| `azure_vm`                   | **USES**              | `azure_public_ip`               |
-| `azure_account`              | **HAS**               | `azure_user`                    |
-| `azure_role_assignment`      | **ASSIGNED**          | `azure_unknown_principal_type`  |
+| `azure_resource_group`       | **HAS**               | `azure_vnet`                    |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_cosmosdb_account`        |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_keyvault_service`        |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_nic`                     |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_public_ip`               |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_resource_group`          |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_security_group`          |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_subscription`            |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_unknown_resource_type`   |
+| `azure_role_assignment`      | **ALLOWS**            | `azure_vnet`                    |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_application`             |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_directory`               |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_directory_role_template` |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_everyone`                |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_foreign_group`           |
-| `azure_role_assignment`      | **ASSIGNED**          | `azure_user_group`              |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_msi`                     |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_service_principal`       |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_unknown`                 |
+| `azure_role_assignment`      | **ASSIGNED**          | `azure_unknown_principal_type`  |
 | `azure_role_assignment`      | **ASSIGNED**          | `azure_user`                    |
-| `azure_account`              | **HAS**               | `azure_keyvault_service`        |
-| `azure_resource_group`       | **HAS**               | `azure_keyvault_service`        |
-| `azure_cosmosdb_account`     | **HAS**               | `azure_cosmosdb_sql_database`   |
-| `azure_resource_group`       | **HAS**               | `azure_cosmosdb_account`        |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_unknown_resource_type`   |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_keyvault_service`        |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_nic`                     |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_security_group`          |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_public_ip`               |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_vnet`                    |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_cosmosdb_account`        |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_subscription`            |
-| `azure_role_assignment`      | **ALLOWS**            | `azure_resource_group`          |
+| `azure_role_assignment`      | **ASSIGNED**          | `azure_user_group`              |
 | `azure_role_assignment`      | **USES**              | `azure_role_definition`         |
-| `azure_classic_admin_group`  | **HAS**               | `azure_user`                    |
+| `azure_security_group`       | **PROTECTS**          | `azure_nic`                     |
+| `azure_security_group`       | **PROTECTS**          | `azure_subnet`                  |
+| `azure_security_group`       | **ALLOWS**            | `azure_subnet`                  |
+| `azure_sql_server`           | **HAS**               | `azure_sql_database`            |
+| `azure_storage_blob_service` | **HAS**               | `azure_storage_container`       |
+| `azure_storage_file_service` | **HAS**               | `azure_storage_share`           |
+| `azure_subnet`               | **HAS**               | `azure_vm`                      |
+| `azure_subscription`         | **HAS**               | `azure_resource_group`          |
+| `azure_vm`                   | **USES**              | `azure_managed_disk`            |
+| `azure_vm`                   | **USES**              | `azure_nic`                     |
+| `azure_vm`                   | **USES**              | `azure_public_ip`               |
+| `azure_vnet`                 | **CONTAINS**          | `azure_subnet`                  |
 
 <!--
 ********************************************************************************

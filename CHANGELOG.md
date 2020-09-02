@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 4.4.1 - 2020-09-02
+
+### Fixed
+
+- Fixed a bug where `resourceGroupId` needed to be case-insensitive
+
 ## 4.4.0 - 2020-09-01
 
 ### Fixed

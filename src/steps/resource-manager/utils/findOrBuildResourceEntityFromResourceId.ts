@@ -85,8 +85,6 @@ export const RESOURCE_ID_TYPES_MAP: ResourceIdMap[] = [
   },
 ];
 
-export const DEFAULT_RESOURCE_TYPE = 'azure_unknown_resource_type';
-
 export function makeMatcherDependsOn(resourceIdMap: ResourceIdMap[]): string[] {
   return ([] as string[]).concat(...resourceIdMap.map((t) => t.dependsOn));
 }
@@ -112,15 +110,6 @@ export function getJupiterTypeForResourceId(
   )?._type;
 }
 
-export function getJupiterTypeForAzureType(
-  azureType: string,
-  resourceIdMap?: ResourceIdMap[],
-): string | undefined {
-  return (resourceIdMap || RESOURCE_ID_TYPES_MAP).find(
-    (t) => t.azureType === azureType,
-  )?._type;
-}
-
 export type PlaceholderEntity = { _type: string; _key: string };
 
 export function isPlaceholderEntity(
@@ -137,26 +126,24 @@ export async function findOrBuildResourceEntityFromResourceId(
   executionContext: IntegrationStepContext,
   options: {
     resourceId: string;
-    type?: string;
     resourceIdMap?: ResourceIdMap[];
   },
-): Promise<Entity | PlaceholderEntity> {
+): Promise<Entity | PlaceholderEntity | undefined> {
   const { jobState } = executionContext;
-  const { resourceId, type, resourceIdMap } = options;
-  let targetEntity:
-    | Entity
-    | PlaceholderEntity
-    | null = await jobState.findEntity(resourceId);
-  if (targetEntity === null) {
-    targetEntity = {
-      _type:
-        getJupiterTypeForAzureType(type || 'NO_TYPE', resourceIdMap) ||
-        getJupiterTypeForResourceId(resourceId, resourceIdMap) ||
-        DEFAULT_RESOURCE_TYPE,
+  const { resourceId, resourceIdMap } = options;
+  const targetEntity = await jobState.findEntity(resourceId);
+
+  if (targetEntity !== null) {
+    return targetEntity;
+  }
+
+  const targetType = getJupiterTypeForResourceId(resourceId, resourceIdMap);
+  if (targetType !== undefined) {
+    return {
+      _type: targetType,
       _key: resourceId,
     };
   }
-  return targetEntity;
 }
 
 export default findOrBuildResourceEntityFromResourceId;

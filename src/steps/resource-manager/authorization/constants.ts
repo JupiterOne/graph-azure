@@ -13,7 +13,6 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 import {
-  DEFAULT_RESOURCE_TYPE,
   ResourceIdMap,
   RESOURCE_ID_TYPES_MAP,
   makeMatcherDependsOn,
@@ -192,7 +191,6 @@ export function createRoleAssignmentScopeRelationshipType(
 }
 
 export const ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_TYPES = [
-  createRoleAssignmentScopeRelationshipType(DEFAULT_RESOURCE_TYPE),
   ...SCOPE_MATCHER_ENTITY_TYPES.map(createRoleAssignmentScopeRelationshipType),
 ];
 

@@ -1,6 +1,4 @@
-import findOrBuildResourceEntityFromResourceId, {
-  DEFAULT_RESOURCE_TYPE,
-} from './findOrBuildResourceEntityFromResourceId';
+import findOrBuildResourceEntityFromResourceId from './findOrBuildResourceEntityFromResourceId';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
@@ -29,7 +27,7 @@ describe('#findOrBuildResourceEntityFromResourceId', () => {
     expect(response).toBe(targetEntity);
   });
 
-  test('should build placeholder entity that does not exist in the job state by id', async () => {
+  test('should build placeholder entity for matched resourceId that does not exist in the job state', async () => {
     const id =
       '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
 
@@ -48,7 +46,7 @@ describe('#findOrBuildResourceEntityFromResourceId', () => {
     });
   });
 
-  test('should return default _type placeholder entity if resourceId does not match', async () => {
+  test('should return undefined if resourceId does not match', async () => {
     const id = 'some-random-id';
 
     const context = createMockStepExecutionContext<IntegrationConfig>({
@@ -60,49 +58,6 @@ describe('#findOrBuildResourceEntityFromResourceId', () => {
       resourceId: id,
     });
 
-    expect(response).toEqual({
-      _type: DEFAULT_RESOURCE_TYPE,
-      _key: id,
-    });
-  });
-
-  test('should build placeholder entity that does not exist in the job state by type', async () => {
-    const id = 'some-random-id';
-    const type = 'Microsoft.KeyVault/vault';
-
-    const context = createMockStepExecutionContext<IntegrationConfig>({
-      instanceConfig,
-      entities: [],
-    });
-
-    const response = await findOrBuildResourceEntityFromResourceId(context, {
-      resourceId: id,
-      type,
-    });
-
-    expect(response).toEqual({
-      _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
-      _key: id,
-    });
-  });
-
-  test('should return default _type placeholder entity if _type does not match', async () => {
-    const id = 'some-random-id';
-    const type = 'some-random-type';
-
-    const context = createMockStepExecutionContext<IntegrationConfig>({
-      instanceConfig,
-      entities: [],
-    });
-
-    const response = await findOrBuildResourceEntityFromResourceId(context, {
-      resourceId: id,
-      type,
-    });
-
-    expect(response).toEqual({
-      _type: DEFAULT_RESOURCE_TYPE,
-      _key: id,
-    });
+    expect(response).toBeUndefined();
   });
 });

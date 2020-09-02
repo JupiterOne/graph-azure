@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Removed
+
+- Removed mapped `role_assignment|allows|<scope>` relationships to avoid creating `azure_unknown_resource_type` entities
+
 ### Changed
 
 - Upgraded SDK to v3.2.0, ordered entity/relationship docs

@@ -465,24 +465,6 @@ test('step - role assignment scope relationships', async () => {
         '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id',
       displayName: 'ALLOWS',
     },
-    {
-      _class: 'ALLOWS',
-      _mapping: {
-        relationshipDirection: 'FORWARD',
-        sourceEntityKey:
-          '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
-        targetEntity: {
-          _key:
-            '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/some-non-keyvault',
-          _type: 'azure_keyvault_service',
-        },
-        targetFilterKeys: [['_key']],
-      },
-      displayName: 'ALLOWS',
-      _key:
-        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2|allows|/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/some-non-keyvault',
-      _type: 'azure_role_assignment_allows_keyvault_service',
-    },
   ]);
 });
 

@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Upgraded SDK to v3.2.0, ordered entity/relationship docs
+
 ## 4.4.1 - 2020-09-02
 
 ### Fixed

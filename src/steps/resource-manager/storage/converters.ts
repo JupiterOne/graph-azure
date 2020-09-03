@@ -127,13 +127,6 @@ export function createStorageFileShareEntity(
   });
 }
 
-/**
- * Creates an integration entity for a Files service file share.
- *
- * * Files are considered to be encrypted when the storage account is
- *   configured as encrypted. See
- *   https://azure.microsoft.com/en-us/blog/announcing-default-encryption-for-azure-blobs-files-table-and-queue-storage/
- */
 export function createStorageQueueEntity(
   webLinker: AzureWebLinker,
   storageAccountEntity: Entity,

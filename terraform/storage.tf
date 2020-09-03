@@ -40,6 +40,11 @@ resource "azurerm_storage_queue" "j1dev" {
   storage_account_name = azurerm_storage_account.j1dev.name
 }
 
+resource "azurerm_storage_table" "j1dev" {
+  name                 = "j1dev"
+  storage_account_name = azurerm_storage_account.j1dev.name
+}
+
 resource "azurerm_sql_server" "j1dev" {
   count = var.azurerm_storage_sql_servers
 

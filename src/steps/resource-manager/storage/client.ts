@@ -3,6 +3,7 @@ import {
   BlobContainer,
   FileShare,
   StorageAccount,
+  Table,
 } from '@azure/arm-storage/esm/models';
 
 interface ListStorageAccountResourcesEndpoint extends ListResourcesEndpoint {
@@ -41,7 +42,12 @@ async function iterateAllStorageAccountResources<ResourceType>({
           );
           return resources;
         } catch (err) {
-          if (err?.body?.code === 'FeatureNotSupportedForAccount') {
+          if (
+            [
+              'OperationNotAllowedOnKind',
+              'FeatureNotSupportedForAccount',
+            ].includes(err?.body?.code)
+          ) {
             // Different storage account kinds support different resources (e.g. BlobStorage does not support queues)
             const response: any = [];
             response._response = { request: err?.request };
@@ -132,6 +138,28 @@ export class StorageClient extends Client {
       resourceGroupName: resourceGroup,
       accountName,
       resourceDescription: 'storage.queues',
+      callback,
+    });
+  }
+
+  /* eslint-disable @typescript-eslint/no-non-null-assertion */
+  public async iterateTables(
+    storageAccount: { name: string; id: string },
+    callback: (e: Table) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      StorageManagementClient,
+    );
+    const resourceGroup = resourceGroupName(storageAccount.id, true)!;
+    const accountName = storageAccount.name!;
+
+    return iterateAllStorageAccountResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: serviceClient.table,
+      resourceGroupName: resourceGroup,
+      accountName,
+      resourceDescription: 'storage.tables',
       callback,
     });
   }

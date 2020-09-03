@@ -36,6 +36,7 @@ import {
 import {
   STEP_RM_STORAGE_RESOURCES,
   STEP_RM_STORAGE_QUEUES,
+  STEP_RM_STORAGE_TABLES,
 } from './steps/resource-manager/storage';
 import { IntegrationConfig } from './types';
 import {
@@ -82,6 +83,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: true },
       [STEP_RM_STORAGE_RESOURCES]: { disabled: true },
       [STEP_RM_STORAGE_QUEUES]: { disabled: true },
+      [STEP_RM_STORAGE_TABLES]: { disabled: true },
       [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: { disabled: true },
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS]: {
@@ -125,6 +127,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: true },
       [STEP_RM_STORAGE_RESOURCES]: { disabled: true },
       [STEP_RM_STORAGE_QUEUES]: { disabled: true },
+      [STEP_RM_STORAGE_TABLES]: { disabled: true },
       [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: { disabled: true },
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS]: {
@@ -168,6 +171,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: false },
       [STEP_RM_STORAGE_RESOURCES]: { disabled: false },
       [STEP_RM_STORAGE_QUEUES]: { disabled: false },
+      [STEP_RM_STORAGE_TABLES]: { disabled: false },
       [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: false },
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: { disabled: false },
       [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS]: {

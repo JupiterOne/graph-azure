@@ -4,6 +4,7 @@ import {
   FileShare,
   StorageAccount,
   Table,
+  StorageQueue,
 } from '@azure/arm-storage/esm/models';
 
 interface ListStorageAccountResourcesEndpoint extends ListResourcesEndpoint {
@@ -11,6 +12,7 @@ interface ListStorageAccountResourcesEndpoint extends ListResourcesEndpoint {
     resourceGroupName: string,
     accountName: string,
   ): Promise<ListResponseType>;
+  listNext<ListResponseType>(nextLink: string): Promise<ListResponseType>;
 }
 
 interface IterateAllStorageAccountResourcesOptions<ResourceType>
@@ -59,7 +61,7 @@ async function iterateAllStorageAccountResources<ResourceType>({
       listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
         nextLink: string,
       ) => {
-        return serviceClient.blobContainers.listNext(nextLink);
+        return resourceEndpoint.listNext(nextLink);
       },
     } as ListResourcesEndpoint,
     resourceDescription,
@@ -123,7 +125,7 @@ export class StorageClient extends Client {
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   public async iterateQueues(
     storageAccount: { name: string; id: string },
-    callback: (e: BlobContainer) => void | Promise<void>,
+    callback: (e: StorageQueue) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       StorageManagementClient,

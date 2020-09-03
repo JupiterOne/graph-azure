@@ -19,6 +19,10 @@ import {
   STEP_RM_COSMOSDB_SQL_DATABASES,
 } from '../cosmosdb';
 import { RESOURCE_GROUP_MATCHER, EOL_MATCHER } from './matchers';
+import {
+  STORAGE_ACCOUNT_ENTITY_METADATA,
+  STEP_RM_STORAGE_RESOURCES,
+} from '../storage';
 
 export interface ResourceIdMap {
   resourceIdMatcher: RegExp;
@@ -82,6 +86,15 @@ export const RESOURCE_ID_TYPES_MAP: ResourceIdMap[] = [
     ),
     _type: RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
     dependsOn: [STEP_RM_COSMOSDB_SQL_DATABASES],
+  },
+  {
+    resourceIdMatcher: new RegExp(
+      RESOURCE_GROUP_MATCHER +
+        '/providers/Microsoft.Storage/storageAccounts/[^/]+' +
+        EOL_MATCHER,
+    ),
+    _type: STORAGE_ACCOUNT_ENTITY_METADATA._type,
+    dependsOn: [STEP_RM_STORAGE_RESOURCES],
   },
 ];
 

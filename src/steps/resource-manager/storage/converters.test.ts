@@ -8,7 +8,7 @@ import { createAzureWebLinker } from '../../../azure';
 import {
   createStorageContainerEntity,
   createStorageFileShareEntity,
-  createStorageServiceEntity,
+  createStorageAccountEntity,
 } from './converters';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
@@ -55,95 +55,39 @@ describe('createStorageAccountEntity Storage (Classic)', () => {
     statusOfPrimary: 'available',
   };
 
-  test('properties transferred blob', () => {
+  test('properties transferred', () => {
     const entity = {
       _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev#blob',
-      _type: 'azure_storage_blob_service',
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
+      _type: 'azure_storage_account',
       _class: ['Service'],
       _rawData: [{ name: 'default', rawData: data }],
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
       name: 'j1dev',
-      displayName: 'j1dev (blob)',
+      displayName: 'j1dev',
       region: 'eastus',
       environment: 'j1dev',
+      encryptedBlob: true,
+      encryptedFileShare: true,
       webLink: webLinker.portalResourceUrl(
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/containersList',
-      ),
-      kind: 'Storage',
-      sku: 'Standard_LRS',
-      resourceGroup: 'j1dev',
-      category: ['infrastructure'],
-      endpoints: ['https://j1dev.blob.core.windows.net/'],
-      createdOn: new Date('2020-04-10T15:43:34.2993802Z').getTime(),
-      encrypted: true,
-      'tag.environment': 'j1dev',
-    };
-
-    expect(createStorageServiceEntity(webLinker, data, 'blob')).toEqual(entity);
-  });
-
-  test('properties transferred queue', () => {
-    const entity = {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev#queue',
-      _type: 'azure_storage_queue_service',
-      _class: ['Service'],
-      _rawData: [{ name: 'default', rawData: data }],
-      id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
-      name: 'j1dev',
-      displayName: 'j1dev (queue)',
-      region: 'eastus',
-      environment: 'j1dev',
-      webLink: webLinker.portalResourceUrl(
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/queueList',
       ),
       kind: 'Storage',
       sku: 'Standard_LRS',
       resourceGroup: 'j1dev',
       category: ['infrastructure'],
-      endpoints: ['https://j1dev.queue.core.windows.net/'],
+      endpoints: [
+        'https://j1dev.blob.core.windows.net/',
+        'https://j1dev.queue.core.windows.net/',
+        'https://j1dev.table.core.windows.net/',
+        'https://j1dev.file.core.windows.net/',
+      ],
       createdOn: new Date('2020-04-10T15:43:34.2993802Z').getTime(),
-      encrypted: false,
       'tag.environment': 'j1dev',
     };
 
-    expect(createStorageServiceEntity(webLinker, data, 'queue')).toEqual(
-      entity,
-    );
-  });
-
-  test('properties transferred table', () => {
-    const entity = {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev#table',
-      _type: 'azure_storage_table_service',
-      _class: ['Service'],
-      _rawData: [{ name: 'default', rawData: data }],
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
-      name: 'j1dev',
-      displayName: 'j1dev (table)',
-      region: 'eastus',
-      environment: 'j1dev',
-      webLink: webLinker.portalResourceUrl(
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/tableList',
-      ),
-      kind: 'Storage',
-      sku: 'Standard_LRS',
-      resourceGroup: 'j1dev',
-      category: ['infrastructure'],
-      endpoints: ['https://j1dev.table.core.windows.net/'],
-      createdOn: new Date('2020-04-10T15:43:34.2993802Z').getTime(),
-      encrypted: false,
-      'tag.environment': 'j1dev',
-    };
-
-    expect(createStorageServiceEntity(webLinker, data, 'table')).toEqual(
-      entity,
-    );
+    expect(createStorageAccountEntity(webLinker, data)).toEqual(entity);
   });
 });
 
@@ -201,62 +145,41 @@ describe('createStorageAccountEntity StorageV2', () => {
     statusOfPrimary: 'available',
   };
 
-  test('properties transferred blob', () => {
+  test('properties transferred', () => {
     const entity = {
       _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev#blob',
-      _type: 'azure_storage_blob_service',
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
+      _type: 'azure_storage_account',
       _class: ['Service'],
       _rawData: [{ name: 'default', rawData: data }],
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
       name: 'j1dev',
-      displayName: 'j1dev (blob)',
+      displayName: 'j1dev',
       region: 'eastus',
       environment: 'j1dev',
+      encryptedBlob: true,
+      encryptedFileShare: true,
       webLink: webLinker.portalResourceUrl(
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/containersList',
-      ),
-      kind: 'StorageV2',
-      sku: 'Standard_LRS',
-      resourceGroup: 'j1dev',
-      category: ['infrastructure'],
-      endpoints: ['https://j1dev.blob.core.windows.net/'],
-      createdOn: new Date('2020-04-10T15:43:34.2993802Z').getTime(),
-      encrypted: true,
-      'tag.environment': 'j1dev',
-    };
-
-    expect(createStorageServiceEntity(webLinker, data, 'blob')).toEqual(entity);
-  });
-
-  test('properties transferred file V2', () => {
-    const entity = {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev#file',
-      _type: 'azure_storage_file_service',
-      _class: ['Service'],
-      _rawData: [{ name: 'default', rawData: data }],
-      id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
-      name: 'j1dev',
-      displayName: 'j1dev (file)',
-      region: 'eastus',
-      environment: 'j1dev',
-      webLink: webLinker.portalResourceUrl(
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/fileList',
       ),
       kind: 'StorageV2',
       sku: 'Standard_LRS',
       resourceGroup: 'j1dev',
       category: ['infrastructure'],
-      endpoints: ['https://j1dev.file.core.windows.net/'],
+      endpoints: [
+        'https://j1dev.dfs.core.windows.net/',
+        'https://j1dev.z13.web.core.windows.net/',
+        'https://j1dev.blob.core.windows.net/',
+        'https://j1dev.queue.core.windows.net/',
+        'https://j1dev.table.core.windows.net/',
+        'https://j1dev.file.core.windows.net/',
+      ],
       createdOn: new Date('2020-04-10T15:43:34.2993802Z').getTime(),
-      encrypted: true,
       'tag.environment': 'j1dev',
     };
 
-    expect(createStorageServiceEntity(webLinker, data, 'file')).toEqual(entity);
+    expect(createStorageAccountEntity(webLinker, data)).toEqual(entity);
   });
 });
 
@@ -314,31 +237,36 @@ describe('createStorageAccountEntity BlobStorage', () => {
   test('properties transferred', () => {
     const entity = {
       _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1devblobstorage#blob',
-      _type: 'azure_storage_blob_service',
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1devblobstorage',
+      _type: 'azure_storage_account',
       _class: ['Service'],
       _rawData: [{ name: 'default', rawData: data }],
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1devblobstorage',
       name: 'j1devblobstorage',
-      displayName: 'j1devblobstorage (blob)',
+      displayName: 'j1devblobstorage',
       region: 'eastus',
       environment: 'j1dev',
+      encryptedBlob: true,
+      encryptedFileShare: true,
       webLink: webLinker.portalResourceUrl(
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1devblobstorage/containersList',
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1devblobstorage',
       ),
       kind: 'BlobStorage',
       sku: 'Standard_LRS',
       resourceGroup: 'j1dev',
       category: ['infrastructure'],
-      endpoints: ['https://j1devblobstorage.blob.core.windows.net/'],
+      endpoints: [
+        'https://j1devblobstorage.blob.core.windows.net/',
+        'https://j1devblobstorage.dfs.core.windows.net/',
+        'https://j1devblobstorage.table.core.windows.net/',
+      ],
       createdOn: new Date('2020-04-17T13:22:05.030Z').getTime(),
       enableHttpsTrafficOnly: true,
-      encrypted: true,
       'tag.environment': 'j1dev',
     };
 
-    expect(createStorageServiceEntity(webLinker, data, 'blob')).toEqual(entity);
+    expect(createStorageAccountEntity(webLinker, data)).toEqual(entity);
   });
 });
 
@@ -555,7 +483,7 @@ describe('createStorageFileShareEntity', () => {
   const entity = {
     _key:
       '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/fileServices/default/shares/j1dev',
-    _type: 'azure_storage_share',
+    _type: 'azure_storage_file_share',
     _class: ['DataStore'],
     _rawData: [{ name: 'default', rawData: data }],
     createdOn: undefined,

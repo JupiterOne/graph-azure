@@ -3,6 +3,7 @@ import {
   FileShare,
   StorageAccount,
   StorageQueue,
+  Table,
 } from '@azure/arm-storage/esm/models';
 import {
   createMockIntegrationLogger,
@@ -256,7 +257,7 @@ describe('iterateTables', () => {
 
     const client = new StorageClient(config, createMockIntegrationLogger());
 
-    const resources: StorageQueue[] = [];
+    const resources: Table[] = [];
     await client.iterateTables(
       {
         id:

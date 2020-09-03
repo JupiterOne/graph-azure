@@ -2,6 +2,7 @@ import {
   BlobContainer,
   FileShare,
   StorageAccount,
+  StorageQueue,
 } from '@azure/arm-storage/esm/models';
 import {
   createMockIntegrationLogger,
@@ -11,6 +12,7 @@ import {
 
 import config from '../../../../test/integrationInstanceConfig';
 import { StorageClient } from './client';
+import { IntegrationConfig } from '../../../types';
 
 let recording: Recording;
 
@@ -165,5 +167,74 @@ describe('iterateFileShares', () => {
         shareQuota: 1,
       }),
     ]);
+  });
+});
+
+describe('iterateQueues', () => {
+  const config: IntegrationConfig & { developerId: string } = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+    developerId: 'ndowmon1',
+  };
+
+  test('all', async () => {
+    recording = setupRecording({
+      directory: __dirname,
+      name: 'iterateQueues',
+      options: {
+        recordFailedRequests: true,
+      },
+    });
+
+    const client = new StorageClient(config, createMockIntegrationLogger());
+
+    const resources: StorageQueue[] = [];
+    await client.iterateQueues(
+      {
+        id:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev',
+        name: 'ndowmon1j1dev',
+      },
+      (e) => {
+        resources.push(e);
+      },
+    );
+
+    expect(resources).toEqual([
+      expect.objectContaining({
+        id:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev/queueServices/default/queues/j1dev',
+        name: 'j1dev',
+        type: 'Microsoft.Storage/storageAccounts/queueServices/queues',
+      }),
+    ]);
+  });
+
+  test('skips when FeatureNotSupportedForAccount', async () => {
+    recording = setupRecording({
+      directory: __dirname,
+      name: 'iterateQueues-FeatureNotSupportedForAccount',
+      options: {
+        recordFailedRequests: true,
+      },
+    });
+
+    const client = new StorageClient(config, createMockIntegrationLogger());
+
+    const resources: StorageQueue[] = [];
+    await client.iterateQueues(
+      {
+        id:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage',
+        name: 'ndowmon1j1devblobstorage',
+      },
+      (e) => {
+        resources.push(e);
+      },
+    );
+
+    expect(resources).toEqual([]);
   });
 });

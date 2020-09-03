@@ -2,6 +2,7 @@ import {
   BlobContainer,
   FileShare,
   StorageAccount,
+  StorageQueue,
 } from '@azure/arm-storage/esm/models';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -9,7 +10,9 @@ import {
   createStorageContainerEntity,
   createStorageFileShareEntity,
   createStorageAccountEntity,
+  createStorageQueueEntity,
 } from './converters';
+import { Entity } from '@jupiterone/integration-sdk-core';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 
@@ -543,6 +546,53 @@ describe('createStorageFileShareEntity', () => {
     ).toEqual({
       ...entity,
       encrypted: false,
+    });
+  });
+});
+
+describe('createStorageQueueEntity', () => {
+  const storageAccountEntity: Entity = {
+    id:
+      '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev',
+    name: 'ndowmon1j1dev',
+    _key:
+      '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev',
+    _type: 'azure_storage_account',
+    _class: ['Service'],
+    displayName: 'ndowmon1j1dev',
+    region: 'eastus',
+    resourceGroup: 'j1dev',
+    kind: 'StorageV2',
+    encryptedFileShare: true,
+    encryptedBlob: true,
+  };
+
+  const data: StorageQueue = {
+    id:
+      '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/queueServices/default/queues/j1dev',
+    name: 'j1dev',
+    type: 'Microsoft.Storage/storageAccounts/queueServices/queues',
+  };
+
+  test('properties transferred', () => {
+    expect(
+      createStorageQueueEntity(webLinker, storageAccountEntity, data),
+    ).toEqual({
+      _key:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/queueServices/default/queues/j1dev',
+      _type: 'azure_storage_queue',
+      _class: ['Queue'],
+      _rawData: [{ name: 'default', rawData: data }],
+      createdOn: undefined,
+      id:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/queueServices/default/queues/j1dev',
+      name: 'j1dev',
+      displayName: 'j1dev',
+      webLink: webLinker.portalResourceUrl(
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/queueServices/default/queues/j1dev',
+      ),
+      resourceGroup: 'j1dev',
+      type: 'Microsoft.Storage/storageAccounts/queueServices/queues',
     });
   });
 });

@@ -77,7 +77,7 @@ export const STORAGE_ACCOUNT_QUEUE_RELATIONSHIP_METADATA = {
 export const STEP_RM_STORAGE_TABLES = 'rm-storage-tables';
 export const STORAGE_TABLE_ENTITY_METADATA = {
   _type: 'azure_storage_table',
-  _class: ['DataStore'],
+  _class: ['DataStore', 'Database'],
   resourceName: '[RM] Storage Table',
 };
 

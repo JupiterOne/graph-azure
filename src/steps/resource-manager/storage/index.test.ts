@@ -134,13 +134,13 @@ test('step - storage tables', async () => {
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'DataStore',
+    _class: ['DataStore', 'Database'],
     schema: {
       additionalProperties: false,
       properties: {
         _type: { const: 'azure_storage_table' },
         _key: { type: 'string' },
-        _class: { type: 'array', items: { const: 'DataStore' } },
+        _class: { type: 'array', items: { const: ['DataStore', 'Database'] } },
         id: { type: 'string' },
         name: { type: 'string' },
         displayName: { type: 'string' },

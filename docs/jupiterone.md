@@ -105,7 +105,7 @@ The following entities are created:
 | [RM] Storage Container   | `azure_storage_container`     | `DataStore`                     |
 | [RM] Storage File Share  | `azure_storage_file_share`    | `DataStore`                     |
 | [RM] Storage Queue       | `azure_storage_queue`         | `Queue`                         |
-| [RM] Storage Table       | `azure_storage_table`         | `DataStore`                     |
+| [RM] Storage Table       | `azure_storage_table`         | `DataStore`, `Database`         |
 | [RM] Subnet              | `azure_subnet`                | `Network`                       |
 | [RM] Subscription        | `azure_subscription`          | `Account`                       |
 | [RM] Virtual Machine     | `azure_vm`                    | `Host`                          |

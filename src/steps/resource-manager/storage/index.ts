@@ -250,7 +250,11 @@ export async function fetchStorageTables(
     { _type: STORAGE_ACCOUNT_ENTITY_METADATA._type },
     async (storageAccountEntity) => {
       await client.iterateTables(
-        (storageAccountEntity as unknown) as { name: string; id: string },
+        (storageAccountEntity as unknown) as {
+          name: string;
+          id: string;
+          kind: Kind;
+        },
         async (e) => {
           const tableEntity = createStorageTableEntity(
             webLinker,

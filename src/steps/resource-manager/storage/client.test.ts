@@ -259,6 +259,7 @@ describe('iterateTables', () => {
         id:
           '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev',
         name: 'ndowmon1j1dev',
+        kind: 'StorageV2',
       },
       (e) => {
         resources.push(e);

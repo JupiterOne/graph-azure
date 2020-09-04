@@ -7,12 +7,12 @@ import {
 import {
   createMockIntegrationLogger,
   Recording,
-  setupRecording,
 } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../../test/integrationInstanceConfig';
 import { StorageClient } from './client';
 import { IntegrationConfig } from '../../../types';
+import { setupAzureRecording } from '../../../../test/helpers/recording';
 
 let recording: Recording;
 
@@ -22,7 +22,7 @@ afterEach(async () => {
 
 describe('iterateStorageAccounts', () => {
   test('all', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateStorageAccounts',
     });
@@ -58,7 +58,7 @@ describe('iterateStorageAccounts', () => {
 
 describe('iterateStorageBlobContainers', () => {
   test('all', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateStorageBlobContainers',
     });
@@ -100,7 +100,7 @@ describe('iterateStorageBlobContainers', () => {
     async () => {
       // jest.useFakeTimers();
 
-      recording = setupRecording({
+      recording = setupAzureRecording({
         directory: __dirname,
         name: 'iterateStorageBlobContainersRetry',
         options: { recordFailedRequests: true },
@@ -140,7 +140,7 @@ describe('iterateStorageBlobContainers', () => {
 
 describe('iterateFileShares', () => {
   test('all', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateFileShares',
     });
@@ -180,7 +180,7 @@ describe('iterateQueues', () => {
   };
 
   test('all', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateQueues',
       options: {
@@ -213,7 +213,7 @@ describe('iterateQueues', () => {
   });
 
   test('skips when FeatureNotSupportedForAccount', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateQueues-FeatureNotSupportedForAccount',
       options: {

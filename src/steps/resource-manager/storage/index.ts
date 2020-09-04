@@ -21,12 +21,16 @@ import {
   STORAGE_QUEUE_ENTITY_METADATA,
   STEP_RM_STORAGE_QUEUES,
   STORAGE_ACCOUNT_QUEUE_RELATIONSHIP_METADATA,
+  STEP_RM_STORAGE_TABLES,
+  STORAGE_TABLE_ENTITY_METADATA,
+  STORAGE_ACCOUNT_TABLE_RELATIONSHIP_METADATA,
 } from './constants';
 import {
   createStorageContainerEntity,
   createStorageFileShareEntity,
   createStorageAccountEntity,
   createStorageQueueEntity,
+  createStorageTableEntity,
 } from './converters';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
@@ -233,6 +237,46 @@ export async function fetchStorageQueues(
   );
 }
 
+export async function fetchStorageTables(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new StorageClient(instance.config, logger);
+
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  await jobState.iterateEntities(
+    { _type: STORAGE_ACCOUNT_ENTITY_METADATA._type },
+    async (storageAccountEntity) => {
+      await client.iterateTables(
+        (storageAccountEntity as unknown) as {
+          name: string;
+          id: string;
+          kind: Kind;
+        },
+        async (e) => {
+          const tableEntity = createStorageTableEntity(
+            webLinker,
+            storageAccountEntity,
+            e,
+          );
+
+          await jobState.addEntity(tableEntity);
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: STORAGE_ACCOUNT_RELATIONSHIP_CLASS,
+              from: storageAccountEntity,
+              to: tableEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
 export const storageSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -267,5 +311,13 @@ export const storageSteps: Step<
     relationships: [STORAGE_ACCOUNT_QUEUE_RELATIONSHIP_METADATA],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_STORAGE_RESOURCES],
     executionHandler: fetchStorageQueues,
+  },
+  {
+    id: STEP_RM_STORAGE_TABLES,
+    name: 'Storage Tables',
+    entities: [STORAGE_TABLE_ENTITY_METADATA],
+    relationships: [STORAGE_ACCOUNT_TABLE_RELATIONSHIP_METADATA],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_STORAGE_RESOURCES],
+    executionHandler: fetchStorageTables,
   },
 ];

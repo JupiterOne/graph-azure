@@ -3,6 +3,7 @@ import {
   FileShare,
   StorageAccount,
   StorageQueue,
+  Table,
 } from '@azure/arm-storage/esm/models';
 import {
   createMockIntegrationLogger,
@@ -232,5 +233,47 @@ describe('iterateQueues', () => {
     );
 
     expect(resources).toEqual([]);
+  });
+});
+
+describe('iterateTables', () => {
+  const config: IntegrationConfig & { developerId: string } = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+    developerId: 'ndowmon1',
+  };
+
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateTables',
+    });
+
+    const client = new StorageClient(config, createMockIntegrationLogger());
+
+    const resources: Table[] = [];
+    await client.iterateTables(
+      {
+        id:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev',
+        name: 'ndowmon1j1dev',
+        kind: 'StorageV2',
+      },
+      (e) => {
+        resources.push(e);
+      },
+    );
+
+    expect(resources).toEqual([
+      expect.objectContaining({
+        id:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev/tableServices/default/tables/j1dev',
+        name: 'j1dev',
+        tableName: 'j1dev',
+        type: 'Microsoft.Storage/storageAccounts/tableServices/tables',
+      }),
+    ]);
   });
 });

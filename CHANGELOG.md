@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Added
 
+- Added `azure_storage_table` entities
+- Added `azure_storage_account|has|azure_storage_table` relationships
 - Added `azure_storage_queue` entities
 - Added `azure_storage_account|has|azure_storage_queue` relationships
 

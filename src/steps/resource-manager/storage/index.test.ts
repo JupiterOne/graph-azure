@@ -24,9 +24,6 @@ test('step - storage queues', async () => {
   recording = setupAzureRecording({
     directory: __dirname,
     name: 'resource-manager-step-storage-queues',
-    options: {
-      recordFailedRequests: true,
-    },
   });
 
   const context = createMockStepExecutionContext<IntegrationConfig>({
@@ -38,6 +35,7 @@ test('step - storage queues', async () => {
         _key: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev`,
         id: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev`,
         name: `ndowmon1j1dev`,
+        kind: 'StorageV2',
       },
       {
         _class: ['Service'],
@@ -45,6 +43,7 @@ test('step - storage queues', async () => {
         _key: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage`,
         id: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage`,
         name: `ndowmon1j1devblobstorage`,
+        kind: 'BlockBlobStorage',
       },
     ],
   });

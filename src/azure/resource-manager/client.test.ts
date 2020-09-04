@@ -3,11 +3,11 @@ import { SqlManagementClient } from '@azure/arm-sql';
 import {
   createMockIntegrationLogger,
   Recording,
-  setupRecording,
 } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../test/integrationInstanceConfig';
 import { Client } from './client';
+import { setupAzureRecording } from '../../../test/helpers/recording';
 
 class SomeClient extends Client {}
 
@@ -20,7 +20,7 @@ afterEach(async () => {
 test('client accessToken fetched once and used across resources', async () => {
   let requests = 0;
 
-  recording = setupRecording({
+  recording = setupAzureRecording({
     directory: __dirname,
     name: 'accessTokenCaching',
   });

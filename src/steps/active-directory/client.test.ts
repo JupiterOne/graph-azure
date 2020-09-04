@@ -1,7 +1,6 @@
 import {
   createMockIntegrationLogger,
   Recording,
-  setupRecording,
 } from '@jupiterone/integration-sdk-testing';
 import {
   DirectoryObject,
@@ -13,6 +12,7 @@ import {
 import config from '../../../test/integrationInstanceConfig';
 import { DirectoryGraphClient, GroupMember } from './client';
 import { IntegrationConfig } from '../../types';
+import { setupAzureRecording } from '../../../test/helpers/recording';
 
 const logger = createMockIntegrationLogger();
 
@@ -25,7 +25,10 @@ afterEach(async () => {
 });
 
 test('iterateGroups', async () => {
-  recording = setupRecording({ directory: __dirname, name: 'iterateGroups' });
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'iterateGroups',
+  });
 
   const client = new DirectoryGraphClient(logger, config);
 
@@ -50,7 +53,7 @@ describe('iterateGroupMembers', () => {
   });
 
   test('single selected property', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateGroupMembersSelectProperty',
     });
@@ -78,7 +81,7 @@ describe('iterateGroupMembers', () => {
   });
 
   test('multiple selected properties', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateGroupMembersSelectProperties',
     });
@@ -104,7 +107,7 @@ describe('iterateGroupMembers', () => {
   });
 
   test('iterateGroupMembers', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateGroupMembers',
     });
@@ -128,7 +131,7 @@ describe('iterateGroupMembers', () => {
 
 describe('iterateUsers', () => {
   test('404 answers empty collection', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateUsers404',
     });
@@ -150,7 +153,10 @@ describe('iterateUsers', () => {
   });
 
   test('provides expected data', async () => {
-    recording = setupRecording({ directory: __dirname, name: 'iterateUsers' });
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateUsers',
+    });
 
     const client = new DirectoryGraphClient(logger, config);
 
@@ -169,7 +175,7 @@ describe('iterateUsers', () => {
 });
 
 test('iterateDirectoryRoles', async () => {
-  recording = setupRecording({
+  recording = setupAzureRecording({
     directory: __dirname,
     name: 'iterateDirectoryRoles',
   });
@@ -190,7 +196,7 @@ test('iterateDirectoryRoles', async () => {
 });
 
 test('iterateDirectoryRoleMembers', async () => {
-  recording = setupRecording({
+  recording = setupAzureRecording({
     directory: __dirname,
     name: 'iterateDirectoryRoleMembers',
   });
@@ -221,7 +227,7 @@ test('iterateServicePrincipals', async () => {
     subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
   };
 
-  recording = setupRecording({
+  recording = setupAzureRecording({
     directory: __dirname,
     name: 'iterateServicePrincipals',
   });

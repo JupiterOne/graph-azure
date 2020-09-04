@@ -1,11 +1,11 @@
 import {
   createMockIntegrationLogger,
   Recording,
-  setupRecording,
 } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../test/integrationInstanceConfig';
 import { GraphClient } from './client';
+import { setupAzureRecording } from '../../../test/helpers/recording';
 
 class AnyGraphClient extends GraphClient {}
 
@@ -20,7 +20,7 @@ afterEach(async () => {
 test('accessToken fetched and cached', async () => {
   let requests = 0;
 
-  recording = setupRecording({
+  recording = setupAzureRecording({
     directory: __dirname,
     name: 'createGraphClient',
   });
@@ -41,7 +41,7 @@ test('accessToken fetched and cached', async () => {
 });
 
 test('fetchOrganization', async () => {
-  recording = setupRecording({
+  recording = setupAzureRecording({
     directory: __dirname,
     name: 'fetchOrganization',
   });

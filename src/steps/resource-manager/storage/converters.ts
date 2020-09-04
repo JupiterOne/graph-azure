@@ -2,6 +2,7 @@ import {
   BlobContainer,
   FileShare,
   StorageAccount,
+  StorageQueue,
 } from '@azure/arm-storage/esm/models';
 import {
   createIntegrationEntity,
@@ -14,6 +15,7 @@ import {
   STORAGE_ACCOUNT_ENTITY_METADATA,
   STORAGE_CONTAINER_ENTITY_METADATA,
   STORAGE_FILE_SHARE_ENTITY_METADATA,
+  STORAGE_QUEUE_ENTITY_METADATA,
 } from './constants';
 
 /**
@@ -120,6 +122,28 @@ export function createStorageFileShareEntity(
         resourceGroup: resourceGroupName(data.id),
         classification: null,
         encrypted: !!account.encryption?.services?.file?.enabled,
+      },
+    },
+  });
+}
+
+export function createStorageQueueEntity(
+  webLinker: AzureWebLinker,
+  storageAccountEntity: Entity,
+  data: StorageQueue,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _type: STORAGE_QUEUE_ENTITY_METADATA._type,
+        _class: STORAGE_QUEUE_ENTITY_METADATA._class,
+        webLink: webLinker.portalResourceUrl(data.id),
+        name: data.name,
+        displayName: data.name,
+        type: data.type,
+        resourceGroup: resourceGroupName(data.id),
+        encrypted: storageAccountEntity.encryptedQueue,
       },
     },
   });

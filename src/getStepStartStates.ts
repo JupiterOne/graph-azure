@@ -39,7 +39,10 @@ import {
   STEP_RM_NETWORK_SECURITY_GROUPS,
   STEP_RM_NETWORK_VIRTUAL_NETWORKS,
 } from './steps/resource-manager/network';
-import { STEP_RM_STORAGE_RESOURCES } from './steps/resource-manager/storage';
+import {
+  STEP_RM_STORAGE_RESOURCES,
+  STEP_RM_STORAGE_QUEUES,
+} from './steps/resource-manager/storage';
 import { IntegrationConfig } from './types';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources';
 import { STEP_RM_SUBSCRIPTIONS } from './steps/resource-manager/subscriptions';
@@ -76,6 +79,7 @@ export default function getStepStartStates(
     [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: resourceManager,
     [STEP_RM_DATABASE_SQL_DATABASES]: resourceManager,
     [STEP_RM_STORAGE_RESOURCES]: resourceManager,
+    [STEP_RM_STORAGE_QUEUES]: resourceManager,
     [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: resourceManager,
     [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: resourceManager,
     [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS]: resourceManager,

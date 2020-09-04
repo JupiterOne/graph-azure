@@ -31,7 +31,7 @@ export interface ListAllResourcesEndpoint {
  * An Azure resource manager endpoint that has `list` and `listNext` functions.
  */
 export interface ListResourcesEndpoint {
-  list<ListResponseType>(): Promise<ListResponseType>;
+  list<ListResponseType>(...args: any): Promise<ListResponseType>;
   listNext?<ListResponseType>(nextLink: string): Promise<ListResponseType>;
 }
 
@@ -219,6 +219,18 @@ export function createClient<T>(
   return new ctor(...args);
 }
 
+export interface IterateAllResourcesOptions<ServiceClientType, ResourceType> {
+  serviceClient: ServiceClientType;
+  resourceEndpoint: ListAllResourcesEndpoint | ListResourcesEndpoint;
+  resourceDescription: string;
+  callback: (
+    resource: ResourceType,
+    serviceClient: ServiceClientType,
+  ) => void | Promise<void>;
+  logger: IntegrationLogger;
+  endpointRatePeriod?: number;
+}
+
 /**
  * Iterate all resources of the provided `resourceEndpoint`.
  *
@@ -238,17 +250,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
   callback,
   logger,
   endpointRatePeriod = 5 * 60 * 1000,
-}: {
-  serviceClient: ServiceClientType;
-  resourceEndpoint: ListAllResourcesEndpoint | ListResourcesEndpoint;
-  resourceDescription: string;
-  callback: (
-    resource: ResourceType,
-    serviceClient: ServiceClientType,
-  ) => void | Promise<void>;
-  logger: IntegrationLogger;
-  endpointRatePeriod?: number;
-}): Promise<void> {
+}: IterateAllResourcesOptions<ServiceClientType, ResourceType>): Promise<void> {
   let nextLink: string | undefined;
   do {
     let response: ResourceListResponse<ResourceType> | undefined;

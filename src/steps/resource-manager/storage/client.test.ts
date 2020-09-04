@@ -2,15 +2,17 @@ import {
   BlobContainer,
   FileShare,
   StorageAccount,
+  StorageQueue,
 } from '@azure/arm-storage/esm/models';
 import {
   createMockIntegrationLogger,
   Recording,
-  setupRecording,
 } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../../test/integrationInstanceConfig';
 import { StorageClient } from './client';
+import { IntegrationConfig } from '../../../types';
+import { setupAzureRecording } from '../../../../test/helpers/recording';
 
 let recording: Recording;
 
@@ -20,7 +22,7 @@ afterEach(async () => {
 
 describe('iterateStorageAccounts', () => {
   test('all', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateStorageAccounts',
     });
@@ -56,7 +58,7 @@ describe('iterateStorageAccounts', () => {
 
 describe('iterateStorageBlobContainers', () => {
   test('all', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateStorageBlobContainers',
     });
@@ -98,7 +100,7 @@ describe('iterateStorageBlobContainers', () => {
     async () => {
       // jest.useFakeTimers();
 
-      recording = setupRecording({
+      recording = setupAzureRecording({
         directory: __dirname,
         name: 'iterateStorageBlobContainersRetry',
         options: { recordFailedRequests: true },
@@ -138,7 +140,7 @@ describe('iterateStorageBlobContainers', () => {
 
 describe('iterateFileShares', () => {
   test('all', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateFileShares',
     });
@@ -165,5 +167,70 @@ describe('iterateFileShares', () => {
         shareQuota: 1,
       }),
     ]);
+  });
+});
+
+describe('iterateQueues', () => {
+  const config: IntegrationConfig & { developerId: string } = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+    developerId: 'ndowmon1',
+  };
+
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateQueues',
+    });
+
+    const client = new StorageClient(config, createMockIntegrationLogger());
+
+    const resources: StorageQueue[] = [];
+    await client.iterateQueues(
+      {
+        id:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev',
+        name: 'ndowmon1j1dev',
+        kind: 'StorageV2',
+      },
+      (e) => {
+        resources.push(e);
+      },
+    );
+
+    expect(resources).toEqual([
+      expect.objectContaining({
+        id:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev/queueServices/default/queues/j1dev',
+        name: 'j1dev',
+        type: 'Microsoft.Storage/storageAccounts/queueServices/queues',
+      }),
+    ]);
+  });
+
+  test('skips when FeatureNotSupportedForAccount', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateQueues-FeatureNotSupportedForAccount',
+    });
+
+    const client = new StorageClient(config, createMockIntegrationLogger());
+
+    const resources: StorageQueue[] = [];
+    await client.iterateQueues(
+      {
+        id:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage',
+        name: 'ndowmon1j1devblobstorage',
+        kind: 'BlobStorage',
+      },
+      (e) => {
+        resources.push(e);
+      },
+    );
+
+    expect(resources).toEqual([]);
   });
 });

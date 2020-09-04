@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_storage_queue` entities
+- Added `azure_storage_account|has|azure_storage_queue` relationships
+
 ### Removed
 
 - Removed mapped `role_assignment|allows|<scope>` relationships to avoid

@@ -1,7 +1,8 @@
-import { Recording, setupRecording } from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../test/integrationInstanceConfig';
 import authenticate from './authenticate';
+import { setupAzureRecording } from '../../../test/helpers/recording';
 
 let recording: Recording;
 
@@ -10,7 +11,7 @@ afterEach(async () => {
 });
 
 test('authenticate with subscription matching', async () => {
-  recording = setupRecording({
+  recording = setupAzureRecording({
     directory: __dirname,
     name: 'authenticate',
   });
@@ -19,7 +20,7 @@ test('authenticate with subscription matching', async () => {
 });
 
 test('authenticate with subscription not matching', async () => {
-  recording = setupRecording({
+  recording = setupAzureRecording({
     directory: __dirname,
     name: 'authenticate bad subscription',
   });
@@ -29,7 +30,7 @@ test('authenticate with subscription not matching', async () => {
 });
 
 test('authenticate with no subscription', async () => {
-  recording = setupRecording({
+  recording = setupAzureRecording({
     directory: __dirname,
     name: 'authenticate no subscription',
   });

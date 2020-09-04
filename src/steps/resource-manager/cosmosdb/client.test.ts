@@ -5,11 +5,11 @@ import {
 import {
   createMockIntegrationLogger,
   Recording,
-  setupRecording,
 } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../../test/integrationInstanceConfig';
 import { CosmosDBClient } from './client';
+import { setupAzureRecording } from '../../../../test/helpers/recording';
 
 let recording: Recording;
 
@@ -19,7 +19,7 @@ afterEach(async () => {
 
 describe('iterateAccounts', () => {
   test('all', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateAccounts',
     });
@@ -48,7 +48,7 @@ describe('iterateAccounts', () => {
 
 describe('iterateSQLDatabases', () => {
   test('all', async () => {
-    recording = setupRecording({
+    recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateSQLDatabases',
     });

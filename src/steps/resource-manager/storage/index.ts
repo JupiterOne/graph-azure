@@ -1,4 +1,4 @@
-import { StorageAccount } from '@azure/arm-storage/esm/models';
+import { StorageAccount, Kind } from '@azure/arm-storage/esm/models';
 import {
   createDirectRelationship,
   Entity,
@@ -206,7 +206,11 @@ export async function fetchStorageQueues(
     { _type: STORAGE_ACCOUNT_ENTITY_METADATA._type },
     async (storageAccountEntity) => {
       await client.iterateQueues(
-        (storageAccountEntity as unknown) as { name: string; id: string },
+        (storageAccountEntity as unknown) as {
+          name: string;
+          id: string;
+          kind: Kind;
+        },
         async (e) => {
           const queueEntity = createStorageQueueEntity(
             webLinker,

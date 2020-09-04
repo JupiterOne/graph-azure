@@ -183,9 +183,6 @@ describe('iterateQueues', () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateQueues',
-      options: {
-        recordFailedRequests: true,
-      },
     });
 
     const client = new StorageClient(config, createMockIntegrationLogger());
@@ -196,6 +193,7 @@ describe('iterateQueues', () => {
         id:
           '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev',
         name: 'ndowmon1j1dev',
+        kind: 'StorageV2',
       },
       (e) => {
         resources.push(e);
@@ -216,9 +214,6 @@ describe('iterateQueues', () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateQueues-FeatureNotSupportedForAccount',
-      options: {
-        recordFailedRequests: true,
-      },
     });
 
     const client = new StorageClient(config, createMockIntegrationLogger());
@@ -229,6 +224,7 @@ describe('iterateQueues', () => {
         id:
           '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage',
         name: 'ndowmon1j1devblobstorage',
+        kind: 'BlobStorage',
       },
       (e) => {
         resources.push(e);

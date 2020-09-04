@@ -4,6 +4,7 @@ import {
   FileShare,
   StorageAccount,
   StorageQueue,
+  Kind,
 } from '@azure/arm-storage/esm/models';
 
 interface ListStorageAccountResourcesEndpoint extends ListResourcesEndpoint {
@@ -36,21 +37,7 @@ async function iterateAllStorageAccountResources<ResourceType>({
     serviceClient,
     resourceEndpoint: {
       list: async () => {
-        try {
-          const resources = await resourceEndpoint.list(
-            resourceGroupName,
-            accountName,
-          );
-          return resources;
-        } catch (err) {
-          if (err?.body?.code === 'FeatureNotSupportedForAccount') {
-            // Different storage account kinds support different resources (e.g. BlobStorage does not support queues)
-            const response: any = [];
-            response._response = { request: err?.request };
-            return response;
-          }
-          throw err;
-        }
+        return resourceEndpoint.list(resourceGroupName, accountName);
       },
       listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
         nextLink: string,
@@ -118,7 +105,7 @@ export class StorageClient extends Client {
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   public async iterateQueues(
-    storageAccount: { name: string; id: string },
+    storageAccount: { name: string; id: string; kind: Kind },
     callback: (e: StorageQueue) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
@@ -127,15 +114,17 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name!;
 
-    return iterateAllStorageAccountResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: serviceClient.queue,
-      resourceGroupName: resourceGroup,
-      accountName,
-      resourceDescription: 'storage.queues',
-      callback,
-    });
+    if ((['Storage', 'StorageV2'] as Kind[]).includes(storageAccount.kind)) {
+      return iterateAllStorageAccountResources({
+        logger: this.logger,
+        serviceClient,
+        resourceEndpoint: serviceClient.queue,
+        resourceGroupName: resourceGroup,
+        accountName,
+        resourceDescription: 'storage.queues',
+        callback,
+      });
+    }
   }
 
   public async iterateFileShares(

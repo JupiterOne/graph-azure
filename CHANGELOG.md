@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.0.0 - 2020-09-04
+
 ### Added
 
 - Added `azure_storage_table` entities
@@ -23,7 +25,9 @@ and this project adheres to
 ### Changed
 
 - Created `azure_storage_account` entities to replace
-  `azure_storage_blob_service` and `azure_storage_file_service`
+  `azure_storage_blob_service` and `azure_storage_file_service`. NOTE: This
+  change requires any existing queries using the `azure_storage_blob_service` or
+  `azure_storage_file_service` `_type` to use `azure_storage_account`.
 - Upgraded SDK to v3.2.0, ordered entity/relationship docs
 
 ## 4.4.1 - 2020-09-02

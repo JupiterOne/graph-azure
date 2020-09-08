@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@azure/arm-authorization": "^8.3.2",
+    "@azure/arm-apimanagement": "^6.0.0",
     "@azure/arm-compute": "^14.0.0",
     "@azure/arm-cosmosdb": "^7.0.0",
     "@azure/arm-keyvault": "^1.2.1",

@@ -28,6 +28,16 @@ variable "azurerm_storage_mysql_databases" {
   default = 0
 }
 
+variable "azurerm_api_management_services" {
+  type    = number
+  default = 0
+}
+
+variable "azurerm_api_management_apis" {
+  type    = number
+  default = 0
+}
+
 variable "developer_id" {
   type    = string
   default = ""

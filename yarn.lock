@@ -9,6 +9,15 @@
   dependencies:
     tslib "^1.9.3"
 
+"@azure/arm-apimanagement@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-apimanagement/-/arm-apimanagement-6.0.0.tgz#961c43284535de50c5d47384a16a5012b720bddc"
+  integrity sha512-yl4nWQ1Jy0byMl+IxGjwk+0PhypS3cYUUInABxeOcTGbI2x2e8wVDfsksHC3GCtd8i6PLsyUU3yVtNN0mQfQ9A==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-authorization@^8.3.2":
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/@azure/arm-authorization/-/arm-authorization-8.3.2.tgz#c48dc3fdd205b0fe63bb94913100a2eabb3b3e5f"

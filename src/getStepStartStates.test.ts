@@ -48,6 +48,10 @@ import {
 } from './steps/resource-manager/authorization';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources';
 import { STEP_RM_SUBSCRIPTIONS } from './steps/resource-manager/subscriptions';
+import {
+  STEP_RM_API_MANAGEMENT_SERVICES,
+  STEP_RM_API_MANAGEMENT_APIS,
+} from './steps/resource-manager/api-management';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -96,6 +100,8 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
       [STEP_RM_SUBSCRIPTIONS]: { disabled: true },
+      [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
+      [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
     });
   });
 
@@ -140,6 +146,8 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
       [STEP_RM_SUBSCRIPTIONS]: { disabled: true },
+      [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
+      [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
     });
   });
 
@@ -184,6 +192,8 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: false },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: false },
       [STEP_RM_SUBSCRIPTIONS]: { disabled: false },
+      [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: false },
+      [STEP_RM_API_MANAGEMENT_APIS]: { disabled: false },
     });
   });
 });

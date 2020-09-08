@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_api_management_service` entities
+- Added `azure_resource_group|has|azure_api_management_service` relationships
+- Added `azure_api_management_api` entities
+- Added `azure_api_management_service|has|azure_api_management_api`
+  relationships
+
 ## 5.0.0 - 2020-09-04
 
 ### Added

@@ -14,6 +14,7 @@ import validateInvocation from './validateInvocation';
 import { storageSteps } from './steps/resource-manager/storage';
 import { resourcesSteps } from './steps/resource-manager/resources';
 import { subscriptionSteps } from './steps/resource-manager/subscriptions';
+import { apiManagementSteps } from './steps/resource-manager/api-management';
 
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
@@ -54,5 +55,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...authorizationSteps,
     ...resourcesSteps,
     ...subscriptionSteps,
+    ...apiManagementSteps,
   ],
 };

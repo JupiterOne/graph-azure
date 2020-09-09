@@ -38,6 +38,16 @@ variable "azurerm_api_management_apis" {
   default = 0
 }
 
+variable "azurerm_dns_zone" {
+  type    = number
+  default = 0
+}
+
+variable "azurerm_dns_a_record" {
+  type    = number
+  default = 0
+}
+
 variable "developer_id" {
   type    = string
   default = ""

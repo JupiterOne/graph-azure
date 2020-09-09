@@ -36,6 +36,15 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
+"@azure/arm-containerregistry@^8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-containerregistry/-/arm-containerregistry-8.0.0.tgz#7d1da67e9d45e540bc75dc12b7a0b55b894b461b"
+  integrity sha512-8v+3YtATbaFv5qMGvhFVR+qx1QPc1+NBy2MWWoJ69SmEE1X91ySvXDbEa0Pr7znm/bqbBYWOLJN5L3Aa7Q0fpg==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-cosmosdb@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-cosmosdb/-/arm-cosmosdb-7.0.0.tgz#fe81b23254b233e7244c03981e55da0e11495b73"

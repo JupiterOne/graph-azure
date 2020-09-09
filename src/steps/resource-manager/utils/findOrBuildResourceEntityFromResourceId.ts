@@ -23,6 +23,10 @@ import {
   STORAGE_ACCOUNT_ENTITY_METADATA,
   STEP_RM_STORAGE_RESOURCES,
 } from '../storage';
+import {
+  ApiManagementEntities,
+  STEP_RM_API_MANAGEMENT_SERVICES,
+} from '../api-management';
 
 export interface ResourceIdMap {
   resourceIdMatcher: RegExp;
@@ -95,6 +99,15 @@ export const RESOURCE_ID_TYPES_MAP: ResourceIdMap[] = [
     ),
     _type: STORAGE_ACCOUNT_ENTITY_METADATA._type,
     dependsOn: [STEP_RM_STORAGE_RESOURCES],
+  },
+  {
+    resourceIdMatcher: new RegExp(
+      RESOURCE_GROUP_MATCHER +
+        '/providers/Microsoft.ApiManagement/service/[^/]+' +
+        EOL_MATCHER,
+    ),
+    _type: ApiManagementEntities.SERVICE._type,
+    dependsOn: [STEP_RM_API_MANAGEMENT_SERVICES],
   },
 ];
 

@@ -47,6 +47,10 @@ import {
 import { IntegrationConfig } from './types';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources';
 import { STEP_RM_SUBSCRIPTIONS } from './steps/resource-manager/subscriptions';
+import {
+  STEP_RM_API_MANAGEMENT_APIS,
+  STEP_RM_API_MANAGEMENT_SERVICES,
+} from './steps/resource-manager/api-management';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -90,5 +94,7 @@ export default function getStepStartStates(
     [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: resourceManager,
     [STEP_RM_RESOURCES_RESOURCE_GROUPS]: resourceManager,
     [STEP_RM_SUBSCRIPTIONS]: resourceManager,
+    [STEP_RM_API_MANAGEMENT_SERVICES]: resourceManager,
+    [STEP_RM_API_MANAGEMENT_APIS]: resourceManager,
   };
 }

@@ -86,6 +86,8 @@ The following entities are created:
 | [RM] Classic Admin          | `azure_classic_admin_group`    | `UserGroup`                     |
 | [RM] Cosmos DB Account      | `azure_cosmosdb_account`       | `Account`, `Service`            |
 | [RM] Cosmos DB Database     | `azure_cosmosdb_sql_database`  | `Database`, `DataStore`         |
+| [RM] DNS Record Set         | `azure_dns_record_set`         | `DomainRecord`                  |
+| [RM] DNS Zone               | `azure_dns_zone`               | `DomainZone`                    |
 | [RM] Image                  | `azure_image`                  | `Image`                         |
 | [RM] Key Vault              | `azure_keyvault_service`       | `Service`                       |
 | [RM] Load Balancer          | `azure_lb`                     | `Gateway`                       |
@@ -125,6 +127,7 @@ The following relationships are created/mapped:
 | `azure_api_management_service` | **HAS**               | `azure_api_management_api`      |
 | `azure_classic_admin_group`    | **HAS**               | `azure_user`                    |
 | `azure_cosmosdb_account`       | **HAS**               | `azure_cosmosdb_sql_database`   |
+| `azure_dns_zone`               | **HAS**               | `azure_dns_record_set`          |
 | `azure_user_group`             | **HAS**               | `azure_user_group`              |
 | `azure_user_group`             | **HAS**               | `azure_group_member`            |
 | `azure_user_group`             | **HAS**               | `azure_user`                    |
@@ -134,6 +137,7 @@ The following relationships are created/mapped:
 | `azure_postgresql_server`      | **HAS**               | `azure_postgresql_database`     |
 | `azure_resource_group`         | **HAS**               | `azure_api_management_service`  |
 | `azure_resource_group`         | **HAS**               | `azure_cosmosdb_account`        |
+| `azure_resource_group`         | **HAS**               | `azure_dns_zone`                |
 | `azure_resource_group`         | **HAS**               | `azure_image`                   |
 | `azure_resource_group`         | **HAS**               | `azure_keyvault_service`        |
 | `azure_resource_group`         | **HAS**               | `azure_lb`                      |
@@ -150,6 +154,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`         | **HAS**               | `azure_vnet`                    |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_api_management_service`  |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_cosmosdb_account`        |
+| `azure_role_assignment`        | **ALLOWS**            | `azure_dns_zone`                |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_keyvault_service`        |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_nic`                     |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_public_ip`               |

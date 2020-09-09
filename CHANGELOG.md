@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.1.0 - 2020-09-09
+
 ### Added
 
 - Added `azure_api_management_service` entities

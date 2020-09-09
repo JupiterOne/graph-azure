@@ -148,6 +148,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`         | **HAS**               | `azure_storage_account`         |
 | `azure_resource_group`         | **HAS**               | `azure_vm`                      |
 | `azure_resource_group`         | **HAS**               | `azure_vnet`                    |
+| `azure_role_assignment`        | **ALLOWS**            | `azure_api_management_service`  |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_cosmosdb_account`        |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_keyvault_service`        |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_nic`                     |

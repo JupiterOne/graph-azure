@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createDnsRecordSetEntity properties transferred 1`] = `
+Object {
+  "TTL": 3600,
+  "_class": Array [
+    "DomainRecord",
+  ],
+  "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/dnszones/jupiterone-dev.com/SOA/@",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "etag": "1860ae74-f08a-4ea4-ad3c-3583ae11ec4b",
+        "fqdn": "jupiterone-dev.com.",
+        "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/dnszones/jupiterone-dev.com/SOA/@",
+        "name": "@",
+        "provisioningState": "Succeeded",
+        "soaRecord": Object {
+          "email": "azuredns-hostmaster.microsoft.com",
+          "expireTime": 2419200,
+          "host": "ns1-05.azure-dns.com.",
+          "minimumTtl": 300,
+          "refreshTime": 3600,
+          "retryTime": 300,
+          "serialNumber": 1,
+        },
+        "tTL": 3600,
+        "targetResource": Object {},
+        "type": "Microsoft.Network/dnszones/SOA",
+      },
+    },
+  ],
+  "_type": "azure_dns_record_set",
+  "azureType": "Microsoft.Network/dnszones/SOA",
+  "createdOn": undefined,
+  "displayName": "@",
+  "etag": "1860ae74-f08a-4ea4-ad3c-3583ae11ec4b",
+  "fqdn": "jupiterone-dev.com.",
+  "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/dnszones/jupiterone-dev.com/SOA/@",
+  "name": "@",
+  "provisioningState": "Succeeded",
+  "tTl": 3600,
+  "type": "SOA",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/dnszones/jupiterone-dev.com/SOA/@",
+}
+`;
+
+exports[`createDnsZoneEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "DomainZone",
+  ],
+  "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/dnszones/jupiterone-dev.com",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "etag": "00000002-0000-0000-2251-9a8ae586d601",
+        "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/dnszones/jupiterone-dev.com",
+        "location": "global",
+        "maxNumberOfRecordSets": 10000,
+        "name": "jupiterone-dev.com",
+        "nameServers": Array [
+          "ns1-05.azure-dns.com.",
+          "ns2-05.azure-dns.net.",
+          "ns3-05.azure-dns.org.",
+          "ns4-05.azure-dns.info.",
+        ],
+        "numberOfRecordSets": 3,
+        "tags": Object {},
+        "type": "Microsoft.Network/dnszones",
+        "zoneType": "Public",
+      },
+    },
+  ],
+  "_type": "azure_dns_zone",
+  "createdOn": undefined,
+  "displayName": "jupiterone-dev.com",
+  "domainName": "jupiterone-dev.com",
+  "etag": "00000002-0000-0000-2251-9a8ae586d601",
+  "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/dnszones/jupiterone-dev.com",
+  "location": "global",
+  "maxNumberOfRecordSets": 10000,
+  "name": "jupiterone-dev.com",
+  "nameServers": Array [
+    "ns1-05.azure-dns.com.",
+    "ns2-05.azure-dns.net.",
+    "ns3-05.azure-dns.org.",
+    "ns4-05.azure-dns.info.",
+  ],
+  "numberOfRecordSets": 3,
+  "recordsCount": 3,
+  "type": "Microsoft.Network/dnszones",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/dnszones/jupiterone-dev.com",
+  "zoneType": "Public",
+}
+`;

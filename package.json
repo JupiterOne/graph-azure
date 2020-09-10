@@ -33,6 +33,7 @@
     "@azure/arm-authorization": "^8.3.2",
     "@azure/arm-compute": "^14.0.0",
     "@azure/arm-cosmosdb": "^7.0.0",
+    "@azure/arm-dns": "^4.0.0",
     "@azure/arm-keyvault": "^1.2.1",
     "@azure/arm-mariadb": "^1.4.0",
     "@azure/arm-mysql": "^3.3.0",
@@ -45,7 +46,7 @@
     "@azure/identity": "^1.0.2",
     "@azure/keyvault-keys": "^4.0.2",
     "@azure/ms-rest-nodeauth": "^2.0.5",
-    "@jupiterone/data-model": "^0.6.4",
+    "@jupiterone/data-model": "^0.10.0",
     "@lifeomic/attempt": "^3.0.0",
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "cross-fetch": "^3.0.4",
@@ -58,12 +59,12 @@
     "@azure/ms-rest-js": "^2.0.0"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^3.2.0"
+    "@jupiterone/integration-sdk-core": "^3.2.1"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^3.2.0",
-    "@jupiterone/integration-sdk-dev-tools": "^3.2.0",
-    "@jupiterone/integration-sdk-testing": "^3.2.0",
+    "@jupiterone/integration-sdk-core": "^3.2.1",
+    "@jupiterone/integration-sdk-dev-tools": "^3.2.1",
+    "@jupiterone/integration-sdk-testing": "^3.2.1",
     "@microsoft/microsoft-graph-types": "^1.10.0",
     "@types/fs-extra": "^5.0.5",
     "@types/jest": "^25.2.1",

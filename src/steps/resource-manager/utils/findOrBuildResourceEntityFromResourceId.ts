@@ -27,6 +27,7 @@ import {
   ApiManagementEntities,
   STEP_RM_API_MANAGEMENT_SERVICES,
 } from '../api-management';
+import { DnsEntities, STEP_RM_DNS_ZONES } from '../dns';
 
 export interface ResourceIdMap {
   resourceIdMatcher: RegExp;
@@ -108,6 +109,15 @@ export const RESOURCE_ID_TYPES_MAP: ResourceIdMap[] = [
     ),
     _type: ApiManagementEntities.SERVICE._type,
     dependsOn: [STEP_RM_API_MANAGEMENT_SERVICES],
+  },
+  {
+    resourceIdMatcher: new RegExp(
+      RESOURCE_GROUP_MATCHER +
+        '/providers/Microsoft.Network/dnszones/[^/]+' +
+        EOL_MATCHER,
+    ),
+    _type: DnsEntities.ZONE._type,
+    dependsOn: [STEP_RM_DNS_ZONES],
   },
 ];
 

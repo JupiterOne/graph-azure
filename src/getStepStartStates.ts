@@ -51,6 +51,10 @@ import {
   STEP_RM_API_MANAGEMENT_APIS,
   STEP_RM_API_MANAGEMENT_SERVICES,
 } from './steps/resource-manager/api-management';
+import {
+  STEP_RM_DNS_ZONES,
+  STEP_RM_DNS_RECORD_SETS,
+} from './steps/resource-manager/dns';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -96,5 +100,7 @@ export default function getStepStartStates(
     [STEP_RM_SUBSCRIPTIONS]: resourceManager,
     [STEP_RM_API_MANAGEMENT_SERVICES]: resourceManager,
     [STEP_RM_API_MANAGEMENT_APIS]: resourceManager,
+    [STEP_RM_DNS_ZONES]: resourceManager,
+    [STEP_RM_DNS_RECORD_SETS]: resourceManager,
   };
 }

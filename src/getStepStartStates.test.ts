@@ -52,6 +52,10 @@ import {
   STEP_RM_API_MANAGEMENT_SERVICES,
   STEP_RM_API_MANAGEMENT_APIS,
 } from './steps/resource-manager/api-management';
+import {
+  STEP_RM_DNS_ZONES,
+  STEP_RM_DNS_RECORD_SETS,
+} from './steps/resource-manager/dns';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -102,6 +106,8 @@ describe('getStepStartStates', () => {
       [STEP_RM_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
+      [STEP_RM_DNS_ZONES]: { disabled: true },
+      [STEP_RM_DNS_RECORD_SETS]: { disabled: true },
     });
   });
 
@@ -148,6 +154,8 @@ describe('getStepStartStates', () => {
       [STEP_RM_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
+      [STEP_RM_DNS_ZONES]: { disabled: true },
+      [STEP_RM_DNS_RECORD_SETS]: { disabled: true },
     });
   });
 
@@ -194,6 +202,8 @@ describe('getStepStartStates', () => {
       [STEP_RM_SUBSCRIPTIONS]: { disabled: false },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: false },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: false },
+      [STEP_RM_DNS_ZONES]: { disabled: false },
+      [STEP_RM_DNS_RECORD_SETS]: { disabled: false },
     });
   });
 });

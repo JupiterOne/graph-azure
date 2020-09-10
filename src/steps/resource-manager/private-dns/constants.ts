@@ -4,7 +4,6 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
-// Fetch Resource Groups
 export const STEP_RM_PRIVATE_DNS_ZONES = 'rm-private-dns-zones';
 export const STEP_RM_PRIVATE_DNS_RECORD_SETS = 'rm-private-dns-record-sets';
 

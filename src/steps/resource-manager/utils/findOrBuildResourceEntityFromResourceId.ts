@@ -29,6 +29,10 @@ import {
 } from '../api-management';
 import { DnsEntities, STEP_RM_DNS_ZONES } from '../dns';
 import { PrivateDnsEntities, STEP_RM_PRIVATE_DNS_ZONES } from '../private-dns';
+import {
+  ContainerRegistryEntities,
+  STEP_RM_CONTAINER_REGISTRIES,
+} from '../container-registry';
 
 export interface ResourceIdMap {
   resourceIdMatcher: RegExp;
@@ -128,6 +132,15 @@ export const RESOURCE_ID_TYPES_MAP: ResourceIdMap[] = [
     ),
     _type: PrivateDnsEntities.ZONE._type,
     dependsOn: [STEP_RM_PRIVATE_DNS_ZONES],
+  },
+  {
+    resourceIdMatcher: new RegExp(
+      RESOURCE_GROUP_MATCHER +
+        '/providers/Microsoft.ContainerRegistry/registries/[^/]+' +
+        EOL_MATCHER,
+    ),
+    _type: ContainerRegistryEntities.REGISTRY._type,
+    dependsOn: [STEP_RM_CONTAINER_REGISTRIES],
   },
 ];
 

@@ -1,0 +1,125 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createContainerRegistryEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "DataStore",
+  ],
+  "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/ndowmon1j1dev",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "adminUserEnabled": false,
+        "creationDate": 2020-09-09T23:49:02.733Z,
+        "dataEndpointEnabled": false,
+        "dataEndpointHostNames": Array [],
+        "encryption": Object {
+          "status": "disabled",
+        },
+        "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/ndowmon1j1dev",
+        "location": "eastus",
+        "loginServer": "ndowmon1j1dev.azurecr.io",
+        "name": "ndowmon1j1dev",
+        "policies": Object {
+          "quarantinePolicy": Object {
+            "status": "disabled",
+          },
+          "retentionPolicy": Object {
+            "days": 7,
+            "lastUpdatedTime": 2020-09-09T23:49:04.060Z,
+            "status": "disabled",
+          },
+          "trustPolicy": Object {
+            "status": "disabled",
+            "type": "Notary",
+          },
+        },
+        "privateEndpointConnections": Array [],
+        "provisioningState": "Succeeded",
+        "publicNetworkAccess": "Enabled",
+        "sku": Object {
+          "name": "Basic",
+          "tier": "Basic",
+        },
+        "systemData": Object {
+          "createdAt": "2020-09-09T23:49:02.73313+00:00",
+          "createdBy": "d2c4cc5a-4ace-480c-aeff-2c97326511ba",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-09-09T23:49:02.73313+00:00",
+          "lastModifiedBy": "d2c4cc5a-4ace-480c-aeff-2c97326511ba",
+          "lastModifiedByType": "Application",
+        },
+        "tags": Object {},
+        "type": "Microsoft.ContainerRegistry/registries",
+      },
+    },
+  ],
+  "_type": "azure_container_registry",
+  "adminUserEnabled": false,
+  "classification": null,
+  "createdOn": 1599695342733,
+  "dataEndpointEnabled": false,
+  "displayName": "ndowmon1j1dev",
+  "encrypted": false,
+  "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/ndowmon1j1dev",
+  "location": "eastus",
+  "loginServer": "ndowmon1j1dev.azurecr.io",
+  "name": "ndowmon1j1dev",
+  "provisioningState": "Succeeded",
+  "publicNetworkAccess": "Enabled",
+  "type": "Microsoft.ContainerRegistry/registries",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/ndowmon1j1dev",
+}
+`;
+
+exports[`createContainerRegistryWebhookEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "ApplicationEndpoint",
+  ],
+  "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/ndowmon1j1dev/webhooks/j1dev",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "actions": Array [
+          "push",
+        ],
+        "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/ndowmon1j1dev/webhooks/j1dev",
+        "location": "eastus",
+        "name": "j1dev",
+        "provisioningState": "Succeeded",
+        "scope": "",
+        "status": "enabled",
+        "systemData": Object {
+          "createdAt": "2020-09-09T23:49:06.7238034+00:00",
+          "createdBy": "d2c4cc5a-4ace-480c-aeff-2c97326511ba",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-09-09T23:49:06.7238034+00:00",
+          "lastModifiedBy": "d2c4cc5a-4ace-480c-aeff-2c97326511ba",
+          "lastModifiedByType": "Application",
+        },
+        "tags": Object {},
+        "type": "Microsoft.ContainerRegistry/registries/webhooks",
+      },
+    },
+  ],
+  "_type": "azure_container_registry_webhook",
+  "actions": Array [
+    "push",
+  ],
+  "active": false,
+  "address": "NOT_RETURNED_FROM_AZURE_API",
+  "createdOn": undefined,
+  "displayName": "j1dev",
+  "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/ndowmon1j1dev/webhooks/j1dev",
+  "location": "eastus",
+  "name": "j1dev",
+  "provisioningState": "Succeeded",
+  "scope": "",
+  "status": "enabled",
+  "type": "Microsoft.ContainerRegistry/registries/webhooks",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/ndowmon1j1dev/webhooks/j1dev",
+}
+`;

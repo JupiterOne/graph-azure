@@ -55,6 +55,10 @@ import {
   STEP_RM_DNS_ZONES,
   STEP_RM_DNS_RECORD_SETS,
 } from './steps/resource-manager/dns';
+import {
+  STEP_RM_PRIVATE_DNS_ZONES,
+  STEP_RM_PRIVATE_DNS_RECORD_SETS,
+} from './steps/resource-manager/private-dns';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -102,5 +106,7 @@ export default function getStepStartStates(
     [STEP_RM_API_MANAGEMENT_APIS]: resourceManager,
     [STEP_RM_DNS_ZONES]: resourceManager,
     [STEP_RM_DNS_RECORD_SETS]: resourceManager,
+    [STEP_RM_PRIVATE_DNS_ZONES]: resourceManager,
+    [STEP_RM_PRIVATE_DNS_RECORD_SETS]: resourceManager,
   };
 }

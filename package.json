@@ -39,6 +39,7 @@
     "@azure/arm-mysql": "^3.3.0",
     "@azure/arm-network": "^20.0.0",
     "@azure/arm-postgresql": "^4.4.0",
+    "@azure/arm-privatedns": "^2.0.0",
     "@azure/arm-resources": "^4.0.0",
     "@azure/arm-sql": "^7.0.0",
     "@azure/arm-storage": "^15.1.0",

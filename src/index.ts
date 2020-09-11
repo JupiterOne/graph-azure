@@ -16,6 +16,7 @@ import { resourcesSteps } from './steps/resource-manager/resources';
 import { subscriptionSteps } from './steps/resource-manager/subscriptions';
 import { apiManagementSteps } from './steps/resource-manager/api-management';
 import { dnsSteps } from './steps/resource-manager/dns';
+import { privateDnsSteps } from './steps/resource-manager/private-dns';
 
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
@@ -58,5 +59,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...subscriptionSteps,
     ...apiManagementSteps,
     ...dnsSteps,
+    ...privateDnsSteps,
   ],
 };

@@ -14,6 +14,10 @@ and this project adheres to
 - Added `azure_resource_group|has|azure_dns_zone` relationships
 - Added `azure_dns_record_set` entities
 - Added `azure_dns_zone|has|azure_dns_record_set` relationships
+- Added `azure_private_dns_zone` entities
+- Added `azure_resource_group|has|azure_private_dns_zone` relationships
+- Added `azure_private_dns_record_set` entities
+- Added `azure_private_dns_zone|has|azure_private_dns_record_set` relationships
 
 ## 5.1.0 - 2020-09-09
 

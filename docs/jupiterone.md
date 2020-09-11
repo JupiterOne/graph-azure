@@ -98,6 +98,8 @@ The following entities are created:
 | [RM] Network Interface      | `azure_nic`                    | `NetworkInterface`              |
 | [RM] PostgreSQL Database    | `azure_postgresql_database`    | `Database`, `DataStore`         |
 | [RM] PostgreSQL Server      | `azure_postgresql_server`      | `Database`, `DataStore`, `Host` |
+| [RM] Private DNS Record Set | `azure_private_dns_record_set` | `DomainRecord`                  |
+| [RM] Private DNS Zone       | `azure_private_dns_zone`       | `DomainZone`                    |
 | [RM] Public IP Address      | `azure_public_ip`              | `IpAddress`                     |
 | [RM] Resource Group         | `azure_resource_group`         | `Group`                         |
 | [RM] Role Assignment        | `azure_role_assignment`        | `AccessPolicy`                  |
@@ -135,6 +137,7 @@ The following relationships are created/mapped:
 | `azure_mariadb_server`         | **HAS**               | `azure_mariadb_database`        |
 | `azure_mysql_server`           | **HAS**               | `azure_mysql_database`          |
 | `azure_postgresql_server`      | **HAS**               | `azure_postgresql_database`     |
+| `azure_private_dns_zone`       | **HAS**               | `azure_private_dns_record_set`  |
 | `azure_resource_group`         | **HAS**               | `azure_api_management_service`  |
 | `azure_resource_group`         | **HAS**               | `azure_cosmosdb_account`        |
 | `azure_resource_group`         | **HAS**               | `azure_dns_zone`                |
@@ -146,6 +149,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`         | **HAS**               | `azure_mysql_server`            |
 | `azure_resource_group`         | **HAS**               | `azure_nic`                     |
 | `azure_resource_group`         | **HAS**               | `azure_postgresql_server`       |
+| `azure_resource_group`         | **HAS**               | `azure_private_dns_zone`        |
 | `azure_resource_group`         | **HAS**               | `azure_public_ip`               |
 | `azure_resource_group`         | **HAS**               | `azure_security_group`          |
 | `azure_resource_group`         | **HAS**               | `azure_sql_server`              |
@@ -157,6 +161,7 @@ The following relationships are created/mapped:
 | `azure_role_assignment`        | **ALLOWS**            | `azure_dns_zone`                |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_keyvault_service`        |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_nic`                     |
+| `azure_role_assignment`        | **ALLOWS**            | `azure_private_dns_zone`        |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_public_ip`               |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_resource_group`          |
 | `azure_role_assignment`        | **ALLOWS**            | `azure_security_group`          |

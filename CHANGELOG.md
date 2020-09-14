@@ -18,6 +18,11 @@ and this project adheres to
 - Added `azure_resource_group|has|azure_private_dns_zone` relationships
 - Added `azure_private_dns_record_set` entities
 - Added `azure_private_dns_zone|has|azure_private_dns_record_set` relationships
+- Added `azure_container_registry` entities
+- Added `azure_resource_group|has|azure_container_registry` relationships
+- Added `azure_container_registry_webhook` entities
+- Added `azure_container_registry|has|azure_container_registry_webhook`
+  relationships
 
 ## 5.1.0 - 2020-09-09
 

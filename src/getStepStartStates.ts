@@ -59,6 +59,10 @@ import {
   STEP_RM_PRIVATE_DNS_ZONES,
   STEP_RM_PRIVATE_DNS_RECORD_SETS,
 } from './steps/resource-manager/private-dns';
+import {
+  STEP_RM_CONTAINER_REGISTRIES,
+  STEP_RM_CONTAINER_REGISTRY_WEBHOOKS,
+} from './steps/resource-manager/container-registry';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -108,5 +112,7 @@ export default function getStepStartStates(
     [STEP_RM_DNS_RECORD_SETS]: resourceManager,
     [STEP_RM_PRIVATE_DNS_ZONES]: resourceManager,
     [STEP_RM_PRIVATE_DNS_RECORD_SETS]: resourceManager,
+    [STEP_RM_CONTAINER_REGISTRIES]: resourceManager,
+    [STEP_RM_CONTAINER_REGISTRY_WEBHOOKS]: resourceManager,
   };
 }

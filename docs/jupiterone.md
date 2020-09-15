@@ -109,6 +109,10 @@ The following entities are created:
 | [RM] SQL Database               | `azure_sql_database`               | `Database`, `DataStore`         |
 | [RM] SQL Server                 | `azure_sql_server`                 | `Database`, `DataStore`, `Host` |
 | [RM] Security Group             | `azure_security_group`             | `Firewall`                      |
+| [RM] Service Bus Namespace      | `azure_service_bus_namespace`      | `Service`                       |
+| [RM] Service Bus Queue          | `azure_service_bus_queue`          | `Queue`                         |
+| [RM] Service Bus Subscription   | `azure_service_bus_subscription`   | `Subscription`                  |
+| [RM] Service Bus Topic          | `azure_service_bus_topic`          | `Queue`                         |
 | [RM] Storage Account            | `azure_storage_account`            | `Service`                       |
 | [RM] Storage Container          | `azure_storage_container`          | `DataStore`                     |
 | [RM] Storage File Share         | `azure_storage_file_share`         | `DataStore`                     |
@@ -156,6 +160,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`         | **HAS**               | `azure_private_dns_zone`           |
 | `azure_resource_group`         | **HAS**               | `azure_public_ip`                  |
 | `azure_resource_group`         | **HAS**               | `azure_security_group`             |
+| `azure_resource_group`         | **HAS**               | `azure_service_bus_namespace`      |
 | `azure_resource_group`         | **HAS**               | `azure_sql_server`                 |
 | `azure_resource_group`         | **HAS**               | `azure_storage_account`            |
 | `azure_resource_group`         | **HAS**               | `azure_vm`                         |
@@ -188,6 +193,9 @@ The following relationships are created/mapped:
 | `azure_security_group`         | **PROTECTS**          | `azure_nic`                        |
 | `azure_security_group`         | **PROTECTS**          | `azure_subnet`                     |
 | `azure_security_group`         | **ALLOWS**            | `azure_subnet`                     |
+| `azure_service_bus_namespace`  | **HAS**               | `azure_service_bus_queue`          |
+| `azure_service_bus_namespace`  | **HAS**               | `azure_service_bus_topic`          |
+| `azure_service_bus_topic`      | **HAS**               | `azure_service_bus_subscription`   |
 | `azure_sql_server`             | **HAS**               | `azure_sql_database`               |
 | `azure_storage_account`        | **HAS**               | `azure_storage_container`          |
 | `azure_storage_account`        | **HAS**               | `azure_storage_file_share`         |

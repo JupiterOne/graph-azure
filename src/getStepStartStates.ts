@@ -63,6 +63,12 @@ import {
   STEP_RM_CONTAINER_REGISTRIES,
   STEP_RM_CONTAINER_REGISTRY_WEBHOOKS,
 } from './steps/resource-manager/container-registry';
+import {
+  STEP_RM_SERVICE_BUS_NAMESPACES,
+  STEP_RM_SERVICE_BUS_QUEUES,
+  STEP_RM_SERVICE_BUS_TOPICS,
+  STEP_RM_SERVICE_BUS_SUBSCRIPTIONS,
+} from './steps/resource-manager/service-bus';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -112,6 +118,10 @@ export default function getStepStartStates(
     [STEP_RM_PRIVATE_DNS_RECORD_SETS]: resourceManager,
     [STEP_RM_CONTAINER_REGISTRIES]: resourceManager,
     [STEP_RM_CONTAINER_REGISTRY_WEBHOOKS]: resourceManager,
+    [STEP_RM_SERVICE_BUS_NAMESPACES]: resourceManager,
+    [STEP_RM_SERVICE_BUS_QUEUES]: resourceManager,
+    [STEP_RM_SERVICE_BUS_TOPICS]: resourceManager,
+    [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: resourceManager,
   };
 
   executionContext.logger.info(

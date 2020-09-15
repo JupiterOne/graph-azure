@@ -64,6 +64,12 @@ import {
   STEP_RM_CONTAINER_REGISTRIES,
   STEP_RM_CONTAINER_REGISTRY_WEBHOOKS,
 } from './steps/resource-manager/container-registry';
+import {
+  STEP_RM_SERVICE_BUS_NAMESPACES,
+  STEP_RM_SERVICE_BUS_SUBSCRIPTIONS,
+  STEP_RM_SERVICE_BUS_QUEUES,
+  STEP_RM_SERVICE_BUS_TOPICS,
+} from './steps/resource-manager/service-bus';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -120,6 +126,10 @@ describe('getStepStartStates', () => {
       [STEP_RM_PRIVATE_DNS_RECORD_SETS]: { disabled: true },
       [STEP_RM_CONTAINER_REGISTRIES]: { disabled: true },
       [STEP_RM_CONTAINER_REGISTRY_WEBHOOKS]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_NAMESPACES]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_QUEUES]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: true },
     });
   });
 
@@ -172,6 +182,10 @@ describe('getStepStartStates', () => {
       [STEP_RM_PRIVATE_DNS_RECORD_SETS]: { disabled: true },
       [STEP_RM_CONTAINER_REGISTRIES]: { disabled: true },
       [STEP_RM_CONTAINER_REGISTRY_WEBHOOKS]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_NAMESPACES]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_QUEUES]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: true },
     });
   });
 
@@ -224,6 +238,10 @@ describe('getStepStartStates', () => {
       [STEP_RM_PRIVATE_DNS_RECORD_SETS]: { disabled: false },
       [STEP_RM_CONTAINER_REGISTRIES]: { disabled: false },
       [STEP_RM_CONTAINER_REGISTRY_WEBHOOKS]: { disabled: false },
+      [STEP_RM_SERVICE_BUS_NAMESPACES]: { disabled: false },
+      [STEP_RM_SERVICE_BUS_QUEUES]: { disabled: false },
+      [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: false },
+      [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: false },
     });
   });
 });

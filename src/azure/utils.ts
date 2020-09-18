@@ -9,7 +9,7 @@ export function normalizeLocation(location?: string): string | undefined {
   }
 }
 
-const resourceGroupRegex = /\/resourceGroups\/(.*?)\//;
+const resourceGroupRegex = /\/resource(G|g)roups\/(.*?)\//;
 
 /**
  * Returns the `resource.name` or throws an error. Useful in situations where
@@ -59,7 +59,7 @@ export function resourceGroupName(
   if (id) {
     const m = resourceGroupRegex.exec(id);
     if (m) {
-      name = m[1].toLowerCase();
+      name = (m.pop() as string).toLowerCase();
     }
   }
 

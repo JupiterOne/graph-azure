@@ -69,6 +69,10 @@ import {
   STEP_RM_SERVICE_BUS_TOPICS,
   STEP_RM_SERVICE_BUS_SUBSCRIPTIONS,
 } from './steps/resource-manager/service-bus';
+import {
+  STEP_RM_CDN_PROFILE,
+  STEP_RM_CDN_ENDPOINTS,
+} from './steps/resource-manager/cdn';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -122,6 +126,8 @@ export default function getStepStartStates(
     [STEP_RM_SERVICE_BUS_QUEUES]: resourceManager,
     [STEP_RM_SERVICE_BUS_TOPICS]: resourceManager,
     [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: resourceManager,
+    [STEP_RM_CDN_PROFILE]: resourceManager,
+    [STEP_RM_CDN_ENDPOINTS]: resourceManager,
   };
 
   executionContext.logger.info(

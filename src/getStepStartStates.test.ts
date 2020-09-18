@@ -70,6 +70,10 @@ import {
   STEP_RM_SERVICE_BUS_QUEUES,
   STEP_RM_SERVICE_BUS_TOPICS,
 } from './steps/resource-manager/service-bus';
+import {
+  STEP_RM_CDN_PROFILE,
+  STEP_RM_CDN_ENDPOINTS,
+} from './steps/resource-manager/cdn';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -130,6 +134,8 @@ describe('getStepStartStates', () => {
       [STEP_RM_SERVICE_BUS_QUEUES]: { disabled: true },
       [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: true },
       [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: true },
+      [STEP_RM_CDN_PROFILE]: { disabled: true },
+      [STEP_RM_CDN_ENDPOINTS]: { disabled: true },
     });
   });
 
@@ -186,6 +192,8 @@ describe('getStepStartStates', () => {
       [STEP_RM_SERVICE_BUS_QUEUES]: { disabled: true },
       [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: true },
       [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: true },
+      [STEP_RM_CDN_PROFILE]: { disabled: true },
+      [STEP_RM_CDN_ENDPOINTS]: { disabled: true },
     });
   });
 
@@ -242,6 +250,8 @@ describe('getStepStartStates', () => {
       [STEP_RM_SERVICE_BUS_QUEUES]: { disabled: false },
       [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: false },
       [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: false },
+      [STEP_RM_CDN_PROFILE]: { disabled: false },
+      [STEP_RM_CDN_ENDPOINTS]: { disabled: false },
     });
   });
 });

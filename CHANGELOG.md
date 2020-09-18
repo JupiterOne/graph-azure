@@ -17,6 +17,10 @@ and this project adheres to
 - Added `azure_service_bus_subscription` entities
 - Added `azure_service_bus_topic|has|azure_service_bus_subscription`
   relationships
+- Added `azure_cdn_profile` entities
+- Added `azure_resource_group|has|azure_cdn_profile` relationships
+- Added `azure_cdn_endpoint` entities
+- Added `azure_cdn_profile|has|azure_cdn_endpoint` relationships
 
 ## 5.2.0 - 2020-09-20
 

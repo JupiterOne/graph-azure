@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.2.0 - 2020-09-20
+
 ### Added
 
 - Added `ingestResourceManager` flag

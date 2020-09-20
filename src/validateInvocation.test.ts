@@ -4,6 +4,8 @@ import { createMockExecutionContext } from '@jupiterone/integration-sdk-testing'
 import { IntegrationConfig } from './types';
 import validateInvocation from './validateInvocation';
 
+import * as graphAuthenticate from './azure/graph/authenticate';
+
 it('should reject', async () => {
   const executionContext = createMockExecutionContext<IntegrationConfig>({
     instanceConfig: {} as IntegrationConfig,
@@ -14,6 +16,25 @@ it('should reject', async () => {
   } catch (e) {
     expect(e instanceof IntegrationValidationError).toBe(true);
   }
+});
+
+test('rejects when ingestResourceManager=true and subscriptionId=undefined', async () => {
+  jest
+    .spyOn(graphAuthenticate, 'default')
+    .mockResolvedValueOnce('someAccessToken');
+  const executionContext = createMockExecutionContext<IntegrationConfig>({
+    instanceConfig: {
+      clientId: 'INVALID',
+      clientSecret: 'INVALID',
+      directoryId: 'INVALID',
+      ingestResourceManager: true,
+    } as IntegrationConfig,
+  });
+
+  const exec = async () => validateInvocation(executionContext);
+  await expect(exec).rejects.toThrow(
+    'When integration configuration value ingestResourceManager flag is set to true, subscriptionId is required.',
+  );
 });
 
 it('auth error', async () => {

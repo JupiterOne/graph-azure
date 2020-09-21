@@ -21,6 +21,11 @@ import { containerRegistrySteps } from './steps/resource-manager/container-regis
 import { serviceBusSteps } from './steps/resource-manager/service-bus';
 import { cdnSteps } from './steps/resource-manager/cdn';
 
+export function hasSubscriptionId(config: IntegrationConfig): boolean {
+  const subscriptionId = config.subscriptionId;
+  return subscriptionId !== undefined && subscriptionId.length > 0;
+}
+
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
     clientId: {
@@ -40,10 +45,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
       mask: false,
     },
     ingestActiveDirectory: {
-      type: 'boolean',
-      mask: false,
-    },
-    ingestResourceManager: {
       type: 'boolean',
       mask: false,
     },

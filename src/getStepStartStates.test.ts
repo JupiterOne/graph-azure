@@ -197,9 +197,9 @@ describe('getStepStartStates', () => {
     });
   });
 
-  test('ingestResourceManager: true', () => {
+  test("subscriptionId: 'value'", () => {
     const context = createMockExecutionContext({
-      instanceConfig: { ingestResourceManager: true } as IntegrationConfig,
+      instanceConfig: { subscriptionId: '1234' } as IntegrationConfig,
     });
     const states = getStepStartStates(context);
     expect(states).toEqual({

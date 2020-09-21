@@ -73,6 +73,7 @@ import {
   STEP_RM_CDN_PROFILE,
   STEP_RM_CDN_ENDPOINTS,
 } from './steps/resource-manager/cdn';
+import { hasSubscriptionId } from '.';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -80,7 +81,7 @@ export default function getStepStartStates(
   const config = executionContext.instance.config || {};
 
   const activeDirectory = { disabled: !config.ingestActiveDirectory };
-  const resourceManager = { disabled: !config.ingestResourceManager };
+  const resourceManager = { disabled: !hasSubscriptionId(config) };
 
   return {
     [STEP_AD_ACCOUNT]: { disabled: false },

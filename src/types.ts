@@ -39,7 +39,7 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
 
   /**
    * The Azure Subscription from which to fetch Azure resources. Currently not
-   * guaranteed to be present in all integration instances. This is required if `ingestResourceManager` is set to `true`
+   * guaranteed to be present in all integration instances.
    *
    * A Subscription Administrator must assign the "Reader" RBAC role (least
    * privilege) to the Service Principal used to obtain API access tokens.
@@ -58,13 +58,4 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
    * instances.
    */
   ingestActiveDirectory?: boolean;
-
-  /**
-   * A directive indicating whether or not to ingest Resource Manager resources.
-   * A value of `undefined` will be interpreted as `false`.
-   *
-   * The integration may be configured to enable or disable the ingestion of
-   * Resource Manager resources. This is necessary when an account administrator wants to set up an azure AD integration, but does not have an azure subscription and does not want to set one up.
-   */
-  ingestResourceManager?: boolean;
 }

@@ -2,12 +2,12 @@ import {
   IntegrationExecutionContext,
   IntegrationValidationError,
   IntegrationError,
-  IntegrationLocalConfigFieldMissingError,
 } from '@jupiterone/integration-sdk-core';
 
 import { default as authenticateGraph } from './azure/graph/authenticate';
 import { default as authenticateResourceManager } from './azure/resource-manager/authenticate';
 import { IntegrationConfig } from './types';
+import { hasSubscriptionId } from '.';
 
 export default async function validateInvocation(
   validationContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -30,13 +30,7 @@ export default async function validateInvocation(
     }
   }
 
-  if (config.ingestResourceManager) {
-    if (!config.subscriptionId) {
-      throw new IntegrationLocalConfigFieldMissingError(
-        'When integration configuration value ingestResourceManager flag is set to true, subscriptionId is required.',
-      );
-    }
-
+  if (hasSubscriptionId(config)) {
     try {
       await authenticateResourceManager(config);
     } catch (err) {

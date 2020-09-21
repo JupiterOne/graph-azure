@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.2.0 - 2020-09-21
+
 - Added `azure_service_bus_namespace` entities
 - Added `azure_resource_group|has|azure_service_bus_namespace` relationships
 - Added `azure_service_bus_queue` entities

@@ -9,7 +9,7 @@ import {
   ExplicitRelationship,
 } from '@jupiterone/integration-sdk-core';
 import { RESOURCE_GROUP_ENTITY } from '../resources';
-import { RESOURCE_GROUP_MATCHER } from './matchers';
+import { getResourceGroupId } from './matchers';
 
 export const RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS = RelationshipClass.HAS;
 
@@ -28,31 +28,20 @@ export function createResourceGroupResourceRelationshipMetadata(
   };
 }
 
-const resourceRegex = new RegExp(RESOURCE_GROUP_MATCHER);
-
-function lowercaseAfterLastForwardSlash(s: string): string {
-  const splitS = s.split('/');
-  const lastElement = splitS.pop() as string;
-  return [...splitS, lastElement.toLowerCase()].join('/');
-}
-
 export async function createResourceGroupResourceRelationship(
   executionContext: StepExecutionContext,
   resourceEntity: Entity,
 ): Promise<ExplicitRelationship> {
-  const resourceGroupIdMatch = resourceEntity._key.match(resourceRegex);
-  if (!resourceGroupIdMatch) {
+  const resourceGroupId = getResourceGroupId(resourceEntity._key);
+  if (resourceGroupId === undefined) {
     throw new IntegrationError({
       message: `Could not identify a resource group ID in the entity _key: ${resourceEntity._key}`,
       code: 'UNMATCHED_RESOURCE_GROUP',
     });
   }
   const { jobState } = executionContext;
-  const resourceGroupId = resourceGroupIdMatch[0];
 
-  const resourceGroupEntity = await jobState.findEntity(
-    lowercaseAfterLastForwardSlash(resourceGroupId),
-  );
+  const resourceGroupEntity = await jobState.findEntity(resourceGroupId);
   if (resourceGroupEntity) {
     return createDirectRelationship({
       _class: RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS,

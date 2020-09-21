@@ -27,6 +27,15 @@
     "@azure/ms-rest-js" "^2.0.3"
     tslib "^1.9.3"
 
+"@azure/arm-cdn@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-cdn/-/arm-cdn-5.0.0.tgz#4f1aad80fc28a6c6bace37c72c0323fa66dc3caa"
+  integrity sha512-C0893lFWihbkKMJ2vB96GF8k54V/OsRssnJTQ1/3oWc8pAv+3n4th7d2tadkg2T97tmHoJlel6x5Qu35NnuJgA==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-compute@^14.0.0":
   version "14.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-compute/-/arm-compute-14.0.0.tgz#792b79e19102230733f3d81b3507b62e4a7326df"
@@ -121,6 +130,15 @@
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-resources/-/arm-resources-4.0.0.tgz#5b0dd7cbb4327a5a2ce184dd4e170459ac41f485"
   integrity sha512-Dd2tsKnTJ62D/LYsr2njnj+/1HsUclJwBGZ+tVVfmdQir9pnGA11k2jhsuhHiCRU0auEKgMDNfhip7q/TpSrXQ==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
+"@azure/arm-servicebus@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-servicebus/-/arm-servicebus-4.0.0.tgz#16f511d09872edc92bf176a086f4ac74b44f8a47"
+  integrity sha512-g8KaPAKwhUJTuvxkUvfwCh2ejdCm4QOAAWittKUVBPCWIwjQqRjDfshdvd1bqTfaKf6QalXacs9E9gWwMqL6Iw==
   dependencies:
     "@azure/ms-rest-azure-js" "^2.0.1"
     "@azure/ms-rest-js" "^2.0.4"

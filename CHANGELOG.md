@@ -8,11 +8,26 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Added `azure_service_bus_namespace` entities
+- Added `azure_resource_group|has|azure_service_bus_namespace` relationships
+- Added `azure_service_bus_queue` entities
+- Added `azure_service_bus_namespace|has|azure_service_bus_queue` relationships
+- Added `azure_service_bus_topic` entities
+- Added `azure_service_bus_namespace|has|azure_service_bus_topic` relationships
+- Added `azure_service_bus_subscription` entities
+- Added `azure_service_bus_topic|has|azure_service_bus_subscription`
+  relationships
+- Added `azure_cdn_profile` entities
+- Added `azure_resource_group|has|azure_cdn_profile` relationships
+- Added `azure_cdn_endpoint` entities
+- Added `azure_cdn_profile|has|azure_cdn_endpoint` relationships
+
 ## 5.2.0 - 2020-09-20
 
 ### Added
 
-- Added `ingestResourceManager` flag
+- Added `ingestResourceManager` flag so that `Resource Manager` steps can be
+  disabled
 - Added `azure_dns_zone` entities
 - Added `azure_resource_group|has|azure_dns_zone` relationships
 - Added `azure_dns_record_set` entities

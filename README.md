@@ -1,6 +1,7 @@
 # graph-azure
 
-[![Build Status](https://travis-ci.org/JupiterOne/graph-azure.svg?branch=master)](https://travis-ci.org/JupiterOne/graph-azure)
+[![Build Status](https://github.com/JupiterOne/graph-azure/workflows/Build/badge.svg)](https://github.com/JupiterOne/graph-azure/actions?query=workflow%3ABuild)
+[![Gitleaks Status](https://github.com/JupiterOne/graph-azure/workflows/gitleaks/badge.svg)](https://github.com/JupiterOne/graph-azure/actions?query=workflow%3Agitleaks)
 
 Integrations are responsible for connecting to data provider APIs to collect
 current state and maintain a graph database representing the entities and

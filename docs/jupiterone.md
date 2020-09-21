@@ -83,6 +83,8 @@ The following entities are created:
 | [RM] API Management API         | `azure_api_management_api`         | `ApplicationEndpoint`           |
 | [RM] API Management Service     | `azure_api_management_service`     | `Gateway`                       |
 | [RM] Azure Managed Disk         | `azure_managed_disk`               | `DataStore`, `Disk`             |
+| [RM] CDN Endpoint               | `azure_cdn_endpoint`               | `Gateway`                       |
+| [RM] CDN Profile                | `azure_cdn_profile`                | `Service`                       |
 | [RM] Classic Admin              | `azure_classic_admin_group`        | `UserGroup`                     |
 | [RM] Container Registry         | `azure_container_registry`         | `DataStore`                     |
 | [RM] Container Registry Webhook | `azure_container_registry_webhook` | `ApplicationEndpoint`           |
@@ -109,6 +111,10 @@ The following entities are created:
 | [RM] SQL Database               | `azure_sql_database`               | `Database`, `DataStore`         |
 | [RM] SQL Server                 | `azure_sql_server`                 | `Database`, `DataStore`, `Host` |
 | [RM] Security Group             | `azure_security_group`             | `Firewall`                      |
+| [RM] Service Bus Namespace      | `azure_service_bus_namespace`      | `Service`                       |
+| [RM] Service Bus Queue          | `azure_service_bus_queue`          | `Queue`                         |
+| [RM] Service Bus Subscription   | `azure_service_bus_subscription`   | `Subscription`                  |
+| [RM] Service Bus Topic          | `azure_service_bus_topic`          | `Queue`                         |
 | [RM] Storage Account            | `azure_storage_account`            | `Service`                       |
 | [RM] Storage Container          | `azure_storage_container`          | `DataStore`                     |
 | [RM] Storage File Share         | `azure_storage_file_share`         | `DataStore`                     |
@@ -129,6 +135,7 @@ The following relationships are created/mapped:
 | `azure_account`                | **HAS**               | `azure_keyvault_service`           |
 | `azure_account`                | **HAS**               | `azure_user`                       |
 | `azure_api_management_service` | **HAS**               | `azure_api_management_api`         |
+| `azure_cdn_profile`            | **HAS**               | `azure_cdn_endpoint`               |
 | `azure_classic_admin_group`    | **HAS**               | `azure_user`                       |
 | `azure_container_registry`     | **HAS**               | `azure_container_registry_webhook` |
 | `azure_cosmosdb_account`       | **HAS**               | `azure_cosmosdb_sql_database`      |
@@ -142,6 +149,7 @@ The following relationships are created/mapped:
 | `azure_postgresql_server`      | **HAS**               | `azure_postgresql_database`        |
 | `azure_private_dns_zone`       | **HAS**               | `azure_private_dns_record_set`     |
 | `azure_resource_group`         | **HAS**               | `azure_api_management_service`     |
+| `azure_resource_group`         | **HAS**               | `azure_cdn_profile`                |
 | `azure_resource_group`         | **HAS**               | `azure_container_registry`         |
 | `azure_resource_group`         | **HAS**               | `azure_cosmosdb_account`           |
 | `azure_resource_group`         | **HAS**               | `azure_dns_zone`                   |
@@ -156,6 +164,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`         | **HAS**               | `azure_private_dns_zone`           |
 | `azure_resource_group`         | **HAS**               | `azure_public_ip`                  |
 | `azure_resource_group`         | **HAS**               | `azure_security_group`             |
+| `azure_resource_group`         | **HAS**               | `azure_service_bus_namespace`      |
 | `azure_resource_group`         | **HAS**               | `azure_sql_server`                 |
 | `azure_resource_group`         | **HAS**               | `azure_storage_account`            |
 | `azure_resource_group`         | **HAS**               | `azure_vm`                         |
@@ -188,6 +197,9 @@ The following relationships are created/mapped:
 | `azure_security_group`         | **PROTECTS**          | `azure_nic`                        |
 | `azure_security_group`         | **PROTECTS**          | `azure_subnet`                     |
 | `azure_security_group`         | **ALLOWS**            | `azure_subnet`                     |
+| `azure_service_bus_namespace`  | **HAS**               | `azure_service_bus_queue`          |
+| `azure_service_bus_namespace`  | **HAS**               | `azure_service_bus_topic`          |
+| `azure_service_bus_topic`      | **HAS**               | `azure_service_bus_subscription`   |
 | `azure_sql_server`             | **HAS**               | `azure_sql_database`               |
 | `azure_storage_account`        | **HAS**               | `azure_storage_container`          |
 | `azure_storage_account`        | **HAS**               | `azure_storage_file_share`         |

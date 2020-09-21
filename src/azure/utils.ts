@@ -1,3 +1,8 @@
+import {
+  getResourceGroupName,
+  RESOURCE_GROUP_MATCHER,
+} from '../steps/resource-manager/utils/matchers';
+
 /**
  * Normalizes locations to the most prominent form of lowercase with no spaces.
  *
@@ -8,8 +13,6 @@ export function normalizeLocation(location?: string): string | undefined {
     return location.toLowerCase().replace(/\s+/, '');
   }
 }
-
-const resourceGroupRegex = /\/resourceGroups\/(.*?)\//;
 
 /**
  * Returns the `resource.name` or throws an error. Useful in situations where
@@ -57,15 +60,12 @@ export function resourceGroupName(
   let name: string | undefined;
 
   if (id) {
-    const m = resourceGroupRegex.exec(id);
-    if (m) {
-      name = m[1].toLowerCase();
-    }
+    name = getResourceGroupName(id);
   }
 
   if (!name && required) {
     throw new Error(
-      `Resource group name not found in '${id}' using '${resourceGroupRegex}`,
+      `Resource group name not found in '${id}' using '${RESOURCE_GROUP_MATCHER}`,
     );
   }
 

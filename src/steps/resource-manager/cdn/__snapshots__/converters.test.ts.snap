@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createContainerRegistryEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Service",
+  ],
+  "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev",
+        "location": "EastUs",
+        "name": "j1dev",
+        "provisioningState": "Succeeded",
+        "resourceState": "Active",
+        "sku": Object {
+          "name": "Standard_Microsoft",
+        },
+        "tags": Object {},
+        "type": "Microsoft.Cdn/profiles",
+      },
+    },
+  ],
+  "_type": "azure_cdn_profile",
+  "category": Array [
+    "infrastructure",
+  ],
+  "createdOn": undefined,
+  "displayName": "j1dev",
+  "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev",
+  "location": "EastUs",
+  "name": "j1dev",
+  "provisioningState": "Succeeded",
+  "resourceState": "Active",
+  "type": "Microsoft.Cdn/profiles",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev",
+}
+`;
+
+exports[`createContainerRegistryWebhookEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Gateway",
+  ],
+  "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "contentTypesToCompress": Array [],
+        "defaultOriginGroup": undefined,
+        "deliveryPolicy": Object {
+          "description": "",
+          "rules": Array [],
+        },
+        "geoFilters": Array [],
+        "hostName": "j1dev.azureedge.net",
+        "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev",
+        "isCompressionEnabled": false,
+        "isHttpAllowed": true,
+        "isHttpsAllowed": true,
+        "location": "EastUs",
+        "name": "j1dev",
+        "optimizationType": undefined,
+        "originGroups": Array [],
+        "originHostHeader": "www.jupiterone.com",
+        "originPath": undefined,
+        "origins": Array [
+          Object {
+            "enabled": true,
+            "hostName": "www.jupiterone.com",
+            "httpPort": 80,
+            "httpsPort": 443,
+            "name": "j1dev",
+            "originHostHeader": "www.jupiterone.com",
+            "priority": 1,
+            "privateLinkAlias": undefined,
+            "privateLinkApprovalMessage": undefined,
+            "privateLinkLocation": undefined,
+            "privateLinkResourceId": undefined,
+            "weight": 1000,
+          },
+        ],
+        "probePath": undefined,
+        "provisioningState": "Succeeded",
+        "queryStringCachingBehavior": "IgnoreQueryString",
+        "resourceState": "Running",
+        "tags": Object {},
+        "type": "Microsoft.Cdn/profiles/endpoints",
+        "urlSigningKeys": Array [],
+        "webApplicationFirewallPolicyLink": undefined,
+      },
+    },
+  ],
+  "_type": "azure_cdn_endpoint",
+  "category": Array [
+    "data",
+  ],
+  "createdOn": undefined,
+  "displayName": "j1dev",
+  "function": Array [
+    "content-distribution",
+  ],
+  "hostName": "j1dev.azureedge.net",
+  "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev",
+  "isCompressionEnabled": false,
+  "isHttpAllowed": true,
+  "isHttpsAllowed": true,
+  "location": "EastUs",
+  "name": "j1dev",
+  "originHostHeader": "www.jupiterone.com",
+  "provisioningState": "Succeeded",
+  "public": true,
+  "queryStringCachingBehavior": "IgnoreQueryString",
+  "resourceState": "Running",
+  "type": "Microsoft.Cdn/profiles/endpoints",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev",
+}
+`;

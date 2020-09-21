@@ -63,6 +63,16 @@ import {
   STEP_RM_CONTAINER_REGISTRIES,
   STEP_RM_CONTAINER_REGISTRY_WEBHOOKS,
 } from './steps/resource-manager/container-registry';
+import {
+  STEP_RM_SERVICE_BUS_NAMESPACES,
+  STEP_RM_SERVICE_BUS_QUEUES,
+  STEP_RM_SERVICE_BUS_TOPICS,
+  STEP_RM_SERVICE_BUS_SUBSCRIPTIONS,
+} from './steps/resource-manager/service-bus';
+import {
+  STEP_RM_CDN_PROFILE,
+  STEP_RM_CDN_ENDPOINTS,
+} from './steps/resource-manager/cdn';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -72,7 +82,7 @@ export default function getStepStartStates(
   const activeDirectory = { disabled: !config.ingestActiveDirectory };
   const resourceManager = { disabled: !config.ingestResourceManager };
 
-  const steps = {
+  return {
     [STEP_AD_ACCOUNT]: { disabled: false },
     [STEP_AD_GROUPS]: activeDirectory,
     [STEP_AD_GROUP_MEMBERS]: activeDirectory,
@@ -112,19 +122,11 @@ export default function getStepStartStates(
     [STEP_RM_PRIVATE_DNS_RECORD_SETS]: resourceManager,
     [STEP_RM_CONTAINER_REGISTRIES]: resourceManager,
     [STEP_RM_CONTAINER_REGISTRY_WEBHOOKS]: resourceManager,
+    [STEP_RM_SERVICE_BUS_NAMESPACES]: resourceManager,
+    [STEP_RM_SERVICE_BUS_QUEUES]: resourceManager,
+    [STEP_RM_SERVICE_BUS_TOPICS]: resourceManager,
+    [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: resourceManager,
+    [STEP_RM_CDN_PROFILE]: resourceManager,
+    [STEP_RM_CDN_ENDPOINTS]: resourceManager,
   };
-
-  executionContext.logger.info(
-    {
-      configFlags: {
-        ingestActiveDirectory: config.ingestActiveDirectory,
-        ingestResourceManager: config.ingestResourceManager,
-      },
-      skippedSteps: Object.keys(steps).filter(
-        (k) => steps[k].disabled === true,
-      ),
-    },
-    'Filtered integration steps based on configuration flags.',
-  );
-  return steps;
 }

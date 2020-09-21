@@ -41,6 +41,10 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
       type: 'boolean',
       mask: false,
     },
+    ingestResourceManager: {
+      type: 'boolean',
+      mask: false,
+    },
   },
   validateInvocation,
 

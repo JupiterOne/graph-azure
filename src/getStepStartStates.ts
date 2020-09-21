@@ -70,11 +70,9 @@ export default function getStepStartStates(
   const config = executionContext.instance.config || {};
 
   const activeDirectory = { disabled: !config.ingestActiveDirectory };
-  const resourceManager = {
-    disabled: typeof config.subscriptionId !== 'string',
-  };
+  const resourceManager = { disabled: !config.ingestResourceManager };
 
-  return {
+  const steps = {
     [STEP_AD_ACCOUNT]: { disabled: false },
     [STEP_AD_GROUPS]: activeDirectory,
     [STEP_AD_GROUP_MEMBERS]: activeDirectory,
@@ -115,4 +113,18 @@ export default function getStepStartStates(
     [STEP_RM_CONTAINER_REGISTRIES]: resourceManager,
     [STEP_RM_CONTAINER_REGISTRY_WEBHOOKS]: resourceManager,
   };
+
+  executionContext.logger.info(
+    {
+      configFlags: {
+        ingestActiveDirectory: config.ingestActiveDirectory,
+        ingestResourceManager: config.ingestResourceManager,
+      },
+      skippedSteps: Object.keys(steps).filter(
+        (k) => steps[k].disabled === true,
+      ),
+    },
+    'Filtered integration steps based on configuration flags.',
+  );
+  return steps;
 }

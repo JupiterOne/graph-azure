@@ -134,6 +134,7 @@ CLIENT_SECRET=app_registration_service_principal_client_secret
 DIRECTORY_ID=development_directory_id
 SUBSCRIPTION_ID=development_subscription_id
 INGEST_ACTIVE_DIRECTORY=true
+INGEST_RESOURCE_MANAGER=true
 ```
 
 You should now be able to [execute the integration](#execute-the-integration)

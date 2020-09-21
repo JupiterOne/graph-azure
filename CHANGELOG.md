@@ -8,8 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.2.0 - 2020-09-20
+
 ### Added
 
+- Added `ingestResourceManager` flag
 - Added `azure_dns_zone` entities
 - Added `azure_resource_group|has|azure_dns_zone` relationships
 - Added `azure_dns_record_set` entities

@@ -82,7 +82,7 @@ export default function getStepStartStates(
   const activeDirectory = { disabled: !config.ingestActiveDirectory };
   const resourceManager = { disabled: !config.ingestResourceManager };
 
-  const steps = {
+  return {
     [STEP_AD_ACCOUNT]: { disabled: false },
     [STEP_AD_GROUPS]: activeDirectory,
     [STEP_AD_GROUP_MEMBERS]: activeDirectory,
@@ -129,18 +129,4 @@ export default function getStepStartStates(
     [STEP_RM_CDN_PROFILE]: resourceManager,
     [STEP_RM_CDN_ENDPOINTS]: resourceManager,
   };
-
-  executionContext.logger.info(
-    {
-      configFlags: {
-        ingestActiveDirectory: config.ingestActiveDirectory,
-        ingestResourceManager: config.ingestResourceManager,
-      },
-      skippedSteps: Object.keys(steps).filter(
-        (k) => steps[k].disabled === true,
-      ),
-    },
-    'Filtered integration steps based on configuration flags.',
-  );
-  return steps;
 }

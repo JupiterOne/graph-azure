@@ -6,6 +6,7 @@ import {
   setupRecording,
   SetupRecordingInput,
 } from '@jupiterone/integration-sdk-testing';
+import { isJson } from '../../src/utils/isJson';
 
 export { Recording };
 
@@ -50,23 +51,25 @@ function mutateRecordingEntry(entry: RecordingEntry): void {
     entry.response.content.text = responseText;
   }
 
-  const responseJson = JSON.parse(responseText);
+  if (isJson(responseText)) {
+    const responseJson = JSON.parse(responseText);
 
-  if (/login/.exec(entry.request.url) && entry.request.postData) {
-    // Redact request body with secrets for authentication
-    entry.request.postData.text = '[REDACTED]';
+    if (/login/.exec(entry.request.url) && entry.request.postData) {
+      // Redact request body with secrets for authentication
+      entry.request.postData.text = '[REDACTED]';
 
-    // Redact authentication response token
-    if (responseJson.access_token) {
-      entry.response.content.text = JSON.stringify(
-        {
-          ...responseJson,
-          /* eslint-disable-next-line @typescript-eslint/camelcase */
-          access_token: '[REDACTED]',
-        },
-        null,
-        0,
-      );
+      // Redact authentication response token
+      if (responseJson.access_token) {
+        entry.response.content.text = JSON.stringify(
+          {
+            ...responseJson,
+            /* eslint-disable-next-line @typescript-eslint/camelcase */
+            access_token: '[REDACTED]',
+          },
+          null,
+          0,
+        );
+      }
     }
   }
 }

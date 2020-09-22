@@ -1,8 +1,12 @@
 import fetch from 'cross-fetch';
 
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
+import {
+  IntegrationProviderAPIError,
+  IntegrationValidationError,
+} from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from '../../types';
+import { isJson } from '../../utils/isJson';
 
 /**
  * Obtain API credentials for Microsoft Graph API.
@@ -23,14 +27,38 @@ export default async function authenticate(
       `client_id=${encodeURIComponent(config.clientId)}`,
       'grant_type=client_credentials',
       `client_secret=${encodeURIComponent(config.clientSecret)}`,
-      'scope=https%3A%2F%2Fgraph.microsoft.com%2F.default',
+      `scope=${encodeURIComponent('https://graph.microsoft.com/.default')}`,
     ].join('&'),
   });
 
-  const json = await response.json();
+  const responseBody = await response.text();
+
+  if (!isJson(responseBody)) {
+    const error = getHTMLErrorFromGraphAuthenticate(responseBody, endpoint);
+    throw error;
+  }
+
+  const json = JSON.parse(responseBody);
 
   if (json.error) {
-    const errorResponse = json as ErrorResponse;
+    const error = getJSONErrorFromGraphAuthenticate(
+      json as ErrorResponse,
+      endpoint,
+    );
+    throw error;
+  } else {
+    const tokenResponse = json as TokenResponse;
+    return tokenResponse.access_token;
+  }
+}
+
+function getJSONErrorFromGraphAuthenticate(
+  errorResponse: ErrorResponse,
+  endpoint: string,
+): Error {
+  if (errorResponse.error === 'invalid_request') {
+    throw new IntegrationValidationError(errorResponse.error_description);
+  } else {
     const error = new Error(errorResponse.error_description);
     Object.assign(error, {
       name: errorResponse.error,
@@ -47,12 +75,28 @@ export default async function authenticate(
       status: errorResponse.error,
       statusText: errorResponse.error_description,
     });
-  } else {
-    const tokenResponse = json as TokenResponse;
-    return tokenResponse.access_token;
   }
 }
 
+function getHTMLErrorFromGraphAuthenticate(
+  response: string,
+  endpoint: string,
+): Error {
+  const INVALID_INPUT_ERROR_MSG =
+    'AADSTS90013: Invalid input received from the user.';
+  if (response.includes(INVALID_INPUT_ERROR_MSG)) {
+    throw new IntegrationValidationError(
+      INVALID_INPUT_ERROR_MSG + ' The provided directory ID is invalid.',
+    );
+  } else {
+    throw new IntegrationProviderAPIError({
+      endpoint,
+      status: 'GRAPH_AUTHENTICATION_ERROR',
+      statusText:
+        'An unknown error occurred while authenticating with the Tenant/Directory ID. Check that the Tenant ID is valid.',
+    });
+  }
+}
 interface TokenResponse {
   token_type: string;
   expires_in: number;

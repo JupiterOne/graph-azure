@@ -44,7 +44,7 @@ describe('#createResourceGroupResourceRelationship', () => {
     });
   });
 
-  test.only('should return direct relationship when resourcegroup (lowercase g) exists in jobState', async () => {
+  test('should return direct relationship when resourcegroup (lowercase g) exists in jobState', async () => {
     const resourceGroupId =
       '/subscriptions/subscription-id/resourceGroups/resource-group-id';
     const resourceGroupEntity: Entity = {

@@ -8,6 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
+## Added
+
+- Added `azure_event_grid_domain` entities
+- Added `azure_resource_group|has|azure_event_grid_domain` relationships
+- Added `azure_event_grid_domain_topic` entities
+- Added `azure_event_grid_domain|has|azure_event_grid_domain_topic`
+  relationships
+- Added `azure_event_grid_event_subscription` entities
+- Added `azure_event_grid_topic` entities
+- Added `azure_resource_group|has|azure_event_grid_topic` relationships
+
 ## 5.3.1 - 2020-09-21
 
 ### Fixed

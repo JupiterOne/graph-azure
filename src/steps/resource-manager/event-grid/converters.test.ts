@@ -2,7 +2,7 @@ import { createAzureWebLinker } from '../../../azure';
 import {
   createEventGridDomainEntity,
   createEventGridDomainTopicEntity,
-  createEventGridEventSubscriptionEntity,
+  createEventGridTopicSubscriptionEntity,
   createEventGridTopicEntity,
 } from './converters';
 import {
@@ -63,7 +63,7 @@ describe('createEventGridDomainTopicEntity', () => {
   });
 });
 
-describe('createEventGridEventSubscriptionEntity', () => {
+describe('createEventGridTopicSubscriptionEntity', () => {
   test('properties transferred', () => {
     const data: EventSubscription = {
       id:
@@ -73,7 +73,7 @@ describe('createEventGridEventSubscriptionEntity', () => {
       type: 'Microsoft.EventGrid/eventSubscriptions',
     };
 
-    const eventSubscriptionEntity = createEventGridEventSubscriptionEntity(
+    const eventSubscriptionEntity = createEventGridTopicSubscriptionEntity(
       webLinker,
       data,
     );

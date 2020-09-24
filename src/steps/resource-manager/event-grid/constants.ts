@@ -6,8 +6,8 @@ import { createResourceGroupResourceRelationshipMetadata } from '../utils/create
 
 export const STEP_RM_EVENT_GRID_DOMAINS = 'rm-event-grid-domains';
 export const STEP_RM_EVENT_GRID_DOMAIN_TOPICS = 'rm-event-grid-domain-topics';
-export const STEP_RM_EVENT_GRID_EVENT_SUBSCRIPTIONS =
-  'rm-event-grid-event-subscriptions';
+export const STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS =
+  'rm-event-grid-topic-subscriptions';
 export const STEP_RM_EVENT_GRID_TOPICS = 'rm-event-grid-topics';
 
 export const EventGridEntities = {
@@ -26,10 +26,10 @@ export const EventGridEntities = {
     _class: ['Queue'],
     resourceName: '[RM] Event Grid Topic',
   },
-  EVENT_SUBSCRIPTION: {
-    _type: 'azure_event_grid_event_subscription',
+  TOPIC_SUBSCRIPTION: {
+    _type: 'azure_event_grid_topic_subscription',
     _class: ['Subscription'],
-    resourceName: '[RM] Event Grid Subscription',
+    resourceName: '[RM] Event Grid Topic Subscription',
   },
 };
 
@@ -52,6 +52,18 @@ export const EventGridRelationships = {
   RESOURCE_GROUP_HAS_TOPIC: createResourceGroupResourceRelationshipMetadata(
     EventGridEntities.TOPIC._type,
   ),
+
+  TOPIC_HAS_SUBSCRIPTION: {
+    _type: generateRelationshipType(
+      RelationshipClass.HAS,
+      EventGridEntities.TOPIC,
+      EventGridEntities.TOPIC_SUBSCRIPTION,
+    ),
+
+    sourceType: EventGridEntities.TOPIC._type,
+    _class: RelationshipClass.HAS,
+    targetType: EventGridEntities.TOPIC_SUBSCRIPTION._type,
+  },
 
   // TODO : Figure out what kinds of subscriptions we want to capture.
   // global, regional, subscription (account level), resource group

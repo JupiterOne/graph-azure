@@ -5,7 +5,12 @@ import {
 } from '../../../../test/helpers/recording';
 import { IntegrationConfig } from '../../../types';
 import { EventGridClient } from './client';
-import { Domain, DomainTopic, Topic } from '@azure/arm-eventgrid/esm/models';
+import {
+  Domain,
+  DomainTopic,
+  EventSubscription,
+  Topic,
+} from '@azure/arm-eventgrid/esm/models';
 
 // developer used different creds than ~/test/integrationInstanceConfig
 const config: IntegrationConfig = {
@@ -107,6 +112,43 @@ describe('iterate topics', () => {
       expect.objectContaining({
         name: 'j1dev-event-grid-topic',
         type: 'Microsoft.EventGrid/topics',
+      }),
+    );
+  });
+});
+
+describe('iterate topic subscriptions', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateTopicSubscriptions',
+    });
+
+    const client = new EventGridClient(
+      config,
+      createMockIntegrationLogger(),
+      true,
+    );
+    const resources: EventSubscription[] = [];
+    const topic = {
+      name: 'j1dev-event-grid-topic',
+      type: 'Microsoft.EventGrid/topics',
+      id:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
+    };
+
+    await client.iterateTopicSubscriptions(topic, (e) => {
+      resources.push(e);
+    });
+
+    expect(resources).toContainEqual(
+      expect.objectContaining({
+        id:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-event-subscription',
+        name: 'j1dev-event-grid-event-subscription',
+        type: 'Microsoft.EventGrid/eventSubscriptions',
+        topic:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic',
       }),
     );
   });

@@ -1,5 +1,10 @@
 import { EventGridManagementClient } from '@azure/arm-eventgrid';
-import { Domain, DomainTopic, Topic } from '@azure/arm-eventgrid/esm/models';
+import {
+  Domain,
+  DomainTopic,
+  EventSubscription,
+  Topic,
+} from '@azure/arm-eventgrid/esm/models';
 import {
   Client,
   iterateAllResources,
@@ -71,6 +76,35 @@ export class EventGridClient extends Client {
           serviceClient.topics.listByResourceGroupNext(nextLink),
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.topic',
+      callback,
+    });
+  }
+
+  public async iterateTopicSubscriptions(
+    topic: { id: string; name: string; type: string },
+    callback: (s: EventSubscription) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      EventGridManagementClient,
+    );
+    const resourceGroup = resourceGroupName(topic.id, true)!;
+    const [providerNamespace, resourceType] = topic.type.split('/');
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.eventSubscriptions.listByResource(
+            resourceGroup,
+            providerNamespace,
+            resourceType,
+            topic.name,
+          ),
+        linkNext: async (nextLink: string) =>
+          serviceClient.eventSubscriptions.listByResourceNext(nextLink),
+      } as ListResourcesEndpoint,
+      resourceDescription: 'eventGrid.subscription',
       callback,
     });
   }

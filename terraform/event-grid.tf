@@ -37,17 +37,6 @@ resource "azurerm_eventgrid_domain_topic" "j1dev" {
   resource_group_name = azurerm_resource_group.j1dev.name
 }
 
-resource "azurerm_eventgrid_event_subscription" "j1dev" {
-  count = local.event_grid_subscription_count
-  name  = "j1dev-event-grid-event-subscription"
-  scope = azurerm_resource_group.j1dev.id
-
-  storage_queue_endpoint {
-    storage_account_id = azurerm_storage_account.j1dev.id
-    queue_name         = azurerm_storage_queue.j1dev.name
-  }
-}
-
 resource "azurerm_eventgrid_topic" "j1dev" {
   count               = local.event_grid_topic_count
   name                = "j1dev-event-grid-topic"
@@ -57,4 +46,17 @@ resource "azurerm_eventgrid_topic" "j1dev" {
   tags = {
     environment = local.j1env
   }
+}
+
+resource "azurerm_eventgrid_event_subscription" "j1dev" {
+  count = local.event_grid_subscription_count
+  name  = "j1dev-event-grid-event-subscription"
+  scope = azurerm_eventgrid_topic.j1dev[count.index].id
+
+  storage_queue_endpoint {
+    storage_account_id = azurerm_storage_account.j1dev.id
+    queue_name         = azurerm_storage_queue.j1dev.name
+  }
+
+  depends_on = [azurerm_eventgrid_topic.j1dev]
 }

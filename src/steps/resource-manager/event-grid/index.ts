@@ -20,14 +20,14 @@ import {
   EventGridRelationships,
   STEP_RM_EVENT_GRID_DOMAINS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
-  STEP_RM_EVENT_GRID_EVENT_SUBSCRIPTIONS,
+  STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
   STEP_RM_EVENT_GRID_TOPICS,
 } from './constants';
 
 import {
   createEventGridDomainEntity,
   createEventGridDomainTopicEntity,
-  createEventGridEventSubscriptionEntity,
+  createEventGridTopicSubscriptionEntity,
   createEventGridTopicEntity,
 } from './converters';
 
@@ -127,7 +127,38 @@ export async function fetchEventGridTopics(
   );
 }
 
-// TODO: add fetchEventGridSubscriptions function
+export async function fetchEventGridTopicSubscriptions(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new EventGridClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: EventGridEntities.TOPIC._type },
+    async (topicEntity) => {
+      await client.iterateTopicSubscriptions(
+        (topicEntity as unknown) as { id: string; name: string; type: string },
+        async (subscription) => {
+          const subscriptionEntity = createEventGridTopicSubscriptionEntity(
+            webLinker,
+            subscription,
+          );
+          await jobState.addEntity(subscriptionEntity);
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: topicEntity,
+              to: subscriptionEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
 
 export const eventGridSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
@@ -153,8 +184,6 @@ export const eventGridSteps: Step<
     executionHandler: fetchEventGridDomainTopics,
   },
   // TODO: Subscriptions? Global? regional? account? resource group? domain topic?
-
-  // TODO: Are topics by event subscriptions? regional? global? account subscription?
   {
     id: STEP_RM_EVENT_GRID_TOPICS,
     name: 'Event Grid Topics',
@@ -162,5 +191,18 @@ export const eventGridSteps: Step<
     relationships: [EventGridRelationships.RESOURCE_GROUP_HAS_TOPIC],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridTopics,
+  },
+
+  {
+    id: STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
+    name: 'Event Grid Topic Subscriptions',
+    entities: [EventGridEntities.TOPIC_SUBSCRIPTION],
+    relationships: [EventGridRelationships.TOPIC_HAS_SUBSCRIPTION],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      STEP_RM_EVENT_GRID_TOPICS,
+    ],
+    executionHandler: fetchEventGridTopicSubscriptions,
   },
 ];

@@ -55,7 +55,7 @@ export function createEventGridDomainTopicEntity(
   });
 }
 
-export function createEventGridEventSubscriptionEntity(
+export function createEventGridTopicSubscriptionEntity(
   webLinker: AzureWebLinker,
   data: EventSubscription,
 ): Entity {
@@ -65,8 +65,8 @@ export function createEventGridEventSubscriptionEntity(
       assign: {
         ...convertProperties(data),
         _key: data.id as string,
-        _type: EventGridEntities.EVENT_SUBSCRIPTION._type,
-        _class: EventGridEntities.EVENT_SUBSCRIPTION._class,
+        _type: EventGridEntities.TOPIC_SUBSCRIPTION._type,
+        _class: EventGridEntities.TOPIC_SUBSCRIPTION._class,
         id: data.id,
         name: data.name,
         webLink: webLinker.portalResourceUrl(data.id),

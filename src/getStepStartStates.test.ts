@@ -77,8 +77,8 @@ import {
 import {
   STEP_RM_EVENT_GRID_DOMAINS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
-  STEP_RM_EVENT_GRID_EVENT_SUBSCRIPTIONS,
   STEP_RM_EVENT_GRID_TOPICS,
+  STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
 } from './steps/resource-manager/event-grid';
 
 describe('getStepStartStates', () => {
@@ -145,7 +145,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_DOMAINS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: { disabled: true },
       [STEP_RM_EVENT_GRID_TOPICS]: { disabled: true },
-      [STEP_RM_EVENT_GRID_EVENT_SUBSCRIPTIONS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
     });
   });
 
@@ -207,7 +207,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_DOMAINS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: { disabled: true },
       [STEP_RM_EVENT_GRID_TOPICS]: { disabled: true },
-      [STEP_RM_EVENT_GRID_EVENT_SUBSCRIPTIONS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
     });
   });
 
@@ -269,7 +269,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_DOMAINS]: { disabled: false },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: { disabled: false },
       [STEP_RM_EVENT_GRID_TOPICS]: { disabled: false },
-      [STEP_RM_EVENT_GRID_EVENT_SUBSCRIPTIONS]: { disabled: false },
+      [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: false },
     });
   });
 });

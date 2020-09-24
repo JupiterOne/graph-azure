@@ -73,7 +73,7 @@ Object {
 }
 `;
 
-exports[`createEventGridEventSubscriptionEntity properties transferred 1`] = `
+exports[`createEventGridTopicSubscriptionEntity properties transferred 1`] = `
 Object {
   "_class": Array [
     "Subscription",

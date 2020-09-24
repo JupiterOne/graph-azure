@@ -2,6 +2,7 @@ import {
   fetchEventGridDomains,
   fetchEventGridDomainTopics,
   fetchEventGridTopics,
+  fetchEventGridTopicSubscriptions,
 } from '.';
 
 import {
@@ -134,9 +135,6 @@ test('step = event grid domain topics', async () => {
   ]);
 });
 
-// TODO: add tests for subscriptions
-// test('step = event grid subscriptions', async () => { });
-
 test('step = event grid topics', async () => {
   recording = setupAzureRecording({
     directory: __dirname,
@@ -180,6 +178,65 @@ test('step = event grid topics', async () => {
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
       _toEntityKey:
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
+      displayName: 'HAS',
+    },
+  ]);
+});
+
+test('step = event grid topic subscriptions', async () => {
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'resource-manager-step-event-grid-topic-subscriptions',
+  });
+
+  const context = createMockStepExecutionContext<IntegrationConfig>({
+    instanceConfig,
+    entities: [
+      {
+        _key:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
+        _type: 'azure_resource_group',
+        _class: ['Group'],
+        name: 'j1dev',
+        id:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
+      },
+
+      {
+        _key:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
+        _type: 'azure_event_grid_topic',
+        _class: ['Queue'],
+        name: 'j1dev-event-grid-topic',
+        id:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
+        type: 'Microsoft.EventGrid/topics',
+      },
+    ],
+  });
+
+  context.jobState.getData = jest.fn().mockResolvedValue({
+    defaultDomain: 'www.fake-domain.com',
+  });
+
+  await fetchEventGridTopicSubscriptions(context);
+
+  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
+  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+    _class: 'Subscription',
+    schema: {},
+  });
+
+  expect(context.jobState.collectedRelationships).toEqual([
+    {
+      _key:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic|has|/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-event-subscription',
+      _type: 'azure_event_grid_topic_has_subscription',
+      _class: 'HAS',
+      _fromEntityKey:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
+      _toEntityKey:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-event-subscription',
       displayName: 'HAS',
     },
   ]);

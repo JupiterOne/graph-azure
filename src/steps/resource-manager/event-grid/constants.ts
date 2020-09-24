@@ -3,11 +3,12 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
-import { RESOURCE_GROUP_MATCHER } from '../utils/matchers';
 
-export const SERVICE_BUS_DOMAIN_MATCHER = new RegExp(
-  RESOURCE_GROUP_MATCHER + '/providers/Microsoft.EventGrid/domains/[^/]+',
-);
+export const STEP_RM_EVENT_GRID_DOMAINS = 'rm-event-grid-domains';
+export const STEP_RM_EVENT_GRID_DOMAIN_TOPICS = 'rm-event-grid-domain-topics';
+export const STEP_RM_EVENT_GRID_EVENT_SUBSCRIPTIONS =
+  'rm-event-grid-event-subscriptions';
+export const STEP_RM_EVENT_GRID_TOPICS = 'rm-event-grid-topics';
 
 export const EventGridEntities = {
   DOMAIN: {
@@ -32,7 +33,7 @@ export const EventGridEntities = {
   },
 };
 
-export const ServiceBusRelationships = {
+export const EventGridRelationships = {
   RESOURCE_GROUP_HAS_DOMAIN: createResourceGroupResourceRelationshipMetadata(
     EventGridEntities.DOMAIN._type,
   ),

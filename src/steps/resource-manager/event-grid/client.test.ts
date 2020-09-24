@@ -111,3 +111,5 @@ describe('iterate topics', () => {
     );
   });
 });
+
+// TODO add iterate subscriptions test

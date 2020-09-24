@@ -74,4 +74,6 @@ export class EventGridClient extends Client {
       callback,
     });
   }
+
+  // TODO add iterateSubscriptions method
 }

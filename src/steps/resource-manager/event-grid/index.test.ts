@@ -7,7 +7,6 @@ import {
 } from '.';
 
 import {
-  createMockExecutionContext,
   createMockStepExecutionContext,
   Recording,
 } from '@jupiterone/integration-sdk-testing';

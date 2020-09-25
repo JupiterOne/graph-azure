@@ -10,9 +10,13 @@ import {
   iterateAllResources,
   ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
-import { resourceGroupName } from '../../../azure/utils';
 
 export class EventGridClient extends Client {
+  /**
+   * Retrieves all Event Grid Domains for a Resource Group from an Azure Subscription
+   * @param resourceGroup A Resource Group belonging to an Azure Subscription
+   * @param callback A callback function to be called after retrieving an Event Grid Domain
+   */
   public async iterateDomains(
     resourceGroup: { name: string },
     callback: (s: Domain) => void | Promise<void>,
@@ -21,47 +25,57 @@ export class EventGridClient extends Client {
       EventGridManagementClient,
     );
 
+    const { name } = resourceGroup;
+
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
-        list: async () =>
-          serviceClient.domains.listByResourceGroup(resourceGroup.name),
-        listNext: async (nextLink: string) =>
-          serviceClient.domains.listByResourceGroupNext(nextLink),
+        list: async () => serviceClient.domains.listByResourceGroup(name),
+        listNext: serviceClient.domains.listByResourceGroupNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.domain',
       callback,
     });
   }
 
+  /**
+   * Retrieves all Event Grid Domain Topics for an Event Grid Domain
+   * @param domain An Event Grid Domain
+   * @param callback A callback function to be called after retrieving an Event Grid Domain Topic
+   */
   public async iterateDomainTopics(
-    domain: { id: string; name: string },
+    domain: { resourceGroupName: string; name: string },
     callback: (s: DomainTopic) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       EventGridManagementClient,
     );
-    const resourceGroup = resourceGroupName(domain.id, true)!;
+
+    const { resourceGroupName, name } = domain;
 
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
         list: async () =>
-          serviceClient.domainTopics.listByDomain(resourceGroup, domain.name),
-        linkNext: async (nextLink: string) =>
-          serviceClient.domainTopics.listByDomainNext(nextLink),
+          serviceClient.domainTopics.listByDomain(resourceGroupName, name),
+        linkNext: serviceClient.domainTopics.listByDomainNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.domainTopic',
       callback,
     });
   }
 
+  /**
+   * Retrieves all Event Grid Domain Topic Subscriptions for an Event Grid Domain Topic
+   * @param domainTopic An Event Grid Domain Topic
+   * @param callback A callback function to be called after retrieving an Event Grid Domain Topic Subscription
+   */
   public async iterateDomainTopicSubscriptions(
     domainTopic: {
       resourceGroupName: string;
-      domainTopicName: string;
+      name: string;
       domainName: string;
     },
     callback: (s: EventSubscription) => void | Promise<void>,
@@ -70,7 +84,7 @@ export class EventGridClient extends Client {
       EventGridManagementClient,
     );
 
-    const { resourceGroupName, domainName, domainTopicName } = domainTopic;
+    const { resourceGroupName, domainName, name } = domainTopic;
 
     return iterateAllResources({
       logger: this.logger,
@@ -80,16 +94,20 @@ export class EventGridClient extends Client {
           serviceClient.eventSubscriptions.listByDomainTopic(
             resourceGroupName,
             domainName,
-            domainTopicName,
+            name,
           ),
-        linkNext: async (nextLink: string) =>
-          serviceClient.eventSubscriptions.listByDomainTopicNext(nextLink),
+        linkNext: serviceClient.eventSubscriptions.listByDomainTopicNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.subscription',
       callback,
     });
   }
 
+  /**
+   * Retrieves all Event Grid Topics for a Resource Group from an Azure Subscription
+   * @param resourceGroup A Resource Group belonging to an Azure Subscription
+   * @param callback A callback function to be called after retrieving an Event Grid Topic
+   */
   public async iterateTopics(
     resourceGroup: { name: string },
     callback: (s: Topic) => void | Promise<void>,
@@ -104,23 +122,32 @@ export class EventGridClient extends Client {
       resourceEndpoint: {
         list: async () =>
           serviceClient.topics.listByResourceGroup(resourceGroup.name),
-        linkNext: async (nextLink: string) =>
-          serviceClient.topics.listByResourceGroupNext(nextLink),
+        linkNext: serviceClient.topics.listByResourceGroupNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.topic',
       callback,
     });
   }
 
+  /**
+   * Retrieves all Event Grid Topic Subscriptions for an Event Grid Topic
+   * @param topic An Event Grid Topic
+   * @param callback A callback function to be called after retrieving an Event Grid Topic Subscription
+   */
   public async iterateTopicSubscriptions(
-    topic: { id: string; name: string; type: string },
+    topic: {
+      resourceGroupName: string;
+      name: string;
+      type: string;
+      providerNamespace: string;
+    },
     callback: (s: EventSubscription) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       EventGridManagementClient,
     );
-    const resourceGroup = resourceGroupName(topic.id, true)!;
-    const [providerNamespace, resourceType] = topic.type.split('/');
+
+    const { resourceGroupName, name, type, providerNamespace } = topic;
 
     return iterateAllResources({
       logger: this.logger,
@@ -128,18 +155,15 @@ export class EventGridClient extends Client {
       resourceEndpoint: {
         list: async () =>
           serviceClient.eventSubscriptions.listByResource(
-            resourceGroup,
+            resourceGroupName,
             providerNamespace,
-            resourceType,
-            topic.name,
+            type,
+            name,
           ),
-        linkNext: async (nextLink: string) =>
-          serviceClient.eventSubscriptions.listByResourceNext(nextLink),
+        linkNext: serviceClient.eventSubscriptions.listByResourceNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.subscription',
       callback,
     });
   }
-
-  // TODO add iterateSubscriptions method
 }

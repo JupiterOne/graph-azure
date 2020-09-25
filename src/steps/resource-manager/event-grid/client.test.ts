@@ -70,7 +70,7 @@ describe('iterate domain topics', () => {
     );
     const resources: DomainTopic[] = [];
     const eventGridDomain = {
-      id: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
+      resourceGroupName: 'j1dev',
       name: 'j1dev-event-grid-domain',
     };
 
@@ -101,7 +101,7 @@ describe('iterate domain topic subscriptions', () => {
     );
     const resources: EventSubscription[] = [];
     const domainTopic = {
-      domainTopicName: 'j1dev-event-grid-domain-topic',
+      name: 'j1dev-event-grid-domain-topic',
       domainName: 'j1dev-event-grid-domain',
       resourceGroupName: 'j1dev',
     };
@@ -167,10 +167,10 @@ describe('iterate topic subscriptions', () => {
     );
     const resources: EventSubscription[] = [];
     const topic = {
+      resourceGroupName: 'j1dev',
       name: 'j1dev-event-grid-topic',
-      type: 'Microsoft.EventGrid/topics',
-      id:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
+      type: 'topics',
+      providerNamespace: 'Microsoft.EventGrid',
     };
 
     await client.iterateTopicSubscriptions(topic, (e) => {
@@ -189,5 +189,3 @@ describe('iterate topic subscriptions', () => {
     );
   });
 });
-
-// TODO add iterate subscriptions test

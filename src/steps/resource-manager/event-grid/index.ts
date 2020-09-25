@@ -48,8 +48,9 @@ export async function fetchEventGridDomains(
   await jobState.iterateEntities(
     { _type: RESOURCE_GROUP_ENTITY._type },
     async (resourceGroupEntity) => {
+      const { name } = resourceGroupEntity;
       await client.iterateDomains(
-        (resourceGroupEntity as unknown) as { name: string },
+        ({ name } as unknown) as { name: string },
         async (domain) => {
           const domainEntity = createEventGridDomainEntity(webLinker, domain);
           await jobState.addEntity(domainEntity);
@@ -78,8 +79,14 @@ export async function fetchEventGridDomainTopics(
   await jobState.iterateEntities(
     { _type: EventGridEntities.DOMAIN._type },
     async (domainEntity) => {
+      const { id, name } = domainEntity;
+      const resourceGroup = resourceGroupName(id, true)!;
+
       await client.iterateDomainTopics(
-        (domainEntity as unknown) as { id: string; name: string },
+        ({ resourceGroupName: resourceGroup, name } as unknown) as {
+          resourceGroupName: string;
+          name: string;
+        },
         async (domainTopic) => {
           const domainTopicEntity = createEventGridDomainTopicEntity(
             webLinker,
@@ -112,19 +119,19 @@ export async function fetchEventGridDomainTopicSubscriptions(
   await jobState.iterateEntities(
     { _type: EventGridEntities.DOMAIN_TOPIC._type },
     async (domainTopicEntity) => {
-      const { id, name: domainTopicName } = domainTopicEntity;
+      const { id, name } = domainTopicEntity;
       const resourceGroup = resourceGroupName(id, true)!;
       const domainName = getEventGridDomainNameFromId(id);
 
-      if (resourceGroup && domainName && domainTopicName) {
+      if (resourceGroup && domainName && name) {
         await client.iterateDomainTopicSubscriptions(
           ({
             resourceGroupName: resourceGroup,
-            domainTopicName,
+            name,
             domainName,
           } as unknown) as {
             resourceGroupName: string;
-            domainTopicName: string;
+            name: string;
             domainName: string;
           },
           async (domainTopicSubscription) => {
@@ -159,8 +166,9 @@ export async function fetchEventGridTopics(
   await jobState.iterateEntities(
     { _type: RESOURCE_GROUP_ENTITY._type },
     async (resourceGroupEntity) => {
+      const { name } = resourceGroupEntity;
       await client.iterateTopics(
-        (resourceGroupEntity as unknown) as { name: string },
+        ({ name } as unknown) as { name: string },
         async (topic) => {
           const topicEntity = createEventGridTopicEntity(webLinker, topic);
           await jobState.addEntity(topicEntity);
@@ -189,23 +197,40 @@ export async function fetchEventGridTopicSubscriptions(
   await jobState.iterateEntities(
     { _type: EventGridEntities.TOPIC._type },
     async (topicEntity) => {
-      await client.iterateTopicSubscriptions(
-        (topicEntity as unknown) as { id: string; name: string; type: string },
-        async (subscription) => {
-          const subscriptionEntity = createEventGridTopicSubscriptionEntity(
-            webLinker,
-            subscription,
-          );
-          await jobState.addEntity(subscriptionEntity);
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.HAS,
-              from: topicEntity,
-              to: subscriptionEntity,
-            }),
-          );
-        },
-      );
+      const { id, type, name } = topicEntity;
+
+      if (id && name && type) {
+        const resourceGroup = resourceGroupName(id, true)!;
+        const [providerNamespace, resourceType] = (type as string).split('/');
+
+        await client.iterateTopicSubscriptions(
+          ({
+            resourceGroupName: resourceGroup,
+            name,
+            type: resourceType,
+            providerNamespace,
+          } as unknown) as {
+            resourceGroupName: string;
+            name: string;
+            type: string;
+            providerNamespace: string;
+          },
+          async (subscription) => {
+            const subscriptionEntity = createEventGridTopicSubscriptionEntity(
+              webLinker,
+              subscription,
+            );
+            await jobState.addEntity(subscriptionEntity);
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.HAS,
+                from: topicEntity,
+                to: subscriptionEntity,
+              }),
+            );
+          },
+        );
+      }
     },
   );
 }
@@ -246,7 +271,7 @@ export const eventGridSteps: Step<
     ],
     executionHandler: fetchEventGridDomainTopicSubscriptions,
   },
-  // TODO: Subscriptions? Global? regional? account? resource group?
+
   {
     id: STEP_RM_EVENT_GRID_TOPICS,
     name: 'Event Grid Topics',

@@ -1,4 +1,4 @@
-import { resourceGroupName } from './utils';
+import { resourceGroupName, getEventGridDomainNameFromId } from './utils';
 
 describe('resourceGroupName', () => {
   test('undefined', () => {
@@ -30,5 +30,38 @@ describe('resourceGroupName', () => {
     expect(() => resourceGroupName('something strange', true)).toThrowError(
       /not found/i,
     );
+  });
+});
+
+describe('getEventGridDomainNameFromId', () => {
+  test('returns undefined when the id is not supplied', () => {
+    let id;
+    expect(getEventGridDomainNameFromId(id)).toBeUndefined();
+  });
+
+  test('returns undefined when the id does not contain a domain name', () => {
+    expect(
+      getEventGridDomainNameFromId(
+        '/subscriptions/1234/resourceGroups/abcd/providers/Microsoft.TestProvider/',
+      ),
+    ).toBeUndefined();
+  });
+
+  test('returns the domain name when it is found in the id', () => {
+    const domainName = 'j1dev-event-grid-domain';
+    expect(
+      getEventGridDomainNameFromId(
+        `/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/${domainName}/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription`,
+      ),
+    ).toBe(domainName);
+  });
+
+  test('returns the undefined when the domain name pattern is found, but the domain name is falsy', () => {
+    const domainName = '';
+    expect(
+      getEventGridDomainNameFromId(
+        `/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/${domainName}/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription`,
+      ),
+    ).toBeUndefined();
   });
 });

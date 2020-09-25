@@ -87,6 +87,42 @@ describe('iterate domain topics', () => {
   });
 });
 
+describe('iterate domain topic subscriptions', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateDomainTopicSubscriptions',
+    });
+
+    const client = new EventGridClient(
+      config,
+      createMockIntegrationLogger(),
+      true,
+    );
+    const resources: EventSubscription[] = [];
+    const domainTopic = {
+      domainTopicName: 'j1dev-event-grid-domain-topic',
+      domainName: 'j1dev-event-grid-domain',
+      resourceGroupName: 'j1dev',
+    };
+
+    await client.iterateDomainTopicSubscriptions(domainTopic, (e) => {
+      resources.push(e);
+    });
+
+    expect(resources).toContainEqual(
+      expect.objectContaining({
+        id:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription',
+        name: 'j1dev-event-grid-domain-topic-subscription',
+        type: 'Microsoft.EventGrid/eventSubscriptions',
+        topic:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic',
+      }),
+    );
+  });
+});
+
 describe('iterate topics', () => {
   test('all', async () => {
     recording = setupAzureRecording({

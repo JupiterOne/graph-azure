@@ -6,6 +6,8 @@ import { createResourceGroupResourceRelationshipMetadata } from '../utils/create
 
 export const STEP_RM_EVENT_GRID_DOMAINS = 'rm-event-grid-domains';
 export const STEP_RM_EVENT_GRID_DOMAIN_TOPICS = 'rm-event-grid-domain-topics';
+export const STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS =
+  'rm-event-grid-domain-topic-subscriptions';
 export const STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS =
   'rm-event-grid-topic-subscriptions';
 export const STEP_RM_EVENT_GRID_TOPICS = 'rm-event-grid-topics';
@@ -47,6 +49,18 @@ export const EventGridRelationships = {
     sourceType: EventGridEntities.DOMAIN._type,
     _class: RelationshipClass.HAS,
     targetType: EventGridEntities.DOMAIN_TOPIC._type,
+  },
+
+  DOMAIN_TOPIC_HAS_SUBSCRIPTION: {
+    _type: generateRelationshipType(
+      RelationshipClass.HAS,
+      EventGridEntities.DOMAIN_TOPIC,
+      EventGridEntities.TOPIC_SUBSCRIPTION,
+    ),
+
+    sourceType: EventGridEntities.DOMAIN_TOPIC._type,
+    _class: RelationshipClass.HAS,
+    targetType: EventGridEntities.TOPIC_SUBSCRIPTION._type,
   },
 
   RESOURCE_GROUP_HAS_TOPIC: createResourceGroupResourceRelationshipMetadata(

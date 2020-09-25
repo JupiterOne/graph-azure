@@ -3,9 +3,7 @@ import {
   createIntegrationEntity,
   convertProperties,
 } from '@jupiterone/integration-sdk-core';
-
 import { AzureWebLinker } from '../../../azure';
-
 import { EventGridEntities } from './constants';
 import {
   Domain,
@@ -50,26 +48,7 @@ export function createEventGridDomainTopicEntity(
         id: data.id,
         name: data.name,
         webLink: webLinker.portalResourceUrl(data.id),
-      },
-    },
-  });
-}
-
-export function createEventGridTopicSubscriptionEntity(
-  webLinker: AzureWebLinker,
-  data: EventSubscription,
-): Entity {
-  return createIntegrationEntity({
-    entityData: {
-      source: data,
-      assign: {
-        ...convertProperties(data),
-        _key: data.id as string,
-        _type: EventGridEntities.TOPIC_SUBSCRIPTION._type,
-        _class: EventGridEntities.TOPIC_SUBSCRIPTION._class,
-        id: data.id,
-        name: data.name,
-        webLink: webLinker.portalResourceUrl(data.id),
+        type: data.type,
       },
     },
   });
@@ -87,6 +66,27 @@ export function createEventGridTopicEntity(
         _key: data.id as string,
         _type: EventGridEntities.TOPIC._type,
         _class: EventGridEntities.TOPIC._class,
+        id: data.id,
+        name: data.name,
+        webLink: webLinker.portalResourceUrl(data.id),
+        type: data.type,
+      },
+    },
+  });
+}
+
+export function createEventGridTopicSubscriptionEntity(
+  webLinker: AzureWebLinker,
+  data: EventSubscription,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        ...convertProperties(data),
+        _key: data.id as string,
+        _type: EventGridEntities.TOPIC_SUBSCRIPTION._type,
+        _class: EventGridEntities.TOPIC_SUBSCRIPTION._class,
         id: data.id,
         name: data.name,
         webLink: webLinker.portalResourceUrl(data.id),

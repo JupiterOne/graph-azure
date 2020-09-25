@@ -5,7 +5,6 @@ import {
   createDirectRelationship,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
@@ -20,16 +19,20 @@ import {
   EventGridRelationships,
   STEP_RM_EVENT_GRID_DOMAINS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
+  STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
   STEP_RM_EVENT_GRID_TOPICS,
 } from './constants';
-
 import {
   createEventGridDomainEntity,
   createEventGridDomainTopicEntity,
-  createEventGridTopicSubscriptionEntity,
   createEventGridTopicEntity,
+  createEventGridTopicSubscriptionEntity,
 } from './converters';
+import {
+  resourceGroupName,
+  getEventGridDomainNameFromId,
+} from '../../../azure/utils';
 
 export * from './constants';
 
@@ -93,6 +96,53 @@ export async function fetchEventGridDomainTopics(
           );
         },
       );
+    },
+  );
+}
+
+export async function fetchEventGridDomainTopicSubscriptions(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new EventGridClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: EventGridEntities.DOMAIN_TOPIC._type },
+    async (domainTopicEntity) => {
+      const { id, name: domainTopicName } = domainTopicEntity;
+      const resourceGroup = resourceGroupName(id, true)!;
+      const domainName = getEventGridDomainNameFromId(id);
+
+      if (resourceGroup && domainName && domainTopicName) {
+        await client.iterateDomainTopicSubscriptions(
+          ({
+            resourceGroupName: resourceGroup,
+            domainTopicName,
+            domainName,
+          } as unknown) as {
+            resourceGroupName: string;
+            domainTopicName: string;
+            domainName: string;
+          },
+          async (domainTopicSubscription) => {
+            const domainTopicSubscriptionEntity = createEventGridTopicSubscriptionEntity(
+              webLinker,
+              domainTopicSubscription,
+            );
+            await jobState.addEntity(domainTopicSubscriptionEntity);
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.HAS,
+                from: domainTopicEntity,
+                to: domainTopicSubscriptionEntity,
+              }),
+            );
+          },
+        );
+      }
     },
   );
 }
@@ -183,7 +233,20 @@ export const eventGridSteps: Step<
     ],
     executionHandler: fetchEventGridDomainTopics,
   },
-  // TODO: Subscriptions? Global? regional? account? resource group? domain topic?
+  {
+    id: STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
+    name: 'Event Grid Domain Topic Subscriptions',
+    entities: [EventGridEntities.TOPIC_SUBSCRIPTION],
+    relationships: [EventGridRelationships.DOMAIN_TOPIC_HAS_SUBSCRIPTION],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      STEP_RM_EVENT_GRID_DOMAINS,
+      STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
+    ],
+    executionHandler: fetchEventGridDomainTopicSubscriptions,
+  },
+  // TODO: Subscriptions? Global? regional? account? resource group?
   {
     id: STEP_RM_EVENT_GRID_TOPICS,
     name: 'Event Grid Topics',

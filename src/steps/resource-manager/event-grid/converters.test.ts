@@ -63,13 +63,31 @@ describe('createEventGridDomainTopicEntity', () => {
   });
 });
 
-describe('createEventGridTopicSubscriptionEntity', () => {
+describe('createEventGridDomainTopicSubscriptionEntity', () => {
   test('properties transferred', () => {
     const data: EventSubscription = {
-      id:
-        '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-subscription',
-      name: 'j1dev-event-grid-subscription',
+      topic:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic',
       provisioningState: 'Succeeded',
+      destination: {
+        resourceId:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev',
+        queueName: 'j1dev-domain-topic-subscription-storage',
+        endpointType: 'StorageQueue',
+      },
+      filter: {
+        subjectBeginsWith: '',
+        subjectEndsWith: '',
+      },
+      labels: [],
+      eventDeliverySchema: 'EventGridSchema',
+      retryPolicy: {
+        maxDeliveryAttempts: 30,
+        eventTimeToLiveInMinutes: 1440,
+      },
+      id:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription',
+      name: 'j1dev-event-grid-domain-topic-subscription',
       type: 'Microsoft.EventGrid/eventSubscriptions',
     };
 
@@ -108,6 +126,29 @@ describe('createEventGridTopicEntity', () => {
     expect(topicEntity).toMatchSnapshot();
     expect(topicEntity).toMatchGraphObjectSchema({
       _class: ['Queue'],
+      schema: {},
+    });
+  });
+});
+
+describe('createEventGridTopicSubscriptionEntity', () => {
+  test('properties transferred', () => {
+    const data: EventSubscription = {
+      id:
+        '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-subscription',
+      name: 'j1dev-event-grid-subscription',
+      provisioningState: 'Succeeded',
+      type: 'Microsoft.EventGrid/eventSubscriptions',
+    };
+
+    const eventSubscriptionEntity = createEventGridTopicSubscriptionEntity(
+      webLinker,
+      data,
+    );
+
+    expect(eventSubscriptionEntity).toMatchSnapshot();
+    expect(eventSubscriptionEntity).toMatchGraphObjectSchema({
+      _class: ['Subscription'],
       schema: {},
     });
   });

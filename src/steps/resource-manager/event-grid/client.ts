@@ -58,6 +58,38 @@ export class EventGridClient extends Client {
     });
   }
 
+  public async iterateDomainTopicSubscriptions(
+    domainTopic: {
+      resourceGroupName: string;
+      domainTopicName: string;
+      domainName: string;
+    },
+    callback: (s: EventSubscription) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      EventGridManagementClient,
+    );
+
+    const { resourceGroupName, domainName, domainTopicName } = domainTopic;
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.eventSubscriptions.listByDomainTopic(
+            resourceGroupName,
+            domainName,
+            domainTopicName,
+          ),
+        linkNext: async (nextLink: string) =>
+          serviceClient.eventSubscriptions.listByDomainTopicNext(nextLink),
+      } as ListResourcesEndpoint,
+      resourceDescription: 'eventGrid.subscription',
+      callback,
+    });
+  }
+
   public async iterateTopics(
     resourceGroup: { name: string },
     callback: (s: Topic) => void | Promise<void>,

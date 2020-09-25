@@ -106,7 +106,7 @@ Object {
       },
     },
   ],
-  "_type": "azure_event_grid_domain_topic_subscription",
+  "_type": "azure_event_grid_topic_subscription",
   "createdOn": undefined,
   "displayName": "j1dev-event-grid-domain-topic-subscription",
   "eventDeliverySchema": "EventGridSchema",

@@ -73,6 +73,7 @@ import {
   STEP_RM_CDN_PROFILE,
   STEP_RM_CDN_ENDPOINTS,
 } from './steps/resource-manager/cdn';
+import { STEP_RM_BATCH_ACCOUNT } from './steps/resource-manager/batch';
 import { hasSubscriptionId } from '.';
 
 export default function getStepStartStates(
@@ -129,5 +130,6 @@ export default function getStepStartStates(
     [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: resourceManager,
     [STEP_RM_CDN_PROFILE]: resourceManager,
     [STEP_RM_CDN_ENDPOINTS]: resourceManager,
+    [STEP_RM_BATCH_ACCOUNT]: resourceManager,
   };
 }

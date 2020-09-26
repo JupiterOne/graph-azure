@@ -1,4 +1,4 @@
-#  TODO: figure out if you need to pull certificates
+#  TODO: figure out how to retrieve certificates
 
 variable "create_batch_account" {
   type    = number
@@ -11,7 +11,7 @@ locals {
 
 resource "azurerm_batch_account" "j1dev" {
   count               = local.batch_account_count
-  name                = "j1devaccount"
+  name                = "j1devbatchaccount"
   resource_group_name = azurerm_resource_group.j1dev.name
   location            = azurerm_resource_group.j1dev.location
   # This can be BatchService | UserSubscription
@@ -22,7 +22,7 @@ resource "azurerm_batch_account" "j1dev" {
 resource "azurerm_batch_pool" "j1dev" {
   count               = local.batch_account_count
   name                = "j1devbatchpool"
-  resource_group_name = azurerm_resource_group.j1dev[count.index].name
+  resource_group_name = azurerm_resource_group.j1dev.name
   account_name        = azurerm_batch_account.j1dev[count.index].name
   display_name        = "J1 Dev Batch Account Pool"
   vm_size             = "Standard_A1"
@@ -48,7 +48,7 @@ resource "azurerm_batch_pool" "j1dev" {
   }
 
   start_task {
-    command_line         = "echo 'Hello j1dev batch'"
+    command_line         = "echo 'Hello j1dev batch account'"
     max_task_retry_count = 1
     wait_for_success     = true
 
@@ -66,7 +66,7 @@ resource "azurerm_batch_pool" "j1dev" {
 
 resource "azurerm_batch_application" "example" {
   count               = local.batch_account_count
-  name                = "j1dev-batch-application"
-  resource_group_name = azurerm_resource_group.j1dev[count.index].name
+  name                = "j1devbatchapplication"
+  resource_group_name = azurerm_resource_group.j1dev.name
   account_name        = azurerm_batch_account.j1dev[count.index].name
 }

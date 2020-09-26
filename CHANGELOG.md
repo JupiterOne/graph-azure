@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Added `azure_batch_account` entities
+- Added `azure_resource_group|has|azure_batch_account` relationships
+
 ## 5.3.1 - 2020-09-21
 
 ### Fixed

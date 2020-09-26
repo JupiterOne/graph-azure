@@ -20,6 +20,7 @@ import { privateDnsSteps } from './steps/resource-manager/private-dns';
 import { containerRegistrySteps } from './steps/resource-manager/container-registry';
 import { serviceBusSteps } from './steps/resource-manager/service-bus';
 import { cdnSteps } from './steps/resource-manager/cdn';
+import { batchSteps } from './steps/resource-manager/batch';
 
 export function hasSubscriptionId(config: IntegrationConfig): boolean {
   const subscriptionId = config.subscriptionId;
@@ -71,5 +72,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...containerRegistrySteps,
     ...serviceBusSteps,
     ...cdnSteps,
+    ...batchSteps,
   ],
 };

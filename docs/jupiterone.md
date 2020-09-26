@@ -83,6 +83,7 @@ The following entities are created:
 | [RM] API Management API         | `azure_api_management_api`         | `ApplicationEndpoint`           |
 | [RM] API Management Service     | `azure_api_management_service`     | `Gateway`                       |
 | [RM] Azure Managed Disk         | `azure_managed_disk`               | `DataStore`, `Disk`             |
+| [RM] Batch Account              | `azure_batch_account`              | `Service`                       |
 | [RM] CDN Endpoint               | `azure_cdn_endpoint`               | `Gateway`                       |
 | [RM] CDN Profile                | `azure_cdn_profile`                | `Service`                       |
 | [RM] Classic Admin              | `azure_classic_admin_group`        | `UserGroup`                     |
@@ -149,6 +150,7 @@ The following relationships are created/mapped:
 | `azure_postgresql_server`      | **HAS**               | `azure_postgresql_database`        |
 | `azure_private_dns_zone`       | **HAS**               | `azure_private_dns_record_set`     |
 | `azure_resource_group`         | **HAS**               | `azure_api_management_service`     |
+| `azure_resource_group`         | **HAS**               | `azure_batch_account`              |
 | `azure_resource_group`         | **HAS**               | `azure_cdn_profile`                |
 | `azure_resource_group`         | **HAS**               | `azure_container_registry`         |
 | `azure_resource_group`         | **HAS**               | `azure_cosmosdb_account`           |

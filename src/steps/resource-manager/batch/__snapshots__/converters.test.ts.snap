@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createBatchAccountEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Service",
+  ],
+  "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "accountEndpoint": "j1devbatchaccount.eastus.batch.azure.com",
+        "activeJobAndJobScheduleQuota": 100,
+        "autoStorage": Object {
+          "lastKeySync": 2020-09-25T23:45:28.358Z,
+          "storageAccountId": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev",
+        },
+        "dedicatedCoreQuota": 20,
+        "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount",
+        "location": "eastus",
+        "lowPriorityCoreQuota": 10,
+        "name": "j1devbatchaccount",
+        "poolAllocationMode": "BatchService",
+        "poolQuota": 20,
+        "provisioningState": "Succeeded",
+        "type": "Microsoft.Batch/batchAccounts",
+      },
+    },
+  ],
+  "_type": "azure_batch_account",
+  "accountEndpoint": "j1devbatchaccount.eastus.batch.azure.com",
+  "activeJobAndJobScheduleQuota": 100,
+  "category": Array [
+    "infrastructure",
+  ],
+  "createdOn": undefined,
+  "dedicatedCoreQuota": 20,
+  "displayName": "j1devbatchaccount",
+  "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount",
+  "location": "eastus",
+  "lowPriorityCoreQuota": 10,
+  "name": "j1devbatchaccount",
+  "poolAllocationMode": "BatchService",
+  "poolQuota": 20,
+  "provisioningState": "Succeeded",
+  "type": "Microsoft.Batch/batchAccounts",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount",
+}
+`;

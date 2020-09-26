@@ -18,7 +18,7 @@ const config: IntegrationConfig = {
 let recording: Recording;
 
 afterEach(async () => {
-  recording.stop();
+  await recording.stop();
 });
 
 describe('iterate batch accounts', () => {
@@ -62,6 +62,6 @@ describe('iterate batch accounts', () => {
   });
 });
 
-describe('iterate batch account pools', () => {});
+// describe('iterate batch account pools', () => { });
 
-describe('iterate batch account applications', () => {});
+// describe('iterate batch account applications', () => { });

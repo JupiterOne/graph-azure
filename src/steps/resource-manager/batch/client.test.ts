@@ -5,7 +5,7 @@ import {
 } from '../../../../test/helpers/recording';
 import { BatchClient } from './client';
 import { IntegrationConfig } from '../../../types';
-import { BatchAccount, Pool, Application } from '@azure/arm-batch/esm/models';
+import { BatchAccount } from '@azure/arm-batch/esm/models';
 
 // developer used different creds than ~/test/integrationInstanceConfig
 const config: IntegrationConfig = {

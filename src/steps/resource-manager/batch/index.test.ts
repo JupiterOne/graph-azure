@@ -1,4 +1,4 @@
-import { fetchBatchAccounts } from '.';
+import { fetchBatchAccounts, fetchBatchPools } from '.';
 import {
   createMockStepExecutionContext,
   Recording,
@@ -58,6 +58,47 @@ test('step - batch accounts', async () => {
     _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
     _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
     _type: 'azure_resource_group_has_batch_account',
+    displayName: 'HAS',
+  });
+});
+
+test('step - batch pools', async () => {
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'resource-manager-step-batch-pools',
+  });
+
+  const batchAccount = {
+    _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
+    id:
+      '/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount',
+    _type: 'azure_batch_account',
+    _class: ['Service'],
+    name: 'j1devbatchaccount',
+  };
+
+  const context = createMockStepExecutionContext<IntegrationConfig>({
+    instanceConfig,
+    entities: [batchAccount],
+  });
+
+  context.jobState.getData = jest.fn().mockResolvedValue({
+    defaultDomain: 'www.fake-domain.com',
+  });
+
+  await fetchBatchPools(context);
+
+  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
+  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+    _class: 'Cluster',
+    schema: {},
+  });
+  expect(context.jobState.collectedRelationships).toContainEqual({
+    _class: 'HAS',
+    _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
+    _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/pools/j1devbatchpool`,
+    _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/pools/j1devbatchpool`,
+    _type: 'azure_batch_account_has_pool',
     displayName: 'HAS',
   });
 });

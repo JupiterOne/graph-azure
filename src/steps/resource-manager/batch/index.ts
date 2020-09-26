@@ -2,8 +2,8 @@ import {
   Entity,
   Step,
   IntegrationStepExecutionContext,
-  // createDirectRelationship,
-  // RelationshipClass,
+  createDirectRelationship,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
@@ -18,16 +18,11 @@ import {
   BatchEntities,
   BatchAccountRelationships,
   STEP_RM_BATCH_ACCOUNT,
-  // STEP_RM_BATCH_POOL,
+  STEP_RM_BATCH_POOL,
   // STEP_RM_BATCH_APPLICATION
 } from './constants';
-import {
-  createBatchAccountEntity,
-  // createBatchPoolEntity
-} from './converters';
-// import {
-//   resourceGroupName,
-// } from '../../../azure/utils';
+import { createBatchAccountEntity, createBatchPoolEntity } from './converters';
+import { resourceGroupName } from '../../../azure/utils';
 
 export * from './constants';
 
@@ -65,6 +60,46 @@ export async function fetchBatchAccounts(
   );
 }
 
+export async function fetchBatchPools(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new BatchClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: BatchEntities.BATCH_ACCOUNT._type },
+    async (batchAccountEntity) => {
+      const { id, name } = batchAccountEntity;
+      const resourceGroup = resourceGroupName(id, true)!;
+
+      await client.iterateBatchPools(
+        ({
+          resourceGroupName: resourceGroup,
+          batchAccountName: name,
+        } as unknown) as {
+          resourceGroupName: string;
+          batchAccountName: string;
+        },
+        async (batchPool) => {
+          const batchPoolEntity = createBatchPoolEntity(webLinker, batchPool);
+          await jobState.addEntity(batchPoolEntity);
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: batchAccountEntity,
+              to: batchPoolEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
 export const batchSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -75,5 +110,17 @@ export const batchSteps: Step<
     relationships: [BatchAccountRelationships.RESOURCE_GROUP_HAS_BATCH_ACCOUNT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchBatchAccounts,
+  },
+  {
+    id: STEP_RM_BATCH_POOL,
+    name: 'Batch Pools',
+    entities: [BatchEntities.BATCH_POOL],
+    relationships: [BatchAccountRelationships.BATCH_ACCOUNT_HAS_BATCH_POOL],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      STEP_RM_BATCH_ACCOUNT,
+    ],
+    executionHandler: fetchBatchPools,
   },
 ];

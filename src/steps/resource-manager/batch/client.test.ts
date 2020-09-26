@@ -5,7 +5,7 @@ import {
 } from '../../../../test/helpers/recording';
 import { BatchClient } from './client';
 import { IntegrationConfig } from '../../../types';
-import { BatchAccount } from '@azure/arm-batch/esm/models';
+import { BatchAccount, Pool } from '@azure/arm-batch/esm/models';
 
 // developer used different creds than ~/test/integrationInstanceConfig
 const config: IntegrationConfig = {
@@ -62,6 +62,39 @@ describe('iterate batch accounts', () => {
   });
 });
 
-// describe('iterate batch account pools', () => { });
+describe('iterate batch account pools', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateBatchAccountPools',
+    });
+
+    const client = new BatchClient(config, createMockIntegrationLogger(), true);
+
+    const resourceGroup = {
+      name: 'j1dev',
+      location: 'eastus',
+    };
+    const batchAccountInfo = {
+      resourceGroupName: resourceGroup.name,
+      batchAccountName: 'j1devbatchaccount',
+    };
+
+    const resources: Pool[] = [];
+
+    await client.iterateBatchPools(batchAccountInfo, (e) => {
+      resources.push(e);
+    });
+
+    expect(resources).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${config.subscriptionId}/resourceGroups/${resourceGroup.name}/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/pools/j1devbatchpool`,
+        name: 'j1devbatchpool',
+        displayName: 'J1 Dev Batch Account Pool',
+        type: 'Microsoft.Batch/batchAccounts/pools',
+      }),
+    );
+  });
+});
 
 // describe('iterate batch account applications', () => { });

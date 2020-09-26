@@ -10,6 +10,8 @@ and this project adheres to
 
 - Added `azure_batch_account` entities
 - Added `azure_resource_group|has|azure_batch_account` relationships
+- Added `azure_batch_pool` entities
+- Added `azure_batch_account|has|azure_batch_pool` relationships
 
 ## 5.3.1 - 2020-09-21
 

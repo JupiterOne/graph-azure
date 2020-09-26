@@ -84,6 +84,7 @@ The following entities are created:
 | [RM] API Management Service     | `azure_api_management_service`     | `Gateway`                       |
 | [RM] Azure Managed Disk         | `azure_managed_disk`               | `DataStore`, `Disk`             |
 | [RM] Batch Account              | `azure_batch_account`              | `Service`                       |
+| [RM] Batch Pool                 | `azure_batch_pool`                 | `Cluster`                       |
 | [RM] CDN Endpoint               | `azure_cdn_endpoint`               | `Gateway`                       |
 | [RM] CDN Profile                | `azure_cdn_profile`                | `Service`                       |
 | [RM] Classic Admin              | `azure_classic_admin_group`        | `UserGroup`                     |
@@ -136,6 +137,7 @@ The following relationships are created/mapped:
 | `azure_account`                | **HAS**               | `azure_keyvault_service`           |
 | `azure_account`                | **HAS**               | `azure_user`                       |
 | `azure_api_management_service` | **HAS**               | `azure_api_management_api`         |
+| `azure_batch_account`          | **HAS**               | `azure_batch_pool`                 |
 | `azure_cdn_profile`            | **HAS**               | `azure_cdn_endpoint`               |
 | `azure_classic_admin_group`    | **HAS**               | `azure_user`                       |
 | `azure_container_registry`     | **HAS**               | `azure_container_registry_webhook` |

@@ -16,12 +16,12 @@ export const BatchEntities = {
   },
   BATCH_POOL: {
     _type: 'azure_batch_pool',
-    _class: ['Host'],
+    _class: ['Cluster'],
     resourceName: '[RM] Batch Pool',
   },
   BATCH_APPLICATION: {
     _type: 'azure_batch_application',
-    _class: ['Host'],
+    _class: ['Process'],
     resourceName: '[RM] Batch Application',
   },
 };

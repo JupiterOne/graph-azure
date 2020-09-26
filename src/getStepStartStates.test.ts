@@ -77,6 +77,7 @@ import {
 import {
   STEP_RM_BATCH_ACCOUNT,
   STEP_RM_BATCH_POOL,
+  STEP_RM_BATCH_APPLICATION,
 } from './steps/resource-manager/batch';
 
 describe('getStepStartStates', () => {
@@ -142,6 +143,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_CDN_ENDPOINTS]: { disabled: true },
       [STEP_RM_BATCH_ACCOUNT]: { disabled: true },
       [STEP_RM_BATCH_POOL]: { disabled: true },
+      [STEP_RM_BATCH_APPLICATION]: { disabled: true },
     });
   });
 
@@ -202,6 +204,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_CDN_ENDPOINTS]: { disabled: true },
       [STEP_RM_BATCH_ACCOUNT]: { disabled: true },
       [STEP_RM_BATCH_POOL]: { disabled: true },
+      [STEP_RM_BATCH_APPLICATION]: { disabled: true },
     });
   });
 
@@ -262,6 +265,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_CDN_ENDPOINTS]: { disabled: false },
       [STEP_RM_BATCH_ACCOUNT]: { disabled: false },
       [STEP_RM_BATCH_POOL]: { disabled: false },
+      [STEP_RM_BATCH_APPLICATION]: { disabled: false },
     });
   });
 });

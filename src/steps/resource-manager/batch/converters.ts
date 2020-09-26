@@ -48,3 +48,23 @@ export function createBatchPoolEntity(
     },
   });
 }
+
+export function createBatchApplicationEntity(
+  webLinker: AzureWebLinker,
+  data: Pool,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        ...convertProperties(data),
+        _key: data.id as string,
+        _type: BatchEntities.BATCH_APPLICATION._type,
+        _class: BatchEntities.BATCH_APPLICATION._class,
+        id: data.id,
+        name: data.displayName,
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}

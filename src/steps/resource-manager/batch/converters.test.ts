@@ -1,7 +1,11 @@
-import { BatchAccount, Pool } from '@azure/arm-batch/esm/models';
+import { BatchAccount, Pool, Application } from '@azure/arm-batch/esm/models';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
-import { createBatchAccountEntity, createBatchPoolEntity } from './converters';
+import {
+  createBatchAccountEntity,
+  createBatchPoolEntity,
+  createBatchApplicationEntity,
+} from './converters';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 
@@ -113,6 +117,28 @@ describe('createBatchPoolEntity', () => {
     expect(batchAccountPoolEntity).toMatchSnapshot();
     expect(batchAccountPoolEntity).toMatchGraphObjectSchema({
       _class: ['Cluster'],
+      schema: {},
+    });
+  });
+});
+
+describe('createBatchApplicationEntity', () => {
+  test('properties transferred', () => {
+    const data: Application = {
+      allowUpdates: true,
+      displayName: '',
+      id: 'j1devbatchapplication',
+      packages: [],
+    };
+
+    const batchApplicationEntity: Entity = createBatchApplicationEntity(
+      webLinker,
+      data,
+    );
+
+    expect(batchApplicationEntity).toMatchSnapshot();
+    expect(batchApplicationEntity).toMatchGraphObjectSchema({
+      _class: ['Process'],
       schema: {},
     });
   });

@@ -76,6 +76,7 @@ import {
 import {
   STEP_RM_BATCH_ACCOUNT,
   STEP_RM_BATCH_POOL,
+  STEP_RM_BATCH_APPLICATION,
 } from './steps/resource-manager/batch';
 import { hasSubscriptionId } from '.';
 
@@ -135,5 +136,6 @@ export default function getStepStartStates(
     [STEP_RM_CDN_ENDPOINTS]: resourceManager,
     [STEP_RM_BATCH_ACCOUNT]: resourceManager,
     [STEP_RM_BATCH_POOL]: resourceManager,
+    [STEP_RM_BATCH_APPLICATION]: resourceManager,
   };
 }

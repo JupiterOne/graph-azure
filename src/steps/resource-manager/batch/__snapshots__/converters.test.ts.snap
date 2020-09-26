@@ -49,6 +49,33 @@ Object {
 }
 `;
 
+exports[`createBatchApplicationEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Process",
+  ],
+  "_key": "j1devbatchapplication",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "allowUpdates": true,
+        "displayName": "",
+        "id": "j1devbatchapplication",
+        "packages": Array [],
+      },
+    },
+  ],
+  "_type": "azure_batch_application",
+  "allowUpdates": true,
+  "createdOn": undefined,
+  "displayName": "",
+  "id": "j1devbatchapplication",
+  "name": "",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resourcej1devbatchapplication",
+}
+`;
+
 exports[`createBatchPoolEntity properties transferred 1`] = `
 Object {
   "_class": Array [

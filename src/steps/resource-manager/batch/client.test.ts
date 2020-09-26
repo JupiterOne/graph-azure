@@ -5,7 +5,7 @@ import {
 } from '../../../../test/helpers/recording';
 import { BatchClient } from './client';
 import { IntegrationConfig } from '../../../types';
-import { BatchAccount, Pool } from '@azure/arm-batch/esm/models';
+import { BatchAccount, Pool, Application } from '@azure/arm-batch/esm/models';
 
 // developer used different creds than ~/test/integrationInstanceConfig
 const config: IntegrationConfig = {
@@ -97,4 +97,37 @@ describe('iterate batch account pools', () => {
   });
 });
 
-// describe('iterate batch account applications', () => { });
+describe('iterate batch account applications', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateBatchAccountApplications',
+    });
+
+    const client = new BatchClient(config, createMockIntegrationLogger(), true);
+
+    const resourceGroup = {
+      name: 'j1dev',
+      location: 'eastus',
+    };
+    const batchAccountInfo = {
+      resourceGroupName: resourceGroup.name,
+      batchAccountName: 'j1devbatchaccount',
+    };
+
+    const resources: Application[] = [];
+
+    await client.iterateBatchApplications(batchAccountInfo, (e) => {
+      resources.push(e);
+    });
+
+    expect(resources).toContainEqual(
+      expect.objectContaining({
+        id: 'j1devbatchapplication',
+        displayName: expect.any(String),
+        packages: expect.any(Array),
+        allowUpdates: expect.any(Boolean),
+      }),
+    );
+  });
+});

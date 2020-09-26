@@ -5,7 +5,12 @@ import {
 } from '../../../../test/helpers/recording';
 import { BatchClient } from './client';
 import { IntegrationConfig } from '../../../types';
-import { BatchAccount, Pool, Application } from '@azure/arm-batch/esm/models';
+import {
+  BatchAccount,
+  Pool,
+  Application,
+  Certificate,
+} from '@azure/arm-batch/esm/models';
 
 // developer used different creds than ~/test/integrationInstanceConfig
 const config: IntegrationConfig = {
@@ -127,6 +132,45 @@ describe('iterate batch account applications', () => {
         displayName: expect.any(String),
         packages: expect.any(Array),
         allowUpdates: expect.any(Boolean),
+      }),
+    );
+  });
+});
+
+describe('iterate batch account certificates', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateBatchAccountCertificates',
+    });
+
+    const client = new BatchClient(config, createMockIntegrationLogger(), true);
+
+    const resourceGroup = {
+      name: 'j1dev',
+      location: 'eastus',
+    };
+    const batchAccountInfo = {
+      resourceGroupName: resourceGroup.name,
+      batchAccountName: 'j1devbatchaccount',
+    };
+
+    const resources: Certificate[] = [];
+
+    await client.iterateBatchCertificates(batchAccountInfo, (e) => {
+      resources.push(e);
+    });
+
+    expect(resources).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/certificates/sha1-6820fee71b8312b01159d3c09fcb9f7ab24ae60d`,
+        name: 'sha1-6820fee71b8312b01159d3c09fcb9f7ab24ae60d',
+        type: 'Microsoft.Batch/batchAccounts/certificates',
+        format: 'Cer',
+        thumbprint: '6820fee71b8312b01159d3c09fcb9f7ab24ae60d',
+        thumbprintAlgorithm: 'sha1',
+        publicData:
+          'MIIDljCCAn4CCQDvLsedfPYEHDANBgkqhkiG9w0BAQsFADCBjDELMAkGA1UEBhMCVVMxDTALBgNVBAgMBFV0YWgxFTATBgNVBAcMDFNvdXRoIEpvcmRhbjENMAsGA1UECgwEVGVzdDESMBAGA1UECwwJVGVzdCBVbml0MRYwFAYDVQQDDA1UZXN0aW5nIEJhdGNoMRwwGgYJKoZIhvcNAQkBFg10ZXN0QHRlc3QuY29tMB4XDTIwMDkyNjA1NTI1NVoXDTIxMDkyNjA1NTI1NVowgYwxCzAJBgNVBAYTAlVTMQ0wCwYDVQQIDARVdGFoMRUwEwYDVQQHDAxTb3V0aCBKb3JkYW4xDTALBgNVBAoMBFRlc3QxEjAQBgNVBAsMCVRlc3QgVW5pdDEWMBQGA1UEAwwNVGVzdGluZyBCYXRjaDEcMBoGCSqGSIb3DQEJARYNdGVzdEB0ZXN0LmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALmNVea9Sm4GHv69qm1kSb6vExnkw9N3hBLm9AVc++KLzDgMx/ME4ih3I8Thb6ApbjXIp2G3Wa/AOQIc58fYrJeQQus3ZY2LGuQBmPzDK4/a94VZCRr7kJWUDjtVeIVd+sIrxmK+t6PXjmMfeKn8JUb7nyzPxK7g6BZwYbq4zX7vJ7iPC8bD2hydrCgPftBt6UklJK7KbD9Ex4/3vU94c36AOvq4QZsHXvneaPBObKN1FoyRJgvtK9+1J0TWvFWmYyoIHE/6YLqafIG+zsOuT8GPFexIoTgjQDi5XjhaPOmS4r+3kmOCNBIBzot/i0zSbwXFH7tttH2qgvYM4dIxm7UCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAsbREEWVz/GBCjEtOe7YoApG45AJCxvs3j7Ox2S2fl2RPzQcOVCDsm5yn9i5IbsJFpNzK33oZOkqNhrfqAMMyDF/YTK9iQZODC8cBWcgY4Ji3lsyCFotbyLSzutRc9P8rLNtHjUd0CHvXbwT1otcDd8aEX76stgTYsEnUT3rDCLwfNuD/jEs5no5ccOAEEn2iE6NLGu8w7bdLiXwE0/DQrK4GP5shol/vIaiOmhpwoedy/C6G5iZp5lo4wkxNp0jKWi4D3IjlWMgqROjOxM5TJVc73pXdifwhlU7l6SwRZN0rl49hcIW6OlOXQZRYJ/CVlBN6krEgfwhnWgeOC1RqFg==',
       }),
     );
   });

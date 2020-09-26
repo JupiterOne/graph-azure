@@ -20,11 +20,13 @@ import {
   STEP_RM_BATCH_ACCOUNT,
   STEP_RM_BATCH_POOL,
   STEP_RM_BATCH_APPLICATION,
+  STEP_RM_BATCH_CERTIFICATE,
 } from './constants';
 import {
   createBatchAccountEntity,
   createBatchApplicationEntity,
   createBatchPoolEntity,
+  createBatchCertificateEntity,
 } from './converters';
 import { resourceGroupName } from '../../../azure/utils';
 
@@ -147,6 +149,49 @@ export async function fetchBatchApplications(
   );
 }
 
+export async function fetchBatchCertificates(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new BatchClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: BatchEntities.BATCH_ACCOUNT._type },
+    async (batchAccountEntity) => {
+      const { id, name } = batchAccountEntity;
+      const resourceGroup = resourceGroupName(id, true)!;
+
+      await client.iterateBatchCertificates(
+        ({
+          resourceGroupName: resourceGroup,
+          batchAccountName: name,
+        } as unknown) as {
+          resourceGroupName: string;
+          batchAccountName: string;
+        },
+        async (batchCertificate) => {
+          const batchCertificateEntity = createBatchCertificateEntity(
+            webLinker,
+            batchCertificate,
+          );
+          await jobState.addEntity(batchCertificateEntity);
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: batchAccountEntity,
+              to: batchCertificateEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
 export const batchSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -183,5 +228,19 @@ export const batchSteps: Step<
       STEP_RM_BATCH_ACCOUNT,
     ],
     executionHandler: fetchBatchApplications,
+  },
+  {
+    id: STEP_RM_BATCH_CERTIFICATE,
+    name: 'Batch Certificates',
+    entities: [BatchEntities.BATCH_CERTIFICATE],
+    relationships: [
+      BatchAccountRelationships.BATCH_ACCOUNT_HAS_BATCH_CERTIFICATE,
+    ],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      STEP_RM_BATCH_ACCOUNT,
+    ],
+    executionHandler: fetchBatchCertificates,
   },
 ];

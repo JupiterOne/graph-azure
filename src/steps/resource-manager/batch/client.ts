@@ -1,5 +1,10 @@
 import { BatchManagementClient } from '@azure/arm-batch';
-import { BatchAccount, Pool, Application } from '@azure/arm-batch/esm/models';
+import {
+  BatchAccount,
+  Pool,
+  Application,
+  Certificate,
+} from '@azure/arm-batch/esm/models';
 import {
   Client,
   iterateAllResources,
@@ -88,6 +93,37 @@ export class BatchClient extends Client {
         linkNext: serviceClient.application.listNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'batch.application',
+      callback,
+    });
+  }
+
+  /**
+   * Retrieves all Batch Account Certificates for a Batch Account in a Resource Group from an Azure Subscription
+   * @param batchAccountInfo Information for the Batch Account, including the resourceGroupName and batchAccountName
+   * @param callback A callback function to be called after retrieving a Batch Account Certificate
+   */
+  public async iterateBatchCertificates(
+    batchAccountInfo: { resourceGroupName: string; batchAccountName: string },
+    callback: (s: Certificate) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      BatchManagementClient,
+    );
+
+    const { resourceGroupName, batchAccountName } = batchAccountInfo;
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.certificate.listByBatchAccount(
+            resourceGroupName,
+            batchAccountName,
+          ),
+        linkNext: serviceClient.certificate.listByBatchAccountNext,
+      } as ListResourcesEndpoint,
+      resourceDescription: 'batch.certificate',
       callback,
     });
   }

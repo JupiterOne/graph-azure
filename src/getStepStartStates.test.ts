@@ -78,6 +78,7 @@ import {
   STEP_RM_BATCH_ACCOUNT,
   STEP_RM_BATCH_POOL,
   STEP_RM_BATCH_APPLICATION,
+  STEP_RM_BATCH_CERTIFICATE,
 } from './steps/resource-manager/batch';
 
 describe('getStepStartStates', () => {
@@ -144,6 +145,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_BATCH_ACCOUNT]: { disabled: true },
       [STEP_RM_BATCH_POOL]: { disabled: true },
       [STEP_RM_BATCH_APPLICATION]: { disabled: true },
+      [STEP_RM_BATCH_CERTIFICATE]: { disabled: true },
     });
   });
 
@@ -205,6 +207,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_BATCH_ACCOUNT]: { disabled: true },
       [STEP_RM_BATCH_POOL]: { disabled: true },
       [STEP_RM_BATCH_APPLICATION]: { disabled: true },
+      [STEP_RM_BATCH_CERTIFICATE]: { disabled: true },
     });
   });
 
@@ -266,6 +269,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_BATCH_ACCOUNT]: { disabled: false },
       [STEP_RM_BATCH_POOL]: { disabled: false },
       [STEP_RM_BATCH_APPLICATION]: { disabled: false },
+      [STEP_RM_BATCH_CERTIFICATE]: { disabled: false },
     });
   });
 });

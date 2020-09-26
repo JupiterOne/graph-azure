@@ -1,4 +1,9 @@
-import { fetchBatchAccounts, fetchBatchApplications, fetchBatchPools } from '.';
+import {
+  fetchBatchAccounts,
+  fetchBatchApplications,
+  fetchBatchCertificates,
+  fetchBatchPools,
+} from '.';
 import {
   createMockStepExecutionContext,
   Recording,
@@ -140,6 +145,47 @@ test('step - batch applications', async () => {
     _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount|has|j1devbatchapplication`,
     _toEntityKey: `j1devbatchapplication`,
     _type: 'azure_batch_account_has_application',
+    displayName: 'HAS',
+  });
+});
+
+test('step - batch certificates', async () => {
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'resource-manager-step-batch-certificates',
+  });
+
+  const batchAccount = {
+    _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
+    id:
+      '/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount',
+    _type: 'azure_batch_account',
+    _class: ['Service'],
+    name: 'j1devbatchaccount',
+  };
+
+  const context = createMockStepExecutionContext<IntegrationConfig>({
+    instanceConfig,
+    entities: [batchAccount],
+  });
+
+  context.jobState.getData = jest.fn().mockResolvedValue({
+    defaultDomain: 'www.fake-domain.com',
+  });
+
+  await fetchBatchCertificates(context);
+
+  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
+  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+    _class: 'Certificate',
+    schema: {},
+  });
+  expect(context.jobState.collectedRelationships).toContainEqual({
+    _class: 'HAS',
+    _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
+    _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/certificates/sha1-6820fee71b8312b01159d3c09fcb9f7ab24ae60d`,
+    _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/certificates/sha1-6820fee71b8312b01159d3c09fcb9f7ab24ae60d`,
+    _type: 'azure_batch_account_has_certificate',
     displayName: 'HAS',
   });
 });

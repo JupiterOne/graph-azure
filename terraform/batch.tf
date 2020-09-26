@@ -1,5 +1,3 @@
-#  TODO: figure out how to retrieve certificates
-
 variable "create_batch_account" {
   type    = number
   default = 0
@@ -64,9 +62,19 @@ resource "azurerm_batch_pool" "j1dev" {
   }
 }
 
-resource "azurerm_batch_application" "example" {
+resource "azurerm_batch_application" "j1dev" {
   count               = local.batch_account_count
   name                = "j1devbatchapplication"
   resource_group_name = azurerm_resource_group.j1dev.name
   account_name        = azurerm_batch_account.j1dev[count.index].name
+}
+
+resource "azurerm_batch_certificate" "j1dev" {
+  count                = local.batch_account_count
+  resource_group_name  = azurerm_resource_group.j1dev.name
+  account_name         = azurerm_batch_account.j1dev[count.index].name
+  certificate          = filebase64("batch.crt")
+  format               = "Cer"
+  thumbprint           = "6820fee71b8312b01159d3c09fcb9f7ab24ae60d"
+  thumbprint_algorithm = "SHA1"
 }

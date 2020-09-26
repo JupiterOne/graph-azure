@@ -5,7 +5,12 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
 import { BatchEntities } from './constants';
-import { BatchAccount, Pool } from '@azure/arm-batch/esm/models';
+import {
+  BatchAccount,
+  Pool,
+  Application,
+  Certificate,
+} from '@azure/arm-batch/esm/models';
 
 export function createBatchAccountEntity(
   webLinker: AzureWebLinker,
@@ -51,7 +56,7 @@ export function createBatchPoolEntity(
 
 export function createBatchApplicationEntity(
   webLinker: AzureWebLinker,
-  data: Pool,
+  data: Application,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
@@ -63,6 +68,25 @@ export function createBatchApplicationEntity(
         _class: BatchEntities.BATCH_APPLICATION._class,
         id: data.id,
         name: data.displayName,
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+
+export function createBatchCertificateEntity(
+  webLinker: AzureWebLinker,
+  data: Certificate,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        ...convertProperties(data),
+        _key: data.id as string,
+        _type: BatchEntities.BATCH_CERTIFICATE._type,
+        _class: BatchEntities.BATCH_CERTIFICATE._class,
+        id: data.id,
         webLink: webLinker.portalResourceUrl(data.id),
       },
     },

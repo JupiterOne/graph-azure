@@ -98,7 +98,7 @@ export class EventGridClient extends Client {
           ),
         listNext: serviceClient.eventSubscriptions.listByDomainTopicNext,
       } as ListResourcesEndpoint,
-      resourceDescription: 'eventGrid.subscription',
+      resourceDescription: 'eventGrid.domainTopicSubscription',
       callback,
     });
   }
@@ -162,7 +162,7 @@ export class EventGridClient extends Client {
           ),
         listNext: serviceClient.eventSubscriptions.listByResourceNext,
       } as ListResourcesEndpoint,
-      resourceDescription: 'eventGrid.subscription',
+      resourceDescription: 'eventGrid.topicSubscription',
       callback,
     });
   }

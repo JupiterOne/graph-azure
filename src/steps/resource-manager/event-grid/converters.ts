@@ -28,6 +28,7 @@ export function createEventGridDomainEntity(
         name: data.name,
         category: ['infrastructure'],
         webLink: webLinker.portalResourceUrl(data.id),
+        type: data.type,
       },
     },
   });
@@ -90,6 +91,7 @@ export function createEventGridTopicSubscriptionEntity(
         id: data.id,
         name: data.name,
         webLink: webLinker.portalResourceUrl(data.id),
+        type: data.type,
       },
     },
   });

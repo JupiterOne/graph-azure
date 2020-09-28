@@ -38,7 +38,12 @@ describe('createEventGridDomainEntity', () => {
     expect(domainEntity).toMatchSnapshot();
     expect(domainEntity).toMatchGraphObjectSchema({
       _class: ['Service'],
-      schema: {},
+      schema: {
+        additionalProperties: true,
+        properties: {
+          type: { const: 'Microsoft.EventGrid/domains' },
+        },
+      },
     });
   });
 });
@@ -58,7 +63,12 @@ describe('createEventGridDomainTopicEntity', () => {
     expect(domainTopicEntity).toMatchSnapshot();
     expect(domainTopicEntity).toMatchGraphObjectSchema({
       _class: ['Queue'],
-      schema: {},
+      schema: {
+        additionalProperties: true,
+        properties: {
+          type: { const: 'Microsoft.EventGrid/domains/topics' },
+        },
+      },
     });
   });
 });
@@ -99,7 +109,12 @@ describe('createEventGridDomainTopicSubscriptionEntity', () => {
     expect(eventSubscriptionEntity).toMatchSnapshot();
     expect(eventSubscriptionEntity).toMatchGraphObjectSchema({
       _class: ['Subscription'],
-      schema: {},
+      schema: {
+        additionalProperties: true,
+        properties: {
+          type: { const: 'Microsoft.EventGrid/eventSubscriptions' },
+        },
+      },
     });
   });
 });
@@ -126,7 +141,12 @@ describe('createEventGridTopicEntity', () => {
     expect(topicEntity).toMatchSnapshot();
     expect(topicEntity).toMatchGraphObjectSchema({
       _class: ['Queue'],
-      schema: {},
+      schema: {
+        additionalProperties: true,
+        properties: {
+          type: { const: 'Microsoft.EventGrid/topics' },
+        },
+      },
     });
   });
 });
@@ -139,6 +159,24 @@ describe('createEventGridTopicSubscriptionEntity', () => {
       name: 'j1dev-event-grid-subscription',
       provisioningState: 'Succeeded',
       type: 'Microsoft.EventGrid/eventSubscriptions',
+      topic:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic',
+      destination: {
+        resourceId:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev',
+        queueName: 'j1dev',
+        endpointType: 'StorageQueue',
+      },
+      filter: {
+        subjectBeginsWith: '',
+        subjectEndsWith: '',
+      },
+      labels: [],
+      eventDeliverySchema: 'EventGridSchema',
+      retryPolicy: {
+        maxDeliveryAttempts: 30,
+        eventTimeToLiveInMinutes: 1440,
+      },
     };
 
     const eventSubscriptionEntity = createEventGridTopicSubscriptionEntity(
@@ -149,7 +187,12 @@ describe('createEventGridTopicSubscriptionEntity', () => {
     expect(eventSubscriptionEntity).toMatchSnapshot();
     expect(eventSubscriptionEntity).toMatchGraphObjectSchema({
       _class: ['Subscription'],
-      schema: {},
+      schema: {
+        additionalProperties: true,
+        properties: {
+          type: { const: 'Microsoft.EventGrid/eventSubscriptions' },
+        },
+      },
     });
   });
 });

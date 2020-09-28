@@ -171,9 +171,25 @@ Object {
     Object {
       "name": "default",
       "rawData": Object {
+        "destination": Object {
+          "endpointType": "StorageQueue",
+          "queueName": "j1dev",
+          "resourceId": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev",
+        },
+        "eventDeliverySchema": "EventGridSchema",
+        "filter": Object {
+          "subjectBeginsWith": "",
+          "subjectEndsWith": "",
+        },
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-subscription",
+        "labels": Array [],
         "name": "j1dev-event-grid-subscription",
         "provisioningState": "Succeeded",
+        "retryPolicy": Object {
+          "eventTimeToLiveInMinutes": 1440,
+          "maxDeliveryAttempts": 30,
+        },
+        "topic": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic",
         "type": "Microsoft.EventGrid/eventSubscriptions",
       },
     },
@@ -181,9 +197,11 @@ Object {
   "_type": "azure_event_grid_topic_subscription",
   "createdOn": undefined,
   "displayName": "j1dev-event-grid-subscription",
+  "eventDeliverySchema": "EventGridSchema",
   "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-subscription",
   "name": "j1dev-event-grid-subscription",
   "provisioningState": "Succeeded",
+  "topic": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic",
   "type": "Microsoft.EventGrid/eventSubscriptions",
   "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-subscription",
 }

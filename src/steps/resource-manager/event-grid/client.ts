@@ -60,7 +60,7 @@ export class EventGridClient extends Client {
       resourceEndpoint: {
         list: async () =>
           serviceClient.domainTopics.listByDomain(resourceGroupName, name),
-        linkNext: serviceClient.domainTopics.listByDomainNext,
+        listNext: serviceClient.domainTopics.listByDomainNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.domainTopic',
       callback,
@@ -96,7 +96,7 @@ export class EventGridClient extends Client {
             domainName,
             name,
           ),
-        linkNext: serviceClient.eventSubscriptions.listByDomainTopicNext,
+        listNext: serviceClient.eventSubscriptions.listByDomainTopicNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.subscription',
       callback,
@@ -122,7 +122,7 @@ export class EventGridClient extends Client {
       resourceEndpoint: {
         list: async () =>
           serviceClient.topics.listByResourceGroup(resourceGroup.name),
-        linkNext: serviceClient.topics.listByResourceGroupNext,
+        listNext: serviceClient.topics.listByResourceGroupNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.topic',
       callback,
@@ -160,7 +160,7 @@ export class EventGridClient extends Client {
             type,
             name,
           ),
-        linkNext: serviceClient.eventSubscriptions.listByResourceNext,
+        listNext: serviceClient.eventSubscriptions.listByResourceNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.subscription',
       callback,

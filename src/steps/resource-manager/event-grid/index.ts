@@ -50,7 +50,7 @@ export async function fetchEventGridDomains(
     async (resourceGroupEntity) => {
       const { name } = resourceGroupEntity;
       await client.iterateDomains(
-        ({ name } as unknown) as { name: string },
+        { resourceGroupName: name as string },
         async (domain) => {
           const domainEntity = createEventGridDomainEntity(webLinker, domain);
           await jobState.addEntity(domainEntity);
@@ -83,10 +83,7 @@ export async function fetchEventGridDomainTopics(
       const resourceGroup = resourceGroupName(id, true)!;
 
       await client.iterateDomainTopics(
-        ({ resourceGroupName: resourceGroup, name } as unknown) as {
-          resourceGroupName: string;
-          name: string;
-        },
+        { resourceGroupName: resourceGroup, domainName: name as string },
         async (domainTopic) => {
           const domainTopicEntity = createEventGridDomainTopicEntity(
             webLinker,
@@ -125,14 +122,10 @@ export async function fetchEventGridDomainTopicSubscriptions(
 
       if (resourceGroup && domainName && name) {
         await client.iterateDomainTopicSubscriptions(
-          ({
+          {
             resourceGroupName: resourceGroup,
-            name,
+            domainTopicName: name as string,
             domainName,
-          } as unknown) as {
-            resourceGroupName: string;
-            name: string;
-            domainName: string;
           },
           async (domainTopicSubscription) => {
             const domainTopicSubscriptionEntity = createEventGridTopicSubscriptionEntity(
@@ -168,7 +161,7 @@ export async function fetchEventGridTopics(
     async (resourceGroupEntity) => {
       const { name } = resourceGroupEntity;
       await client.iterateTopics(
-        ({ name } as unknown) as { name: string },
+        { resourceGroupName: name as string },
         async (topic) => {
           const topicEntity = createEventGridTopicEntity(webLinker, topic);
           await jobState.addEntity(topicEntity);
@@ -204,16 +197,11 @@ export async function fetchEventGridTopicSubscriptions(
         const [providerNamespace, resourceType] = (type as string).split('/');
 
         await client.iterateTopicSubscriptions(
-          ({
+          {
             resourceGroupName: resourceGroup,
-            name,
-            type: resourceType,
+            topicName: name as string,
+            topicType: resourceType,
             providerNamespace,
-          } as unknown) as {
-            resourceGroupName: string;
-            name: string;
-            type: string;
-            providerNamespace: string;
           },
           async (subscription) => {
             const subscriptionEntity = createEventGridTopicSubscriptionEntity(

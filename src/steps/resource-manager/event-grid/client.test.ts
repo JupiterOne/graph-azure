@@ -39,11 +39,11 @@ describe('iterate domains', () => {
       true,
     );
     const resources: Domain[] = [];
-    const resourceGroup = {
-      name: 'j1dev',
+    const resourceGroupInfo = {
+      resourceGroupName: 'j1dev',
     };
 
-    await client.iterateDomains(resourceGroup, (e) => {
+    await client.iterateDomains(resourceGroupInfo, (e) => {
       resources.push(e);
     });
 
@@ -69,12 +69,12 @@ describe('iterate domain topics', () => {
       true,
     );
     const resources: DomainTopic[] = [];
-    const eventGridDomain = {
+    const domainInfo = {
       resourceGroupName: 'j1dev',
-      name: 'j1dev-event-grid-domain',
+      domainName: 'j1dev-event-grid-domain',
     };
 
-    await client.iterateDomainTopics(eventGridDomain, (e) => {
+    await client.iterateDomainTopics(domainInfo, (e) => {
       resources.push(e);
     });
 
@@ -100,13 +100,13 @@ describe('iterate domain topic subscriptions', () => {
       true,
     );
     const resources: EventSubscription[] = [];
-    const domainTopic = {
-      name: 'j1dev-event-grid-domain-topic',
+    const domainTopicInfo = {
+      domainTopicName: 'j1dev-event-grid-domain-topic',
       domainName: 'j1dev-event-grid-domain',
       resourceGroupName: 'j1dev',
     };
 
-    await client.iterateDomainTopicSubscriptions(domainTopic, (e) => {
+    await client.iterateDomainTopicSubscriptions(domainTopicInfo, (e) => {
       resources.push(e);
     });
 
@@ -136,11 +136,11 @@ describe('iterate topics', () => {
       true,
     );
     const resources: Topic[] = [];
-    const resourceGroup = {
-      name: 'j1dev',
+    const resourceGroupInfo = {
+      resourceGroupName: 'j1dev',
     };
 
-    await client.iterateTopics(resourceGroup, (e) => {
+    await client.iterateTopics(resourceGroupInfo, (e) => {
       resources.push(e);
     });
 
@@ -166,14 +166,14 @@ describe('iterate topic subscriptions', () => {
       true,
     );
     const resources: EventSubscription[] = [];
-    const topic = {
+    const topicInfo = {
       resourceGroupName: 'j1dev',
-      name: 'j1dev-event-grid-topic',
-      type: 'topics',
+      topicName: 'j1dev-event-grid-topic',
+      topicType: 'topics',
       providerNamespace: 'Microsoft.EventGrid',
     };
 
-    await client.iterateTopicSubscriptions(topic, (e) => {
+    await client.iterateTopicSubscriptions(topicInfo, (e) => {
       resources.push(e);
     });
 

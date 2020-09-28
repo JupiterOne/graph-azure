@@ -18,20 +18,21 @@ export class EventGridClient extends Client {
    * @param callback A callback function to be called after retrieving an Event Grid Domain
    */
   public async iterateDomains(
-    resourceGroup: { name: string },
+    domainInfo: { resourceGroupName: string },
     callback: (s: Domain) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       EventGridManagementClient,
     );
 
-    const { name } = resourceGroup;
+    const { resourceGroupName } = domainInfo;
 
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
-        list: async () => serviceClient.domains.listByResourceGroup(name),
+        list: async () =>
+          serviceClient.domains.listByResourceGroup(resourceGroupName),
         listNext: serviceClient.domains.listByResourceGroupNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.domain',
@@ -45,21 +46,24 @@ export class EventGridClient extends Client {
    * @param callback A callback function to be called after retrieving an Event Grid Domain Topic
    */
   public async iterateDomainTopics(
-    domain: { resourceGroupName: string; name: string },
+    domainInfo: { resourceGroupName: string; domainName: string },
     callback: (s: DomainTopic) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       EventGridManagementClient,
     );
 
-    const { resourceGroupName, name } = domain;
+    const { resourceGroupName, domainName } = domainInfo;
 
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
         list: async () =>
-          serviceClient.domainTopics.listByDomain(resourceGroupName, name),
+          serviceClient.domainTopics.listByDomain(
+            resourceGroupName,
+            domainName,
+          ),
         listNext: serviceClient.domainTopics.listByDomainNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.domainTopic',
@@ -73,9 +77,9 @@ export class EventGridClient extends Client {
    * @param callback A callback function to be called after retrieving an Event Grid Domain Topic Subscription
    */
   public async iterateDomainTopicSubscriptions(
-    domainTopic: {
+    domainTopicInfo: {
       resourceGroupName: string;
-      name: string;
+      domainTopicName: string;
       domainName: string;
     },
     callback: (s: EventSubscription) => void | Promise<void>,
@@ -84,7 +88,7 @@ export class EventGridClient extends Client {
       EventGridManagementClient,
     );
 
-    const { resourceGroupName, domainName, name } = domainTopic;
+    const { resourceGroupName, domainName, domainTopicName } = domainTopicInfo;
 
     return iterateAllResources({
       logger: this.logger,
@@ -94,7 +98,7 @@ export class EventGridClient extends Client {
           serviceClient.eventSubscriptions.listByDomainTopic(
             resourceGroupName,
             domainName,
-            name,
+            domainTopicName,
           ),
         listNext: serviceClient.eventSubscriptions.listByDomainTopicNext,
       } as ListResourcesEndpoint,
@@ -109,19 +113,21 @@ export class EventGridClient extends Client {
    * @param callback A callback function to be called after retrieving an Event Grid Topic
    */
   public async iterateTopics(
-    resourceGroup: { name: string },
+    resourceGroupInfo: { resourceGroupName: string },
     callback: (s: Topic) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       EventGridManagementClient,
     );
 
+    const { resourceGroupName } = resourceGroupInfo;
+
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
         list: async () =>
-          serviceClient.topics.listByResourceGroup(resourceGroup.name),
+          serviceClient.topics.listByResourceGroup(resourceGroupName),
         listNext: serviceClient.topics.listByResourceGroupNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'eventGrid.topic',
@@ -135,10 +141,10 @@ export class EventGridClient extends Client {
    * @param callback A callback function to be called after retrieving an Event Grid Topic Subscription
    */
   public async iterateTopicSubscriptions(
-    topic: {
+    topicInfo: {
       resourceGroupName: string;
-      name: string;
-      type: string;
+      topicName: string;
+      topicType: string;
       providerNamespace: string;
     },
     callback: (s: EventSubscription) => void | Promise<void>,
@@ -147,7 +153,12 @@ export class EventGridClient extends Client {
       EventGridManagementClient,
     );
 
-    const { resourceGroupName, name, type, providerNamespace } = topic;
+    const {
+      resourceGroupName,
+      topicName,
+      topicType,
+      providerNamespace,
+    } = topicInfo;
 
     return iterateAllResources({
       logger: this.logger,
@@ -157,8 +168,8 @@ export class EventGridClient extends Client {
           serviceClient.eventSubscriptions.listByResource(
             resourceGroupName,
             providerNamespace,
-            type,
-            name,
+            topicType,
+            topicName,
           ),
         listNext: serviceClient.eventSubscriptions.listByResourceNext,
       } as ListResourcesEndpoint,

@@ -1,8 +1,9 @@
 import {
   getResourceGroupName,
   RESOURCE_GROUP_MATCHER,
-  EVENT_GRID_DOMAIN_NAME_MATCHER,
 } from '../steps/resource-manager/utils/matchers';
+
+export const EVENT_GRID_DOMAIN_NAME_MATCHER = '(/domains/)([^/]*)';
 
 /**
  * Normalizes locations to the most prominent form of lowercase with no spaces.

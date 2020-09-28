@@ -35,22 +35,21 @@ describe('iterate batch accounts', () => {
 
     const client = new BatchClient(config, createMockIntegrationLogger(), true);
 
-    const resourceGroup = {
-      name: 'j1dev',
-      location: 'eastus',
+    const resourceGroupInfo = {
+      resourceGroupName: 'j1dev',
     };
 
     const resources: BatchAccount[] = [];
-    await client.iterateBatchAccounts(resourceGroup, (e) => {
+    await client.iterateBatchAccounts(resourceGroupInfo, (e) => {
       resources.push(e);
     });
 
     expect(resources).toContainEqual(
       expect.objectContaining({
-        id: `/subscriptions/${config.subscriptionId}/resourceGroups/${resourceGroup.name}/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
+        id: `/subscriptions/${config.subscriptionId}/resourceGroups/${resourceGroupInfo.resourceGroupName}/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
         name: 'j1devbatchaccount',
         type: 'Microsoft.Batch/batchAccounts',
-        location: resourceGroup.location,
+        location: 'eastus',
         accountEndpoint: expect.any(String),
         activeJobAndJobScheduleQuota: expect.any(Number),
         dedicatedCoreQuota: expect.any(Number),

@@ -46,7 +46,7 @@ export async function fetchBatchAccounts(
     async (resourceGroupEntity) => {
       const { name } = resourceGroupEntity;
       await client.iterateBatchAccounts(
-        ({ name } as unknown) as { name: string },
+        { resourceGroupName: name as string },
         async (domain) => {
           const batchAccountEntity = createBatchAccountEntity(
             webLinker,
@@ -82,12 +82,9 @@ export async function fetchBatchPools(
       const resourceGroup = resourceGroupName(id, true)!;
 
       await client.iterateBatchPools(
-        ({
+        {
           resourceGroupName: resourceGroup,
-          batchAccountName: name,
-        } as unknown) as {
-          resourceGroupName: string;
-          batchAccountName: string;
+          batchAccountName: name as string,
         },
         async (batchPool) => {
           const batchPoolEntity = createBatchPoolEntity(webLinker, batchPool);
@@ -122,12 +119,9 @@ export async function fetchBatchApplications(
       const resourceGroup = resourceGroupName(id, true)!;
 
       await client.iterateBatchApplications(
-        ({
+        {
           resourceGroupName: resourceGroup,
-          batchAccountName: name,
-        } as unknown) as {
-          resourceGroupName: string;
-          batchAccountName: string;
+          batchAccountName: name as string,
         },
         async (batchApplication) => {
           const batchApplicationEntity = createBatchApplicationEntity(
@@ -165,12 +159,9 @@ export async function fetchBatchCertificates(
       const resourceGroup = resourceGroupName(id, true)!;
 
       await client.iterateBatchCertificates(
-        ({
+        {
           resourceGroupName: resourceGroup,
-          batchAccountName: name,
-        } as unknown) as {
-          resourceGroupName: string;
-          batchAccountName: string;
+          batchAccountName: name as string,
         },
         async (batchCertificate) => {
           const batchCertificateEntity = createBatchCertificateEntity(

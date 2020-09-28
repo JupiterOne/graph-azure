@@ -18,19 +18,20 @@ export class BatchClient extends Client {
    * @param callback A callback function to be called after retrieving a Batch Account
    */
   public async iterateBatchAccounts(
-    resourceGroup: { name: string },
+    resourceGroupInfo: { resourceGroupName: string },
     callback: (s: BatchAccount) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       BatchManagementClient,
     );
-    const { name } = resourceGroup;
+    const { resourceGroupName } = resourceGroupInfo;
 
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
-        list: async () => serviceClient.batchAccount.listByResourceGroup(name),
+        list: async () =>
+          serviceClient.batchAccount.listByResourceGroup(resourceGroupName),
         listNext: serviceClient.batchAccount.listByResourceGroupNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'batch.account',
@@ -62,7 +63,7 @@ export class BatchClient extends Client {
             resourceGroupName,
             batchAccountName,
           ),
-        linkNext: serviceClient.pool.listByBatchAccountNext,
+        listNext: serviceClient.pool.listByBatchAccountNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'batch.pool',
       callback,
@@ -90,7 +91,7 @@ export class BatchClient extends Client {
       resourceEndpoint: {
         list: async () =>
           serviceClient.application.list(resourceGroupName, batchAccountName),
-        linkNext: serviceClient.application.listNext,
+        listNext: serviceClient.application.listNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'batch.application',
       callback,
@@ -121,7 +122,7 @@ export class BatchClient extends Client {
             resourceGroupName,
             batchAccountName,
           ),
-        linkNext: serviceClient.certificate.listByBatchAccountNext,
+        listNext: serviceClient.certificate.listByBatchAccountNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'batch.certificate',
       callback,

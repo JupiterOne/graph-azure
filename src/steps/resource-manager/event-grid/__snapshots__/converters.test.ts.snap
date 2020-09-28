@@ -1,0 +1,208 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createEventGridDomainEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Service",
+  ],
+  "_key": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resoruce/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "endpoint": "https://j1dev-event-grid-domain.eastus-1.eventgrid.azure.net/api/events",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resoruce/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain",
+        "inputSchema": "EventGridSchema",
+        "location": "eastus",
+        "metricResourceId": "10000000-0000-0000-0000-000000000000",
+        "name": "j1dev-event-grid-domain",
+        "provisioningState": "Succeeded",
+        "publicNetworkAccess": "Enabled",
+        "tags": Object {
+          "environment": "j1dev",
+        },
+        "type": "Microsoft.EventGrid/domains",
+      },
+    },
+  ],
+  "_type": "azure_event_grid_domain",
+  "category": Array [
+    "infrastructure",
+  ],
+  "createdOn": undefined,
+  "displayName": "j1dev-event-grid-domain",
+  "endpoint": "https://j1dev-event-grid-domain.eastus-1.eventgrid.azure.net/api/events",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resoruce/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain",
+  "inputSchema": "EventGridSchema",
+  "location": "eastus",
+  "metricResourceId": "10000000-0000-0000-0000-000000000000",
+  "name": "j1dev-event-grid-domain",
+  "provisioningState": "Succeeded",
+  "publicNetworkAccess": "Enabled",
+  "tag.environment": "j1dev",
+  "type": "Microsoft.EventGrid/domains",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resoruce/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain",
+}
+`;
+
+exports[`createEventGridDomainTopicEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Queue",
+  ],
+  "_key": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic",
+        "name": "j1dev-event-grid-domain-topic",
+        "provisioningState": "Succeeded",
+        "type": "Microsoft.EventGrid/domains/topics",
+      },
+    },
+  ],
+  "_type": "azure_event_grid_domain_topic",
+  "createdOn": undefined,
+  "displayName": "j1dev-event-grid-domain-topic",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic",
+  "name": "j1dev-event-grid-domain-topic",
+  "provisioningState": "Succeeded",
+  "type": "Microsoft.EventGrid/domains/topics",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic",
+}
+`;
+
+exports[`createEventGridDomainTopicSubscriptionEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Subscription",
+  ],
+  "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "destination": Object {
+          "endpointType": "StorageQueue",
+          "queueName": "j1dev-domain-topic-subscription-storage",
+          "resourceId": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev",
+        },
+        "eventDeliverySchema": "EventGridSchema",
+        "filter": Object {
+          "subjectBeginsWith": "",
+          "subjectEndsWith": "",
+        },
+        "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription",
+        "labels": Array [],
+        "name": "j1dev-event-grid-domain-topic-subscription",
+        "provisioningState": "Succeeded",
+        "retryPolicy": Object {
+          "eventTimeToLiveInMinutes": 1440,
+          "maxDeliveryAttempts": 30,
+        },
+        "topic": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic",
+        "type": "Microsoft.EventGrid/eventSubscriptions",
+      },
+    },
+  ],
+  "_type": "azure_event_grid_topic_subscription",
+  "createdOn": undefined,
+  "displayName": "j1dev-event-grid-domain-topic-subscription",
+  "eventDeliverySchema": "EventGridSchema",
+  "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription",
+  "name": "j1dev-event-grid-domain-topic-subscription",
+  "provisioningState": "Succeeded",
+  "topic": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic",
+  "type": "Microsoft.EventGrid/eventSubscriptions",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription",
+}
+`;
+
+exports[`createEventGridTopicEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Queue",
+  ],
+  "_key": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "endpoint": "https://j1dev-eventgrid-topic.eastus-1.eventgrid.azure.net/api/events",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic",
+        "inputSchema": "EventGridSchema",
+        "location": "eastus",
+        "metricResourceId": "20000000-0000-0000-0000-000000000000",
+        "name": "j1dev-event-grid-topic",
+        "provisioningState": "Succeeded",
+        "publicNetworkAccess": "Enabled",
+        "tags": Object {
+          "environment": "j1dev",
+        },
+        "type": "Microsoft.EventGrid/topics",
+      },
+    },
+  ],
+  "_type": "azure_event_grid_topic",
+  "createdOn": undefined,
+  "displayName": "j1dev-event-grid-topic",
+  "endpoint": "https://j1dev-eventgrid-topic.eastus-1.eventgrid.azure.net/api/events",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic",
+  "inputSchema": "EventGridSchema",
+  "location": "eastus",
+  "metricResourceId": "20000000-0000-0000-0000-000000000000",
+  "name": "j1dev-event-grid-topic",
+  "provisioningState": "Succeeded",
+  "publicNetworkAccess": "Enabled",
+  "tag.environment": "j1dev",
+  "type": "Microsoft.EventGrid/topics",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic",
+}
+`;
+
+exports[`createEventGridTopicSubscriptionEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Subscription",
+  ],
+  "_key": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-subscription",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "destination": Object {
+          "endpointType": "StorageQueue",
+          "queueName": "j1dev",
+          "resourceId": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev",
+        },
+        "eventDeliverySchema": "EventGridSchema",
+        "filter": Object {
+          "subjectBeginsWith": "",
+          "subjectEndsWith": "",
+        },
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-subscription",
+        "labels": Array [],
+        "name": "j1dev-event-grid-subscription",
+        "provisioningState": "Succeeded",
+        "retryPolicy": Object {
+          "eventTimeToLiveInMinutes": 1440,
+          "maxDeliveryAttempts": 30,
+        },
+        "topic": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic",
+        "type": "Microsoft.EventGrid/eventSubscriptions",
+      },
+    },
+  ],
+  "_type": "azure_event_grid_topic_subscription",
+  "createdOn": undefined,
+  "displayName": "j1dev-event-grid-subscription",
+  "eventDeliverySchema": "EventGridSchema",
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-subscription",
+  "name": "j1dev-event-grid-subscription",
+  "provisioningState": "Succeeded",
+  "topic": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic",
+  "type": "Microsoft.EventGrid/eventSubscriptions",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-subscription",
+}
+`;

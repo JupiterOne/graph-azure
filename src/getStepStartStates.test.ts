@@ -74,6 +74,13 @@ import {
   STEP_RM_CDN_PROFILE,
   STEP_RM_CDN_ENDPOINTS,
 } from './steps/resource-manager/cdn';
+import {
+  STEP_RM_EVENT_GRID_DOMAINS,
+  STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
+  STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
+  STEP_RM_EVENT_GRID_TOPICS,
+  STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
+} from './steps/resource-manager/event-grid';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -136,6 +143,11 @@ describe('getStepStartStates', () => {
       [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_CDN_PROFILE]: { disabled: true },
       [STEP_RM_CDN_ENDPOINTS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_DOMAINS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_TOPICS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
     });
   });
 
@@ -194,6 +206,11 @@ describe('getStepStartStates', () => {
       [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_CDN_PROFILE]: { disabled: true },
       [STEP_RM_CDN_ENDPOINTS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_DOMAINS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_TOPICS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
     });
   });
 
@@ -252,6 +269,11 @@ describe('getStepStartStates', () => {
       [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: false },
       [STEP_RM_CDN_PROFILE]: { disabled: false },
       [STEP_RM_CDN_ENDPOINTS]: { disabled: false },
+      [STEP_RM_EVENT_GRID_DOMAINS]: { disabled: false },
+      [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: { disabled: false },
+      [STEP_RM_EVENT_GRID_TOPICS]: { disabled: false },
+      [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: false },
+      [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: false },
     });
   });
 });

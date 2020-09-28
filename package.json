@@ -36,6 +36,7 @@
     "@azure/arm-containerregistry": "^8.0.0",
     "@azure/arm-cosmosdb": "^7.0.0",
     "@azure/arm-dns": "^4.0.0",
+    "@azure/arm-eventgrid": "^9.0.0",
     "@azure/arm-keyvault": "^1.2.1",
     "@azure/arm-mariadb": "^1.4.0",
     "@azure/arm-mysql": "^3.3.0",

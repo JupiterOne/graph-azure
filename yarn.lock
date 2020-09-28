@@ -81,6 +81,15 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
+"@azure/arm-eventgrid@^9.0.0":
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-eventgrid/-/arm-eventgrid-9.0.0.tgz#5db6057fbfc92dd694cde101ba00b1603812ec5b"
+  integrity sha512-h6U8CsRPB5EIiN9p/b22x/TT3UadosTnZPLU1WXPYbqDkTlcxBZ0LiTMIvH4jhXxq8BRGtXh1tS2CdMiEYjy2Q==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-keyvault@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@azure/arm-keyvault/-/arm-keyvault-1.2.1.tgz#0dfb3335bda59fa70549c728114de2dc9ef8be9e"

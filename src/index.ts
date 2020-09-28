@@ -21,6 +21,7 @@ import { containerRegistrySteps } from './steps/resource-manager/container-regis
 import { serviceBusSteps } from './steps/resource-manager/service-bus';
 import { cdnSteps } from './steps/resource-manager/cdn';
 import { batchSteps } from './steps/resource-manager/batch';
+import { eventGridSteps } from './steps/resource-manager/event-grid';
 
 export function hasSubscriptionId(config: IntegrationConfig): boolean {
   const subscriptionId = config.subscriptionId;
@@ -73,5 +74,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...serviceBusSteps,
     ...cdnSteps,
     ...batchSteps,
+    ...eventGridSteps,
   ],
 };

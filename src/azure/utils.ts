@@ -3,6 +3,8 @@ import {
   RESOURCE_GROUP_MATCHER,
 } from '../steps/resource-manager/utils/matchers';
 
+export const EVENT_GRID_DOMAIN_NAME_MATCHER = '(/domains/)([^/]*)';
+
 /**
  * Normalizes locations to the most prominent form of lowercase with no spaces.
  *
@@ -70,4 +72,25 @@ export function resourceGroupName(
   }
 
   return name;
+}
+
+/**
+ * Extracts the Event Grid domain name from a resource id
+ * @param id the resource id, which is expected to include the domain name
+ * @returns the resource domain name, or `undefined` when not found
+ */
+export function getEventGridDomainNameFromId(
+  id: string | undefined,
+): string | undefined {
+  let domainName: string | undefined;
+
+  if (id) {
+    const domainNameRegex = new RegExp(EVENT_GRID_DOMAIN_NAME_MATCHER, 'g');
+    const domainNameMatches = domainNameRegex.exec(id); // if no matches are found, this will return null
+    if (domainNameMatches) {
+      domainName = domainNameMatches[2] || undefined;
+    }
+
+    return domainName;
+  }
 }

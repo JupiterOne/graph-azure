@@ -8,6 +8,20 @@ and this project adheres to
 
 ## [Unreleased]
 
+## Added
+
+- Added `azure_event_grid_domain` entities
+- Added `azure_resource_group|has|azure_event_grid_domain` relationships
+- Added `azure_event_grid_domain_topic` entities
+- Added `azure_event_grid_domain|has|azure_event_grid_domain_topic`
+  relationships
+- Added `azure_event_grid_topic` entities
+- Added `azure_resource_group|has|azure_event_grid_topic` relationships
+- Added `azure_event_grid_topic_subscription` entities
+- Added `azure_event_grid_topic|has|azure_event_grid_topic_subscription`
+  relationship
+- Added `azure_event_grid_domain_topic|has|azure_event_grid_topic_subscription`
+  relationship
 - Added `azure_batch_account` entities
 - Added `azure_resource_group|has|azure_batch_account` relationships
 - Added `azure_batch_pool` entities

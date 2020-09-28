@@ -79,6 +79,13 @@ import {
   STEP_RM_BATCH_APPLICATION,
   STEP_RM_BATCH_CERTIFICATE,
 } from './steps/resource-manager/batch';
+import {
+  STEP_RM_EVENT_GRID_DOMAINS,
+  STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
+  STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
+  STEP_RM_EVENT_GRID_TOPICS,
+  STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
+} from './steps/resource-manager/event-grid';
 import { hasSubscriptionId } from '.';
 
 export default function getStepStartStates(
@@ -139,5 +146,10 @@ export default function getStepStartStates(
     [STEP_RM_BATCH_POOL]: resourceManager,
     [STEP_RM_BATCH_APPLICATION]: resourceManager,
     [STEP_RM_BATCH_CERTIFICATE]: resourceManager,
+    [STEP_RM_EVENT_GRID_DOMAINS]: resourceManager,
+    [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: resourceManager,
+    [STEP_RM_EVENT_GRID_TOPICS]: resourceManager,
+    [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: resourceManager,
+    [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: resourceManager,
   };
 }

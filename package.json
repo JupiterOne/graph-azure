@@ -31,6 +31,7 @@
   "dependencies": {
     "@azure/arm-apimanagement": "^6.0.0",
     "@azure/arm-authorization": "^8.3.2",
+    "@azure/arm-batch": "^4.0.0",
     "@azure/arm-cdn": "^5.0.0",
     "@azure/arm-compute": "^14.0.0",
     "@azure/arm-containerregistry": "^8.0.0",

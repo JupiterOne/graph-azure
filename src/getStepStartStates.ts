@@ -74,6 +74,12 @@ import {
   STEP_RM_CDN_ENDPOINTS,
 } from './steps/resource-manager/cdn';
 import {
+  STEP_RM_BATCH_ACCOUNT,
+  STEP_RM_BATCH_POOL,
+  STEP_RM_BATCH_APPLICATION,
+  STEP_RM_BATCH_CERTIFICATE,
+} from './steps/resource-manager/batch';
+import {
   STEP_RM_EVENT_GRID_DOMAINS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
@@ -136,6 +142,10 @@ export default function getStepStartStates(
     [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: resourceManager,
     [STEP_RM_CDN_PROFILE]: resourceManager,
     [STEP_RM_CDN_ENDPOINTS]: resourceManager,
+    [STEP_RM_BATCH_ACCOUNT]: resourceManager,
+    [STEP_RM_BATCH_POOL]: resourceManager,
+    [STEP_RM_BATCH_APPLICATION]: resourceManager,
+    [STEP_RM_BATCH_CERTIFICATE]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAINS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: resourceManager,
     [STEP_RM_EVENT_GRID_TOPICS]: resourceManager,

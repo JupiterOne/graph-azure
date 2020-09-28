@@ -22,6 +22,14 @@ and this project adheres to
   relationship
 - Added `azure_event_grid_domain_topic|has|azure_event_grid_topic_subscription`
   relationship
+- Added `azure_batch_account` entities
+- Added `azure_resource_group|has|azure_batch_account` relationships
+- Added `azure_batch_pool` entities
+- Added `azure_batch_account|has|azure_batch_pool` relationships
+- Added `azure_batch_application` entities
+- Added `azure_batch_account|has|azure_batch_application` relationships
+- Added `azure_batch_certificate` entities
+- Added `azure_batch_account|has|azure_batch_certificate` relationships
 
 ## 5.3.1 - 2020-09-21
 

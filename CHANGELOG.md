@@ -30,6 +30,8 @@ and this project adheres to
 - Added `azure_batch_account|has|azure_batch_application` relationships
 - Added `azure_batch_certificate` entities
 - Added `azure_batch_account|has|azure_batch_certificate` relationships
+- Added `azure_redis_cache` entities
+- Added `azure_resource_group|has|azure_redis_cache` relationships
 
 ## 5.3.1 - 2020-09-21
 

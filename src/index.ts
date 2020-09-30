@@ -21,6 +21,7 @@ import { containerRegistrySteps } from './steps/resource-manager/container-regis
 import { serviceBusSteps } from './steps/resource-manager/service-bus';
 import { cdnSteps } from './steps/resource-manager/cdn';
 import { batchSteps } from './steps/resource-manager/batch';
+import { redisCacheSteps } from './steps/resource-manager/redis-cache';
 import { eventGridSteps } from './steps/resource-manager/event-grid';
 
 export function hasSubscriptionId(config: IntegrationConfig): boolean {
@@ -74,6 +75,10 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...serviceBusSteps,
     ...cdnSteps,
     ...batchSteps,
+    ...redisCacheSteps,
+
+    // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last.
+    // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
     ...eventGridSteps,
   ],
 };

@@ -8,7 +8,6 @@ import {
   iterateAllResources,
   ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
-import { resourceGroupName } from '../../../azure/utils';
 
 export class RedisCacheClient extends Client {
   /**

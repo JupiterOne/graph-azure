@@ -69,3 +69,33 @@ Object {
   "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache",
 }
 `;
+
+exports[`createRedisFirewallRuleEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Rule",
+  ],
+  "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "endIP": "2.3.4.5",
+        "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule",
+        "name": "keionned-j1dev-redis-cache/j1dev_redis_cache_firewall_rule",
+        "startIP": "1.2.3.4",
+        "type": "Microsoft.Cache/Redis/firewallRules",
+      },
+    },
+  ],
+  "_type": "azure_firewall_rule",
+  "createdOn": undefined,
+  "displayName": "keionned-j1dev-redis-cache/j1dev_redis_cache_firewall_rule",
+  "endIp": "2.3.4.5",
+  "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule",
+  "name": "keionned-j1dev-redis-cache/j1dev_redis_cache_firewall_rule",
+  "startIp": "1.2.3.4",
+  "type": "Microsoft.Cache/Redis/firewallRules",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule",
+}
+`;

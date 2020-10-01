@@ -1,5 +1,8 @@
 import { AzureWebLinker } from '../../../azure';
-import { RedisResource } from '@azure/arm-rediscache/esm/models';
+import {
+  RedisFirewallRule,
+  RedisResource,
+} from '@azure/arm-rediscache/esm/models';
 import {
   convertProperties,
   createIntegrationEntity,
@@ -23,18 +26,44 @@ export function createRedisCacheEntity(
         name: data.name,
         webLink: webLinker.portalResourceUrl(data.id),
         /**
-         * While by default Azure Cache for Redis encrypts all data in transit using TLS 1.2 encryption,
-         * it is possible for a customer to turn this off or use TLS 1.0 or TLS 1.1, thus leaving them open to vulnerabilities.
-         * Azure Cache for Redis also stores customer data in memory, and data in memory is not encrypted by default
-         * Azure recommends encrypting any content before storing it in Azure Cache for Redis.
-         * https://docs.microsoft.com/en-us/azure/azure-cache-for-redis/security-baseline#48-encrypt-sensitive-information-at-rest
-         * This means that whether or not the data is encrypted (in transmission or in storage) is dependent on the customer and therefore unknown.
+         * * While by default Azure Cache for Redis encrypts all data in transit using TLS 1.2 encryption,
+         * * it is possible for a customer to turn this off or use TLS 1.0 or TLS 1.1, thus leaving them open to vulnerabilities.
+         * * Azure Cache for Redis also stores customer data in memory, and data in memory is not encrypted by default.
+         * * If a customer needs encrypted data, Azure recommends encrypting it before storing it in Azure Cache for Redis.
+         * * https://docs.microsoft.com/en-us/azure/azure-cache-for-redis/security-baseline#48-encrypt-sensitive-information-at-rest
+         * * This means that whether or not the data is encrypted (in transmission or in storage) is dependent on the customer and therefore unknown.
          */
+        // TODO: Does this mean 'encryptionRequired' is true?
+        // TODO: Does this mean 'encrypted' is false, because the store itself does not use encryption by default?
         encrypted: null,
         /**
          * We do not know the type or classification of data the customer is storing in the Azure Cache for Redis.
          */
         classification: null,
+      },
+    },
+  });
+}
+
+export function createRedisFirewallRuleEntity(
+  webLinker: AzureWebLinker,
+  data: RedisFirewallRule,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        ...convertProperties(data),
+        _key: data.id as string,
+        _type: RedisCacheEntities.FIREWALL_RULE._type,
+        _class: RedisCacheEntities.FIREWALL_RULE._class,
+        id: data.id,
+        name: data.name,
+        webLink: webLinker.portalResourceUrl(data.id),
+        /**
+         * TODO: Do we want to include a category for the firewall rule? Which category?
+         * TODO: Do we want to include content for the firewall rule? What should the content say? All rules appear to be IP range restrictions, with a startIP and endIP.
+         */
       },
     },
   });

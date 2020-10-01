@@ -79,7 +79,10 @@ import {
   STEP_RM_BATCH_APPLICATION,
   STEP_RM_BATCH_CERTIFICATE,
 } from './steps/resource-manager/batch';
-import { STEP_RM_REDIS_CACHES } from './steps/resource-manager/redis-cache';
+import {
+  STEP_RM_REDIS_CACHES,
+  STEP_RM_REDIS_FIREWALL_RULES,
+} from './steps/resource-manager/redis-cache';
 import {
   STEP_RM_EVENT_GRID_DOMAINS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
@@ -148,6 +151,7 @@ export default function getStepStartStates(
     [STEP_RM_BATCH_APPLICATION]: resourceManager,
     [STEP_RM_BATCH_CERTIFICATE]: resourceManager,
     [STEP_RM_REDIS_CACHES]: resourceManager,
+    [STEP_RM_REDIS_FIREWALL_RULES]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAINS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: resourceManager,
     [STEP_RM_EVENT_GRID_TOPICS]: resourceManager,

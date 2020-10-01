@@ -1,6 +1,12 @@
 import { createAzureWebLinker } from '../../../azure';
-import { createRedisCacheEntity } from './converters';
-import { RedisResource } from '@azure/arm-rediscache/esm/models';
+import {
+  createRedisCacheEntity,
+  createRedisFirewallRuleEntity,
+} from './converters';
+import {
+  RedisResource,
+  RedisFirewallRule,
+} from '@azure/arm-rediscache/esm/models';
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 
 describe('createRedisCacheEntity', () => {
@@ -43,6 +49,30 @@ describe('createRedisCacheEntity', () => {
     expect(redisCacheEntity).toMatchSnapshot();
     expect(redisCacheEntity).toMatchGraphObjectSchema({
       _class: ['Database', 'DataStore', 'Cluster'],
+      schema: {},
+    });
+  });
+});
+
+describe('createRedisFirewallRuleEntity', () => {
+  test('properties transferred', () => {
+    const data: RedisFirewallRule = {
+      id:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule',
+      name: 'keionned-j1dev-redis-cache/j1dev_redis_cache_firewall_rule',
+      startIP: '1.2.3.4',
+      endIP: '2.3.4.5',
+      type: 'Microsoft.Cache/Redis/firewallRules',
+    };
+
+    const redisFirewallRuleEntity = createRedisFirewallRuleEntity(
+      webLinker,
+      data,
+    );
+
+    expect(redisFirewallRuleEntity).toMatchSnapshot();
+    expect(redisFirewallRuleEntity).toMatchGraphObjectSchema({
+      _class: ['Rule'],
       schema: {},
     });
   });

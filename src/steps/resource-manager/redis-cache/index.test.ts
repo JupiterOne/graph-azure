@@ -1,4 +1,4 @@
-import { fetchRedisCaches } from '.';
+import { fetchRedisCaches, fetchRedisFirewallRules } from '.';
 import {
   createMockStepExecutionContext,
   Recording,
@@ -64,6 +64,63 @@ test('step = redis caches', async () => {
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
       _toEntityKey:
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache',
+      displayName: 'HAS',
+    },
+  ]);
+});
+
+test('step = redis firewall rules', async () => {
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'resource-manager-step-redis-firewall-rules',
+  });
+
+  const context = createMockStepExecutionContext<IntegrationConfig>({
+    instanceConfig,
+    entities: [
+      {
+        _key:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
+        _type: 'azure_resource_group',
+        _class: ['Group'],
+        name: 'j1dev',
+        id:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
+      },
+      {
+        _key:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache',
+        id:
+          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache',
+        _class: ['Database', 'DataStore', 'Cluster'],
+        _type: 'azure_redis_cache',
+        name: 'keionned-j1dev-redis-cache',
+      },
+    ],
+  });
+
+  context.jobState.getData = jest.fn().mockResolvedValue({
+    defaultDomain: 'www.fake-domain.com',
+  });
+
+  await fetchRedisFirewallRules(context);
+
+  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
+  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+    _class: ['Rule'],
+    schema: {},
+  });
+
+  expect(context.jobState.collectedRelationships).toEqual([
+    {
+      _key:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache|has|/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule',
+      _type: 'azure_redis_cache_has_firewall_rule',
+      _class: 'HAS',
+      _fromEntityKey:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache',
+      _toEntityKey:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule',
       displayName: 'HAS',
     },
   ]);

@@ -5,7 +5,10 @@ import {
 } from '../../../../test/helpers/recording';
 import { IntegrationConfig } from '../../../types';
 import { RedisCacheClient } from './client';
-import { RedisResource } from '@azure/arm-rediscache/esm/models';
+import {
+  RedisFirewallRule,
+  RedisResource,
+} from '@azure/arm-rediscache/esm/models';
 
 // developer used different creds than ~/test/integrationInstanceConfig
 const config: IntegrationConfig = {
@@ -73,6 +76,40 @@ describe('iterate caches', () => {
         sslPort: expect.any(Number),
         tags: {},
         type: 'Microsoft.Cache/Redis',
+      }),
+    );
+  });
+});
+
+describe('iterate firewall rules', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateFirewallRules',
+    });
+
+    const client = new RedisCacheClient(
+      config,
+      createMockIntegrationLogger(),
+      true,
+    );
+    const resources: RedisFirewallRule[] = [];
+    const redisCacheInfo = {
+      resourceGroupName: 'j1dev',
+      redisCacheName: 'keionned-j1dev-redis-cache',
+    };
+
+    await client.iterateFirewallRules(redisCacheInfo, (e) => {
+      resources.push(e);
+    });
+
+    expect(resources).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${config.subscriptionId}/resourceGroups/${redisCacheInfo.resourceGroupName}/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule`,
+        name: 'keionned-j1dev-redis-cache/j1dev_redis_cache_firewall_rule',
+        startIP: '1.2.3.4',
+        endIP: '2.3.4.5',
+        type: 'Microsoft.Cache/Redis/firewallRules',
       }),
     );
   });

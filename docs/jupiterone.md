@@ -114,6 +114,7 @@ The following entities are created:
 | [RM] Private DNS Zone              | `azure_private_dns_zone`              | `DomainZone`                       |
 | [RM] Public IP Address             | `azure_public_ip`                     | `IpAddress`                        |
 | [RM] Redis Cache                   | `azure_redis_cache`                   | `Database`, `DataStore`, `Cluster` |
+| [RM] Redis Firewall Rule           | `azure_firewall_rule`                 | `Rule`                             |
 | [RM] Resource Group                | `azure_resource_group`                | `Group`                            |
 | [RM] Role Assignment               | `azure_role_assignment`               | `AccessPolicy`                     |
 | [RM] Role Definition               | `azure_role_definition`               | `AccessRole`                       |
@@ -163,6 +164,7 @@ The following relationships are created/mapped:
 | `azure_mysql_server`            | **HAS**               | `azure_mysql_database`                |
 | `azure_postgresql_server`       | **HAS**               | `azure_postgresql_database`           |
 | `azure_private_dns_zone`        | **HAS**               | `azure_private_dns_record_set`        |
+| `azure_redis_cache`             | **HAS**               | `azure_firewall_rule`                 |
 | `azure_resource_group`          | **HAS**               | `azure_api_management_service`        |
 | `azure_resource_group`          | **HAS**               | `azure_batch_account`                 |
 | `azure_resource_group`          | **HAS**               | `azure_cdn_profile`                   |

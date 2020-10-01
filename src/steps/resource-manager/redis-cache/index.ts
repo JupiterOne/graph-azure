@@ -2,6 +2,8 @@ import {
   Entity,
   Step,
   IntegrationStepExecutionContext,
+  createDirectRelationship,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
@@ -12,12 +14,17 @@ import {
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
 } from '../resources';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
-import { createRedisCacheEntity } from './converters';
+import {
+  createRedisCacheEntity,
+  createRedisFirewallRuleEntity,
+} from './converters';
 import {
   RedisCacheEntities,
   RedisCacheRelationships,
   STEP_RM_REDIS_CACHES,
+  STEP_RM_REDIS_FIREWALL_RULES,
 } from './constants';
+import { resourceGroupName } from '../../../azure/utils';
 export * from './constants';
 
 export async function fetchRedisCaches(
@@ -52,6 +59,41 @@ export async function fetchRedisCaches(
   );
 }
 
+export async function fetchRedisFirewallRules(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new RedisCacheClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: RedisCacheEntities.CACHE._type },
+    async (redisCacheEntity) => {
+      const { id, name } = redisCacheEntity;
+      const resourceGroup = resourceGroupName(id, true)!;
+
+      await client.iterateFirewallRules(
+        { resourceGroupName: resourceGroup, redisCacheName: name as string },
+        async (redisFirewallRule) => {
+          const redisFirewallRuleEntity = createRedisFirewallRuleEntity(
+            webLinker,
+            redisFirewallRule,
+          );
+          await jobState.addEntity(redisFirewallRuleEntity);
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: redisCacheEntity,
+              to: redisFirewallRuleEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
 export const redisCacheSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -62,5 +104,17 @@ export const redisCacheSteps: Step<
     relationships: [RedisCacheRelationships.RESOURCE_GROUP_HAS_REDIS_CACHE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchRedisCaches,
+  },
+  {
+    id: STEP_RM_REDIS_FIREWALL_RULES,
+    name: 'Redis Firewall Rules',
+    entities: [RedisCacheEntities.FIREWALL_RULE],
+    relationships: [RedisCacheRelationships.REDIS_CACHE_HAS_FIREWALL_RULE],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      STEP_RM_REDIS_CACHES,
+    ],
+    executionHandler: fetchRedisFirewallRules,
   },
 ];

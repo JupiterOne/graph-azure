@@ -1,15 +1,19 @@
 import { RedisManagementClient } from '@azure/arm-rediscache';
-import { RedisResource } from '@azure/arm-rediscache/esm/models';
+import {
+  RedisResource,
+  RedisFirewallRule,
+} from '@azure/arm-rediscache/esm/models';
 import {
   Client,
   iterateAllResources,
   ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
+import { resourceGroupName } from '../../../azure/utils';
 
 export class RedisCacheClient extends Client {
   /**
-   * Retrieves all Redis Caches for a Resource Group from an Azure Subscription
-   * @param resourceGroupInfo An object containing information about the domain to retrieve like the Resource Group name belonging to an Azure Subscription
+   * Retrieves all Redis Caches in a Resource Group for an Azure Subscription
+   * @param resourceGroupInfo An object containing information about the Resource Group that the Redis Cache is in. This information should contain the name of Resource Group.
    * @param callback  A callback function to be called after retrieving a Redis Cache
    */
   public async iterateCaches(
@@ -29,6 +33,37 @@ export class RedisCacheClient extends Client {
         listNext: serviceClient.redis.listByResourceGroupNext,
       } as ListResourcesEndpoint,
       resourceDescription: 'redisCache.cache',
+      callback,
+    });
+  }
+
+  /**
+   * Retrieves all Redis Firewall Rules for a Redis Caches in a Resource Group for an Azure Subscription
+   * @param redisCacheInfo An object containing information about the Redis Cache needed to retrieve the Redis Firewall Rules. This should include the Resource Group name that the Redis Cache belongs to and the name of the Redis Cache.
+   * @param callback A callback function to be called after retrieving Redis Firewall Rules
+   */
+  public async iterateFirewallRules(
+    redisCacheInfo: { resourceGroupName: string; redisCacheName: string },
+    callback: (s: RedisFirewallRule) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      RedisManagementClient,
+    );
+
+    const { resourceGroupName, redisCacheName } = redisCacheInfo;
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.firewallRules.listByRedisResource(
+            resourceGroupName,
+            redisCacheName,
+          ),
+        listNext: serviceClient.firewallRules.listByRedisResourceNext,
+      } as ListResourcesEndpoint,
+      resourceDescription: 'redisCache.firewallRules',
       callback,
     });
   }

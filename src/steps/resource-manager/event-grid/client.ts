@@ -14,7 +14,7 @@ import {
 export class EventGridClient extends Client {
   /**
    * Retrieves all Event Grid Domains for a Resource Group from an Azure Subscription
-   * @param resourceGroup A Resource Group belonging to an Azure Subscription
+   * @param domainInfo An object containing information about the domain to retrieve like the Resource Group name belonging to an Azure Subscription
    * @param callback A callback function to be called after retrieving an Event Grid Domain
    */
   public async iterateDomains(
@@ -42,7 +42,7 @@ export class EventGridClient extends Client {
 
   /**
    * Retrieves all Event Grid Domain Topics for an Event Grid Domain
-   * @param domain An Event Grid Domain
+   * @param domainInfo An object containing information about the domain to retrieve like the Resource Group and Event Grid Domain
    * @param callback A callback function to be called after retrieving an Event Grid Domain Topic
    */
   public async iterateDomainTopics(
@@ -73,7 +73,7 @@ export class EventGridClient extends Client {
 
   /**
    * Retrieves all Event Grid Domain Topic Subscriptions for an Event Grid Domain Topic
-   * @param domainTopic An Event Grid Domain Topic
+   * @param domainTopicInfo An object containing information about the Domain Topic. Should include the Resource Group name, Event Grid Domain name, and Event Grid Domain Topic name
    * @param callback A callback function to be called after retrieving an Event Grid Domain Topic Subscription
    */
   public async iterateDomainTopicSubscriptions(
@@ -109,7 +109,7 @@ export class EventGridClient extends Client {
 
   /**
    * Retrieves all Event Grid Topics for a Resource Group from an Azure Subscription
-   * @param resourceGroup A Resource Group belonging to an Azure Subscription
+   * @param resourceGroupInfo An object containing information about the Resource Group. It should include the Resource Group name.
    * @param callback A callback function to be called after retrieving an Event Grid Topic
    */
   public async iterateTopics(
@@ -137,7 +137,7 @@ export class EventGridClient extends Client {
 
   /**
    * Retrieves all Event Grid Topic Subscriptions for an Event Grid Topic
-   * @param topic An Event Grid Topic
+   * @param topicInfo An object containing information about the Event Grid Topic. Should include the Resource Group name, Event Grid Topic name, Event Grid Topic type, and the name of the Event Grid Topic provider
    * @param callback A callback function to be called after retrieving an Event Grid Topic Subscription
    */
   public async iterateTopicSubscriptions(

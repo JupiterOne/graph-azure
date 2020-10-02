@@ -144,6 +144,15 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
+"@azure/arm-rediscache@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-rediscache/-/arm-rediscache-4.0.0.tgz#fc610a0c0f7bde34b8a47db6b79588cf263dc6bf"
+  integrity sha512-Va0KhT+3EEAFxUiCTpL5+6rmWENFphCM9pXWCE4Ul6L6I5Gn2AwxmvsOpZwebAS7hWNd0SKGWz6aFME1v9oC3g==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-resources@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-resources/-/arm-resources-4.0.0.tgz#5b0dd7cbb4327a5a2ce184dd4e170459ac41f485"

@@ -80,6 +80,11 @@ import {
   STEP_RM_BATCH_CERTIFICATE,
 } from './steps/resource-manager/batch';
 import {
+  STEP_RM_REDIS_CACHES,
+  STEP_RM_REDIS_FIREWALL_RULES,
+  STEP_RM_REDIS_LINKED_SERVERS,
+} from './steps/resource-manager/redis-cache';
+import {
   STEP_RM_EVENT_GRID_DOMAINS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
@@ -146,9 +151,14 @@ export default function getStepStartStates(
     [STEP_RM_BATCH_POOL]: resourceManager,
     [STEP_RM_BATCH_APPLICATION]: resourceManager,
     [STEP_RM_BATCH_CERTIFICATE]: resourceManager,
+    [STEP_RM_REDIS_CACHES]: resourceManager,
+    [STEP_RM_REDIS_FIREWALL_RULES]: resourceManager,
+    [STEP_RM_REDIS_LINKED_SERVERS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAINS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: resourceManager,
     [STEP_RM_EVENT_GRID_TOPICS]: resourceManager,
+    // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last.  See SDK #326: https://github.com/JupiterOne/sdk/issues/326
+    // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
     [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: resourceManager,
   };

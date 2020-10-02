@@ -82,6 +82,7 @@ import {
 import {
   STEP_RM_REDIS_CACHES,
   STEP_RM_REDIS_FIREWALL_RULES,
+  STEP_RM_REDIS_LINKED_SERVERS,
 } from './steps/resource-manager/redis-cache';
 import {
   STEP_RM_EVENT_GRID_DOMAINS,
@@ -152,9 +153,12 @@ export default function getStepStartStates(
     [STEP_RM_BATCH_CERTIFICATE]: resourceManager,
     [STEP_RM_REDIS_CACHES]: resourceManager,
     [STEP_RM_REDIS_FIREWALL_RULES]: resourceManager,
+    [STEP_RM_REDIS_LINKED_SERVERS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAINS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: resourceManager,
     [STEP_RM_EVENT_GRID_TOPICS]: resourceManager,
+    // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last.
+    // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
     [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: resourceManager,
   };

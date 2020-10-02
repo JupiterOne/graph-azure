@@ -1,6 +1,7 @@
 import { AzureWebLinker } from '../../../azure';
 import {
   RedisFirewallRule,
+  RedisLinkedServerWithProperties,
   RedisResource,
 } from '@azure/arm-rediscache/esm/models';
 import {
@@ -67,4 +68,22 @@ export function createRedisFirewallRuleEntity(
       },
     },
   });
+}
+
+export function createRedisLinkedServerRelationshipProperties(
+  webLinker: AzureWebLinker,
+  primaryCache: Entity,
+  linkedServer: RedisLinkedServerWithProperties,
+) {
+  return {
+    linkedServerId: linkedServer.id,
+    webLink: webLinker.portalResourceUrl(linkedServer.id),
+    primaryCacheId: primaryCache.id,
+    primaryCacheName: primaryCache.name,
+    secondaryCacheId: linkedServer.linkedRedisCacheId,
+    secondaryCacheName: linkedServer.name,
+    secondaryCacheLocation: linkedServer.linkedRedisCacheLocation,
+    type: linkedServer.type,
+    provisioningState: linkedServer.provisioningState,
+  };
 }

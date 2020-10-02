@@ -2,11 +2,14 @@ import { createAzureWebLinker } from '../../../azure';
 import {
   createRedisCacheEntity,
   createRedisFirewallRuleEntity,
+  createRedisLinkedServerRelationshipProperties,
 } from './converters';
 import {
   RedisResource,
   RedisFirewallRule,
+  RedisLinkedServerWithProperties,
 } from '@azure/arm-rediscache/esm/models';
+import { Entity } from '@jupiterone/integration-sdk-core';
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 
 describe('createRedisCacheEntity', () => {
@@ -76,4 +79,53 @@ describe('createRedisFirewallRuleEntity', () => {
       schema: {},
     });
   });
+});
+
+describe('createRedisLinkedServerRelationshipProperties', () => {
+  const primaryCacheEntity: Entity = {
+    _key:
+      '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-primary-redis-cache',
+    id:
+      '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-primary-redis-cache',
+    _class: ['Database', 'DataStore', 'Cluster'],
+    _type: 'azure_redis_cache',
+    name: 'keionned-j1dev-primary-redis-cache',
+  };
+
+  const linkedServer: RedisLinkedServerWithProperties = {
+    id:
+      '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-primary-redis-cache/linkedServers/keionned-j1dev-secondary-redis-cache',
+    name: 'keionned-j1dev-secondary-redis-cache',
+    linkedRedisCacheId:
+      '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev-secondary-redis-cache-resource-group/providers/Microsoft.Cache/Redis/keionned-j1dev-secondary-redis-cache',
+    linkedRedisCacheLocation: 'West US',
+    provisioningState: 'Succeeded',
+    serverRole: 'Secondary',
+    type: 'Microsoft.Cache/Redis/linkedServers',
+  };
+
+  const linkedServerRelationshipProperties = createRedisLinkedServerRelationshipProperties(
+    webLinker,
+    primaryCacheEntity,
+    linkedServer,
+  );
+
+  expect(linkedServerRelationshipProperties).toMatchSnapshot();
+  expect(linkedServerRelationshipProperties).toEqual(
+    expect.objectContaining({
+      linkedServerId:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-primary-redis-cache/linkedServers/keionned-j1dev-secondary-redis-cache',
+      primaryCacheId:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-primary-redis-cache',
+      primaryCacheName: 'keionned-j1dev-primary-redis-cache',
+      provisioningState: 'Succeeded',
+      secondaryCacheId:
+        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev-secondary-redis-cache-resource-group/providers/Microsoft.Cache/Redis/keionned-j1dev-secondary-redis-cache',
+      secondaryCacheLocation: 'West US',
+      secondaryCacheName: 'keionned-j1dev-secondary-redis-cache',
+      type: 'Microsoft.Cache/Redis/linkedServers',
+      webLink:
+        'https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-primary-redis-cache/linkedServers/keionned-j1dev-secondary-redis-cache',
+    }),
+  );
 });

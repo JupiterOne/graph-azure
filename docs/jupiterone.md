@@ -164,6 +164,7 @@ The following relationships are created/mapped:
 | `azure_mysql_server`            | **HAS**               | `azure_mysql_database`                |
 | `azure_postgresql_server`       | **HAS**               | `azure_postgresql_database`           |
 | `azure_private_dns_zone`        | **HAS**               | `azure_private_dns_record_set`        |
+| `azure_redis_cache`             | **CONNECTS**          | `azure_redis_cache`                   |
 | `azure_redis_cache`             | **HAS**               | `azure_firewall_rule`                 |
 | `azure_resource_group`          | **HAS**               | `azure_api_management_service`        |
 | `azure_resource_group`          | **HAS**               | `azure_batch_account`                 |

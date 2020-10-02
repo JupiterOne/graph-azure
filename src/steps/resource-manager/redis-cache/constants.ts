@@ -6,6 +6,7 @@ import { createResourceGroupResourceRelationshipMetadata } from '../utils/create
 
 export const STEP_RM_REDIS_CACHES = 'rm-redis-caches';
 export const STEP_RM_REDIS_FIREWALL_RULES = 'rm-redis-firewall-rules';
+export const STEP_RM_REDIS_LINKED_SERVERS = 'rm-redis-linked-servers';
 
 export const RedisCacheEntities = {
   CACHE: {
@@ -35,5 +36,16 @@ export const RedisCacheRelationships = {
     sourceType: RedisCacheEntities.CACHE._type,
     _class: RelationshipClass.HAS,
     targetType: RedisCacheEntities.FIREWALL_RULE._type,
+  },
+
+  REDIS_CACHE_IS_LINKED_TO_REDIS_CACHE: {
+    _type: generateRelationshipType(
+      RelationshipClass.CONNECTS,
+      RedisCacheEntities.CACHE._type,
+      RedisCacheEntities.CACHE._type,
+    ),
+    sourceType: RedisCacheEntities.CACHE._type,
+    _class: RelationshipClass.CONNECTS,
+    targetType: RedisCacheEntities.CACHE._type,
   },
 };

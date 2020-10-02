@@ -34,6 +34,7 @@ and this project adheres to
 - Added `azure_resource_group|has|azure_redis_cache` relationships
 - Added `azure_redis_firewall_rule` entities
 - Added `azure_redis_cache|has|azure_redis_firewall_rule` relationships
+- Added `azure_redis_cache|connects|azure_redis_cache` relationships
 
 ## 5.3.1 - 2020-09-21
 

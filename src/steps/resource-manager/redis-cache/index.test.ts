@@ -111,7 +111,7 @@ test('step = redis firewall rules', async () => {
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: ['Rule'],
+    _class: ['Firewall'],
     schema: {},
   });
 

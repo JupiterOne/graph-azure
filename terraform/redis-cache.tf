@@ -33,7 +33,7 @@ resource "azurerm_redis_firewall_rule" "j1dev" {
   count = local.redis_cache_count
   # NOTE: You cannot choose a name with hyphens, only alphanumeric characters and underscores are allowed
   name                = "j1dev_redis_cache_firewall_rule"
-  redis_cache_name    = azurerm_redis_cache.j1dev[count.index].name
+  redis_cache_name    = azurerm_redis_cache.j1dev[0].name
   resource_group_name = azurerm_resource_group.j1dev.name
   start_ip            = "1.2.3.4"
   end_ip              = "2.3.4.5"
@@ -71,8 +71,8 @@ resource "azurerm_resource_group" "j1dev-secondary-redis-cache-resource-group" {
 resource "azurerm_redis_cache" "j1dev-secondary-redis-cache" {
   count               = local.redis_cache_count
   name                = "${var.developer_id}-j1dev-secondary-redis-cache"
-  location            = azurerm_resource_group.j1dev-secondary-redis-cache-resource-group[count.index].location
-  resource_group_name = azurerm_resource_group.j1dev-secondary-redis-cache-resource-group[count.index].name
+  location            = azurerm_resource_group.j1dev-secondary-redis-cache-resource-group[0].location
+  resource_group_name = azurerm_resource_group.j1dev-secondary-redis-cache-resource-group[0].name
   capacity            = 2
   family              = "P"
   sku_name            = "Premium"
@@ -90,10 +90,14 @@ resource "azurerm_redis_cache" "j1dev-secondary-redis-cache" {
 
 resource "azurerm_redis_linked_server" "j1dev-redis-linked-server" {
   count                       = local.redis_cache_count
-  target_redis_cache_name     = azurerm_redis_cache.j1dev-primary-redis-cache[count.index].name
-  resource_group_name         = azurerm_redis_cache.j1dev-primary-redis-cache[count.index].resource_group_name
-  linked_redis_cache_id       = azurerm_redis_cache.j1dev-secondary-redis-cache[count.index].id
-  linked_redis_cache_location = azurerm_redis_cache.j1dev-secondary-redis-cache[count.index].location
+  target_redis_cache_name     = azurerm_redis_cache.j1dev-primary-redis-cache[0].name
+  resource_group_name         = azurerm_redis_cache.j1dev-primary-redis-cache[0].resource_group_name
+  linked_redis_cache_id       = azurerm_redis_cache.j1dev-secondary-redis-cache[0].id
+  linked_redis_cache_location = azurerm_redis_cache.j1dev-secondary-redis-cache[0].location
   server_role                 = "Secondary"
-  depends_on                  = [azurerm_redis_cache.j1dev-primary-redis-cache, azurerm_redis_cache.j1dev-secondary-redis-cache]
+  # NOTE: we are explictly stating that the linked server is dependent on the primary and secondary cache. 
+  # Without this statement, when terraform tries to destroy the resources, it will destory the caches first
+  # An error will then be thrown, stating that you cannot destroy a cache that has a link to another cache.
+  # This line ensures that the resources are deleted in the correct order. The linked server must be deleted before the caches can be deleted.
+  depends_on = [azurerm_redis_cache.j1dev-primary-redis-cache, azurerm_redis_cache.j1dev-secondary-redis-cache]
 }

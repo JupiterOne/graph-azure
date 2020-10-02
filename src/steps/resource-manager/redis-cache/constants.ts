@@ -17,7 +17,7 @@ export const RedisCacheEntities = {
 
   FIREWALL_RULE: {
     _type: 'azure_firewall_rule',
-    _class: ['Rule'],
+    _class: ['Firewall'],
     resourceName: '[RM] Redis Firewall Rule',
   },
 };

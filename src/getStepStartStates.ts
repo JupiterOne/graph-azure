@@ -157,7 +157,7 @@ export default function getStepStartStates(
     [STEP_RM_EVENT_GRID_DOMAINS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: resourceManager,
     [STEP_RM_EVENT_GRID_TOPICS]: resourceManager,
-    // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last.
+    // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last.  See SDK #326: https://github.com/JupiterOne/sdk/issues/326
     // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
     [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: resourceManager,

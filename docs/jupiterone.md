@@ -114,7 +114,7 @@ The following entities are created:
 | [RM] Private DNS Zone              | `azure_private_dns_zone`              | `DomainZone`                       |
 | [RM] Public IP Address             | `azure_public_ip`                     | `IpAddress`                        |
 | [RM] Redis Cache                   | `azure_redis_cache`                   | `Database`, `DataStore`, `Cluster` |
-| [RM] Redis Firewall Rule           | `azure_firewall_rule`                 | `Rule`                             |
+| [RM] Redis Firewall Rule           | `azure_firewall_rule`                 | `Firewall`                         |
 | [RM] Resource Group                | `azure_resource_group`                | `Group`                            |
 | [RM] Role Assignment               | `azure_role_assignment`               | `AccessPolicy`                     |
 | [RM] Role Definition               | `azure_role_definition`               | `AccessRole`                       |

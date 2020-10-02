@@ -75,8 +75,14 @@ describe('createRedisFirewallRuleEntity', () => {
 
     expect(redisFirewallRuleEntity).toMatchSnapshot();
     expect(redisFirewallRuleEntity).toMatchGraphObjectSchema({
-      _class: ['Rule'],
-      schema: {},
+      _class: ['Firewall'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          ipRangeStart: { const: '1.2.3.4' },
+          ipRangeEnd: { const: '2.3.4.5' },
+        },
+      },
     });
   });
 });

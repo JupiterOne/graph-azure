@@ -61,10 +61,10 @@ export function createRedisFirewallRuleEntity(
         id: data.id,
         name: data.name,
         webLink: webLinker.portalResourceUrl(data.id),
-        /**
-         * TODO: Do we want to include a category for the firewall rule? Which category?
-         * TODO: Do we want to include content for the firewall rule? What should the content say? All rules appear to be IP range restrictions, with a startIP and endIP.
-         */
+        category: ['host'],
+        ipRangeStart: data.startIP,
+        ipRangeEnd: data.endIP,
+        isStateful: false,
       },
     },
   });

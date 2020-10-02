@@ -87,7 +87,7 @@ Object {
 exports[`createRedisFirewallRuleEntity properties transferred 1`] = `
 Object {
   "_class": Array [
-    "Rule",
+    "Firewall",
   ],
   "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule",
   "_rawData": Array [
@@ -103,10 +103,16 @@ Object {
     },
   ],
   "_type": "azure_firewall_rule",
+  "category": Array [
+    "host",
+  ],
   "createdOn": undefined,
   "displayName": "keionned-j1dev-redis-cache/j1dev_redis_cache_firewall_rule",
   "endIp": "2.3.4.5",
   "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule",
+  "ipRangeEnd": "2.3.4.5",
+  "ipRangeStart": "1.2.3.4",
+  "isStateful": false,
   "name": "keionned-j1dev-redis-cache/j1dev_redis_cache_firewall_rule",
   "startIp": "1.2.3.4",
   "type": "Microsoft.Cache/Redis/firewallRules",

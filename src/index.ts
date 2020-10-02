@@ -77,7 +77,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...batchSteps,
     ...redisCacheSteps,
 
-    // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last.
+    // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last. See SDK #326: https://github.com/JupiterOne/sdk/issues/326
     // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
     ...eventGridSteps,
   ],

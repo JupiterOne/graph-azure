@@ -120,6 +120,19 @@ export async function fetchRedisLinkedServers(
         { resourceGroupName: resourceGroup, redisCacheName: name as string },
         async (linkedServer) => {
           const { linkedRedisCacheId } = linkedServer;
+          /**
+           * We are using this if statement to prevent recording duplicate linked server relationships.
+           * When we ask the Azure Redis Cache Client to return the linked servers for a cache, it returns a linked server for both caches in the linked server relationship.
+           * Meaning, when we ask it for linked servers for cache1, it returns that cache1 is linked to cache2.
+           * When we ask the client for linked servers for cache2, it returns that cache2 is linked to cache1.
+           * We only want to record that relationship one time.
+           * We can use a property that the linkedServer has called serverRole to determine whether or not we will record the linked server relationship.
+           * A serverRole can only ever be 'Primary' or 'Secondary'. A cache cannot be linked to more than one cache.
+           * A cache will only ever be the 'Primary' or 'Secondary' cache in a linked server relationship.
+           * This means we only need to record the times when the linkedServer we found for the current redisCacheEntity is the 'Secondary' cache.
+           * When we do this, it means that the current redisCacheEntity in the iteration is the 'Primary' cache in the linked server relationship,
+           * and the linked server we found is the the 'Secondary' cache in the linked server relationship.
+           */
           if (cacheIsLinkedToSecondaryCache(linkedServer)) {
             const secondaryCacheEntity = await jobState.findEntity(
               linkedRedisCacheId,
@@ -162,11 +175,7 @@ export const redisCacheSteps: Step<
     name: 'Redis Firewall Rules',
     entities: [RedisCacheEntities.FIREWALL_RULE],
     relationships: [RedisCacheRelationships.REDIS_CACHE_HAS_FIREWALL_RULE],
-    dependsOn: [
-      STEP_AD_ACCOUNT,
-      STEP_RM_RESOURCES_RESOURCE_GROUPS,
-      STEP_RM_REDIS_CACHES,
-    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_REDIS_CACHES],
     executionHandler: fetchRedisFirewallRules,
   },
   {
@@ -176,11 +185,7 @@ export const redisCacheSteps: Step<
     relationships: [
       RedisCacheRelationships.REDIS_CACHE_IS_LINKED_TO_REDIS_CACHE,
     ],
-    dependsOn: [
-      STEP_AD_ACCOUNT,
-      STEP_RM_RESOURCES_RESOURCE_GROUPS,
-      STEP_RM_REDIS_CACHES,
-    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_REDIS_CACHES],
     executionHandler: fetchRedisLinkedServers,
   },
 ];

@@ -1,0 +1,160 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createContainerEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Container",
+  ],
+  "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/containers/nginx",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "command": Array [],
+        "environmentVariables": Array [],
+        "image": "nginx",
+        "name": "nginx",
+        "ports": Array [
+          Object {
+            "port": 80,
+            "protocol": "TCP",
+          },
+        ],
+        "resources": Object {
+          "requests": Object {
+            "cpu": 0.5,
+            "memoryInGB": 1.5,
+          },
+        },
+      },
+    },
+  ],
+  "_type": "azure_container",
+  "createdOn": undefined,
+  "displayName": "nginx",
+  "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/containers/nginx",
+  "image": "nginx",
+  "name": "nginx",
+}
+`;
+
+exports[`createContainerGroupEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Group",
+  ],
+  "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "containers": Array [
+          Object {
+            "command": Array [],
+            "environmentVariables": Array [],
+            "image": "nginx",
+            "name": "nginx",
+            "ports": Array [
+              Object {
+                "port": 80,
+                "protocol": "TCP",
+              },
+            ],
+            "resources": Object {
+              "requests": Object {
+                "cpu": 0.5,
+                "memoryInGB": 1.5,
+              },
+            },
+          },
+          Object {
+            "command": Array [],
+            "environmentVariables": Array [],
+            "image": "microsoft/aci-helloworld:latest",
+            "name": "hello-world",
+            "ports": Array [
+              Object {
+                "port": 443,
+                "protocol": "TCP",
+              },
+            ],
+            "resources": Object {
+              "requests": Object {
+                "cpu": 0.5,
+                "memoryInGB": 1.5,
+              },
+            },
+          },
+        ],
+        "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group",
+        "initContainers": Array [],
+        "ipAddress": Object {
+          "dnsNameLabel": "j1dev-container-group-dns",
+          "fqdn": "j1dev-container-group-dns.eastus.azurecontainer.io",
+          "ip": "52.186.103.187",
+          "ports": Array [
+            Object {
+              "port": 80,
+              "protocol": "TCP",
+            },
+            Object {
+              "port": 443,
+              "protocol": "TCP",
+            },
+          ],
+          "type": "Public",
+        },
+        "location": "eastus",
+        "name": "j1dev-container-group",
+        "osType": "Linux",
+        "provisioningState": "Succeeded",
+        "restartPolicy": "Always",
+        "sku": "Standard",
+        "tags": Object {},
+        "type": "Microsoft.ContainerInstance/containerGroups",
+      },
+    },
+  ],
+  "_type": "azure_container_group",
+  "createdOn": undefined,
+  "displayName": "j1dev-container-group",
+  "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group",
+  "location": "eastus",
+  "name": "j1dev-container-group",
+  "osType": "Linux",
+  "provisioningState": "Succeeded",
+  "restartPolicy": "Always",
+  "sku": "Standard",
+  "type": "Microsoft.ContainerInstance/containerGroups",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group",
+}
+`;
+
+exports[`createVolumeEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Disk",
+  ],
+  "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/volumes/nginx-mount",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "azureFile": Object {
+          "readOnly": false,
+          "shareName": "j1dev",
+          "storageAccountName": "keionnedj1dev",
+        },
+        "name": "nginx-mount",
+      },
+    },
+  ],
+  "_type": "azure_volume",
+  "classification": null,
+  "createdOn": undefined,
+  "displayName": "nginx-mount",
+  "encrypted": null,
+  "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/volumes/nginx-mount",
+  "name": "nginx-mount",
+}
+`;

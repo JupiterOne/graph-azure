@@ -90,6 +90,8 @@ The following entities are created:
 | [RM] CDN Endpoint                  | `azure_cdn_endpoint`                  | `Gateway`                          |
 | [RM] CDN Profile                   | `azure_cdn_profile`                   | `Service`                          |
 | [RM] Classic Admin                 | `azure_classic_admin_group`           | `UserGroup`                        |
+| [RM] Container                     | `azure_container`                     | `Container`                        |
+| [RM] Container Group               | `azure_container_group`               | `Group`                            |
 | [RM] Container Registry            | `azure_container_registry`            | `DataStore`                        |
 | [RM] Container Registry Webhook    | `azure_container_registry_webhook`    | `ApplicationEndpoint`              |
 | [RM] Cosmos DB Account             | `azure_cosmosdb_account`              | `Account`, `Service`               |
@@ -134,6 +136,7 @@ The following entities are created:
 | [RM] Subscription                  | `azure_subscription`                  | `Account`                          |
 | [RM] Virtual Machine               | `azure_vm`                            | `Host`                             |
 | [RM] Virtual Network               | `azure_vnet`                          | `Network`                          |
+| [RM] Volume                        | `azure_volume`                        | `Disk`                             |
 
 ### Relationships
 
@@ -150,6 +153,9 @@ The following relationships are created/mapped:
 | `azure_batch_account`           | **HAS**               | `azure_batch_pool`                    |
 | `azure_cdn_profile`             | **HAS**               | `azure_cdn_endpoint`                  |
 | `azure_classic_admin_group`     | **HAS**               | `azure_user`                          |
+| `azure_container`               | **CONNECTS**          | `azure_volume`                        |
+| `azure_container_group`         | **HAS**               | `azure_container`                     |
+| `azure_container_group`         | **HAS**               | `azure_volume`                        |
 | `azure_container_registry`      | **HAS**               | `azure_container_registry_webhook`    |
 | `azure_cosmosdb_account`        | **HAS**               | `azure_cosmosdb_sql_database`         |
 | `azure_dns_zone`                | **HAS**               | `azure_dns_record_set`                |
@@ -169,6 +175,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`          | **HAS**               | `azure_api_management_service`        |
 | `azure_resource_group`          | **HAS**               | `azure_batch_account`                 |
 | `azure_resource_group`          | **HAS**               | `azure_cdn_profile`                   |
+| `azure_resource_group`          | **HAS**               | `azure_container_group`               |
 | `azure_resource_group`          | **HAS**               | `azure_container_registry`            |
 | `azure_resource_group`          | **HAS**               | `azure_cosmosdb_account`              |
 | `azure_resource_group`          | **HAS**               | `azure_dns_zone`                      |

@@ -37,6 +37,11 @@ and this project adheres to
 - Added `azure_redis_cache|connects|azure_redis_cache` relationships
 - Added `azure_container_group` entities
 - Added `azure_resource_group|has|azure_container_group` relationships
+- Added `azure_container` entities
+- Added `azure_container_group|has|azure_container` relationships
+- Added `azure_volume` entities
+- Added `azure_container_group|has|azure_volume` relationships
+- Added `azure_container|connects|azure_volume` relationships
 
 ## 5.3.1 - 2020-09-21
 

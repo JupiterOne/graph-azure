@@ -81,7 +81,7 @@ async function createVolumeFileShareRelationshipHandler(
         const match = storageFileShareEntity.id.match(fileShareRegex);
 
         if (match) {
-          const [_, storageAccountName, storageShareName] = match;
+          const [, storageAccountName, storageShareName] = match;
           if (
             volume.azureFile?.storageAccountName === storageAccountName &&
             volume.azureFile.shareName === storageShareName

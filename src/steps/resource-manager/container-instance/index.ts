@@ -4,6 +4,7 @@ import {
   IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
+  JobState,
 } from '@jupiterone/integration-sdk-core';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
@@ -24,7 +25,82 @@ import {
   ContainerInstanceRelationships,
   STEP_RM_CONTAINER_GROUPS,
 } from './contants';
+import { Volume } from '@azure/arm-containerinstance/esm/models';
+import {
+  STEP_RM_STORAGE_RESOURCES,
+  STORAGE_FILE_SHARE_ENTITY_METADATA,
+} from '../storage';
 export * from './contants';
+
+interface VolumeRelationshipStrategy {
+  shouldAddRelationship: (volume: Volume) => Boolean;
+  addRelationshipHandler: (
+    volume: Volume,
+    volumeEntity: Entity,
+    jobState: JobState,
+  ) => Promise<void>;
+}
+
+async function createVolumeRelationshipsIfExists(
+  volume: Volume,
+  volumeEntity: Entity,
+  jobState: JobState,
+): Promise<void> {
+  const volumeRelationshipStrategies: VolumeRelationshipStrategy[] = [
+    // Strategy to handle when the volume is using an existing Azure Storage File Share
+    {
+      shouldAddRelationship: (volume: Volume) =>
+        !!(
+          volume.azureFile &&
+          volume.azureFile.shareName &&
+          volume.azureFile.storageAccountName
+        ),
+      addRelationshipHandler: createVolumeFileShareRelationshipHandler,
+    },
+    // TODO: handle the other volume possibilities (Secrets, empty directory, GitHub Repo)
+  ];
+
+  volumeRelationshipStrategies.forEach(
+    async (s: VolumeRelationshipStrategy) => {
+      if (s.shouldAddRelationship(volume)) {
+        await s.addRelationshipHandler(volume, volumeEntity, jobState);
+      }
+    },
+  );
+}
+
+async function createVolumeFileShareRelationshipHandler(
+  volume: Volume,
+  volumeEntity: Entity,
+  jobState: JobState,
+): Promise<void> {
+  await jobState.iterateEntities(
+    { _type: STORAGE_FILE_SHARE_ENTITY_METADATA._type },
+    async (storageFileShareEntity) => {
+      if (storageFileShareEntity.id) {
+        const fileShareRegex =
+          '/subscriptions/[^/]+/resource[G|g]roups/[^/]+/providers/[M|m]icrosoft.[S|s]torage/storage[A|a]ccounts/([^/]+)/fileServices/default/shares/([^/]+)';
+        const match = storageFileShareEntity.id.match(fileShareRegex);
+
+        if (match) {
+          const [_, storageAccountName, storageShareName] = match;
+          if (
+            volume.azureFile?.storageAccountName === storageAccountName &&
+            volume.azureFile.shareName === storageShareName
+          ) {
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.USES,
+                from: volumeEntity,
+                to: storageFileShareEntity,
+              }),
+            );
+          }
+        }
+      }
+    },
+  );
+}
 
 export async function fetchContainerGroups(
   executionContext: IntegrationStepContext,
@@ -63,8 +139,8 @@ export async function fetchContainerGroups(
            * Iterating over them in memory shouldn't cause an issues, because there is a limit set at 20 volumes per container group.
            * https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quotas
            */
-          containerGroup.volumes?.forEach(async (volume) => {
-            // NOTE: Volumes do not have ids. We create our own by using the id of the resource group and pre-pending it to the volume name.
+          for (const volume of containerGroup.volumes || []) {
+            // NOTE: Volumes do not have ids. We create our own by using the id of the Azure Container Group and pre-pending it to the volume name.
             // The result should look something like `subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.ContainerInstance/containerGroups/${containerGroup}/volumes/${volumeName}
             const volumeEntity = createVolumeEntity({
               id: `${id}/volumes/${volume.name}`,
@@ -79,7 +155,13 @@ export async function fetchContainerGroups(
                 to: volumeEntity,
               }),
             );
-          });
+
+            await createVolumeRelationshipsIfExists(
+              volume,
+              volumeEntity,
+              jobState,
+            );
+          }
 
           /**
            * NOTE: There is not call/function in the Container Instance Management Client to get containers by container group.
@@ -87,9 +169,9 @@ export async function fetchContainerGroups(
            * Iterating over them in memory shouldn't cause an issue, because there is a limit set at 60 containers per container group.
            * https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quotas
            */
-          containerGroup.containers.forEach(async (container) => {
+          for (const container of containerGroup.containers || []) {
             /**
-             * NOTE: Containers in Azure Container Groups do not have an id. We are creating one by adding /containers/${containerName} at the end of the Azure Container Group Id
+             * NOTE: Azure Containers in Azure Container Groups do not have an id. We are creating one by adding /containers/${containerName} to the end of the Azure Container Group Id
              * The result should look like /subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.ContainerInstance/containerGroups/${containerGroup}/containers/${containerName}
              */
             const containerEntity = createContainerEntity({
@@ -110,7 +192,8 @@ export async function fetchContainerGroups(
              * NOTE: If the Container is connected to a Volume via a volumeMount,
              * we want to record that relationship.
              */
-            container.volumeMounts?.forEach(async (volumeMount) => {
+
+            for (const volumeMount of container.volumeMounts || []) {
               const volumeKey = `${id}/volumes/${volumeMount.name}`;
               // Find the previously tracked volume so that we can record a relationship between the container and the volume
               const connectedVolumeEntity = await jobState.findEntity(
@@ -127,8 +210,8 @@ export async function fetchContainerGroups(
                   }),
                 );
               }
-            });
-          });
+            }
+          }
         },
       );
     },
@@ -151,8 +234,13 @@ export const containerInstanceSteps: Step<
       ContainerInstanceRelationships.CONTAINER_GROUP_HAS_CONTAINER,
       ContainerInstanceRelationships.CONTAINER_GROUP_HAS_CONTAINER_VOLUME,
       ContainerInstanceRelationships.CONTAINER_USES_CONTAINER_VOLUME,
+      ContainerInstanceRelationships.CONTAINER_VOLUME_USES_STORAGE_FILE_SHARE,
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      STEP_RM_STORAGE_RESOURCES,
+    ],
     executionHandler: fetchContainerGroups,
   },
 ];

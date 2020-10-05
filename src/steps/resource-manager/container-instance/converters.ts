@@ -30,7 +30,8 @@ export function createContainerGroupEntity(
 
 export function createContainerEntity(data: ContainerWithId): Entity {
   /**
-   * NOTE: We pull the id off so that it is not recorded as raw data.
+   * NOTE: We pull the id off of the container so that it is not recorded as raw data.
+   * The id is not a part of the raw data because it was created by us.
    * Azure does not assign an id to Containers in a Container Group, so we create it.
    * This is also why we are not attaching a webLink to the Container Entity
    */
@@ -53,9 +54,10 @@ export function createContainerEntity(data: ContainerWithId): Entity {
 
 export function createVolumeEntity(data: VolumeWithId): Entity {
   /**
-   * NOTE: We pull the id off so that it is not recorded as raw data.
-   * Azure does not assign an id to Volumes in a Container Group, so we create it.
-   * This is also why we are not attaching a webLink to the Volume Entity
+   * NOTE: We pull the id off of the volume so that it is not recorded as raw data.
+   * The id is not a part of the raw data because it was created by us.
+   * Azure does not assign an id to Container Volumes in a Container Group, so we create it.
+   * This is also why we are not attaching a webLink to the Volume Entity.
    */
   const { id, ...volume } = data;
   return createIntegrationEntity({

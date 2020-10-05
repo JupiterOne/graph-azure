@@ -25,14 +25,23 @@ describe('step = container instance container groups', () => {
     });
 
     const entities = {
-      '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev': {
-        _key:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
+      [`/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`]: {
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
         _type: 'azure_resource_group',
         _class: ['Group'],
         name: 'j1dev',
-        id:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+      },
+      [`/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev/fileServices/default/shares/j1dev`]: {
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev/fileServices/default/shares/j1dev`,
+        name: 'j1dev',
+        _type: 'azure_storage_file_share',
+        _class: ['DataStore'],
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev/fileServices/default/shares/j1dev`,
+        resourceGroup: 'j1dev-container-resource-group',
+        classification: null,
+        encrypted: true,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev/fileServices/default/shares/j1dev`,
       },
     };
 
@@ -137,7 +146,7 @@ describe('step = container instance container groups', () => {
                   },
                 ],
                 type: 'Public',
-                ip: '20.62.140.108',
+                ip: expect.any(String),
                 dnsNameLabel: 'j1dev-container-group-dns-keionned',
                 fqdn:
                   'j1dev-container-group-dns-keionned.eastus.azurecontainer.io',
@@ -336,6 +345,19 @@ describe('step = container instance container groups', () => {
         name: 'nginx-mount',
         mountPath: '/etc/test_mount',
         readOnly: false,
+      }),
+    );
+  });
+
+  it('should track the Volume uses File Share relationship', () => {
+    expect(context.jobState.collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/volumes/nginx-mount|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev/fileServices/default/shares/j1dev`,
+        _type: 'azure_container_volume_uses_storage_file_share',
+        _class: 'USES',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/volumes/nginx-mount`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev/fileServices/default/shares/j1dev`,
+        displayName: 'USES',
       }),
     );
   });

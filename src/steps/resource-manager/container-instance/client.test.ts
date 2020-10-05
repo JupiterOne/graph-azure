@@ -75,7 +75,7 @@ describe('iterate container groups', () => {
         ipAddress: {
           dnsNameLabel: 'j1dev-container-group-dns-keionned',
           fqdn: 'j1dev-container-group-dns-keionned.eastus.azurecontainer.io',
-          ip: '52.224.192.229',
+          ip: '20.62.140.108',
           ports: [
             { port: 80, protocol: 'TCP' },
             { port: 443, protocol: 'TCP' },

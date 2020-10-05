@@ -64,8 +64,8 @@ export function createVolumeEntity(data: VolumeWithId): Entity {
       assign: {
         ...convertProperties(volume),
         _key: id,
-        _type: ContainerInstanceEntities.VOLUME._type,
-        _class: ContainerInstanceEntities.VOLUME._class,
+        _type: ContainerInstanceEntities.CONTAINER_VOLUME._type,
+        _class: ContainerInstanceEntities.CONTAINER_VOLUME._class,
         id: id,
         name: volume.name,
         classification: null,

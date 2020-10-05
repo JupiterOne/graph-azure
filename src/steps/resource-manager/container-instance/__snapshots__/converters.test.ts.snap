@@ -149,7 +149,7 @@ Object {
       },
     },
   ],
-  "_type": "azure_volume",
+  "_type": "azure_container_volume",
   "classification": null,
   "createdOn": undefined,
   "displayName": "nginx-mount",

@@ -137,7 +137,7 @@ describe('step = container instance container groups', () => {
                   },
                 ],
                 type: 'Public',
-                ip: '52.224.192.229',
+                ip: '20.62.140.108',
                 dnsNameLabel: 'j1dev-container-group-dns-keionned',
                 fqdn:
                   'j1dev-container-group-dns-keionned.eastus.azurecontainer.io',
@@ -169,7 +169,7 @@ describe('step = container instance container groups', () => {
         id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/volumes/nginx-mount`,
         name: 'nginx-mount',
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/volumes/nginx-mount`,
-        _type: 'azure_volume',
+        _type: 'azure_container_volume',
         _class: ['Disk'],
         classification: null,
         encrypted: null,
@@ -327,12 +327,12 @@ describe('step = container instance container groups', () => {
   it('should track the Container connect Volume relationship', () => {
     expect(context.jobState.collectedRelationships).toContainEqual(
       expect.objectContaining({
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/containers/nginx|connects|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/volumes/nginx-mount`,
-        _type: 'azure_container_connects_volume',
-        _class: 'CONNECTS',
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/containers/nginx|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/volumes/nginx-mount`,
+        _type: 'azure_container_uses_volume',
+        _class: 'USES',
         _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/containers/nginx`,
         _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerInstance/containerGroups/j1dev-container-group/volumes/nginx-mount`,
-        displayName: 'CONNECTS',
+        displayName: 'USES',
         name: 'nginx-mount',
         mountPath: '/etc/test_mount',
         readOnly: false,

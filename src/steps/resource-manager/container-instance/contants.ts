@@ -19,10 +19,10 @@ export const ContainerInstanceEntities = {
     resourceName: '[RM] Container',
   },
 
-  VOLUME: {
-    _type: 'azure_volume',
+  CONTAINER_VOLUME: {
+    _type: 'azure_container_volume',
     _class: ['Disk'],
-    resourceName: '[RM] Volume',
+    resourceName: '[RM] Container Volume',
   },
 };
 
@@ -42,25 +42,25 @@ export const ContainerInstanceRelationships = {
     targetType: ContainerInstanceEntities.CONTAINER._type,
   },
 
-  CONTAINER_GROUP_HAS_VOLUME: {
+  CONTAINER_GROUP_HAS_CONTAINER_VOLUME: {
     _type: generateRelationshipType(
       RelationshipClass.HAS,
       ContainerInstanceEntities.CONTAINER_GROUP,
-      ContainerInstanceEntities.VOLUME,
+      ContainerInstanceEntities.CONTAINER_VOLUME,
     ),
     sourceType: ContainerInstanceEntities.CONTAINER_GROUP._type,
     _class: RelationshipClass.HAS,
-    targetType: ContainerInstanceEntities.VOLUME._type,
+    targetType: ContainerInstanceEntities.CONTAINER_VOLUME._type,
   },
 
-  CONTAINER_CONNECTS_VOLUME: {
+  CONTAINER_USES_CONTAINER_VOLUME: {
     _type: generateRelationshipType(
-      RelationshipClass.CONNECTS,
+      RelationshipClass.USES,
       ContainerInstanceEntities.CONTAINER,
-      ContainerInstanceEntities.VOLUME,
+      ContainerInstanceEntities.CONTAINER_VOLUME,
     ),
     sourceType: ContainerInstanceEntities.CONTAINER._type,
-    _class: RelationshipClass.CONNECTS,
-    targetType: ContainerInstanceEntities.VOLUME._type,
+    _class: RelationshipClass.USES,
+    targetType: ContainerInstanceEntities.CONTAINER_VOLUME._type,
   },
 };

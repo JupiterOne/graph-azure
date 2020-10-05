@@ -120,7 +120,7 @@ export async function fetchContainerGroups(
               if (connectedVolumeEntity) {
                 await jobState.addRelationship(
                   createDirectRelationship({
-                    _class: RelationshipClass.CONNECTS,
+                    _class: RelationshipClass.USES,
                     from: containerEntity,
                     to: connectedVolumeEntity,
                     properties: volumeMount,
@@ -144,13 +144,13 @@ export const containerInstanceSteps: Step<
     entities: [
       ContainerInstanceEntities.CONTAINER_GROUP,
       ContainerInstanceEntities.CONTAINER,
-      ContainerInstanceEntities.VOLUME,
+      ContainerInstanceEntities.CONTAINER_VOLUME,
     ],
     relationships: [
       ContainerInstanceRelationships.RESOURCE_GROUP_HAS_CONTAINER_GROUP,
       ContainerInstanceRelationships.CONTAINER_GROUP_HAS_CONTAINER,
-      ContainerInstanceRelationships.CONTAINER_GROUP_HAS_VOLUME,
-      ContainerInstanceRelationships.CONTAINER_CONNECTS_VOLUME,
+      ContainerInstanceRelationships.CONTAINER_GROUP_HAS_CONTAINER_VOLUME,
+      ContainerInstanceRelationships.CONTAINER_USES_CONTAINER_VOLUME,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchContainerGroups,

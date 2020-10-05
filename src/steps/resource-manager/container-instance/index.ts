@@ -60,13 +60,11 @@ async function createVolumeRelationshipsIfExists(
     // TODO: handle the other volume possibilities (Secrets, empty directory, GitHub Repo)
   ];
 
-  volumeRelationshipStrategies.forEach(
-    async (s: VolumeRelationshipStrategy) => {
-      if (s.shouldAddRelationship(volume)) {
-        await s.addRelationshipHandler(volume, volumeEntity, jobState);
-      }
-    },
-  );
+  for (const s of volumeRelationshipStrategies) {
+    if (s.shouldAddRelationship(volume)) {
+      await s.addRelationshipHandler(volume, volumeEntity, jobState);
+    }
+  }
 }
 
 async function createVolumeFileShareRelationshipHandler(

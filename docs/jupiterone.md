@@ -157,6 +157,7 @@ The following relationships are created/mapped:
 | `azure_container_group`         | **HAS**               | `azure_container_volume`              |
 | `azure_container_registry`      | **HAS**               | `azure_container_registry_webhook`    |
 | `azure_container`               | **USES**              | `azure_container_volume`              |
+| `azure_container_volume`        | **USES**              | `azure_storage_file_share`            |
 | `azure_cosmosdb_account`        | **HAS**               | `azure_cosmosdb_sql_database`         |
 | `azure_dns_zone`                | **HAS**               | `azure_dns_record_set`                |
 | `azure_event_grid_domain`       | **HAS**               | `azure_event_grid_domain_topic`       |

@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.4.0 - 2020-10-07
+
 ### Added
 
 - Added `azure_event_grid_domain` entities

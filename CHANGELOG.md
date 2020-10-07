@@ -8,7 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
-## Added
+### Added
 
 - Added `azure_event_grid_domain` entities
 - Added `azure_resource_group|has|azure_event_grid_domain` relationships
@@ -43,6 +43,10 @@ and this project adheres to
 - Added `azure_container_group|has|azure_container_volume` relationships
 - Added `azure_container|uses|azure_container_volume` relationships
 - Added `azure_container_volume|uses|azure_storage_file_share` relationships
+
+### Changed
+
+- Upgraded SDK to v3.5.1
 
 ## 5.3.1 - 2020-09-21
 

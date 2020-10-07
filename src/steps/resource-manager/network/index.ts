@@ -301,22 +301,22 @@ export async function buildSecurityGroupRuleRelationships(
 ): Promise<void> {
   const { jobState, logger } = executionContext;
 
-  const findSubnetsForCIDR = async (cidr?: string) => {
+  const findSubnetEntitiesForCIDR = async (cidr?: string) => {
     if (!cidr) return null;
 
-    const subnets: Subnet[] = [];
+    const subnetEntities: Entity[] = [];
 
     await jobState.iterateEntities(
       { _type: SUBNET_ENTITY_TYPE },
       (subnetEntity) => {
         const subnet = getRawData(subnetEntity) as Subnet;
         if (subnet.addressPrefix === cidr) {
-          subnets.push(subnet);
+          subnetEntities.push(subnetEntity);
         }
       },
     );
 
-    return subnets;
+    return subnetEntities;
   };
 
   await jobState.iterateEntities(
@@ -331,11 +331,17 @@ export async function buildSecurityGroupRuleRelationships(
             target._class === SUBNET_ENTITY_CLASS &&
             target._type === SUBNET_ENTITY_TYPE
           ) {
-            const subnets = await findSubnetsForCIDR(target.CIDR as string);
-            if (subnets?.length) {
-              for (const subnet of subnets) {
+            const subnetEntities = await findSubnetEntitiesForCIDR(
+              target.CIDR as string,
+            );
+            if (subnetEntities?.length) {
+              for (const subnetEntity of subnetEntities) {
                 await jobState.addRelationship(
-                  createSecurityGroupRuleSubnetRelationship(sg, rule, subnet),
+                  createSecurityGroupRuleSubnetRelationship(
+                    sgEntity,
+                    rule,
+                    subnetEntity,
+                  ),
                 );
               }
             } else {
@@ -346,7 +352,7 @@ export async function buildSecurityGroupRuleRelationships(
             }
           } else {
             await jobState.addRelationship(
-              createSecurityGroupRuleMappedRelationship(sg, rule, target),
+              createSecurityGroupRuleMappedRelationship(sgEntity, rule, target),
             );
           }
         }

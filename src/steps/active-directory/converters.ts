@@ -204,7 +204,7 @@ export function createGroupMemberRelationship(
       },
     },
     properties: {
-      groupId: group.id,
+      groupId: group.id as string,
       memberId: member.id,
       memberType: member['@odata.type'],
     },

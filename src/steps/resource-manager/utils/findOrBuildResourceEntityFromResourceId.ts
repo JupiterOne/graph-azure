@@ -169,7 +169,11 @@ export function getJupiterTypeForResourceId(
   )?._type;
 }
 
-export type PlaceholderEntity = { _type: string; _key: string };
+export type PlaceholderEntity = {
+  _type: string;
+  _key: string;
+  [key: string]: string;
+};
 
 export function isPlaceholderEntity(
   targetEntity: Entity | PlaceholderEntity,

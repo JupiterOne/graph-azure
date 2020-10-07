@@ -16,6 +16,10 @@ import {
   processSecurityGroupRule,
   processSecurityGroupRules,
 } from './securityGroups';
+import { createNetworkSecurityGroupEntity } from '.';
+import { createAzureWebLinker } from '../../../../azure';
+
+const webLinker = createAzureWebLinker('my.onmicrosoft.com');
 
 describe('build mapped relationships from security group rules', () => {
   const inboundRuleFromSingleIpToSubnet: SecurityRule = {
@@ -100,6 +104,11 @@ describe('build mapped relationships from security group rules', () => {
     provisioningState: 'Succeeded',
     etag: '',
   };
+
+  const securityGroupEntity = createNetworkSecurityGroupEntity(
+    webLinker,
+    securityGroup,
+  );
 
   const inboundRuleFromSingleIpToSubnetRelationship = createMappedRelationship({
     _class: RelationshipClass.ALLOWS,
@@ -240,7 +249,7 @@ describe('build mapped relationships from security group rules', () => {
 
     expect(
       createSecurityGroupRuleMappedRelationship(
-        securityGroup,
+        securityGroupEntity,
         rule,
         targetEntity,
       ),
@@ -260,7 +269,7 @@ describe('build mapped relationships from security group rules', () => {
 
     expect(
       createSecurityGroupRuleMappedRelationship(
-        securityGroup,
+        securityGroupEntity,
         portRange0Rule,
         portRange0Rule.targets[0],
       ),
@@ -268,7 +277,7 @@ describe('build mapped relationships from security group rules', () => {
 
     expect(
       createSecurityGroupRuleMappedRelationship(
-        securityGroup,
+        securityGroupEntity,
         portRange1Rule,
         portRange1Rule.targets[0],
       ),
@@ -283,7 +292,7 @@ describe('build mapped relationships from security group rules', () => {
 
     expect(
       createSecurityGroupRuleMappedRelationship(
-        securityGroup,
+        securityGroupEntity,
         rules[0],
         rules[0].targets[0],
       ),

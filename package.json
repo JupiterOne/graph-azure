@@ -34,6 +34,7 @@
     "@azure/arm-batch": "^4.0.0",
     "@azure/arm-cdn": "^5.0.0",
     "@azure/arm-compute": "^14.0.0",
+    "@azure/arm-containerinstance": "^6.0.0",
     "@azure/arm-containerregistry": "^8.0.0",
     "@azure/arm-cosmosdb": "^7.0.0",
     "@azure/arm-dns": "^4.0.0",

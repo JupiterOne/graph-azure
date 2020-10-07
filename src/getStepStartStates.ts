@@ -84,6 +84,7 @@ import {
   STEP_RM_REDIS_FIREWALL_RULES,
   STEP_RM_REDIS_LINKED_SERVERS,
 } from './steps/resource-manager/redis-cache';
+import { STEP_RM_CONTAINER_GROUPS } from './steps/resource-manager/container-instance';
 import {
   STEP_RM_EVENT_GRID_DOMAINS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
@@ -154,6 +155,7 @@ export default function getStepStartStates(
     [STEP_RM_REDIS_CACHES]: resourceManager,
     [STEP_RM_REDIS_FIREWALL_RULES]: resourceManager,
     [STEP_RM_REDIS_LINKED_SERVERS]: resourceManager,
+    [STEP_RM_CONTAINER_GROUPS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAINS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: resourceManager,
     [STEP_RM_EVENT_GRID_TOPICS]: resourceManager,

@@ -22,6 +22,7 @@ import { serviceBusSteps } from './steps/resource-manager/service-bus';
 import { cdnSteps } from './steps/resource-manager/cdn';
 import { batchSteps } from './steps/resource-manager/batch';
 import { redisCacheSteps } from './steps/resource-manager/redis-cache';
+import { containerInstanceSteps } from './steps/resource-manager/container-instance';
 import { eventGridSteps } from './steps/resource-manager/event-grid';
 
 export function hasSubscriptionId(config: IntegrationConfig): boolean {
@@ -76,7 +77,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...cdnSteps,
     ...batchSteps,
     ...redisCacheSteps,
-
+    ...containerInstanceSteps,
     // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last. See SDK #326: https://github.com/JupiterOne/sdk/issues/326
     // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
     ...eventGridSteps,

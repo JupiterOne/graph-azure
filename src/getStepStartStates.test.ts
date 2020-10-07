@@ -85,6 +85,7 @@ import {
   STEP_RM_REDIS_FIREWALL_RULES,
   STEP_RM_REDIS_LINKED_SERVERS,
 } from './steps/resource-manager/redis-cache';
+import { STEP_RM_CONTAINER_GROUPS } from './steps/resource-manager/container-instance';
 import {
   STEP_RM_EVENT_GRID_DOMAINS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
@@ -161,6 +162,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_REDIS_CACHES]: { disabled: true },
       [STEP_RM_REDIS_FIREWALL_RULES]: { disabled: true },
       [STEP_RM_REDIS_LINKED_SERVERS]: { disabled: true },
+      [STEP_RM_CONTAINER_GROUPS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAINS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: { disabled: true },
       [STEP_RM_EVENT_GRID_TOPICS]: { disabled: true },
@@ -231,6 +233,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_REDIS_CACHES]: { disabled: true },
       [STEP_RM_REDIS_FIREWALL_RULES]: { disabled: true },
       [STEP_RM_REDIS_LINKED_SERVERS]: { disabled: true },
+      [STEP_RM_CONTAINER_GROUPS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAINS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: { disabled: true },
       [STEP_RM_EVENT_GRID_TOPICS]: { disabled: true },
@@ -301,6 +304,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_REDIS_CACHES]: { disabled: false },
       [STEP_RM_REDIS_FIREWALL_RULES]: { disabled: false },
       [STEP_RM_REDIS_LINKED_SERVERS]: { disabled: false },
+      [STEP_RM_CONTAINER_GROUPS]: { disabled: false },
       [STEP_RM_EVENT_GRID_DOMAINS]: { disabled: false },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: { disabled: false },
       [STEP_RM_EVENT_GRID_TOPICS]: { disabled: false },

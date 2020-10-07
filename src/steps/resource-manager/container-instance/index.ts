@@ -78,13 +78,15 @@ async function createVolumeFileShareRelationshipHandler(
       if (storageFileShareEntity.id) {
         const fileShareRegex =
           '/subscriptions/[^/]+/resource[G|g]roups/[^/]+/providers/[M|m]icrosoft.[S|s]torage/storage[A|a]ccounts/([^/]+)/fileServices/default/shares/([^/]+)';
-        const match = storageFileShareEntity.id.match(fileShareRegex);
+        const match = (storageFileShareEntity.id as string).match(
+          fileShareRegex,
+        );
 
         if (match) {
           const [, storageAccountName, storageShareName] = match;
           if (
             volume.azureFile?.storageAccountName === storageAccountName &&
-            volume.azureFile.shareName === storageShareName
+            volume.azureFile?.shareName === storageShareName
           ) {
             await jobState.addRelationship(
               createDirectRelationship({
@@ -204,7 +206,9 @@ export async function fetchContainerGroups(
                     _class: RelationshipClass.USES,
                     from: containerEntity,
                     to: connectedVolumeEntity,
-                    properties: volumeMount,
+                    properties: {
+                      ...volumeMount,
+                    },
                   }),
                 );
               }

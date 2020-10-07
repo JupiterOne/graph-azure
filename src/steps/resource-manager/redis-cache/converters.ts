@@ -78,8 +78,8 @@ export function createRedisLinkedServerRelationshipProperties(
   return {
     linkedServerId: linkedServer.id,
     webLink: webLinker.portalResourceUrl(linkedServer.id),
-    primaryCacheId: primaryCache.id,
-    primaryCacheName: primaryCache.name,
+    primaryCacheId: primaryCache.id as string,
+    primaryCacheName: primaryCache.name as string,
     secondaryCacheId: linkedServer.linkedRedisCacheId,
     secondaryCacheName: linkedServer.name,
     secondaryCacheLocation: linkedServer.linkedRedisCacheLocation,

@@ -1,6 +1,11 @@
-export function generateEntityKey(id: string | number | undefined): string {
+export function generateEntityKey(
+  id: string | string[] | number | undefined,
+): string {
   if (!id) {
     throw new Error('Cannot generate entity key with `undefined` id');
+  }
+  if (Array.isArray(id)) {
+    throw new Error('Cannot generate entity key with array id');
   }
   return `${id}`;
 }

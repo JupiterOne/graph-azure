@@ -3,7 +3,6 @@ import snakeCase from 'lodash.snakecase';
 import {
   NetworkSecurityGroup,
   SecurityRule,
-  Subnet,
 } from '@azure/arm-network/esm/models';
 import { FirewallRuleProperties, INTERNET } from '@jupiterone/data-model';
 import {
@@ -21,7 +20,6 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import {
-  SECURITY_GROUP_ENTITY_TYPE,
   SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
   SUBNET_ENTITY_CLASS,
   SUBNET_ENTITY_TYPE,
@@ -105,24 +103,20 @@ function securityGroupRuleRelationshipKeyPrefix(rule: Rule): string {
 }
 
 export function createSecurityGroupRuleSubnetRelationship(
-  sg: NetworkSecurityGroup,
+  sgEntity: Entity,
   rule: Rule,
-  subnet: Subnet,
+  subnetEntity: Entity,
 ): Relationship {
   const direction = securityGroupRuleRelationshipDirection(rule);
   const directionalProperties =
     direction === RelationshipDirection.FORWARD
       ? {
-          fromType: SECURITY_GROUP_ENTITY_TYPE,
-          fromKey: sg.id as string,
-          toType: SUBNET_ENTITY_TYPE,
-          toKey: subnet.id as string,
+          from: sgEntity,
+          to: subnetEntity,
         }
       : {
-          fromType: SUBNET_ENTITY_TYPE,
-          fromKey: subnet.id as string,
-          toType: SECURITY_GROUP_ENTITY_TYPE,
-          toKey: sg.id as string,
+          from: subnetEntity,
+          to: sgEntity,
         };
   return createDirectRelationship({
     _class: securityGroupRuleRelationshipClass(rule),
@@ -130,26 +124,30 @@ export function createSecurityGroupRuleSubnetRelationship(
     properties: {
       ...rule.properties,
       _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
-      _key: `${securityGroupRuleRelationshipKeyPrefix(rule)}:${subnet.id}`,
+      _key: `${securityGroupRuleRelationshipKeyPrefix(rule)}:${
+        subnetEntity.id
+      }`,
     },
   });
 }
 
 export function createSecurityGroupRuleMappedRelationship(
-  sg: NetworkSecurityGroup,
+  sgEntity: Entity,
   rule: Rule,
   target: RuleTargetEntity,
 ): Relationship {
   const targetFilterKeys = target.internet ? [['_key']] : [Object.keys(target)];
-  const targetEntity = target.internet ? INTERNET : (target as Entity);
+  const targetEntity = target.internet ? INTERNET : target;
 
   return createMappedRelationship({
     _class: securityGroupRuleRelationshipClass(rule),
     _mapping: {
       relationshipDirection: securityGroupRuleRelationshipDirection(rule),
-      sourceEntityKey: sg.id as string,
+      sourceEntityKey: sgEntity._key,
       targetFilterKeys,
-      targetEntity,
+      targetEntity: {
+        ...targetEntity,
+      },
       skipTargetCreation: !!target._key,
     },
     properties: {

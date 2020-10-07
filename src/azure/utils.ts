@@ -32,12 +32,12 @@ export function resourceName(resource: { name?: string }): string {
 }
 
 export function resourceGroupName(
-  id: string | undefined,
+  id: string | string[] | undefined,
   required: true,
 ): string;
 
 export function resourceGroupName(
-  id: string | undefined,
+  id: string | string[] | undefined,
   required?: boolean,
 ): string | undefined;
 
@@ -56,12 +56,12 @@ export function resourceGroupName(
  * @returns the resource group name lowercased, or `undefined` when not found
  */
 export function resourceGroupName(
-  id: string | undefined,
+  id: string | string[] | undefined,
   required = false,
 ): string | undefined {
   let name: string | undefined;
 
-  if (id) {
+  if (id && !Array.isArray(id)) {
     name = getResourceGroupName(id);
   }
 
@@ -80,11 +80,11 @@ export function resourceGroupName(
  * @returns the resource domain name, or `undefined` when not found
  */
 export function getEventGridDomainNameFromId(
-  id: string | undefined,
+  id: string | string[] | undefined,
 ): string | undefined {
   let domainName: string | undefined;
 
-  if (id) {
+  if (id && !Array.isArray(id)) {
     const domainNameRegex = new RegExp(EVENT_GRID_DOMAIN_NAME_MATCHER, 'g');
     const domainNameMatches = domainNameRegex.exec(id); // if no matches are found, this will return null
     if (domainNameMatches) {

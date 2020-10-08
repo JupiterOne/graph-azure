@@ -7,7 +7,6 @@ import {
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
 
@@ -56,7 +55,7 @@ export class CosmosDBClient extends Client {
             accountName,
           );
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'cosmosdb.listSqlDatabases',
       callback,
     });

@@ -8,7 +8,6 @@ import {
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 
 export class BatchClient extends Client {
@@ -33,7 +32,7 @@ export class BatchClient extends Client {
         list: async () =>
           serviceClient.batchAccount.listByResourceGroup(resourceGroupName),
         listNext: serviceClient.batchAccount.listByResourceGroupNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'batch.account',
       callback,
     });
@@ -64,7 +63,7 @@ export class BatchClient extends Client {
             batchAccountName,
           ),
         listNext: serviceClient.pool.listByBatchAccountNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'batch.pool',
       callback,
     });
@@ -92,7 +91,7 @@ export class BatchClient extends Client {
         list: async () =>
           serviceClient.application.list(resourceGroupName, batchAccountName),
         listNext: serviceClient.application.listNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'batch.application',
       callback,
     });
@@ -123,7 +122,7 @@ export class BatchClient extends Client {
             batchAccountName,
           ),
         listNext: serviceClient.certificate.listByBatchAccountNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'batch.certificate',
       callback,
     });

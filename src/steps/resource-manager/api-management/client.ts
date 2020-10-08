@@ -6,7 +6,6 @@ import {
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
 
@@ -49,7 +48,7 @@ export class J1ApiManagementClient extends Client {
         ) => {
           return serviceClient.api.listByServiceNext(nextLink);
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'apiManagement.api',
       callback,
     });

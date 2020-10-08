@@ -8,7 +8,6 @@ import {
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 
 export class EventGridClient extends Client {
@@ -34,7 +33,7 @@ export class EventGridClient extends Client {
         list: async () =>
           serviceClient.domains.listByResourceGroup(resourceGroupName),
         listNext: serviceClient.domains.listByResourceGroupNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'eventGrid.domain',
       callback,
     });
@@ -65,7 +64,7 @@ export class EventGridClient extends Client {
             domainName,
           ),
         listNext: serviceClient.domainTopics.listByDomainNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'eventGrid.domainTopic',
       callback,
     });
@@ -101,7 +100,7 @@ export class EventGridClient extends Client {
             domainTopicName,
           ),
         listNext: serviceClient.eventSubscriptions.listByDomainTopicNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'eventGrid.domainTopicSubscription',
       callback,
     });
@@ -129,7 +128,7 @@ export class EventGridClient extends Client {
         list: async () =>
           serviceClient.topics.listByResourceGroup(resourceGroupName),
         listNext: serviceClient.topics.listByResourceGroupNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'eventGrid.topic',
       callback,
     });
@@ -172,7 +171,7 @@ export class EventGridClient extends Client {
             topicName,
           ),
         listNext: serviceClient.eventSubscriptions.listByResourceNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'eventGrid.topicSubscription',
       callback,
     });

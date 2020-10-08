@@ -3,7 +3,6 @@ import { PrivateZone, RecordSet } from '@azure/arm-privatedns/esm/models';
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
 
@@ -46,7 +45,7 @@ export class J1PrivateDnsManagementClient extends Client {
         ) => {
           return serviceClient.recordSets.listNext(nextLink);
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'privatedns.recordSet',
       callback,
     });

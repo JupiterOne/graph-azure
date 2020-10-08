@@ -8,6 +8,14 @@ import {
   Kind,
 } from '@azure/arm-storage/esm/models';
 
+import {
+  Client,
+  iterateAllResources,
+  IterateAllResourcesOptions,
+  ListResourcesEndpoint,
+} from '../../../azure/resource-manager/client';
+import { resourceGroupName } from '../../../azure/utils';
+
 interface ListStorageAccountResourcesEndpoint extends ListResourcesEndpoint {
   list<ListResponseType>(
     resourceGroupName: string,
@@ -45,19 +53,11 @@ async function iterateAllStorageAccountResources<ResourceType>({
       ) => {
         return resourceEndpoint.listNext(nextLink);
       },
-    } as ListResourcesEndpoint,
+    },
     resourceDescription,
     callback,
   });
 }
-
-import {
-  Client,
-  iterateAllResources,
-  ListResourcesEndpoint,
-  IterateAllResourcesOptions,
-} from '../../../azure/resource-manager/client';
-import { resourceGroupName } from '../../../azure/utils';
 
 export class StorageClient extends Client {
   public async iterateStorageAccounts(
@@ -98,7 +98,7 @@ export class StorageClient extends Client {
         ) => {
           return serviceClient.blobContainers.listNext(nextLink);
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'storage.blobContainers',
       callback,
     });
@@ -174,7 +174,7 @@ export class StorageClient extends Client {
         ) => {
           return serviceClient.fileShares.listNext(nextLink);
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'storage.fileShares',
       callback,
     });

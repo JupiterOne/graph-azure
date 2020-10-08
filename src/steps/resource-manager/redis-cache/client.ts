@@ -7,7 +7,6 @@ import {
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 
 export class RedisCacheClient extends Client {
@@ -31,7 +30,7 @@ export class RedisCacheClient extends Client {
         list: async () =>
           serviceClient.redis.listByResourceGroup(resourceGroupName),
         listNext: serviceClient.redis.listByResourceGroupNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'redisCache.cache',
       callback,
     });
@@ -62,7 +61,7 @@ export class RedisCacheClient extends Client {
             redisCacheName,
           ),
         listNext: serviceClient.firewallRules.listByRedisResourceNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'redisCache.firewallRule',
       callback,
     });
@@ -90,7 +89,7 @@ export class RedisCacheClient extends Client {
         list: async () =>
           serviceClient.linkedServer.list(resourceGroupName, redisCacheName),
         listNext: serviceClient.linkedServer.listNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'redisCache.linkedServer',
       callback,
     });

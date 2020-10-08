@@ -4,7 +4,6 @@ import { Database, Server } from '@azure/arm-postgresql/esm/models';
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../../azure/utils';
 
@@ -47,7 +46,7 @@ export class PostgreSQLClient extends Client {
             serverName,
           );
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'postgresql.databases',
       callback,
     });

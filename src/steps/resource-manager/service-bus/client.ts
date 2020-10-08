@@ -8,7 +8,6 @@ import {
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
 
@@ -53,7 +52,7 @@ export class ServiceBusClient extends Client {
         ) => {
           return serviceClient.queues.listByNamespaceNext(nextLink);
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'serviceBus.queue',
       callback,
     });
@@ -83,7 +82,7 @@ export class ServiceBusClient extends Client {
         ) => {
           return serviceClient.topics.listByNamespaceNext(nextLink);
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'serviceBus.topic',
       callback,
     });
@@ -115,7 +114,7 @@ export class ServiceBusClient extends Client {
         ) => {
           return serviceClient.topics.listByNamespaceNext(nextLink);
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'serviceBus.topic.subscription',
       callback,
     });

@@ -12,7 +12,6 @@ import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../../azure/utils';
 
@@ -58,7 +57,7 @@ export class SQLClient extends Client {
             serverName,
           );
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'sql.databases',
       callback,
     });

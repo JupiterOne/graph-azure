@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Stop casting client `resourceEndpoint` arg to `ListResourcesEndpoint`
+
 ## 5.4.0 - 2020-10-07
 
 ### Added

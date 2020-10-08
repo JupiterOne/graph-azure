@@ -3,7 +3,6 @@ import { Profile, Endpoint } from '@azure/arm-cdn/esm/models';
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
 
@@ -49,7 +48,7 @@ export class CdnClient extends Client {
         ) => {
           return serviceClient.endpoints.listByProfileNext(nextLink);
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'cdn.endpoint',
       callback,
     });

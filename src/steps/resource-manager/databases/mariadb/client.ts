@@ -4,7 +4,6 @@ import { Database, Server } from '@azure/arm-mariadb/esm/models';
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../../azure/utils';
 
@@ -47,7 +46,7 @@ export class MariaDBClient extends Client {
             serverName,
           );
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'maria.databases',
       callback,
     });

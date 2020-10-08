@@ -3,7 +3,6 @@ import { Zone, RecordSet } from '@azure/arm-dns/esm/models';
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
 
@@ -49,7 +48,7 @@ export class J1DnsManagementClient extends Client {
         ) => {
           return serviceClient.recordSets.listByDnsZoneNext(nextLink);
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'dns.recordSet',
       callback,
     });

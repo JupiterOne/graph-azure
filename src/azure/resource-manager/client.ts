@@ -21,18 +21,16 @@ import { AzureManagementClientCredentials } from './types';
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
  */
 export interface ListAllResourcesEndpoint {
-  listAll: <ListResponseType>() => Promise<ListResponseType>;
-  listAllNext: <ListResponseType>(
-    nextLink: string,
-  ) => Promise<ListResponseType>;
+  listAll: () => Promise<ResourceListResponse<any>>;
+  listAllNext: (nextLink: string) => Promise<ResourceListResponse<any>>;
 }
 
 /**
  * An Azure resource manager endpoint that has `list` and `listNext` functions.
  */
 export interface ListResourcesEndpoint {
-  list<ListResponseType>(...args: any): Promise<ListResponseType>;
-  listNext?<ListResponseType>(nextLink: string): Promise<ListResponseType>;
+  list(...args: any): Promise<ResourceListResponse<any>>;
+  listNext?(nextLink: string): Promise<ResourceListResponse<any>>;
 }
 
 export interface ResourceListResponse<T> extends Array<T> {
@@ -260,19 +258,13 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
         if ('listAllNext' in resourceEndpoint) {
           return nextLink
             ? /* istanbul ignore next: testing iteration might be difficult */
-              await resourceEndpoint.listAllNext<
-                ResourceListResponse<ResourceType>
-              >(nextLink)
-            : await resourceEndpoint.listAll<
-                ResourceListResponse<ResourceType>
-              >();
+              await resourceEndpoint.listAllNext(nextLink)
+            : await resourceEndpoint.listAll();
         } else {
           return resourceEndpoint.listNext && nextLink
             ? /* istanbul ignore next: testing iteration might be difficult */
-              await resourceEndpoint.listNext<
-                ResourceListResponse<ResourceType>
-              >(nextLink)
-            : await resourceEndpoint.list<ResourceListResponse<ResourceType>>();
+              await resourceEndpoint.listNext(nextLink)
+            : await resourceEndpoint.list();
         }
       }, endpointRatePeriod);
     } catch (err) {

@@ -3,7 +3,6 @@ import { Registry, Webhook } from '@azure/arm-containerregistry/esm/models';
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
 
@@ -46,7 +45,7 @@ export class J1ContainerRegistryManagementClient extends Client {
         ) => {
           return serviceClient.webhooks.listNext(nextLink);
         },
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'containerRegistry.webhook',
       callback,
     });

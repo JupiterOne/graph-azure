@@ -3,7 +3,6 @@ import { ContainerGroup } from '@azure/arm-containerinstance/esm/models';
 import {
   Client,
   iterateAllResources,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 
 export class ContainerInstanceClient extends Client {
@@ -28,7 +27,7 @@ export class ContainerInstanceClient extends Client {
         list: async () =>
           serviceClient.containerGroups.listByResourceGroup(resourceGroupName),
         listNext: serviceClient.containerGroups.listByResourceGroupNext,
-      } as ListResourcesEndpoint,
+      },
       resourceDescription: 'containerInstance.containerGroups',
       callback,
     });

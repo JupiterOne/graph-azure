@@ -16,6 +16,7 @@ import {
 } from './constants';
 import { createRecommendationEntity } from './converters';
 import { SecuritySteps } from '../security';
+import { getResourceManagerSteps } from '../../../getStepStartStates';
 export * from './constants';
 
 export async function fetchRecommendations(
@@ -77,7 +78,11 @@ export const advisorSteps: Step<
       AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING,
       AdvisorRelationships.ANY_RESOURCE_HAS_FINDING,
     ],
-    dependsOn: [STEP_AD_ACCOUNT, SecuritySteps.ASSESSMENTS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      SecuritySteps.ASSESSMENTS,
+      ...getResourceManagerSteps().executeFirstSteps,
+    ],
     executionHandler: fetchRecommendations,
   },
 ];

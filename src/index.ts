@@ -27,11 +27,6 @@ import { eventGridSteps } from './steps/resource-manager/event-grid';
 import { advisorSteps } from './steps/resource-manager/advisor';
 import { securitySteps } from './steps/resource-manager/security';
 
-export function hasSubscriptionId(config: IntegrationConfig): boolean {
-  const subscriptionId = config.subscriptionId;
-  return subscriptionId !== undefined && subscriptionId.length > 0;
-}
-
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
     clientId: {

@@ -25,6 +25,7 @@ import { redisCacheSteps } from './steps/resource-manager/redis-cache';
 import { containerInstanceSteps } from './steps/resource-manager/container-instance';
 import { eventGridSteps } from './steps/resource-manager/event-grid';
 import { advisorSteps } from './steps/resource-manager/advisor';
+import { securitySteps } from './steps/resource-manager/security';
 
 export function hasSubscriptionId(config: IntegrationConfig): boolean {
   const subscriptionId = config.subscriptionId;
@@ -83,5 +84,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
     ...eventGridSteps,
     ...advisorSteps,
+    ...securitySteps,
   ],
 };

@@ -94,6 +94,7 @@ import {
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
 } from './steps/resource-manager/event-grid';
 import { AdvisorSteps } from './steps/resource-manager/advisor';
+import { SecuritySteps } from './steps/resource-manager/security';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -170,6 +171,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
+      [SecuritySteps.ASSESSMENTS]: { disabled: true },
     });
   });
 
@@ -242,6 +244,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
+      [SecuritySteps.ASSESSMENTS]: { disabled: true },
     });
   });
 
@@ -314,6 +317,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: false },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: false },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: false },
+      [SecuritySteps.ASSESSMENTS]: { disabled: false },
     });
   });
 });

@@ -1,4 +1,5 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
+import { SecurityEntities } from '../security';
 import { ANY_SCOPE } from '../constants';
 
 export const AdvisorSteps = {
@@ -14,6 +15,12 @@ export const AdvisorEntities = {
 };
 
 export const AdvisorRelationships = {
+  ASSESSMENT_IDENTIFIED_FINDING: {
+    _type: 'azure_assessment_identified_recommendation',
+    sourceType: SecurityEntities.ASSESSMENT._type,
+    _class: RelationshipClass.IDENTIFIED,
+    targetType: AdvisorEntities.RECOMMENDATION._type,
+  },
   ANY_RESOURCE_HAS_FINDING: {
     _type: 'ANY_SCOPE_has_finding',
     sourceType: ANY_SCOPE,

@@ -48,6 +48,7 @@
     "@azure/arm-privatedns": "^2.0.0",
     "@azure/arm-rediscache": "^4.0.0",
     "@azure/arm-resources": "^4.0.0",
+    "@azure/arm-security": "^2.0.0",
     "@azure/arm-servicebus": "^4.0.0",
     "@azure/arm-sql": "^7.0.0",
     "@azure/arm-storage": "^15.1.0",

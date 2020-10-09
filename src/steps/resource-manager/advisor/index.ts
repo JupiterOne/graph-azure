@@ -15,6 +15,7 @@ import {
   AdvisorSteps,
 } from './constants';
 import { createRecommendationEntity } from './converters';
+import { SecuritySteps } from '../security';
 export * from './constants';
 
 export async function fetchRecommendations(
@@ -30,6 +31,22 @@ export async function fetchRecommendations(
     const recommendationEntity = await jobState.addEntity(
       createRecommendationEntity(webLinker, recommendation),
     );
+
+    const assessmentEntity = await jobState.findEntity(
+      recommendation.resourceMetadata?.source!,
+    );
+    if (assessmentEntity) {
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING._class,
+          from: assessmentEntity,
+          to: recommendationEntity,
+          properties: {
+            _type: AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING._type,
+          },
+        }),
+      );
+    }
 
     const resourceEntity = await jobState.findEntity(
       recommendation.resourceMetadata?.resourceId!,
@@ -56,8 +73,11 @@ export const advisorSteps: Step<
     id: AdvisorSteps.RECOMMENDATIONS,
     name: 'Recommendations',
     entities: [AdvisorEntities.RECOMMENDATION],
-    relationships: [AdvisorRelationships.ANY_RESOURCE_HAS_FINDING],
-    dependsOn: [STEP_AD_ACCOUNT],
+    relationships: [
+      AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING,
+      AdvisorRelationships.ANY_RESOURCE_HAS_FINDING,
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, SecuritySteps.ASSESSMENTS],
     executionHandler: fetchRecommendations,
   },
 ];

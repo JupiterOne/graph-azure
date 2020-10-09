@@ -13,6 +13,9 @@ import {
 } from '../key-vault';
 import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions';
 import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage';
+import { SecurityEntities } from '../security';
+import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
+
 let recording: Recording;
 
 afterEach(async () => {
@@ -37,6 +40,26 @@ test('step - recommendations', async () => {
   const context = createMockStepExecutionContext<IntegrationConfig>({
     instanceConfig,
     entities: [
+      // ASSESSMENT ENTITIES
+      {
+        _key:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/ndowmon1-j1dev/providers/Microsoft.Security/assessments/88bbc99c-e5af-ddd7-6105-6150b2bfa519',
+        _type: SecurityEntities.ASSESSMENT._type,
+        _class: SecurityEntities.ASSESSMENT._class,
+      },
+      {
+        _key:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1dev/providers/Microsoft.Security/assessments/51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6',
+        _type: SecurityEntities.ASSESSMENT._type,
+        _class: SecurityEntities.ASSESSMENT._class,
+      },
+      {
+        _key:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1devblobstorage/providers/Microsoft.Security/assessments/51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6',
+        _type: SecurityEntities.ASSESSMENT._type,
+        _class: SecurityEntities.ASSESSMENT._class,
+      },
+      // SCOPE ENTITIES
       {
         _key:
           '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/ndowmon1-j1dev',
@@ -72,6 +95,31 @@ test('step - recommendations', async () => {
   expect(collectedEntities.length).toBeGreaterThan(0);
   expect(collectedEntities).toMatchGraphObjectSchema({
     _class: AdvisorEntities.RECOMMENDATION._class,
+  });
+
+  const collectedEntitiesWithSourceProperty = collectedEntities.filter(
+    (e) =>
+      (e._rawData![0].rawData as ResourceRecommendationBase).resourceMetadata
+        ?.source !== undefined,
+  );
+
+  const assessmentRelationships = collectedRelationships.filter(
+    (r) => r._type === AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING._type,
+  );
+  expect(assessmentRelationships.length).toEqual(
+    collectedEntitiesWithSourceProperty.length,
+  );
+  expect(assessmentRelationships).toMatchDirectRelationshipSchema({
+    schema: {
+      properties: {
+        _class: {
+          const: AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING._class,
+        },
+        _type: {
+          const: AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING._type,
+        },
+      },
+    },
   });
 
   const resourceRelationships = collectedRelationships.filter(

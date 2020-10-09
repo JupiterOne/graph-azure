@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createAssessmentEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Assessment",
+  ],
+  "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1devblobstorage/providers/Microsoft.Security/assessments/51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "displayName": "Storage account public access should be disallowed",
+        "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1devblobstorage/providers/Microsoft.Security/assessments/51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
+        "name": "51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
+        "resourceDetails": Object {
+          "Id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1devblobstorage",
+          "Source": "Azure",
+        },
+        "status": Object {
+          "code": "Unhealthy",
+        },
+        "type": "Microsoft.Security/assessments",
+      },
+    },
+  ],
+  "_type": "azure_security_assessment",
+  "active": undefined,
+  "category": "Security Assessment",
+  "createdOn": undefined,
+  "displayName": "Storage account public access should be disallowed",
+  "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1devblobstorage/providers/Microsoft.Security/assessments/51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
+  "internal": true,
+  "name": "51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
+  "resourceDetailsId": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1devblobstorage",
+  "resourceDetailsSource": "Azure",
+  "statusCause": undefined,
+  "statusCode": "Unhealthy",
+  "statusDescription": undefined,
+  "summary": "Storage account public access should be disallowed",
+  "type": "Microsoft.Security/assessments",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1devblobstorage/providers/Microsoft.Security/assessments/51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
+}
+`;

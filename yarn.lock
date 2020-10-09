@@ -180,6 +180,15 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
+"@azure/arm-security@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-security/-/arm-security-2.0.0.tgz#5b0e05d23bc758d509bea2ee85e4d5d92c48962a"
+  integrity sha512-vkqhzIUo92fApQJMsaRRr1OTPRSbCV/ujwhdS6O+T0mdarMcCfDZK0h2y7bfzl0++S5EWBtm4otYWHK7fgKwhQ==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-servicebus@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-servicebus/-/arm-servicebus-4.0.0.tgz#16f511d09872edc92bf176a086f4ac74b44f8a47"

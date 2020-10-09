@@ -94,6 +94,7 @@ import {
 } from './steps/resource-manager/event-grid';
 import { hasSubscriptionId } from '.';
 import { AdvisorSteps } from './steps/resource-manager/advisor';
+import { SecuritySteps } from './steps/resource-manager/security';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -165,5 +166,6 @@ export default function getStepStartStates(
     [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: resourceManager,
     [AdvisorSteps.RECOMMENDATIONS]: resourceManager,
+    [SecuritySteps.ASSESSMENTS]: resourceManager,
   };
 }

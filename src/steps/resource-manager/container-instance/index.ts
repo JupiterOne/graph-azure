@@ -24,13 +24,13 @@ import {
   ContainerInstanceEntities,
   ContainerInstanceRelationships,
   STEP_RM_CONTAINER_GROUPS,
-} from './contants';
+} from './constants';
 import { Volume } from '@azure/arm-containerinstance/esm/models';
 import {
   STEP_RM_STORAGE_RESOURCES,
   STORAGE_FILE_SHARE_ENTITY_METADATA,
 } from '../storage';
-export * from './contants';
+export * from './constants';
 
 interface VolumeRelationshipStrategy {
   shouldAddRelationship: (volume: Volume) => Boolean;

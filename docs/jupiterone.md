@@ -82,6 +82,7 @@ The following entities are created:
 | [AD] User                          | `azure_user`                          | `User`                             |
 | [RM] API Management API            | `azure_api_management_api`            | `ApplicationEndpoint`              |
 | [RM] API Management Service        | `azure_api_management_service`        | `Gateway`                          |
+| [RM] Advisor Recommendation        | `azure_advisor_recommendation`        | `Finding`                          |
 | [RM] Azure Managed Disk            | `azure_managed_disk`                  | `DataStore`, `Disk`                |
 | [RM] Batch Account                 | `azure_batch_account`                 | `Service`                          |
 | [RM] Batch Application             | `azure_batch_application`             | `Process`                          |
@@ -144,6 +145,7 @@ The following relationships are created/mapped:
 
 | Source Entity `_type`           | Relationship `_class` | Target Entity `_type`                 |
 | ------------------------------- | --------------------- | ------------------------------------- |
+| `ANY_SCOPE`                     | **HAS**               | `azure_advisor_recommendation`        |
 | `azure_account`                 | **HAS**               | `azure_user_group`                    |
 | `azure_account`                 | **HAS**               | `azure_keyvault_service`              |
 | `azure_account`                 | **HAS**               | `azure_user`                          |

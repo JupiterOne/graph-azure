@@ -9,6 +9,15 @@
   dependencies:
     tslib "^1.9.3"
 
+"@azure/arm-advisor@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-advisor/-/arm-advisor-2.0.0.tgz#cc7b9743c9d239feafb07c7d30bc750e7d79155f"
+  integrity sha512-XLJtnPmz9c2AW0eYlTtU0nKqPaEbSwPeA66jba+sy0Ow3Qyb9Daxn4pf4SG0Y+TqWZq88F+Ou1OjizlG0Z74gg==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-apimanagement@^6.0.0":
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-apimanagement/-/arm-apimanagement-6.0.0.tgz#961c43284535de50c5d47384a16a5012b720bddc"

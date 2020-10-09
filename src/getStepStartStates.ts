@@ -93,6 +93,7 @@ import {
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
 } from './steps/resource-manager/event-grid';
 import { hasSubscriptionId } from '.';
+import { AdvisorSteps } from './steps/resource-manager/advisor';
 
 export default function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
@@ -163,5 +164,6 @@ export default function getStepStartStates(
     // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
     [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: resourceManager,
     [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: resourceManager,
+    [AdvisorSteps.RECOMMENDATIONS]: resourceManager,
   };
 }

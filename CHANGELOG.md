@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_advisor_recommendation` entities
+- Added `ANY_SCOPE|has|finding` relationships. These can target any scoped
+  entity within Azure.
+
 ## 5.4.1 - 2020-10-13
 
 ### Fixed

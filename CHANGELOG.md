@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Fixed
 
+- Don't throw if `createResourceGroupResourceRelationship` doesn't find the
+  target resource group.
 - Stop casting client `resourceEndpoint` arg to `ListResourcesEndpoint`
 
 ## 5.4.0 - 2020-10-07

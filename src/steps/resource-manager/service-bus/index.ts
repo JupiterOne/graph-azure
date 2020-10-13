@@ -45,11 +45,9 @@ export async function fetchServiceBusNamespaces(
     );
     await jobState.addEntity(namespaceEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        namespaceEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      namespaceEntity,
     );
   });
 }

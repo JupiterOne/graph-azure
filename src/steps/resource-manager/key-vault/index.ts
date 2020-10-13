@@ -37,11 +37,9 @@ export async function fetchKeyVaults(
   await client.iterateKeyVaults(async (vault) => {
     const vaultEntity = createKeyVaultEntity(webLinker, vault);
     await jobState.addEntity(vaultEntity);
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        vaultEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      vaultEntity,
     );
     await jobState.addRelationship(
       createDirectRelationship({

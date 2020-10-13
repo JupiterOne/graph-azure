@@ -55,11 +55,9 @@ export async function fetchEventGridDomains(
           const domainEntity = createEventGridDomainEntity(webLinker, domain);
           await jobState.addEntity(domainEntity);
 
-          await jobState.addRelationship(
-            await createResourceGroupResourceRelationship(
-              executionContext,
-              domainEntity,
-            ),
+          await createResourceGroupResourceRelationship(
+            executionContext,
+            domainEntity,
           );
         },
       );
@@ -166,11 +164,9 @@ export async function fetchEventGridTopics(
           const topicEntity = createEventGridTopicEntity(webLinker, topic);
           await jobState.addEntity(topicEntity);
 
-          await jobState.addRelationship(
-            await createResourceGroupResourceRelationship(
-              executionContext,
-              topicEntity,
-            ),
+          await createResourceGroupResourceRelationship(
+            executionContext,
+            topicEntity,
           );
         },
       );

@@ -34,11 +34,9 @@ export async function fetchZones(
     const dnsZoneEntity = createDnsZoneEntity(webLinker, zone);
     await jobState.addEntity(dnsZoneEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        dnsZoneEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      dnsZoneEntity,
     );
   });
 }

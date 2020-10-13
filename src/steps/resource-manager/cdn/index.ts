@@ -34,11 +34,9 @@ export async function fetchProfiles(
     const profileEntity = createCdnProfileEntity(webLinker, profile);
     await jobState.addEntity(profileEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        profileEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      profileEntity,
     );
   });
 }

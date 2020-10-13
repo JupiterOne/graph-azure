@@ -47,11 +47,9 @@ export async function fetchVirtualMachines(
     const virtualMachineEntity = createVirtualMachineEntity(webLinker, vm);
     await jobState.addEntity(virtualMachineEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        virtualMachineEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      virtualMachineEntity,
     );
 
     if (vm.storageProfile) {
@@ -75,11 +73,9 @@ export async function fetchVirtualMachineImages(
     const imageEntity = createImageEntity(webLinker, vm);
     await jobState.addEntity(imageEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        imageEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      imageEntity,
     );
   });
 }
@@ -97,12 +93,7 @@ export async function fetchVirtualMachineDisks(
     const diskEntity = createDiskEntity(webLinker, data);
     await jobState.addEntity(diskEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        diskEntity,
-      ),
-    );
+    await createResourceGroupResourceRelationship(executionContext, diskEntity);
   });
 }
 

@@ -51,11 +51,9 @@ export async function fetchRedisCaches(
             redisCache,
           );
           await jobState.addEntity(redisCacheEntity);
-          await jobState.addRelationship(
-            await createResourceGroupResourceRelationship(
-              executionContext,
-              redisCacheEntity,
-            ),
+          await createResourceGroupResourceRelationship(
+            executionContext,
+            redisCacheEntity,
           );
         },
       );

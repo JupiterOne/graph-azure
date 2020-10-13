@@ -37,11 +37,9 @@ export async function fetchPrivateZones(
     const dnsZoneEntity = createPrivateDnsZoneEntity(webLinker, zone);
     await jobState.addEntity(dnsZoneEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        dnsZoneEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      dnsZoneEntity,
     );
   });
 }

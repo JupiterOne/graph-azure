@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.4.1 - 2020-10-13
+
 ### Fixed
 
 - Don't throw if `createResourceGroupResourceRelationship` doesn't find the

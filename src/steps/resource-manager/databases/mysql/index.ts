@@ -34,11 +34,9 @@ export async function fetchMySQLDatabases(
     );
     await jobState.addEntity(serverEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        serverEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      serverEntity,
     );
 
     try {

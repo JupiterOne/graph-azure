@@ -111,11 +111,9 @@ export async function fetchNetworkInterfaces(
       findPublicIPAddresses(e.ipConfigurations),
     );
     await jobState.addEntity(networkInterfaceEntity);
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        networkInterfaceEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      networkInterfaceEntity,
     );
   });
 }
@@ -134,11 +132,9 @@ export async function fetchPublicIPAddresses(
     publicIpAddresses.push(e);
     const publicIpAddressEntity = createPublicIPAddressEntity(webLinker, e);
     await jobState.addEntity(publicIpAddressEntity);
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        publicIpAddressEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      publicIpAddressEntity,
     );
   });
 
@@ -202,11 +198,9 @@ export async function fetchLoadBalancers(
   await client.iterateLoadBalancers(async (e) => {
     const loadBalancerEntity = createLoadBalancerEntity(webLinker, e);
     await jobState.addEntity(loadBalancerEntity);
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        loadBalancerEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      loadBalancerEntity,
     );
     const nicRelationships = createLoadBalancerBackendNicRelationships(e);
     if (nicRelationships) {
@@ -230,9 +224,7 @@ export async function fetchNetworkSecurityGroups(
     const sgEntity = createNetworkSecurityGroupEntity(webLinker, sg);
     await jobState.addEntity(sgEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(executionContext, sgEntity),
-    );
+    await createResourceGroupResourceRelationship(executionContext, sgEntity);
 
     if (sg.networkInterfaces) {
       await jobState.addRelationships(
@@ -287,11 +279,9 @@ export async function fetchVirtualNetworks(
     }
     const virtualNetworkEntity = createVirtualNetworkEntity(webLinker, vnet);
     await jobState.addEntity(virtualNetworkEntity);
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        virtualNetworkEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      virtualNetworkEntity,
     );
   });
 }

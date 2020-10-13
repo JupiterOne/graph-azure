@@ -126,11 +126,9 @@ export async function fetchContainerGroups(
           );
 
           await jobState.addEntity(containerGroupEntity);
-          await jobState.addRelationship(
-            await createResourceGroupResourceRelationship(
-              executionContext,
-              containerGroupEntity,
-            ),
+          await createResourceGroupResourceRelationship(
+            executionContext,
+            containerGroupEntity,
           );
 
           /**

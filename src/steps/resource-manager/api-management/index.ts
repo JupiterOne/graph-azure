@@ -40,11 +40,9 @@ export async function fetchApiManagementServices(
     );
     await jobState.addEntity(apiManagementServiceEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        apiManagementServiceEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      apiManagementServiceEntity,
     );
   });
 }

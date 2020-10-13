@@ -26,10 +26,10 @@ describe('#createResourceGroupResourceRelationship', () => {
         resourceGroupId + '/providers/Microsoft/KeyVault/vaults/key-vault-id',
     };
 
-    const result = await createResourceGroupResourceRelationship(
-      context,
-      resourceEntity,
-    );
+    await createResourceGroupResourceRelationship(context, resourceEntity);
+
+    expect(context.jobState.collectedRelationships.length).toBe(1);
+    const result = context.jobState.collectedRelationships[0];
 
     expect(result).toEqual({
       _class: 'HAS',
@@ -66,10 +66,10 @@ describe('#createResourceGroupResourceRelationship', () => {
         '/providers/Microsoft/KeyVault/vaults/key-vault-id',
     };
 
-    const result = await createResourceGroupResourceRelationship(
-      context,
-      resourceEntity,
-    );
+    await createResourceGroupResourceRelationship(context, resourceEntity);
+
+    expect(context.jobState.collectedRelationships.length).toBe(1);
+    const result = context.jobState.collectedRelationships[0];
 
     expect(result).toEqual({
       _class: 'HAS',
@@ -93,6 +93,8 @@ describe('#createResourceGroupResourceRelationship', () => {
       entities: [],
     });
 
+    const loggerErrorSpy = spyOn(context.logger, 'error');
+
     const resourceEntity: Entity = {
       _class: ['Service'],
       _type: 'azure_keyvault_service',
@@ -100,11 +102,15 @@ describe('#createResourceGroupResourceRelationship', () => {
         resourceGroupId + '/providers/Microsoft/KeyVault/vaults/key-vault-id',
     };
 
-    const exec = async () =>
-      createResourceGroupResourceRelationship(context, resourceEntity);
+    await createResourceGroupResourceRelationship(context, resourceEntity);
 
-    await expect(exec).rejects.toThrow(
-      'Could not find the resource group "/subscriptions/subscription-id/resourceGroups/resource-group-id" in this subscription',
+    expect(context.jobState.collectedRelationships.length).toBe(0);
+
+    expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
+    expect(loggerErrorSpy).toHaveBeenCalledWith(
+      new Error(
+        'Could not find the resource group "/subscriptions/subscription-id/resourceGroups/resource-group-id" in this subscription.',
+      ),
     );
   });
 
@@ -147,10 +153,10 @@ describe('#createResourceGroupResourceRelationship', () => {
         '/subscriptions/subscription-id/resourceGroups/RESOURCE-GROUP-ID/providers/Microsoft/KeyVault/vaults/key-vault-id',
     };
 
-    const result = await createResourceGroupResourceRelationship(
-      context,
-      resourceEntity,
-    );
+    await createResourceGroupResourceRelationship(context, resourceEntity);
+
+    expect(context.jobState.collectedRelationships.length).toBe(1);
+    const result = context.jobState.collectedRelationships[0];
 
     expect(result).toEqual({
       _class: 'HAS',

@@ -40,11 +40,9 @@ export async function fetchContainerRegistries(
     const registryEntity = createContainerRegistryEntity(webLinker, registry);
     await jobState.addEntity(registryEntity);
 
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        registryEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      registryEntity,
     );
   });
 }

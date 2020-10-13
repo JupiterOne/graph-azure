@@ -54,11 +54,9 @@ export async function fetchBatchAccounts(
           );
           await jobState.addEntity(batchAccountEntity);
 
-          await jobState.addRelationship(
-            await createResourceGroupResourceRelationship(
-              executionContext,
-              batchAccountEntity,
-            ),
+          await createResourceGroupResourceRelationship(
+            executionContext,
+            batchAccountEntity,
           );
         },
       );

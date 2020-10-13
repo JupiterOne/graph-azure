@@ -52,11 +52,9 @@ export async function fetchStorageResources(
     const storageAccountEntity = await jobState.addEntity(
       createStorageAccountEntity(webLinker, storageAccount),
     );
-    await jobState.addRelationship(
-      await createResourceGroupResourceRelationship(
-        executionContext,
-        storageAccountEntity,
-      ),
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      storageAccountEntity,
     );
 
     await synchronizeStorageAccount(

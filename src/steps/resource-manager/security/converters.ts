@@ -35,11 +35,10 @@ export function createAssessmentEntity(
       source: data,
       assign: {
         ...convertProperties(data),
-        ...prefixProperties(convertProperties(data.metadata), 'metadata'),
-        ...prefixProperties(
-          convertProperties(data.resourceDetails),
-          'resourceDetails',
-        ),
+        ...convertProperties(data.metadata, { prefix: 'metadata' }),
+        ...convertProperties(data.resourceDetails, {
+          prefix: 'resourceDetails',
+        }),
         _key: data.id as string,
         _type: SecurityEntities.ASSESSMENT._type,
         _class: SecurityEntities.ASSESSMENT._class,
@@ -62,20 +61,4 @@ export function createAssessmentEntity(
       },
     },
   });
-}
-
-function prefixProperties(
-  obj: { [k: string]: any },
-  prefix: string,
-): { [k: string]: any } {
-  const newObj: { [k: string]: any } = {};
-
-  for (const key of Object.keys(obj)) {
-    newObj[prefix + capitalizeFirstLetter(key)] = obj[key];
-  }
-  return newObj;
-}
-
-function capitalizeFirstLetter(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }

@@ -2,14 +2,39 @@ import {
   Entity,
   createIntegrationEntity,
   convertProperties,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
 import { AdvisorEntities } from './constants';
-import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
+import {
+  ResourceRecommendationBase,
+  Impact,
+} from '@azure/arm-advisor/esm/models';
 
 function maybeConvertToNumber(maybeNumber: string | undefined) {
   if (!isNaN(parseFloat(maybeNumber || 'NaN'))) return parseFloat(maybeNumber!);
+}
+
+function getNumericSeverity(impact?: Impact) {
+  switch (impact) {
+    case 'High':
+      return 10;
+    case 'Medium':
+      return 5;
+    case 'Low':
+      return 1;
+
+    default:
+      return 5;
+  }
+}
+
+function getTargets(data: ResourceRecommendationBase): string[] {
+  const targets: string[] = [];
+  if (data.impactedField) targets.push(data.impactedField);
+  if (data.impactedValue) targets.push(data.impactedValue);
+  return targets;
 }
 
 export function createRecommendationEntity(
@@ -27,18 +52,20 @@ export function createRecommendationEntity(
         id: data.id,
         name: data.name,
         category: data.category,
-        impact: data.impact,
-        impactedField: data.impactedField,
-        impactedValue: data.impactedValue,
-        recommendationTypeId: data.recommendationTypeId,
+        assessment: data.extendedProperties?.assessmentKey,
+        severity: data.impact,
+        numericSeverity: getNumericSeverity(data.impact),
+        score: maybeConvertToNumber(data.extendedProperties?.score),
+        impact: data.impact?.toLowerCase(),
+        recommendation: data.shortDescription?.solution,
+        targets: getTargets(data),
         shortDescriptionProblem: data.shortDescription?.problem,
         shortDescriptionSolution: data.shortDescription?.solution,
-        assessmentKey: data.extendedProperties?.assessmentKey,
-        score: maybeConvertToNumber(data.extendedProperties?.score),
+
         resourceId: data.resourceMetadata?.resourceId,
         source: data.resourceMetadata?.source,
         open: true,
-        severity: data.impact,
+        updatedOn: parseTimePropertyValue(data.lastUpdated),
         webLink: webLinker.portalResourceUrl(data.id),
       },
     },

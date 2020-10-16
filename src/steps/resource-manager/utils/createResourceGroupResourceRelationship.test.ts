@@ -1,8 +1,7 @@
-import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
-import { IntegrationConfig } from '../../../types';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import createResourceGroupResourceRelationship from './createResourceGroupResourceRelationship';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
 describe('#createResourceGroupResourceRelationship', () => {
   test('should return direct relationship when resourceGroup exists in jobState', async () => {
@@ -14,7 +13,7 @@ describe('#createResourceGroupResourceRelationship', () => {
       _key: resourceGroupId,
     };
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [resourceGroupEntity],
     });
@@ -53,7 +52,7 @@ describe('#createResourceGroupResourceRelationship', () => {
       _key: resourceGroupId,
     };
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [resourceGroupEntity],
     });
@@ -88,7 +87,7 @@ describe('#createResourceGroupResourceRelationship', () => {
     const resourceGroupId =
       '/subscriptions/subscription-id/resourceGroups/resource-group-id';
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [],
     });
@@ -115,7 +114,7 @@ describe('#createResourceGroupResourceRelationship', () => {
   });
 
   test('should throw when resourceGroup cannot be extracted from entity _key', async () => {
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [],
     });
@@ -141,7 +140,7 @@ describe('#createResourceGroupResourceRelationship', () => {
       _key: '/subscriptions/subscription-id/resourceGroups/resource-group-id',
     };
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [resourceGroupEntity],
     });

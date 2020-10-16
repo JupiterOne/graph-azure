@@ -8,10 +8,7 @@ import {
   buildRoleAssignmentScopeRelationships,
 } from '.';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { AuthorizationClient } from './client';
 import { Entity } from '@jupiterone/integration-sdk-core';
@@ -30,6 +27,7 @@ import { generateEntityKey } from '../../../utils/generateKeys';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { USER_ENTITY_TYPE, USER_ENTITY_CLASS } from '../../active-directory';
 import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
 let recording: Recording;
 
@@ -76,7 +74,7 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
       _class: ROLE_DEFINITION_ENTITY_CLASS,
     };
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [roleDefinitionEntity],
     });
@@ -135,7 +133,7 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
       _class: ROLE_DEFINITION_ENTITY_CLASS,
     };
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [],
     });
@@ -164,7 +162,7 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
       roleDefinitionId: fullyQualifiedRoleDefinitionId,
     };
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [],
     });
@@ -219,7 +217,7 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
       principalType,
     };
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [targetEntity],
     });
@@ -252,7 +250,7 @@ describe('#findOrBuildTargetEntityForRoleDefinition', () => {
       principalType,
     };
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [],
     });
@@ -285,7 +283,7 @@ test('step - role assignments', async () => {
     name: 'active-directory-step-role-assignments',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
   });
 
@@ -356,7 +354,7 @@ test('step - role assignment principal relationships', async () => {
     principalType: 'User' as PrincipalType,
   };
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       userEntity,
@@ -437,7 +435,7 @@ test('step - role assignment scope relationships', async () => {
     scope: keyVaultPrefix + 'some-non-keyvault',
   };
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       keyVaultEntity,
@@ -498,7 +496,7 @@ test('step - role definitions', async () => {
     roleDefinitionId:
       '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
   };
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [roleAssignmentEntity, roleAssignmentEntityTwo],
   });
@@ -575,7 +573,7 @@ test('step - classic administrators', async () => {
     name: 'active-directory-step-classic-administrators',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
   });
 

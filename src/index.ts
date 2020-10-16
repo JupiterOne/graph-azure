@@ -81,4 +81,8 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...advisorSteps,
     ...securitySteps,
   ],
+
+  invocationConfigOptions: {
+    keyNormalizationFunction: (_key) => _key.toLowerCase(),
+  },
 };

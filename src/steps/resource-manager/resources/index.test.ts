@@ -2,14 +2,12 @@ import {
   fetchResourceGroups,
   createSubscriptionResourceGroupRelationship,
 } from '.';
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import globalInstanceConfig from '../../../../test/integrationInstanceConfig';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { Entity } from '@jupiterone/integration-sdk-core';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 let recording: Recording;
 
 afterEach(async () => {
@@ -27,7 +25,7 @@ describe('#createSubscriptionResourceGroupRelationship', () => {
       _key: subscriptionId,
     };
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig: globalInstanceConfig,
       entities: [subscriptionEntity],
     });
@@ -58,7 +56,7 @@ describe('#createSubscriptionResourceGroupRelationship', () => {
   test('should throw when subscription does not exist in jobState', async () => {
     const subscriptionId = '/subscriptions/subscription-id';
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig: globalInstanceConfig,
       entities: [],
     });
@@ -81,7 +79,7 @@ describe('#createSubscriptionResourceGroupRelationship', () => {
   });
 
   test('should throw when subscription ID cannot be extracted from entity _key', async () => {
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig: globalInstanceConfig,
       entities: [],
     });
@@ -117,7 +115,7 @@ test('step - resource groups', async () => {
     name: 'resource-manager-step-resource-groups',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {

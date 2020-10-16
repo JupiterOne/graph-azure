@@ -1,13 +1,11 @@
 import { fetchAssessments } from '.';
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { SecurityEntities } from './constants';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 let recording: Recording;
 
 afterEach(async () => {
@@ -29,7 +27,7 @@ test('step - security assessments', async () => {
     name: 'resource-manager-step-security-assessments',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {

@@ -1,11 +1,11 @@
 import {
-  createMockStepExecutionContext,
   Recording,
   MockIntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { fetchContainerGroups } from '.';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
 const instanceConfig: IntegrationConfig = {
   clientId: process.env.CLIENT_ID || 'clientId',
@@ -45,7 +45,7 @@ describe('step = container instance container groups', () => {
       },
     };
 
-    context = createMockStepExecutionContext<IntegrationConfig>({
+    context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: Object.values(entities),
     });

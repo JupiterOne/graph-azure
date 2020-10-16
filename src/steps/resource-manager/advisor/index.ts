@@ -33,36 +33,40 @@ export async function fetchRecommendations(
       createRecommendationEntity(webLinker, recommendation),
     );
 
-    const assessmentEntity = await jobState.findEntity(
-      recommendation.resourceMetadata?.source!,
-    );
-    if (assessmentEntity) {
-      await jobState.addRelationship(
-        createDirectRelationship({
-          _class: AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING._class,
-          from: assessmentEntity,
-          to: recommendationEntity,
-          properties: {
-            _type: AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING._type,
-          },
-        }),
+    if (recommendation.resourceMetadata?.source) {
+      const assessmentEntity = await jobState.findEntity(
+        recommendation.resourceMetadata.source,
       );
+      if (assessmentEntity) {
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING._class,
+            from: assessmentEntity,
+            to: recommendationEntity,
+            properties: {
+              _type: AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING._type,
+            },
+          }),
+        );
+      }
     }
 
-    const resourceEntity = await jobState.findEntity(
-      recommendation.resourceMetadata?.resourceId!,
-    );
-    if (resourceEntity) {
-      await jobState.addRelationship(
-        createDirectRelationship({
-          _class: AdvisorRelationships.ANY_RESOURCE_HAS_FINDING._class,
-          from: resourceEntity,
-          to: recommendationEntity,
-          properties: {
-            _type: AdvisorRelationships.ANY_RESOURCE_HAS_FINDING._type,
-          },
-        }),
+    if (recommendation.resourceMetadata?.resourceId) {
+      const resourceEntity = await jobState.findEntity(
+        recommendation.resourceMetadata.resourceId,
       );
+      if (resourceEntity) {
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: AdvisorRelationships.ANY_RESOURCE_HAS_FINDING._class,
+            from: resourceEntity,
+            to: recommendationEntity,
+            properties: {
+              _type: AdvisorRelationships.ANY_RESOURCE_HAS_FINDING._type,
+            },
+          }),
+        );
+      }
     }
   });
 }

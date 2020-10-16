@@ -1,8 +1,5 @@
 import { fetchRecommendations } from '.';
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { AdvisorEntities, AdvisorRelationships } from './constants';
@@ -15,6 +12,7 @@ import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions';
 import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage';
 import { SecurityEntities } from '../security';
 import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
 let recording: Recording;
 
@@ -37,7 +35,7 @@ test('step - recommendations', async () => {
     name: 'resource-manager-step-recommendations',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       // ASSESSMENT ENTITIES

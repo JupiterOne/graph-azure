@@ -1,9 +1,8 @@
 import findOrBuildResourceEntityFromResourceId from './findOrBuildResourceEntityFromResourceId';
 import { Entity } from '@jupiterone/integration-sdk-core';
-import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
-import { IntegrationConfig } from '../../../types';
 import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
 describe('#findOrBuildResourceEntityFromResourceId', () => {
   test('should find resource entity that exists in the job state', async () => {
@@ -15,7 +14,7 @@ describe('#findOrBuildResourceEntityFromResourceId', () => {
       _key: id,
     };
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [targetEntity],
     });
@@ -31,7 +30,7 @@ describe('#findOrBuildResourceEntityFromResourceId', () => {
     const id =
       '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [],
     });
@@ -49,7 +48,7 @@ describe('#findOrBuildResourceEntityFromResourceId', () => {
   test('should return undefined if resourceId does not match', async () => {
     const id = 'some-random-id';
 
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [],
     });

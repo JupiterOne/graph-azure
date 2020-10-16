@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Added
 
+- Added the ability to execute specific steps in an integration last.
+- Added a transformer so that `findEntity` uses case-insensitive matching.
 - Added `azure_advisor_recommendation` entities
 - Added `ANY_SCOPE|has|azure_advisor_recommendation` relationships. These can
   target any scoped entity within Azure.

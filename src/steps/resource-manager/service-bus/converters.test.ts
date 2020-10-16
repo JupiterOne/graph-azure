@@ -36,7 +36,6 @@ describe('createServiceBusNamespaceEntity', () => {
       createServiceBusNamespaceEntity(webLinker, data),
     ).toMatchGraphObjectSchema({
       _class: ['Service'],
-      schema: {},
     });
   });
 });
@@ -82,7 +81,6 @@ describe('createServiceBusQueueEntity', () => {
       createServiceBusQueueEntity(webLinker, data),
     ).toMatchGraphObjectSchema({
       _class: ['Queue'],
-      schema: {},
     });
   });
 });
@@ -125,7 +123,6 @@ describe('createServiceBusTopicEntity', () => {
       createServiceBusTopicEntity(webLinker, data),
     ).toMatchGraphObjectSchema({
       _class: ['Queue'],
-      schema: {},
     });
   });
 });
@@ -168,7 +165,6 @@ describe('createServiceBusSubscriptionEntity', () => {
       createServiceBusSubscriptionEntity(webLinker, data),
     ).toMatchGraphObjectSchema({
       _class: ['Subscription'],
-      schema: {},
     });
   });
 });

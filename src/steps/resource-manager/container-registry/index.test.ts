@@ -45,7 +45,6 @@ test('step - container registries', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'DataStore',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -99,7 +98,6 @@ test('step - container registry webhooks', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'ApplicationEndpoint',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([

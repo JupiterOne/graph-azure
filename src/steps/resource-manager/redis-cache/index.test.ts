@@ -53,7 +53,6 @@ test('step = redis caches', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: ['Database', 'DataStore', 'Cluster'],
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -109,7 +108,6 @@ test('step = redis firewall rules', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: ['Firewall'],
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([

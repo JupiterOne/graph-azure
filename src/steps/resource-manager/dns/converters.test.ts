@@ -28,7 +28,6 @@ describe('createDnsZoneEntity', () => {
     expect(createDnsZoneEntity(webLinker, data)).toMatchSnapshot();
     expect(createDnsZoneEntity(webLinker, data)).toMatchGraphObjectSchema({
       _class: ['DomainZone'],
-      schema: {},
     });
   });
 });
@@ -59,7 +58,6 @@ describe('createDnsRecordSetEntity', () => {
     expect(createDnsRecordSetEntity(webLinker, data)).toMatchSnapshot();
     expect(createDnsRecordSetEntity(webLinker, data)).toMatchGraphObjectSchema({
       _class: ['DomainRecord'],
-      schema: {},
     });
   });
 });

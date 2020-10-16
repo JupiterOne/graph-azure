@@ -58,7 +58,6 @@ describe('createContainerGroupEntity', () => {
     expect(containerGroupEntity).toMatchSnapshot();
     expect(containerGroupEntity).toMatchGraphObjectSchema({
       _class: ['Group'],
-      schema: {},
     });
   });
 });
@@ -81,7 +80,6 @@ describe('createContainerEntity', () => {
     expect(containerEntity).toMatchSnapshot();
     expect(containerEntity).toMatchGraphObjectSchema({
       _class: ['Container'],
-      schema: {},
     });
   });
 });
@@ -104,7 +102,6 @@ describe('createVolumeEntity', () => {
     expect(volumeEntity).toMatchSnapshot();
     expect(volumeEntity).toMatchGraphObjectSchema({
       _class: ['Disk'],
-      schema: {},
     });
   });
 });

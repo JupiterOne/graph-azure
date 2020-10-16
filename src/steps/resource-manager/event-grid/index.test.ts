@@ -57,7 +57,6 @@ test('step = event grid domains', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Service',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -114,7 +113,6 @@ test('step = event grid domain topics', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Queue',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -172,7 +170,6 @@ test('step = event grid domain topic subscriptions', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Subscription',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -219,7 +216,6 @@ test('step = event grid topics', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Queue',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -277,7 +273,6 @@ test('step = event grid topic subscriptions', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Subscription',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([

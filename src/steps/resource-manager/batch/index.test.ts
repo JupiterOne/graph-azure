@@ -53,7 +53,6 @@ test('step - batch accounts', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Service',
-    schema: {},
   });
   expect(context.jobState.collectedRelationships).toContainEqual({
     _class: 'HAS',
@@ -93,7 +92,6 @@ test('step - batch pools', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Cluster',
-    schema: {},
   });
   expect(context.jobState.collectedRelationships).toContainEqual({
     _class: 'HAS',
@@ -133,7 +131,6 @@ test('step - batch applications', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Process',
-    schema: {},
   });
   expect(context.jobState.collectedRelationships).toContainEqual({
     _class: 'HAS',
@@ -173,7 +170,6 @@ test('step - batch certificates', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Certificate',
-    schema: {},
   });
   expect(context.jobState.collectedRelationships).toContainEqual({
     _class: 'HAS',

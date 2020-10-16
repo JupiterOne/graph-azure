@@ -50,7 +50,6 @@ describe('createContainerRegistryEntity', () => {
       createContainerRegistryEntity(webLinker, data),
     ).toMatchGraphObjectSchema({
       _class: ['DataStore'],
-      schema: {},
     });
   });
 });
@@ -86,7 +85,6 @@ describe('createContainerRegistryWebhookEntity', () => {
       createContainerRegistryWebhookEntity(webLinker, data),
     ).toMatchGraphObjectSchema({
       _class: ['ApplicationEndpoint'],
-      schema: {},
     });
   });
 });

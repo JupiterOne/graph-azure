@@ -45,7 +45,6 @@ test('step - private dns zones', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'DomainZone',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -113,7 +112,6 @@ test('step - private dns record sets', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'DomainRecord',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([

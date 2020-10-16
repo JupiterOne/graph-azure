@@ -46,7 +46,6 @@ test('step - cdn profiles', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: CdnEntities.PROFILE._class,
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -100,7 +99,6 @@ test('step - cdn endpoints', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: CdnEntities.ENDPOINT._class,
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([

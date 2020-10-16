@@ -45,7 +45,6 @@ describe('createBatchAccountEntity', () => {
     expect(batchAccountEntity).toMatchSnapshot();
     expect(batchAccountEntity).toMatchGraphObjectSchema({
       _class: ['Service'],
-      schema: {},
     });
   });
 });
@@ -123,7 +122,6 @@ describe('createBatchPoolEntity', () => {
     expect(batchAccountPoolEntity).toMatchSnapshot();
     expect(batchAccountPoolEntity).toMatchGraphObjectSchema({
       _class: ['Cluster'],
-      schema: {},
     });
   });
 });
@@ -145,7 +143,6 @@ describe('createBatchApplicationEntity', () => {
     expect(batchApplicationEntity).toMatchSnapshot();
     expect(batchApplicationEntity).toMatchGraphObjectSchema({
       _class: ['Process'],
-      schema: {},
     });
   });
 });
@@ -175,7 +172,6 @@ describe('createBatchCertificateEntity', () => {
     expect(batchCertificateEntity).toMatchSnapshot();
     expect(batchCertificateEntity).toMatchGraphObjectSchema({
       _class: ['Certificate'],
-      schema: {},
     });
   });
 });

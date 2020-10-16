@@ -22,7 +22,6 @@ describe('createContainerRegistryEntity', () => {
     expect(createCdnProfileEntity(webLinker, data)).toMatchSnapshot();
     expect(createCdnProfileEntity(webLinker, data)).toMatchGraphObjectSchema({
       _class: CdnEntities.PROFILE._class,
-      schema: {},
     });
   });
 });
@@ -76,7 +75,6 @@ describe('createContainerRegistryWebhookEntity', () => {
     expect(createCdnEndpointEntity(webLinker, data)).toMatchSnapshot();
     expect(createCdnEndpointEntity(webLinker, data)).toMatchGraphObjectSchema({
       _class: CdnEntities.ENDPOINT._class,
-      schema: {},
     });
   });
 });

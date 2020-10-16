@@ -50,7 +50,6 @@ test('step - service bus namespaces', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Service',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -103,7 +102,6 @@ test('step - service bus queues', async () => {
 
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Queue',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -157,7 +155,6 @@ test('step - service bus topics', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Queue',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -211,7 +208,6 @@ test('step - service bus subscriptions', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Subscription',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([

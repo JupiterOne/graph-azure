@@ -31,7 +31,6 @@ describe('createPrivateDnsZoneEntity', () => {
       createPrivateDnsZoneEntity(webLinker, data),
     ).toMatchGraphObjectSchema({
       _class: ['DomainZone'],
-      schema: {},
     });
   });
 });
@@ -63,7 +62,6 @@ describe('createDnsRecordSetEntity', () => {
       createPrivateDnsRecordSetEntity(webLinker, data),
     ).toMatchGraphObjectSchema({
       _class: ['DomainRecord'],
-      schema: {},
     });
   });
 });

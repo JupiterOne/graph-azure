@@ -25,7 +25,11 @@ import {
 } from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
-import { USER_ENTITY_TYPE, USER_ENTITY_CLASS } from '../../active-directory';
+import {
+  USER_ENTITY_TYPE,
+  USER_ENTITY_CLASS,
+  ACCOUNT_ENTITY_TYPE,
+} from '../../active-directory';
 import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
@@ -285,10 +289,9 @@ test('step - role assignments', async () => {
 
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchRoleAssignments(context);
@@ -362,10 +365,6 @@ test('step - role assignment principal relationships', async () => {
       roleAssignmentMappedEntity,
     ],
   });
-
-  context.jobState.getData = jest
-    .fn()
-    .mockRejectedValue(new Error('Should not call getData in this step!'));
 
   await buildRoleAssignmentPrincipalRelationships(context);
 
@@ -444,10 +443,6 @@ test('step - role assignment scope relationships', async () => {
     ],
   });
 
-  context.jobState.getData = jest
-    .fn()
-    .mockRejectedValue(new Error('Should not call getData in this step!'));
-
   await buildRoleAssignmentScopeRelationships(context);
 
   expect(context.jobState.collectedEntities.length).toBe(0);
@@ -499,10 +494,9 @@ test('step - role definitions', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [roleAssignmentEntity, roleAssignmentEntityTwo],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchRoleDefinitions(context);
@@ -575,10 +569,9 @@ test('step - classic administrators', async () => {
 
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchClassicAdministrators(context);

@@ -8,6 +8,7 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 
 let recording: Recording;
 
@@ -42,10 +43,9 @@ test('step - batch accounts', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [resourceGroup],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchBatchAccounts(context);
@@ -83,10 +83,9 @@ test('step - batch pools', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [batchAccount],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchBatchPools(context);
@@ -124,10 +123,9 @@ test('step - batch applications', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [batchAccount],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchBatchApplications(context);
@@ -165,10 +163,9 @@ test('step - batch certificates', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [batchAccount],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchBatchCertificates(context);

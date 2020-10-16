@@ -11,6 +11,7 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 
 const instanceConfig: IntegrationConfig = {
   clientId: process.env.CLIENT_ID || 'clientId',
@@ -46,10 +47,9 @@ test('step = event grid domains', async () => {
           '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchEventGridDomains(context);
@@ -104,10 +104,9 @@ test('step = event grid domain topics', async () => {
           '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchEventGridDomainTopics(context);
@@ -163,10 +162,9 @@ test('step = event grid domain topic subscriptions', async () => {
         type: 'Microsoft.EventGrid/domains/topics',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchEventGridDomainTopicSubscriptions(context);
@@ -211,10 +209,9 @@ test('step = event grid topics', async () => {
           '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchEventGridTopics(context);
@@ -270,10 +267,9 @@ test('step = event grid topic subscriptions', async () => {
         type: 'Microsoft.EventGrid/topics',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchEventGridTopicSubscriptions(context);

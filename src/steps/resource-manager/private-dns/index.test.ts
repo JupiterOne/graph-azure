@@ -3,6 +3,7 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 let recording: Recording;
 
 afterEach(async () => {
@@ -34,10 +35,9 @@ test('step - private dns zones', async () => {
         _class: ['Group'],
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchPrivateZones(context);
@@ -103,10 +103,9 @@ test('step - private dns record sets', async () => {
         name: 'jupiterone-dev.com',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchPrivateRecordSets(context);

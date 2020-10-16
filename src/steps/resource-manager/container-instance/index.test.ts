@@ -6,6 +6,7 @@ import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { fetchContainerGroups } from '.';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 
 const instanceConfig: IntegrationConfig = {
   clientId: process.env.CLIENT_ID || 'clientId',
@@ -48,10 +49,9 @@ describe('step = container instance container groups', () => {
     context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: Object.values(entities),
-    });
-
-    context.jobState.getData = jest.fn().mockResolvedValue({
-      defaultDomain: 'www.fake-domain.com',
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      },
     });
 
     await fetchContainerGroups(context);

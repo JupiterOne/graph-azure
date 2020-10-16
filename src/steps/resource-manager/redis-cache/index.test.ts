@@ -7,6 +7,7 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 
 const instanceConfig: IntegrationConfig = {
   clientId: process.env.CLIENT_ID || 'clientId',
@@ -42,10 +43,9 @@ test('step = redis caches', async () => {
           '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchRedisCaches(context);
@@ -99,10 +99,9 @@ test('step = redis firewall rules', async () => {
         name: 'keionned-j1dev-redis-cache',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchRedisFirewallRules(context);
@@ -185,10 +184,9 @@ test('step = redis linked servers', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: Object.values(entities),
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   context.jobState.findEntity = jest

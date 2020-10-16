@@ -25,15 +25,15 @@ describe('step = container instance container groups', () => {
       name: 'resource-manager-step-container-groups',
     });
 
-    const entities = {
-      [`/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`]: {
+    const entities = [
+      {
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
         _type: 'azure_resource_group',
         _class: ['Group'],
         name: 'j1dev',
         id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
       },
-      [`/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev/fileServices/default/shares/j1dev`]: {
+      {
         id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev/fileServices/default/shares/j1dev`,
         name: 'j1dev',
         _type: 'azure_storage_file_share',
@@ -44,11 +44,11 @@ describe('step = container instance container groups', () => {
         encrypted: true,
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev/fileServices/default/shares/j1dev`,
       },
-    };
+    ];
 
     context = createMockAzureStepExecutionContext({
       instanceConfig,
-      entities: Object.values(entities),
+      entities,
       setData: {
         [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
       },

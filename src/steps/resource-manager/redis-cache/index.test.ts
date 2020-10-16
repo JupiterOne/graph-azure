@@ -133,8 +133,8 @@ test('step = redis linked servers', async () => {
     name: 'resource-manager-step-redis-linked-servers',
   });
 
-  const entities = {
-    '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev': {
+  const entities = [
+    {
       _key:
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
       _type: 'azure_resource_group',
@@ -143,7 +143,7 @@ test('step = redis linked servers', async () => {
       id:
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
     },
-    '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev-secondary-redis-cache-resource-group': {
+    {
       _key:
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev-secondary-redis-cache-resource-group',
       _type: 'azure_resource_group',
@@ -152,7 +152,7 @@ test('step = redis linked servers', async () => {
       id:
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev-secondary-redis-cache-resource-group',
     },
-    '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache': {
+    {
       _key:
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache',
       id:
@@ -161,7 +161,7 @@ test('step = redis linked servers', async () => {
       _type: 'azure_redis_cache',
       name: 'keionned-j1dev-redis-cache',
     },
-    '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-primary-redis-cache': {
+    {
       _key:
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-primary-redis-cache',
       id:
@@ -170,7 +170,7 @@ test('step = redis linked servers', async () => {
       _type: 'azure_redis_cache',
       name: 'keionned-j1dev-primary-redis-cache',
     },
-    '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev-secondary-redis-cache-resource-group/providers/Microsoft.Cache/Redis/keionned-j1dev-secondary-redis-cache': {
+    {
       _key:
         '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev-secondary-redis-cache-resource-group/providers/Microsoft.Cache/Redis/keionned-j1dev-secondary-redis-cache',
       id:
@@ -179,19 +179,15 @@ test('step = redis linked servers', async () => {
       _type: 'azure_redis_cache',
       name: 'keionned-j1dev-secondary-redis-cache',
     },
-  };
+  ];
 
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
-    entities: Object.values(entities),
+    entities,
     setData: {
       [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
     },
   });
-
-  context.jobState.findEntity = jest
-    .fn()
-    .mockImplementation((key) => Promise.resolve(entities[key]));
 
   await fetchRedisLinkedServers(context);
 

@@ -10,10 +10,6 @@ export function createMockAzureStepExecutionContext(
 ) {
   return createMockStepExecutionContext<IntegrationConfig>({
     ...options,
-    invocationConfigOptions: {
-      ...options.invocationConfigOptions,
-      keyNormalizationFunction:
-        invocationConfig.invocationConfigOptions?.keyNormalizationFunction,
-    },
+    normalizeGraphObjectKey: invocationConfig.normalizeGraphObjectKey,
   });
 }

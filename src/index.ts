@@ -82,7 +82,5 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...securitySteps,
   ],
 
-  invocationConfigOptions: {
-    keyNormalizationFunction: (_key) => _key.toLowerCase(),
-  },
+  normalizeGraphObjectKey: (_key) => _key.toLowerCase(),
 };

@@ -4,6 +4,7 @@ import {
   StorageAccount,
   StorageQueue,
   Table,
+  Kind,
 } from '@azure/arm-storage/esm/models';
 import {
   createMockIntegrationLogger,
@@ -234,6 +235,29 @@ describe('iterateQueues', () => {
 
     expect(resources).toEqual([]);
   });
+
+  test('fails when storage account does not support queues', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateQueeus-unsupported-account',
+      options: { recordFailedRequests: true },
+    });
+
+    const client = new StorageClient(config, createMockIntegrationLogger());
+
+    const storageAccount = {
+      id:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage',
+      name: 'ndowmon1j1devblobstorage',
+      kind: 'Storage' as Kind, // Set `Kind` to 'Storage` instead of 'BlobStorage' so the API is called on an invalid storage account.
+    };
+
+    await expect(
+      client.iterateQueues(storageAccount, jest.fn()),
+    ).rejects.toThrow(
+      'Provider API failed at storage.queues: FeatureNotSupportedForAccount Queue is not supported for the account.',
+    );
+  });
 });
 
 describe('iterateTables', () => {
@@ -275,5 +299,28 @@ describe('iterateTables', () => {
         type: 'Microsoft.Storage/storageAccounts/tableServices/tables',
       }),
     ]);
+  });
+
+  test('fails when storage account does not support tables', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateTables-unsupported-account',
+      options: { recordFailedRequests: true },
+    });
+
+    const client = new StorageClient(config, createMockIntegrationLogger());
+
+    const storageAccount = {
+      id:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage',
+      name: 'ndowmon1j1devblobstorage',
+      kind: 'Storage' as Kind, // Set `Kind` to 'Storage` instead of 'BlobStorage' so the API is called on an invalid storage account.
+    };
+
+    await expect(
+      client.iterateTables(storageAccount, jest.fn()),
+    ).rejects.toThrow(
+      'Provider API failed at storage.tables: OperationNotAllowedOnKind The operation is not allowed on account kind BlobStorage',
+    );
   });
 });

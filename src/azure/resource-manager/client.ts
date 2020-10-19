@@ -275,8 +275,8 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
         throw new IntegrationProviderAPIError({
           cause: err,
           endpoint: resourceDescription,
-          status: err.statusCode,
-          statusText: err.statusText,
+          status: err.body?.code || err.statusCode,
+          statusText: err.body?.message || err.statusText,
         });
       }
     }
@@ -286,6 +286,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
         {
           resourceCount: response.length,
           resource: response._response.request.url,
+          nextLink: response.nextLink,
         },
         'Received resources for endpoint',
       );

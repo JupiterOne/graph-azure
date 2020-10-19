@@ -11,53 +11,8 @@ import {
 import {
   Client,
   iterateAllResources,
-  IterateAllResourcesOptions,
-  ListResourcesEndpoint,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
-
-interface ListStorageAccountResourcesEndpoint extends ListResourcesEndpoint {
-  list<ListResponseType>(
-    resourceGroupName: string,
-    accountName: string,
-  ): Promise<ListResponseType>;
-  listNext<ListResponseType>(nextLink: string): Promise<ListResponseType>;
-}
-
-interface IterateAllStorageAccountResourcesOptions<ResourceType>
-  extends IterateAllResourcesOptions<any, ResourceType> {
-  resourceGroupName: string;
-  accountName: string;
-  serviceClient: StorageManagementClient;
-  resourceEndpoint: ListStorageAccountResourcesEndpoint;
-}
-
-async function iterateAllStorageAccountResources<ResourceType>({
-  serviceClient,
-  resourceEndpoint,
-  resourceDescription,
-  callback,
-  logger,
-  resourceGroupName,
-  accountName,
-}: IterateAllStorageAccountResourcesOptions<ResourceType>) {
-  return iterateAllResources({
-    logger,
-    serviceClient,
-    resourceEndpoint: {
-      list: async () => {
-        return resourceEndpoint.list(resourceGroupName, accountName);
-      },
-      listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-        nextLink: string,
-      ) => {
-        return resourceEndpoint.listNext(nextLink);
-      },
-    },
-    resourceDescription,
-    callback,
-  });
-}
 
 export class StorageClient extends Client {
   public async iterateStorageAccounts(
@@ -116,12 +71,25 @@ export class StorageClient extends Client {
     const accountName = storageAccount.name!;
 
     if ((['Storage', 'StorageV2'] as Kind[]).includes(storageAccount.kind)) {
-      return iterateAllStorageAccountResources({
+      this.logger.info(
+        {
+          resourceGroupName: resourceGroup,
+          storageAccountName: accountName,
+          storageAccountKind: storageAccount.kind,
+        },
+        'Fetching queues for storage account',
+      );
+      return iterateAllResources({
         logger: this.logger,
         serviceClient,
-        resourceEndpoint: serviceClient.queue,
-        resourceGroupName: resourceGroup,
-        accountName,
+        resourceEndpoint: {
+          list: async () => {
+            return serviceClient.queue.list(resourceGroup, accountName);
+          },
+          listNext: async (nextLink: string) => {
+            return serviceClient.queue.listNext(nextLink);
+          },
+        },
         resourceDescription: 'storage.queues',
         callback,
       });
@@ -137,15 +105,28 @@ export class StorageClient extends Client {
       StorageManagementClient,
     );
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
-    const accountName = storageAccount.name!;
+    const accountName = storageAccount.name;
 
     if ((['Storage', 'StorageV2'] as Kind[]).includes(storageAccount.kind)) {
-      return iterateAllStorageAccountResources({
+      this.logger.info(
+        {
+          resourceGroupName: resourceGroup,
+          storageAccountName: accountName,
+          storageAccountKind: storageAccount.kind,
+        },
+        'Fetching tables for storage account',
+      );
+      return iterateAllResources({
         logger: this.logger,
         serviceClient,
-        resourceEndpoint: serviceClient.table,
-        resourceGroupName: resourceGroup,
-        accountName,
+        resourceEndpoint: {
+          list: async () => {
+            return serviceClient.table.list(resourceGroup, accountName);
+          },
+          listNext: async (nextLink: string) => {
+            return serviceClient.table.listNext(nextLink);
+          },
+        },
         resourceDescription: 'storage.tables',
         callback,
       });

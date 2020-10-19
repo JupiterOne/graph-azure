@@ -7,7 +7,7 @@ import {
 import { default as authenticateGraph } from './azure/graph/authenticate';
 import { default as authenticateResourceManager } from './azure/resource-manager/authenticate';
 import { IntegrationConfig } from './types';
-import { hasSubscriptionId } from '.';
+import { hasSubscriptionId } from './utils/hasSubscriptionId';
 
 export default async function validateInvocation(
   validationContext: IntegrationExecutionContext<IntegrationConfig>,

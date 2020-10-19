@@ -6,7 +6,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { ContainerGroup } from '@azure/arm-containerinstance/esm/models';
 import { ContainerWithId, VolumeWithId } from './types';
-import { ContainerInstanceEntities } from './contants';
+import { ContainerInstanceEntities } from './constants';
 
 export function createContainerGroupEntity(
   webLinker: AzureWebLinker,

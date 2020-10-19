@@ -9,6 +9,15 @@
   dependencies:
     tslib "^1.9.3"
 
+"@azure/arm-advisor@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-advisor/-/arm-advisor-2.0.0.tgz#cc7b9743c9d239feafb07c7d30bc750e7d79155f"
+  integrity sha512-XLJtnPmz9c2AW0eYlTtU0nKqPaEbSwPeA66jba+sy0Ow3Qyb9Daxn4pf4SG0Y+TqWZq88F+Ou1OjizlG0Z74gg==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-apimanagement@^6.0.0":
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-apimanagement/-/arm-apimanagement-6.0.0.tgz#961c43284535de50c5d47384a16a5012b720bddc"
@@ -166,6 +175,15 @@
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-resources/-/arm-resources-4.0.0.tgz#5b0dd7cbb4327a5a2ce184dd4e170459ac41f485"
   integrity sha512-Dd2tsKnTJ62D/LYsr2njnj+/1HsUclJwBGZ+tVVfmdQir9pnGA11k2jhsuhHiCRU0auEKgMDNfhip7q/TpSrXQ==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
+"@azure/arm-security@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-security/-/arm-security-2.0.0.tgz#5b0e05d23bc758d509bea2ee85e4d5d92c48962a"
+  integrity sha512-vkqhzIUo92fApQJMsaRRr1OTPRSbCV/ujwhdS6O+T0mdarMcCfDZK0h2y7bfzl0++S5EWBtm4otYWHK7fgKwhQ==
   dependencies:
     "@azure/ms-rest-azure-js" "^2.0.1"
     "@azure/ms-rest-js" "^2.0.4"

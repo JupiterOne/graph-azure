@@ -8,6 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_advisor_recommendation` entities
+- Added `ANY_SCOPE|has|azure_advisor_recommendation` relationships. These can
+  target any scoped entity within Azure.
+- Added `azure_security_assessment` entities
+- Added `azure_security_assessment|identified|azure_advisor_recommendation`
+  relationships
+- Added `azure_subscription|performed|azure_security_assessment` relationships
+
 ## 5.4.1 - 2020-10-13
 
 ### Fixed

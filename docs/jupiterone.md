@@ -82,6 +82,7 @@ The following entities are created:
 | [AD] User                          | `azure_user`                          | `User`                             |
 | [RM] API Management API            | `azure_api_management_api`            | `ApplicationEndpoint`              |
 | [RM] API Management Service        | `azure_api_management_service`        | `Gateway`                          |
+| [RM] Advisor Recommendation        | `azure_advisor_recommendation`        | `Finding`                          |
 | [RM] Azure Managed Disk            | `azure_managed_disk`                  | `DataStore`, `Disk`                |
 | [RM] Batch Account                 | `azure_batch_account`                 | `Service`                          |
 | [RM] Batch Application             | `azure_batch_application`             | `Process`                          |
@@ -123,6 +124,7 @@ The following entities are created:
 | [RM] Role Definition               | `azure_role_definition`               | `AccessRole`                       |
 | [RM] SQL Database                  | `azure_sql_database`                  | `Database`, `DataStore`            |
 | [RM] SQL Server                    | `azure_sql_server`                    | `Database`, `DataStore`, `Host`    |
+| [RM] Security Assessment           | `azure_security_assessment`           | `Assessment`                       |
 | [RM] Security Group                | `azure_security_group`                | `Firewall`                         |
 | [RM] Service Bus Namespace         | `azure_service_bus_namespace`         | `Service`                          |
 | [RM] Service Bus Queue             | `azure_service_bus_queue`             | `Queue`                            |
@@ -144,10 +146,12 @@ The following relationships are created/mapped:
 
 | Source Entity `_type`           | Relationship `_class` | Target Entity `_type`                 |
 | ------------------------------- | --------------------- | ------------------------------------- |
+| `ANY_SCOPE`                     | **HAS**               | `azure_advisor_recommendation`        |
 | `azure_account`                 | **HAS**               | `azure_user_group`                    |
 | `azure_account`                 | **HAS**               | `azure_keyvault_service`              |
 | `azure_account`                 | **HAS**               | `azure_user`                          |
 | `azure_api_management_service`  | **HAS**               | `azure_api_management_api`            |
+| `azure_security_assessment`     | **IDENTIFIED**        | `azure_advisor_recommendation`        |
 | `azure_batch_account`           | **HAS**               | `azure_batch_application`             |
 | `azure_batch_account`           | **HAS**               | `azure_batch_certificate`             |
 | `azure_batch_account`           | **HAS**               | `azure_batch_pool`                    |
@@ -237,6 +241,7 @@ The following relationships are created/mapped:
 | `azure_storage_account`         | **HAS**               | `azure_storage_table`                 |
 | `azure_subnet`                  | **HAS**               | `azure_vm`                            |
 | `azure_subscription`            | **HAS**               | `azure_resource_group`                |
+| `azure_subscription`            | **PERFORMED**         | `azure_security_assessment`           |
 | `azure_vm`                      | **USES**              | `azure_managed_disk`                  |
 | `azure_vm`                      | **USES**              | `azure_nic`                           |
 | `azure_vm`                      | **USES**              | `azure_public_ip`                     |

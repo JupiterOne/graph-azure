@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Added
 
+- Added info-level logs when iterating Queues & Tables in storage accounts.
 - Added the ability to execute specific steps in an integration last.
 - Added a transformer so that `findEntity` uses case-insensitive matching.
 - Added `azure_advisor_recommendation` entities

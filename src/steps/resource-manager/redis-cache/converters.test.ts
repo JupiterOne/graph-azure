@@ -52,7 +52,6 @@ describe('createRedisCacheEntity', () => {
     expect(redisCacheEntity).toMatchSnapshot();
     expect(redisCacheEntity).toMatchGraphObjectSchema({
       _class: ['Database', 'DataStore', 'Cluster'],
-      schema: {},
     });
   });
 });

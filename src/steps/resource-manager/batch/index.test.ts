@@ -8,6 +8,7 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 
 let recording: Recording;
 
@@ -42,10 +43,9 @@ test('step - batch accounts', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [resourceGroup],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchBatchAccounts(context);
@@ -53,7 +53,6 @@ test('step - batch accounts', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Service',
-    schema: {},
   });
   expect(context.jobState.collectedRelationships).toContainEqual({
     _class: 'HAS',
@@ -83,10 +82,9 @@ test('step - batch pools', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [batchAccount],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchBatchPools(context);
@@ -94,7 +92,6 @@ test('step - batch pools', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Cluster',
-    schema: {},
   });
   expect(context.jobState.collectedRelationships).toContainEqual({
     _class: 'HAS',
@@ -124,10 +121,9 @@ test('step - batch applications', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [batchAccount],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchBatchApplications(context);
@@ -135,7 +131,6 @@ test('step - batch applications', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Process',
-    schema: {},
   });
   expect(context.jobState.collectedRelationships).toContainEqual({
     _class: 'HAS',
@@ -165,10 +160,9 @@ test('step - batch certificates', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [batchAccount],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchBatchCertificates(context);
@@ -176,7 +170,6 @@ test('step - batch certificates', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Certificate',
-    schema: {},
   });
   expect(context.jobState.collectedRelationships).toContainEqual({
     _class: 'HAS',

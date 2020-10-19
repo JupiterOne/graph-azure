@@ -8,6 +8,7 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 let recording: Recording;
 
 afterEach(async () => {
@@ -39,10 +40,9 @@ test('step - service bus namespaces', async () => {
         _class: ['Group'],
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchServiceBusNamespaces(context);
@@ -50,7 +50,6 @@ test('step - service bus namespaces', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Service',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -94,17 +93,15 @@ test('step - service bus queues', async () => {
         name: 'ndowmon1j1dev',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchServiceBusQueues(context);
 
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Queue',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -148,10 +145,9 @@ test('step - service bus topics', async () => {
         name: 'ndowmon1j1dev',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchServiceBusTopics(context);
@@ -159,7 +155,6 @@ test('step - service bus topics', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Queue',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -203,10 +198,9 @@ test('step - service bus subscriptions', async () => {
         name: 'j1dev-topic',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchServiceBusSubscriptions(context);
@@ -214,7 +208,6 @@ test('step - service bus subscriptions', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: 'Subscription',
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([

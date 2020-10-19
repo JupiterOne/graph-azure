@@ -8,6 +8,7 @@ import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 let recording: Recording;
 
 afterEach(async () => {
@@ -124,10 +125,9 @@ test('step - resource groups', async () => {
         _key: `/subscriptions/${instanceConfig.subscriptionId}`,
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchResourceGroups(context);

@@ -4,6 +4,7 @@ import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { CdnEntities } from './constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 let recording: Recording;
 
 afterEach(async () => {
@@ -35,10 +36,9 @@ test('step - cdn profiles', async () => {
         _class: ['Group'],
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchProfiles(context);
@@ -46,7 +46,6 @@ test('step - cdn profiles', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: CdnEntities.PROFILE._class,
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([
@@ -90,10 +89,9 @@ test('step - cdn endpoints', async () => {
         name: 'j1dev',
       },
     ],
-  });
-
-  context.jobState.getData = jest.fn().mockResolvedValue({
-    defaultDomain: 'www.fake-domain.com',
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
   });
 
   await fetchEndpoints(context);
@@ -101,7 +99,6 @@ test('step - cdn endpoints', async () => {
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: CdnEntities.ENDPOINT._class,
-    schema: {},
   });
 
   expect(context.jobState.collectedRelationships).toEqual([

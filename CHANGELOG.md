@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.5.0 - 2020-10-19
+
 ### Added
 
 - Added info-level logs when iterating Queues & Tables in storage accounts.

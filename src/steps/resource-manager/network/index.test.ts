@@ -3,14 +3,10 @@ import {
   Relationship,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
-import { IntegrationConfig } from '../../../types';
 import { fetchAccount } from '../../active-directory';
 import {
   buildSecurityGroupRuleRelationships,
@@ -20,6 +16,7 @@ import {
   fetchPublicIPAddresses,
   fetchVirtualNetworks,
 } from './';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
 expect.extend({
   toContainGraphObject<T extends Entity | Relationship>(
@@ -108,7 +105,7 @@ test('network steps', async () => {
     _class: ['Group'],
   };
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [resouceGroupEntity],
   });

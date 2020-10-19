@@ -1,10 +1,8 @@
 import { fetchApiManagementServices, fetchApiManagementApis } from '.';
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 let recording: Recording;
 
 afterEach(async () => {
@@ -26,7 +24,7 @@ test('step - api management services', async () => {
     name: 'resource-manager-step-api-management-services',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -122,7 +120,7 @@ test('step - api management apis', async () => {
     },
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {

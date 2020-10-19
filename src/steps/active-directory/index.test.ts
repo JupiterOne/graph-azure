@@ -1,7 +1,4 @@
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 
 import { setupAzureRecording } from '../../../test/helpers/recording';
 import instanceConfig from '../../../test/integrationInstanceConfig';
@@ -13,6 +10,7 @@ import {
   fetchUsers,
   fetchServicePrincipals,
 } from './index';
+import { createMockAzureStepExecutionContext } from '../../../test/createMockAzureStepExecutionContext';
 
 let recording: Recording;
 
@@ -26,7 +24,7 @@ test('active directory steps', async () => {
     name: 'active-directory-steps',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
   });
 
@@ -301,7 +299,7 @@ test('active directory step - service principals', async () => {
     name: 'active-directory-step-service-principals',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
   });
 

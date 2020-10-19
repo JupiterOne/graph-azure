@@ -3,12 +3,10 @@ import {
   fetchRedisFirewallRules,
   fetchRedisLinkedServers,
 } from '.';
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
 const instanceConfig: IntegrationConfig = {
   clientId: process.env.CLIENT_ID || 'clientId',
@@ -31,7 +29,7 @@ test('step = redis caches', async () => {
     name: 'resource-manager-step-redis-caches',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -79,7 +77,7 @@ test('step = redis firewall rules', async () => {
     name: 'resource-manager-step-redis-firewall-rules',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -184,7 +182,7 @@ test('step = redis linked servers', async () => {
     },
   };
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: Object.values(entities),
   });

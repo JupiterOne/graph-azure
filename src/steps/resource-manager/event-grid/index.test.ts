@@ -6,13 +6,11 @@ import {
   fetchEventGridTopicSubscriptions,
 } from '.';
 
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
 const instanceConfig: IntegrationConfig = {
   clientId: process.env.CLIENT_ID || 'clientId',
@@ -35,7 +33,7 @@ test('step = event grid domains', async () => {
     name: 'resource-manager-step-event-grid-domains',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -83,7 +81,7 @@ test('step = event grid domain topics', async () => {
     name: 'resource-manager-step-event-grid-domain-topics',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -141,7 +139,7 @@ test('step = event grid domain topic subscriptions', async () => {
     name: 'resource-manager-step-event-grid-domain-topic-subscriptions',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -200,7 +198,7 @@ test('step = event grid topics', async () => {
     name: 'resource-manager-step-event-grid-topics',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -248,7 +246,7 @@ test('step = event grid topic subscriptions', async () => {
     name: 'resource-manager-step-event-grid-topic-subscriptions',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {

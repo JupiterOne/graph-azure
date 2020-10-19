@@ -81,4 +81,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...advisorSteps,
     ...securitySteps,
   ],
+
+  normalizeGraphObjectKey: (_key) => _key.toLowerCase(),
 };

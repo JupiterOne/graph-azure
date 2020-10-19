@@ -1,11 +1,9 @@
 import { fetchProfiles, fetchEndpoints } from '.';
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { CdnEntities } from './constants';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 let recording: Recording;
 
 afterEach(async () => {
@@ -27,7 +25,7 @@ test('step - cdn profiles', async () => {
     name: 'resource-manager-step-cdn-profiles',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -81,7 +79,7 @@ test('step - cdn endpoints', async () => {
 
   const parentId =
     '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev';
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {

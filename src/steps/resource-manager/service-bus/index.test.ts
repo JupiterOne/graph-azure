@@ -4,12 +4,10 @@ import {
   fetchServiceBusTopics,
   fetchServiceBusSubscriptions,
 } from '.';
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 let recording: Recording;
 
 afterEach(async () => {
@@ -31,7 +29,7 @@ test('step - service bus namespaces', async () => {
     name: 'resource-manager-step-service-bus-namespaces',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -83,7 +81,7 @@ test('step - service bus queues', async () => {
     name: 'resource-manager-step-service-bus-queues',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -137,7 +135,7 @@ test('step - service bus topics', async () => {
     name: 'resource-manager-step-service-bus-topics',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {
@@ -192,7 +190,7 @@ test('step - service bus subscriptions', async () => {
     name: 'resource-manager-step-service-bus-subscriptions',
   });
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
       {

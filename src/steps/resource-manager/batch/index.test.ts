@@ -4,12 +4,10 @@ import {
   fetchBatchCertificates,
   fetchBatchPools,
 } from '.';
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
 let recording: Recording;
 
@@ -41,7 +39,7 @@ test('step - batch accounts', async () => {
     location: 'eastus',
   };
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [resourceGroup],
   });
@@ -82,7 +80,7 @@ test('step - batch pools', async () => {
     name: 'j1devbatchaccount',
   };
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [batchAccount],
   });
@@ -123,7 +121,7 @@ test('step - batch applications', async () => {
     name: 'j1devbatchaccount',
   };
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [batchAccount],
   });
@@ -164,7 +162,7 @@ test('step - batch certificates', async () => {
     name: 'j1devbatchaccount',
   };
 
-  const context = createMockStepExecutionContext<IntegrationConfig>({
+  const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [batchAccount],
   });

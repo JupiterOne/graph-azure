@@ -4,6 +4,7 @@ import {
   StorageAccount,
   StorageQueue,
   Table,
+  Endpoints,
 } from '@azure/arm-storage/esm/models';
 import {
   createIntegrationEntity,
@@ -19,6 +20,34 @@ import {
   STORAGE_QUEUE_ENTITY_METADATA,
   STORAGE_TABLE_ENTITY_METADATA,
 } from './constants';
+
+/**
+ * J1 entity properties cannot be arrays of objects; create an array of string endpoints
+ */
+function getArrayOfStorageAccountEndpoints(
+  endpoints?: Endpoints,
+): string[] | undefined {
+  if (endpoints) {
+    return [
+      endpoints.blob,
+      endpoints.queue,
+      endpoints.table,
+      endpoints.file,
+      endpoints.web,
+      endpoints.dfs,
+      endpoints.microsoftEndpoints?.blob,
+      endpoints.microsoftEndpoints?.queue,
+      endpoints.microsoftEndpoints?.table,
+      endpoints.microsoftEndpoints?.file,
+      endpoints.microsoftEndpoints?.web,
+      endpoints.microsoftEndpoints?.dfs,
+      endpoints.internetEndpoints?.blob,
+      endpoints.internetEndpoints?.file,
+      endpoints.internetEndpoints?.web,
+      endpoints.internetEndpoints?.dfs,
+    ].filter((e): e is string => e !== undefined);
+  }
+}
 
 /**
  * Creates an entity for a storage service. Storage accounts have one or more
@@ -42,9 +71,7 @@ export function createStorageAccountEntity(
         resourceGroup: resourceGroupName(data.id),
         kind: data.kind,
         sku: data.sku?.name,
-        endpoints: data.primaryEndpoints
-          ? Object.values(data.primaryEndpoints)
-          : undefined,
+        endpoints: getArrayOfStorageAccountEndpoints(data.primaryEndpoints),
         enableHttpsTrafficOnly: data.enableHttpsTrafficOnly,
         category: ['infrastructure'],
         encryptedFileShare:

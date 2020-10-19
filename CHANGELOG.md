@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- [#182](https://github.com/JupiterOne/graph-azure/issues/182) - Disallow
+  objects in `azure_storage_account.endpoints` array property.
+
 ## 5.5.0 - 2020-10-19
 
 ### Added

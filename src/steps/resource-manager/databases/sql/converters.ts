@@ -27,6 +27,7 @@ export function setAuditingStatus(
   if (auditStatus) {
     Object.assign(serverOrDatabaseEntity, {
       auditingEnabled: ENABLED_PATTERN.test(auditStatus),
+      loggingEnabled: ENABLED_PATTERN.test(auditStatus),
       auditLogDestination: auditing.storageEndpoint,
       auditActionsAndGroups: auditing.auditActionsAndGroups?.filter(
         (e) => e !== '',

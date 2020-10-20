@@ -10,8 +10,9 @@ and this project adheres to
 
 ### Fixed
 
+- Added `loggingEnabled` property on database entities
 - [#182](https://github.com/JupiterOne/graph-azure/issues/182) - Disallow
-  objects in `azure_storage_account.endpoints` array property.
+  objects in `azure_storage_account.endpoints` array property
 
 ## 5.5.0 - 2020-10-19
 

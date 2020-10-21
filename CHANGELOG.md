@@ -10,6 +10,9 @@ and this project adheres to
 
 ### Fixed
 
+- [#185](https://github.com/JupiterOne/graph-azure/issues/185) - Handle
+  `OperationNotAllowedOnKind` errors when storage accounts do not allow storage
+  queues or storage tables
 - Added `loggingEnabled` property on database entities
 - [#182](https://github.com/JupiterOne/graph-azure/issues/182) - Disallow
   objects in `azure_storage_account.endpoints` array property

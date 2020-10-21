@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Fixed
 
+- [#187](https://github.com/JupiterOne/graph-azure/issues/187) - Throw
+  `IntegrationValidationError` when invalid client secret is provided.
 - [#185](https://github.com/JupiterOne/graph-azure/issues/185) - Handle
   `OperationNotAllowedOnKind` errors when storage accounts do not allow storage
   queues or storage tables

@@ -1,4 +1,4 @@
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
+import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import { Recording } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../test/integrationInstanceConfig';
@@ -28,5 +28,5 @@ test('authenticate invalid credentials', async () => {
   });
   await expect(
     authenticate({ ...config, clientSecret: 'somejunkfortest' }),
-  ).rejects.toThrow(IntegrationProviderAPIError);
+  ).rejects.toThrow(IntegrationValidationError);
 });

@@ -56,7 +56,10 @@ function getJSONErrorFromGraphAuthenticate(
   errorResponse: ErrorResponse,
   endpoint: string,
 ): Error {
-  if (errorResponse.error === 'invalid_request') {
+  if (
+    errorResponse.error === 'invalid_request' ||
+    errorResponse.error === 'invalid_client'
+  ) {
     throw new IntegrationValidationError(errorResponse.error_description);
   } else {
     const error = new Error(errorResponse.error_description);

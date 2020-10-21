@@ -71,28 +71,40 @@ export class StorageClient extends Client {
     const accountName = storageAccount.name!;
 
     if ((['Storage', 'StorageV2'] as Kind[]).includes(storageAccount.kind)) {
-      this.logger.info(
-        {
-          resourceGroupName: resourceGroup,
-          storageAccountName: accountName,
-          storageAccountKind: storageAccount.kind,
-        },
-        'Fetching queues for storage account',
-      );
-      return iterateAllResources({
-        logger: this.logger,
-        serviceClient,
-        resourceEndpoint: {
-          list: async () => {
-            return serviceClient.queue.list(resourceGroup, accountName);
+      try {
+        await iterateAllResources({
+          logger: this.logger,
+          serviceClient,
+          resourceEndpoint: {
+            list: async () => {
+              return serviceClient.queue.list(resourceGroup, accountName);
+            },
+            listNext: async (nextLink: string) => {
+              return serviceClient.queue.listNext(nextLink);
+            },
           },
-          listNext: async (nextLink: string) => {
-            return serviceClient.queue.listNext(nextLink);
-          },
-        },
-        resourceDescription: 'storage.queues',
-        callback,
-      });
+          resourceDescription: 'storage.queues',
+          callback,
+        });
+      } catch (err) {
+        const azureErrorCode = err._cause?.code;
+        if (
+          azureErrorCode === 'FeatureNotSupportedForAccount' ||
+          azureErrorCode === 'OperationNotAllowedOnKind'
+        ) {
+          this.logger.info(
+            {
+              err,
+              resourceGroupName: resourceGroup,
+              storageAccountName: accountName,
+              storageAccountKind: storageAccount.kind,
+            },
+            'Could not fetch queues for storage account kind.',
+          );
+        } else {
+          throw err;
+        }
+      }
     }
   }
 
@@ -108,28 +120,40 @@ export class StorageClient extends Client {
     const accountName = storageAccount.name;
 
     if ((['Storage', 'StorageV2'] as Kind[]).includes(storageAccount.kind)) {
-      this.logger.info(
-        {
-          resourceGroupName: resourceGroup,
-          storageAccountName: accountName,
-          storageAccountKind: storageAccount.kind,
-        },
-        'Fetching tables for storage account',
-      );
-      return iterateAllResources({
-        logger: this.logger,
-        serviceClient,
-        resourceEndpoint: {
-          list: async () => {
-            return serviceClient.table.list(resourceGroup, accountName);
+      try {
+        await iterateAllResources({
+          logger: this.logger,
+          serviceClient,
+          resourceEndpoint: {
+            list: async () => {
+              return serviceClient.table.list(resourceGroup, accountName);
+            },
+            listNext: async (nextLink: string) => {
+              return serviceClient.table.listNext(nextLink);
+            },
           },
-          listNext: async (nextLink: string) => {
-            return serviceClient.table.listNext(nextLink);
-          },
-        },
-        resourceDescription: 'storage.tables',
-        callback,
-      });
+          resourceDescription: 'storage.tables',
+          callback,
+        });
+      } catch (err) {
+        const azureErrorCode = err._cause?.code;
+        if (
+          azureErrorCode === 'FeatureNotSupportedForAccount' ||
+          azureErrorCode === 'OperationNotAllowedOnKind'
+        ) {
+          this.logger.info(
+            {
+              err,
+              resourceGroupName: resourceGroup,
+              storageAccountName: accountName,
+              storageAccountKind: storageAccount.kind,
+            },
+            'Could not fetch tables for storage account kind.',
+          );
+        } else {
+          throw err;
+        }
+      }
     }
   }
 

@@ -236,7 +236,7 @@ describe('iterateQueues', () => {
     expect(resources).toEqual([]);
   });
 
-  test('fails when storage account does not support queues', async () => {
+  test('logs when storage account does not support queues', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateQueeus-unsupported-account',
@@ -244,6 +244,7 @@ describe('iterateQueues', () => {
     });
 
     const client = new StorageClient(config, createMockIntegrationLogger());
+    const loggerInfoSpy = jest.spyOn(client.logger, 'info');
 
     const storageAccount = {
       id:
@@ -252,10 +253,19 @@ describe('iterateQueues', () => {
       kind: 'Storage' as Kind, // Set `Kind` to 'Storage` instead of 'BlobStorage' so the API is called on an invalid storage account.
     };
 
-    await expect(
-      client.iterateQueues(storageAccount, jest.fn()),
-    ).rejects.toThrow(
-      'Provider API failed at storage.queues: FeatureNotSupportedForAccount Queue is not supported for the account.',
+    await client.iterateQueues(storageAccount, jest.fn());
+    expect(loggerInfoSpy).toHaveBeenLastCalledWith(
+      {
+        err: expect.objectContaining({
+          _cause: expect.objectContaining({
+            code: 'FeatureNotSupportedForAccount',
+          }),
+        }),
+        resourceGroupName: 'j1dev',
+        storageAccountName: 'ndowmon1j1devblobstorage',
+        storageAccountKind: 'Storage',
+      },
+      'Could not fetch queues for storage account kind.',
     );
   });
 });
@@ -301,7 +311,7 @@ describe('iterateTables', () => {
     ]);
   });
 
-  test('fails when storage account does not support tables', async () => {
+  test('logs when storage account does not support tables', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateTables-unsupported-account',
@@ -309,6 +319,7 @@ describe('iterateTables', () => {
     });
 
     const client = new StorageClient(config, createMockIntegrationLogger());
+    const loggerInfoSpy = jest.spyOn(client.logger, 'info');
 
     const storageAccount = {
       id:
@@ -317,10 +328,19 @@ describe('iterateTables', () => {
       kind: 'Storage' as Kind, // Set `Kind` to 'Storage` instead of 'BlobStorage' so the API is called on an invalid storage account.
     };
 
-    await expect(
-      client.iterateTables(storageAccount, jest.fn()),
-    ).rejects.toThrow(
-      'Provider API failed at storage.tables: OperationNotAllowedOnKind The operation is not allowed on account kind BlobStorage',
+    await client.iterateTables(storageAccount, jest.fn());
+    expect(loggerInfoSpy).toHaveBeenLastCalledWith(
+      {
+        err: expect.objectContaining({
+          _cause: expect.objectContaining({
+            code: 'OperationNotAllowedOnKind',
+          }),
+        }),
+        resourceGroupName: 'j1dev',
+        storageAccountName: 'ndowmon1j1devblobstorage',
+        storageAccountKind: 'Storage',
+      },
+      'Could not fetch tables for storage account kind.',
     );
   });
 });

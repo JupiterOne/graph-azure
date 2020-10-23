@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.5.1 - 2020-10-22
+
 ### Fixed
 
 - [#187](https://github.com/JupiterOne/graph-azure/issues/187) - Throw

@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createPolicyAssignmentEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "ControlPolicy",
+  ],
+  "_key": "/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyAssignments/EnforceNaming",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "description": "Force resource names to begin with given DeptA and end with -LC",
+        "displayName": "Enforce resource naming rules",
+        "enforcementMode": "Default",
+        "id": "/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyAssignments/EnforceNaming",
+        "metadata": Object {
+          "assignedBy": "Someone Special",
+        },
+        "name": "EnforceNaming",
+        "notScopes": Array [],
+        "parameters": Object {
+          "prefix": Object {
+            "value": "DeptA",
+          },
+          "suffix": Object {
+            "value": "-LC",
+          },
+        },
+        "policyDefinitionId": "/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyDefinitions/ResourceNaming",
+        "scope": "subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
+        "type": "Microsoft.Authorization/policyAssignments",
+      },
+    },
+  ],
+  "_type": "azure_policy_assignment",
+  "createdOn": undefined,
+  "description": "Force resource names to begin with given DeptA and end with -LC",
+  "displayName": "Enforce resource naming rules",
+  "enforcementMode": "Default",
+  "id": "/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyAssignments/EnforceNaming",
+  "metadata.assignedBy": "Someone Special",
+  "name": "Enforce resource naming rules",
+  "parameters.prefix": "DeptA",
+  "parameters.suffix": "-LC",
+  "policyDefinitionId": "/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyDefinitions/ResourceNaming",
+  "scope": "subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyAssignments/EnforceNaming",
+}
+`;

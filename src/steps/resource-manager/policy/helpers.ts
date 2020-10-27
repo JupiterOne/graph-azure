@@ -2,49 +2,6 @@ import {
   parseStringPropertyValue,
   parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core/dist/src/data/converters';
-const obj1 = {
-  displayName: 'Enforce resource naming rules',
-  description:
-    'Force resource names to begin with given DeptA and end with -LC',
-  metadata: {
-    assignedBy: 'Special Someone',
-  },
-  policyDefinitionId:
-    '/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyDefinitions/ResourceNaming',
-  notScopes: [],
-  parameters: {
-    prefix: {
-      value: 'DeptA',
-    },
-    suffix: {
-      value: '-LC',
-    },
-  },
-  enforcementMode: 'Default',
-  scope: 'subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2',
-  id:
-    '/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyAssignments/EnforceNaming',
-  type: 'Microsoft.Authorization/policyAssignments',
-  name: 'EnforceNaming',
-};
-
-const obj2 = {
-  displayName: 'Enforce resource naming rules',
-  description:
-    'Force resource names to begin with given DeptA and end with -LC',
-  'metadata.assignedBy': 'Special Someone',
-  policyDefinitionId:
-    '/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyDefinitions/ResourceNaming',
-  notScopes: [],
-  'parameters.prefix': 'DeptA',
-  'parameters.suffix': '-LC',
-  enforcementMode: 'Default',
-  scope: 'subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2',
-  id:
-    '/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyAssignments/EnforceNaming',
-  type: 'Microsoft.Authorization/policyAssignments',
-  name: 'EnforceNaming',
-};
 
 export type FlattenObjectOptions = {
   /**

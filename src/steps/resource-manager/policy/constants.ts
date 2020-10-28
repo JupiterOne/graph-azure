@@ -1,6 +1,7 @@
 import {
   generateRelationshipType,
   RelationshipClass,
+  // Entity
 } from '@jupiterone/integration-sdk-core';
 import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
@@ -33,4 +34,15 @@ export const PolicyRelationships = {
     _class: RelationshipClass.HAS,
     targetType: PolicyEntities.POLICY_ASSIGNMENT._type,
   },
+
+  // RESOURCE_HAS_POLICY_ASSIGNMENT: {
+  //   _type: generateRelationshipType(
+  //     RelationshipClass.HAS,
+  //     Entity.,
+  //     PolicyEntities.POLICY_ASSIGNMENT._type,
+  //   ),
+  //   sourceType: SUBSCRIPTION_ENTITY_METADATA._type,
+  //   _class: RelationshipClass.HAS,
+  //   targetType: PolicyEntities.POLICY_ASSIGNMENT._type,
+  // },
 };

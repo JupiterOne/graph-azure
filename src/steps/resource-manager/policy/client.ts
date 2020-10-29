@@ -23,8 +23,9 @@ export class AzurePolicyClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
-        list: serviceClient.policyAssignments.list,
-        listNext: serviceClient.policyAssignments.listNext,
+        list: async () => serviceClient.policyAssignments.list(),
+        listNext: async (nextPageLink) =>
+          serviceClient.policyAssignments.listNext(nextPageLink),
       },
       resourceDescription: 'policy.assignment',
       callback,

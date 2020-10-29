@@ -1,15 +1,12 @@
-import {
-  generateRelationshipType,
-  RelationshipClass,
-  // Entity
-} from '@jupiterone/integration-sdk-core';
-import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions';
-import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
+import { RelationshipClass } from '@jupiterone/integration-sdk-core';
+import { ANY_SCOPE } from '../constants';
 
 // TODO: Add a Step for getting Policy Definitions
 // TODO: Add a Step for getting Policy Set Definitions
 
-export const STEP_RM_POLICY_ASSIGNMENTS = 'rm-policy-assignments';
+export const PolicySteps = {
+  POLICY_ASSIGNMENTS: 'rm-policy-assignments',
+};
 
 export const PolicyEntities = {
   POLICY_ASSIGNMENT: {
@@ -20,29 +17,18 @@ export const PolicyEntities = {
 };
 
 export const PolicyRelationships = {
-  RESOURCE_GROUP_HAS_POLICY_ASSIGNMENT: createResourceGroupResourceRelationshipMetadata(
-    PolicyEntities.POLICY_ASSIGNMENT._type,
-  ),
-
-  SUBSCRIPTION_HAS_POLICY_ASSIGNMENT: {
-    _type: generateRelationshipType(
-      RelationshipClass.HAS,
-      SUBSCRIPTION_ENTITY_METADATA._type,
-      PolicyEntities.POLICY_ASSIGNMENT._type,
-    ),
-    sourceType: SUBSCRIPTION_ENTITY_METADATA._type,
+  /**
+   * NOTE: Management Groups, Subscriptions, Resource Groups, and Resources can all have Policy Assignments
+   * We currently don't ingest Management Groups, but we do ingest Subscriptions and Resource Groups
+   * We've chosen, instead, to represent the relationship as ANY_SCOPE has a Policy Assignment.
+   * This is because we want the relationship metadata to line up with the actual ingested relationships.
+   * If we say that we expect ANY_SCOPE_had_policy_assignment and instead generate that a azure_storage_account_has_policy_assignment,
+   * it might cause issues down the road.
+   */
+  ANY_RESOURCE_POLICY_ASSIGNMENT: {
+    _type: 'ANY_SCOPE_has_policy_assignment',
+    sourceType: ANY_SCOPE,
     _class: RelationshipClass.HAS,
     targetType: PolicyEntities.POLICY_ASSIGNMENT._type,
   },
-
-  // RESOURCE_HAS_POLICY_ASSIGNMENT: {
-  //   _type: generateRelationshipType(
-  //     RelationshipClass.HAS,
-  //     Entity.,
-  //     PolicyEntities.POLICY_ASSIGNMENT._type,
-  //   ),
-  //   sourceType: SUBSCRIPTION_ENTITY_METADATA._type,
-  //   _class: RelationshipClass.HAS,
-  //   targetType: PolicyEntities.POLICY_ASSIGNMENT._type,
-  // },
 };

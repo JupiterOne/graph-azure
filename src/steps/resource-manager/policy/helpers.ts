@@ -45,6 +45,10 @@ type ConversionStrategy = {
 
 const conversionStrategies: ConversionStrategy[] = [
   {
+    canConvert: (key, value, _) => value === null,
+    convert: (key, value, _) => value,
+  },
+  {
     canConvert: (key, value, _) =>
       typeof value === 'boolean' || typeof value === 'number',
     convert: (key, value, _) => value,
@@ -104,34 +108,36 @@ function getConversionStrategy(
 }
 
 export function flatten(
-  obj: any = {},
+  obj: any, // If this is used at runtime against a returned property from a client, it maybe used against something someone expects to be an object, but is not
   options: FlattenObjectOptions = {},
   currentKey: string = '',
-): object {
-  return Object.entries(obj).reduce((flattened, [key, value]) => {
-    const newKey = !currentKey
-      ? key
-      : key === 'value'
-      ? currentKey
-      : `${currentKey}.${key}`;
+): any {
+  return obj && typeof obj === 'object'
+    ? Object.entries(obj).reduce((flattened, [key, value]) => {
+        const newKey = !currentKey
+          ? key
+          : key === 'value'
+          ? currentKey
+          : `${currentKey}.${key}`;
 
-    if (value !== undefined) {
-      const strategy = getConversionStrategy(key, value, options);
+        if (value !== undefined) {
+          const strategy = getConversionStrategy(key, value, options);
 
-      if (strategy) {
-        const convertedValue = strategy.convert(key, value, options);
+          if (strategy) {
+            const convertedValue = strategy.convert(key, value, options);
 
-        if (convertedValue !== undefined) {
-          flattened[newKey] = convertedValue;
+            if (convertedValue !== undefined) {
+              flattened[newKey] = convertedValue;
+            }
+          } else {
+            flattened = {
+              ...flattened,
+              ...flatten(value, options, newKey),
+            };
+          }
         }
-      } else {
-        flattened = {
-          ...flattened,
-          ...flatten(value, options, newKey),
-        };
-      }
-    }
 
-    return flattened;
-  }, {});
+        return flattened;
+      }, {})
+    : obj;
 }

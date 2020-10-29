@@ -117,9 +117,28 @@ describe('flatten', () => {
     });
   });
 
-  describe('when flattening a falsy value', () => {
-    it('should return an empty object', () => {
-      expect(flatten()).toEqual({});
+  describe('when flattening undefined', () => {
+    it('should return undefined', () => {
+      expect(flatten(undefined)).toEqual(undefined);
+    });
+  });
+
+  describe('when flattening null', () => {
+    it('should return null', () => {
+      expect(flatten(null)).toEqual(null);
+    });
+  });
+
+  describe('when flattening any non-object', () => {
+    it('should return the same value', () => {
+      expect(flatten(1)).toEqual(1);
+      expect(flatten('hello, world')).toEqual('hello, world');
+    });
+  });
+
+  describe('when flattening an object with a null property', () => {
+    it('should return an object with that null property', () => {
+      expect(flatten({ a: null })).toEqual({ a: null });
     });
   });
 

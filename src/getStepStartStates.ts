@@ -94,9 +94,10 @@ import {
   STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
   STEP_RM_EVENT_GRID_TOPICS,
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
-} from './steps/resource-manager/event-grid';
+} from './steps/resource-manager/event-grid/constants';
 import { AdvisorSteps } from './steps/resource-manager/advisor/constants';
 import { SecuritySteps } from './steps/resource-manager/security/constants';
+import { PolicySteps } from './steps/resource-manager/policy/constants';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -184,7 +185,10 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
       SecuritySteps.ASSESSMENTS,
     ],
-    executeLastSteps: [AdvisorSteps.RECOMMENDATIONS],
+    executeLastSteps: [
+      AdvisorSteps.RECOMMENDATIONS,
+      PolicySteps.POLICY_ASSIGNMENTS,
+    ],
   };
 }
 

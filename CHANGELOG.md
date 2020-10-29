@@ -8,11 +8,20 @@ and this project adheres to
 
 ## [Unreleased]
 
+<<<<<<< HEAD
+
 ### Added
 
 - Added `azure_policy_assignment` entities
 - Added `ANY_SCOPE|has|azure_policy_assignment` relationships. These can target
-  any scoped entity within Azure.
+  any scoped entity within Azure. =======
+
+## 5.5.2 - 2020-10-29
+
+### Changed
+
+- Upgrade sdk to v4
+  > > > > > > > master
 
 ## 5.5.1 - 2020-10-22
 

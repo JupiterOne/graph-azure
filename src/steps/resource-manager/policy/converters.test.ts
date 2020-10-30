@@ -56,10 +56,10 @@ describe('createPolicyAssignmentEntity', () => {
             const:
               '/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8',
           },
-          assignedBy: { type: ['string', 'null', 'undefined'] },
-          createdBy: { type: ['string', 'null', 'undefined'] },
+          assignedBy: { type: ['string', 'null'] },
+          createdBy: { type: ['string', 'null'] },
           createdOn: { type: 'number' },
-          updatedBy: { type: ['string', 'null', 'undefined'] },
+          updatedBy: { type: ['string', 'null'] },
           updatedOn: { type: 'number' },
         },
       },

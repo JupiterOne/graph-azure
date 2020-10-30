@@ -57,7 +57,7 @@ test('step = policy assignments', async () => {
   expect(context.jobState.collectedRelationships).toContainEqual(
     expect.objectContaining({
       _key: `/subscriptions/${instanceConfig.subscriptionId}|has|/subscriptions/${instanceConfig.subscriptionId}/providers/Microsoft.Authorization/policyAssignments/SecurityCenterBuiltIn`,
-      _type: 'ANY_SCOPE_has_policy_assignment',
+      _type: 'azure_resource_has_policy_assignment',
       _class: 'HAS',
       _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}`,
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/providers/Microsoft.Authorization/policyAssignments/SecurityCenterBuiltIn`,
@@ -68,7 +68,7 @@ test('step = policy assignments', async () => {
   expect(context.jobState.collectedRelationships).toContainEqual(
     expect.objectContaining({
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev-policy-resource-group|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev-policy-resource-group/providers/Microsoft.Authorization/policyAssignments/j1dev-policy-assignment`,
-      _type: 'ANY_SCOPE_has_policy_assignment',
+      _type: 'azure_resource_has_policy_assignment',
       _class: 'HAS',
       _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev-policy-resource-group`,
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev-policy-resource-group/providers/Microsoft.Authorization/policyAssignments/j1dev-policy-assignment`,

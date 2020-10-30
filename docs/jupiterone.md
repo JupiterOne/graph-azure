@@ -147,8 +147,6 @@ The following relationships are created/mapped:
 
 | Source Entity `_type`           | Relationship `_class` | Target Entity `_type`                 |
 | ------------------------------- | --------------------- | ------------------------------------- |
-| `ANY_SCOPE`                     | **HAS**               | `azure_advisor_recommendation`        |
-| `ANY_SCOPE`                     | **HAS**               | `azure_policy_assignment`             |
 | `azure_account`                 | **HAS**               | `azure_user_group`                    |
 | `azure_account`                 | **HAS**               | `azure_keyvault_service`              |
 | `azure_account`                 | **HAS**               | `azure_user`                          |
@@ -205,6 +203,8 @@ The following relationships are created/mapped:
 | `azure_resource_group`          | **HAS**               | `azure_storage_account`               |
 | `azure_resource_group`          | **HAS**               | `azure_vm`                            |
 | `azure_resource_group`          | **HAS**               | `azure_vnet`                          |
+| `ANY_SCOPE`                     | **HAS**               | `azure_advisor_recommendation`        |
+| `ANY_SCOPE`                     | **HAS**               | `azure_policy_assignment`             |
 | `azure_role_assignment`         | **ALLOWS**            | `azure_api_management_service`        |
 | `azure_role_assignment`         | **ALLOWS**            | `azure_container_registry`            |
 | `azure_role_assignment`         | **ALLOWS**            | `azure_cosmosdb_account`              |

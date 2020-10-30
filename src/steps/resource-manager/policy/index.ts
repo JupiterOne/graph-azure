@@ -24,37 +24,42 @@ export async function fetchPolicyAssignments(
   const client = new AzurePolicyClient(instance.config, logger);
 
   await client.iteratePolicyAssignments(async (policyAssignment) => {
-    const policyAssignmentEntity = createPolicyAssignmentEntity(
-      webLinker,
-      policyAssignment,
+    const policyAssignmentEntity = await jobState.addEntity(
+      createPolicyAssignmentEntity(webLinker, policyAssignment),
     );
-    await jobState.addEntity(policyAssignmentEntity);
 
     const { scope } = policyAssignment;
-    if (scope) {
-      const scopeEntity = await jobState.findEntity(scope);
+    if (!scope) return;
 
-      if (scopeEntity) {
-        await jobState.addRelationship(
-          createDirectRelationship({
-            _class: RelationshipClass.HAS,
-            from: scopeEntity,
-            to: policyAssignmentEntity,
-            /**
-             * NOTE: Azure Management Groups, Azure Subscriptions, Azure Resource Groups, and Azure Resources can all have Azure Policy Assignments.
-             * We currently don't ingest Management Groups, but we do ingest Subscriptions, Resource Groups, and some Resources
-             * We've chosen to represent the relationship as ANY_SCOPE has a Policy Assignment.
-             * This is because we want the relationship metadata to line up with the actual ingested relationships.
-             * If we say that we expect ANY_SCOPE_had_policy_assignment and instead generate that a azure_storage_account_has_policy_assignment,
-             * it might cause issues down the road.
-             */
-            properties: {
-              _type: 'ANY_SCOPE_has_policy_assignment',
-            },
-          }),
-        );
-      }
-    }
+    const scopeEntity = await jobState.findEntity(scope);
+    if (!scopeEntity) return;
+
+    await jobState.addRelationship(
+      createDirectRelationship({
+        _class: RelationshipClass.HAS,
+        from: scopeEntity,
+        to: policyAssignmentEntity,
+        /**
+         * NOTE: Azure Management Groups, Azure Subscriptions, Azure Resource Groups, and Azure Resources can all have Azure Policy Assignments.
+         * We currently don't ingest Management Groups, but we do ingest Subscriptions, Resource Groups, and some Resources
+         * We've chosen to represent the relationship as ANY_SCOPE has a Policy Assignment.
+         * This is because we want the relationship metadata to line up with the actual ingested relationships.
+         * If we say that we expect ANY_SCOPE_had_policy_assignment and instead generate that a azure_storage_account_has_policy_assignment,
+         * it might cause issues down the road.
+         */
+        properties: {
+          _type: PolicyRelationships.ANY_RESOURCE_POLICY_ASSIGNMENT._type,
+        },
+      }),
+    );
+
+    /**
+     * TODO: We want to add a relationship between the creator of the Policy Assignment and the Policy Assignment.
+     * The Policy Assignment is createdBy some actor (application or user).
+     * Because the id is just a guid and not in long form (i.e. /subscriptions/{subscriptionId}/providers/{providerName}/...),
+     * we don't know yet who or what created the Policy Assignment.
+     * If/when we can find out, we want to add that relationship here.
+     */
   });
 }
 

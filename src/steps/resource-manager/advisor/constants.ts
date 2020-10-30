@@ -22,7 +22,7 @@ export const AdvisorRelationships = {
     targetType: AdvisorEntities.RECOMMENDATION._type,
   },
   ANY_RESOURCE_HAS_FINDING: {
-    _type: 'ANY_SCOPE_has_finding',
+    _type: 'azure_resource_has_finding',
     sourceType: ANY_SCOPE,
     _class: RelationshipClass.HAS,
     targetType: AdvisorEntities.RECOMMENDATION._type,

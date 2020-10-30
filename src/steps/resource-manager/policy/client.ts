@@ -22,11 +22,7 @@ export class AzurePolicyClient extends Client {
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
-      resourceEndpoint: {
-        list: async () => serviceClient.policyAssignments.list(),
-        listNext: async (nextPageLink) =>
-          serviceClient.policyAssignments.listNext(nextPageLink),
-      },
+      resourceEndpoint: serviceClient.policyAssignments,
       resourceDescription: 'policy.assignment',
       callback,
     });

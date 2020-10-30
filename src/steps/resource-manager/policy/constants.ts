@@ -26,7 +26,7 @@ export const PolicyRelationships = {
    * it might cause issues down the road.
    */
   ANY_RESOURCE_POLICY_ASSIGNMENT: {
-    _type: 'ANY_SCOPE_has_policy_assignment',
+    _type: 'azure_resource_has_policy_assignment',
     sourceType: ANY_SCOPE,
     _class: RelationshipClass.HAS,
     targetType: PolicyEntities.POLICY_ASSIGNMENT._type,

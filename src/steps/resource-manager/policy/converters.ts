@@ -12,8 +12,11 @@ export function createPolicyAssignmentEntity(
   webLinker: AzureWebLinker,
   data: PolicyAssignment,
 ): Entity {
+  const assignedBy = data.metadata?.assignedBy;
   const createdOn = parseTimePropertyValue(data.metadata?.createdOn);
   const updatedOn = parseTimePropertyValue(data.metadata?.updatedOn);
+  const createdBy = data.metadata?.createdBy;
+  const updatedBy = data.metadata?.updatedBy;
 
   return createIntegrationEntity({
     entityData: {
@@ -28,10 +31,10 @@ export function createPolicyAssignmentEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         scope: data.scope,
         policyDefinitionId: data.policyDefinitionId,
-        assignedBy: data.metadata?.assignedBy || null,
-        createdBy: data.metadata?.createdBy || null,
+        ...(assignedBy && { assignedBy }),
+        ...(createdBy && { createdBy }),
         ...(createdOn && { createdOn }),
-        updatedBy: data.metadata?.updatedBy || null,
+        ...(updatedBy && { updatedBy }),
         ...(updatedOn && { updatedOn }),
       },
     },

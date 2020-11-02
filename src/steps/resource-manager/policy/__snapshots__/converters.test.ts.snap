@@ -14,6 +14,14 @@ Object {
         "displayName": "ASC Default (subscription: 40474ebe-55a2-4071-8fa8-b610acdd8e56)",
         "enforcementMode": "Default",
         "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/providers/Microsoft.Authorization/policyAssignments/SecurityCenterBuiltIn",
+        "metadata": Object {
+          "assignedBy": "Security Center",
+          "createdBy": "488baaae-0786-48e5-aa3d-6c7c773d9557",
+          "createdOn": "2020-09-24T16:32:06.2258988Z",
+          "parameterScopes": Object {},
+          "updatedBy": "3b3dbbda-9a3c-4b0b-b2f4-60cfeaa74233",
+          "updatedOn": "2020-10-29T17:42:36.1625526Z",
+        },
         "name": "SecurityCenterBuiltIn",
         "notScopes": Array [],
         "parameters": Object {

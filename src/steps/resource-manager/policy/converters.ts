@@ -21,7 +21,7 @@ export function createPolicyAssignmentEntity(
 
   return createIntegrationEntity({
     entityData: {
-      source: pa,
+      source: data,
       assign: {
         ...flatten(pa),
         _key: pa.id,

@@ -44,6 +44,7 @@
     "@azure/arm-mariadb": "^1.4.0",
     "@azure/arm-mysql": "^3.3.0",
     "@azure/arm-network": "^20.0.0",
+    "@azure/arm-policy": "^3.1.0",
     "@azure/arm-postgresql": "^4.4.0",
     "@azure/arm-privatedns": "^2.0.0",
     "@azure/arm-rediscache": "^4.0.0",

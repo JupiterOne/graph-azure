@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.6.0 - 2020-11-02
+
 ### Added
 
 - Added `azure_policy_assignment` entities

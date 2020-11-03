@@ -3,7 +3,7 @@ import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions/constants';
 
 export const SecuritySteps = {
   ASSESSMENTS: 'rm-security-assessments',
-  SECURITY_CENTER_CONTACTS: 'rm-security-contacts',
+  SECURITY_CENTER_CONTACTS: 'rm-security-center-contacts',
 };
 
 export const SecurityEntities = {

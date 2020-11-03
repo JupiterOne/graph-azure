@@ -56,6 +56,22 @@ export async function fetchAssessments(
   );
 }
 
+export async function fetchSecurityContacts(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new SecurityClient(instance.config, logger);
+
+  await client.iterateSecurityContacts(async (securityContact) => {
+    const securityContactEntity = await jobState.addEntity(
+      createSecurityContactEntity(webLinker, securityContact),
+    );
+  });
+}
+
 export const securitySteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -66,5 +82,13 @@ export const securitySteps: Step<
     relationships: [SecurityRelationships.SUBSCRIPTION_PERFORMED_ASSESSMENT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAssessments,
+  },
+  {
+    id: SecuritySteps.SECURITY_CONTACTS,
+    name: 'Security Contacts',
+    entities: [SecurityEntities.SECURITY_CONTACT],
+    relationships: [SecurityRelationships.SUBSCRIPTION_HAS_SECURITY_CONTACT],
+    dependsOn: [STEP_AD_ACCOUNT],
+    executionHandler: fetchSecurityContacts,
   },
 ];

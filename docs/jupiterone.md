@@ -126,6 +126,7 @@ The following entities are created:
 | [RM] SQL Database                  | `azure_sql_database`                  | `Database`, `DataStore`            |
 | [RM] SQL Server                    | `azure_sql_server`                    | `Database`, `DataStore`, `Host`    |
 | [RM] Security Assessment           | `azure_security_assessment`           | `Assessment`                       |
+| [RM] Security Contact              | `azure_security_contact`              | ``                                 |
 | [RM] Security Group                | `azure_security_group`                | `Firewall`                         |
 | [RM] Service Bus Namespace         | `azure_service_bus_namespace`         | `Service`                          |
 | [RM] Service Bus Queue             | `azure_service_bus_queue`             | `Queue`                            |
@@ -243,6 +244,7 @@ The following relationships are created/mapped:
 | `azure_storage_account`         | **HAS**               | `azure_storage_table`                 |
 | `azure_subnet`                  | **HAS**               | `azure_vm`                            |
 | `azure_subscription`            | **HAS**               | `azure_resource_group`                |
+| `azure_subscription`            | **HAS**               | `azure_security_contact`              |
 | `azure_subscription`            | **PERFORMED**         | `azure_security_assessment`           |
 | `azure_vm`                      | **USES**              | `azure_managed_disk`                  |
 | `azure_vm`                      | **USES**              | `azure_nic`                           |

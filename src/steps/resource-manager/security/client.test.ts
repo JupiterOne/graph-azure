@@ -81,6 +81,10 @@ describe('iterate security contacts', () => {
       resources.push(e);
     });
 
-    expect(resources).toContainEqual(expect.objectContaining({}));
+    expect(resources).toContainEqual(
+      expect.objectContaining({
+        test: 'foo',
+      }),
+    );
   });
 });

@@ -55,7 +55,7 @@ describe('createSecurityContactEntity', () => {
 
     expect(securityContactEntity).toMatchSnapshot();
     expect(securityContactEntity).toMatchGraphObjectSchema({
-      _class: [''],
+      _class: ['Resource'],
       schema: {
         additionalProperties: true,
         properties: {

@@ -55,9 +55,7 @@ export function createAssessmentEntity(
         statusCode: data.status.code,
         statusCause: data.status.cause,
         statusDescription: data.status.description,
-
         scannedResourceId: findSecurityAssessmentScannedResourceId(data),
-
         webLink: webLinker.portalResourceUrl(data.id),
       },
     },

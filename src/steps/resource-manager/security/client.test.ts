@@ -83,7 +83,15 @@ describe('iterate security contacts', () => {
 
     expect(resources).toContainEqual(
       expect.objectContaining({
-        test: 'foo',
+        alertNotifications: 'On',
+        alertsToAdmins: 'On',
+        email: 'test@j1dev.com',
+        etag: '"0d004bb2-0000-0d00-0000-5fa1dd9c0000"',
+        id: `/subscriptions/${config.subscriptionId}/providers/Microsoft.Security/securityContact/default1`,
+        location: 'West Europe',
+        name: 'default1',
+        phone: '+1-801-555-1234',
+        type: 'Microsoft.Security/securityContact',
       }),
     );
   });

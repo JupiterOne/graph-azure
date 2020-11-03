@@ -1,4 +1,4 @@
-import { fetchAssessments } from '.';
+import { fetchAssessments, fetchSecurityCenterContacts } from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
@@ -52,4 +52,53 @@ test('step - security assessments', async () => {
 
   expect(collectedRelationships.length).toBeGreaterThan(0);
   expect(collectedRelationships).toMatchDirectRelationshipSchema({});
+});
+
+test('step - security center contacts', async () => {
+  const instanceConfig: IntegrationConfig = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
+    subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+  };
+
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'resource-manager-step-security-center-contacts',
+  });
+
+  const context = createMockAzureStepExecutionContext({
+    instanceConfig,
+    entities: [
+      {
+        _key: `/subscriptions/${instanceConfig.subscriptionId}`,
+        _type: SUBSCRIPTION_ENTITY_METADATA._type,
+        _class: SUBSCRIPTION_ENTITY_METADATA._class,
+      },
+    ],
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+    },
+  });
+
+  await fetchSecurityCenterContacts(context);
+
+  const { collectedEntities, collectedRelationships } = context.jobState;
+
+  expect(collectedEntities.length).toBeGreaterThan(0);
+  expect(collectedEntities).toMatchGraphObjectSchema({
+    _class: ['Resource'],
+  });
+
+  expect(collectedRelationships).toMatchDirectRelationshipSchema({});
+  expect(collectedRelationships).toContainEqual(
+    expect.objectContaining({
+      _key: `/subscriptions/${instanceConfig.subscriptionId}|has|/subscriptions/${instanceConfig.subscriptionId}/providers/Microsoft.Security/securityContact/default1`,
+      _type: 'azure_subscription_has_security_center_contact',
+      _class: 'HAS',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/providers/Microsoft.Security/securityContact/default1`,
+      displayName: 'HAS',
+    }),
+  );
 });

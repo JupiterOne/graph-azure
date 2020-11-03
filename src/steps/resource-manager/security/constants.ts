@@ -3,7 +3,7 @@ import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions/constants';
 
 export const SecuritySteps = {
   ASSESSMENTS: 'rm-security-assessments',
-  SECURITY_CONTACTS: 'rm-security-contacts',
+  SECURITY_CENTER_CONTACTS: 'rm-security-contacts',
 };
 
 export const SecurityEntities = {
@@ -12,7 +12,7 @@ export const SecurityEntities = {
     _class: ['Assessment'],
     resourceName: '[RM] Security Assessment',
   },
-  SECURITY_CONTACT: {
+  SECURITY_CENTER_CONTACT: {
     _type: 'azure_security_center_contact',
     _class: ['Resource'],
     resourceName: '[RM] Security Contact',
@@ -27,10 +27,10 @@ export const SecurityRelationships = {
     targetType: SecurityEntities.ASSESSMENT._type,
   },
 
-  SUBSCRIPTION_HAS_SECURITY_CONTACT: {
+  SUBSCRIPTION_HAS_SECURITY_CENTER_CONTACT: {
     _type: 'azure_subscription_has_security_center_contact',
     sourceType: SUBSCRIPTION_ENTITY_METADATA._type,
     _class: RelationshipClass.HAS,
-    targetType: SecurityEntities.SECURITY_CONTACT._type,
+    targetType: SecurityEntities.SECURITY_CENTER_CONTACT._type,
   },
 };

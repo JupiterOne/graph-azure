@@ -62,7 +62,7 @@ export async function fetchAssessments(
   );
 }
 
-export async function fetchSecurityContacts(
+export async function fetchSecurityCenterContacts(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
@@ -83,7 +83,8 @@ export async function fetchSecurityContacts(
 
     await jobState.addRelationship(
       createDirectRelationship({
-        _class: SecurityRelationships.SUBSCRIPTION_HAS_SECURITY_CONTACT._class,
+        _class:
+          SecurityRelationships.SUBSCRIPTION_HAS_SECURITY_CENTER_CONTACT._class,
         from: subscriptionEntity,
         to: securityContactEntity,
       }),
@@ -103,11 +104,13 @@ export const securitySteps: Step<
     executionHandler: fetchAssessments,
   },
   {
-    id: SecuritySteps.SECURITY_CONTACTS,
+    id: SecuritySteps.SECURITY_CENTER_CONTACTS,
     name: 'Security Contacts',
-    entities: [SecurityEntities.SECURITY_CONTACT],
-    relationships: [SecurityRelationships.SUBSCRIPTION_HAS_SECURITY_CONTACT],
+    entities: [SecurityEntities.SECURITY_CENTER_CONTACT],
+    relationships: [
+      SecurityRelationships.SUBSCRIPTION_HAS_SECURITY_CENTER_CONTACT,
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SUBSCRIPTIONS],
-    executionHandler: fetchSecurityContacts,
+    executionHandler: fetchSecurityCenterContacts,
   },
 ];

@@ -184,6 +184,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
       STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
       SecuritySteps.ASSESSMENTS,
+      SecuritySteps.SECURITY_CENTER_CONTACTS,
     ],
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,

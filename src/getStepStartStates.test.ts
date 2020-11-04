@@ -174,6 +174,7 @@ describe('getStepStartStates', () => {
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
       [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
+      [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
     });
   });
 
@@ -248,6 +249,7 @@ describe('getStepStartStates', () => {
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
       [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
+      [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
     });
   });
 
@@ -322,6 +324,7 @@ describe('getStepStartStates', () => {
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: false },
       [SecuritySteps.ASSESSMENTS]: { disabled: false },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: false },
+      [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: false },
     });
   });
 });

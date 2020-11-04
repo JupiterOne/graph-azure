@@ -9,6 +9,7 @@ import { SecurityEntities } from './constants';
 import {
   SecurityAssessment,
   AzureResourceDetails,
+  SecurityContact,
 } from '@azure/arm-security/esm/models';
 
 function findSecurityAssessmentScannedResourceId(
@@ -54,10 +55,30 @@ export function createAssessmentEntity(
         statusCode: data.status.code,
         statusCause: data.status.cause,
         statusDescription: data.status.description,
-
         scannedResourceId: findSecurityAssessmentScannedResourceId(data),
-
         webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+
+export function createSecurityContactEntity(
+  webLinker: AzureWebLinker,
+  data: SecurityContact,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id as string,
+        id: data.id,
+        webLink: webLinker.portalResourceUrl(data.id),
+        _type: SecurityEntities.SECURITY_CENTER_CONTACT._type,
+        _class: SecurityEntities.SECURITY_CENTER_CONTACT._class,
+        email: data.email,
+        phone: data.phone,
+        alertNotifications: data.alertNotifications,
+        alertsToAdmins: data.alertsToAdmins,
       },
     },
   });

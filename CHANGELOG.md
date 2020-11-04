@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_security_center_contact` entities
+- Added `azure_subscription|has|azure_security_center_contact` relationships
+
 ## 5.6.0 - 2020-11-02
 
 ### Added

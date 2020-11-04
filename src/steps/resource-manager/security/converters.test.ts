@@ -1,8 +1,12 @@
 import { createAzureWebLinker } from '../../../azure';
-import { createAssessmentEntity } from './converters';
+import {
+  createAssessmentEntity,
+  createSecurityContactEntity,
+} from './converters';
 import {
   SecurityAssessment,
   AzureResourceDetails,
+  SecurityContact,
 } from '@azure/arm-security/esm/models';
 import { SecurityEntities } from './constants';
 
@@ -32,5 +36,35 @@ describe('createAssessmentEntity', () => {
       _class: SecurityEntities.ASSESSMENT._class,
     });
     expect(assessmentEntity).toMatchSnapshot();
+  });
+});
+
+describe('createSecurityContactEntity', () => {
+  test('properties transferred', () => {
+    const data: SecurityContact = {
+      id:
+        '/subscriptions/20ff7fc3-e762-44dd-bd96-b71116dcdc23/providers/Microsoft.Security/securityContacts/default2',
+      name: 'default2',
+      type: 'Microsoft.Security/securityContacts',
+      email: 'chen@contoso.com',
+      alertNotifications: 'On',
+      alertsToAdmins: 'On',
+    };
+
+    const securityContactEntity = createSecurityContactEntity(webLinker, data);
+
+    expect(securityContactEntity).toMatchSnapshot();
+    expect(securityContactEntity).toMatchGraphObjectSchema({
+      _class: ['Resource'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          email: { type: 'string' },
+          phone: { type: 'string' },
+          alertNotifications: { type: 'string', enum: ['On', 'Off'] },
+          alertsToAdmins: { type: 'string', enum: ['On', 'Off'] },
+        },
+      },
+    });
   });
 });

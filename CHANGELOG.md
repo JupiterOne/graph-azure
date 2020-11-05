@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.7.0 - 2020-11-05
+
 ### Added
 
 - Added `azure_security_center_contact` entities

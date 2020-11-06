@@ -126,6 +126,15 @@
     "@azure/ms-rest-js" "^1.8.1"
     tslib "^1.9.3"
 
+"@azure/arm-monitor@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-monitor/-/arm-monitor-6.0.0.tgz#ed2d8b8e38ceb85757bf81d74aa9058bd73a5760"
+  integrity sha512-KcX9Hdejc71OdKH+GsLoJ4mQ8rpXCXgMRa0ivb/SH3NLjH0Qc0bvjthNFY74NXVKy5qwjBNYuUb/GrNLtwQQ/g==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-mysql@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-mysql/-/arm-mysql-3.3.0.tgz#e47f3523dcdb4be3542b1e77179ecdf2e8ca4ea6"

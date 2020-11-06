@@ -4,7 +4,7 @@ import {
   Entity,
 } from '@jupiterone/integration-sdk-core';
 import { parseTimePropertyValue } from '@jupiterone/integration-sdk-core/dist/src/data/converters';
-import { flatten } from './helpers';
+import flatten from '../utils/flatten';
 import { PolicyEntities } from './constants';
 import { PolicyAssignment } from '@azure/arm-policy/esm/models';
 

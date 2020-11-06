@@ -1,4 +1,4 @@
-import { flatten } from './helpers';
+import flatten from './flatten';
 
 describe('flatten', () => {
   describe('when flattening an object with a boolean prop', () => {

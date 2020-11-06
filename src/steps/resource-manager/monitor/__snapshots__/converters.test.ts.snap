@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createMonitorLogProfileEntity properties transferred 1`] = `
+Object {
+  "_class": Array [
+    "Configuration",
+  ],
+  "_key": "/subscriptions/df602c9c-7aa0-407d-a6fb-eb20c8bd1192/providers/microsoft.insights/logprofiles/default",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "categories": Array [
+          "Delete",
+          "Write",
+          "Action",
+        ],
+        "id": "/subscriptions/df602c9c-7aa0-407d-a6fb-eb20c8bd1192/providers/microsoft.insights/logprofiles/default",
+        "location": "",
+        "locations": Array [
+          "global",
+        ],
+        "name": "default",
+        "retentionPolicy": Object {
+          "days": 3,
+          "enabled": true,
+        },
+        "serviceBusRuleId": "",
+        "storageAccountId": "/subscriptions/df602c9c-7aa0-407d-a6fb-eb20c8bd1192/resourceGroups/JohnKemTest/providers/Microsoft.Storage/storageAccounts/johnkemtest8162",
+        "type": "",
+      },
+    },
+  ],
+  "_type": "azure_monitor_log_profile",
+  "categories": Array [
+    "Delete",
+    "Write",
+    "Action",
+  ],
+  "createdOn": undefined,
+  "displayName": "default",
+  "id": "/subscriptions/df602c9c-7aa0-407d-a6fb-eb20c8bd1192/providers/microsoft.insights/logprofiles/default",
+  "locations": Array [
+    "global",
+  ],
+  "name": "default",
+  "retentionPolicy.days": 3,
+  "retentionPolicy.enabled": true,
+  "serviceBusRuleId": "",
+  "storageAccountId": "/subscriptions/df602c9c-7aa0-407d-a6fb-eb20c8bd1192/resourceGroups/JohnKemTest/providers/Microsoft.Storage/storageAccounts/johnkemtest8162",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/df602c9c-7aa0-407d-a6fb-eb20c8bd1192/providers/microsoft.insights/logprofiles/default",
+}
+`;

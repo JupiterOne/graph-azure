@@ -98,6 +98,7 @@ import {
 import { AdvisorSteps } from './steps/resource-manager/advisor/constants';
 import { SecuritySteps } from './steps/resource-manager/security/constants';
 import { PolicySteps } from './steps/resource-manager/policy/constants';
+import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -185,6 +186,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
       SecuritySteps.ASSESSMENTS,
       SecuritySteps.SECURITY_CENTER_CONTACTS,
+      MonitorSteps.MONITOR_LOG_PROFILES,
     ],
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,

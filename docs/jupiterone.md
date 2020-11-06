@@ -109,6 +109,7 @@ The following entities are created:
 | [RM] Load Balancer                 | `azure_lb`                            | `Gateway`                          |
 | [RM] MariaDB Database              | `azure_mariadb_database`              | `Database`, `DataStore`            |
 | [RM] MariaDB Server                | `azure_mariadb_server`                | `Database`, `DataStore`, `Host`    |
+| [RM] Monitor Log Profile           | `azure_monitor_log_profile`           | `Configuration`                    |
 | [RM] MySQL Database                | `azure_mysql_database`                | `Database`, `DataStore`            |
 | [RM] MySQL Server                  | `azure_mysql_server`                  | `Database`, `DataStore`, `Host`    |
 | [RM] Network Interface             | `azure_nic`                           | `NetworkInterface`                 |
@@ -173,6 +174,7 @@ The following relationships are created/mapped:
 | `azure_user_group`              | **HAS**               | `azure_user`                          |
 | `azure_lb`                      | **CONNECTS**          | `azure_nic`                           |
 | `azure_mariadb_server`          | **HAS**               | `azure_mariadb_database`              |
+| `azure_monitor_log_profile`     | **USES**              | `azure_storage_account`               |
 | `azure_mysql_server`            | **HAS**               | `azure_mysql_database`                |
 | `azure_postgresql_server`       | **HAS**               | `azure_postgresql_database`           |
 | `azure_private_dns_zone`        | **HAS**               | `azure_private_dns_record_set`        |
@@ -243,6 +245,7 @@ The following relationships are created/mapped:
 | `azure_storage_account`         | **HAS**               | `azure_storage_queue`                 |
 | `azure_storage_account`         | **HAS**               | `azure_storage_table`                 |
 | `azure_subnet`                  | **HAS**               | `azure_vm`                            |
+| `azure_subscription`            | **HAS**               | `azure_monitor_log_profile`           |
 | `azure_subscription`            | **HAS**               | `azure_resource_group`                |
 | `azure_subscription`            | **HAS**               | `azure_security_center_contact`       |
 | `azure_subscription`            | **PERFORMED**         | `azure_security_assessment`           |

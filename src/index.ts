@@ -27,6 +27,7 @@ import { eventGridSteps } from './steps/resource-manager/event-grid';
 import { advisorSteps } from './steps/resource-manager/advisor';
 import { securitySteps } from './steps/resource-manager/security';
 import { policySteps } from './steps/resource-manager/policy';
+import { monitorSteps } from './steps/resource-manager/monitor';
 
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
@@ -82,6 +83,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...advisorSteps,
     ...securitySteps,
     ...policySteps,
+    ...monitorSteps,
   ],
 
   normalizeGraphObjectKey: (_key) => _key.toLowerCase(),

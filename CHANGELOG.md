@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_monitor_log_profile` entities
+- Added `azure_subscription|has|azure_monitor_log_profile` relationships
+- Added `azure_monitor_log_profile|uses|azure_storage_account` relationships
+
 ## 5.7.0 - 2020-11-05
 
 ### Added

@@ -16,7 +16,7 @@ export const MonitorEntities = {
 
 export const MonitorRelationships = {
   SUBSCRIPTION_HAS_MONITOR_LOG_PROFILE: {
-    _type: 'azure_subscription_has_monitor_policy_assignment',
+    _type: 'azure_subscription_has_monitor_log_profile',
     sourceType: SUBSCRIPTION_ENTITY_METADATA._type,
     _class: RelationshipClass.HAS,
     targetType: MonitorEntities.MONITOR_LOG_PROFILE._type,

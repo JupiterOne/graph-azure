@@ -95,7 +95,7 @@ export function createStorageAccountEntity(
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,
-            keyValueProperties: data.encryption?.keyVaultProperties,
+            keyVaultProperties: data.encryption?.keyVaultProperties,
           },
         }),
       },

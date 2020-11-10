@@ -112,9 +112,9 @@ describe('createStorageAccountEntity Storage (Classic)', () => {
       'tag.environment': 'j1dev',
       allowBlobPublicAccess: false,
       'encryption.keySource': 'Microsoft.Keyvault',
-      'encryption.keyValueProperties.keyName': 'test',
-      'encryption.keyValueProperties.keyVaultUri': 'testUri',
-      'encryption.keyValueProperties.keyVersion': 'version',
+      'encryption.keyVaultProperties.keyName': 'test',
+      'encryption.keyVaultProperties.keyVaultUri': 'testUri',
+      'encryption.keyVaultProperties.keyVersion': 'version',
     };
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data);

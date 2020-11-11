@@ -91,7 +91,7 @@ async function buildKeyVaultEntityMap(
 
   await jobState.iterateEntities(
     { _type: KEY_VAULT_SERVICE_ENTITY_TYPE },
-    async (keyVaultEntity) => {
+    (keyVaultEntity) => {
       // NOTE: sometimes the URI is returned with a trailing slash. We must remove it to make sure it matches the URI on the Storage Account
       const vaultUri: string = keyVaultEntity?._rawData?.[0]?.rawData?.vaultUri.replace(
         /\/$/,

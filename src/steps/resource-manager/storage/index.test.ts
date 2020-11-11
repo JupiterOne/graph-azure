@@ -44,7 +44,9 @@ test('step - storage accounts', async () => {
           {
             name: `${devName}-j1dev`,
             rawData: {
-              vaultUri: `https://${devName}-j1dev.vault.azure.net`,
+              properties: {
+                vaultUri: `https://${devName}-j1dev.vault.azure.net`,
+              },
             },
           },
         ],

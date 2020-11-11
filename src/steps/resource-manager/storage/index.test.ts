@@ -8,6 +8,8 @@ import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { Vault } from '@azure/arm-keyvault/esm/models';
+
 let recording: Recording;
 
 afterEach(async () => {
@@ -31,6 +33,17 @@ test('step - storage accounts', async () => {
     name: 'resource-manager-step-storage-accounts',
   });
 
+  const vault: Vault = {
+    location: 'eastus',
+    properties: {
+      tenantId: instanceConfig.directoryId,
+      sku: {
+        name: 'standard',
+      },
+      vaultUri: `https://${devName}-j1dev.vault.azure.net`,
+    },
+  };
+
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [
@@ -43,11 +56,7 @@ test('step - storage accounts', async () => {
         _rawData: [
           {
             name: `${devName}-j1dev`,
-            rawData: {
-              properties: {
-                vaultUri: `https://${devName}-j1dev.vault.azure.net`,
-              },
-            },
+            rawData: vault,
           },
         ],
       },

@@ -52,6 +52,8 @@ export async function fetchStorageResources(
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
+  const keyVaultEntityMap = await buildKeyVaultEntityMap(executionContext);
+
   await client.iterateStorageAccounts(async (storageAccount) => {
     const storageAccountEntity = await jobState.addEntity(
       createStorageAccountEntity(webLinker, storageAccount),
@@ -75,9 +77,34 @@ export async function fetchStorageResources(
         executionContext,
         storageAccount,
         storageAccountEntity,
+        keyVaultEntityMap,
       );
     }
   });
+}
+
+async function buildKeyVaultEntityMap(
+  executionContext: IntegrationStepContext,
+): Promise<{ [key: string]: Entity }> {
+  const keyVaultEntityMap: { [key: string]: Entity } = {};
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: KEY_VAULT_SERVICE_ENTITY_TYPE },
+    async (keyVaultEntity) => {
+      // NOTE: sometimes the URI is returned with a trailing slash. We must remove it to make sure it matches the URI on the Storage Account
+      const vaultUri: string = keyVaultEntity?._rawData?.[0]?.rawData?.vaultUri.replace(
+        /\/$/,
+        '',
+      );
+
+      if (!vaultUri) return;
+
+      keyVaultEntityMap[vaultUri] = keyVaultEntity;
+    },
+  );
+
+  return keyVaultEntityMap;
 }
 
 function storageAccountUsesKeyVault(storageAccount: StorageAccount): boolean {
@@ -91,6 +118,7 @@ async function associateStorageAccountWithKeyVault(
   executionContext: IntegrationStepContext,
   storageAccount: StorageAccount,
   storageAccountEntity: Entity,
+  keyVaultEntityMap: { [key: string]: Entity },
 ): Promise<void> {
   if (!storageAccount.encryption?.keyVaultProperties) return;
 
@@ -99,34 +127,27 @@ async function associateStorageAccountWithKeyVault(
     keyVaultUri,
     keyVersion,
   } = storageAccount.encryption?.keyVaultProperties;
+
+  if (!keyVaultUri) return;
+
+  // NOTE: sometimes the URI is returned with a trailing slash. We must remove it to make sure it matches the URI on the Key Vault
+  const keyVaultEntity = keyVaultEntityMap[keyVaultUri.replace(/\/$/, '')];
+
+  if (!keyVaultEntity) return;
+
   const { jobState } = executionContext;
 
-  await jobState.iterateEntities(
-    { _type: KEY_VAULT_SERVICE_ENTITY_TYPE },
-    async (keyVaultEntity) => {
-      if (
-        !keyVaultEntity ||
-        !keyVaultEntity.endpoints ||
-        !Array.isArray(keyVaultEntity.endpoints)
-      )
-        return;
-
-      const [vaultUri] = keyVaultEntity.endpoints;
-      if (!vaultUri || vaultUri !== keyVaultUri) return;
-
-      await jobState.addRelationship(
-        createDirectRelationship({
-          _class: StorageRelationships.STORAGE_ACCOUNT_USES_KEY_VAULT._class,
-          from: storageAccountEntity,
-          to: keyVaultEntity,
-          properties: {
-            keyName,
-            keyVaultUri,
-            keyVersion,
-          },
-        }),
-      );
-    },
+  await jobState.addRelationship(
+    createDirectRelationship({
+      _class: StorageRelationships.STORAGE_ACCOUNT_USES_KEY_VAULT._class,
+      from: storageAccountEntity,
+      to: keyVaultEntity,
+      properties: {
+        keyName,
+        keyVaultUri,
+        keyVersion,
+      },
+    }),
   );
 }
 

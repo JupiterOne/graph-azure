@@ -16,6 +16,7 @@ and this project adheres to
 - Added `encryption.keySource` and `encryption.keyVaultProperties` to the
   `azure_storage_account` entity
 - Added `allowBlobPublicAccess` to the `azure_storage_account` entity
+- Added `azure_storage_account|uses|azure_keyvault_service` relationship
 
 ## 5.7.0 - 2020-11-05
 

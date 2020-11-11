@@ -24,6 +24,7 @@ import {
   STEP_RM_STORAGE_TABLES,
   STORAGE_TABLE_ENTITY_METADATA,
   STORAGE_ACCOUNT_TABLE_RELATIONSHIP_METADATA,
+  StorageRelationships,
 } from './constants';
 import {
   createStorageContainerEntity,
@@ -36,7 +37,10 @@ import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
-
+import {
+  KEY_VAULT_SERVICE_ENTITY_TYPE,
+  STEP_RM_KEYVAULT_VAULTS,
+} from '../key-vault/constants';
 export * from './constants';
 
 export async function fetchStorageResources(
@@ -65,7 +69,65 @@ export async function fetchStorageResources(
       storageAccountEntity,
       client,
     );
+
+    if (storageAccountUsesKeyVault(storageAccount)) {
+      await associateStorageAccountWithKeyVault(
+        executionContext,
+        storageAccount,
+        storageAccountEntity,
+      );
+    }
   });
+}
+
+function storageAccountUsesKeyVault(storageAccount: StorageAccount): boolean {
+  return !!(
+    storageAccount.encryption?.keySource === 'Microsoft.Keyvault' &&
+    storageAccount.encryption?.keyVaultProperties?.keyVaultUri
+  );
+}
+
+async function associateStorageAccountWithKeyVault(
+  executionContext: IntegrationStepContext,
+  storageAccount: StorageAccount,
+  storageAccountEntity: Entity,
+): Promise<void> {
+  if (!storageAccount.encryption?.keyVaultProperties) return;
+
+  const {
+    keyName,
+    keyVaultUri,
+    keyVersion,
+  } = storageAccount.encryption?.keyVaultProperties;
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: KEY_VAULT_SERVICE_ENTITY_TYPE },
+    async (keyVaultEntity) => {
+      if (
+        !keyVaultEntity ||
+        !keyVaultEntity.endpoints ||
+        !Array.isArray(keyVaultEntity.endpoints)
+      )
+        return;
+
+      const [vaultUri] = keyVaultEntity.endpoints;
+      if (!vaultUri || vaultUri !== keyVaultUri) return;
+
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: StorageRelationships.STORAGE_ACCOUNT_USES_KEY_VAULT._class,
+          from: storageAccountEntity,
+          to: keyVaultEntity,
+          properties: {
+            keyName,
+            keyVaultUri,
+            keyVersion,
+          },
+        }),
+      );
+    },
+  );
 }
 
 async function synchronizeStorageAccount(
@@ -292,6 +354,7 @@ export const storageSteps: Step<
       ),
       STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_METADATA,
       STORAGE_ACCOUNT_FILE_SHARE_RELATIONSHIP_METADATA,
+      StorageRelationships.STORAGE_ACCOUNT_USES_KEY_VAULT,
     ],
     // From what I can tell, the following are not yet implemented
     // STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
@@ -299,7 +362,11 @@ export const storageSteps: Step<
 
     // STORAGE_TABLE_SERVICE_ENTITY_TYPE,
     // ACCOUNT_STORAGE_TABLE_SERVICE_RELATIONSHIP_TYPE,
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      STEP_RM_KEYVAULT_VAULTS,
+    ],
     executionHandler: fetchStorageResources,
   },
   {

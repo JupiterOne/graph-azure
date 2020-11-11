@@ -244,6 +244,7 @@ The following relationships are created/mapped:
 | `azure_storage_account`         | **HAS**               | `azure_storage_file_share`            |
 | `azure_storage_account`         | **HAS**               | `azure_storage_queue`                 |
 | `azure_storage_account`         | **HAS**               | `azure_storage_table`                 |
+| `azure_storage_account`         | **USES**              | `azure_keyvault_service`              |
 | `azure_subnet`                  | **HAS**               | `azure_vm`                            |
 | `azure_subscription`            | **HAS**               | `azure_monitor_log_profile`           |
 | `azure_subscription`            | **HAS**               | `azure_resource_group`                |

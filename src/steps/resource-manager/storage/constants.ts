@@ -2,6 +2,7 @@ import {
   generateRelationshipType,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
+import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
 
 // Step IDs
 export const STEP_RM_STORAGE_RESOURCES = 'rm-storage-resources';
@@ -35,6 +36,15 @@ export const STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_METADATA = {
   sourceType: STORAGE_ACCOUNT_ENTITY_METADATA._type,
   _class: STORAGE_ACCOUNT_RELATIONSHIP_CLASS,
   targetType: STORAGE_CONTAINER_ENTITY_METADATA._type,
+};
+
+export const StorageRelationships = {
+  STORAGE_ACCOUNT_USES_KEY_VAULT: {
+    _type: 'azure_storage_account_uses_keyvault_service',
+    sourceType: STORAGE_ACCOUNT_ENTITY_METADATA._type,
+    _class: RelationshipClass.USES,
+    targetType: KEY_VAULT_SERVICE_ENTITY_TYPE,
+  },
 };
 
 export const STORAGE_FILE_SHARE_ENTITY_METADATA = {

@@ -96,6 +96,7 @@ import {
 import { AdvisorSteps } from './steps/resource-manager/advisor';
 import { SecuritySteps } from './steps/resource-manager/security';
 import { PolicySteps } from './steps/resource-manager/policy/constants';
+import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -175,6 +176,7 @@ describe('getStepStartStates', () => {
       [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
+      [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
     });
   });
 
@@ -250,6 +252,7 @@ describe('getStepStartStates', () => {
       [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
+      [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
     });
   });
 
@@ -325,6 +328,7 @@ describe('getStepStartStates', () => {
       [SecuritySteps.ASSESSMENTS]: { disabled: false },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: false },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: false },
+      [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: false },
     });
   });
 });

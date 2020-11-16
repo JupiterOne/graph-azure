@@ -8,6 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_monitor_log_profile` entities
+- Added `azure_subscription|has|azure_monitor_log_profile` relationships
+- Added `azure_monitor_log_profile|uses|azure_storage_account` relationships
+- Added `encryption.keySource` and `encryption.keyVaultProperties` to the
+  `azure_storage_account` entity
+- Added `allowBlobPublicAccess` to the `azure_storage_account` entity
+- Added `azure_storage_account|uses|azure_keyvault_service` relationship
+
 ## 5.7.0 - 2020-11-05
 
 ### Added

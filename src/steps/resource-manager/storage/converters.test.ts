@@ -50,7 +50,12 @@ describe('createStorageAccountEntity Storage (Classic)', () => {
           lastEnabledTime: new Date('2019-10-09T18:53:02.2416314Z'),
         },
       },
-      keySource: 'Microsoft.Storage',
+      keySource: 'Microsoft.Keyvault',
+      keyVaultProperties: {
+        keyName: 'test',
+        keyVersion: 'version',
+        keyVaultUri: 'testUri',
+      },
     },
     provisioningState: 'Succeeded',
     creationTime: new Date('2020-04-10T15:43:34.2993802Z'),
@@ -68,6 +73,7 @@ describe('createStorageAccountEntity Storage (Classic)', () => {
     },
     primaryLocation: 'eastus',
     statusOfPrimary: 'available',
+    allowBlobPublicAccess: false,
   };
 
   test('properties transferred', () => {
@@ -104,11 +110,26 @@ describe('createStorageAccountEntity Storage (Classic)', () => {
       ],
       createdOn: new Date('2020-04-10T15:43:34.2993802Z').getTime(),
       'tag.environment': 'j1dev',
+      allowBlobPublicAccess: false,
+      'encryption.keySource': 'Microsoft.Keyvault',
+      'encryption.keyVaultProperties.keyName': 'test',
+      'encryption.keyVaultProperties.keyVaultUri': 'testUri',
+      'encryption.keyVaultProperties.keyVersion': 'version',
     };
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data);
     expect(storageAccountEntity).toMatchGraphObjectSchema({
       _class: STORAGE_ACCOUNT_ENTITY_METADATA._class,
+      schema: {
+        additionalProperties: true,
+        properties: {
+          allowBlobPublicAccess: { type: 'boolean' },
+          'encryption.keySource': { type: 'string' },
+          'encryption.keyVaultProperties.keyName': { type: 'string' },
+          'encryption.keyVaultProperties.keyVersion': { type: 'string' },
+          'encryption.keyVaultProperties.keyVaultUri': { type: 'string' },
+        },
+      },
     });
     expect(storageAccountEntity).toEqual(entity);
   });
@@ -214,6 +235,7 @@ describe('createStorageAccountEntity StorageV2', () => {
       ],
       createdOn: new Date('2020-04-10T15:43:34.2993802Z').getTime(),
       'tag.environment': 'j1dev',
+      'encryption.keySource': 'Microsoft.Storage',
     };
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data);
@@ -315,6 +337,7 @@ describe('createStorageAccountEntity BlobStorage', () => {
       createdOn: new Date('2020-04-17T13:22:05.030Z').getTime(),
       enableHttpsTrafficOnly: true,
       'tag.environment': 'j1dev',
+      'encryption.keySource': 'Microsoft.Storage',
     };
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data);

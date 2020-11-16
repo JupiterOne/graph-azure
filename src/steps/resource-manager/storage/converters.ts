@@ -13,6 +13,7 @@ import {
 
 import { AzureWebLinker } from '../../../azure';
 import { resourceGroupName } from '../../../azure/utils';
+import flatten from '../utils/flatten';
 import {
   STORAGE_ACCOUNT_ENTITY_METADATA,
   STORAGE_CONTAINER_ENTITY_METADATA,
@@ -90,6 +91,13 @@ export function createStorageAccountEntity(
           encryptedServices?.queue?.enabled !== undefined
             ? encryptedServices.queue?.enabled
             : undefined,
+        allowBlobPublicAccess: data.allowBlobPublicAccess,
+        ...flatten({
+          encryption: {
+            keySource: data.encryption?.keySource,
+            keyVaultProperties: data.encryption?.keyVaultProperties,
+          },
+        }),
       },
       tagProperties: ['environment'],
     },

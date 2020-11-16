@@ -24,6 +24,7 @@ import {
   STEP_RM_STORAGE_TABLES,
   STORAGE_TABLE_ENTITY_METADATA,
   STORAGE_ACCOUNT_TABLE_RELATIONSHIP_METADATA,
+  StorageRelationships,
 } from './constants';
 import {
   createStorageContainerEntity,
@@ -36,7 +37,10 @@ import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
-
+import {
+  KEY_VAULT_SERVICE_ENTITY_TYPE,
+  STEP_RM_KEYVAULT_VAULTS,
+} from '../key-vault/constants';
 export * from './constants';
 
 export async function fetchStorageResources(
@@ -47,6 +51,8 @@ export async function fetchStorageResources(
 
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  const keyVaultEntityMap = await buildKeyVaultEntityMap(executionContext);
 
   await client.iterateStorageAccounts(async (storageAccount) => {
     const storageAccountEntity = await jobState.addEntity(
@@ -65,7 +71,87 @@ export async function fetchStorageResources(
       storageAccountEntity,
       client,
     );
+
+    if (storageAccountUsesKeyVault(storageAccount)) {
+      await associateStorageAccountWithKeyVault(
+        executionContext,
+        storageAccount,
+        storageAccountEntity,
+        keyVaultEntityMap,
+      );
+    }
   });
+}
+
+async function buildKeyVaultEntityMap(
+  executionContext: IntegrationStepContext,
+): Promise<{ [key: string]: Entity }> {
+  const keyVaultEntityMap: { [key: string]: Entity } = {};
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: KEY_VAULT_SERVICE_ENTITY_TYPE },
+    (keyVaultEntity) => {
+      const keyVaultRawData = keyVaultEntity?._rawData?.[0]?.rawData;
+      if (!keyVaultRawData) return;
+
+      const rawVaultUri: string = keyVaultRawData.properties?.vaultUri;
+      if (!rawVaultUri) return;
+
+      // NOTE: sometimes the URI is returned with a trailing slash. We must remove it to make sure it matches the URI on the Storage Account
+      const vaultUri = rawVaultUri.replace(/\/$/, '');
+
+      if (!vaultUri) return;
+
+      keyVaultEntityMap[vaultUri] = keyVaultEntity;
+    },
+  );
+
+  return keyVaultEntityMap;
+}
+
+function storageAccountUsesKeyVault(storageAccount: StorageAccount): boolean {
+  return !!(
+    storageAccount.encryption?.keySource === 'Microsoft.Keyvault' &&
+    storageAccount.encryption?.keyVaultProperties?.keyVaultUri
+  );
+}
+
+async function associateStorageAccountWithKeyVault(
+  executionContext: IntegrationStepContext,
+  storageAccount: StorageAccount,
+  storageAccountEntity: Entity,
+  keyVaultEntityMap: { [key: string]: Entity },
+): Promise<void> {
+  if (!storageAccount.encryption?.keyVaultProperties) return;
+
+  const {
+    keyName,
+    keyVaultUri,
+    keyVersion,
+  } = storageAccount.encryption?.keyVaultProperties;
+
+  if (!keyVaultUri) return;
+
+  // NOTE: sometimes the URI is returned with a trailing slash. We must remove it to make sure it matches the URI on the Key Vault
+  const keyVaultEntity = keyVaultEntityMap[keyVaultUri.replace(/\/$/, '')];
+
+  if (!keyVaultEntity) return;
+
+  const { jobState } = executionContext;
+
+  await jobState.addRelationship(
+    createDirectRelationship({
+      _class: StorageRelationships.STORAGE_ACCOUNT_USES_KEY_VAULT._class,
+      from: storageAccountEntity,
+      to: keyVaultEntity,
+      properties: {
+        keyName,
+        keyVaultUri,
+        keyVersion,
+      },
+    }),
+  );
 }
 
 async function synchronizeStorageAccount(
@@ -292,6 +378,7 @@ export const storageSteps: Step<
       ),
       STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_METADATA,
       STORAGE_ACCOUNT_FILE_SHARE_RELATIONSHIP_METADATA,
+      StorageRelationships.STORAGE_ACCOUNT_USES_KEY_VAULT,
     ],
     // From what I can tell, the following are not yet implemented
     // STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
@@ -299,7 +386,11 @@ export const storageSteps: Step<
 
     // STORAGE_TABLE_SERVICE_ENTITY_TYPE,
     // ACCOUNT_STORAGE_TABLE_SERVICE_RELATIONSHIP_TYPE,
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      STEP_RM_KEYVAULT_VAULTS,
+    ],
     executionHandler: fetchStorageResources,
   },
   {

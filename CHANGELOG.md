@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.8.0 - 2020-12-01
+
 ### Added
 
 - Added `azure_monitor_log_profile` entities

@@ -177,6 +177,7 @@ describe('getStepStartStates', () => {
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
+      [MonitorSteps.MONITOR_DIAGNOSTIC_SETTINGS]: { disabled: true },
     });
   });
 
@@ -253,6 +254,7 @@ describe('getStepStartStates', () => {
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
+      [MonitorSteps.MONITOR_DIAGNOSTIC_SETTINGS]: { disabled: true },
     });
   });
 
@@ -329,6 +331,7 @@ describe('getStepStartStates', () => {
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: false },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: false },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: false },
+      [MonitorSteps.MONITOR_DIAGNOSTIC_SETTINGS]: { disabled: false },
     });
   });
 });

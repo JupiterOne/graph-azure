@@ -17,6 +17,13 @@ and this project adheres to
   `azure_storage_account` entity
 - Added `allowBlobPublicAccess` to the `azure_storage_account` entity
 - Added `azure_storage_account|uses|azure_keyvault_service` relationship
+- Added `azure_diagnostic_log_setting` entities
+- Added `ANY_SCOPE|has|azure_diagnostic_log_setting` relationships
+- Added `azure_diagnostic_log_setting|uses|azure_storage_account` relationships
+- Added `azure_diagnostic_metric_setting` entities
+- Added `ANY_SCOPE|has|azure_diagnostic_metric_setting` relationships
+- Added `azure_diagnostic_metric_setting|uses|azure_storage_account`
+  relationships
 
 ## 5.7.0 - 2020-11-05
 

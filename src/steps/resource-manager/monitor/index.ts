@@ -18,8 +18,6 @@ import {
 } from './constants';
 import { createMonitorLogProfileEntity } from './converters';
 
-export * from './constants';
-
 export async function fetchLogProfiles(
   executionContext: IntegrationStepContext,
 ): Promise<void> {

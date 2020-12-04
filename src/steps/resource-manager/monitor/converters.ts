@@ -76,11 +76,6 @@ function createSettingEntity(
         'retentionPolicy.days': retentionPolicy?.days,
         'retentionPolicy.enabled': retentionPolicy?.enabled,
         id,
-        /**
-         * Because we are creating a custom id, and the DiagnosticSettingsResource has its own id,
-         * we want to add the id in last, after the properties from the DiagnosticSettingsResource have been spread
-         * This way we do not override it with the DiagnosticSettingsResource id
-         */
       },
     },
   });

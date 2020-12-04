@@ -71,9 +71,6 @@ export class MonitorClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       MonitorManagementClient,
     );
-    resourceUri =
-      resourceUri ||
-      '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev_diag_set_resource_group/providers/Microsoft.KeyVault/vaults/j1devdiagsetkeyvault';
 
     return iterateAllResources({
       logger: this.logger,

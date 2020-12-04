@@ -6,7 +6,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { MonitorClient } from './client';
 import { MonitorEntities } from './constants';
 import {
@@ -18,7 +18,7 @@ import {
   LogSettings,
   MetricSettings,
 } from '@azure/arm-monitor/esm/models';
-import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage';
+import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage/constants';
 
 type CreateDiagnosticSettingEntity = (
   webLinker: AzureWebLinker,

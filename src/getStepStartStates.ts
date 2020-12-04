@@ -191,7 +191,6 @@ export function getResourceManagerSteps(): GetApiSteps {
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,
       PolicySteps.POLICY_ASSIGNMENTS,
-      MonitorSteps.MONITOR_DIAGNOSTIC_SETTINGS,
     ],
   };
 }

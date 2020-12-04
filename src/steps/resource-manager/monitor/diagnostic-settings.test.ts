@@ -124,7 +124,7 @@ test('fetchDiagnosticSettings', async () => {
 
   expect(collectedRelationships).toMatchDirectRelationshipSchema({});
 
-  // It should connect those entities with the Azure resource (Key Vault in this case)
+  // it should connect those entities with the Azure resource (Key Vault in this case)
   expect(collectedRelationships).toContainEqual({
     _class: 'HAS',
     _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_diag_set_resource_group/providers/Microsoft.KeyVault/vaults/j1devdiagsetkeyvault`,
@@ -150,7 +150,7 @@ test('fetchDiagnosticSettings', async () => {
     displayName: 'HAS',
   });
 
-  // It should connect the Diagnostic Settings with the Azure Storage Account they use
+  // it should connect the Diagnostic Settings with the Azure Storage Account they use
   expect(collectedRelationships).toContainEqual({
     _class: 'USES',
     _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev_diag_set_resource_group/providers/microsoft.keyvault/vaults/j1devdiagsetkeyvault/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/false`,

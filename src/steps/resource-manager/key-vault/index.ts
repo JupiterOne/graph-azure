@@ -16,12 +16,15 @@ import {
   STEP_RM_KEYVAULT_VAULTS,
   KEY_VAULT_SERVICE_ENTITY_CLASS,
   ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
+  KeyVaultRelationships,
 } from './constants';
 import { createKeyVaultEntity } from './converters';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
+import { fetchDiagnosticSettings } from '../monitor/diagnostic-settings';
+import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 
 export * from './constants';
 
@@ -48,6 +51,8 @@ export async function fetchKeyVaults(
         to: vaultEntity,
       }),
     );
+
+    await fetchDiagnosticSettings(executionContext, vaultEntity);
   });
 }
 
@@ -63,6 +68,8 @@ export const keyvaultSteps: Step<
         _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
         _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
       },
+      MonitorEntities.DIAGNOSTIC_LOG_SETTING,
+      MonitorEntities.DIAGNOSTIC_METRIC_SETTING
     ],
     relationships: [
       {
@@ -74,6 +81,10 @@ export const keyvaultSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         KEY_VAULT_SERVICE_ENTITY_TYPE,
       ),
+      KeyVaultRelationships.KEY_VAULT_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING,
+      KeyVaultRelationships.KEY_VAULT_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING,
+      MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT,
+      MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,

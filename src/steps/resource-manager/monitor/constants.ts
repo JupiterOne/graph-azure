@@ -1,6 +1,6 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
-import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage';
-import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions';
+import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage/constants';
+import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions/constants';
 
 export const MonitorSteps = {
   MONITOR_LOG_PROFILES: 'rm-monitor-log-profiles',

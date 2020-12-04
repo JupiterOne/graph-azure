@@ -3,7 +3,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { MonitorEntities } from '../monitor/constants';
 
 // Step IDs
@@ -25,13 +25,13 @@ export const KeyVaultRelationships = {
     _type: 'azure_keyvault_service_has_diagnostic_log_setting',
     sourceType: KEY_VAULT_SERVICE_ENTITY_TYPE,
     _class: RelationshipClass.HAS,
-    targetType: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type
+    targetType: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
   },
 
   KEY_VAULT_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING: {
     _type: 'azure_keyvault_service_has_diagnostic_metric_setting',
     sourceType: KEY_VAULT_SERVICE_ENTITY_TYPE,
     _class: RelationshipClass.HAS,
-    targetType: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type
-  }
-}
+    targetType: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
+  },
+};

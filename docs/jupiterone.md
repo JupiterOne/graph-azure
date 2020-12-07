@@ -176,8 +176,6 @@ The following relationships are created/mapped:
 | `azure_user_group`                | **HAS**               | `azure_user_group`                    |
 | `azure_user_group`                | **HAS**               | `azure_group_member`                  |
 | `azure_user_group`                | **HAS**               | `azure_user`                          |
-| `azure_keyvault_service`          | **HAS**               | `azure_diagnostic_log_setting`        |
-| `azure_keyvault_service`          | **HAS**               | `azure_diagnostic_metric_setting`     |
 | `azure_lb`                        | **CONNECTS**          | `azure_nic`                           |
 | `azure_mariadb_server`            | **HAS**               | `azure_mariadb_database`              |
 | `azure_monitor_log_profile`       | **USES**              | `azure_storage_account`               |
@@ -212,6 +210,8 @@ The following relationships are created/mapped:
 | `azure_resource_group`            | **HAS**               | `azure_storage_account`               |
 | `azure_resource_group`            | **HAS**               | `azure_vm`                            |
 | `azure_resource_group`            | **HAS**               | `azure_vnet`                          |
+| `ANY_RESOURCE`                    | **HAS**               | `azure_diagnostic_log_setting`        |
+| `ANY_RESOURCE`                    | **HAS**               | `azure_diagnostic_metric_setting`     |
 | `ANY_SCOPE`                       | **HAS**               | `azure_advisor_recommendation`        |
 | `ANY_SCOPE`                       | **HAS**               | `azure_policy_assignment`             |
 | `azure_role_assignment`           | **ALLOWS**            | `azure_api_management_service`        |
@@ -250,7 +250,7 @@ The following relationships are created/mapped:
 | `azure_storage_account`           | **HAS**               | `azure_storage_file_share`            |
 | `azure_storage_account`           | **HAS**               | `azure_storage_queue`                 |
 | `azure_storage_account`           | **HAS**               | `azure_storage_table`                 |
-| `azure_storage_account`           | **USES**              | `undefined`                           |
+| `azure_storage_account`           | **USES**              | `azure_keyvault_service`              |
 | `azure_subnet`                    | **HAS**               | `azure_vm`                            |
 | `azure_subscription`              | **HAS**               | `azure_monitor_log_profile`           |
 | `azure_subscription`              | **HAS**               | `azure_resource_group`                |

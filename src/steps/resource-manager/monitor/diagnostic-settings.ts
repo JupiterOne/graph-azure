@@ -8,7 +8,7 @@ import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { MonitorClient } from './client';
-import { MonitorEntities } from './constants';
+import { MonitorEntities, MonitorRelationships } from './constants';
 import {
   createDiagnosticLogSettingEntity,
   createDiagnosticMetricSettingEntity,
@@ -19,6 +19,7 @@ import {
   MetricSettings,
 } from '@azure/arm-monitor/esm/models';
 import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage/constants';
+import { ANY_RESOURCE } from '../constants';
 
 type CreateDiagnosticSettingEntity = (
   webLinker: AzureWebLinker,
@@ -33,13 +34,27 @@ type StorageLocation = {
   storageType: string;
 };
 
+type DIAGNOSTIC_SETTING_INFO = {
+  createEntity: CreateDiagnosticSettingEntity;
+  relationshipType: string;
+};
+
 const DIAGNOSTIC_SETTING_INFO_MAP: {
-  [key: string]: CreateDiagnosticSettingEntity;
+  [key: string]: DIAGNOSTIC_SETTING_INFO;
 } = {
-  [MonitorEntities.DIAGNOSTIC_LOG_SETTING
-    ._type]: createDiagnosticLogSettingEntity,
-  [MonitorEntities.DIAGNOSTIC_METRIC_SETTING
-    ._type]: createDiagnosticMetricSettingEntity,
+  [MonitorEntities.DIAGNOSTIC_LOG_SETTING._type]: {
+    createEntity: createDiagnosticLogSettingEntity,
+    relationshipType:
+      MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+        ._type,
+  },
+
+  [MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type]: {
+    createEntity: createDiagnosticMetricSettingEntity,
+    relationshipType:
+      MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING
+        ._type,
+  },
 };
 
 // TODO: Add the other types of storage when we ingest them. (Azure Log Analytics, Azure Event Hub)
@@ -61,7 +76,9 @@ async function createEntitiesAndRelationships(
 ): Promise<void> {
   if (!DIAGNOSTIC_SETTING_INFO_MAP[entityType]) return;
 
-  const createEntity = DIAGNOSTIC_SETTING_INFO_MAP[entityType];
+  const { createEntity, relationshipType } = DIAGNOSTIC_SETTING_INFO_MAP[
+    entityType
+  ];
 
   // Create Azure Diagnostic Log Setting or Azure Diagnostic Metric Setting entity
   const settingEntity = await jobState.addEntity(
@@ -72,10 +89,13 @@ async function createEntitiesAndRelationships(
   await jobState.addRelationship(
     createDirectRelationship({
       _class: RelationshipClass.HAS,
-      fromType: resourceEntity._type,
+      fromType: ANY_RESOURCE,
       fromKey: resourceEntity._key,
       toType: settingEntity._type,
       toKey: settingEntity._key,
+      properties: {
+        _type: relationshipType,
+      },
     }),
   );
 

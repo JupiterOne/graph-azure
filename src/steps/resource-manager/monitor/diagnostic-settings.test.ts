@@ -130,7 +130,7 @@ test('fetchDiagnosticSettings', async () => {
     _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_diag_set_resource_group/providers/Microsoft.KeyVault/vaults/j1devdiagsetkeyvault`,
     _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_diag_set_resource_group/providers/Microsoft.KeyVault/vaults/j1devdiagsetkeyvault|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev_diag_set_resource_group/providers/microsoft.keyvault/vaults/j1devdiagsetkeyvault/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/false`,
     _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev_diag_set_resource_group/providers/microsoft.keyvault/vaults/j1devdiagsetkeyvault/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/false`,
-    _type: 'azure_keyvault_service_has_diagnostic_log_setting',
+    _type: 'azure_resource_has_diagnostic_log_setting',
     displayName: 'HAS',
   });
   expect(collectedRelationships).toContainEqual({
@@ -138,7 +138,7 @@ test('fetchDiagnosticSettings', async () => {
     _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_diag_set_resource_group/providers/Microsoft.KeyVault/vaults/j1devdiagsetkeyvault`,
     _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_diag_set_resource_group/providers/Microsoft.KeyVault/vaults/j1devdiagsetkeyvault|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev_diag_set_resource_group/providers/microsoft.keyvault/vaults/j1devdiagsetkeyvault/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/true`,
     _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev_diag_set_resource_group/providers/microsoft.keyvault/vaults/j1devdiagsetkeyvault/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/true`,
-    _type: 'azure_keyvault_service_has_diagnostic_log_setting',
+    _type: 'azure_resource_has_diagnostic_log_setting',
     displayName: 'HAS',
   });
   expect(collectedRelationships).toContainEqual({
@@ -146,7 +146,7 @@ test('fetchDiagnosticSettings', async () => {
     _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_diag_set_resource_group/providers/Microsoft.KeyVault/vaults/j1devdiagsetkeyvault`,
     _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_diag_set_resource_group/providers/Microsoft.KeyVault/vaults/j1devdiagsetkeyvault|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev_diag_set_resource_group/providers/microsoft.keyvault/vaults/j1devdiagsetkeyvault/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/metrics/AllMetrics/true/undefined/0/false`,
     _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev_diag_set_resource_group/providers/microsoft.keyvault/vaults/j1devdiagsetkeyvault/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/metrics/AllMetrics/true/undefined/0/false`,
-    _type: 'azure_keyvault_service_has_diagnostic_metric_setting',
+    _type: 'azure_resource_has_diagnostic_metric_setting',
     displayName: 'HAS',
   });
 

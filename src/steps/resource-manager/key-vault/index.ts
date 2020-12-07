@@ -8,7 +8,10 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
+import {
+  ACCOUNT_ENTITY_TYPE,
+  STEP_AD_ACCOUNT,
+} from '../../active-directory/constants';
 import { KeyVaultClient } from './client';
 import {
   ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
@@ -19,7 +22,7 @@ import {
   KeyVaultRelationships,
 } from './constants';
 import { createKeyVaultEntity } from './converters';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
@@ -69,7 +72,7 @@ export const keyvaultSteps: Step<
         _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
       },
       MonitorEntities.DIAGNOSTIC_LOG_SETTING,
-      MonitorEntities.DIAGNOSTIC_METRIC_SETTING
+      MonitorEntities.DIAGNOSTIC_METRIC_SETTING,
     ],
     relationships: [
       {
@@ -81,10 +84,10 @@ export const keyvaultSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         KEY_VAULT_SERVICE_ENTITY_TYPE,
       ),
-      KeyVaultRelationships.KEY_VAULT_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING,
-      KeyVaultRelationships.KEY_VAULT_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING,
+      MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING,
+      MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING,
       MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT,
-      MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+      MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,

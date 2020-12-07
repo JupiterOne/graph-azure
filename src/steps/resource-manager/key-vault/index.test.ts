@@ -148,7 +148,7 @@ describe('step = key vaults', () => {
       _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/keionned1-j1dev`,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/keionned1-j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/keionned1-j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/true`,
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/keionned1-j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/true`,
-      _type: 'azure_keyvault_service_has_diagnostic_log_setting',
+      _type: 'azure_resource_has_diagnostic_log_setting',
       displayName: 'HAS',
     });
   });

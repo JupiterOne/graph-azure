@@ -19,7 +19,6 @@ import {
   STEP_RM_KEYVAULT_VAULTS,
   KEY_VAULT_SERVICE_ENTITY_CLASS,
   ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
-  KeyVaultRelationships,
 } from './constants';
 import { createKeyVaultEntity } from './converters';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';

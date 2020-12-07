@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.8.1 - 2020-12-02
+
+- Upgrade `@jupiterone/integration-sdk-*@5.0.0`
+
+## 5.8.0 - 2020-12-01
+
 ### Added
 
 - Added `azure_monitor_log_profile` entities

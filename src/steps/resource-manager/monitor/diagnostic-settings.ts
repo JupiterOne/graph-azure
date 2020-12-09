@@ -128,8 +128,10 @@ export async function fetchDiagnosticSettings(
   const client = new MonitorClient(instance.config, logger);
 
   const { id } = resourceEntity;
-  if (id && typeof id === 'string') {
-    await client.iterateDiagnosticSettings(id, async (diagnosticSettings) => {
+
+  await client.iterateDiagnosticSettings(
+    id as string,
+    async (diagnosticSettings) => {
       const { logs, metrics } = diagnosticSettings;
 
       await Promise.all([
@@ -160,6 +162,6 @@ export async function fetchDiagnosticSettings(
             )
           : []),
       ]);
-    });
-  }
+    },
+  );
 }

@@ -210,8 +210,8 @@ The following relationships are created/mapped:
 | `azure_resource_group`            | **HAS**               | `azure_storage_account`               |
 | `azure_resource_group`            | **HAS**               | `azure_vm`                            |
 | `azure_resource_group`            | **HAS**               | `azure_vnet`                          |
-| `ANY_RESOURCE`                    | **HAS**               | `azure_diagnostic_log_setting`        |
-| `ANY_RESOURCE`                    | **HAS**               | `azure_diagnostic_metric_setting`     |
+| `ANY_SCOPE`                       | **HAS**               | `azure_diagnostic_log_setting`        |
+| `ANY_SCOPE`                       | **HAS**               | `azure_diagnostic_metric_setting`     |
 | `ANY_SCOPE`                       | **HAS**               | `azure_advisor_recommendation`        |
 | `ANY_SCOPE`                       | **HAS**               | `azure_policy_assignment`             |
 | `azure_role_assignment`           | **ALLOWS**            | `azure_api_management_service`        |

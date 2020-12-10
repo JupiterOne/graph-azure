@@ -19,6 +19,7 @@ test('step = monitor log profiles', async () => {
     clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
     directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
     subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+    developerId: 'keionned',
   };
 
   recording = setupAzureRecording({
@@ -38,8 +39,8 @@ test('step = monitor log profiles', async () => {
       {
         _class: ['Service'],
         _type: 'azure_storage_account',
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_log_profile_resource_group/providers/Microsoft.Storage/storageAccounts/j1devlogprofilestrgacct`,
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_log_profile_resource_group/providers/Microsoft.Storage/storageAccounts/j1devlogprofilestrgacct`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
         name: `j1devlogprofilestrgacct`,
       },
     ],
@@ -67,11 +68,11 @@ test('step = monitor log profiles', async () => {
   );
   expect(collectedRelationships).toContainEqual(
     expect.objectContaining({
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/providers/microsoft.insights/logprofiles/default|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_log_profile_resource_group/providers/Microsoft.Storage/storageAccounts/j1devlogprofilestrgacct`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/providers/microsoft.insights/logprofiles/default|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
       _type: 'azure_monitor_log_profile_uses_storage_account',
       _class: 'USES',
       _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/providers/microsoft.insights/logprofiles/default`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev_log_profile_resource_group/providers/Microsoft.Storage/storageAccounts/j1devlogprofilestrgacct`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
       displayName: 'USES',
     }),
   );

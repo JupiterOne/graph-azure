@@ -24,6 +24,7 @@ describe('iterateLogProfiles', () => {
       clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
       directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
       subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+      developerId: 'keionned',
     };
 
     recording = setupAzureRecording({
@@ -51,8 +52,8 @@ describe('iterateLogProfiles', () => {
       kind: null,
       name: 'default',
       location: null,
-      storageAccountId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev_log_profile_resource_group/providers/Microsoft.Storage/storageAccounts/j1devlogprofilestrgacct`,
-      serviceBusRuleId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev_log_profile_resource_group/providers/Microsoft.EventHub/namespaces/j1dev-log-profile-eventhub/authorizationrules/RootManageSharedAccessKey`,
+      storageAccountId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${config.developerId}j1dev`,
+      serviceBusRuleId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventHub/namespaces/j1dev-log-profile-eventhub/authorizationrules/RootManageSharedAccessKey`,
       locations: ['westus', 'global'],
       categories: ['Delete', 'Action', 'Write'],
       retentionPolicy: {

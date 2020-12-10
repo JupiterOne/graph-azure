@@ -25,7 +25,7 @@ import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
-import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from '../../../utils/diagnosticSettings';
+import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 
 export * from './constants';

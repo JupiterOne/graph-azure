@@ -2,37 +2,20 @@ import {
   createDirectRelationship,
   Entity,
   ExplicitRelationship,
-  JobState,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { createAzureWebLinker } from '../azure';
-import { IntegrationStepContext } from '../types';
-import { ACCOUNT_ENTITY_TYPE } from '../steps/active-directory/constants';
-import { MonitorClient } from '../steps/resource-manager/monitor/client';
-import { MonitorRelationships } from '../steps/resource-manager/monitor/constants';
+import { createAzureWebLinker } from '../../../azure';
+import { IntegrationStepContext } from '../../../types';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
+import { MonitorClient } from '../monitor/client';
+import { MonitorRelationships } from '../monitor/constants';
 import {
   createDiagnosticLogSettingEntity,
   createDiagnosticMetricSettingEntity,
-} from '../steps/resource-manager/monitor/converters';
+} from '../monitor/converters';
 import { DiagnosticSettingsResource } from '@azure/arm-monitor/esm/models';
-import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../steps/resource-manager/storage/constants';
-import { ANY_SCOPE } from '../steps/resource-manager/constants';
-
-type StorageLocation = {
-  getStorageId: (
-    diagnosticSettings: DiagnosticSettingsResource,
-  ) => string | undefined;
-  storageType: string;
-};
-
-// TODO: Add the other types of storage when we ingest them. (Azure Log Analytics, Azure Event Hub)
-const STORAGE_LOCATIONS: StorageLocation[] = [
-  {
-    getStorageId: (diagnosticSettings: DiagnosticSettingsResource) =>
-      diagnosticSettings.storageAccountId,
-    storageType: STORAGE_ACCOUNT_ENTITY_METADATA._type,
-  },
-];
+import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage/constants';
+import { ANY_SCOPE } from '../constants';
 
 /**
  * Creates a direct/explicit relationship between an Azure Scope and an Azure Diagnostic Log Setting or Azure Diagnostic Metric Setting
@@ -58,6 +41,24 @@ function createResourceHasSettingRelationship(
 }
 
 /**
+ * Create a direct/explicit relationship between an Azure Diagnostic Log Setting or Azure Diagnostic Metric Setting and an Azure Storage Account
+ * @param settingEntity The Azure Diagnostic Log or Metric Setting Entity
+ * @param storageAccountId The Azure resource URI of the Azure Storage Account that the Azure resource will use to store metrics and/or logs
+ */
+function createSettingUsesStorageAccountRelationship(
+  settingEntity: Entity,
+  storageAccountId: string,
+): ExplicitRelationship {
+  return createDirectRelationship({
+    _class: RelationshipClass.USES,
+    fromType: settingEntity._type,
+    fromKey: settingEntity._key,
+    toType: STORAGE_ACCOUNT_ENTITY_METADATA._type,
+    toKey: storageAccountId,
+  });
+}
+
+/**
  * Creates direct/explicit relationships between an Azure Diagnostic Log Setting or Azure Diagnostic Metric Setting and the Azure Storage Resource(s) (Event Hub, Log Analytics, or Storage Account) that it uses.
  * @param diagnosticSettings The Azure Diagnostic Settings that contains the storage locations of the log and metrics
  * @param settingEntity The Azure Diagnostic Log or Metric Setting Entity
@@ -66,40 +67,28 @@ function createSettingUsesStorageRelationships(
   diagnosticSettings: DiagnosticSettingsResource,
   settingEntity: Entity,
 ): ExplicitRelationship[] {
-  return STORAGE_LOCATIONS.reduce<ExplicitRelationship[]>(
-    (relationships, storageLocation) => {
-      const { getStorageId, storageType } = storageLocation;
-      const storageId = getStorageId(diagnosticSettings);
+  const relationships: ExplicitRelationship[] = [];
+  const { storageAccountId } = diagnosticSettings;
 
-      if (storageId) {
-        relationships.push(
-          createDirectRelationship({
-            _class: RelationshipClass.USES,
-            fromType: settingEntity._type,
-            fromKey: settingEntity._key,
-            toType: storageType,
-            toKey: storageId,
-          }),
-        );
-      }
+  if (storageAccountId) {
+    relationships.push(
+      createSettingUsesStorageAccountRelationship(
+        settingEntity,
+        storageAccountId,
+      ),
+    );
+  }
 
-      return relationships;
-    },
-    [],
-  );
+  // TODO: Add the other types of storage when we ingest them. (Azure Log Analytics, Azure Event Hub)
+
+  return relationships;
 }
 
-function persistDiagnosticSettingsGraphObjects(
-  jobState: JobState,
-  settingEntity: Entity,
-  relationships: ExplicitRelationship[],
-) {
-  return Promise.all([
-    jobState.addEntity(settingEntity),
-    jobState.addRelationships(relationships),
-  ]);
-}
-
+/**
+ * Creates and persists the Azure Diagnostic Settings graph objects (entities and relationships) for an Azure Resource
+ * @param executionContext The execution context of an integration step
+ * @param resourceEntity The Azure resource entity who's Diagnostic Settings should be retrieved
+ */
 export async function createDiagnosticSettingsEntitiesAndRelationshipsForResource(
   executionContext: IntegrationStepContext,
   resourceEntity: Entity,
@@ -135,14 +124,13 @@ export async function createDiagnosticSettingsEntitiesAndRelationshipsForResourc
                 logSettingEntity,
               );
 
-              await persistDiagnosticSettingsGraphObjects(
-                jobState,
-                logSettingEntity,
-                [
+              await Promise.all([
+                jobState.addEntity(logSettingEntity),
+                jobState.addRelationships([
                   resourceHasLogSettingRelationship,
-                  ...(logSettingUsesStorageRelationships || []),
-                ],
-              );
+                  ...logSettingUsesStorageRelationships,
+                ]),
+              ]);
             })
           : []),
         ...(metrics
@@ -163,14 +151,13 @@ export async function createDiagnosticSettingsEntitiesAndRelationshipsForResourc
                 metricSettingEntity,
               );
 
-              await persistDiagnosticSettingsGraphObjects(
-                jobState,
-                metricSettingEntity,
-                [
+              await Promise.all([
+                jobState.addEntity(metricSettingEntity),
+                jobState.addRelationships([
                   resourceHasMetricSettingRelationship,
-                  ...(metricSettingUsesStorageRelationships || []),
-                ],
-              );
+                  ...metricSettingUsesStorageRelationships,
+                ]),
+              ]);
             })
           : []),
       ]);

@@ -2,17 +2,17 @@ import {
   MockIntegrationStepExecutionContext,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig } from '../types';
-import { setupAzureRecording } from '../../test/helpers/recording';
-import { createMockAzureStepExecutionContext } from '../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../steps/active-directory';
-import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from './diagnosticSettings';
+import { IntegrationConfig } from '../../../types';
+import { setupAzureRecording } from '../../../../test/helpers/recording';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from './createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import {
   KEY_VAULT_SERVICE_ENTITY_CLASS,
   KEY_VAULT_SERVICE_ENTITY_TYPE,
-} from '../steps/resource-manager/key-vault';
+} from '../key-vault';
 import { Entity } from '@jupiterone/integration-sdk-core';
-import { MonitorEntities } from '../steps/resource-manager/monitor/constants';
+import { MonitorEntities } from '../monitor/constants';
 
 let recording: Recording;
 

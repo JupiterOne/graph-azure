@@ -64,27 +64,11 @@ resource "azurerm_monitor_log_profile" "j1dev_log_profile" {
   }
 }
 
-resource "azurerm_resource_group" "j1dev_diag_set_resource_group" {
-  count    = local.monitor_diagnostic_settings_count 
-  name     = "j1dev_diag_set_resource_group"
-  location = "eastus"
-}
-
-resource "azurerm_storage_account" "j1dev_diag_set_strg_acct" {
-  count                    = local.monitor_diagnostic_settings_count
-  # The name can only consist of lowercase letters and numbers, and must be between 3 and 24 characters long.
-  name                     = "j1devdiagsetstrgacct"
-  resource_group_name      = azurerm_resource_group.j1dev_diag_set_resource_group[0].name
-  location                 = azurerm_resource_group.j1dev_diag_set_resource_group[0].location
-  account_tier             = "Standard"
-  account_replication_type = "GRS"
-}
-
 resource "azurerm_key_vault" "j1dev_diag_set_key_vault" {
   count                       = local.monitor_diagnostic_settings_count
-  name                        = "j1devdiagsetkeyvault"
-  resource_group_name         = azurerm_resource_group.j1dev_diag_set_resource_group[0].name
-  location                    = azurerm_resource_group.j1dev_diag_set_resource_group[0].location
+  name                        = "${var.developer_id}j1-dgset-kv"
+  resource_group_name         = azurerm_resource_group.j1dev.name
+  location                    = azurerm_resource_group.j1dev.location
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_enabled         = true
@@ -97,7 +81,7 @@ resource "azurerm_monitor_diagnostic_setting" "j1dev_diag_set" {
   count              = local.monitor_diagnostic_settings_count
   name               = "j1dev_diag_set"
   target_resource_id = azurerm_key_vault.j1dev_diag_set_key_vault[0].id
-  storage_account_id = azurerm_storage_account.j1dev_diag_set_strg_acct[0].id
+  storage_account_id = azurerm_storage_account.j1dev.id
 
   log {
     category = "AuditEvent"

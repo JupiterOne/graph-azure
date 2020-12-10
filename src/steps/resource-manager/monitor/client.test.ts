@@ -71,6 +71,7 @@ describe('iterateDiagnosticSettings', () => {
       clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
       directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
       subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+      developerId: 'keionned',
     };
 
     recording = setupAzureRecording({
@@ -84,7 +85,7 @@ describe('iterateDiagnosticSettings', () => {
       true,
     );
 
-    const resourceUri = `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev_diag_set_resource_group/providers/Microsoft.KeyVault/vaults/j1devdiagsetkeyvault`;
+    const resourceUri = `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${config.developerId}j1-dgset-kv`;
 
     const resources: DiagnosticSettingsResource[] = [];
 
@@ -96,7 +97,7 @@ describe('iterateDiagnosticSettings', () => {
       expect.objectContaining({
         eventHubAuthorizationRuleId: null,
         eventHubName: null,
-        id: `/subscriptions/${config.subscriptionId}/resourcegroups/j1dev_diag_set_resource_group/providers/microsoft.keyvault/vaults/j1devdiagsetkeyvault/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set`,
+        id: `/subscriptions/${config.subscriptionId}/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/${config.developerId}j1-dgset-kv/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set`,
         identity: null,
         kind: null,
         location: null,
@@ -122,7 +123,7 @@ describe('iterateDiagnosticSettings', () => {
         ]),
         name: 'j1dev_diag_set',
         serviceBusRuleId: null,
-        storageAccountId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev_diag_set_resource_group/providers/Microsoft.Storage/storageAccounts/j1devdiagsetstrgacct`,
+        storageAccountId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${config.developerId}j1dev`,
         tags: null,
         type: 'Microsoft.Insights/diagnosticSettings',
         workspaceId: null,

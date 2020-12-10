@@ -25,7 +25,7 @@ import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
-import { fetchDiagnosticSettings } from '../monitor/diagnostic-settings';
+import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from '../../../utils/diagnosticSettings';
 import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 
 export * from './constants';
@@ -54,7 +54,10 @@ export async function fetchKeyVaults(
       }),
     );
 
-    await fetchDiagnosticSettings(executionContext, vaultEntity);
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      vaultEntity,
+    );
   });
 }
 

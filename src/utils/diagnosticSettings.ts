@@ -4,22 +4,25 @@ import {
   JobState,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
-import { MonitorClient } from './client';
-import { MonitorEntities, MonitorRelationships } from './constants';
+import { AzureWebLinker, createAzureWebLinker } from '../azure';
+import { IntegrationStepContext } from '../types';
+import { ACCOUNT_ENTITY_TYPE } from '../steps/active-directory/constants';
+import { MonitorClient } from '../steps/resource-manager/monitor/client';
+import {
+  MonitorEntities,
+  MonitorRelationships,
+} from '../steps/resource-manager/monitor/constants';
 import {
   createDiagnosticLogSettingEntity,
   createDiagnosticMetricSettingEntity,
-} from './converters';
+} from '../steps/resource-manager/monitor/converters';
 import {
   DiagnosticSettingsResource,
   LogSettings,
   MetricSettings,
 } from '@azure/arm-monitor/esm/models';
-import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage/constants';
-import { ANY_RESOURCE } from '../constants';
+import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../steps/resource-manager/storage/constants';
+import { ANY_SCOPE } from '../steps/resource-manager/constants';
 
 type CreateDiagnosticSettingEntity = (
   webLinker: AzureWebLinker,
@@ -89,7 +92,7 @@ async function createEntitiesAndRelationships(
   await jobState.addRelationship(
     createDirectRelationship({
       _class: RelationshipClass.HAS,
-      fromType: ANY_RESOURCE,
+      fromType: ANY_SCOPE,
       fromKey: resourceEntity._key,
       toType: settingEntity._type,
       toKey: settingEntity._key,
@@ -118,7 +121,7 @@ async function createEntitiesAndRelationships(
   }
 }
 
-export async function fetchDiagnosticSettings(
+export async function createDiagnosticSettingsEntitiesAndRelationshipsForResource(
   executionContext: IntegrationStepContext,
   resourceEntity: Entity,
 ): Promise<void> {

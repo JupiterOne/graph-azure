@@ -5,29 +5,8 @@ import {
 import { MonitorManagementClient } from '@azure/arm-monitor';
 import {
   DiagnosticSettingsResource,
-  DiagnosticSettingsResourceCollection,
   LogProfileResource,
 } from '@azure/arm-monitor/esm/models';
-import { HttpResponse } from '@azure/ms-rest-js';
-
-class DiagnosticSettingsListResponse extends Array<DiagnosticSettingsResource> {
-  readonly _response: HttpResponse & {
-    /**
-     * The response body as text (string format)
-     */
-    bodyAsText: string;
-
-    /**
-     * The response body as parsed JSON or XML
-     */
-    parsedBody: DiagnosticSettingsResourceCollection;
-  };
-
-  constructor(response, items: DiagnosticSettingsResource[]) {
-    super(...items);
-    this._response = response;
-  }
-}
 
 export class MonitorClient extends Client {
   /**
@@ -76,16 +55,15 @@ export class MonitorClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
-        list: async () =>
-          serviceClient.diagnosticSettings
-            .list(resourceUri)
-            .then(
-              (result) =>
-                new DiagnosticSettingsListResponse(
-                  result._response,
-                  result.value || [],
-                ),
-            ),
+        list: async () => {
+          const response = await serviceClient.diagnosticSettings.list(
+            resourceUri,
+          );
+          const diagnosticSettings = response.value!;
+          return Object.assign(diagnosticSettings, {
+            _response: response._response,
+          });
+        },
       },
       resourceDescription: 'monitor.diagnosticSetting',
       callback,

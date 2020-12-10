@@ -85,7 +85,7 @@ describe('iterateDiagnosticSettings', () => {
       true,
     );
 
-    const resourceUri = `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${config.developerId}j1-dgset-kv`;
+    const resourceUri = `/subscriptions/${config.subscriptionId}/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/${config.developerId}1-j1dev`;
 
     const resources: DiagnosticSettingsResource[] = [];
 
@@ -97,7 +97,7 @@ describe('iterateDiagnosticSettings', () => {
       expect.objectContaining({
         eventHubAuthorizationRuleId: null,
         eventHubName: null,
-        id: `/subscriptions/${config.subscriptionId}/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/${config.developerId}j1-dgset-kv/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set`,
+        id: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set`,
         identity: null,
         kind: null,
         location: null,
@@ -121,7 +121,7 @@ describe('iterateDiagnosticSettings', () => {
             retentionPolicy: { days: 0, enabled: false },
           },
         ]),
-        name: 'j1dev_diag_set',
+        name: 'j1dev_key_vault_diag_set',
         serviceBusRuleId: null,
         storageAccountId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${config.developerId}j1dev`,
         tags: null,

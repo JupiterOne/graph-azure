@@ -48,7 +48,7 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
      * The id/URI of the storage account these entities use are returned by the endpoint in camel case.
      * When creating relationships between these entities and others, all other references to Azure Diagnostic Log Setting and Azure Diagnostic Metric Setting _keys or ids will be lowercased, but all other references to _keys or id are in the casing returned by the client.
      */
-    resourceUri = `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/${instanceConfig.developerId}j1-dgset-kv`;
+    resourceUri = `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/${instanceConfig.developerId}1-j1dev`;
 
     const resourceEntity: Entity = {
       id: resourceUri,
@@ -76,19 +76,19 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
 
     expect(collectedEntities).toContainEqual(
       expect.objectContaining({
-        id: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/false`,
-        _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/false`,
+        id: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/false`,
+        _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/false`,
         _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
         _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set`,
         storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
         eventHubAuthorizationRuleId: null,
         eventHubName: null,
         logAnalyticsDestinationType: null,
         serviceBusRuleId: null,
         workspaceId: null,
-        displayName: 'j1dev_diag_set',
-        name: 'j1dev_diag_set',
+        displayName: 'j1dev_key_vault_diag_set',
+        name: 'j1dev_key_vault_diag_set',
         category: 'AuditEvent',
         enabled: true,
         'retentionPolicy.days': 7,
@@ -102,19 +102,19 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
 
     expect(collectedEntities).toContainEqual(
       expect.objectContaining({
-        id: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/true`,
-        _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/true`,
+        id: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/true`,
+        _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/true`,
         _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
         _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set`,
         storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
         eventHubAuthorizationRuleId: null,
         eventHubName: null,
         logAnalyticsDestinationType: null,
         serviceBusRuleId: null,
         workspaceId: null,
-        displayName: 'j1dev_diag_set',
-        name: 'j1dev_diag_set',
+        displayName: 'j1dev_key_vault_diag_set',
+        name: 'j1dev_key_vault_diag_set',
         category: 'AuditEvent',
         enabled: true,
         'retentionPolicy.days': 7,
@@ -128,19 +128,19 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
 
     expect(collectedEntities).toContainEqual(
       expect.objectContaining({
-        id: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/metrics/AllMetrics/true/undefined/0/false`,
-        _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/metrics/AllMetrics/true/undefined/0/false`,
+        id: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/metrics/AllMetrics/true/undefined/0/false`,
+        _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/metrics/AllMetrics/true/undefined/0/false`,
         _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
         _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set`,
         storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
         eventHubAuthorizationRuleId: null,
         eventHubName: null,
         logAnalyticsDestinationType: null,
         serviceBusRuleId: null,
         workspaceId: null,
-        displayName: 'j1dev_diag_set',
-        name: 'j1dev_diag_set',
+        displayName: 'j1dev_key_vault_diag_set',
+        name: 'j1dev_key_vault_diag_set',
         category: 'AllMetrics',
         enabled: true,
         'retentionPolicy.days': 0,
@@ -161,8 +161,8 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
     expect(collectedRelationships).toContainEqual({
       _class: 'HAS',
       _fromEntityKey: resourceUri,
-      _key: `${resourceUri}|has|${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/false`,
-      _toEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/false`,
+      _key: `${resourceUri}|has|${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/false`,
+      _toEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/false`,
       _type: 'azure_resource_has_diagnostic_log_setting',
       displayName: 'HAS',
     });
@@ -174,8 +174,8 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
     expect(collectedRelationships).toContainEqual({
       _class: 'HAS',
       _fromEntityKey: resourceUri,
-      _key: `${resourceUri}|has|${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/true`,
-      _toEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/true`,
+      _key: `${resourceUri}|has|${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/true`,
+      _toEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/true`,
       _type: 'azure_resource_has_diagnostic_log_setting',
       displayName: 'HAS',
     });
@@ -187,8 +187,8 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
     expect(collectedRelationships).toContainEqual({
       _class: 'HAS',
       _fromEntityKey: resourceUri,
-      _key: `${resourceUri}|has|${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/metrics/AllMetrics/true/undefined/0/false`,
-      _toEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/metrics/AllMetrics/true/undefined/0/false`,
+      _key: `${resourceUri}|has|${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/metrics/AllMetrics/true/undefined/0/false`,
+      _toEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/metrics/AllMetrics/true/undefined/0/false`,
       _type: 'azure_resource_has_diagnostic_metric_setting',
       displayName: 'HAS',
     });
@@ -199,8 +199,8 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
 
     expect(collectedRelationships).toContainEqual({
       _class: 'USES',
-      _fromEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/false`,
-      _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _fromEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/false`,
+      _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
       _type: 'azure_diagnostic_log_setting_uses_storage_account',
       displayName: 'USES',
@@ -212,8 +212,8 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
 
     expect(collectedRelationships).toContainEqual({
       _class: 'USES',
-      _fromEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/true`,
-      _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/logs/AuditEvent/true/7/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _fromEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/true`,
+      _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/logs/AuditEvent/true/7/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
       _type: 'azure_diagnostic_log_setting_uses_storage_account',
       displayName: 'USES',
@@ -225,8 +225,8 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
 
     expect(collectedRelationships).toContainEqual({
       _class: 'USES',
-      _fromEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/metrics/AllMetrics/true/undefined/0/false`,
-      _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_diag_set/metrics/AllMetrics/true/undefined/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _fromEntityKey: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/metrics/AllMetrics/true/undefined/0/false`,
+      _key: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set/metrics/AllMetrics/true/undefined/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
       _type: 'azure_diagnostic_metric_setting_uses_storage_account',
       displayName: 'USES',

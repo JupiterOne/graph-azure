@@ -50,4 +50,22 @@ resource "azurerm_monitor_diagnostic_setting" "j1dev_key_vault_diag_set" {
       days    = 7
     }
   }
+
+  log {
+    category = "AuditEvent"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+      days    = 7
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+
+    retention_policy {
+      enabled = false
+    }
+  }
 }

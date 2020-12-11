@@ -3,12 +3,14 @@ import {
   Entity,
   ExplicitRelationship,
   RelationshipClass,
+  StepEntityMetadata,
+  StepRelationshipMetadata,
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { MonitorClient } from '../monitor/client';
-import { MonitorRelationships } from '../monitor/constants';
+import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 import {
   createDiagnosticLogSettingEntity,
   createDiagnosticMetricSettingEntity,
@@ -164,3 +166,15 @@ export async function createDiagnosticSettingsEntitiesAndRelationshipsForResourc
     },
   );
 }
+
+export const diagnosticSettingsEntitiesForResource: StepEntityMetadata[] = [
+  MonitorEntities.DIAGNOSTIC_LOG_SETTING,
+  MonitorEntities.DIAGNOSTIC_METRIC_SETTING,
+];
+
+export const diagnosticSettingsRelationshipsForResource: StepRelationshipMetadata[] = [
+  MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING,
+  MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING,
+  MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT,
+  MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT,
+];

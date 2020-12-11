@@ -25,7 +25,11 @@ import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
-import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import {
+  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+  diagnosticSettingsEntitiesForResource,
+  diagnosticSettingsRelationshipsForResource,
+} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 
 export * from './constants';
@@ -73,8 +77,7 @@ export const keyvaultSteps: Step<
         _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
         _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
       },
-      MonitorEntities.DIAGNOSTIC_LOG_SETTING,
-      MonitorEntities.DIAGNOSTIC_METRIC_SETTING,
+      ...diagnosticSettingsEntitiesForResource,
     ],
     relationships: [
       {
@@ -86,10 +89,7 @@ export const keyvaultSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         KEY_VAULT_SERVICE_ENTITY_TYPE,
       ),
-      MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING,
-      MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING,
-      MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT,
-      MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT,
+      ...diagnosticSettingsRelationshipsForResource,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,

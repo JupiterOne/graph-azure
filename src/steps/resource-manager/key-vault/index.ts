@@ -30,7 +30,6 @@ import {
   diagnosticSettingsEntitiesForResource,
   diagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
-import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 
 export * from './constants';
 

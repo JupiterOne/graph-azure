@@ -7,7 +7,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { STEP_RM_STORAGE_RESOURCES } from '../storage/constants';
 import { STEP_RM_SUBSCRIPTIONS } from '../subscriptions/constants';
 import { MonitorClient } from './client';
@@ -17,7 +17,6 @@ import {
   MonitorRelationships,
 } from './constants';
 import { createMonitorLogProfileEntity } from './converters';
-export * from './constants';
 
 export async function fetchLogProfiles(
   executionContext: IntegrationStepContext,

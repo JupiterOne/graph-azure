@@ -5,7 +5,10 @@ import {
 } from '../../../../test/helpers/recording';
 import { IntegrationConfig } from '../../../types';
 import { MonitorClient } from './client';
-import { LogProfileResource } from '@azure/arm-monitor/esm/models';
+import {
+  DiagnosticSettingsResource,
+  LogProfileResource,
+} from '@azure/arm-monitor/esm/models';
 
 let recording: Recording;
 
@@ -21,11 +24,12 @@ describe('iterateLogProfiles', () => {
       clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
       directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
       subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+      developerId: 'keionned',
     };
 
     recording = setupAzureRecording({
       directory: __dirname,
-      name: 'iteratePolicyAssignments',
+      name: 'iterateLogProfiles',
     });
 
     const client = new MonitorClient(
@@ -48,8 +52,8 @@ describe('iterateLogProfiles', () => {
       kind: null,
       name: 'default',
       location: null,
-      storageAccountId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev_log_profile_resource_group/providers/Microsoft.Storage/storageAccounts/j1devlogprofilestrgacct`,
-      serviceBusRuleId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev_log_profile_resource_group/providers/Microsoft.EventHub/namespaces/j1dev-log-profile-eventhub/authorizationrules/RootManageSharedAccessKey`,
+      storageAccountId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${config.developerId}j1dev`,
+      serviceBusRuleId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventHub/namespaces/j1dev-log-profile-eventhub/authorizationrules/RootManageSharedAccessKey`,
       locations: ['westus', 'global'],
       categories: ['Delete', 'Action', 'Write'],
       retentionPolicy: {
@@ -57,5 +61,74 @@ describe('iterateLogProfiles', () => {
         days: 365,
       },
     });
+  });
+});
+
+describe('iterateDiagnosticSettings', () => {
+  test('all', async () => {
+    // developer used different creds than ~/test/integrationInstanceConfig
+    const config: IntegrationConfig = {
+      clientId: process.env.CLIENT_ID || 'clientId',
+      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+      directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
+      subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+      developerId: 'keionned',
+    };
+
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateDiagnosticSettings',
+    });
+
+    const client = new MonitorClient(
+      config,
+      createMockIntegrationLogger(),
+      true,
+    );
+
+    const resourceUri = `/subscriptions/${config.subscriptionId}/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/${config.developerId}1-j1dev`;
+
+    const resources: DiagnosticSettingsResource[] = [];
+
+    await client.iterateDiagnosticSettings(resourceUri, (e) => {
+      resources.push(e);
+    });
+
+    expect(resources).toContainEqual(
+      expect.objectContaining({
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        id: `${resourceUri}/providers/microsoft.insights/diagnosticSettings/j1dev_key_vault_diag_set`,
+        identity: null,
+        kind: null,
+        location: null,
+        logAnalyticsDestinationType: null,
+        logs: expect.arrayContaining([
+          {
+            category: 'AuditEvent',
+            enabled: true,
+            retentionPolicy: { days: 7, enabled: true },
+          },
+          {
+            category: 'AuditEvent',
+            enabled: true,
+            retentionPolicy: { days: 7, enabled: false },
+          },
+        ]),
+        metrics: expect.arrayContaining([
+          {
+            category: 'AllMetrics',
+            enabled: true,
+            retentionPolicy: { days: 0, enabled: false },
+          },
+        ]),
+        name: 'j1dev_key_vault_diag_set',
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${config.developerId}j1dev`,
+        tags: null,
+        type: 'Microsoft.Insights/diagnosticSettings',
+        workspaceId: null,
+      }),
+    );
   });
 });

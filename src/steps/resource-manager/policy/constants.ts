@@ -25,7 +25,7 @@ export const PolicyRelationships = {
    * If we say that we expect ANY_SCOPE_had_policy_assignment and instead generate that a azure_storage_account_has_policy_assignment,
    * it might cause issues down the road.
    */
-  ANY_RESOURCE_POLICY_ASSIGNMENT: {
+  ANY_RESOURCE_HAS_POLICY_ASSIGNMENT: {
     _type: 'azure_resource_has_policy_assignment',
     sourceType: ANY_SCOPE,
     _class: RelationshipClass.HAS,

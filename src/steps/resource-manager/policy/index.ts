@@ -48,7 +48,7 @@ export async function fetchPolicyAssignments(
          * it might cause issues down the road.
          */
         properties: {
-          _type: PolicyRelationships.ANY_RESOURCE_POLICY_ASSIGNMENT._type,
+          _type: PolicyRelationships.ANY_RESOURCE_HAS_POLICY_ASSIGNMENT._type,
         },
       }),
     );
@@ -70,7 +70,7 @@ export const policySteps: Step<
     id: PolicySteps.POLICY_ASSIGNMENTS,
     name: 'Policy Assignments',
     entities: [PolicyEntities.POLICY_ASSIGNMENT],
-    relationships: [PolicyRelationships.ANY_RESOURCE_POLICY_ASSIGNMENT],
+    relationships: [PolicyRelationships.ANY_RESOURCE_HAS_POLICY_ASSIGNMENT],
     dependsOn: [
       STEP_AD_ACCOUNT,
       ...getResourceManagerSteps().executeFirstSteps,

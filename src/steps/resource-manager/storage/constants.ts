@@ -2,7 +2,7 @@ import {
   generateRelationshipType,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
+import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault/constants';
 
 // Step IDs
 export const STEP_RM_STORAGE_RESOURCES = 'rm-storage-resources';

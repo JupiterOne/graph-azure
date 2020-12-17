@@ -8,7 +8,10 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
+import {
+  ACCOUNT_ENTITY_TYPE,
+  STEP_AD_ACCOUNT,
+} from '../../active-directory/constants';
 import { KeyVaultClient } from './client';
 import {
   ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
@@ -18,10 +21,15 @@ import {
   ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
 } from './constants';
 import { createKeyVaultEntity } from './converters';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
+import {
+  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+  diagnosticSettingsEntitiesForResource,
+  diagnosticSettingsRelationshipsForResource,
+} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
 
@@ -48,6 +56,11 @@ export async function fetchKeyVaults(
         to: vaultEntity,
       }),
     );
+
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      vaultEntity,
+    );
   });
 }
 
@@ -63,6 +76,7 @@ export const keyvaultSteps: Step<
         _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
         _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
       },
+      ...diagnosticSettingsEntitiesForResource,
     ],
     relationships: [
       {
@@ -74,6 +88,7 @@ export const keyvaultSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         KEY_VAULT_SERVICE_ENTITY_TYPE,
       ),
+      ...diagnosticSettingsRelationshipsForResource,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,

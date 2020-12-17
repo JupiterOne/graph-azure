@@ -3,7 +3,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 
 // Step IDs
 export const STEP_RM_KEYVAULT_VAULTS = 'rm-keyvault-vaults';

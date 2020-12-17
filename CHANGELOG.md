@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.9.0 - 2020-12-17
+
 ### Added
 
 - Added `azure_diagnostic_log_setting` entities

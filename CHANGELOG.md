@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade integration SDK `devDependencies` and increment SDK `peerDependency`
+  version
+
 ## 5.9.0 - 2020-12-17
 
 ### Added

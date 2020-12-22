@@ -77,6 +77,32 @@ resource "azurerm_network_security_group" "j1dev" {
   }
 }
 
+resource "azurerm_monitor_diagnostic_setting" "j1dev_net_sec_grp_set" {
+  name               = "j1dev_net_sec_grp_set"
+  target_resource_id = azurerm_network_security_group.j1dev.id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  log {
+    category = "NetworkSecurityGroupRuleCounter"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 1
+    }
+  }
+
+  log {
+    category = "NetworkSecurityGroupEvent"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 1
+    }
+  }
+}
+
 resource "azurerm_network_interface" "j1dev" {
   name                = "j1dev"
   location            = "eastus"

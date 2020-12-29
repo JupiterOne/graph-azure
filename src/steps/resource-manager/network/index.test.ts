@@ -6,7 +6,6 @@ import {
 import { Recording } from '@jupiterone/integration-sdk-testing';
 
 import { setupAzureRecording } from '../../../../test/helpers/recording';
-import instanceConfig from '../../../../test/integrationInstanceConfig';
 import { fetchAccount } from '../../active-directory';
 import {
   buildSecurityGroupRuleRelationships,
@@ -17,6 +16,14 @@ import {
   fetchVirtualNetworks,
 } from './';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { MonitorEntities } from '../monitor/constants';
+import { IntegrationConfig } from '../../../types';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+
+const GUID_REGEX = new RegExp(
+  '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+  'i',
+);
 
 expect.extend({
   toContainGraphObject<T extends Entity | Relationship>(
@@ -87,20 +94,28 @@ expect.extend({
 });
 
 let recording: Recording;
+let instanceConfig: IntegrationConfig;
 
 afterEach(async () => {
   await recording.stop();
 });
 
 test('network steps', async () => {
+  instanceConfig = {
+    clientId: process.env.CLIENT_ID || 'clientId',
+    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+    directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
+    subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+    developerId: 'keionned',
+  };
+
   recording = setupAzureRecording({
     directory: __dirname,
     name: 'network-steps',
   });
 
   const resouceGroupEntity: Entity = {
-    _key:
-      '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
+    _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
     _type: 'azure_resource_group',
     _class: ['Group'],
   };
@@ -108,6 +123,14 @@ test('network steps', async () => {
   const context = createMockAzureStepExecutionContext({
     instanceConfig,
     entities: [resouceGroupEntity],
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: {
+        defaultDomain: 'www.fake-domain.com',
+        _type: ACCOUNT_ENTITY_TYPE,
+        _key: 'azure_account_id',
+        id: 'azure_account_id',
+      },
+    },
   });
 
   // Simulates dependency order of execution
@@ -128,7 +151,7 @@ test('network steps', async () => {
       createdOn: undefined,
       defaultDomain: expect.any(String),
       displayName: 'Local Integration',
-      id: 'a76fc728-0cba-45f0-a9eb-d45207e14513',
+      id: instanceConfig.directoryId,
       name: 'Default Directory',
       organizationName: 'Default Directory',
       verifiedDomains: expect.any(Array),
@@ -138,176 +161,192 @@ test('network steps', async () => {
     {
       CIDR: '10.0.0.0/16',
       _class: ['Network'],
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
       _rawData: [expect.objectContaining({ name: 'default' })],
       _type: 'azure_vnet',
       createdOn: undefined,
       displayName: 'j1dev (10.0.0.0/16)',
       environment: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
       internal: true,
       name: 'j1dev',
       public: false,
       region: 'eastus',
       resourceGroup: 'j1dev',
       'tag.environment': 'j1dev',
-      webLink:
-        'https://portal.azure.com/#@adamjupiteronehotmailcom.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
     },
     {
       CIDR: '10.0.2.0/24',
       _class: ['Network'],
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev`,
       _rawData: [expect.objectContaining({ name: 'default' })],
       _type: 'azure_subnet',
       createdOn: undefined,
       displayName: 'j1dev (10.0.2.0/24)',
       environment: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev`,
       internal: true,
       name: 'j1dev',
       public: false,
       region: 'eastus',
       resourceGroup: 'j1dev',
-      webLink:
-        'https://portal.azure.com/#@adamjupiteronehotmailcom.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev`,
     },
     {
       CIDR: '10.0.3.0/24',
       _class: ['Network'],
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
       _rawData: [expect.objectContaining({ name: 'default' })],
       _type: 'azure_subnet',
       createdOn: undefined,
       displayName: 'j1dev_priv_one (10.0.3.0/24)',
       environment: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
       internal: true,
       name: 'j1dev_priv_one',
       public: false,
       region: 'eastus',
       resourceGroup: 'j1dev',
-      webLink:
-        'https://portal.azure.com/#@adamjupiteronehotmailcom.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one',
+      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
     },
     {
       _class: 'IpAddress',
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
       _rawData: [expect.objectContaining({ name: 'default' })],
       _type: 'azure_public_ip',
       displayName: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
       public: true,
       // Dynamic address may be undefined when the address is not bound to anything
       // publicIp: '52.188.119.30',
       // publicIpAddress: '52.188.119.30',
       region: 'eastus',
       resourceGroup: 'j1dev',
-      resourceGuid: 'e91e06bc-4c1a-42e1-bf2e-87c2a36ebdd2',
+      resourceGuid: expect.stringMatching(GUID_REGEX),
       sku: 'Basic',
       'tag.environment': 'j1dev',
       type: 'Microsoft.Network/publicIPAddresses',
-      webLink:
-        'https://portal.azure.com/#@adamjupiteronehotmailcom.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
     },
     {
       _class: 'NetworkInterface',
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
       _rawData: [expect.objectContaining({ name: 'default' })],
       _type: 'azure_nic',
       displayName: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
       ipForwarding: false,
-      macAddress: '00-0D-3A-98-B8-2E',
+      macAddress: undefined,
       privateIp: ['10.0.2.4'],
       privateIpAddress: ['10.0.2.4'],
       publicIp: expect.any(Array),
       publicIpAddress: expect.any(Array),
       region: 'eastus',
       resourceGroup: 'j1dev',
-      resourceGuid: '9a2f2357-0821-48b7-89dc-7a6af8d31a95',
-      securityGroupId:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      resourceGuid: expect.stringMatching(GUID_REGEX),
+      securityGroupId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
       'tag.environment': 'j1dev',
       type: 'Microsoft.Network/networkInterfaces',
       // Only defined when bound to a VM
       // virtualMachineId:
-      //   '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Compute/virtualMachines/j1dev',
-      webLink:
-        'https://portal.azure.com/#@adamjupiteronehotmailcom.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      //   `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Compute/virtualMachines/j1dev`,
+      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
     },
     {
       _class: ['Firewall'],
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
       _rawData: [expect.objectContaining({ name: 'default' })],
       _type: 'azure_security_group',
       category: ['network', 'host'],
       createdOn: undefined,
       displayName: 'j1dev',
       environment: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
       isWideOpen: false,
       name: 'j1dev',
       region: 'eastus',
       resourceGroup: 'j1dev',
       'tag.environment': 'j1dev',
-      webLink:
-        'https://portal.azure.com/#@adamjupiteronehotmailcom.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
     },
 
     // VPC default, westus
     {
       CIDR: '10.0.0.0/16',
       _class: ['Network'],
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two`,
       _rawData: [expect.objectContaining({ name: 'default' })],
       _type: 'azure_vnet',
       createdOn: undefined,
       displayName: 'j1dev_two (10.0.0.0/16)',
       environment: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two`,
       internal: true,
       name: 'j1dev_two',
       public: false,
       region: 'westus',
       resourceGroup: 'j1dev',
       'tag.environment': 'j1dev',
-      webLink:
-        'https://portal.azure.com/#@adamjupiteronehotmailcom.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two',
+      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two`,
     },
     {
       CIDR: '10.0.3.0/24',
       _class: ['Network'],
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
       _rawData: [expect.objectContaining({ name: 'default' })],
       _type: 'azure_subnet',
       createdOn: undefined,
       displayName: 'j1dev_priv_two (10.0.3.0/24)',
       environment: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
       internal: true,
       name: 'j1dev_priv_two',
       public: false,
       region: 'westus',
       resourceGroup: 'j1dev',
-      webLink:
-        'https://portal.azure.com/#@adamjupiteronehotmailcom.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two',
+      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
+    },
+    // Diagnostic Settings
+    {
+      _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupRuleCounter/true/1/true`,
+      _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+      _rawData: [expect.objectContaining({ name: 'default' })],
+      category: 'NetworkSecurityGroupRuleCounter',
+      displayName: 'j1dev_net_sec_grp_set',
+      enabled: true,
+      eventHubAuthorizationRuleId: null,
+      eventHubName: null,
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupRuleCounter/true/1/true`,
+      logAnalyticsDestinationType: null,
+      name: 'j1dev_net_sec_grp_set',
+      'retentionPolicy.days': 1,
+      'retentionPolicy.enabled': true,
+      serviceBusRuleId: null,
+      storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set`,
+      workspaceId: null,
+    },
+    {
+      _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupEvent/true/1/true`,
+      _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+      _rawData: [expect.objectContaining({ name: 'default' })],
+      category: 'NetworkSecurityGroupEvent',
+      displayName: 'j1dev_net_sec_grp_set',
+      enabled: true,
+      eventHubAuthorizationRuleId: null,
+      eventHubName: null,
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupEvent/true/1/true`,
+      logAnalyticsDestinationType: null,
+      name: 'j1dev_net_sec_grp_set',
+      'retentionPolicy.days': 1,
+      'retentionPolicy.enabled': true,
+      serviceBusRuleId: null,
+      storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set`,
+      workspaceId: null,
     },
   );
 
@@ -315,56 +354,41 @@ test('network steps', async () => {
     // VPC default, eastus
     {
       _class: 'CONTAINS',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev|contains|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev|contains|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev`,
       _type: 'azure_vnet_contains_subnet',
       displayName: 'CONTAINS',
     },
     {
       _class: 'CONTAINS',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev|contains|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev|contains|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
       _type: 'azure_vnet_contains_subnet',
       displayName: 'CONTAINS',
     },
     {
       _class: 'PROTECTS',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|protects|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|protects|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev`,
       _type: 'azure_security_group_protects_subnet',
       displayName: 'PROTECTS',
     },
     {
       _class: 'PROTECTS',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|protects|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|protects|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
       _type: 'azure_security_group_protects_nic',
       displayName: 'PROTECTS',
     },
     {
       _class: 'ALLOWS',
-      _key:
-        'azure_security_group_rule:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/priv_one:22:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      _key: `azure_security_group_rule:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/priv_one:22:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
       _type: 'azure_security_group_rule',
       access: 'Allow',
       destinationAddressPrefix: '*',
@@ -374,8 +398,7 @@ test('network steps', async () => {
       egress: false,
       etag: expect.any(String),
       fromPort: 22,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/priv_one',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/priv_one`,
       inbound: true,
       ingress: true,
       ipProtocol: 'tcp',
@@ -393,12 +416,9 @@ test('network steps', async () => {
     },
     {
       _class: 'ALLOWS',
-      _key:
-        'azure_security_group_rule:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/priv_one:22:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      _key: `azure_security_group_rule:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/priv_one:22:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
       _type: 'azure_security_group_rule',
       access: 'Allow',
       destinationAddressPrefix: '*',
@@ -408,8 +428,7 @@ test('network steps', async () => {
       egress: false,
       etag: expect.any(String),
       fromPort: 22,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/priv_one',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/priv_one`,
       inbound: true,
       ingress: true,
       ipProtocol: 'tcp',
@@ -427,13 +446,11 @@ test('network steps', async () => {
     },
     {
       _class: 'ALLOWS',
-      _key:
-        'azure_security_group_rule:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetInBound:*:Service:azure_virtual_network:VirtualNetwork',
+      _key: `azure_security_group_rule:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetInBound:*:Service:azure_virtual_network:VirtualNetwork`,
       _mapping: {
         relationshipDirection: RelationshipDirection.REVERSE,
         skipTargetCreation: false,
-        sourceEntityKey:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+        sourceEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
         targetEntity: {
           _class: 'Service',
           _type: 'azure_virtual_network',
@@ -451,8 +468,7 @@ test('network steps', async () => {
       egress: false,
       etag: expect.any(String),
       fromPort: 0,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetInBound',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetInBound`,
       inbound: true,
       ingress: true,
       ipProtocol: '*',
@@ -470,13 +486,11 @@ test('network steps', async () => {
     },
     {
       _class: 'ALLOWS',
-      _key:
-        'azure_security_group_rule:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowAzureLoadBalancerInBound:*:Service:azure_load_balancer:AzureLoadBalancer',
+      _key: `azure_security_group_rule:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowAzureLoadBalancerInBound:*:Service:azure_load_balancer:AzureLoadBalancer`,
       _mapping: {
         relationshipDirection: RelationshipDirection.REVERSE,
         skipTargetCreation: false,
-        sourceEntityKey:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+        sourceEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
         targetEntity: {
           _class: 'Service',
           _type: 'azure_load_balancer',
@@ -494,8 +508,7 @@ test('network steps', async () => {
       egress: false,
       etag: expect.any(String),
       fromPort: 0,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowAzureLoadBalancerInBound',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowAzureLoadBalancerInBound`,
       inbound: true,
       ingress: true,
       ipProtocol: '*',
@@ -513,13 +526,11 @@ test('network steps', async () => {
     },
     {
       _class: 'DENIES',
-      _key:
-        'azure_security_group_rule:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllInBound:*:internet',
+      _key: `azure_security_group_rule:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllInBound:*:internet`,
       _mapping: {
         relationshipDirection: RelationshipDirection.REVERSE,
         skipTargetCreation: false,
-        sourceEntityKey:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+        sourceEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
         targetEntity: {
           CIDR: '0.0.0.0/0',
           CIDRv6: '::/0',
@@ -541,8 +552,7 @@ test('network steps', async () => {
       egress: false,
       etag: expect.any(String),
       fromPort: 0,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllInBound',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllInBound`,
       inbound: true,
       ingress: true,
       ipProtocol: '*',
@@ -560,13 +570,11 @@ test('network steps', async () => {
     },
     {
       _class: 'ALLOWS',
-      _key:
-        'azure_security_group_rule:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetOutBound:*:Service:azure_virtual_network:VirtualNetwork',
+      _key: `azure_security_group_rule:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetOutBound:*:Service:azure_virtual_network:VirtualNetwork`,
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
         skipTargetCreation: false,
-        sourceEntityKey:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+        sourceEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
         targetEntity: {
           _class: 'Service',
           _type: 'azure_virtual_network',
@@ -584,8 +592,7 @@ test('network steps', async () => {
       egress: true,
       etag: expect.any(String),
       fromPort: 0,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetOutBound',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetOutBound`,
       inbound: false,
       ingress: false,
       ipProtocol: '*',
@@ -603,13 +610,11 @@ test('network steps', async () => {
     },
     {
       _class: 'ALLOWS',
-      _key:
-        'azure_security_group_rule:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowInternetOutBound:*:internet',
+      _key: `azure_security_group_rule:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowInternetOutBound:*:internet`,
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
         skipTargetCreation: false,
-        sourceEntityKey:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+        sourceEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
         targetEntity: {
           CIDR: '0.0.0.0/0',
           CIDRv6: '::/0',
@@ -631,8 +636,7 @@ test('network steps', async () => {
       egress: true,
       etag: expect.any(String),
       fromPort: 0,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowInternetOutBound',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowInternetOutBound`,
       inbound: false,
       ingress: false,
       ipProtocol: '*',
@@ -650,13 +654,11 @@ test('network steps', async () => {
     },
     {
       _class: 'DENIES',
-      _key:
-        'azure_security_group_rule:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllOutBound:*:internet',
+      _key: `azure_security_group_rule:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllOutBound:*:internet`,
       _mapping: {
         relationshipDirection: RelationshipDirection.FORWARD,
         skipTargetCreation: false,
-        sourceEntityKey:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+        sourceEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
         targetEntity: {
           CIDR: '0.0.0.0/0',
           CIDRv6: '::/0',
@@ -678,8 +680,7 @@ test('network steps', async () => {
       egress: true,
       etag: expect.any(String),
       fromPort: 0,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllOutBound',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllOutBound`,
       inbound: false,
       ingress: false,
       ipProtocol: '*',
@@ -697,13 +698,11 @@ test('network steps', async () => {
     },
     {
       _class: 'ALLOWS',
-      _key:
-        'azure_security_group_rule:/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/SSH:22:internet',
+      _key: `azure_security_group_rule:/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/SSH:22:internet`,
       _mapping: {
         relationshipDirection: RelationshipDirection.REVERSE,
         skipTargetCreation: false,
-        sourceEntityKey:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+        sourceEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
         targetEntity: {
           CIDR: '0.0.0.0/0',
           CIDRv6: '::/0',
@@ -724,8 +723,7 @@ test('network steps', async () => {
       egress: false,
       etag: expect.any(String),
       fromPort: 22,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/SSH',
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/SSH`,
       inbound: true,
       ingress: true,
       ipProtocol: 'tcp',
@@ -745,71 +743,86 @@ test('network steps', async () => {
     // VPC default, westus
     {
       _class: 'CONTAINS',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two',
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two|contains|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two|contains|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
       _type: 'azure_vnet_contains_subnet',
       displayName: 'CONTAINS',
     },
 
     // Resource Group
     {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev|has|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
       _type: 'azure_resource_group_has_nic',
       _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
       displayName: 'HAS',
     },
     {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev|has|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
       _type: 'azure_resource_group_has_public_ip',
       _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
       displayName: 'HAS',
     },
     {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev|has|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
       _type: 'azure_resource_group_has_security_group',
       _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
       displayName: 'HAS',
     },
     {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev|has|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
       _type: 'azure_resource_group_has_vnet',
       _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
       displayName: 'HAS',
     },
     {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev|has|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two',
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two`,
       _type: 'azure_resource_group_has_vnet',
       _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev',
-      _toEntityKey:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two`,
       displayName: 'HAS',
+    },
+    // Diagnostic Settings
+    {
+      _class: 'HAS',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupRuleCounter/true/1/true`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupRuleCounter/true/1/true`,
+      _type: 'azure_resource_has_diagnostic_log_setting',
+      displayName: 'HAS',
+    },
+    {
+      _class: 'HAS',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupEvent/true/1/true`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupEvent/true/1/true`,
+      _type: 'azure_resource_has_diagnostic_log_setting',
+      displayName: 'HAS',
+    },
+    {
+      _class: 'USES',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupRuleCounter/true/1/true`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupRuleCounter/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _type: 'azure_diagnostic_log_setting_uses_storage_account',
+      displayName: 'USES',
+    },
+    {
+      _class: 'USES',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupEvent/true/1/true`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupEvent/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _type: 'azure_diagnostic_log_setting_uses_storage_account',
+      displayName: 'USES',
     },
   );
 }, 120000);

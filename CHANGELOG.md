@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Diagnostic Settings entities and relationships for Network Security Groups
+
 ## 5.9.0 - 2020-12-17
 
 ### Added

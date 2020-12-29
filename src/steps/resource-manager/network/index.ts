@@ -66,6 +66,11 @@ import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import {
+  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+  diagnosticSettingsEntitiesForResource,
+  diagnosticSettingsRelationshipsForResource,
+} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
 
@@ -239,6 +244,11 @@ export async function fetchNetworkSecurityGroups(
         subnetSecurityGroupMap[s.id as string] = sg;
       }
     }
+
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      sgEntity,
+    );
   });
 
   await jobState.setData('subnetSecurityGroupMap', subnetSecurityGroupMap);
@@ -442,6 +452,7 @@ export const networkSteps: Step<
         _type: SECURITY_GROUP_ENTITY_TYPE,
         _class: SECURITY_GROUP_ENTITY_CLASS,
       },
+      ...diagnosticSettingsEntitiesForResource,
     ],
     relationships: [
       {
@@ -453,6 +464,7 @@ export const networkSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         SECURITY_GROUP_ENTITY_TYPE,
       ),
+      ...diagnosticSettingsRelationshipsForResource,
     ],
     // SECURITY_GROUP_RULE_RELATIONSHIP_TYPE doesn't seem to exist here.
     dependsOn: [

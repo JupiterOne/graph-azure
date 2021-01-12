@@ -5,12 +5,14 @@ import {
   RequestPolicyFactory,
   systemErrorRetryPolicy,
   throttlingRetryPolicy,
+  RestError as AzureRestError,
 } from '@azure/ms-rest-js';
 import {
   IntegrationLogger,
   IntegrationProviderAPIError,
 } from '@jupiterone/integration-sdk-core';
 import { retry } from '@lifeomic/attempt';
+import { FetchError } from 'node-fetch';
 
 import { IntegrationConfig } from '../../types';
 import authenticate from './authenticate';
@@ -230,6 +232,53 @@ export interface IterateAllResourcesOptions<ServiceClientType, ResourceType> {
 }
 
 /**
+ * Call an azure endpoint that returns a ResourceListResponse. Explicitly handle
+ * known API errors that we may encounter, including retries.
+ */
+export async function callAzureResourceListApi<T = any>(
+  resourceListCallback: () => Promise<ResourceListResponse<T>>,
+  logger: IntegrationLogger,
+  resourceDescription: string,
+  endpointRatePeriod: number,
+): Promise<ResourceListResponse<T> | undefined> {
+  try {
+    const response = await retryResourceRequest(
+      resourceListCallback,
+      endpointRatePeriod,
+    );
+    return response;
+  } catch (err) {
+    /* istanbul ignore else */
+    if (err.statusCode === 404) {
+      logger.warn({ err }, 'Resources not found');
+    } else {
+      if (err instanceof AzureRestError) {
+        throw new IntegrationProviderAPIError({
+          cause: err,
+          endpoint: resourceDescription,
+          status: err.body?.code as string,
+          statusText: err.body?.message as string,
+        });
+      }
+      if (err instanceof FetchError) {
+        throw new IntegrationProviderAPIError({
+          cause: err,
+          endpoint: resourceDescription,
+          status: err.code!,
+          statusText: err.message,
+        });
+      }
+      throw new IntegrationProviderAPIError({
+        cause: err,
+        endpoint: resourceDescription,
+        status: err.statusCode,
+        statusText: err.statusText,
+      });
+    }
+  }
+}
+
+/**
  * Iterate all resources of the provided `resourceEndpoint`.
  *
  * Sometimes listing fails with a `404` response. In this case, the `callback`
@@ -251,10 +300,8 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
 }: IterateAllResourcesOptions<ServiceClientType, ResourceType>): Promise<void> {
   let nextLink: string | undefined;
   do {
-    let response: ResourceListResponse<ResourceType> | undefined;
-
-    try {
-      response = await retryResourceRequest(async () => {
+    const response = await callAzureResourceListApi(
+      async () => {
         if ('listAllNext' in resourceEndpoint) {
           return nextLink
             ? /* istanbul ignore next: testing iteration might be difficult */
@@ -266,20 +313,11 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
               await resourceEndpoint.listNext(nextLink)
             : await resourceEndpoint.list();
         }
-      }, endpointRatePeriod);
-    } catch (err) {
-      /* istanbul ignore else */
-      if (err.statusCode === 404) {
-        logger.warn({ err }, 'Resources not found');
-      } else {
-        throw new IntegrationProviderAPIError({
-          cause: err,
-          endpoint: resourceDescription,
-          status: err.body?.code || err.statusCode,
-          statusText: err.body?.message || err.statusText,
-        });
-      }
-    }
+      },
+      logger,
+      resourceDescription,
+      endpointRatePeriod,
+    );
 
     if (response) {
       logger.info(

@@ -17,6 +17,33 @@ resource "azurerm_batch_account" "j1dev" {
   storage_account_id   = azurerm_storage_account.j1dev.id
 }
 
+resource "azurerm_monitor_diagnostic_setting" "j1dev_batch_diag_set" {
+  count              = local.batch_account_count
+  name               = "j1dev_batch_diag_set"
+  target_resource_id = azurerm_batch_account.j1dev[0].id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  log {
+    category = "ServiceLog"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 1
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 1
+    }
+  }
+}
+
 resource "azurerm_batch_pool" "j1dev" {
   count               = local.batch_account_count
   name                = "j1devbatchpool"

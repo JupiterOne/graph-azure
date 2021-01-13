@@ -29,6 +29,11 @@ import {
   createBatchCertificateEntity,
 } from './converters';
 import { resourceGroupName } from '../../../azure/utils';
+import {
+  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+  diagnosticSettingsEntitiesForResource,
+  diagnosticSettingsRelationshipsForResource,
+} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
 
@@ -55,6 +60,11 @@ export async function fetchBatchAccounts(
           await jobState.addEntity(batchAccountEntity);
 
           await createResourceGroupResourceRelationship(
+            executionContext,
+            batchAccountEntity,
+          );
+
+          await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
             executionContext,
             batchAccountEntity,
           );
@@ -187,8 +197,14 @@ export const batchSteps: Step<
   {
     id: STEP_RM_BATCH_ACCOUNT,
     name: 'Batch Accounts',
-    entities: [BatchEntities.BATCH_ACCOUNT],
-    relationships: [BatchAccountRelationships.RESOURCE_GROUP_HAS_BATCH_ACCOUNT],
+    entities: [
+      BatchEntities.BATCH_ACCOUNT,
+      ...diagnosticSettingsEntitiesForResource,
+    ],
+    relationships: [
+      BatchAccountRelationships.RESOURCE_GROUP_HAS_BATCH_ACCOUNT,
+      ...diagnosticSettingsRelationshipsForResource,
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchBatchAccounts,
   },

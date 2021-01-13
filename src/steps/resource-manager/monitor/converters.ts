@@ -55,15 +55,16 @@ function createSettingEntity(
   } = diagnosticSetting;
 
   const { retentionPolicy, enabled, category, timeGrain } = setting;
+  const normalizedId = normalizeId(id);
 
   return createIntegrationEntity({
     entityData: {
       source: diagnosticSetting,
       assign: {
-        _key: id,
+        _key: normalizedId,
         _type,
         _class,
-        webLink: webLinker.portalResourceUrl(diagnosticSetting.id),
+        webLink: webLinker.portalResourceUrl(normalizeId(diagnosticSetting.id)),
         storageAccountId,
         serviceBusRuleId,
         eventHubAuthorizationRuleId,
@@ -75,10 +76,20 @@ function createSettingEntity(
         timeGrain,
         'retentionPolicy.days': retentionPolicy?.days,
         'retentionPolicy.enabled': retentionPolicy?.enabled,
-        id,
+        id: normalizedId,
       },
     },
   });
+}
+
+/**
+ * When getting Diagnostic Settings for some Azure Resources, the Diagnostic Settings id is returned from the client without the leading slash.
+ * This function adds the leading slash to an id, if it does not exist
+ * @param id The resource URI of an Azure resource
+ */
+function normalizeId(id: string | undefined): string | undefined {
+  if (!id) return id;
+  return id.startsWith('/') ? id : `/${id}`;
 }
 
 export function createDiagnosticLogSettingEntity(

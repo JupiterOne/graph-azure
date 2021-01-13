@@ -11,6 +11,8 @@ and this project adheres to
 ### Added
 
 - Diagnostic Settings entities and relationships for Network Security Groups
+- Diagnostic Settings entities and relationships for Activity Logs (Azure
+  Subscription)
 
 ## 5.9.0 - 2020-12-17
 

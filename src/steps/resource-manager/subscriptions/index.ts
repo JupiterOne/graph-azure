@@ -7,6 +7,11 @@ import {
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
+import {
+  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+  diagnosticSettingsEntitiesForResource,
+  diagnosticSettingsRelationshipsForResource,
+} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { J1SubscriptionClient } from './client';
 import {
   STEP_RM_SUBSCRIPTIONS,
@@ -30,6 +35,10 @@ export async function fetchSubscriptions(
       subscription,
     );
     await jobState.addEntity(subscriptionEntity);
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      subscriptionEntity,
+    );
   });
 }
 
@@ -39,8 +48,11 @@ export const subscriptionSteps: Step<
   {
     id: STEP_RM_SUBSCRIPTIONS,
     name: 'Subscriptions',
-    entities: [SUBSCRIPTION_ENTITY_METADATA],
-    relationships: [],
+    entities: [
+      SUBSCRIPTION_ENTITY_METADATA,
+      ...diagnosticSettingsEntitiesForResource,
+    ],
+    relationships: [...diagnosticSettingsRelationshipsForResource],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscriptions,
   },

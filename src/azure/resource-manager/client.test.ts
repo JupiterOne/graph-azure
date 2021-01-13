@@ -6,7 +6,7 @@ import {
 } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../test/integrationInstanceConfig';
-import { Client, callAzureResourceListApi } from './client';
+import { Client, request } from './client';
 import { setupAzureRecording } from '../../../test/helpers/recording';
 
 import { FetchError } from 'node-fetch';
@@ -54,7 +54,7 @@ test('client accessToken fetched once and used across resources', async () => {
 test('callAzureResourceListApi should expose Azure RestError error codes', async () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const noop: any = () => {};
-  const request = {
+  const azureRequest = {
     url: 'some-url',
     method: 'GET' as any,
     headers: {
@@ -77,17 +77,17 @@ test('callAzureResourceListApi should expose Azure RestError error codes', async
   };
 
   await expect(
-    callAzureResourceListApi(
+    request(
       () => {
         throw new AzureRestError(
           'Error message for azure rest error',
           'Error Code',
           400,
-          request,
+          azureRequest,
           {
-            request,
+            request: azureRequest,
             status: 400,
-            headers: request.headers,
+            headers: azureRequest.headers,
           },
           {
             code: 'FeatureNotSupportedForAccount',
@@ -111,7 +111,7 @@ test('callAzureResourceListApi should expose node-fetch error codes', async () =
   const systemError = new Error('system error');
   (systemError as any).code = 'ECONNRESET';
   await expect(
-    callAzureResourceListApi(
+    request(
       () => {
         throw new FetchError(
           'Error message for system error',

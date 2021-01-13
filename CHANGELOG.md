@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Started retrying all request errors that are not handled by the Azure API
+  client. Continue retrying 429 errors thrown by the Azure API client.
+
 ## 5.10.0 - 2020-01-13
 
 ### Added

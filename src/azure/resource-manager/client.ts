@@ -140,6 +140,7 @@ export abstract class Client {
 function retryResourceRequest<ResponseType>(
   requestFunc: () => Promise<ResponseType>,
   endpointRatePeriod: number,
+  logger: IntegrationLogger,
 ): Promise<ResponseType> {
   return retry(
     async (_context) => {
@@ -161,9 +162,25 @@ function retryResourceRequest<ResponseType>(
       // Most errors will be handled by the request policies. They will raise
       // a `RestError.statusCode: 429` when they see two 429 responses in a row,
       // which is the scenario we're aiming to address with our retry.
+      //
+      // Non Azure `RestError`s, such as ECONNRESET, should be retried.
       handleError: (err, context, _options) => {
-        if (err.statusCode !== 429) {
+        if (err instanceof AzureRestError && err.statusCode !== 429) {
+          logger.info(
+            {
+              err,
+            },
+            'Encountered non-retryable error in Resource Manager client.',
+          );
           context.abort();
+        } else {
+          logger.info(
+            {
+              err,
+              attemptsRemaining: context.attemptsRemaining,
+            },
+            'Encountered retryable error in Resource Manager client.',
+          );
         }
       },
     },
@@ -235,7 +252,7 @@ export interface IterateAllResourcesOptions<ServiceClientType, ResourceType> {
  * Call an azure endpoint that returns a ResourceListResponse. Explicitly handle
  * known API errors that we may encounter, including retries.
  */
-export async function callAzureResourceListApi<T = any>(
+export async function request<T = any>(
   resourceListCallback: () => Promise<ResourceListResponse<T>>,
   logger: IntegrationLogger,
   resourceDescription: string,
@@ -245,6 +262,7 @@ export async function callAzureResourceListApi<T = any>(
     const response = await retryResourceRequest(
       resourceListCallback,
       endpointRatePeriod,
+      logger,
     );
     return response;
   } catch (err) {
@@ -300,7 +318,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
 }: IterateAllResourcesOptions<ServiceClientType, ResourceType>): Promise<void> {
   let nextLink: string | undefined;
   do {
-    const response = await callAzureResourceListApi(
+    const response = await request(
       async () => {
         if ('listAllNext' in resourceEndpoint) {
           return nextLink

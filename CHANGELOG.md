@@ -14,6 +14,11 @@ and this project adheres to
 - Diagnostic Settings entities and relationships for Activity Logs (Azure
   Subscription)
 
+### Fixed
+
+- Fixed the way `IntegrationProviderAPIError` exposes error code/message of
+  `node-fetch` errors, such as `ECONNRESET`.
+
 ## 5.9.0 - 2020-12-17
 
 ### Added

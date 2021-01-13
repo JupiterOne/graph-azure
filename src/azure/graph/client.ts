@@ -104,7 +104,7 @@ export abstract class GraphClient {
 
       this.logger.warn(
         { err, resourceUrl: endpoint },
-        'Encountered non-fatal error in Azure Graph client. Continuing step execution.',
+        'Encountered non-fatal error in Azure Graph client.',
       );
     }
   }

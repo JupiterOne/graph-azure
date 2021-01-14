@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Diagnostic Settings entities and relationships for Azure CDN
+
 ### Fixed
 
 - Started retrying all request errors that are not handled by the Azure API

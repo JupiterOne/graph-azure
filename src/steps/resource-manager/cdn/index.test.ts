@@ -1,117 +1,439 @@
 import { fetchProfiles, fetchEndpoints } from '.';
-import { Recording } from '@jupiterone/integration-sdk-testing';
+import {
+  MockIntegrationStepExecutionContext,
+  Recording,
+} from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { CdnEntities } from './constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { MonitorEntities } from '../monitor/constants';
+
 let recording: Recording;
+let instanceConfig: IntegrationConfig;
+let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
 
-afterEach(async () => {
-  if (recording) {
-    await recording.stop();
-  }
-});
+describe('step - cdn profiles', () => {
+  beforeAll(async () => {
+    instanceConfig = {
+      clientId: process.env.CLIENT_ID || 'clientId',
+      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+      directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
+      subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+      developerId: 'keionned',
+    };
 
-test('step - cdn profiles', async () => {
-  const instanceConfig: IntegrationConfig = {
-    clientId: process.env.CLIENT_ID || 'clientId',
-    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
-    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-  };
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-cdn-profiles',
+    });
 
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'resource-manager-step-cdn-profiles',
-  });
-
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig,
-    entities: [
-      {
-        _key:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev',
-        _type: 'azure_resource_group',
-        _class: ['Group'],
+    context = createMockAzureStepExecutionContext({
+      instanceConfig,
+      entities: [
+        {
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+          _type: 'azure_resource_group',
+          _class: ['Group'],
+        },
+      ],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
       },
-    ],
-    setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
-    },
+    });
+
+    await fetchProfiles(context);
   });
 
-  await fetchProfiles(context);
-
-  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
-  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: CdnEntities.PROFILE._class,
+  afterAll(async () => {
+    if (recording) {
+      await recording.stop();
+    }
   });
 
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev',
+  it('should collect an Azure CDN Profile entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        _class: CdnEntities.PROFILE._class,
+        _type: CdnEntities.PROFILE._type,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev`,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev`,
+        displayName: 'j1dev',
+        kind: 'cdn',
+        location: 'EastUs',
+        name: 'j1dev',
+        provisioningState: 'Succeeded',
+        resourceState: 'Active',
+        type: 'Microsoft.Cdn/profiles',
+      }),
+    );
+  });
+
+  it('should collect an Azure Resource Group has Azure CDN Profile relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev`,
       _type: 'azure_resource_group_has_cdn_profile',
       _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev',
-      _toEntityKey:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev`,
       displayName: 'HAS',
-    },
-  ]);
+    });
+  });
+
+  it('should collect the first Azure Diagnostic Log Setting entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/AzureCdnAccessLog/true/1/true`,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/AzureCdnAccessLog/true/1/true`,
+        category: 'AzureCdnAccessLog',
+        displayName: 'j1dev_cdn_prof_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_cdn_prof_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect the second Azure Diagnostic Log Setting entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorAccessLog/false/0/false`,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorAccessLog/false/0/false`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        category: 'FrontDoorAccessLog',
+        displayName: 'j1dev_cdn_prof_diag_set',
+        enabled: false,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_cdn_prof_diag_set',
+        'retentionPolicy.days': 0,
+        'retentionPolicy.enabled': false,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect the third Azure Diagnostic Log Setting entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorHealthProbeLog/false/0/false`,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorHealthProbeLog/false/0/false`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        category: 'FrontDoorHealthProbeLog',
+        displayName: 'j1dev_cdn_prof_diag_set',
+        enabled: false,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_cdn_prof_diag_set',
+        'retentionPolicy.days': 0,
+        'retentionPolicy.enabled': false,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect the fourth Azure Diagnostic Log Setting entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorWebApplicationFirewallLog/false/0/false`,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorWebApplicationFirewallLog/false/0/false`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        category: 'FrontDoorWebApplicationFirewallLog',
+        displayName: 'j1dev_cdn_prof_diag_set',
+        enabled: false,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_cdn_prof_diag_set',
+        'retentionPolicy.days': 0,
+        'retentionPolicy.enabled': false,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Metric Setting entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/metrics/AllMetrics/false/undefined/0/false`,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/metrics/AllMetrics/false/undefined/0/false`,
+        _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
+        category: 'AllMetrics',
+        displayName: 'j1dev_cdn_prof_diag_set',
+        enabled: false,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_cdn_prof_diag_set',
+        'retentionPolicy.days': 0,
+        'retentionPolicy.enabled': false,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect the first Azure CDN Profile has Azure Diagnostic Log Setting relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class: 'HAS',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/AzureCdnAccessLog/true/1/true`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/AzureCdnAccessLog/true/1/true`,
+      _type: 'azure_resource_has_diagnostic_log_setting',
+      displayName: 'HAS',
+    });
+  });
+
+  it('should collect the first Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class: 'USES',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/AzureCdnAccessLog/true/1/true`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/AzureCdnAccessLog/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _type: 'azure_diagnostic_log_setting_uses_storage_account',
+      displayName: 'USES',
+    });
+  });
+
+  it('should collect the second Azure CDN Profile has Azure Diagnostic Log Setting relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class: 'HAS',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorAccessLog/false/0/false`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorAccessLog/false/0/false`,
+      _type: 'azure_resource_has_diagnostic_log_setting',
+      displayName: 'HAS',
+    });
+  });
+
+  it('should collect the second Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class: 'USES',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorAccessLog/false/0/false`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorAccessLog/false/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _type: 'azure_diagnostic_log_setting_uses_storage_account',
+      displayName: 'USES',
+    });
+  });
+
+  it('should collect the third Azure CDN Profile has Azure Diagnostic Log Setting relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class: 'HAS',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorHealthProbeLog/false/0/false`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorHealthProbeLog/false/0/false`,
+      _type: 'azure_resource_has_diagnostic_log_setting',
+      displayName: 'HAS',
+    });
+  });
+
+  it('should collect the third Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class: 'USES',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorHealthProbeLog/false/0/false`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_prof_diag_set/logs/FrontDoorHealthProbeLog/false/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _type: 'azure_diagnostic_log_setting_uses_storage_account',
+      displayName: 'USES',
+    });
+  });
 });
 
-test('step - cdn endpoints', async () => {
-  const instanceConfig: IntegrationConfig = {
-    clientId: process.env.CLIENT_ID || 'clientId',
-    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
-    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-  };
+describe('step - cdn endpoints', () => {
+  beforeAll(async () => {
+    instanceConfig = {
+      clientId: process.env.CLIENT_ID || 'clientId',
+      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+      directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
+      subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+      developerId: 'keionned',
+    };
 
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'resource-manager-step-cdn-endpoints',
-  });
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-cdn-endpoints',
+    });
 
-  const parentId =
-    '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev';
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig,
-    entities: [
-      {
-        _key: parentId,
-        _type: CdnEntities.PROFILE._type,
-        _class: CdnEntities.PROFILE._class,
-        id: parentId,
-        name: 'j1dev',
+    const parentId = `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev`;
+
+    context = createMockAzureStepExecutionContext({
+      instanceConfig,
+      entities: [
+        {
+          _key: parentId,
+          _type: CdnEntities.PROFILE._type,
+          _class: CdnEntities.PROFILE._class,
+          id: parentId,
+          name: 'j1dev',
+        },
+      ],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
       },
-    ],
-    setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
-    },
+    });
+
+    await fetchEndpoints(context);
   });
 
-  await fetchEndpoints(context);
-
-  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
-  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: CdnEntities.ENDPOINT._class,
+  afterAll(async () => {
+    if (recording) {
+      await recording.stop();
+    }
   });
 
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev',
-      _type: 'azure_cdn_profile_has_endpoint',
-      _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev',
-      _toEntityKey:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev',
-      displayName: 'HAS',
-    },
-  ]);
+  it('should collect an Azure CDN Endpoint entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev`,
+        _class: CdnEntities.ENDPOINT._class,
+        _type: CdnEntities.ENDPOINT._type,
+        category: ['data'],
+        displayName: 'j1dev',
+        function: ['content-distribution'],
+        hostName: 'j1dev.azureedge.net',
+        isCompressionEnabled: false,
+        isHttpAllowed: true,
+        isHttpsAllowed: true,
+        location: 'EastUs',
+        name: 'j1dev',
+        originHostHeader: 'www.jupiterone.com',
+        provisioningState: 'Succeeded',
+        public: true,
+        queryStringCachingBehavior: 'IgnoreQueryString',
+        resourceState: 'Running',
+        type: 'Microsoft.Cdn/profiles/endpoints',
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev`,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Log Setting entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/endpoints/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_endpt_diag_set/logs/CoreAnalytics/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/endpoints/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_endpt_diag_set/logs/CoreAnalytics/true/1/true`,
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        category: 'CoreAnalytics',
+        displayName: 'j1dev_cdn_endpt_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_cdn_endpt_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/endpoints/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_endpt_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect an Azure CDN Profile has an Azure CDN Endpoint relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev`,
+        _type: 'azure_cdn_profile_has_endpoint',
+        _class: 'HAS',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev`,
+        displayName: 'HAS',
+      }),
+    );
+  });
+
+  it('should collect an Azure CDN Endpoint has an Azure Diagnostic Log Setting relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _class: 'HAS',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/endpoints/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_endpt_diag_set/logs/CoreAnalytics/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/endpoints/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_endpt_diag_set/logs/CoreAnalytics/true/1/true`,
+        _type: 'azure_resource_has_diagnostic_log_setting',
+        displayName: 'HAS',
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Log Setting uses an Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _class: 'USES',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/endpoints/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_endpt_diag_set/logs/CoreAnalytics/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.cdn/profiles/j1dev/endpoints/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cdn_endpt_diag_set/logs/CoreAnalytics/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type: 'azure_diagnostic_log_setting_uses_storage_account',
+        displayName: 'USES',
+      }),
+    );
+  });
 });

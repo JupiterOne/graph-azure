@@ -101,30 +101,22 @@ export class DirectoryGraphClient extends GraphClient {
     query?: QueryParams;
     callback: (item: T) => void | Promise<void>;
   }): Promise<void> {
-    try {
-      let nextLink: string | undefined;
-      do {
-        let api = this.client.api(nextLink || resourceUrl);
-        if (query) {
-          api = api.query(query);
-        }
-
-        const response = await api.get();
-        if (response) {
-          nextLink = response['@odata.nextLink'];
-          for (const value of response.value) {
-            await callback(value);
-          }
-        } else {
-          nextLink = undefined;
-        }
-      } while (nextLink);
-    } catch (err) {
-      if (err.statusCode === 403) {
-        this.logger.warn({ err, resourceUrl }, 'Forbidden');
-      } else if (err.statusCode !== 404) {
-        throw err;
+    let nextLink: string | undefined;
+    do {
+      let api = this.client.api(nextLink || resourceUrl);
+      if (query) {
+        api = api.query(query);
       }
-    }
+
+      const response = await this.request(api);
+      if (response) {
+        nextLink = response['@odata.nextLink'];
+        for (const value of response.value) {
+          await callback(value);
+        }
+      } else {
+        nextLink = undefined;
+      }
+    } while (nextLink);
   }
 }

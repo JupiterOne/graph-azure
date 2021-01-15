@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.10.1 - 2020-01-15
+
 ### Fixed
 
 - Started retrying all request errors that are not handled by the Azure API

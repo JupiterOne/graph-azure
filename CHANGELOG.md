@@ -10,8 +10,7 @@ and this project adheres to
 
 ### Added
 
-- Diagnostic Settings entities and relationships for Azure API Management
-  Services
+- Diagnostic Settings entities and relationships for Azure API Management Services
 
 ## 5.10.1 - 2020-01-15
 

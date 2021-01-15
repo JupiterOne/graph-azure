@@ -8,10 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.10.1 - 2020-01-15
+
 ### Fixed
 
 - Started retrying all request errors that are not handled by the Azure API
   client. Continue retrying 429 errors thrown by the Azure API client.
+- Started retrying API errors in Azure Graph API (Azure Active Directory
+  endpoints.)
 
 ## 5.10.0 - 2020-01-13
 

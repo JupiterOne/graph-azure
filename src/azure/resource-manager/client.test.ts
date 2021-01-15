@@ -51,7 +51,7 @@ test('client accessToken fetched once and used across resources', async () => {
   expect(requests).toEqual(2);
 });
 
-test('callAzureResourceListApi should expose Azure RestError error codes', async () => {
+test('request should expose Azure RestError error codes', async () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const noop: any = () => {};
   const azureRequest = {
@@ -104,7 +104,7 @@ test('callAzureResourceListApi should expose Azure RestError error codes', async
   );
 });
 
-test('callAzureResourceListApi should expose node-fetch error codes', async () => {
+test('request should expose node-fetch error codes', async () => {
   // See how node-fetch handles system errors:
   // https://github.com/node-fetch/node-fetch/blob/master/docs/ERROR-HANDLING.md
 

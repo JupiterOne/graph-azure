@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Diagnostic Settings entities and relationships for Azure Batch Account
+
 ## 5.10.1 - 2020-01-15
 
 ### Fixed

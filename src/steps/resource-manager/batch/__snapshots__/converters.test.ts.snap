@@ -72,7 +72,7 @@ Object {
   "displayName": "",
   "id": "j1devbatchapplication",
   "name": "",
-  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resourcej1devbatchapplication",
+  "webLink": "https://portal.azure.com/#@something.onmicrosoft.com/resource/j1devbatchapplication",
 }
 `;
 

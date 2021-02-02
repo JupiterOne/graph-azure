@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Diagnostic Settings entities and relationships for Activity Logs (Azure
+  Subscription)
+
 ## 5.10.1 - 2020-01-15
 
 ### Fixed

@@ -33,6 +33,11 @@ import {
   resourceGroupName,
   getEventGridDomainNameFromId,
 } from '../../../azure/utils';
+import {
+  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+  diagnosticSettingsEntitiesForResource,
+  diagnosticSettingsRelationshipsForResource,
+} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
 
@@ -56,6 +61,11 @@ export async function fetchEventGridDomains(
           await jobState.addEntity(domainEntity);
 
           await createResourceGroupResourceRelationship(
+            executionContext,
+            domainEntity,
+          );
+
+          await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
             executionContext,
             domainEntity,
           );
@@ -168,6 +178,11 @@ export async function fetchEventGridTopics(
             executionContext,
             topicEntity,
           );
+
+          await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+            executionContext,
+            topicEntity,
+          );
         },
       );
     },
@@ -225,8 +240,14 @@ export const eventGridSteps: Step<
   {
     id: STEP_RM_EVENT_GRID_DOMAINS,
     name: 'Event Grid Domains',
-    entities: [EventGridEntities.DOMAIN],
-    relationships: [EventGridRelationships.RESOURCE_GROUP_HAS_DOMAIN],
+    entities: [
+      EventGridEntities.DOMAIN,
+      ...diagnosticSettingsEntitiesForResource,
+    ],
+    relationships: [
+      EventGridRelationships.RESOURCE_GROUP_HAS_DOMAIN,
+      ...diagnosticSettingsRelationshipsForResource,
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridDomains,
   },
@@ -255,16 +276,20 @@ export const eventGridSteps: Step<
     ],
     executionHandler: fetchEventGridDomainTopicSubscriptions,
   },
-
   {
     id: STEP_RM_EVENT_GRID_TOPICS,
     name: 'Event Grid Topics',
-    entities: [EventGridEntities.TOPIC],
-    relationships: [EventGridRelationships.RESOURCE_GROUP_HAS_TOPIC],
+    entities: [
+      EventGridEntities.TOPIC,
+      ...diagnosticSettingsEntitiesForResource,
+    ],
+    relationships: [
+      EventGridRelationships.RESOURCE_GROUP_HAS_TOPIC,
+      ...diagnosticSettingsRelationshipsForResource,
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridTopics,
   },
-
   {
     id: STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
     name: 'Event Grid Topic Subscriptions',

@@ -10,7 +10,11 @@ and this project adheres to
 
 ### Added
 
-- Diagnostic Settings entities and relationships for Azure API Management Services
+- Diagnostic Settings entities and relationships for Azure API Management
+  Services
+- Diagnostic Settings entities and relationships for Azure Event Grid Domain and
+  Azure Event Grid Topics
+- Diagnostic Settings entities and relationships for Azure Batch Account
 
 ## 5.10.1 - 2020-01-15
 

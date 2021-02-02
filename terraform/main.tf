@@ -1,5 +1,5 @@
 provider "azurerm" {
-  version = "~>2.29.0"
+  version = "~>2.43.0"
   features {
     key_vault {
       recover_soft_deleted_key_vaults = true

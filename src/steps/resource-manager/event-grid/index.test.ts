@@ -6,286 +6,532 @@ import {
   fetchEventGridTopicSubscriptions,
 } from '.';
 
-import { Recording } from '@jupiterone/integration-sdk-testing';
+import {
+  MockIntegrationStepExecutionContext,
+  Recording,
+} from '@jupiterone/integration-sdk-testing';
 
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-
-const instanceConfig: IntegrationConfig = {
-  clientId: process.env.CLIENT_ID || 'clientId',
-  clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-  directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
-  subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
-};
+import { EventGridEntities } from './constants';
+import { MonitorEntities } from '../monitor/constants';
 
 let recording: Recording;
+let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
+let instanceConfig: IntegrationConfig;
 
-afterEach(async () => {
-  if (recording) {
-    await recording.stop();
-  }
-});
+describe('step = event grid domains', () => {
+  beforeAll(async () => {
+    instanceConfig = {
+      clientId: process.env.CLIENT_ID || 'clientId',
+      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
+      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
+      developerId: 'keionned',
+    };
 
-test('step = event grid domains', async () => {
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'resource-manager-step-event-grid-domains',
-  });
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-event-grid-domains',
+    });
 
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig,
-    entities: [
-      {
-        _key:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
-        _type: 'azure_resource_group',
-        _class: ['Group'],
-        name: 'j1dev',
-        id:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
+    context = createMockAzureStepExecutionContext({
+      instanceConfig,
+      entities: [
+        {
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+          _type: 'azure_resource_group',
+          _class: ['Group'],
+          name: 'j1dev',
+          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+        },
+      ],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
       },
-    ],
-    setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
-    },
+    });
+
+    await fetchEventGridDomains(context);
   });
 
-  await fetchEventGridDomains(context);
-
-  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
-  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'Service',
+  afterAll(async () => {
+    if (recording) {
+      await recording.stop();
+    }
   });
 
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
-      _key:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev|has|/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain',
-      _type: 'azure_resource_group_has_event_grid_domain',
-      _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
-      _toEntityKey:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain',
-      displayName: 'HAS',
-    },
-  ]);
-});
+  it('should collect an Azure Event Grid Domain entity', () => {
+    const { collectedEntities } = context.jobState;
 
-test('step = event grid domain topics', async () => {
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'resource-manager-step-event-grid-domain-topics',
-  });
-
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig,
-    entities: [
-      {
-        _key:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
-        _type: 'azure_resource_group',
-        _class: ['Group'],
-        name: 'j1dev',
-        id:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
-      },
-
-      {
-        _key:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain',
-        _type: 'azure_event_grid_domain',
-        _class: ['Service'],
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
+        _class: EventGridEntities.DOMAIN._class,
+        _type: EventGridEntities.DOMAIN._type,
+        category: ['infrastructure'],
+        displayName: 'j1dev-event-grid-domain',
+        endpoint:
+          'https://j1dev-event-grid-domain.eastus-1.eventgrid.azure.net/api/events',
+        inputSchema: 'EventGridSchema',
+        location: 'eastus',
         name: 'j1dev-event-grid-domain',
-        id:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain',
-      },
-    ],
-    setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
-    },
+        metricResourceId: expect.any(String),
+        provisioningState: 'Succeeded',
+        publicNetworkAccess: 'Enabled',
+        'tag.environment': 'j1dev',
+        type: 'Microsoft.EventGrid/domains',
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
+      }),
+    );
   });
 
-  await fetchEventGridDomainTopics(context);
+  it('should collect an Azure Diagnostic Log Settings entity', () => {
+    const { collectedEntities } = context.jobState;
 
-  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
-  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'Queue',
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true`,
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        category: 'DeliveryFailures',
+        displayName: 'j1dev_evt_grd_dom_dg_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_evt_grd_dom_dg_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set`,
+        workspaceId: null,
+      }),
+    );
   });
 
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
-      _key:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain|has|/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic',
-      _type: 'azure_event_grid_domain_has_topic',
+  it('should collect an Azure Resource Group has Azure Event Grid Domain relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
+        _type: 'azure_resource_group_has_event_grid_domain',
+        _class: 'HAS',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
+        displayName: 'HAS',
+      }),
+    );
+  });
+
+  it('should collect an Azure Event Grid Domain has Azure Diagnostic Log Settings relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
       _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain',
-      _toEntityKey:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true`,
+      _type: 'azure_resource_has_diagnostic_log_setting',
       displayName: 'HAS',
-    },
-  ]);
+    });
+  });
+
+  it('should collect an Azure Diagnostic Log Settings uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class: 'USES',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _type: 'azure_diagnostic_log_setting_uses_storage_account',
+      displayName: 'USES',
+    });
+  });
 });
 
-test('step = event grid domain topic subscriptions', async () => {
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'resource-manager-step-event-grid-domain-topic-subscriptions',
+describe('step = event grid domain topics', () => {
+  beforeAll(async () => {
+    instanceConfig = {
+      clientId: process.env.CLIENT_ID || 'clientId',
+      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
+      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
+    };
+
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-event-grid-domain-topics',
+    });
+
+    context = createMockAzureStepExecutionContext({
+      instanceConfig,
+      entities: [
+        {
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+          _type: 'azure_resource_group',
+          _class: ['Group'],
+          name: 'j1dev',
+          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+        },
+
+        {
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
+          _type: 'azure_event_grid_domain',
+          _class: ['Service'],
+          name: 'j1dev-event-grid-domain',
+          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
+        },
+      ],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      },
+    });
+
+    await fetchEventGridDomainTopics(context);
   });
 
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig,
-    entities: [
-      {
-        _key:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
-        _type: 'azure_resource_group',
-        _class: ['Group'],
-        name: 'j1dev',
-        id:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
-      },
+  afterAll(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
 
-      {
-        _key:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/',
-        _type: 'azure_event_grid_domain_topic',
-        _class: ['Queue'],
+  it('should collect an Azure Event Grid Domain Topic entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic`,
+        _class: EventGridEntities.DOMAIN_TOPIC._class,
+        _type: EventGridEntities.DOMAIN_TOPIC._type,
+        displayName: 'j1dev-event-grid-domain-topic',
         name: 'j1dev-event-grid-domain-topic',
-        id:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/',
+        provisioningState: 'Succeeded',
         type: 'Microsoft.EventGrid/domains/topics',
-      },
-    ],
-    setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
-    },
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic`,
+      }),
+    );
   });
 
-  await fetchEventGridDomainTopicSubscriptions(context);
+  it('should collect an Azure Event Grid Domain has Azure Event Grid Domain Topic relationship', () => {
+    const { collectedRelationships } = context.jobState;
 
-  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
-  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'Subscription',
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic`,
+        _type: 'azure_event_grid_domain_has_topic',
+        _class: 'HAS',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic`,
+        displayName: 'HAS',
+      }),
+    );
   });
-
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
-      _key:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/|has|/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription',
-      _type: 'azure_event_grid_domain_topic_has_topic_subscription',
-      _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/',
-      _toEntityKey:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription',
-      displayName: 'HAS',
-    },
-  ]);
 });
 
-test('step = event grid topics', async () => {
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'resource-manager-step-event-grid-topics',
-  });
+describe('step = event grid domain topic subscriptions', () => {
+  beforeAll(async () => {
+    instanceConfig = {
+      clientId: process.env.CLIENT_ID || 'clientId',
+      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
+      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
+    };
 
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig,
-    entities: [
-      {
-        _key:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
-        _type: 'azure_resource_group',
-        _class: ['Group'],
-        name: 'j1dev',
-        id:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-event-grid-domain-topic-subscriptions',
+    });
+
+    context = createMockAzureStepExecutionContext({
+      instanceConfig,
+      entities: [
+        {
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+          _type: 'azure_resource_group',
+          _class: ['Group'],
+          name: 'j1dev',
+          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+        },
+
+        {
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/`,
+          _type: 'azure_event_grid_domain_topic',
+          _class: ['Queue'],
+          name: 'j1dev-event-grid-domain-topic',
+          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/`,
+          type: 'Microsoft.EventGrid/domains/topics',
+        },
+      ],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
       },
-    ],
-    setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
-    },
+    });
+
+    await fetchEventGridDomainTopicSubscriptions(context);
   });
 
-  await fetchEventGridTopics(context);
-
-  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
-  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'Queue',
+  afterAll(async () => {
+    if (recording) {
+      await recording.stop();
+    }
   });
 
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
-      _key:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev|has|/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
-      _type: 'azure_resource_group_has_event_grid_topic',
-      _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
-      _toEntityKey:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
-      displayName: 'HAS',
-    },
-  ]);
+  it('should collect an Azure Event Grid Domain Topic Subscription entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription`,
+        _class: EventGridEntities.TOPIC_SUBSCRIPTION._class,
+        _type: EventGridEntities.TOPIC_SUBSCRIPTION._type,
+      }),
+    );
+  });
+
+  it('should collect an Azure Event Grid Domain Topic has Azure Event Grid Domain Topic Subscription relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription`,
+        _type: 'azure_event_grid_domain_topic_has_topic_subscription',
+        _class: 'HAS',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain/topics/j1dev-event-grid-domain-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-domain-topic-subscription`,
+        displayName: 'HAS',
+      }),
+    );
+  });
 });
 
-test('step = event grid topic subscriptions', async () => {
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'resource-manager-step-event-grid-topic-subscriptions',
+describe('step = event grid topics', () => {
+  beforeAll(async () => {
+    instanceConfig = {
+      clientId: process.env.CLIENT_ID || 'clientId',
+      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
+      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
+      developerId: 'keionned',
+    };
+
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-event-grid-topics',
+    });
+
+    context = createMockAzureStepExecutionContext({
+      instanceConfig,
+      entities: [
+        {
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+          _type: 'azure_resource_group',
+          _class: ['Group'],
+          name: 'j1dev',
+          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+        },
+      ],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      },
+    });
+
+    await fetchEventGridTopics(context);
   });
 
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig,
-    entities: [
-      {
-        _key:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
-        _type: 'azure_resource_group',
-        _class: ['Group'],
-        name: 'j1dev',
-        id:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev',
-      },
+  afterAll(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
 
-      {
-        _key:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
-        _type: 'azure_event_grid_topic',
-        _class: ['Queue'],
+  it('should collect an Azure Event Grid Topic entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
+        _class: EventGridEntities.TOPIC._class,
+        _type: EventGridEntities.TOPIC._type,
+        displayName: 'j1dev-event-grid-topic',
+        endpoint:
+          'https://j1dev-event-grid-topic.eastus-1.eventgrid.azure.net/api/events',
+        inputSchema: 'EventGridSchema',
+        metricResourceId: expect.any(String),
+        location: 'eastus',
         name: 'j1dev-event-grid-topic',
-        id:
-          '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
+        provisioningState: 'Succeeded',
+        publicNetworkAccess: 'Enabled',
+        'tag.environment': 'j1dev',
         type: 'Microsoft.EventGrid/topics',
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Log Setting entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true`,
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        category: 'DeliveryFailures',
+        displayName: 'j1dev_evt_grd_tp_dg_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_evt_grd_tp_dg_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect an Azure Resource Group has an Azure Event Grid Topic relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
+        _type: 'azure_resource_group_has_event_grid_topic',
+        _class: 'HAS',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
+        displayName: 'HAS',
+      }),
+    );
+  });
+
+  it('should collect an Azure Event Grid Topic has Azure Diagnostic Log Setting relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _class: 'HAS',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true`,
+        _type: 'azure_resource_has_diagnostic_log_setting',
+        displayName: 'HAS',
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _class: 'USES',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type: 'azure_diagnostic_log_setting_uses_storage_account',
+        displayName: 'USES',
+      }),
+    );
+  });
+});
+
+describe('step = event grid topic subscriptions', () => {
+  beforeAll(async () => {
+    instanceConfig = {
+      clientId: process.env.CLIENT_ID || 'clientId',
+      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
+      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
+      developerId: 'keionned',
+    };
+
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-event-grid-topic-subscriptions',
+    });
+
+    context = createMockAzureStepExecutionContext({
+      instanceConfig,
+      entities: [
+        {
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+          _type: 'azure_resource_group',
+          _class: ['Group'],
+          name: 'j1dev',
+          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+        },
+
+        {
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
+          _type: 'azure_event_grid_topic',
+          _class: ['Queue'],
+          name: 'j1dev-event-grid-topic',
+          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
+          type: 'Microsoft.EventGrid/topics',
+        },
+      ],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
       },
-    ],
-    setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
-    },
+    });
+
+    await fetchEventGridTopicSubscriptions(context);
   });
 
-  await fetchEventGridTopicSubscriptions(context);
-
-  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
-  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'Subscription',
+  afterAll(async () => {
+    if (recording) {
+      await recording.stop();
+    }
   });
 
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
-      _key:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic|has|/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-event-subscription',
-      _type: 'azure_event_grid_topic_has_subscription',
-      _class: 'HAS',
-      _fromEntityKey:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic',
-      _toEntityKey:
-        '/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-event-subscription',
-      displayName: 'HAS',
-    },
-  ]);
+  it('should collect an Azure Event Grid Topic Subscription entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-event-subscription`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-event-subscription`,
+        _type: EventGridEntities.TOPIC_SUBSCRIPTION._type,
+        _class: EventGridEntities.TOPIC_SUBSCRIPTION._class,
+        displayName: 'j1dev-event-grid-event-subscription',
+        eventDeliverySchema: 'EventGridSchema',
+        name: 'j1dev-event-grid-event-subscription',
+        provisioningState: 'Succeeded',
+        topic: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic`,
+        type: 'Microsoft.EventGrid/eventSubscriptions',
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-event-subscription`,
+      }),
+    );
+  });
+
+  it('should collect an Azure Event Grid Topic has an Azure Event Grid Topic Subscription relationships', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-event-subscription`,
+        _type: 'azure_event_grid_topic_has_subscription',
+        _class: 'HAS',
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic/providers/Microsoft.EventGrid/eventSubscriptions/j1dev-event-grid-event-subscription`,
+        displayName: 'HAS',
+      }),
+    );
+  });
 });

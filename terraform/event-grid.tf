@@ -30,6 +30,23 @@ resource "azurerm_eventgrid_domain" "j1dev" {
   }
 }
 
+resource "azurerm_monitor_diagnostic_setting" "j1dev_evt_grd_dom_dg_set" {
+  count              = local.event_grid_domain_count
+  name               = "j1dev_evt_grd_dom_dg_set"
+  target_resource_id = azurerm_eventgrid_domain.j1dev[0].id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  log {
+    category = "DeliveryFailures"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 1
+    }
+  }
+}
+
 resource "azurerm_eventgrid_domain_topic" "j1dev" {
   count               = local.event_grid_domain_count
   name                = "j1dev-event-grid-domain-topic"
@@ -62,6 +79,23 @@ resource "azurerm_eventgrid_topic" "j1dev" {
 
   tags = {
     environment = local.j1env
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "j1dev_evt_grd_tp_dg_set" {
+  count              = local.event_grid_topic_count
+  name               = "j1dev_evt_grd_tp_dg_set"
+  target_resource_id = azurerm_eventgrid_topic.j1dev[0].id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  log {
+    category = "DeliveryFailures"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 1
+    }
   }
 }
 

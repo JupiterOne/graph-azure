@@ -19,6 +19,11 @@ import {
 import { createCdnProfileEntity, createCdnEndpointEntity } from './converters';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import {
+  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+  diagnosticSettingsEntitiesForResource,
+  diagnosticSettingsRelationshipsForResource,
+} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 export * from './constants';
 
 export async function fetchProfiles(
@@ -35,6 +40,11 @@ export async function fetchProfiles(
     await jobState.addEntity(profileEntity);
 
     await createResourceGroupResourceRelationship(
+      executionContext,
+      profileEntity,
+    );
+
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
       executionContext,
       profileEntity,
     );
@@ -69,6 +79,11 @@ export async function fetchEndpoints(
               to: cdnEndpointEntity,
             }),
           );
+
+          await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+            executionContext,
+            cdnEndpointEntity,
+          );
         },
       );
     },
@@ -81,16 +96,22 @@ export const cdnSteps: Step<
   {
     id: STEP_RM_CDN_PROFILE,
     name: 'CDN Profiles',
-    entities: [CdnEntities.PROFILE],
-    relationships: [CdnRelationships.RESOURCE_GROUP_HAS_PROFILE],
+    entities: [CdnEntities.PROFILE, ...diagnosticSettingsEntitiesForResource],
+    relationships: [
+      CdnRelationships.RESOURCE_GROUP_HAS_PROFILE,
+      ...diagnosticSettingsRelationshipsForResource,
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchProfiles,
   },
   {
     id: STEP_RM_CDN_ENDPOINTS,
     name: 'CDN Endpoints',
-    entities: [CdnEntities.ENDPOINT],
-    relationships: [CdnRelationships.PROFILE_HAS_ENDPOINT],
+    entities: [CdnEntities.ENDPOINT, ...diagnosticSettingsEntitiesForResource],
+    relationships: [
+      CdnRelationships.PROFILE_HAS_ENDPOINT,
+      ...diagnosticSettingsRelationshipsForResource,
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CDN_PROFILE],
     executionHandler: fetchEndpoints,
   },

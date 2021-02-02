@@ -22,6 +22,11 @@ import {
 } from './converters';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import {
+  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+  diagnosticSettingsEntitiesForResource,
+  diagnosticSettingsRelationshipsForResource,
+} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 export * from './constants';
 
 export async function fetchContainerRegistries(
@@ -41,6 +46,11 @@ export async function fetchContainerRegistries(
     await jobState.addEntity(registryEntity);
 
     await createResourceGroupResourceRelationship(
+      executionContext,
+      registryEntity,
+    );
+
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
       executionContext,
       registryEntity,
     );
@@ -90,8 +100,14 @@ export const containerRegistrySteps: Step<
   {
     id: STEP_RM_CONTAINER_REGISTRIES,
     name: 'Container Registries',
-    entities: [ContainerRegistryEntities.REGISTRY],
-    relationships: [ContainerRegistryRelationships.RESOURCE_GROUP_HAS_ZONE],
+    entities: [
+      ContainerRegistryEntities.REGISTRY,
+      ...diagnosticSettingsEntitiesForResource,
+    ],
+    relationships: [
+      ContainerRegistryRelationships.RESOURCE_GROUP_HAS_ZONE,
+      ...diagnosticSettingsRelationshipsForResource,
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchContainerRegistries,
   },

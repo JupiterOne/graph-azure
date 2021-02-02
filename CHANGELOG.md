@@ -11,6 +11,8 @@ and this project adheres to
 ### Added
 
 - Diagnostic Settings entities and relationships for Azure Container Registry
+- Diagnostic Settings entities and relationships for Azure API Management
+  Services
 - Diagnostic Settings entities and relationships for Azure CDN
 - Diagnostic Settings entities and relationships for Azure Event Grid Domain and
   Azure Event Grid Topics

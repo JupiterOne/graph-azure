@@ -14,17 +14,10 @@ import {
 import { MonitorEntities } from '../monitor/constants';
 
 let recording: Recording;
-
-afterEach(async () => {
-  if (recording) {
-    await recording.stop();
-  }
-});
+let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
+let instanceConfig: IntegrationConfig;
 
 describe('step = key vaults', () => {
-  let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
-  let instanceConfig: IntegrationConfig;
-
   beforeAll(async () => {
     instanceConfig = {
       clientId: process.env.CLIENT_ID || 'clientId',
@@ -68,6 +61,12 @@ describe('step = key vaults', () => {
     });
 
     await fetchKeyVaults(context);
+  });
+
+  afterAll(async () => {
+    if (recording) {
+      await recording.stop();
+    }
   });
 
   it('should collect an Azure Key Vault entity', () => {

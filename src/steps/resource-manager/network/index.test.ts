@@ -97,21 +97,26 @@ let recording: Recording;
 let instanceConfig: IntegrationConfig;
 
 afterEach(async () => {
-  await recording.stop();
+  if (recording) {
+    await recording.stop();
+  }
 });
 
 test('network steps', async () => {
   instanceConfig = {
     clientId: process.env.CLIENT_ID || 'clientId',
     clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-    directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
-    subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+    directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
+    subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
     developerId: 'keionned',
   };
 
   recording = setupAzureRecording({
     directory: __dirname,
     name: 'network-steps',
+    options: {
+      recordFailedRequests: true,
+    },
   });
 
   const resouceGroupEntity: Entity = {
@@ -174,7 +179,7 @@ test('network steps', async () => {
       region: 'eastus',
       resourceGroup: 'j1dev',
       'tag.environment': 'j1dev',
-      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
     },
     {
       CIDR: '10.0.2.0/24',
@@ -191,7 +196,7 @@ test('network steps', async () => {
       public: false,
       region: 'eastus',
       resourceGroup: 'j1dev',
-      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev`,
     },
     {
       CIDR: '10.0.3.0/24',
@@ -208,7 +213,7 @@ test('network steps', async () => {
       public: false,
       region: 'eastus',
       resourceGroup: 'j1dev',
-      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
     },
     {
       _class: 'IpAddress',
@@ -227,7 +232,7 @@ test('network steps', async () => {
       sku: 'Basic',
       'tag.environment': 'j1dev',
       type: 'Microsoft.Network/publicIPAddresses',
-      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
     },
     {
       _class: 'NetworkInterface',
@@ -251,7 +256,7 @@ test('network steps', async () => {
       // Only defined when bound to a VM
       // virtualMachineId:
       //   `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Compute/virtualMachines/j1dev`,
-      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
     },
     {
       _class: ['Firewall'],
@@ -268,7 +273,7 @@ test('network steps', async () => {
       region: 'eastus',
       resourceGroup: 'j1dev',
       'tag.environment': 'j1dev',
-      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
     },
 
     // VPC default, westus
@@ -288,7 +293,7 @@ test('network steps', async () => {
       region: 'westus',
       resourceGroup: 'j1dev',
       'tag.environment': 'j1dev',
-      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two`,
     },
     {
       CIDR: '10.0.3.0/24',
@@ -305,7 +310,7 @@ test('network steps', async () => {
       public: false,
       region: 'westus',
       resourceGroup: 'j1dev',
-      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
     },
     // Diagnostic Settings
     {
@@ -325,7 +330,7 @@ test('network steps', async () => {
       'retentionPolicy.enabled': true,
       serviceBusRuleId: null,
       storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set`,
       workspaceId: null,
     },
     {
@@ -345,7 +350,88 @@ test('network steps', async () => {
       'retentionPolicy.enabled': true,
       serviceBusRuleId: null,
       storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-      webLink: `https://portal.azure.com/#@kanddventurepartnersgmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set`,
+      workspaceId: null,
+    },
+    {
+      _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true`,
+      _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+      _rawData: [expect.objectContaining({ name: 'default' })],
+      category: 'DDoSMitigationFlowLogs',
+      displayName: 'j1dev_pub_ip_diag_set',
+      enabled: true,
+      eventHubAuthorizationRuleId: null,
+      eventHubName: null,
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true`,
+      logAnalyticsDestinationType: null,
+      name: 'j1dev_pub_ip_diag_set',
+      'retentionPolicy.days': 1,
+      'retentionPolicy.enabled': true,
+      serviceBusRuleId: null,
+      storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set`,
+      workspaceId: null,
+    },
+    {
+      _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/false/0/false`,
+      _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+      _rawData: [expect.objectContaining({ name: 'default' })],
+      category: 'DDoSMitigationReports',
+      displayName: 'j1dev_pub_ip_diag_set',
+      enabled: false,
+      eventHubAuthorizationRuleId: null,
+      eventHubName: null,
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/false/0/false`,
+      logAnalyticsDestinationType: null,
+      name: 'j1dev_pub_ip_diag_set',
+      'retentionPolicy.days': 0,
+      'retentionPolicy.enabled': false,
+      serviceBusRuleId: null,
+      storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set`,
+      workspaceId: null,
+    },
+    {
+      _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/false/0/false`,
+      _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+      _rawData: [expect.objectContaining({ name: 'default' })],
+      category: 'DDoSProtectionNotifications',
+      displayName: 'j1dev_pub_ip_diag_set',
+      enabled: false,
+      eventHubAuthorizationRuleId: null,
+      eventHubName: null,
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/false/0/false`,
+      logAnalyticsDestinationType: null,
+      name: 'j1dev_pub_ip_diag_set',
+      'retentionPolicy.days': 0,
+      'retentionPolicy.enabled': false,
+      serviceBusRuleId: null,
+      storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set`,
+      workspaceId: null,
+    },
+    {
+      _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/false/undefined/0/false`,
+      _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
+      _rawData: [expect.objectContaining({ name: 'default' })],
+      category: 'AllMetrics',
+      displayName: 'j1dev_pub_ip_diag_set',
+      enabled: false,
+      eventHubAuthorizationRuleId: null,
+      eventHubName: null,
+      id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/false/undefined/0/false`,
+      logAnalyticsDestinationType: null,
+      name: 'j1dev_pub_ip_diag_set',
+      'retentionPolicy.days': 0,
+      'retentionPolicy.enabled': false,
+      timeGrain: undefined,
+      serviceBusRuleId: null,
+      storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set`,
       workspaceId: null,
     },
   );
@@ -809,6 +895,38 @@ test('network steps', async () => {
       displayName: 'HAS',
     },
     {
+      _class: 'HAS',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true`,
+      _type: 'azure_resource_has_diagnostic_log_setting',
+      displayName: 'HAS',
+    },
+    {
+      _class: 'HAS',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/false/0/false`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/false/0/false`,
+      _type: 'azure_resource_has_diagnostic_log_setting',
+      displayName: 'HAS',
+    },
+    {
+      _class: 'HAS',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/false/0/false`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/false/0/false`,
+      _type: 'azure_resource_has_diagnostic_log_setting',
+      displayName: 'HAS',
+    },
+    {
+      _class: 'HAS',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/false/undefined/0/false`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/false/undefined/0/false`,
+      _type: 'azure_resource_has_diagnostic_metric_setting',
+      displayName: 'HAS',
+    },
+    {
       _class: 'USES',
       _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupRuleCounter/true/1/true`,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupRuleCounter/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
@@ -822,6 +940,38 @@ test('network steps', async () => {
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupEvent/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
       _type: 'azure_diagnostic_log_setting_uses_storage_account',
+      displayName: 'USES',
+    },
+    {
+      _class: 'USES',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _type: 'azure_diagnostic_log_setting_uses_storage_account',
+      displayName: 'USES',
+    },
+    {
+      _class: 'USES',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/false/0/false`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/false/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _type: 'azure_diagnostic_log_setting_uses_storage_account',
+      displayName: 'USES',
+    },
+    {
+      _class: 'USES',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/false/0/false`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/false/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _type: 'azure_diagnostic_log_setting_uses_storage_account',
+      displayName: 'USES',
+    },
+    {
+      _class: 'USES',
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/false/undefined/0/false`,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/false/undefined/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _type: 'azure_diagnostic_metric_setting_uses_storage_account',
       displayName: 'USES',
     },
   );

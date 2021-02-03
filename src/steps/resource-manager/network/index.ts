@@ -141,6 +141,10 @@ export async function fetchPublicIPAddresses(
       executionContext,
       publicIpAddressEntity,
     );
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      publicIpAddressEntity,
+    );
   });
 
   // A simple way to make the set available to dependent steps. Assumes dataset
@@ -373,11 +377,13 @@ export const networkSteps: Step<
         _type: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
         _class: PUBLIC_IP_ADDRESS_ENTITY_CLASS,
       },
+      ...diagnosticSettingsEntitiesForResource,
     ],
     relationships: [
       createResourceGroupResourceRelationshipMetadata(
         PUBLIC_IP_ADDRESS_ENTITY_TYPE,
       ),
+      ...diagnosticSettingsRelationshipsForResource,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPublicIPAddresses,

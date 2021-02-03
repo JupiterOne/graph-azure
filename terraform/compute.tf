@@ -41,6 +41,22 @@ resource "azurerm_public_ip" "j1dev" {
   }
 }
 
+resource "azurerm_monitor_diagnostic_setting" "j1dev_pub_ip_diag_set" {
+  name               = "j1dev_pub_ip_diag_set"
+  target_resource_id = azurerm_public_ip.j1dev.id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  log {
+    category = "DDoSMitigationFlowLogs"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 1
+    }
+  }
+}
+
 resource "azurerm_network_security_group" "j1dev" {
   name                = "j1dev"
   location            = "eastus"

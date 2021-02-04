@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.11.0 - 2020-02-02
+
 ### Added
 
 - Diagnostic Settings entities and relationships for Azure Container Registry

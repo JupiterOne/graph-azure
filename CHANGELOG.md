@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `debug`-level logs to `ad-groups` step.
+
 ## 5.11.0 - 2020-02-02
 
 ### Added

@@ -22,7 +22,11 @@ import {
 } from './converters';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
-import { createDiagnosticSettingsEntitiesAndRelationshipsForResource, diagnosticSettingsEntitiesForResource, diagnosticSettingsRelationshipsForResource } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import {
+  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+  diagnosticSettingsEntitiesForResource,
+  diagnosticSettingsRelationshipsForResource,
+} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 export * from './constants';
 
 export async function fetchApiManagementServices(
@@ -46,7 +50,10 @@ export async function fetchApiManagementServices(
       apiManagementServiceEntity,
     );
 
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(executionContext, apiManagementServiceEntity);
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      apiManagementServiceEntity,
+    );
   });
 }
 
@@ -87,8 +94,14 @@ export const apiManagementSteps: Step<
   {
     id: STEP_RM_API_MANAGEMENT_SERVICES,
     name: 'API Management Services',
-    entities: [ApiManagementEntities.SERVICE, ...diagnosticSettingsEntitiesForResource],
-    relationships: [ApiManagementRelationships.RESOURCE_GROUP_HAS_SERVICE, ...diagnosticSettingsRelationshipsForResource],
+    entities: [
+      ApiManagementEntities.SERVICE,
+      ...diagnosticSettingsEntitiesForResource,
+    ],
+    relationships: [
+      ApiManagementRelationships.RESOURCE_GROUP_HAS_SERVICE,
+      ...diagnosticSettingsRelationshipsForResource,
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApiManagementServices,
   },

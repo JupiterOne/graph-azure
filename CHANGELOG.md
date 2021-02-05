@@ -8,8 +8,23 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.11.2 - 2020-02-05
+
 ### Added
 
+- Added additional logging in the `DirectoryGraphClient`.
+
+## 5.11.1 - 2020-02-04
+
+### Added
+
+- Added `debug`-level logs to `ad-groups` step.
+
+## 5.11.0 - 2020-02-02
+
+### Added
+
+- Diagnostic Settings entities and relationships for Azure Container Registry
 - Diagnostic Settings entities and relationships for Azure API Management
   Services
 - Diagnostic Settings entities and relationships for Azure CDN

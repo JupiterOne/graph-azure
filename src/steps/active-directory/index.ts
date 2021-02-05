@@ -75,10 +75,13 @@ export async function fetchGroups(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { logger, instance, jobState } = executionContext;
+  logger.debug('Initializing directory graph client');
   const graphClient = new DirectoryGraphClient(logger, instance.config);
 
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  logger.debug('Iterating groups');
   await graphClient.iterateGroups(async (group) => {
+    logger.debug({ id: group.id }, 'Creating graph objects for group');
     const groupEntity = createGroupEntity(group);
     await jobState.addEntity(groupEntity);
     await jobState.addRelationship(

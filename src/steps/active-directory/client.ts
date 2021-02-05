@@ -29,6 +29,7 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateDirectoryRoles(
     callback: (role: DirectoryRole) => void | Promise<void>,
   ): Promise<void> {
+    this.logger.info('Iterating directory roles.');
     return this.iterateResources({ resourceUrl: '/directoryRoles', callback });
   }
 
@@ -37,6 +38,7 @@ export class DirectoryGraphClient extends GraphClient {
     roleId: string,
     callback: (member: DirectoryObject) => void | Promise<void>,
   ): Promise<void> {
+    this.logger.info({ roleId }, 'Iterating directory role members.');
     return this.iterateResources({
       resourceUrl: `/directoryRoles/${roleId}/members`,
       callback,
@@ -47,6 +49,7 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateGroups(
     callback: (user: Group) => void | Promise<void>,
   ): Promise<void> {
+    this.logger.info('Iterating groups.');
     return this.iterateResources({ resourceUrl: '/groups', callback });
   }
 
@@ -61,6 +64,7 @@ export class DirectoryGraphClient extends GraphClient {
     },
     callback: (user: GroupMember) => void | Promise<void>,
   ): Promise<void> {
+    this.logger.info({ groupId: input.groupId }, 'Iterating group members.');
     const $select = input.select
       ? Array.isArray(input.select)
         ? input.select.join(',')
@@ -78,6 +82,7 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateUsers(
     callback: (user: User) => void | Promise<void>,
   ): Promise<void> {
+    this.logger.info('Iterating users.');
     return this.iterateResources({ resourceUrl: '/users', callback });
   }
 
@@ -85,6 +90,7 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateServicePrincipals(
     callback: (a: any) => void | Promise<void>,
   ): Promise<void> {
+    this.logger.info('Iterating service principals.');
     return this.iterateResources({
       resourceUrl: '/servicePrincipals',
       callback,
@@ -112,7 +118,16 @@ export class DirectoryGraphClient extends GraphClient {
       if (response) {
         nextLink = response['@odata.nextLink'];
         for (const value of response.value) {
-          await callback(value);
+          try {
+            await callback(value);
+          } catch (err) {
+            this.logger.error(
+              {
+                resourceUrl,
+              },
+              'Callback error while iterating an API response in DirectoryGraphClient',
+            );
+          }
         }
       } else {
         nextLink = undefined;

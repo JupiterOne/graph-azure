@@ -301,6 +301,10 @@ export async function fetchVirtualNetworks(
       executionContext,
       virtualNetworkEntity,
     );
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      virtualNetworkEntity,
+    );
   });
 }
 
@@ -428,6 +432,7 @@ export const networkSteps: Step<
         _type: SUBNET_ENTITY_TYPE,
         _class: SUBNET_ENTITY_CLASS,
       },
+      ...diagnosticSettingsEntitiesForResource,
     ],
     relationships: [
       {
@@ -445,6 +450,7 @@ export const networkSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         VIRTUAL_NETWORK_ENTITY_TYPE,
       ),
+      ...diagnosticSettingsRelationshipsForResource,
     ],
     dependsOn: [
       STEP_AD_ACCOUNT,

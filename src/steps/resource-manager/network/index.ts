@@ -211,6 +211,10 @@ export async function fetchLoadBalancers(
       executionContext,
       loadBalancerEntity,
     );
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      loadBalancerEntity,
+    );
     const nicRelationships = createLoadBalancerBackendNicRelationships(e);
     if (nicRelationships) {
       await jobState.addRelationships(nicRelationships);

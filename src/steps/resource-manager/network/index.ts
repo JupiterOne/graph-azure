@@ -493,6 +493,7 @@ export const networkSteps: Step<
         _type: LOAD_BALANCER_ENTITY_TYPE,
         _class: LOAD_BALANCER_ENTITY_CLASS,
       },
+      ...diagnosticSettingsEntitiesForResource,
     ],
     relationships: [
       {
@@ -504,6 +505,7 @@ export const networkSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         LOAD_BALANCER_ENTITY_TYPE,
       ),
+      ...diagnosticSettingsRelationshipsForResource,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchLoadBalancers,

@@ -141,6 +141,10 @@ export async function fetchPublicIPAddresses(
       executionContext,
       publicIpAddressEntity,
     );
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      publicIpAddressEntity,
+    );
   });
 
   // A simple way to make the set available to dependent steps. Assumes dataset
@@ -204,6 +208,10 @@ export async function fetchLoadBalancers(
     const loadBalancerEntity = createLoadBalancerEntity(webLinker, e);
     await jobState.addEntity(loadBalancerEntity);
     await createResourceGroupResourceRelationship(
+      executionContext,
+      loadBalancerEntity,
+    );
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
       executionContext,
       loadBalancerEntity,
     );
@@ -293,6 +301,10 @@ export async function fetchVirtualNetworks(
       executionContext,
       virtualNetworkEntity,
     );
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      virtualNetworkEntity,
+    );
   });
 }
 
@@ -373,11 +385,13 @@ export const networkSteps: Step<
         _type: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
         _class: PUBLIC_IP_ADDRESS_ENTITY_CLASS,
       },
+      ...diagnosticSettingsEntitiesForResource,
     ],
     relationships: [
       createResourceGroupResourceRelationshipMetadata(
         PUBLIC_IP_ADDRESS_ENTITY_TYPE,
       ),
+      ...diagnosticSettingsRelationshipsForResource,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPublicIPAddresses,
@@ -418,6 +432,7 @@ export const networkSteps: Step<
         _type: SUBNET_ENTITY_TYPE,
         _class: SUBNET_ENTITY_CLASS,
       },
+      ...diagnosticSettingsEntitiesForResource,
     ],
     relationships: [
       {
@@ -435,6 +450,7 @@ export const networkSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         VIRTUAL_NETWORK_ENTITY_TYPE,
       ),
+      ...diagnosticSettingsRelationshipsForResource,
     ],
     dependsOn: [
       STEP_AD_ACCOUNT,
@@ -483,6 +499,7 @@ export const networkSteps: Step<
         _type: LOAD_BALANCER_ENTITY_TYPE,
         _class: LOAD_BALANCER_ENTITY_CLASS,
       },
+      ...diagnosticSettingsEntitiesForResource,
     ],
     relationships: [
       {
@@ -494,6 +511,7 @@ export const networkSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         LOAD_BALANCER_ENTITY_TYPE,
       ),
+      ...diagnosticSettingsRelationshipsForResource,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchLoadBalancers,

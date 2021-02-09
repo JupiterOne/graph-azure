@@ -11,6 +11,22 @@ resource "azurerm_virtual_network" "j1dev" {
   }
 }
 
+resource "azurerm_monitor_diagnostic_setting" "j1dev_vn_diag_set" {
+  name               = "j1dev_vn_diag_set"
+  target_resource_id = azurerm_virtual_network.j1dev.id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  log {
+    category = "VMProtectionAlerts"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 1
+    }
+  }
+}
+
 resource "azurerm_subnet" "j1dev" {
   name                 = "j1dev"
   resource_group_name  = azurerm_resource_group.j1dev.name
@@ -38,6 +54,60 @@ resource "azurerm_public_ip" "j1dev" {
 
   tags = {
     environment = local.j1env
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "j1dev_pub_ip_diag_set" {
+  name               = "j1dev_pub_ip_diag_set"
+  target_resource_id = azurerm_public_ip.j1dev.id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  log {
+    category = "DDoSMitigationFlowLogs"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 1
+    }
+  }
+}
+
+resource "azurerm_public_ip" "j1dev_lb_ip" {
+  name                = "j1dev_lb_ip"
+  location            = "eastus"
+  resource_group_name = azurerm_resource_group.j1dev.name
+  allocation_method   = "Dynamic"
+
+  tags = {
+    environment = local.j1env
+  }
+}
+
+resource "azurerm_lb" "j1dev" {
+  name                = "TestLoadBalancer"
+  location            = "East US"
+  resource_group_name = azurerm_resource_group.j1dev.name
+
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = azurerm_public_ip.j1dev_lb_ip.id
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "j1dev_lb_diag_set" {
+  name               = "j1dev_lb_diag_set"
+  target_resource_id = azurerm_lb.j1dev.id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  log {
+    category = "LoadBalancerAlertEvent"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 1
+    }
   }
 }
 

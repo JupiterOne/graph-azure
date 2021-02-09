@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Collected Diagnostic Settings entities and relationships for Azure Network
+  Load Balancers
+- Collected Diagnostic Settings entities and relationships for Azure Network
+  Public IP Addresses
+- Collected Diagnostic Settings entities and relationships for Azure Network
+  Virtual Networks
+
 ## 5.11.2 - 2020-02-05
 
 ### Added

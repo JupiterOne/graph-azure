@@ -1,5 +1,6 @@
 import { NetworkManagementClient } from '@azure/arm-network';
 import {
+  AzureFirewall,
   LoadBalancer,
   NetworkInterface,
   NetworkSecurityGroup,
@@ -13,6 +14,31 @@ import {
 } from '../../../azure/resource-manager/client';
 
 export class NetworkClient extends Client {
+  /**
+   * Fetches all Azure Firewalls in an Azure Resource Group
+   * @param resourceGroupName name of the Azure Resource Group
+   * @param callback A callback function to be called after retrieving an Azure Firewall
+   */
+  public async iterateAzureFirewalls(
+    resourceGroupName: string,
+    callback: (azureFirewall: AzureFirewall) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => serviceClient.azureFirewalls.list(resourceGroupName),
+        listNext: serviceClient.azureFirewalls.listNext,
+      },
+      resourceDescription: 'network.azureFirewalls',
+      callback,
+    });
+  }
+
   public async iterateNetworkInterfaces(
     callback: (nic: NetworkInterface) => void | Promise<void>,
   ): Promise<void> {

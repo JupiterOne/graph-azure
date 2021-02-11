@@ -114,6 +114,7 @@ The following entities are created:
 | [RM] Monitor Log Profile               | `azure_monitor_log_profile`           | `Configuration`                    |
 | [RM] MySQL Database                    | `azure_mysql_database`                | `Database`, `DataStore`            |
 | [RM] MySQL Server                      | `azure_mysql_server`                  | `Database`, `DataStore`, `Host`    |
+| [RM] Network Azure Firewall            | `azure_network_azure_firewall`        | `Firewall`                         |
 | [RM] Network Interface                 | `azure_nic`                           | `NetworkInterface`                 |
 | [RM] Policy Assignment                 | `azure_policy_assignment`             | `ControlPolicy`                    |
 | [RM] PostgreSQL Database               | `azure_postgresql_database`           | `Database`, `DataStore`            |
@@ -199,6 +200,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`            | **HAS**               | `azure_managed_disk`                  |
 | `azure_resource_group`            | **HAS**               | `azure_mariadb_server`                |
 | `azure_resource_group`            | **HAS**               | `azure_mysql_server`                  |
+| `azure_resource_group`            | **HAS**               | `azure_network_azure_firewall`        |
 | `azure_resource_group`            | **HAS**               | `azure_nic`                           |
 | `azure_resource_group`            | **HAS**               | `azure_postgresql_server`             |
 | `azure_resource_group`            | **HAS**               | `azure_private_dns_zone`              |

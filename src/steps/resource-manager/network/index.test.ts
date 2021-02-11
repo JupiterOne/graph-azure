@@ -19,12 +19,7 @@ import { createMockAzureStepExecutionContext } from '../../../../test/createMock
 import { MonitorEntities } from '../monitor/constants';
 import { IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-import {
-  LOAD_BALANCER_ENTITY_CLASS,
-  LOAD_BALANCER_ENTITY_TYPE,
-  PUBLIC_IP_ADDRESS_ENTITY_CLASS,
-  PUBLIC_IP_ADDRESS_ENTITY_TYPE,
-} from './constants';
+import { NetworkEntities } from './constants';
 
 const GUID_REGEX = new RegExp(
   '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
@@ -173,10 +168,10 @@ test('network steps', async () => {
     // VPC default, eastus
     {
       CIDR: '10.0.0.0/16',
-      _class: ['Network'],
+      _class: NetworkEntities.VIRTUAL_NETWORK._class,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
       _rawData: [expect.objectContaining({ name: 'default' })],
-      _type: 'azure_vnet',
+      _type: NetworkEntities.VIRTUAL_NETWORK._type,
       createdOn: undefined,
       displayName: 'j1dev (10.0.0.0/16)',
       environment: 'j1dev',
@@ -191,10 +186,10 @@ test('network steps', async () => {
     },
     {
       CIDR: '10.0.2.0/24',
-      _class: ['Network'],
+      _class: [NetworkEntities.SUBNET._class],
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev`,
       _rawData: [expect.objectContaining({ name: 'default' })],
-      _type: 'azure_subnet',
+      _type: NetworkEntities.SUBNET._type,
       createdOn: undefined,
       displayName: 'j1dev (10.0.2.0/24)',
       environment: 'j1dev',
@@ -208,10 +203,10 @@ test('network steps', async () => {
     },
     {
       CIDR: '10.0.3.0/24',
-      _class: ['Network'],
+      _class: [NetworkEntities.SUBNET._class],
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
       _rawData: [expect.objectContaining({ name: 'default' })],
-      _type: 'azure_subnet',
+      _type: NetworkEntities.SUBNET._type,
       createdOn: undefined,
       displayName: 'j1dev_priv_one (10.0.3.0/24)',
       environment: 'j1dev',
@@ -224,7 +219,7 @@ test('network steps', async () => {
       webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev_priv_one`,
     },
     {
-      _class: 'IpAddress',
+      _class: NetworkEntities.PUBLIC_IP_ADDRESS._class,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
       _rawData: [expect.objectContaining({ name: 'default' })],
       _type: 'azure_public_ip',
@@ -243,10 +238,10 @@ test('network steps', async () => {
       webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
     },
     {
-      _class: 'NetworkInterface',
+      _class: NetworkEntities.NETWORK_INTERFACE._class,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
       _rawData: [expect.objectContaining({ name: 'default' })],
-      _type: 'azure_nic',
+      _type: NetworkEntities.NETWORK_INTERFACE._type,
       displayName: 'j1dev',
       id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
       ipForwarding: false,
@@ -267,10 +262,10 @@ test('network steps', async () => {
       webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev`,
     },
     {
-      _class: ['Firewall'],
+      _class: NetworkEntities.SECURITY_GROUP._class,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
       _rawData: [expect.objectContaining({ name: 'default' })],
-      _type: 'azure_security_group',
+      _type: NetworkEntities.SECURITY_GROUP._type,
       category: ['network', 'host'],
       createdOn: undefined,
       displayName: 'j1dev',
@@ -286,8 +281,8 @@ test('network steps', async () => {
     {
       id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev_lb_ip`,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev_lb_ip`,
-      _class: PUBLIC_IP_ADDRESS_ENTITY_CLASS,
-      _type: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
+      _class: NetworkEntities.PUBLIC_IP_ADDRESS._class,
+      _type: NetworkEntities.PUBLIC_IP_ADDRESS._type,
       _rawData: [expect.objectContaining({ name: 'default' })],
       displayName: 'j1dev_lb_ip',
       public: true,
@@ -305,8 +300,8 @@ test('network steps', async () => {
     {
       id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/loadBalancers/TestLoadBalancer`,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/loadBalancers/TestLoadBalancer`,
-      _class: [LOAD_BALANCER_ENTITY_CLASS],
-      _type: LOAD_BALANCER_ENTITY_TYPE,
+      _class: NetworkEntities.LOAD_BALANCER._class,
+      _type: NetworkEntities.LOAD_BALANCER._type,
       category: ['network'],
       function: ['load-balancing'],
       resourceGuid: expect.stringMatching(GUID_REGEX),
@@ -323,10 +318,10 @@ test('network steps', async () => {
     // VPC default, westus
     {
       CIDR: '10.0.0.0/16',
-      _class: ['Network'],
+      _class: NetworkEntities.VIRTUAL_NETWORK._class,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two`,
       _rawData: [expect.objectContaining({ name: 'default' })],
-      _type: 'azure_vnet',
+      _type: NetworkEntities.VIRTUAL_NETWORK._type,
       createdOn: undefined,
       displayName: 'j1dev_two (10.0.0.0/16)',
       environment: 'j1dev',
@@ -341,10 +336,10 @@ test('network steps', async () => {
     },
     {
       CIDR: '10.0.3.0/24',
-      _class: ['Network'],
+      _class: [NetworkEntities.SUBNET._class],
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
       _rawData: [expect.objectContaining({ name: 'default' })],
-      _type: 'azure_subnet',
+      _type: NetworkEntities.SUBNET._type,
       createdOn: undefined,
       displayName: 'j1dev_priv_two (10.0.3.0/24)',
       environment: 'j1dev',

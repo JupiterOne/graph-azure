@@ -21,6 +21,7 @@ resource "azurerm_container_registry" "j1dev" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "j1dev_cont_reg_diag_set" {
+  count              = local.container_registry_resource_count
   name               = "j1dev_cont_reg_diag_set"
   target_resource_id = azurerm_container_registry.j1dev[0].id
   storage_account_id = azurerm_storage_account.j1dev.id

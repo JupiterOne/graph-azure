@@ -1,3 +1,12 @@
+variable "create_azure_newtork_azure_firewall" {
+  type    = number
+  default = 0
+}
+
+locals {
+  network_azure_firewall_count = var.create_azure_newtork_azure_firewall == 1 ? 1 : 0
+}
+
 #### VPC default, eastus
 
 resource "azurerm_virtual_network" "j1dev" {
@@ -251,4 +260,42 @@ resource "azurerm_subnet" "j1dev_priv_two" {
   resource_group_name  = azurerm_resource_group.j1dev.name
   virtual_network_name = azurerm_virtual_network.j1dev_two.name
   address_prefix       = "10.0.3.0/24"
+}
+
+resource "azurerm_virtual_network" "j1dev_az_fw_vm" {
+  count               = local.network_azure_firewall_count
+  name                = "j1dev_az_fw_vm"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.j1dev.location
+  resource_group_name = azurerm_resource_group.j1dev.name
+}
+
+resource "azurerm_subnet" "j1dev_az_fw_subnet" {
+  count                = local.network_azure_firewall_count
+  name                 = "AzureFirewallSubnet"
+  resource_group_name  = azurerm_resource_group.j1dev.name
+  virtual_network_name = azurerm_virtual_network.j1dev_az_fw_vm[0].name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+resource "azurerm_public_ip" "j1dev_az_fw_pub_ip" {
+  count               = local.network_azure_firewall_count
+  name                = "j1dev_az_fw_pub_ip"
+  location            = azurerm_resource_group.j1dev.location
+  resource_group_name = azurerm_resource_group.j1dev.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_firewall" "j1dev_firewall" {
+  count               = local.network_azure_firewall_count
+  name                = "j1dev_firewall"
+  location            = azurerm_resource_group.j1dev.location
+  resource_group_name = azurerm_resource_group.j1dev.name
+
+  ip_configuration {
+    name                 = "configuration"
+    subnet_id            = azurerm_subnet.j1dev_az_fw_subnet[0].id
+    public_ip_address_id = azurerm_public_ip.j1dev_az_fw_pub_ip[0].id
+  }
 }

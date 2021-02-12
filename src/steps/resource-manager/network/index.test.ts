@@ -411,6 +411,7 @@ describe('network steps', () => {
         webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_two/subnets/j1dev_priv_two`,
       },
       // Diagnostic Settings
+      // Network Security Group Diagnostic Settings
       {
         _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupRuleCounter/true/1/true`,
@@ -451,6 +452,7 @@ describe('network steps', () => {
         webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set`,
         workspaceId: null,
       },
+      // Network Public IP Address Diagnostic Settings
       {
         _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true`,
@@ -472,6 +474,68 @@ describe('network steps', () => {
         workspaceId: null,
       },
       {
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/true/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        _rawData: [expect.objectContaining({ name: 'default' })],
+        category: 'DDoSMitigationReports',
+        displayName: 'j1dev_pub_ip_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/true/1/true`,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_pub_ip_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set`,
+        workspaceId: null,
+      },
+      {
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/true/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        _rawData: [expect.objectContaining({ name: 'default' })],
+        category: 'DDoSProtectionNotifications',
+        displayName: 'j1dev_pub_ip_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/true/1/true`,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_pub_ip_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set`,
+        workspaceId: null,
+      },
+      {
+        _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
+        _rawData: [expect.objectContaining({ name: 'default' })],
+        category: 'AllMetrics',
+        displayName: 'j1dev_pub_ip_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_pub_ip_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        timeGrain: undefined,
+        webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set`,
+        workspaceId: null,
+      },
+      // Network Load Balancer Diagnostic Settings
+      {
         id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerAlertEvent/true/1/true`,
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerAlertEvent/true/1/true`,
         _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
@@ -492,6 +556,48 @@ describe('network steps', () => {
         workspaceId: null,
       },
       {
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerProbeHealthStatus/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerProbeHealthStatus/true/1/true`,
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        _rawData: [expect.objectContaining({ name: 'default' })],
+        category: 'LoadBalancerProbeHealthStatus',
+        displayName: 'j1dev_lb_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_lb_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set`,
+        workspaceId: null,
+      },
+      {
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
+        _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
+        _rawData: [expect.objectContaining({ name: 'default' })],
+        category: 'AllMetrics',
+        displayName: 'j1dev_lb_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_lb_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        timeGrain: undefined,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set`,
+        workspaceId: null,
+      },
+      // Network Virtual Network Diagnostic Settings
+      {
         id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/logs/VMProtectionAlerts/true/1/true`,
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/logs/VMProtectionAlerts/true/1/true`,
         _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
@@ -506,6 +612,27 @@ describe('network steps', () => {
         name: 'j1dev_vn_diag_set',
         'retentionPolicy.days': 1,
         'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set`,
+        workspaceId: null,
+      },
+      {
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
+        _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
+        _rawData: [expect.objectContaining({ name: 'default' })],
+        category: 'AllMetrics',
+        displayName: 'j1dev_vn_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_vn_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        timeGrain: undefined,
         serviceBusRuleId: null,
         storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
         webLink: `https://portal.azure.com/#@knnderoussellegmail.onmicrosoft.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set`,
@@ -1092,6 +1219,7 @@ describe('network steps', () => {
             ._class,
       },
       // Diagnostic Settings
+      // Network Security Groups Diagnostic Settings
       {
         _class:
           MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
@@ -1113,48 +1241,6 @@ describe('network steps', () => {
         _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev`,
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupEvent/true/1/true`,
         _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/networksecuritygroups/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_net_sec_grp_set/logs/NetworkSecurityGroupEvent/true/1/true`,
-        _type:
-          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
-            ._type,
-        displayName:
-          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
-            ._class,
-      },
-      {
-        _class:
-          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
-            ._class,
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true`,
-        _type:
-          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
-            ._type,
-        displayName:
-          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
-            ._class,
-      },
-      {
-        _class:
-          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
-            ._class,
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/loadBalancers/TestLoadBalancer`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/loadBalancers/TestLoadBalancer|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerAlertEvent/true/1/true`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerAlertEvent/true/1/true`,
-        _type:
-          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
-            ._type,
-        displayName:
-          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
-            ._class,
-      },
-      {
-        _class:
-          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
-            ._class,
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/logs/VMProtectionAlerts/true/1/true`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/logs/VMProtectionAlerts/true/1/true`,
         _type:
           MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
             ._type,
@@ -1190,6 +1276,21 @@ describe('network steps', () => {
           MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
             ._class,
       },
+      // Network Public IP Addresses Diagnostic Settings
+      {
+        _class:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationFlowLogs/true/1/true`,
+        _type:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._type,
+        displayName:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+      },
       {
         _class:
           MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
@@ -1202,6 +1303,105 @@ describe('network steps', () => {
             ._type,
         displayName:
           MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+      },
+      {
+        _class:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/true/1/true`,
+        _type:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._type,
+        displayName:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+      },
+      {
+        _class:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSMitigationReports/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._type,
+        displayName:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+      },
+      {
+        _class:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/true/1/true`,
+        _type:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._type,
+        displayName:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+      },
+      {
+        _class:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/logs/DDoSProtectionNotifications/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._type,
+        displayName:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+      },
+      {
+        _class:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _type:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._type,
+        displayName:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._class,
+      },
+      {
+        _class:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/publicipaddresses/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_pub_ip_diag_set/metrics/AllMetrics/true/undefined/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._type,
+        displayName:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+      },
+      // Network Load Balancers Diagnostic Settings
+      {
+        _class:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/loadBalancers/TestLoadBalancer`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/loadBalancers/TestLoadBalancer|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerAlertEvent/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerAlertEvent/true/1/true`,
+        _type:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._type,
+        displayName:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
             ._class,
       },
       {
@@ -1220,6 +1420,77 @@ describe('network steps', () => {
       },
       {
         _class:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/loadBalancers/TestLoadBalancer`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/loadBalancers/TestLoadBalancer|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerProbeHealthStatus/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerProbeHealthStatus/true/1/true`,
+        _type:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._type,
+        displayName:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+      },
+      {
+        _class:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerProbeHealthStatus/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/logs/LoadBalancerProbeHealthStatus/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._type,
+        displayName:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+      },
+      {
+        _class:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/loadBalancers/TestLoadBalancer`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/loadBalancers/TestLoadBalancer|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _type:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._type,
+        displayName:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._class,
+      },
+      {
+        _class:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/loadbalancers/testloadbalancer/providers/microsoft.insights/diagnosticSettings/j1dev_lb_diag_set/metrics/AllMetrics/true/undefined/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._type,
+        displayName:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+      },
+      // Network Virtual Networks Diagnostic Settings
+      {
+        _class:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/logs/VMProtectionAlerts/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/logs/VMProtectionAlerts/true/1/true`,
+        _type:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._type,
+        displayName:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+      },
+      {
+        _class:
           MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
             ._class,
         _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/logs/VMProtectionAlerts/true/1/true`,
@@ -1230,6 +1501,34 @@ describe('network steps', () => {
             ._type,
         displayName:
           MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+      },
+      {
+        _class:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _type:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._type,
+        displayName:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._class,
+      },
+      {
+        _class:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/virtualnetworks/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_vn_diag_set/metrics/AllMetrics/true/undefined/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._type,
+        displayName:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
             ._class,
       },
     );

@@ -78,7 +78,7 @@ export async function fetchAzureFirewalls(
       await client.iterateAzureFirewalls(
         name as string,
         async (azureFirewall) => {
-          const azureFirewallEntity = await createAzureFirewallEntity(
+          const azureFirewallEntity = createAzureFirewallEntity(
             webLinker,
             azureFirewall,
           );

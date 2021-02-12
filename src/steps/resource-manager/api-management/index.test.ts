@@ -19,8 +19,8 @@ describe('step - api management services', () => {
     instanceConfig = {
       clientId: process.env.CLIENT_ID || 'clientId',
       clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-      directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
-      subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
+      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
       developerId: 'keionned',
     };
 
@@ -76,7 +76,7 @@ describe('step - api management services', () => {
         portalUrl: 'https://j1dev.portal.azure-api.net',
         provisioningState: 'Succeeded',
         public: true,
-        publicIpAddresses: ['104.211.7.149'],
+        publicIpAddresses: ['40.121.14.61'],
         publisherEmail: 'ndowmon@jupiterone.com',
         publisherName: 'JupiterOne',
         scmUrl: 'https://j1dev.scm.azure-api.net',
@@ -119,100 +119,19 @@ describe('step - api management services', () => {
 
     expect(collectedEntities).toContainEqual(
       expect.objectContaining({
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Gateway Requests/false/undefined/0/false`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Gateway Requests/false/undefined/0/false`,
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/AllMetrics/true/undefined/1/true`,
         _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
         _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
-        category: 'Gateway Requests',
+        category: 'AllMetrics',
         displayName: 'j1dev_api_mgmt_diag_set',
-        enabled: false,
+        enabled: true,
         eventHubAuthorizationRuleId: null,
         eventHubName: null,
         logAnalyticsDestinationType: 'AzureDiagnostics',
         name: 'j1dev_api_mgmt_diag_set',
-        'retentionPolicy.days': 0,
-        'retentionPolicy.enabled': false,
-        serviceBusRuleId: null,
-        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        timeGrain: undefined,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set`,
-        workspaceId: null,
-      }),
-    );
-  });
-
-  it('should collect an Azure Diagnostic Metric Setting entity', () => {
-    const { collectedEntities } = context.jobState;
-
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Capacity/false/undefined/0/false`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Capacity/false/undefined/0/false`,
-        _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
-        _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
-        category: 'Capacity',
-        displayName: 'j1dev_api_mgmt_diag_set',
-        enabled: false,
-        eventHubAuthorizationRuleId: null,
-        eventHubName: null,
-        logAnalyticsDestinationType: 'AzureDiagnostics',
-        name: 'j1dev_api_mgmt_diag_set',
-        'retentionPolicy.days': 0,
-        'retentionPolicy.enabled': false,
-        serviceBusRuleId: null,
-        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        timeGrain: undefined,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set`,
-        workspaceId: null,
-      }),
-    );
-  });
-
-  it('should collect an Azure Diagnostic Metric Setting entity', () => {
-    const { collectedEntities } = context.jobState;
-
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/EventHub Events/false/undefined/0/false`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/EventHub Events/false/undefined/0/false`,
-        _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
-        _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
-        category: 'EventHub Events',
-        displayName: 'j1dev_api_mgmt_diag_set',
-        enabled: false,
-        eventHubAuthorizationRuleId: null,
-        eventHubName: null,
-        logAnalyticsDestinationType: 'AzureDiagnostics',
-        name: 'j1dev_api_mgmt_diag_set',
-        'retentionPolicy.days': 0,
-        'retentionPolicy.enabled': false,
-        serviceBusRuleId: null,
-        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        timeGrain: undefined,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set`,
-        workspaceId: null,
-      }),
-    );
-  });
-
-  it('should collect an Azure Diagnostic Metric Setting entity', () => {
-    const { collectedEntities } = context.jobState;
-
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Network Status/false/undefined/0/false`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Network Status/false/undefined/0/false`,
-        _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
-        _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
-        category: 'Network Status',
-        displayName: 'j1dev_api_mgmt_diag_set',
-        enabled: false,
-        eventHubAuthorizationRuleId: null,
-        eventHubName: null,
-        logAnalyticsDestinationType: 'AzureDiagnostics',
-        name: 'j1dev_api_mgmt_diag_set',
-        'retentionPolicy.days': 0,
-        'retentionPolicy.enabled': false,
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
         serviceBusRuleId: null,
         storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
         timeGrain: undefined,
@@ -274,8 +193,8 @@ describe('step - api management services', () => {
       expect.objectContaining({
         _class: 'HAS',
         _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ApiManagement/service/j1dev`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ApiManagement/service/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Gateway Requests/false/undefined/0/false`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Gateway Requests/false/undefined/0/false`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ApiManagement/service/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/AllMetrics/true/undefined/1/true`,
         _type: 'azure_resource_has_diagnostic_metric_setting',
         displayName: 'HAS',
       }),
@@ -288,98 +207,8 @@ describe('step - api management services', () => {
     expect(collectedRelationships).toContainEqual(
       expect.objectContaining({
         _class: 'USES',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Gateway Requests/false/undefined/0/false`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Gateway Requests/false/undefined/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        _type: 'azure_diagnostic_metric_setting_uses_storage_account',
-        displayName: 'USES',
-      }),
-    );
-  });
-
-  it('should collect an Azure Api Management Service has Azure Diagnostic Metric Setting relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _class: 'HAS',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ApiManagement/service/j1dev`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ApiManagement/service/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Capacity/false/undefined/0/false`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Capacity/false/undefined/0/false`,
-        _type: 'azure_resource_has_diagnostic_metric_setting',
-        displayName: 'HAS',
-      }),
-    );
-  });
-
-  it('should collect an Azure Diagnostic Metric Setting uses Azure Storage Account relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _class: 'USES',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Capacity/false/undefined/0/false`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Capacity/false/undefined/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        _type: 'azure_diagnostic_metric_setting_uses_storage_account',
-        displayName: 'USES',
-      }),
-    );
-  });
-
-  it('should collect an Azure Api Management Service has Azure Diagnostic Metric Setting relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _class: 'HAS',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ApiManagement/service/j1dev`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ApiManagement/service/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/EventHub Events/false/undefined/0/false`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/EventHub Events/false/undefined/0/false`,
-        _type: 'azure_resource_has_diagnostic_metric_setting',
-        displayName: 'HAS',
-      }),
-    );
-  });
-
-  it('should collect an Azure Diagnostic Metric Setting uses Azure Storage Account relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _class: 'USES',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/EventHub Events/false/undefined/0/false`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/EventHub Events/false/undefined/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        _type: 'azure_diagnostic_metric_setting_uses_storage_account',
-        displayName: 'USES',
-      }),
-    );
-  });
-
-  it('should collect an Azure Api Management Service has Azure Diagnostic Metric Setting relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _class: 'HAS',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ApiManagement/service/j1dev`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ApiManagement/service/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Network Status/false/undefined/0/false`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Network Status/false/undefined/0/false`,
-        _type: 'azure_resource_has_diagnostic_metric_setting',
-        displayName: 'HAS',
-      }),
-    );
-  });
-
-  it('should collect an Azure Diagnostic Metric Setting uses Azure Storage Account relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _class: 'USES',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Network Status/false/undefined/0/false`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/Network Status/false/undefined/0/false|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.apimanagement/service/j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_api_mgmt_diag_set/metrics/AllMetrics/true/undefined/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
         _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
         _type: 'azure_diagnostic_metric_setting_uses_storage_account',
         displayName: 'USES',
@@ -393,8 +222,8 @@ describe('step - api management apis', () => {
     instanceConfig = {
       clientId: process.env.CLIENT_ID || 'clientId',
       clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-      directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
-      subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
+      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
     };
 
     recording = setupAzureRecording({
@@ -449,7 +278,7 @@ describe('step - api management apis', () => {
         path: 'j1dev/test',
         protocols: ['https'],
         serviceUrl: '',
-        subscriptionRequired: false,
+        subscriptionRequired: true,
         type: 'Microsoft.ApiManagement/service/apis',
         webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ApiManagement/service/j1dev/apis/j1dev-api`,
       }),

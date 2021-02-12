@@ -1,4 +1,5 @@
 import {
+  AzureFirewall,
   NetworkInterface,
   NetworkSecurityGroup,
   PublicIPAddress,
@@ -8,7 +9,9 @@ import {
 import { Relationship } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../../azure';
+import { NetworkEntities } from '../constants';
 import {
+  createAzureFirewallEntity,
   createNetworkInterfaceEntity,
   createNetworkSecurityGroupEntity,
   createNetworkSecurityGroupNicRelationship,
@@ -20,6 +23,67 @@ import {
 } from './index';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
+
+describe('createAzureFirewallEntity', () => {
+  test('properties transferred', () => {
+    const data: AzureFirewall = {
+      additionalProperties: {},
+      applicationRuleCollections: [],
+      etag: expect.any(String),
+      id:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall',
+      ipConfigurations: [
+        {
+          etag: expect.any(String),
+          id:
+            '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall/azureFirewallIpConfigurations/configuration',
+          name: 'configuration',
+          privateIPAddress: '10.0.1.4',
+          provisioningState: 'Succeeded',
+          publicIPAddress: {
+            id:
+              '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev_az_fw_pub_ip',
+          },
+          subnet: {
+            id:
+              '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_az_fw_vm/subnets/AzureFirewallSubnet',
+          },
+          type:
+            'Microsoft.Network/azureFirewalls/azureFirewallIpConfigurations',
+        },
+      ],
+      location: 'eastus',
+      name: 'j1dev_firewall',
+      natRuleCollections: [],
+      networkRuleCollections: [],
+      provisioningState: 'Succeeded',
+      sku: { name: 'AZFW_VNet', tier: 'Standard' },
+      tags: {},
+      threatIntelMode: 'Alert',
+      type: 'Microsoft.Network/azureFirewalls',
+    };
+
+    expect(createAzureFirewallEntity(webLinker, data)).toEqual({
+      id:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall',
+      _key:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall',
+      _class: NetworkEntities.AZURE_FIREWALL._class,
+      _type: NetworkEntities.AZURE_FIREWALL._type,
+      category: ['network'],
+      createdOn: undefined,
+      displayName: 'j1dev_firewall',
+      name: 'j1dev_firewall',
+      _rawData: [{ name: 'default', rawData: data }],
+      provisioningState: 'Succeeded',
+      region: 'eastus',
+      threatIntelMode: 'Alert',
+      type: 'Microsoft.Network/azureFirewalls',
+      webLink:
+        'https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall',
+    });
+  });
+});
 
 describe('createNetworkInterfaceEntity', () => {
   test('properties transferred', () => {

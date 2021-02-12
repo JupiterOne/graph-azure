@@ -210,7 +210,7 @@ export function createAzureFirewallEntity(
         provisioningState: data.provisioningState,
         threatIntelMode: data.threatIntelMode,
         type: data.type,
-        zones: data.zones,
+        ...(data.zones && { zones: data.zones }),
       },
     },
   });

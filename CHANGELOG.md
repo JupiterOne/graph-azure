@@ -16,6 +16,10 @@ and this project adheres to
   Public IP Addresses
 - Collected Diagnostic Settings entities and relationships for Azure Network
   Virtual Networks
+- Added `azure_network_azure_firewall` entities
+- Added `azure_resource_group|has|azure_network_azure_firewall` relationships
+- Collected Diagnostic Setting entities and relationships for Azure Network
+  Azure Firewalls
 
 ## 5.11.2 - 2020-02-05
 

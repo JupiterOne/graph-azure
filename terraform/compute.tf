@@ -1,3 +1,25 @@
+# DIAGNOSTIC SETTINGS NOTE:
+# When taking a recording of a request to Azure to retrieve diagnostic settings for an Azure resource, 
+# the request sometimes returns a different amount of diagnostic settings for that resource than what was specified in the terraform.
+#
+# This occurs when specifying that Azure only create a subset of all potential diagnostic settings for a resource.
+# E.G. In terraform, you specify that only one diagnostic settings log category is enabled, although there are more log categories that can be enabled for that resource.
+#
+# This is because when you make a request to create diagnostic settings for that resource, Azure automatically creates the other diagnostic settings categories with default values.
+# The result will be that the response given from retrieving diagnostic settings for that resource return more diagnostic settings than the amount of diagnostic settings you specified in the terraform.
+#
+# The next time you run terraform, it will see that it plans to remove the 'extra' set of diagnostic settings (the ones Azure created by default), even though you never specified to create them.
+# It will then attempt to remove the default diagnostic settings that Azure created.
+#
+# If another recording of the same request to Azure to retrieve diagnostic settings is taken, you will see that either:
+# 1) Azure allows the deletion of the default diagnostic settings, resulting in inconsistent testing. You can't both assert that the default settings exist and don't exist.
+# 2) Azure does not allow the deletion of the default diagnostic settings and recreates them or ignores the request. This might result in you not understanding why more results are returned than expected in your tests.
+#
+# It was suggested that the best way to handle this problem is to supply the full available set of diagnostic settings categories for a resource in terraform. 
+# Doing this ensures that you get the same result when performing the terraform multiple times because Azure won't have the opportunity to create defaults.
+# 
+# See https://github.com/terraform-providers/terraform-provider-azurerm/issues/7235#issuecomment-647974840 for more details.
+
 variable "create_azure_newtork_azure_firewall" {
   type    = number
   default = 0
@@ -20,18 +42,38 @@ resource "azurerm_virtual_network" "j1dev" {
   }
 }
 
+data "azurerm_monitor_diagnostic_categories" "j1dev_nv_ds_cat" {
+  resource_id = azurerm_virtual_network.j1dev.id
+}
+
 resource "azurerm_monitor_diagnostic_setting" "j1dev_vn_diag_set" {
   name               = "j1dev_vn_diag_set"
   target_resource_id = azurerm_virtual_network.j1dev.id
   storage_account_id = azurerm_storage_account.j1dev.id
 
-  log {
-    category = "VMProtectionAlerts"
-    enabled  = true
+  dynamic log {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_nv_ds_cat.logs)
+    content {
+      category = log.value
+      enabled  = true
 
-    retention_policy {
-      enabled = true
-      days    = 1
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
+  }
+
+  dynamic metric {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_nv_ds_cat.metrics)
+    content {
+      category = metric.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
     }
   }
 }
@@ -66,18 +108,38 @@ resource "azurerm_public_ip" "j1dev" {
   }
 }
 
+data "azurerm_monitor_diagnostic_categories" "j1dev_pub_ip_ds_cat" {
+  resource_id = azurerm_public_ip.j1dev.id
+}
+
 resource "azurerm_monitor_diagnostic_setting" "j1dev_pub_ip_diag_set" {
   name               = "j1dev_pub_ip_diag_set"
   target_resource_id = azurerm_public_ip.j1dev.id
   storage_account_id = azurerm_storage_account.j1dev.id
 
-  log {
-    category = "DDoSMitigationFlowLogs"
-    enabled  = true
+  dynamic log {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_pub_ip_ds_cat.logs)
+    content {
+      category = log.value
+      enabled  = true
 
-    retention_policy {
-      enabled = true
-      days    = 1
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
+  }
+
+  dynamic metric {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_pub_ip_ds_cat.metrics)
+    content {
+      category = metric.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
     }
   }
 }
@@ -104,18 +166,38 @@ resource "azurerm_lb" "j1dev" {
   }
 }
 
+data "azurerm_monitor_diagnostic_categories" "j1dev_lb_ds_cat" {
+  resource_id = azurerm_lb.j1dev.id
+}
+
 resource "azurerm_monitor_diagnostic_setting" "j1dev_lb_diag_set" {
   name               = "j1dev_lb_diag_set"
   target_resource_id = azurerm_lb.j1dev.id
   storage_account_id = azurerm_storage_account.j1dev.id
 
-  log {
-    category = "LoadBalancerAlertEvent"
-    enabled  = true
+  dynamic log {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_lb_ds_cat.logs)
+    content {
+      category = log.value
+      enabled  = true
 
-    retention_policy {
-      enabled = true
-      days    = 1
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
+  }
+
+  dynamic metric {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_lb_ds_cat.metrics)
+    content {
+      category = metric.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
     }
   }
 }
@@ -156,28 +238,38 @@ resource "azurerm_network_security_group" "j1dev" {
   }
 }
 
+data "azurerm_monitor_diagnostic_categories" "j1dev_net_sec_grp_ds_cat" {
+  resource_id = azurerm_network_security_group.j1dev.id
+}
+
 resource "azurerm_monitor_diagnostic_setting" "j1dev_net_sec_grp_set" {
   name               = "j1dev_net_sec_grp_set"
   target_resource_id = azurerm_network_security_group.j1dev.id
   storage_account_id = azurerm_storage_account.j1dev.id
 
-  log {
-    category = "NetworkSecurityGroupRuleCounter"
-    enabled  = true
+  dynamic log {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_net_sec_grp_ds_cat.logs)
+    content {
+      category = log.value
+      enabled  = true
 
-    retention_policy {
-      enabled = true
-      days    = 1
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
     }
   }
 
-  log {
-    category = "NetworkSecurityGroupEvent"
-    enabled  = true
+  dynamic metric {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_net_sec_grp_ds_cat.metrics)
+    content {
+      category = metric.value
+      enabled  = true
 
-    retention_policy {
-      enabled = true
-      days    = 1
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
     }
   }
 }

@@ -20,6 +20,15 @@ and this project adheres to
 - Added `azure_resource_group|has|azure_network_azure_firewall` relationships
 - Collected Diagnostic Setting entities and relationships for Azure Network
   Azure Firewalls
+- Refactored the terraform creation for Diagnostic Settings for Azure Batch
+  Accounts, Azure CDN Endpoints, Azure CDN Profiles, Azure Key Vaults, Azure
+  Network Load Balancers, Azure Network Security Groups, Azure Network Public IP
+  Addresses, Azure Network Virtual Networks, Azure Event Grid Domains, and Azure
+  Event Grid Topics. This was because Azure was creating default Diagnostic
+  Settings for categories not specified in the terraform. This was producing
+  inconsistent test results. See
+  https://github.com/terraform-providers/terraform-provider-azurerm/issues/7235#issuecomment-647974840
+  for more details.
 
 ## 5.11.2 - 2020-02-05
 

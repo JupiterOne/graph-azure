@@ -20,13 +20,13 @@
 # 
 # See https://github.com/terraform-providers/terraform-provider-azurerm/issues/7235#issuecomment-647974840 for more details.
 
-variable "create_azure_newtork_azure_firewall" {
+variable "create_azure_network_azure_firewall" {
   type    = number
   default = 0
 }
 
 locals {
-  network_azure_firewall_count = var.create_azure_newtork_azure_firewall == 1 ? 1 : 0
+  network_azure_firewall_count = var.create_azure_network_azure_firewall == 1 ? 1 : 0
 }
 
 #### VPC default, eastus
@@ -389,5 +389,43 @@ resource "azurerm_firewall" "j1dev_firewall" {
     name                 = "configuration"
     subnet_id            = azurerm_subnet.j1dev_az_fw_subnet[0].id
     public_ip_address_id = azurerm_public_ip.j1dev_az_fw_pub_ip[0].id
+  }
+}
+
+data "azurerm_monitor_diagnostic_categories" "j1dev_firewall_ds_cat" {
+  count       = local.network_azure_firewall_count
+  resource_id = azurerm_firewall.j1dev_firewall[0].id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "j1dev_firewall_diag_set" {
+  count              = local.network_azure_firewall_count
+  name               = "j1dev_firewall_diag_set"
+  target_resource_id = azurerm_firewall.j1dev_firewall[0].id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  dynamic log {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_firewall_ds_cat[0].logs)
+    content {
+      category = log.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
+  }
+
+  dynamic metric {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_firewall_ds_cat[0].metrics)
+    content {
+      category = metric.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
   }
 }

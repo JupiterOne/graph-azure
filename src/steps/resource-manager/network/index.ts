@@ -88,6 +88,10 @@ export async function fetchAzureFirewalls(
             executionContext,
             azureFirewallEntity,
           );
+          await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+            executionContext,
+            azureFirewallEntity,
+          );
         },
       );
     },

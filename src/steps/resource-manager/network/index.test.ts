@@ -148,8 +148,6 @@ describe('network steps', () => {
     await fetchVirtualNetworks(context);
     await fetchLoadBalancers(context);
     await buildSecurityGroupRuleRelationships(context);
-
-    // console.log(JSON.stringify(context.jobState.collectedEntities, null, 2))
   }, 120000);
 
   afterAll(async () => {
@@ -1619,6 +1617,279 @@ describe('step = fetch azure firewalls', () => {
           NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL._class,
         displayName:
           NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL._class,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Log Settings entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallDnsProxy/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallDnsProxy/true/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        category: 'AzureFirewallDnsProxy',
+        displayName: 'j1dev_firewall_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_firewall_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Log Settings entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallApplicationRule/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallApplicationRule/true/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        category: 'AzureFirewallApplicationRule',
+        displayName: 'j1dev_firewall_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_firewall_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Log Settings entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallNetworkRule/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallNetworkRule/true/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        category: 'AzureFirewallNetworkRule',
+        displayName: 'j1dev_firewall_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_firewall_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Metric Settings entity', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
+        _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
+        category: 'AllMetrics',
+        displayName: 'j1dev_firewall_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_firewall_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        timeGrain: undefined,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect an Azure Network Azure Firewall has Azure Diagnostic Log Settings relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallDnsProxy/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallDnsProxy/true/1/true`,
+        _type:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._type,
+        _class:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+        displayName:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallDnsProxy/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallDnsProxy/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._type,
+        _class:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+        displayName:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+      }),
+    );
+  });
+
+  it('should collect an Azure Network Azure Firewall has Azure Diagnostic Log Settings relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallApplicationRule/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallApplicationRule/true/1/true`,
+        _type:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._type,
+        _class:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+        displayName:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallApplicationRule/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallApplicationRule/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._type,
+        _class:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+        displayName:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+      }),
+    );
+  });
+
+  it('should collect an Azure Network Azure Firewall has Azure Diagnostic Log Settings relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallNetworkRule/true/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallNetworkRule/true/1/true`,
+        _type:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._type,
+        _class:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+        displayName:
+          MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+            ._class,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallNetworkRule/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/logs/AzureFirewallNetworkRule/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._type,
+        _class:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+        displayName:
+          MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+      }),
+    );
+  });
+
+  it('should collect an Azure Network Azure Firewall has Azure Diagnostic Metric Settings relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _type:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._type,
+        _class:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._class,
+        displayName:
+          MonitorRelationships
+            .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._class,
+      }),
+    );
+  });
+
+  it('should collect an Azure Diagnostic Metric Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual(
+      expect.objectContaining({
+        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.network/azurefirewalls/j1dev_firewall/providers/microsoft.insights/diagnosticSettings/j1dev_firewall_diag_set/metrics/AllMetrics/true/undefined/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        _type:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._type,
+        _class:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
+        displayName:
+          MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+            ._class,
       }),
     );
   });

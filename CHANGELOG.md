@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed `hasSubscriptionId()` when `subscriptionId=null`.
+
 ### Added
 
 - Collected Diagnostic Settings entities and relationships for Azure Network

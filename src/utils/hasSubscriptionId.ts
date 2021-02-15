@@ -1,6 +1,8 @@
 import { IntegrationConfig } from '../types';
 
 export function hasSubscriptionId(config: IntegrationConfig): boolean {
-  const subscriptionId = config.subscriptionId;
-  return subscriptionId !== undefined && subscriptionId.length > 0;
+  return (
+    config.subscriptionId?.length !== undefined &&
+    config.subscriptionId.length > 0
+  );
 }

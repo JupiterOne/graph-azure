@@ -107,6 +107,7 @@ function getConversionStrategy(
   return conversionStrategies.find((cs) => cs.canConvert(key, value, options));
 }
 
+// TODO needs docstrings
 export default function flatten(
   obj: any, // If this is used at runtime against a returned property from a client, it maybe used against something someone expects to be an object, but is not
   options: FlattenObjectOptions = {},

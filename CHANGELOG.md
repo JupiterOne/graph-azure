@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.12.0 - 2021-02-15
+
+### Fixed
+
+- Fixed `hasSubscriptionId()` when `subscriptionId=null`.
+
 ### Added
 
 - Collected Diagnostic Settings entities and relationships for Azure Network
@@ -17,19 +23,19 @@ and this project adheres to
 - Collected Diagnostic Settings entities and relationships for Azure Network
   Virtual Networks
 
-## 5.11.2 - 2020-02-05
+## 5.11.2 - 2021-02-05
 
 ### Added
 
 - Added additional logging in the `DirectoryGraphClient`.
 
-## 5.11.1 - 2020-02-04
+## 5.11.1 - 2021-02-04
 
 ### Added
 
 - Added `debug`-level logs to `ad-groups` step.
 
-## 5.11.0 - 2020-02-02
+## 5.11.0 - 2021-02-02
 
 ### Added
 
@@ -41,7 +47,7 @@ and this project adheres to
   Azure Event Grid Topics
 - Diagnostic Settings entities and relationships for Azure Batch Account
 
-## 5.10.1 - 2020-01-15
+## 5.10.1 - 2021-01-15
 
 ### Fixed
 
@@ -50,7 +56,7 @@ and this project adheres to
 - Started retrying API errors in Azure Graph API (Azure Active Directory
   endpoints.)
 
-## 5.10.0 - 2020-01-13
+## 5.10.0 - 2021-01-13
 
 ### Added
 

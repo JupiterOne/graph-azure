@@ -44,7 +44,7 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
    * A Subscription Administrator must assign the "Reader" RBAC role (least
    * privilege) to the Service Principal used to obtain API access tokens.
    */
-  subscriptionId?: string;
+  subscriptionId?: string | null;
 
   /**
    * A directive indicating whether or not to ingest Active Directory resources.

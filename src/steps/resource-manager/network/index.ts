@@ -271,9 +271,10 @@ export async function fetchVirtualNetworks(
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
-  const subnetSecurityGroupMap = await jobState.getData<SubnetSecurityGroupMap>(
-    'subnetSecurityGroupMap',
-  );
+  const subnetSecurityGroupMap =
+    (await jobState.getData<SubnetSecurityGroupMap>(
+      'subnetSecurityGroupMap',
+    )) || {};
 
   await client.iterateVirtualNetworks(async (vnet) => {
     if (vnet.subnets) {

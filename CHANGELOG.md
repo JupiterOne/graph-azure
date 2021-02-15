@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- The `Network Security Groups` step creates a map between security groups and
+  subnets which is used later in the `Virtual Networks` step. In the event that
+  `Network Security Groups` fails, the `Virtual Networks` step will fail with
+  `Cannot read property '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.Network/virtualNetworks/vnet-name/subnets/subnet-name' of undefined`.
+  Default to returning an empty object if undefined, so that key lookups do not
+  cause the integration to fail.
+
 ## 5.12.0 - 2021-02-15
 
 ### Fixed

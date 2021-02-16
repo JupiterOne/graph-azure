@@ -19,8 +19,8 @@ describe('step - container registries', () => {
     instanceConfig = {
       clientId: process.env.CLIENT_ID || 'clientId',
       clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-      directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
-      subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
+      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
+      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
       developerId: 'keionned',
     };
 

@@ -17,29 +17,40 @@ resource "azurerm_batch_account" "j1dev" {
   storage_account_id   = azurerm_storage_account.j1dev.id
 }
 
+data "azurerm_monitor_diagnostic_categories" "j1dev_batch_cat" {
+  count       = local.batch_account_count
+  resource_id = azurerm_batch_account.j1dev[0].id
+}
+
 resource "azurerm_monitor_diagnostic_setting" "j1dev_batch_diag_set" {
   count              = local.batch_account_count
   name               = "j1dev_batch_diag_set"
   target_resource_id = azurerm_batch_account.j1dev[0].id
   storage_account_id = azurerm_storage_account.j1dev.id
 
-  log {
-    category = "ServiceLog"
-    enabled  = true
+  dynamic log {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_batch_cat[0].logs)
+    content {
+      category = log.value
+      enabled  = true
 
-    retention_policy {
-      enabled = true
-      days    = 1
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
     }
   }
 
-  metric {
-    category = "AllMetrics"
-    enabled  = true
+  dynamic metric {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_batch_cat[0].metrics)
+    content {
+      category = metric.value
+      enabled  = true
 
-    retention_policy {
-      enabled = true
-      days    = 1
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
     }
   }
 }

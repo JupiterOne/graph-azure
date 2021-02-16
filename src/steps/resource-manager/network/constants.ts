@@ -2,6 +2,7 @@ import {
   RelationshipClass,
   generateRelationshipType,
 } from '@jupiterone/integration-sdk-core';
+import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 // Step IDs
 export const STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES = 'rm-network-ip-addresses';
@@ -11,56 +12,138 @@ export const STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS =
   'rm-network-security-group-rules';
 export const STEP_RM_NETWORK_VIRTUAL_NETWORKS = 'rm-network-virtual-networks';
 export const STEP_RM_NETWORK_LOAD_BALANCERS = 'rm-network-load-balancers';
+export const STEP_RM_NETWORK_AZURE_FIREWALLS = 'rm-network-azure-firewalls';
 
 // Graph objects
-export const VIRTUAL_NETWORK_ENTITY_TYPE = 'azure_vnet';
-export const VIRTUAL_NETWORK_ENTITY_CLASS = 'Network';
+export const NetworkEntities = {
+  AZURE_FIREWALL: {
+    _type: 'azure_network_azure_firewall',
+    _class: ['Firewall'],
+    resourceName: '[RM] Network Azure Firewall',
+  },
 
-export const SECURITY_GROUP_ENTITY_TYPE = 'azure_security_group';
-export const SECURITY_GROUP_ENTITY_CLASS = 'Firewall';
+  VIRTUAL_NETWORK: {
+    _type: 'azure_vnet',
+    _class: ['Network'],
+    resourceName: '[RM] Virtual Network',
+  },
 
-export const SUBNET_ENTITY_TYPE = 'azure_subnet';
-export const SUBNET_ENTITY_CLASS = 'Network';
+  SECURITY_GROUP: {
+    _type: 'azure_security_group',
+    _class: ['Firewall'],
+    resourceName: '[RM] Security Group',
+  },
 
-export const PUBLIC_IP_ADDRESS_ENTITY_TYPE = 'azure_public_ip';
-export const PUBLIC_IP_ADDRESS_ENTITY_CLASS = 'IpAddress';
+  PUBLIC_IP_ADDRESS: {
+    _type: 'azure_public_ip',
+    _class: 'IpAddress',
+    resourceName: '[RM] Public IP Address',
+  },
 
-export const NETWORK_INTERFACE_ENTITY_TYPE = 'azure_nic';
-export const NETWORK_INTERFACE_ENTITY_CLASS = 'NetworkInterface';
+  SUBNET: {
+    _type: 'azure_subnet',
+    _class: 'Network',
+    resourceName: '[RM] Subnet',
+  },
 
-export const LOAD_BALANCER_ENTITY_TYPE = 'azure_lb';
-export const LOAD_BALANCER_ENTITY_CLASS = 'Gateway';
+  NETWORK_INTERFACE: {
+    _type: 'azure_nic',
+    _class: 'NetworkInterface',
+    resourceName: '[RM] Network Interface',
+  },
 
-export const SECURITY_GROUP_NIC_RELATIONSHIP_CLASS = RelationshipClass.PROTECTS;
-export const SECURITY_GROUP_NIC_RELATIONSHIP_TYPE = generateRelationshipType(
-  SECURITY_GROUP_NIC_RELATIONSHIP_CLASS,
-  SECURITY_GROUP_ENTITY_TYPE,
-  NETWORK_INTERFACE_ENTITY_TYPE,
-);
-
-export const SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS =
-  RelationshipClass.PROTECTS;
-export const SECURITY_GROUP_SUBNET_RELATIONSHIP_TYPE = generateRelationshipType(
-  SECURITY_GROUP_SUBNET_RELATIONSHIP_CLASS,
-  SECURITY_GROUP_ENTITY_TYPE,
-  SUBNET_ENTITY_TYPE,
-);
+  LOAD_BALANCER: {
+    _type: 'azure_lb',
+    _class: ['Gateway'],
+    resourceName: '[RM] Load Balancer',
+  },
+};
 
 export const SECURITY_GROUP_RULE_RELATIONSHIP_TYPE =
   'azure_security_group_rule';
 
-export const VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS =
-  RelationshipClass.CONTAINS;
-export const VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_TYPE = generateRelationshipType(
-  VIRTUAL_NETWORK_SUBNET_RELATIONSHIP_CLASS,
-  VIRTUAL_NETWORK_ENTITY_TYPE,
-  SUBNET_ENTITY_TYPE,
-);
-
-export const LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_CLASS =
-  RelationshipClass.CONNECTS;
-export const LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_TYPE = generateRelationshipType(
-  LOAD_BALANCER_BACKEND_NIC_RELATIONSHIP_CLASS,
-  LOAD_BALANCER_ENTITY_TYPE,
-  NETWORK_INTERFACE_ENTITY_TYPE,
-);
+// Relationships
+export const NetworkRelationships = {
+  RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL: createResourceGroupResourceRelationshipMetadata(
+    NetworkEntities.AZURE_FIREWALL._type,
+  ),
+  RESOURCE_GROUP_HAS_NETWORK_PUBLIC_IP_ADDRESS: createResourceGroupResourceRelationshipMetadata(
+    NetworkEntities.PUBLIC_IP_ADDRESS._type,
+  ),
+  RESOURCE_GROUP_HAS_NETWORK_NETWORK_INTERFACE: createResourceGroupResourceRelationshipMetadata(
+    NetworkEntities.NETWORK_INTERFACE._type,
+  ),
+  RESOURCE_GROUP_HAS_NETWORK_VIRTUAL_NETWORK: createResourceGroupResourceRelationshipMetadata(
+    NetworkEntities.VIRTUAL_NETWORK._type,
+  ),
+  RESOURCE_GROUP_HAS_NETWORK_SECURITY_GROUP: createResourceGroupResourceRelationshipMetadata(
+    NetworkEntities.SECURITY_GROUP._type,
+  ),
+  RESOURCE_GROUP_HAS_NETWORK_LOAD_BALANCER: createResourceGroupResourceRelationshipMetadata(
+    NetworkEntities.LOAD_BALANCER._type,
+  ),
+  NETWORK_VIRTUAL_NETWORK_CONTAINS_NETWORK_SUBNET: {
+    _type: generateRelationshipType(
+      RelationshipClass.CONTAINS,
+      NetworkEntities.VIRTUAL_NETWORK._type,
+      NetworkEntities.SUBNET._type,
+    ),
+    sourceType: NetworkEntities.VIRTUAL_NETWORK._type,
+    _class: RelationshipClass.CONTAINS,
+    targetType: NetworkEntities.SUBNET._type,
+  },
+  NETWORK_SECURITY_GROUP_PROTECTS_NETWORK_SUBNET: {
+    _type: generateRelationshipType(
+      RelationshipClass.PROTECTS,
+      NetworkEntities.SECURITY_GROUP._type,
+      NetworkEntities.SUBNET._type,
+    ),
+    sourceType: NetworkEntities.SECURITY_GROUP._type,
+    _class: RelationshipClass.PROTECTS,
+    targetType: NetworkEntities.SUBNET._type,
+  },
+  NETWORK_SECURITY_GROUP_PROTECTS_NETWORK_INTERFACE: {
+    _type: generateRelationshipType(
+      RelationshipClass.PROTECTS,
+      NetworkEntities.SECURITY_GROUP._type,
+      NetworkEntities.NETWORK_INTERFACE._type,
+    ),
+    sourceType: NetworkEntities.SECURITY_GROUP._type,
+    _class: RelationshipClass.PROTECTS,
+    targetType: NetworkEntities.NETWORK_INTERFACE._type,
+  },
+  NETWORK_LOAD_BALANCER_CONNECTS_NETWORK_INTERFACE: {
+    _type: generateRelationshipType(
+      RelationshipClass.CONNECTS,
+      NetworkEntities.LOAD_BALANCER._type,
+      NetworkEntities.NETWORK_INTERFACE._type,
+    ),
+    sourceType: NetworkEntities.LOAD_BALANCER._type,
+    _class: RelationshipClass.CONNECTS,
+    targetType: NetworkEntities.NETWORK_INTERFACE._type,
+  },
+  NETWORK_SECURITY_GROUP_ALLOWS_NETWORK_SUBNET: {
+    _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+    sourceType: NetworkEntities.SECURITY_GROUP._type,
+    _class: RelationshipClass.ALLOWS,
+    targetType: NetworkEntities.SUBNET._type,
+  },
+  NETWORK_SUBNET_ALLOWS_NETWORK_SECURITY_GROUP: {
+    _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+    sourceType: NetworkEntities.SUBNET._type,
+    _class: RelationshipClass.ALLOWS,
+    targetType: NetworkEntities.SECURITY_GROUP._type,
+  },
+  NETWORK_SECURITY_GROUP_DENIES_NETWORK_SUBNET: {
+    _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+    sourceType: NetworkEntities.SECURITY_GROUP._type,
+    _class: RelationshipClass.DENIES,
+    targetType: NetworkEntities.SUBNET._type,
+  },
+  NETWORK_SUBNET_DENIES_NETWORK_SECURITY_GROUP: {
+    _type: SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
+    sourceType: NetworkEntities.SUBNET._type,
+    _class: RelationshipClass.DENIES,
+    targetType: NetworkEntities.SECURITY_GROUP._type,
+  },
+};

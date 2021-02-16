@@ -21,8 +21,7 @@ import {
 
 import {
   SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
-  SUBNET_ENTITY_CLASS,
-  SUBNET_ENTITY_TYPE,
+  NetworkEntities,
 } from '../constants';
 import parseSecurityRulePortRange from './parseSecurityRulePortRange';
 import { SecurityRulePortRange } from './types';
@@ -212,8 +211,8 @@ export function processSecurityGroupRule(rule: SecurityRule): Rule[] {
         } else {
           // Target is a private network IP
           targets.push({
-            _class: SUBNET_ENTITY_CLASS,
-            _type: SUBNET_ENTITY_TYPE,
+            _class: NetworkEntities.SUBNET._class,
+            _type: NetworkEntities.SUBNET._type,
             CIDR: targetPrefix,
           });
         }

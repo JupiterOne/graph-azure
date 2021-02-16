@@ -16,12 +16,10 @@ import {
   VIRTUAL_MACHINE_ENTITY_TYPE,
 } from '../compute';
 import {
-  NETWORK_INTERFACE_ENTITY_TYPE,
   STEP_RM_NETWORK_INTERFACES,
   STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
-  SUBNET_ENTITY_TYPE,
-  PUBLIC_IP_ADDRESS_ENTITY_TYPE,
-} from '../network';
+  NetworkEntities,
+} from '../network/constants';
 import {
   STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,
   SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
@@ -105,7 +103,7 @@ async function loadNetworkInterfaces(
 ): Promise<NetworkInterface[]> {
   const networkInterfaces: NetworkInterface[] = [];
   await jobState.iterateEntities(
-    { _type: NETWORK_INTERFACE_ENTITY_TYPE },
+    { _type: NetworkEntities.NETWORK_INTERFACE._type },
     (nic) => {
       const nicRawData = getRawData<NetworkInterface>(nic);
       if (!nicRawData) {
@@ -142,7 +140,7 @@ export const interserviceSteps: Step<
     relationships: [
       {
         _type: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
-        sourceType: SUBNET_ENTITY_TYPE,
+        sourceType: NetworkEntities.SUBNET._type,
         _class: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
         targetType: VIRTUAL_MACHINE_ENTITY_TYPE,
       },
@@ -150,13 +148,13 @@ export const interserviceSteps: Step<
         _type: VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
         sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
         _class: VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
-        targetType: NETWORK_INTERFACE_ENTITY_TYPE,
+        targetType: NetworkEntities.NETWORK_INTERFACE._type,
       },
       {
         _type: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
         sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
         _class: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS,
-        targetType: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
+        targetType: NetworkEntities.PUBLIC_IP_ADDRESS._type,
       },
     ],
     dependsOn: [

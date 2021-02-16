@@ -11,11 +11,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { VIRTUAL_MACHINE_ENTITY_TYPE } from '../compute';
-import {
-  NETWORK_INTERFACE_ENTITY_TYPE,
-  PUBLIC_IP_ADDRESS_ENTITY_TYPE,
-  SUBNET_ENTITY_TYPE,
-} from '../network';
+import { NetworkEntities } from '../network/constants';
 import { VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE } from './constants';
 
 export function createVirtualMachineNetworkInterfaceRelationship(
@@ -27,7 +23,7 @@ export function createVirtualMachineNetworkInterfaceRelationship(
     fromKey: vm.id as string,
     fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
     toKey: nic.id as string,
-    toType: NETWORK_INTERFACE_ENTITY_TYPE,
+    toType: NetworkEntities.NETWORK_INTERFACE._type,
     properties: {
       _type: VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
       vmId: vm.vmId as string,
@@ -42,7 +38,7 @@ export function createSubnetVirtualMachineRelationship(
   return createDirectRelationship({
     _class: RelationshipClass.HAS,
     fromKey: subnet.id as string,
-    fromType: SUBNET_ENTITY_TYPE,
+    fromType: NetworkEntities.SUBNET._type,
     toKey: vm.id as string,
     toType: VIRTUAL_MACHINE_ENTITY_TYPE,
   });
@@ -57,7 +53,7 @@ export function createVirtualMachinePublicIPAddressRelationship(
     fromKey: vm.id as string,
     fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
     toKey: ipAddress.id as string,
-    toType: PUBLIC_IP_ADDRESS_ENTITY_TYPE,
+    toType: NetworkEntities.PUBLIC_IP_ADDRESS._type,
     properties: {
       vmId: vm.vmId as string,
     },

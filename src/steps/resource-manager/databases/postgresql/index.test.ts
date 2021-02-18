@@ -9,6 +9,7 @@ import { IntegrationConfig } from '../../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
 import { fetchPostgreSQLDatabases } from '.';
 import { PostgreSQLEntities, PostgreSQLRelationships } from './constants';
+import { MonitorEntities, MonitorRelationships } from '../../monitor/constants';
 
 let recording: Recording;
 let instanceConfig: IntegrationConfig;
@@ -21,6 +22,7 @@ describe('step = postgreSQL servers and databases', () => {
       clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
       directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
       subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
+      developerId: 'keionned',
     };
 
     recording = setupAzureRecording({
@@ -58,7 +60,7 @@ describe('step = postgreSQL servers and databases', () => {
     }
   });
 
-  it.only('should collect Azure PostgreSQL Server entities', () => {
+  it('should collect Azure PostgreSQL Server entities', () => {
     const { collectedEntities } = context.jobState;
 
     expect(collectedEntities).toContainEqual(
@@ -234,6 +236,254 @@ describe('step = postgreSQL servers and databases', () => {
       displayName:
         PostgreSQLRelationships.POSTGRESQL_SERVER_HAS_POSTGRESQL_DATABASE
           ._class,
+    });
+  });
+
+  it('should collect Azure Diagnostic Log Setting', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/PostgreSQLLogs/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/PostgreSQLLogs/true/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        category: 'PostgreSQLLogs',
+        displayName: 'j1dev_pgsql_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_pgsql_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect Azure PostgreSQL Server has Azure Diagnostic Log Setting relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class:
+        MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+          ._class,
+      _type:
+        MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+          ._type,
+      displayName:
+        MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+          ._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.DBforPostgreSQL/servers/j1dev-psqlserver|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/PostgreSQLLogs/true/1/true`,
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.DBforPostgreSQL/servers/j1dev-psqlserver`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/PostgreSQLLogs/true/1/true`,
+    });
+  });
+
+  it('should collect Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class:
+        MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT._class,
+      _type:
+        MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT._type,
+      displayName:
+        MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/PostgreSQLLogs/true/1/true|uses|/subscriptions/87f62f44-9dad-4284-a08f-f2fb3d8b528a/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/PostgreSQLLogs/true/1/true`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+    });
+  });
+
+  it('should collect Azure Diagnostic Log Setting', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreWaitStatistics/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreWaitStatistics/true/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        category: 'QueryStoreWaitStatistics',
+        displayName: 'j1dev_pgsql_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_pgsql_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect Azure PostgreSQL Server has Azure Diagnostic Log Setting relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class:
+        MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+          ._class,
+      _type:
+        MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+          ._type,
+      displayName:
+        MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+          ._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.DBforPostgreSQL/servers/j1dev-psqlserver|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreWaitStatistics/true/1/true`,
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.DBforPostgreSQL/servers/j1dev-psqlserver`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreWaitStatistics/true/1/true`,
+    });
+  });
+
+  it('should collect Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class:
+        MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT._class,
+      _type:
+        MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT._type,
+      displayName:
+        MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreWaitStatistics/true/1/true|uses|/subscriptions/87f62f44-9dad-4284-a08f-f2fb3d8b528a/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreWaitStatistics/true/1/true`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+    });
+  });
+
+  it('should collect Azure Diagnostic Log Setting', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreRuntimeStatistics/true/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreRuntimeStatistics/true/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
+        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
+        category: 'QueryStoreRuntimeStatistics',
+        displayName: 'j1dev_pgsql_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_pgsql_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect Azure PostgreSQL Server has Azure Diagnostic Log Setting relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class:
+        MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+          ._class,
+      _type:
+        MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+          ._type,
+      displayName:
+        MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
+          ._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.DBforPostgreSQL/servers/j1dev-psqlserver|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreRuntimeStatistics/true/1/true`,
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.DBforPostgreSQL/servers/j1dev-psqlserver`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreRuntimeStatistics/true/1/true`,
+    });
+  });
+
+  it('should collect Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class:
+        MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT._class,
+      _type:
+        MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT._type,
+      displayName:
+        MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreRuntimeStatistics/true/1/true|uses|/subscriptions/87f62f44-9dad-4284-a08f-f2fb3d8b528a/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/logs/QueryStoreRuntimeStatistics/true/1/true`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+    });
+  });
+
+  it('should collect Azure Diagnostic Metric Setting', () => {
+    const { collectedEntities } = context.jobState;
+
+    expect(collectedEntities).toContainEqual(
+      expect.objectContaining({
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+        _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
+        _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
+        category: 'AllMetrics',
+        displayName: 'j1dev_pgsql_diag_set',
+        enabled: true,
+        eventHubAuthorizationRuleId: null,
+        eventHubName: null,
+        logAnalyticsDestinationType: null,
+        name: 'j1dev_pgsql_diag_set',
+        'retentionPolicy.days': 1,
+        'retentionPolicy.enabled': true,
+        serviceBusRuleId: null,
+        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+        timeGrain: undefined,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set`,
+        workspaceId: null,
+      }),
+    );
+  });
+
+  it('should collect Azure PostgreSQL Server has Azure Diagnostic Metric Setting relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class:
+        MonitorRelationships
+          .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._class,
+      _type:
+        MonitorRelationships
+          .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._type,
+      displayName:
+        MonitorRelationships
+          .AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.DBforPostgreSQL/servers/j1dev-psqlserver|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.DBforPostgreSQL/servers/j1dev-psqlserver`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+    });
+  });
+
+  it('should collect Azure Diagnostic Metric Setting uses Azure Storage Account relationship', () => {
+    const { collectedRelationships } = context.jobState;
+
+    expect(collectedRelationships).toContainEqual({
+      _class:
+        MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+          ._class,
+      _type:
+        MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+          ._type,
+      displayName:
+        MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
+          ._class,
+      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/metrics/AllMetrics/true/undefined/1/true|uses|/subscriptions/87f62f44-9dad-4284-a08f-f2fb3d8b528a/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
+      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.dbforpostgresql/servers/j1dev-psqlserver/providers/microsoft.insights/diagnosticSettings/j1dev_pgsql_diag_set/metrics/AllMetrics/true/undefined/1/true`,
+      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
     });
   });
 });

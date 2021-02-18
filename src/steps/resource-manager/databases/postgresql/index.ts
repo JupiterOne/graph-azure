@@ -25,15 +25,12 @@ export async function fetchPostgreSQLDatabases(
   const client = new PostgreSQLClient(instance.config, logger);
 
   await client.iterateServers(async (server) => {
-    console.log('before convert');
     const serverEntity = createDbServerEntity(
       webLinker,
       server,
       PostgreSQLEntities.SERVER._type,
     );
-    console.log('after convert');
     await jobState.addEntity(serverEntity);
-    console.log(JSON.stringify(serverEntity, null, 2));
     await createResourceGroupResourceRelationship(
       executionContext,
       serverEntity,

@@ -1,3 +1,12 @@
+variable "azurerm_storage_postgresql_servers" {
+  type    = number
+  default = 0
+}
+
+locals {
+  storage_postgresql_servers_count = var.azurerm_storage_postgresql_servers == 1 ? 1 : 0
+}
+
 resource "azurerm_storage_account" "j1dev" {
   name                     = "${var.developer_id}j1dev"
   resource_group_name      = azurerm_resource_group.j1dev.name
@@ -46,6 +55,7 @@ resource "azurerm_storage_table" "j1dev" {
 }
 
 resource "azurerm_postgresql_server" "j1dev" {
+  count               = local.storage_postgresql_servers_count
   name                = "j1dev-psqlserver"
   location            = azurerm_resource_group.j1dev.location
   resource_group_name = azurerm_resource_group.j1dev.name
@@ -64,6 +74,44 @@ resource "azurerm_postgresql_server" "j1dev" {
   public_network_access_enabled    = false
   ssl_enforcement_enabled          = true
   ssl_minimal_tls_version_enforced = "TLS1_2"
+}
+
+data "azurerm_monitor_diagnostic_categories" "j1dev_pgsql_cat" {
+  count       = local.storage_postgresql_servers_count
+  resource_id = azurerm_postgresql_server.j1dev[0].id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "j1dev_pgsql_diag_set" {
+  count              = local.storage_postgresql_servers_count
+  name               = "j1dev_pgsql_diag_set"
+  target_resource_id = azurerm_postgresql_server.j1dev[0].id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  dynamic log {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_pgsql_cat[0].logs)
+    content {
+      category = log.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
+  }
+
+  dynamic metric {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_pgsql_cat[0].metrics)
+    content {
+      category = metric.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
+  }
 }
 
 resource "azurerm_sql_server" "j1dev" {

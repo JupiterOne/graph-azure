@@ -9,11 +9,9 @@ import { IntegrationStepContext } from '../../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
 import { createDatabaseEntity, createDbServerEntity } from '../converters';
 import { PostgreSQLClient } from './client';
-import {
-  RM_POSTGRESQL_DATABASE_ENTITY_TYPE,
-  RM_POSTGRESQL_SERVER_ENTITY_TYPE,
-} from './constants';
+import { PostgreSQLEntities } from './constants';
 import createResourceGroupResourceRelationship from '../../utils/createResourceGroupResourceRelationship';
+import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
 
@@ -27,14 +25,21 @@ export async function fetchPostgreSQLDatabases(
   const client = new PostgreSQLClient(instance.config, logger);
 
   await client.iterateServers(async (server) => {
+    console.log('before convert');
     const serverEntity = createDbServerEntity(
       webLinker,
       server,
-      RM_POSTGRESQL_SERVER_ENTITY_TYPE,
+      PostgreSQLEntities.SERVER._type,
     );
+    console.log('after convert');
     await jobState.addEntity(serverEntity);
-
+    console.log(JSON.stringify(serverEntity, null, 2));
     await createResourceGroupResourceRelationship(
+      executionContext,
+      serverEntity,
+    );
+
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
       executionContext,
       serverEntity,
     );
@@ -44,7 +49,7 @@ export async function fetchPostgreSQLDatabases(
         const databaseEntity = createDatabaseEntity(
           webLinker,
           database,
-          RM_POSTGRESQL_DATABASE_ENTITY_TYPE,
+          PostgreSQLEntities.DATABASE._type,
         );
 
         await jobState.addEntity(databaseEntity);

@@ -45,6 +45,27 @@ resource "azurerm_storage_table" "j1dev" {
   storage_account_name = azurerm_storage_account.j1dev.name
 }
 
+resource "azurerm_postgresql_server" "j1dev" {
+  name                = "j1dev-psqlserver"
+  location            = azurerm_resource_group.j1dev.location
+  resource_group_name = azurerm_resource_group.j1dev.name
+
+  administrator_login          = random_string.administrator_login.result
+  administrator_login_password = random_password.administrator_password.result
+
+  sku_name   = "GP_Gen5_4"
+  version    = "9.6"
+  storage_mb = 640000
+
+  backup_retention_days        = 7
+  geo_redundant_backup_enabled = false
+  auto_grow_enabled            = false
+
+  public_network_access_enabled    = false
+  ssl_enforcement_enabled          = true
+  ssl_minimal_tls_version_enforced = "TLS1_2"
+}
+
 resource "azurerm_sql_server" "j1dev" {
   count = var.azurerm_storage_sql_servers
 

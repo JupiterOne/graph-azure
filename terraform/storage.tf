@@ -7,6 +7,8 @@ locals {
   storage_postgresql_servers_count = var.azurerm_storage_postgresql_servers == 1 ? 1 : 0
   storage_sql_servers_count = var.azurerm_storage_sql_servers == 1 ? 1 : 0
   storage_sql_databases_count = var.azurerm_storage_sql_servers == 1 && var.azurerm_storage_sql_databases == 1 ? 1 : 0
+  storage_mysql_servers_count = var.azurerm_storage_mysql_servers == 1 ? 1 : 0
+  storage_mysql_databases_count = var.azurerm_storage_mysql_servers == 1 && var.azurerm_storage_mysql_databases == 1 ? 1 : 0
 }
 
 resource "azurerm_storage_account" "j1dev" {
@@ -185,7 +187,7 @@ resource "azurerm_sql_database" "j1dev" {
 }
 
 resource "azurerm_mysql_server" "j1dev" {
-  count = var.azurerm_storage_mysql_servers
+  count = local.storage_mysql_servers_count
 
   name                = "j1dev-mysqlserver"
   location            = azurerm_resource_group.j1dev.location
@@ -209,8 +211,46 @@ resource "azurerm_mysql_server" "j1dev" {
   }
 }
 
+data "azurerm_monitor_diagnostic_categories" "j1dev_mysql_cat" {
+  count       = local.storage_mysql_servers_count
+  resource_id = azurerm_mysql_server.j1dev[0].id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "j1dev_mysql_diag_set" {
+  count              = local.storage_mysql_servers_count
+  name               = "j1dev_mysql_diag_set"
+  target_resource_id = azurerm_mysql_server.j1dev[0].id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  dynamic log {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_mysql_cat[0].logs)
+    content {
+      category = log.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
+  }
+
+  dynamic metric {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_mysql_cat[0].metrics)
+    content {
+      category = metric.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
+  }
+}
+
 resource "azurerm_mysql_database" "j1dev" {
-  count = var.azurerm_storage_mysql_databases
+  count = local.storage_mysql_databases_count
 
   name                = "j1dev-mysqldb"
   resource_group_name = azurerm_resource_group.j1dev.name

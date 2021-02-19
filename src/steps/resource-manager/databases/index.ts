@@ -16,10 +16,8 @@ import {
 } from './mariadb';
 import {
   fetchMySQLDatabases,
-  RM_MYSQL_DATABASE_ENTITY_TYPE,
-  RM_MYSQL_SERVER_DATABASE_RELATIONSHIP_TYPE,
-  RM_MYSQL_SERVER_ENTITY_TYPE,
-  RM_MYSQL_SERVER_DATABASE_RELATIONSHIP_CLASS,
+  MySQLEntities,
+  MySQLRelationships,
 } from './mysql';
 import {
   fetchPostgreSQLDatabases,
@@ -72,28 +70,10 @@ export const databaseSteps: Step<
   {
     id: STEP_RM_DATABASE_MYSQL_DATABASES,
     name: 'MySQL Databases',
-    entities: [
-      {
-        resourceName: '[RM] MySQL Server',
-        _type: RM_MYSQL_SERVER_ENTITY_TYPE,
-        _class: RM_DATABASE_SERVER_ENTITY_CLASS,
-      },
-      {
-        resourceName: '[RM] MySQL Database',
-        _type: RM_MYSQL_DATABASE_ENTITY_TYPE,
-        _class: RM_DATABASE_ENTITY_CLASS,
-      },
-    ],
+    entities: [MySQLEntities.SERVER, MySQLEntities.DATABASE],
     relationships: [
-      {
-        _type: RM_MYSQL_SERVER_DATABASE_RELATIONSHIP_TYPE,
-        sourceType: RM_MYSQL_SERVER_ENTITY_TYPE,
-        _class: RM_MYSQL_SERVER_DATABASE_RELATIONSHIP_CLASS,
-        targetType: RM_MYSQL_DATABASE_ENTITY_TYPE,
-      },
-      createResourceGroupResourceRelationshipMetadata(
-        RM_MYSQL_SERVER_ENTITY_TYPE,
-      ),
+      MySQLRelationships.RESOURCE_GROUP_HAS_MYSQL_SERVER,
+      MySQLRelationships.MYSQL_SERVER_HAS_MYSQL_DATABASE,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMySQLDatabases,

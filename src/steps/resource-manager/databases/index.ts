@@ -27,7 +27,6 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { IntegrationConfig } from '../../../types';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
-import { MonitorEntities } from '../monitor/constants';
 import {
   diagnosticSettingsEntitiesForResource,
   diagnosticSettingsRelationshipsForResource,

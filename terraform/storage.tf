@@ -5,6 +5,8 @@ variable "azurerm_storage_postgresql_servers" {
 
 locals {
   storage_postgresql_servers_count = var.azurerm_storage_postgresql_servers == 1 ? 1 : 0
+  storage_sql_servers_count = var.azurerm_storage_sql_servers == 1 ? 1 : 0
+  storage_sql_databases_count = var.azurerm_storage_sql_servers == 1 && var.azurerm_storage_sql_databases == 1 ? 1 : 0
 }
 
 resource "azurerm_storage_account" "j1dev" {
@@ -115,7 +117,7 @@ resource "azurerm_monitor_diagnostic_setting" "j1dev_pgsql_diag_set" {
 }
 
 resource "azurerm_sql_server" "j1dev" {
-  count = var.azurerm_storage_sql_servers
+  count = local.storage_sql_servers_count
 
   name                         = "j1dev-sqlserver"
   resource_group_name          = azurerm_resource_group.j1dev.name
@@ -129,8 +131,46 @@ resource "azurerm_sql_server" "j1dev" {
   }
 }
 
+data "azurerm_monitor_diagnostic_categories" "j1dev_sql_cat" {
+  count       = local.storage_sql_servers_count
+  resource_id = azurerm_sql_server.j1dev[0].id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "j1dev_sql_diag_set" {
+  count              = local.storage_sql_servers_count
+  name               = "j1dev_sql_diag_set"
+  target_resource_id = azurerm_sql_server.j1dev[0].id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  dynamic log {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_sql_cat[0].logs)
+    content {
+      category = log.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
+  }
+
+  dynamic metric {
+    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_sql_cat[0].metrics)
+    content {
+      category = metric.value
+      enabled  = true
+
+      retention_policy {
+        enabled = true
+        days    = 1
+      }
+    }
+  }
+}
+
 resource "azurerm_sql_database" "j1dev" {
-  count = var.azurerm_storage_sql_databases
+  count = local.storage_sql_databases_count
 
   name                = "j1dev-sqldatabase"
   resource_group_name = azurerm_resource_group.j1dev.name

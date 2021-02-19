@@ -26,13 +26,7 @@ import {
   PostgreSQLEntities,
   PostgreSQLRelationships,
 } from './postgresql';
-import {
-  fetchSQLDatabases,
-  RM_SQL_DATABASE_ENTITY_TYPE,
-  RM_SQL_SERVER_DATABASE_RELATIONSHIP_TYPE,
-  RM_SQL_SERVER_ENTITY_TYPE,
-  RM_SQL_SERVER_DATABASE_RELATIONSHIP_CLASS,
-} from './sql';
+import { fetchSQLDatabases, SQLEntities, SQLRelationships } from './sql';
 import {
   Step,
   IntegrationStepExecutionContext,
@@ -118,28 +112,10 @@ export const databaseSteps: Step<
   {
     id: STEP_RM_DATABASE_SQL_DATABASES,
     name: 'SQL Databases',
-    entities: [
-      {
-        resourceName: '[RM] SQL Server',
-        _type: RM_SQL_SERVER_ENTITY_TYPE,
-        _class: RM_DATABASE_SERVER_ENTITY_CLASS,
-      },
-      {
-        resourceName: '[RM] SQL Database',
-        _type: RM_SQL_DATABASE_ENTITY_TYPE,
-        _class: RM_DATABASE_ENTITY_CLASS,
-      },
-    ],
+    entities: [SQLEntities.SERVER, SQLEntities.DATABASE],
     relationships: [
-      {
-        _type: RM_SQL_SERVER_DATABASE_RELATIONSHIP_TYPE,
-        sourceType: RM_SQL_SERVER_ENTITY_TYPE,
-        _class: RM_SQL_SERVER_DATABASE_RELATIONSHIP_CLASS,
-        targetType: RM_SQL_DATABASE_ENTITY_TYPE,
-      },
-      createResourceGroupResourceRelationshipMetadata(
-        RM_SQL_SERVER_ENTITY_TYPE,
-      ),
+      SQLRelationships.RESOURCE_GROUP_HAS_SQL_SERVER,
+      SQLRelationships.SQL_SERVER_HAS_SQL_DATABASE,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchSQLDatabases,

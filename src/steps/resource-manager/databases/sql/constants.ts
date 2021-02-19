@@ -2,17 +2,39 @@ import {
   generateRelationshipType,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
+import { createResourceGroupResourceRelationshipMetadata } from '../../utils/createResourceGroupResourceRelationship';
+import {
+  RM_DATABASE_ENTITY_CLASS,
+  RM_DATABASE_SERVER_ENTITY_CLASS,
+} from '../constants';
 
-// Graph objects
-export const RM_SQL_SERVER_ENTITY_TYPE = 'azure_sql_server';
-export const RM_SQL_DATABASE_ENTITY_TYPE = 'azure_sql_database';
+export const SQLEntities = {
+  SERVER: {
+    _type: 'azure_sql_server',
+    _class: RM_DATABASE_SERVER_ENTITY_CLASS,
+    resourceName: '[RM] SQL Server',
+  },
 
-export const RM_SQL_SERVER_DATABASE_RELATIONSHIP_CLASS = RelationshipClass.HAS;
-export const RM_SQL_SERVER_DATABASE_RELATIONSHIP_TYPE = generateRelationshipType(
-  RM_SQL_SERVER_DATABASE_RELATIONSHIP_CLASS,
-  RM_SQL_SERVER_ENTITY_TYPE,
-  RM_SQL_DATABASE_ENTITY_TYPE,
-);
+  DATABASE: {
+    _type: 'azure_sql_database',
+    _class: RM_DATABASE_ENTITY_CLASS,
+    resourceName: '[RM] SQL Database',
+  },
+};
 
-export const SQL_SERVER_DATABASE_RELATIONSHIP_TYPE =
-  'azure_sql_server_has_database';
+export const SQLRelationships = {
+  RESOURCE_GROUP_HAS_SQL_SERVER: createResourceGroupResourceRelationshipMetadata(
+    SQLEntities.SERVER._type,
+  ),
+
+  SQL_SERVER_HAS_SQL_DATABASE: {
+    _type: generateRelationshipType(
+      RelationshipClass.HAS,
+      SQLEntities.SERVER._type,
+      SQLEntities.DATABASE._type,
+    ),
+    sourceType: SQLEntities.SERVER._type,
+    _class: RelationshipClass.HAS,
+    targetType: SQLEntities.DATABASE._type,
+  },
+};

@@ -4,15 +4,11 @@ import {
   STEP_RM_DATABASE_MYSQL_DATABASES,
   STEP_RM_DATABASE_POSTGRESQL_DATABASES,
   STEP_RM_DATABASE_SQL_DATABASES,
-  RM_DATABASE_SERVER_ENTITY_CLASS,
-  RM_DATABASE_ENTITY_CLASS,
 } from './constants';
 import {
   fetchMariaDBDatabases,
-  RM_MARIADB_DATABASE_ENTITY_TYPE,
-  RM_MARIADB_SERVER_DATABASE_RELATIONSHIP_TYPE,
-  RM_MARIADB_SERVER_ENTITY_TYPE,
-  RM_MARIADB_SERVER_DATABASE_RELATIONSHIP_CLASS,
+  MariaDBEntities,
+  MariaDBRelationships,
 } from './mariadb';
 import {
   fetchMySQLDatabases,
@@ -30,7 +26,6 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 import { IntegrationConfig } from '../../../types';
-import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 
 export * from './constants';
@@ -41,28 +36,10 @@ export const databaseSteps: Step<
   {
     id: STEP_RM_DATABASE_MARIADB_DATABASES,
     name: 'MariaDB Databases',
-    entities: [
-      {
-        resourceName: '[RM] MariaDB Server',
-        _type: RM_MARIADB_SERVER_ENTITY_TYPE,
-        _class: RM_DATABASE_SERVER_ENTITY_CLASS,
-      },
-      {
-        resourceName: '[RM] MariaDB Database',
-        _type: RM_MARIADB_DATABASE_ENTITY_TYPE,
-        _class: RM_DATABASE_ENTITY_CLASS,
-      },
-    ],
+    entities: [MariaDBEntities.SERVER, MariaDBEntities.DATABASE],
     relationships: [
-      {
-        _type: RM_MARIADB_SERVER_DATABASE_RELATIONSHIP_TYPE,
-        sourceType: RM_MARIADB_SERVER_ENTITY_TYPE,
-        _class: RM_MARIADB_SERVER_DATABASE_RELATIONSHIP_CLASS,
-        targetType: RM_MARIADB_DATABASE_ENTITY_TYPE,
-      },
-      createResourceGroupResourceRelationshipMetadata(
-        RM_MARIADB_SERVER_ENTITY_TYPE,
-      ),
+      MariaDBRelationships.RESOURCE_GROUP_HAS_MARIADB_SERVER,
+      MariaDBRelationships.MARIADB_SERVER_HAS_MARIADB_DATABASE,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMariaDBDatabases,

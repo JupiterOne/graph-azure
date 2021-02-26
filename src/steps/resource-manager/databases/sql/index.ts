@@ -9,16 +9,14 @@ import { IntegrationStepContext } from '../../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
 import { createDatabaseEntity, createDbServerEntity } from '../converters';
 import { SQLClient } from './client';
-import {
-  RM_SQL_DATABASE_ENTITY_TYPE,
-  RM_SQL_SERVER_ENTITY_TYPE,
-} from './constants';
+import { SQLEntities } from './constants';
 import {
   setAuditingStatus,
   setDatabaseEncryption,
   setServerSecurityAlerting,
 } from './converters';
 import createResourceGroupResourceRelationship from '../../utils/createResourceGroupResourceRelationship';
+import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
 
@@ -35,7 +33,7 @@ export async function fetchSQLDatabases(
     const serverEntity = createDbServerEntity(
       webLinker,
       server,
-      RM_SQL_SERVER_ENTITY_TYPE,
+      SQLEntities.SERVER._type,
     );
 
     setAuditingStatus(
@@ -54,12 +52,17 @@ export async function fetchSQLDatabases(
       serverEntity,
     );
 
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+      executionContext,
+      serverEntity,
+    );
+
     try {
       await client.iterateDatabases(server, async (database) => {
         const databaseEntity = createDatabaseEntity(
           webLinker,
           database,
-          RM_SQL_DATABASE_ENTITY_TYPE,
+          SQLEntities.DATABASE._type,
         );
 
         setDatabaseEncryption(

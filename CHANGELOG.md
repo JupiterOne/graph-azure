@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Collected Diagnostic Settings entities and relationships for Azure MariaDB
+  Servers, Azure MySQL Servers, Azure PostgreSQL Servers, and Azure SQL Servers
+
 ### Fixed
 
 - The `Network Security Groups` step creates a map between security groups and

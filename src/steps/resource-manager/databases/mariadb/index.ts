@@ -9,11 +9,9 @@ import { IntegrationStepContext } from '../../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
 import { createDatabaseEntity, createDbServerEntity } from '../converters';
 import { MariaDBClient } from './client';
-import {
-  RM_MARIADB_DATABASE_ENTITY_TYPE,
-  RM_MARIADB_SERVER_ENTITY_TYPE,
-} from './constants';
+import { MariaDBEntities } from './constants';
 import createResourceGroupResourceRelationship from '../../utils/createResourceGroupResourceRelationship';
+import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
 
@@ -30,11 +28,16 @@ export async function fetchMariaDBDatabases(
     const serverEntity = createDbServerEntity(
       webLinker,
       server,
-      RM_MARIADB_SERVER_ENTITY_TYPE,
+      MariaDBEntities.SERVER._type,
     );
     await jobState.addEntity(serverEntity);
 
     await createResourceGroupResourceRelationship(
+      executionContext,
+      serverEntity,
+    );
+
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
       executionContext,
       serverEntity,
     );
@@ -44,7 +47,7 @@ export async function fetchMariaDBDatabases(
         const databaseEntity = createDatabaseEntity(
           webLinker,
           database,
-          RM_MARIADB_DATABASE_ENTITY_TYPE,
+          MariaDBEntities.DATABASE._type,
         );
 
         await jobState.addEntity(databaseEntity);

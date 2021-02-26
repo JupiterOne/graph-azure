@@ -9,11 +9,9 @@ import { IntegrationStepContext } from '../../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
 import { createDatabaseEntity, createDbServerEntity } from '../converters';
 import { PostgreSQLClient } from './client';
-import {
-  RM_POSTGRESQL_DATABASE_ENTITY_TYPE,
-  RM_POSTGRESQL_SERVER_ENTITY_TYPE,
-} from './constants';
+import { PostgreSQLEntities } from './constants';
 import createResourceGroupResourceRelationship from '../../utils/createResourceGroupResourceRelationship';
+import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
 
@@ -30,11 +28,15 @@ export async function fetchPostgreSQLDatabases(
     const serverEntity = createDbServerEntity(
       webLinker,
       server,
-      RM_POSTGRESQL_SERVER_ENTITY_TYPE,
+      PostgreSQLEntities.SERVER._type,
     );
     await jobState.addEntity(serverEntity);
-
     await createResourceGroupResourceRelationship(
+      executionContext,
+      serverEntity,
+    );
+
+    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
       executionContext,
       serverEntity,
     );
@@ -44,7 +46,7 @@ export async function fetchPostgreSQLDatabases(
         const databaseEntity = createDatabaseEntity(
           webLinker,
           database,
-          RM_POSTGRESQL_DATABASE_ENTITY_TYPE,
+          PostgreSQLEntities.DATABASE._type,
         );
 
         await jobState.addEntity(databaseEntity);

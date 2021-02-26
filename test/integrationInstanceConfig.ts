@@ -10,3 +10,16 @@ const config: IntegrationConfig = {
 };
 
 export default config;
+
+/**
+ * We should move this project to completely matchable API calls, and thus,
+ * should be using this version of the config for all tests. We will need to
+ * maintain the above `config` until the entire project as been transitioned
+ * to this `configFromEnv`, at which time the above can be removed.
+ */
+export const configFromEnv: IntegrationConfig = {
+  clientId: process.env.CLIENT_ID || 'clientId',
+  clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+  directoryId: process.env.DIRECTORY_ID || 'directoryId',
+  subscriptionId: process.env.SUBSCRIPTION_ID || 'subscriptionId',
+};

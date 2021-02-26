@@ -7,6 +7,7 @@ import {
   SetupRecordingInput,
 } from '@jupiterone/integration-sdk-testing';
 import { isJson } from '../../src/utils/isJson';
+import { IntegrationConfig } from '../../src/types';
 
 export { Recording };
 
@@ -72,4 +73,15 @@ function mutateRecordingEntry(entry: RecordingEntry): void {
       }
     }
   }
+}
+
+export function getMatchRequestsBy({ config }: { config: IntegrationConfig }) {
+  return {
+    headers: false,
+    url: {
+      pathname: (pathname) => {
+        return pathname.replace(config.directoryId, 'directory-id');
+      },
+    },
+  };
 }

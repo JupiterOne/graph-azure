@@ -5,7 +5,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { default as authenticateGraph } from './azure/graph/authenticate';
-import { default as authenticateResourceManager } from './azure/resource-manager/authenticate';
+import { validateResourceManagerInvocation } from './azure/resource-manager/authenticate';
 import { IntegrationConfig } from './types';
 import { hasSubscriptionId } from './utils/hasSubscriptionId';
 
@@ -32,7 +32,7 @@ export default async function validateInvocation(
 
   if (hasSubscriptionId(config)) {
     try {
-      await authenticateResourceManager(config);
+      await validateResourceManagerInvocation(config);
     } catch (err) {
       if (!(err instanceof IntegrationError)) {
         throw new IntegrationValidationError(err);

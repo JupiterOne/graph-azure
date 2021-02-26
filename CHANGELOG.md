@@ -14,6 +14,7 @@ and this project adheres to
   Servers, Azure MySQL Servers, Azure PostgreSQL Servers, and Azure SQL Servers
 - Added `getMatchRequestsBy()` to match azure recordings for any integration
   configuration.
+- Added `userType` property to `azure_user` entities.
 
 ### Fixed
 

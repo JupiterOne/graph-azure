@@ -4,7 +4,7 @@ import {
   MappedRelationship,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
-import { Organization } from '@microsoft/microsoft-graph-types';
+import { Organization, User, Group } from '@microsoft/microsoft-graph-types';
 
 import { GroupMember } from './client';
 import {
@@ -74,29 +74,36 @@ describe('createAccountEntityWithOrganization', () => {
 });
 
 describe('createGroupEntity', () => {
+  function getMockGroup(group?: Partial<Group>) {
+    return {
+      id: '89fac263-2430-48fd-9278-dacfdfc89792',
+      deletedDateTime: undefined,
+      classification: undefined,
+      createdDateTime: '2019-04-23T18:06:05Z',
+      description: 'descr',
+      displayName: 'test group',
+      groupTypes: [],
+      mail: undefined,
+      mailEnabled: false,
+      mailNickname: '8bb2d1c34',
+      onPremisesLastSyncDateTime: undefined,
+      onPremisesSecurityIdentifier: undefined,
+      onPremisesSyncEnabled: undefined,
+      proxyAddresses: [],
+      renewedDateTime: '2019-04-23T18:06:05Z',
+      securityEnabled: true,
+      visibility: undefined,
+      onPremisesProvisioningErrors: [],
+      ...(group ? group : {}),
+    };
+  }
+
   test('properties transferred', () => {
-    expect(
-      createGroupEntity({
-        id: '89fac263-2430-48fd-9278-dacfdfc89792',
-        deletedDateTime: undefined,
-        classification: undefined,
-        createdDateTime: '2019-04-23T18:06:05Z',
-        description: 'descr',
-        displayName: 'test group',
-        groupTypes: [],
-        mail: undefined,
-        mailEnabled: false,
-        mailNickname: '8bb2d1c34',
-        onPremisesLastSyncDateTime: undefined,
-        onPremisesSecurityIdentifier: undefined,
-        onPremisesSyncEnabled: undefined,
-        proxyAddresses: [],
-        renewedDateTime: '2019-04-23T18:06:05Z',
-        securityEnabled: true,
-        visibility: undefined,
-        onPremisesProvisioningErrors: [],
-      }),
-    ).toEqual({
+    const mockGroupEntity = createGroupEntity(getMockGroup());
+    expect(mockGroupEntity).toMatchGraphObjectSchema({
+      _class: GROUP_ENTITY_CLASS,
+    });
+    expect(mockGroupEntity).toEqual({
       _class: ['UserGroup'],
       _key: '89fac263-2430-48fd-9278-dacfdfc89792',
       _type: 'azure_user_group',
@@ -116,11 +123,20 @@ describe('createGroupEntity', () => {
       securityEnabled: true,
     });
   });
+
+  test('should validate schema when `null` mail passed', () => {
+    // Recorded API calls exposed the fact that these properties are nullable, in spite of the Typescript typings.
+    const mockGroup = getMockGroup({ mail: (null as unknown) as undefined });
+    const groupEntity = createGroupEntity(mockGroup);
+    expect(groupEntity).toMatchGraphObjectSchema({
+      _class: GROUP_ENTITY_CLASS,
+    });
+  });
 });
 
 describe('createUserEntity', () => {
-  test('properties transferred', () => {
-    const data = {
+  function getMockUser(user?: Partial<User>) {
+    return {
       businessPhones: ['+1 2223334444'],
       displayName: 'Andrew Kulakov',
       givenName: 'Andrew',
@@ -133,12 +149,20 @@ describe('createUserEntity', () => {
       userPrincipalName:
         'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
       id: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
+      userType: 'Member',
+      ...(user ? user : {}),
     };
-    expect(createUserEntity(data)).toEqual({
+  }
+
+  test('properties transferred', () => {
+    const mockUser = getMockUser();
+    const userEntity = createUserEntity(mockUser);
+    expect(userEntity).toMatchGraphObjectSchema({ _class: USER_ENTITY_CLASS });
+    expect(userEntity).toEqual({
       _class: ['User'],
       _key: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
       _type: 'azure_user',
-      _rawData: [{ name: 'default', rawData: data }],
+      _rawData: [{ name: 'default', rawData: mockUser }],
       createdOn: undefined,
       email: 'admin_test@dualboot.com',
       mail: 'admin_test@dualboot.com',
@@ -155,9 +179,17 @@ describe('createUserEntity', () => {
       officeLocation: 'DBP',
       surname: 'Kulakov',
       lastName: 'Kulakov',
+      userType: 'Member',
       userPrincipalName:
         'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
     });
+  });
+
+  test('should validate schema when `null` mail passed', () => {
+    // Recorded API calls exposed the fact that these properties are nullable, in spite of the Typescript typings.
+    const mockUser = getMockUser({ mail: (null as unknown) as undefined });
+    const userEntity = createUserEntity(mockUser);
+    expect(userEntity).toMatchGraphObjectSchema({ _class: USER_ENTITY_CLASS });
   });
 });
 

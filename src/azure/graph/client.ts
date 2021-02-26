@@ -14,8 +14,6 @@ import { IntegrationConfig } from '../../types';
 import authenticate from './authenticate';
 import { retry } from '@lifeomic/attempt';
 
-export type QueryParams = string | { [key: string]: string | number };
-
 interface AzureGraphResponse<TResponseType = any> {
   value: TResponseType[];
   ['@odata.nextLink']?: string;

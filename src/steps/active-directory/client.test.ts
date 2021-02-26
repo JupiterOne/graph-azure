@@ -9,10 +9,13 @@ import {
   User,
 } from '@microsoft/microsoft-graph-types';
 
-import config from '../../../test/integrationInstanceConfig';
+import config, { configFromEnv } from '../../../test/integrationInstanceConfig';
 import { DirectoryGraphClient, GroupMember } from './client';
 import { IntegrationConfig } from '../../types';
-import { setupAzureRecording } from '../../../test/helpers/recording';
+import {
+  setupAzureRecording,
+  getMatchRequestsBy,
+} from '../../../test/helpers/recording';
 
 const logger = createMockIntegrationLogger();
 
@@ -62,7 +65,7 @@ describe('iterateGroupMembers', () => {
     await client.iterateGroupMembers(
       {
         groupId: '1c417feb-b04f-46c9-a747-614d6d03f348',
-        select: 'id',
+        select: ['id'],
       },
       (e) => {
         resources.push(e);
@@ -156,9 +159,12 @@ describe('iterateUsers', () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateUsers',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
     });
 
-    const client = new DirectoryGraphClient(logger, config);
+    const client = new DirectoryGraphClient(logger, configFromEnv);
 
     const resources: User[] = [];
     await client.iterateUsers((e) => {
@@ -169,6 +175,7 @@ describe('iterateUsers', () => {
     resources.forEach((r) => {
       expect(r).toMatchObject({
         id: expect.any(String),
+        userType: expect.stringMatching(/(Member|Guest)/),
       });
     });
   });

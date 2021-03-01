@@ -12,6 +12,8 @@ and this project adheres to
 
 - Collected Diagnostic Settings entities and relationships for Azure MariaDB
   Servers, Azure MySQL Servers, Azure PostgreSQL Servers, and Azure SQL Servers
+- Added `getMatchRequestsBy()` to match azure recordings for any integration
+  configuration.
 
 ### Fixed
 

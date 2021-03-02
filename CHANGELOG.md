@@ -8,12 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.13.0 - 2021-03-01
+
 ### Added
 
 - Collected Diagnostic Settings entities and relationships for Azure MariaDB
   Servers, Azure MySQL Servers, Azure PostgreSQL Servers, and Azure SQL Servers
 - Added `getMatchRequestsBy()` to match azure recordings for any integration
   configuration.
+- Added `userType` property to `azure_user` entities.
 
 ### Fixed
 

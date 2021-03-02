@@ -1,7 +1,10 @@
 import { Recording } from '@jupiterone/integration-sdk-testing';
 
-import { setupAzureRecording } from '../../../test/helpers/recording';
-import instanceConfig from '../../../test/integrationInstanceConfig';
+import {
+  setupAzureRecording,
+  getMatchRequestsBy,
+} from '../../../test/helpers/recording';
+import { configFromEnv } from '../../../test/integrationInstanceConfig';
 import { IntegrationConfig } from '../../types';
 import {
   fetchAccount,
@@ -11,6 +14,19 @@ import {
   fetchServicePrincipals,
 } from './index';
 import { createMockAzureStepExecutionContext } from '../../../test/createMockAzureStepExecutionContext';
+import { Entity, Relationship } from '@jupiterone/integration-sdk-core';
+import {
+  ACCOUNT_ENTITY_TYPE,
+  ACCOUNT_ENTITY_CLASS,
+  USER_ENTITY_CLASS,
+  USER_ENTITY_TYPE,
+  ACCOUNT_USER_RELATIONSHIP_TYPE,
+  GROUP_ENTITY_TYPE,
+  GROUP_ENTITY_CLASS,
+  ACCOUNT_GROUP_RELATIONSHIP_TYPE,
+  GROUP_MEMBER_RELATIONSHIP_TYPE,
+  GROUP_MEMBER_ENTITY_CLASS,
+} from './constants';
 
 let recording: Recording;
 
@@ -18,14 +34,99 @@ afterEach(async () => {
   await recording.stop();
 });
 
+function separateActiveDirectoryEntities(entities: Entity[]) {
+  const {
+    targets: accountEntities,
+    rest: restAfterAccount,
+  } = filterGraphObjects(entities, (e) => e._type === ACCOUNT_ENTITY_TYPE);
+  const { targets: userEntities, rest: restAfterUsers } = filterGraphObjects(
+    restAfterAccount,
+    (e) => e._type === USER_ENTITY_TYPE,
+  );
+  const { targets: groupEntities, rest: restAfterGroups } = filterGraphObjects(
+    restAfterUsers,
+    (e) => e._type === GROUP_ENTITY_TYPE,
+  );
+  const {
+    targets: groupMemberEntities,
+    rest: restAfterGroupMembers,
+  } = filterGraphObjects(restAfterGroups, (e) => e._type === GROUP_ENTITY_TYPE);
+
+  return {
+    accountEntities,
+    userEntities,
+    groupEntities,
+    groupMemberEntities,
+    restEntities: restAfterGroupMembers,
+  };
+}
+
+function separateActiveDirectoryRelationships(relationships: Relationship[]) {
+  const {
+    targets: accountUserRelationships,
+    rest: restAfterAccountUsers,
+  } = filterGraphObjects(
+    relationships,
+    (r) => r._type === ACCOUNT_USER_RELATIONSHIP_TYPE,
+  );
+  const {
+    targets: accountGroupRelationships,
+    rest: restAfterAccountGroups,
+  } = filterGraphObjects(
+    restAfterAccountUsers,
+    (r) => r._type === ACCOUNT_GROUP_RELATIONSHIP_TYPE,
+  );
+  const {
+    targets: directGroupMemberRelationships,
+    rest: restAfterDirectGroupMembers,
+  } = filterGraphObjects(
+    restAfterAccountGroups,
+    (r) =>
+      r._type === GROUP_MEMBER_RELATIONSHIP_TYPE && r._mapping === undefined,
+  );
+  const {
+    targets: mappedGroupMemberRelationships,
+    rest: restAfterMappedGroupMembers,
+  } = filterGraphObjects(
+    restAfterDirectGroupMembers,
+    (r) =>
+      r._type === GROUP_MEMBER_RELATIONSHIP_TYPE && r._mapping !== undefined,
+  );
+  return {
+    accountUserRelationships,
+    accountGroupRelationships,
+    directGroupMemberRelationships,
+    mappedGroupMemberRelationships,
+    restRelationships: restAfterMappedGroupMembers,
+  };
+}
+
+function filterGraphObjects<T = Entity | Relationship>(
+  graphObjects: T[],
+  filter: (graphObject: T) => boolean,
+): { targets: T[]; rest: T[] } {
+  const targets: T[] = [];
+  const rest: T[] = [];
+
+  for (const graphObject of graphObjects) {
+    if (filter(graphObject)) {
+      targets.push(graphObject);
+    } else {
+      rest.push(graphObject);
+    }
+  }
+  return { targets, rest };
+}
+
 test('active directory steps', async () => {
   recording = setupAzureRecording({
     directory: __dirname,
     name: 'active-directory-steps',
+    options: { matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }) },
   });
 
   const context = createMockAzureStepExecutionContext({
-    instanceConfig,
+    instanceConfig: configFromEnv,
   });
 
   await fetchAccount(context);
@@ -33,257 +134,68 @@ test('active directory steps', async () => {
   await fetchGroups(context);
   await fetchGroupMembers(context);
 
-  expect(context.jobState.collectedEntities).toEqual([
-    {
-      _class: ['Account'],
-      _key: 'local-integration-instance',
-      _type: 'azure_account',
-      _rawData: [expect.objectContaining({ name: 'default' })],
-      createdOn: undefined,
-      defaultDomain: 'adamjupiteronehotmailcom.onmicrosoft.com',
-      displayName: 'Local Integration',
-      id: 'a76fc728-0cba-45f0-a9eb-d45207e14513',
-      name: 'Default Directory',
-      organizationName: 'Default Directory',
-      verifiedDomains: ['adamjupiteronehotmailcom.onmicrosoft.com'],
-    },
-    {
-      _class: ['User'],
-      _key: 'd0e84358-ed79-4ae0-9157-83d3a0ef9b78',
-      _type: 'azure_user',
-      _rawData: [expect.objectContaining({ name: 'default' })],
-      createdOn: undefined,
-      name: 'Adam Williams',
-      displayName: 'Adam Williams',
-      firstName: 'Adam',
-      givenName: 'Adam',
-      email: null,
-      id: 'd0e84358-ed79-4ae0-9157-83d3a0ef9b78',
-      lastName: 'Williams',
-      preferredLanguage: 'en',
-      surname: 'Williams',
-      userPrincipalName: 'admin@adamjupiteronehotmailcom.onmicrosoft.com',
-      username: 'admin@adamjupiteronehotmailcom.onmicrosoft.com',
-    },
-    {
-      _class: ['User'],
-      _key: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
-      _type: 'azure_user',
-      _rawData: [expect.objectContaining({ name: 'default' })],
-      createdOn: undefined,
-      name: 'adam',
-      displayName: 'adam',
-      firstName: null,
-      lastName: null,
-      email: 'adam@thewilliams.ws',
-      id: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
-      mail: 'adam@thewilliams.ws',
-      userPrincipalName:
-        'adam_thewilliams.ws#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
-      username:
-        'adam_thewilliams.ws#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
-    },
-    {
-      _class: ['User'],
-      _key: '894a1974-e9fa-4bcc-a560-91b58d1a224f',
-      _type: 'azure_user',
-      _rawData: [expect.objectContaining({ name: 'default' })],
-      createdOn: undefined,
-      name: 'Erkang Zheng',
-      displayName: 'Erkang Zheng',
-      email: 'erkang@gmail.com',
-      firstName: 'Erkang',
-      givenName: 'Erkang',
-      id: '894a1974-e9fa-4bcc-a560-91b58d1a224f',
-      lastName: 'Zheng',
-      mail: 'erkang@gmail.com',
-      surname: 'Zheng',
-      userPrincipalName:
-        'erkang_gmail.com#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
-      username:
-        'erkang_gmail.com#EXT#@adamjupiteronehotmailcom.onmicrosoft.com',
-    },
-    {
-      _class: ['UserGroup'],
-      _key: '1c417feb-b04f-46c9-a747-614d6d03f348',
-      _type: 'azure_user_group',
-      _rawData: [expect.objectContaining({ name: 'default' })],
-      createdOn: 1567782403000,
-      createdDateTime: 1567782403000,
-      deletedOn: undefined,
-      description: 'Developers working on the JupiterOne Azure Integration',
-      name: 'Integration Developers',
-      displayName: 'Integration Developers',
-      id: '1c417feb-b04f-46c9-a747-614d6d03f348',
-      email: null,
-      mailEnabled: false,
-      mailNickname: '21e62e82-8',
-      renewedOn: 1567782403000,
-      renewedDateTime: 1567782403000,
-      securityEnabled: true,
-      securityIdentifier: 'S-1-12-1-474054635-1187622991-1298220967-1223885677',
-    },
-    {
-      _class: ['UserGroup'],
-      _key: '58e48aba-cd45-440f-a851-2bf9715fadc1',
-      _type: 'azure_user_group',
-      _rawData: [expect.objectContaining({ name: 'default' })],
-      createdOn: 1567617474000,
-      createdDateTime: 1567617474000,
-      deletedOn: undefined,
-      description: 'Users authorized to managed things (test)',
-      name: 'Managers',
-      displayName: 'Managers',
-      id: '58e48aba-cd45-440f-a851-2bf9715fadc1',
-      email: null,
-      mailEnabled: false,
-      mailNickname: 'bd565bd0-d',
-      renewedOn: 1567617474000,
-      renewedDateTime: 1567617474000,
-      securityEnabled: true,
-      securityIdentifier:
-        'S-1-12-1-1491372730-1141886277-4180365736-3249364849',
-    },
-  ]);
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
+  const {
+    accountEntities,
+    userEntities,
+    groupEntities,
+    groupMemberEntities,
+    restEntities,
+  } = separateActiveDirectoryEntities(context.jobState.collectedEntities);
+
+  expect(accountEntities.length).toBe(1);
+  expect(accountEntities).toMatchGraphObjectSchema({
+    _class: ACCOUNT_ENTITY_CLASS,
+  });
+
+  expect(userEntities.length).toBeGreaterThan(0);
+  expect(userEntities).toMatchGraphObjectSchema({ _class: USER_ENTITY_CLASS });
+
+  expect(groupEntities.length).toBeGreaterThan(0);
+  expect(groupEntities).toMatchGraphObjectSchema({
+    _class: GROUP_ENTITY_CLASS,
+  });
+
+  // expect(groupMemberEntities.length).toBeGreaterThan(0); // The 'ad-group-members' can simply return relationships in some cases.
+  expect(groupMemberEntities).toMatchGraphObjectSchema({
+    _class: GROUP_MEMBER_ENTITY_CLASS,
+  });
+
+  expect(restEntities.length).toBe(0);
+
+  const {
+    accountUserRelationships,
+    accountGroupRelationships,
+    directGroupMemberRelationships,
+    mappedGroupMemberRelationships,
+    restRelationships,
+  } = separateActiveDirectoryRelationships(
+    context.jobState.collectedRelationships,
+  );
+
+  expect(accountUserRelationships.length).toBeGreaterThan(0);
+  expect(accountUserRelationships).toMatchDirectRelationshipSchema({});
+
+  expect(accountGroupRelationships.length).toBeGreaterThan(0);
+  expect(accountGroupRelationships).toMatchDirectRelationshipSchema({});
+
+  // expect(directGroupMemberRelationships.length).toBeGreaterThan(0); // The 'ad-group-members' can simply return relationships in some cases.
+  expect(directGroupMemberRelationships).toMatchDirectRelationshipSchema({});
+
+  expect(mappedGroupMemberRelationships.length).toBeGreaterThan(0);
+  for (const mappedGroupMemberRelationship of mappedGroupMemberRelationships) {
+    expect(mappedGroupMemberRelationship).toMatchObject({
       _class: 'HAS',
-      _fromEntityKey: 'local-integration-instance',
-      _key:
-        'local-integration-instance|has|d0e84358-ed79-4ae0-9157-83d3a0ef9b78',
-      _toEntityKey: 'd0e84358-ed79-4ae0-9157-83d3a0ef9b78',
-      _type: 'azure_account_has_user',
-      displayName: 'HAS',
-    },
-    {
-      _class: 'HAS',
-      _fromEntityKey: 'local-integration-instance',
-      _key:
-        'local-integration-instance|has|1bc373cb-36d4-4fd9-8996-b77d3544a380',
-      _toEntityKey: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
-      _type: 'azure_account_has_user',
-      displayName: 'HAS',
-    },
-    {
-      _class: 'HAS',
-      _fromEntityKey: 'local-integration-instance',
-      _key:
-        'local-integration-instance|has|894a1974-e9fa-4bcc-a560-91b58d1a224f',
-      _toEntityKey: '894a1974-e9fa-4bcc-a560-91b58d1a224f',
-      _type: 'azure_account_has_user',
-      displayName: 'HAS',
-    },
-    {
-      _class: 'HAS',
-      _fromEntityKey: 'local-integration-instance',
-      _key:
-        'local-integration-instance|has|1c417feb-b04f-46c9-a747-614d6d03f348',
-      _toEntityKey: '1c417feb-b04f-46c9-a747-614d6d03f348',
-      _type: 'azure_account_has_group',
-      displayName: 'HAS',
-    },
-    {
-      _class: 'HAS',
-      _fromEntityKey: 'local-integration-instance',
-      _key:
-        'local-integration-instance|has|58e48aba-cd45-440f-a851-2bf9715fadc1',
-      _toEntityKey: '58e48aba-cd45-440f-a851-2bf9715fadc1',
-      _type: 'azure_account_has_group',
-      displayName: 'HAS',
-    },
-    {
-      _class: 'HAS',
-      _key:
-        '1c417feb-b04f-46c9-a747-614d6d03f348_d0e84358-ed79-4ae0-9157-83d3a0ef9b78',
-      _mapping: {
-        relationshipDirection: 'FORWARD',
-        sourceEntityKey: '1c417feb-b04f-46c9-a747-614d6d03f348',
-        targetEntity: {
-          _class: 'User',
-          _key: 'd0e84358-ed79-4ae0-9157-83d3a0ef9b78',
-          _type: 'azure_user',
-          displayName: 'Adam Williams',
-          email: null,
-          jobTitle: null,
-        },
-        targetFilterKeys: [['_type', '_key']],
-      },
-      _type: 'azure_group_has_member',
-      displayName: 'HAS',
-      groupId: '1c417feb-b04f-46c9-a747-614d6d03f348',
-      memberId: 'd0e84358-ed79-4ae0-9157-83d3a0ef9b78',
-      memberType: '#microsoft.graph.user',
-    },
-    {
-      _class: 'HAS',
-      _key:
-        '1c417feb-b04f-46c9-a747-614d6d03f348_1bc373cb-36d4-4fd9-8996-b77d3544a380',
-      _mapping: {
-        relationshipDirection: 'FORWARD',
-        sourceEntityKey: '1c417feb-b04f-46c9-a747-614d6d03f348',
-        targetEntity: {
-          _class: 'User',
-          _key: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
-          _type: 'azure_user',
-          displayName: 'adam',
-          email: 'adam@thewilliams.ws',
-          jobTitle: null,
-        },
-        targetFilterKeys: [['_type', '_key']],
-      },
-      _type: 'azure_group_has_member',
-      displayName: 'HAS',
-      groupId: '1c417feb-b04f-46c9-a747-614d6d03f348',
-      memberId: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
-      memberType: '#microsoft.graph.user',
-    },
-    {
-      _class: 'HAS',
-      _key:
-        '1c417feb-b04f-46c9-a747-614d6d03f348_58e48aba-cd45-440f-a851-2bf9715fadc1',
-      _mapping: {
-        relationshipDirection: 'FORWARD',
-        sourceEntityKey: '1c417feb-b04f-46c9-a747-614d6d03f348',
-        targetEntity: {
-          _class: 'UserGroup',
-          _key: '58e48aba-cd45-440f-a851-2bf9715fadc1',
-          _type: 'azure_user_group',
-          displayName: 'Managers',
-          email: null,
-          jobTitle: undefined,
-        },
-        targetFilterKeys: [['_type', '_key']],
-      },
-      _type: 'azure_group_has_member',
-      displayName: 'HAS',
-      groupId: '1c417feb-b04f-46c9-a747-614d6d03f348',
-      memberId: '58e48aba-cd45-440f-a851-2bf9715fadc1',
-      memberType: '#microsoft.graph.group',
-    },
-    {
-      _class: 'HAS',
-      _key:
-        '58e48aba-cd45-440f-a851-2bf9715fadc1_1bc373cb-36d4-4fd9-8996-b77d3544a380',
-      _mapping: {
-        relationshipDirection: 'FORWARD',
-        sourceEntityKey: '58e48aba-cd45-440f-a851-2bf9715fadc1',
-        targetEntity: {
-          _class: 'User',
-          _key: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
-          _type: 'azure_user',
-          displayName: 'adam',
-          email: 'adam@thewilliams.ws',
-          jobTitle: null,
-        },
-        targetFilterKeys: [['_type', '_key']],
-      },
-      _type: 'azure_group_has_member',
-      displayName: 'HAS',
-      groupId: '58e48aba-cd45-440f-a851-2bf9715fadc1',
-      memberId: '1bc373cb-36d4-4fd9-8996-b77d3544a380',
-      memberType: '#microsoft.graph.user',
-    },
-  ]);
+      _key: expect.any(String),
+      _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
+      _mapping: expect.objectContaining({
+        sourceEntityKey: expect.any(String),
+        targetEntity: expect.any(Object),
+        targetFilterKeys: expect.any(Array),
+      }),
+    });
+  }
+
+  expect(restRelationships.length).toBe(0);
 });
 
 test('active directory step - service principals', async () => {

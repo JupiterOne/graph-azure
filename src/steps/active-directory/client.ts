@@ -5,7 +5,7 @@ import {
   User,
 } from '@microsoft/microsoft-graph-types';
 
-import { GraphClient, QueryParams } from '../../azure/graph/client';
+import { GraphClient } from '../../azure/graph/client';
 
 export enum MemberType {
   USER = '#microsoft.graph.user',
@@ -57,23 +57,15 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateGroupMembers(
     input: {
       groupId: string;
-      /**
-       * The property names for `$select` query param.
-       */
-      select?: string | string[];
+      select?: string[];
     },
     callback: (user: GroupMember) => void | Promise<void>,
   ): Promise<void> {
     this.logger.info({ groupId: input.groupId }, 'Iterating group members.');
-    const $select = input.select
-      ? Array.isArray(input.select)
-        ? input.select.join(',')
-        : input.select
-      : undefined;
 
     return this.iterateResources({
       resourceUrl: `/groups/${input.groupId}/members`,
-      query: $select ? { $select } : undefined,
+      options: { select: input.select },
       callback,
     });
   }
@@ -83,7 +75,25 @@ export class DirectoryGraphClient extends GraphClient {
     callback: (user: User) => void | Promise<void>,
   ): Promise<void> {
     this.logger.info('Iterating users.');
-    return this.iterateResources({ resourceUrl: '/users', callback });
+    const defaultSelect = [
+      'businessPhones',
+      'displayName',
+      'givenName',
+      'jobTitle',
+      'mail',
+      'mobilePhone',
+      'officeLocation',
+      'preferredLanguage',
+      'surname',
+      'userPrincipalName',
+      'id',
+    ];
+    const select = [...defaultSelect, 'userType'];
+    return this.iterateResources({
+      resourceUrl: '/users',
+      options: { select },
+      callback,
+    });
   }
 
   // https://docs.microsoft.com/en-us/graph/api/serviceprincipal-list?view=graph-rest-1.0&tabs=http
@@ -100,18 +110,19 @@ export class DirectoryGraphClient extends GraphClient {
   // Not using PageIterator because it doesn't allow async callback
   private async iterateResources<T>({
     resourceUrl,
-    query,
+    options,
     callback,
   }: {
     resourceUrl: string;
-    query?: QueryParams;
+    options?: { select?: string[] };
     callback: (item: T) => void | Promise<void>;
   }): Promise<void> {
     let nextLink: string | undefined;
     do {
       let api = this.client.api(nextLink || resourceUrl);
-      if (query) {
-        api = api.query(query);
+      api.select;
+      if (options?.select) {
+        api = api.select(options.select);
       }
 
       const response = await this.request(api);

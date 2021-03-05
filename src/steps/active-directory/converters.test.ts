@@ -6,12 +6,16 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { Organization, User, Group } from '@microsoft/microsoft-graph-types';
 
-import { GroupMember } from './client';
+import {
+  GroupMember,
+  IdentitySecurityDefaultsEnforcementPolicy,
+} from './client';
 import {
   GROUP_ENTITY_CLASS,
   GROUP_ENTITY_TYPE,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
+  ACCOUNT_ENTITY_CLASS,
 } from './constants';
 import {
   createAccountEntityWithOrganization,
@@ -32,14 +36,16 @@ afterAll(() => {
 });
 
 describe('createAccountEntityWithOrganization', () => {
-  test('properties transferred', () => {
-    const instance = {
+  function createInstance(): IntegrationInstance {
+    return {
       id: 'the-instance-id',
       name: 'instance.config.name configured by customer',
       config: {},
     } as IntegrationInstance;
+  }
 
-    const organization: Organization = {
+  function createOrganization(): Organization {
+    return {
       displayName: 'Org Display Name',
       verifiedDomains: [
         {
@@ -51,6 +57,19 @@ describe('createAccountEntityWithOrganization', () => {
         },
       ],
     };
+  }
+
+  function createSecurityDefaults(): IdentitySecurityDefaultsEnforcementPolicy {
+    return {
+      description: 'description',
+      displayName: 'displayName',
+      isEnabled: true,
+      id: 'id',
+    };
+  }
+  test('properties transferred', () => {
+    const instance = createInstance();
+    const organization = createOrganization();
     const accountEntity = createAccountEntityWithOrganization(
       instance,
       organization,
@@ -69,6 +88,43 @@ describe('createAccountEntityWithOrganization', () => {
         'whatever.onmicrosoft.com',
         'something.onmicrosoft.com',
       ],
+    });
+  });
+
+  test('properties transferred with securityDefaults', () => {
+    const instance = createInstance();
+    const organization = createOrganization();
+    const securityDefaults = createSecurityDefaults();
+    const accountEntity = createAccountEntityWithOrganization(
+      instance,
+      organization,
+      securityDefaults,
+    );
+
+    expect(accountEntity).toEqual({
+      _class: ['Account'],
+      _key: 'the-instance-id',
+      _type: 'azure_account',
+      _rawData: [
+        { name: 'default', rawData: organization },
+        {
+          name: 'identitySecurityDefaultsEnforcementPolicy',
+          rawData: securityDefaults,
+        },
+      ],
+      name: 'Org Display Name',
+      displayName: 'instance.config.name configured by customer',
+      defaultDomain: 'something.onmicrosoft.com',
+      organizationName: 'Org Display Name',
+      verifiedDomains: [
+        'whatever.onmicrosoft.com',
+        'something.onmicrosoft.com',
+      ],
+      securityDefaultsEnabled: true,
+    });
+
+    expect(accountEntity).toMatchGraphObjectSchema({
+      _class: ACCOUNT_ENTITY_CLASS,
     });
   });
 });

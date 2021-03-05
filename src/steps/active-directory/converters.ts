@@ -11,6 +11,7 @@ import {
   RelationshipDirection,
   assignTags,
   createMappedRelationship,
+  setRawData,
 } from '@jupiterone/integration-sdk-core';
 import { Group, Organization, User } from '@microsoft/microsoft-graph-types';
 
@@ -18,7 +19,11 @@ import {
   generateEntityKey,
   generateRelationshipKey,
 } from '../../utils/generateKeys';
-import { GroupMember, MemberType } from './client';
+import {
+  GroupMember,
+  MemberType,
+  IdentitySecurityDefaultsEnforcementPolicy,
+} from './client';
 import {
   ACCOUNT_ENTITY_CLASS,
   ACCOUNT_ENTITY_TYPE,
@@ -53,6 +58,7 @@ export function createAccountEntity(instance: IntegrationInstance): Entity {
 export function createAccountEntityWithOrganization(
   instance: IntegrationInstance,
   organization: Organization,
+  securityDefaults?: IdentitySecurityDefaultsEnforcementPolicy,
 ): Entity {
   let defaultDomain: string | undefined;
   const verifiedDomains = map(organization.verifiedDomains, (e) => {
@@ -62,7 +68,7 @@ export function createAccountEntityWithOrganization(
     return e.name as string;
   });
 
-  return createIntegrationEntity({
+  const accountEntityWithOrganization = createIntegrationEntity({
     entityData: {
       source: organization,
       assign: {
@@ -74,9 +80,18 @@ export function createAccountEntityWithOrganization(
         organizationName: organization.displayName,
         defaultDomain,
         verifiedDomains,
+        securityDefaultsEnabled: securityDefaults?.isEnabled,
       },
     },
   });
+
+  if (securityDefaults) {
+    setRawData(accountEntityWithOrganization, {
+      name: 'identitySecurityDefaultsEnforcementPolicy',
+      rawData: securityDefaults,
+    });
+  }
+  return accountEntityWithOrganization;
 }
 
 export function createGroupEntity(data: Group): Entity {

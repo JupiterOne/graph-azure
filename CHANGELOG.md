@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `securityDefaultsEnabled` property to `azure_account` entities.
+
 ## 5.13.0 - 2021-03-01
 
 ### Added

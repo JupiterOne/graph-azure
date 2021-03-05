@@ -76,7 +76,7 @@ describe('fetchIdentitySecurityDefaultsEnforcementPolicy', () => {
     expect(response).toBeUndefined();
     expect(publishEventSpy).toHaveBeenCalledTimes(1);
     expect(publishEventSpy).toHaveBeenCalledWith({
-      name: 'missing_optional_permission',
+      name: 'auth',
       description:
         'Unable to fetch data from /policies/identitySecurityDefaultsEnforcementPolicy. See https://github.com/JupiterOne/graph-azure/blob/master/docs/jupiterone.md#permissions for more information about optional permissions for this integration.',
     });

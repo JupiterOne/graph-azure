@@ -51,7 +51,7 @@ export class DirectoryGraphClient extends GraphClient {
           'You cannot perform the requested operation, required scopes are missing in the token.'
         ) {
           this.logger.publishEvent({
-            name: 'missing_optional_permission',
+            name: 'auth',
             description: `Unable to fetch data from ${path}. See https://github.com/JupiterOne/graph-azure/blob/master/docs/jupiterone.md#permissions for more information about optional permissions for this integration.`,
           });
           return;

@@ -61,12 +61,12 @@ export class DirectoryGraphClient extends GraphClient {
       // This endpoint is brittle, since it behaves differently whether the default directory (tenant) is a "personal"
       // account or a "school/work" account. In order to protect us from execution failures during an important active directory
       // step, we'll never throw an error here but _explicitly_ warn operators (developers) using logger.error, and
-      // also send a message to sentry via logger.onError.
+      // also send a message to sentry via logger.onFailure.
       //
       // In the future when this endpoint is better understood, we can improve the handling here.
       this.logger.error(err);
       try {
-        (this.logger as any)?.onFailure({ err });
+        (this.logger as any).onFailure({ err });
       } catch (err) {
         // pass
       }

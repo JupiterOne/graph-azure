@@ -45,7 +45,12 @@ export async function fetchAccount(
   let accountEntity: Entity;
   try {
     const organization = await graphClient.fetchOrganization();
-    accountEntity = createAccountEntityWithOrganization(instance, organization);
+    const securityDefaults = await graphClient.fetchIdentitySecurityDefaultsEnforcementPolicy();
+    accountEntity = createAccountEntityWithOrganization(
+      instance,
+      organization,
+      securityDefaults,
+    );
   } catch (err) {
     // TODO logger.authError()
     accountEntity = createAccountEntity(instance);

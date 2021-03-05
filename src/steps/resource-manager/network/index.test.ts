@@ -114,9 +114,6 @@ describe('network steps', () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'network-steps',
-      options: {
-        recordFailedRequests: true,
-      },
     });
 
     const resourceGroupEntity: Entity = {

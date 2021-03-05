@@ -32,13 +32,24 @@ To create the App Registration:
 1. Create a new client secret
 1. Copy the generated secret (you only get one chance!)
 
+### APIPermissions
+
 Grant permission to read Microsoft Graph information:
 
 1. Navigate to **API permissions**, choose **Microsoft Graph**, then
    **Application Permissions**
-1. Grant `Directory.Read.All` permissions to allow reading users, groups, and
-   members of groups, including organization contacts and Microsoft Intune
-   devices
+1. Grant the following permissions to the application:
+
+   **Required**
+
+   - `Directory.Read.All`
+
+   **Optional**
+
+   | Permission        | Endpoint(s)                                                                                                                                                                   |
+   | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | `Policy.Read.All` | [/policies/identitySecurityDefaultsEnforcementPolicy](https://docs.microsoft.com/en-us/graph/api/identitysecuritydefaultsenforcementpolicy-get?view=graph-rest-1.0&tabs=http) |
+
 1. Grant admin consent for this directory for the permissions above
 
 Please note that minimally [`User.Read` is required][3] even when AD ingestion

@@ -6,6 +6,7 @@ import {
 } from '@microsoft/microsoft-graph-types';
 
 import { GraphClient } from '../../azure/graph/client';
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 
 export enum MemberType {
   USER = '#microsoft.graph.user',
@@ -24,7 +25,55 @@ export interface GroupMember extends DirectoryObject {
   jobTitle?: string | null;
 }
 
+export interface IdentitySecurityDefaultsEnforcementPolicy
+  extends DirectoryObject {
+  description: string;
+  displayName: string;
+  id: string;
+  isEnabled: boolean;
+}
+
 export class DirectoryGraphClient extends GraphClient {
+  // https://docs.microsoft.com/en-us/graph/api/identitysecuritydefaultsenforcementpolicy-get?view=graph-rest-beta&tabs=http
+  public async fetchIdentitySecurityDefaultsEnforcementPolicy(): Promise<
+    IdentitySecurityDefaultsEnforcementPolicy | undefined
+  > {
+    const path = '/policies/identitySecurityDefaultsEnforcementPolicy';
+    let response;
+    try {
+      response = await this.request<IdentitySecurityDefaultsEnforcementPolicy>(
+        this.client.api(path),
+      );
+    } catch (err) {
+      if (err instanceof IntegrationProviderAPIError) {
+        if (
+          err._cause?.message ===
+          'You cannot perform the requested operation, required scopes are missing in the token.'
+        ) {
+          this.logger.publishEvent({
+            name: 'missing_optional_permission',
+            description: `Unable to fetch data from ${path}. See https://github.com/JupiterOne/graph-azure/blob/master/docs/jupiterone.md#permissions for more information about optional permissions for this integration.`,
+          });
+          return;
+        }
+      }
+
+      // This endpoint is brittle, since it behaves differently whether the default directory (tenant) is a "personal"
+      // account or a "school/work" account. In order to protect us from execution failures during an important active directory
+      // step, we'll never throw an error here but _explicitly_ warn operators (developers) using logger.error, and
+      // also send a message to sentry via logger.onError.
+      //
+      // In the future when this endpoint is better understood, we can improve the handling here.
+      this.logger.error(err);
+      try {
+        (this.logger as any)?.onFailure({ err });
+      } catch (err) {
+        // pass
+      }
+    }
+    return response;
+  }
+
   // https://docs.microsoft.com/en-us/graph/api/directoryrole-list?view=graph-rest-1.0&tabs=http
   public async iterateDirectoryRoles(
     callback: (role: DirectoryRole) => void | Promise<void>,

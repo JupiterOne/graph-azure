@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- [#230](https://github.com/JupiterOne/graph-azure/issues/230) - Change job log
+  name from `missing_optional_permissions` to `auth`.
+
 ## 5.14.0 - 2021-03-05
 
 ### Added

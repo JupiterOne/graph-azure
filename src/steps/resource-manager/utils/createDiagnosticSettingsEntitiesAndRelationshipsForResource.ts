@@ -16,7 +16,7 @@ import {
   createDiagnosticMetricSettingEntity,
 } from '../monitor/converters';
 import { DiagnosticSettingsResource } from '@azure/arm-monitor/esm/models';
-import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage/constants';
+import { entities as storageEntities } from '../storage/constants';
 import { ANY_SCOPE } from '../constants';
 
 /**
@@ -55,7 +55,7 @@ function createSettingUsesStorageAccountRelationship(
     _class: RelationshipClass.USES,
     fromType: settingEntity._type,
     fromKey: settingEntity._key,
-    toType: STORAGE_ACCOUNT_ENTITY_METADATA._type,
+    toType: storageEntities.STORAGE_ACCOUNT._type,
     toKey: storageAccountId,
   });
 }

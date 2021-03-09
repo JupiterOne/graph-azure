@@ -4,28 +4,14 @@ import {
   Entity,
   Step,
   IntegrationStepExecutionContext,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
 import { StorageClient } from './client';
-import {
-  STEP_RM_STORAGE_RESOURCES,
-  STORAGE_ACCOUNT_RELATIONSHIP_CLASS,
-  STORAGE_ACCOUNT_ENTITY_METADATA,
-  STORAGE_CONTAINER_ENTITY_METADATA,
-  STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_METADATA,
-  STORAGE_FILE_SHARE_ENTITY_METADATA,
-  STORAGE_ACCOUNT_FILE_SHARE_RELATIONSHIP_METADATA,
-  STORAGE_QUEUE_ENTITY_METADATA,
-  STEP_RM_STORAGE_QUEUES,
-  STORAGE_ACCOUNT_QUEUE_RELATIONSHIP_METADATA,
-  STEP_RM_STORAGE_TABLES,
-  STORAGE_TABLE_ENTITY_METADATA,
-  STORAGE_ACCOUNT_TABLE_RELATIONSHIP_METADATA,
-  StorageRelationships,
-} from './constants';
+import { steps, entities, relationships } from './constants';
 import {
   createStorageContainerEntity,
   createStorageFileShareEntity,
@@ -142,7 +128,7 @@ async function associateStorageAccountWithKeyVault(
 
   await jobState.addRelationship(
     createDirectRelationship({
-      _class: StorageRelationships.STORAGE_ACCOUNT_USES_KEY_VAULT._class,
+      _class: relationships.STORAGE_ACCOUNT_USES_KEY_VAULT._class,
       from: storageAccountEntity,
       to: keyVaultEntity,
       properties: {
@@ -239,7 +225,7 @@ async function synchronizeBlobStorage(
 
       await jobState.addRelationship(
         createDirectRelationship({
-          _class: STORAGE_ACCOUNT_RELATIONSHIP_CLASS,
+          _class: RelationshipClass.HAS,
           from: storageAccountEntity,
           to: containerEntity,
         }),
@@ -273,7 +259,7 @@ async function synchronizeFileStorage(
 
     await jobState.addRelationship(
       createDirectRelationship({
-        _class: STORAGE_ACCOUNT_RELATIONSHIP_CLASS,
+        _class: RelationshipClass.HAS,
         from: storageAccountEntity,
         to: fileShareEntity,
       }),
@@ -291,7 +277,7 @@ export async function fetchStorageQueues(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await jobState.iterateEntities(
-    { _type: STORAGE_ACCOUNT_ENTITY_METADATA._type },
+    { _type: entities.STORAGE_ACCOUNT._type },
     async (storageAccountEntity) => {
       await client.iterateQueues(
         (storageAccountEntity as unknown) as {
@@ -310,7 +296,7 @@ export async function fetchStorageQueues(
 
           await jobState.addRelationship(
             createDirectRelationship({
-              _class: STORAGE_ACCOUNT_RELATIONSHIP_CLASS,
+              _class: RelationshipClass.HAS,
               from: storageAccountEntity,
               to: queueEntity,
             }),
@@ -331,7 +317,7 @@ export async function fetchStorageTables(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await jobState.iterateEntities(
-    { _type: STORAGE_ACCOUNT_ENTITY_METADATA._type },
+    { _type: entities.STORAGE_ACCOUNT._type },
     async (storageAccountEntity) => {
       await client.iterateTables(
         (storageAccountEntity as unknown) as {
@@ -350,7 +336,7 @@ export async function fetchStorageTables(
 
           await jobState.addRelationship(
             createDirectRelationship({
-              _class: STORAGE_ACCOUNT_RELATIONSHIP_CLASS,
+              _class: RelationshipClass.HAS,
               from: storageAccountEntity,
               to: tableEntity,
             }),
@@ -365,27 +351,21 @@ export const storageSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
   {
-    id: STEP_RM_STORAGE_RESOURCES,
+    id: steps.STORAGE_RESOURCES,
     name: 'Storage Resources',
     entities: [
-      STORAGE_ACCOUNT_ENTITY_METADATA,
-      STORAGE_CONTAINER_ENTITY_METADATA,
-      STORAGE_FILE_SHARE_ENTITY_METADATA,
+      entities.STORAGE_ACCOUNT,
+      entities.STORAGE_CONTAINER,
+      entities.STORAGE_FILE_SHARE,
     ],
     relationships: [
       createResourceGroupResourceRelationshipMetadata(
-        STORAGE_ACCOUNT_ENTITY_METADATA._type,
+        entities.STORAGE_ACCOUNT._type,
       ),
-      STORAGE_ACCOUNT_CONTAINER_RELATIONSHIP_METADATA,
-      STORAGE_ACCOUNT_FILE_SHARE_RELATIONSHIP_METADATA,
-      StorageRelationships.STORAGE_ACCOUNT_USES_KEY_VAULT,
+      relationships.STORAGE_ACCOUNT_HAS_CONTAINER,
+      relationships.STORAGE_ACCOUNT_HAS_FILE_SHARE,
+      relationships.STORAGE_ACCOUNT_USES_KEY_VAULT,
     ],
-    // From what I can tell, the following are not yet implemented
-    // STORAGE_QUEUE_SERVICE_ENTITY_TYPE,
-    // ACCOUNT_STORAGE_QUEUE_SERVICE_RELATIONSHIP_TYPE,
-
-    // STORAGE_TABLE_SERVICE_ENTITY_TYPE,
-    // ACCOUNT_STORAGE_TABLE_SERVICE_RELATIONSHIP_TYPE,
     dependsOn: [
       STEP_AD_ACCOUNT,
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
@@ -394,19 +374,19 @@ export const storageSteps: Step<
     executionHandler: fetchStorageResources,
   },
   {
-    id: STEP_RM_STORAGE_QUEUES,
+    id: steps.STORAGE_QUEUES,
     name: 'Storage Queues',
-    entities: [STORAGE_QUEUE_ENTITY_METADATA],
-    relationships: [STORAGE_ACCOUNT_QUEUE_RELATIONSHIP_METADATA],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_STORAGE_RESOURCES],
+    entities: [entities.STORAGE_QUEUE],
+    relationships: [relationships.STORAGE_ACCOUNT_HAS_QUEUE],
+    dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_RESOURCES],
     executionHandler: fetchStorageQueues,
   },
   {
-    id: STEP_RM_STORAGE_TABLES,
+    id: steps.STORAGE_TABLES,
     name: 'Storage Tables',
-    entities: [STORAGE_TABLE_ENTITY_METADATA],
-    relationships: [STORAGE_ACCOUNT_TABLE_RELATIONSHIP_METADATA],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_STORAGE_RESOURCES],
+    entities: [entities.STORAGE_TABLE],
+    relationships: [relationships.STORAGE_ACCOUNT_HAS_TABLE],
+    dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_RESOURCES],
     executionHandler: fetchStorageTables,
   },
 ];

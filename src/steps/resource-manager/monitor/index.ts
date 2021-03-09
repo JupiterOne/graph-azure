@@ -8,7 +8,7 @@ import {
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
-import { STEP_RM_STORAGE_RESOURCES } from '../storage/constants';
+import { steps as storageSteps } from '../storage/constants';
 import { STEP_RM_SUBSCRIPTIONS } from '../subscriptions/constants';
 import { MonitorClient } from './client';
 import {
@@ -74,7 +74,7 @@ export const monitorSteps: Step<
       MonitorRelationships.SUBSCRIPTION_HAS_MONITOR_LOG_PROFILE,
       MonitorRelationships.MONITOR_LOG_PROFILE_USES_STORAGE_ACCOUNT,
     ],
-    dependsOn: [STEP_RM_SUBSCRIPTIONS, STEP_RM_STORAGE_RESOURCES],
+    dependsOn: [STEP_RM_SUBSCRIPTIONS, storageSteps.STORAGE_RESOURCES],
     executionHandler: fetchLogProfiles,
   },
 ];

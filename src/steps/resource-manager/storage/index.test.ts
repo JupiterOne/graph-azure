@@ -5,7 +5,10 @@ import {
 } from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  setupAzureRecording,
+  getMatchRequestsBy,
+} from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE, fetchAccount } from '../../active-directory';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
@@ -113,6 +116,9 @@ describe('rm-storage-resources', () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'resource-manager-step-storage-accounts',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
     });
 
     const { accountEntity, keyVaultEntity } = await getSetupEntities();

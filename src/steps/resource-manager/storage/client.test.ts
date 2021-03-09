@@ -5,16 +5,22 @@ import {
   StorageQueue,
   Table,
   Kind,
+  BlobServiceProperties,
 } from '@azure/arm-storage/esm/models';
 import {
   createMockIntegrationLogger,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
 
-import config from '../../../../test/integrationInstanceConfig';
+import config, {
+  configFromEnv,
+} from '../../../../test/integrationInstanceConfig';
 import { StorageClient } from './client';
 import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  setupAzureRecording,
+  getMatchRequestsBy,
+} from '../../../../test/helpers/recording';
 
 let recording: Recording;
 
@@ -55,6 +61,40 @@ describe('iterateStorageAccounts', () => {
         }),
       }),
     ]);
+  });
+});
+
+describe('getBlobServiceProperties', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'getBlobServiceProperties',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new StorageClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+
+    const b: BlobServiceProperties[] = [];
+    await client.iterateStorageAccounts(async (sa) => {
+      b.push(
+        await client.getBlobServiceProperties({ name: sa.name!, id: sa.id! }),
+      );
+    });
+
+    expect(b).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          deleteRetentionPolicy: {
+            enabled: expect.any(Boolean),
+          },
+        }),
+      ]),
+    );
   });
 });
 

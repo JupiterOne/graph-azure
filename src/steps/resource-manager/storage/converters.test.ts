@@ -3,6 +3,7 @@ import {
   FileShare,
   StorageAccount,
   StorageQueue,
+  BlobServiceProperties,
 } from '@azure/arm-storage/esm/models';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -298,6 +299,15 @@ describe('createStorageAccountEntity BlobStorage', () => {
     },
     type: 'Microsoft.Storage/storageAccounts',
   };
+  const blobServiceProperties: BlobServiceProperties = {
+    id:
+      '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev/blobServices/default',
+    name: 'default',
+    type: 'Microsoft.Storage/storageAccounts/blobServices',
+    cors: { corsRules: [] },
+    deleteRetentionPolicy: { enabled: true, days: 7 },
+    sku: { name: 'Standard_LRS', tier: 'Standard' },
+  };
 
   test('properties transferred', () => {
     const entity = {
@@ -305,7 +315,10 @@ describe('createStorageAccountEntity BlobStorage', () => {
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1devblobstorage',
       _type: 'azure_storage_account',
       _class: ['Service'],
-      _rawData: [{ name: 'default', rawData: data }],
+      _rawData: [
+        { name: 'default', rawData: data },
+        { name: 'blobServiceProperties', rawData: blobServiceProperties },
+      ],
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1devblobstorage',
       name: 'j1devblobstorage',
@@ -335,9 +348,15 @@ describe('createStorageAccountEntity BlobStorage', () => {
       'encryption.keySource': 'Microsoft.Storage',
       networkRuleSetDefaultAction: 'Allow',
       networkRuleSetBypass: 'AzureServices',
+      blobSoftDeleteEnabled: true,
+      blobSoftDeleteRetentionDays: 7,
     };
 
-    const storageAccountEntity = createStorageAccountEntity(webLinker, data);
+    const storageAccountEntity = createStorageAccountEntity(
+      webLinker,
+      data,
+      blobServiceProperties,
+    );
     expect(storageAccountEntity).toMatchGraphObjectSchema({
       _class: entities.STORAGE_ACCOUNT._class,
     });

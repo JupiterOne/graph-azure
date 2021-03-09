@@ -7,12 +7,12 @@ resource "azurerm_key_vault" "j1dev" {
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_enabled         = true
   soft_delete_retention_days  = 7
-  purge_protection_enabled    = false
+  purge_protection_enabled    = true
 
   sku_name = "standard"
 
   network_acls {
-    default_action = "Deny"
+    default_action = "Allow"
     bypass         = "AzureServices"
   }
 
@@ -29,11 +29,33 @@ resource "azurerm_key_vault_access_policy" "j1dev" {
 
   key_permissions = [
     "get",
+    "create",
+    "recover",
+    "delete",
+    "purge",
   ]
 
   secret_permissions = [
     "get",
   ]
+}
+
+resource "azurerm_key_vault_key" "j1dev" {
+  name         = "j1dev"
+  key_vault_id = azurerm_key_vault.j1dev.id
+  key_type     = "RSA"
+  key_size     = 2048
+
+  key_opts = [
+    "decrypt",
+    "encrypt",
+    "sign",
+    "unwrapKey",
+    "verify",
+    "wrapKey",
+  ]
+
+  depends_on = [ azurerm_key_vault_access_policy.j1dev ]
 }
 
 data "azurerm_monitor_diagnostic_categories" "j1dev_key_vault_cat" {

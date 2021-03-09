@@ -36,6 +36,12 @@ resource "azurerm_storage_account" "j1dev" {
   }
 }
 
+resource "azurerm_storage_account_customer_managed_key" "j1dev" {
+  storage_account_id = azurerm_storage_account.j1dev.id
+  key_vault_id       = azurerm_key_vault.j1dev.id
+  key_name           = azurerm_key_vault_key.j1dev.name
+}
+
 resource "azurerm_storage_account" "j1dev_blobstorage" {
   name                     = "${var.developer_id}j1devblobstorage"
   resource_group_name      = azurerm_resource_group.j1dev.name

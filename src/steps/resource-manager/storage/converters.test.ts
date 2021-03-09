@@ -334,6 +334,7 @@ describe('createStorageAccountEntity BlobStorage', () => {
       'tag.environment': 'j1dev',
       'encryption.keySource': 'Microsoft.Storage',
       networkRuleSetDefaultAction: 'Allow',
+      networkRuleSetBypass: 'AzureServices',
     };
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data);

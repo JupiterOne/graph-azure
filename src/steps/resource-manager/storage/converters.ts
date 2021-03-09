@@ -87,6 +87,7 @@ export function createStorageAccountEntity(
             : undefined,
         allowBlobPublicAccess: data.allowBlobPublicAccess,
         networkRuleSetDefaultAction: data.networkRuleSet?.defaultAction,
+        networkRuleSetBypass: data.networkRuleSet?.bypass,
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,

@@ -10,7 +10,8 @@ and this project adheres to
 
 ### Added
 
-- Added `networkRuleSetDefaultAction` property to `azure_storage_account`.
+- Added `networkRuleSetDefaultAction` and `networkRuleSetBypass` properties to
+  `azure_storage_account`.
 
 ### Changed
 

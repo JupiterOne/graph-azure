@@ -1,6 +1,6 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 import { ANY_SCOPE } from '../constants';
-import { STORAGE_ACCOUNT_ENTITY_METADATA } from '../storage/constants';
+import { entities as storageEntities } from '../storage/constants';
 import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions/constants';
 
 export const MonitorSteps = {
@@ -39,7 +39,7 @@ export const MonitorRelationships = {
     _type: 'azure_monitor_log_profile_uses_storage_account',
     sourceType: MonitorEntities.MONITOR_LOG_PROFILE._type,
     _class: RelationshipClass.USES,
-    targetType: STORAGE_ACCOUNT_ENTITY_METADATA._type,
+    targetType: storageEntities.STORAGE_ACCOUNT._type,
   },
 
   AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING: {
@@ -60,13 +60,13 @@ export const MonitorRelationships = {
     _type: 'azure_diagnostic_log_setting_uses_storage_account',
     sourceType: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
     _class: RelationshipClass.USES,
-    targetType: STORAGE_ACCOUNT_ENTITY_METADATA._type,
+    targetType: storageEntities.STORAGE_ACCOUNT._type,
   },
 
   DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT: {
     _type: 'azure_diagnostic_metric_setting_uses_storage_account',
     sourceType: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
     _class: RelationshipClass.USES,
-    targetType: STORAGE_ACCOUNT_ENTITY_METADATA._type,
+    targetType: storageEntities.STORAGE_ACCOUNT._type,
   },
 };

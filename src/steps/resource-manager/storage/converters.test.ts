@@ -13,12 +13,7 @@ import {
   createStorageQueueEntity,
 } from './converters';
 import { Entity } from '@jupiterone/integration-sdk-core';
-import {
-  STORAGE_ACCOUNT_ENTITY_METADATA,
-  STORAGE_CONTAINER_ENTITY_METADATA,
-  STORAGE_FILE_SHARE_ENTITY_METADATA,
-  STORAGE_QUEUE_ENTITY_METADATA,
-} from './constants';
+import { entities } from './constants';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 
@@ -119,7 +114,7 @@ describe('createStorageAccountEntity Storage (Classic)', () => {
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data);
     expect(storageAccountEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_ACCOUNT_ENTITY_METADATA._class,
+      _class: entities.STORAGE_ACCOUNT._class,
       schema: {
         additionalProperties: true,
         properties: {
@@ -240,7 +235,7 @@ describe('createStorageAccountEntity StorageV2', () => {
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data);
     expect(storageAccountEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_ACCOUNT_ENTITY_METADATA._class,
+      _class: entities.STORAGE_ACCOUNT._class,
     });
     expect(storageAccountEntity).toEqual(entity);
   });
@@ -338,11 +333,13 @@ describe('createStorageAccountEntity BlobStorage', () => {
       enableHttpsTrafficOnly: true,
       'tag.environment': 'j1dev',
       'encryption.keySource': 'Microsoft.Storage',
+      networkRuleSetDefaultAction: 'Allow',
+      networkRuleSetBypass: 'AzureServices',
     };
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data);
     expect(storageAccountEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_ACCOUNT_ENTITY_METADATA._class,
+      _class: entities.STORAGE_ACCOUNT._class,
     });
     expect(storageAccountEntity).toEqual(entity);
   });
@@ -432,7 +429,7 @@ describe('createStorageBlobContainerEntity', () => {
       data,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_CONTAINER_ENTITY_METADATA._class,
+      _class: entities.STORAGE_CONTAINER._class,
     });
     expect(storageContainerEntity).toEqual(entity);
   });
@@ -447,7 +444,7 @@ describe('createStorageBlobContainerEntity', () => {
       },
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_CONTAINER_ENTITY_METADATA._class,
+      _class: entities.STORAGE_CONTAINER._class,
     });
     expect(storageContainerEntity).toEqual({
       ...entity,
@@ -469,7 +466,7 @@ describe('createStorageBlobContainerEntity', () => {
       },
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_CONTAINER_ENTITY_METADATA._class,
+      _class: entities.STORAGE_CONTAINER._class,
     });
     expect(storageContainerEntity).toEqual({
       ...entity,
@@ -497,7 +494,7 @@ describe('createStorageBlobContainerEntity', () => {
       data,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_CONTAINER_ENTITY_METADATA._class,
+      _class: entities.STORAGE_CONTAINER._class,
     });
 
     expect(storageContainerEntity).toEqual({
@@ -519,7 +516,7 @@ describe('createStorageBlobContainerEntity', () => {
       data,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_CONTAINER_ENTITY_METADATA._class,
+      _class: entities.STORAGE_CONTAINER._class,
     });
 
     expect(storageContainerEntity).toEqual({
@@ -608,7 +605,7 @@ describe('createStorageFileShareEntity', () => {
       data,
     );
     expect(storageShareEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_FILE_SHARE_ENTITY_METADATA._class,
+      _class: entities.STORAGE_FILE_SHARE._class,
     });
     expect(storageShareEntity).toEqual(entity);
   });
@@ -629,7 +626,7 @@ describe('createStorageFileShareEntity', () => {
       data,
     );
     expect(storageShareEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_FILE_SHARE_ENTITY_METADATA._class,
+      _class: entities.STORAGE_FILE_SHARE._class,
     });
     expect(storageShareEntity).toEqual({
       ...entity,
@@ -650,7 +647,7 @@ describe('createStorageFileShareEntity', () => {
       data,
     );
     expect(storageShareEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_FILE_SHARE_ENTITY_METADATA._class,
+      _class: entities.STORAGE_FILE_SHARE._class,
     });
     expect(storageShareEntity).toEqual({
       ...entity,
@@ -690,7 +687,7 @@ describe('createStorageQueueEntity', () => {
       data,
     );
     expect(storageQueueEntity).toMatchGraphObjectSchema({
-      _class: STORAGE_QUEUE_ENTITY_METADATA._class,
+      _class: entities.STORAGE_QUEUE._class,
     });
     expect(storageQueueEntity).toEqual({
       _key:

@@ -26,10 +26,7 @@ import {
   STEP_RM_CONTAINER_GROUPS,
 } from './constants';
 import { Volume } from '@azure/arm-containerinstance/esm/models';
-import {
-  STEP_RM_STORAGE_RESOURCES,
-  STORAGE_FILE_SHARE_ENTITY_METADATA,
-} from '../storage';
+import { steps as storageSteps, entities as storageEntities } from '../storage';
 export * from './constants';
 
 interface VolumeRelationshipStrategy {
@@ -73,7 +70,7 @@ async function createVolumeFileShareRelationshipHandler(
   jobState: JobState,
 ): Promise<void> {
   await jobState.iterateEntities(
-    { _type: STORAGE_FILE_SHARE_ENTITY_METADATA._type },
+    { _type: storageEntities.STORAGE_FILE_SHARE._type },
     async (storageFileShareEntity) => {
       if (storageFileShareEntity.id) {
         const fileShareRegex =
@@ -239,7 +236,7 @@ export const containerInstanceSteps: Step<
     dependsOn: [
       STEP_AD_ACCOUNT,
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
-      STEP_RM_STORAGE_RESOURCES,
+      storageSteps.STORAGE_RESOURCES,
     ],
     executionHandler: fetchContainerGroups,
   },

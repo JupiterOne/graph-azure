@@ -44,11 +44,7 @@ import {
   STEP_RM_NETWORK_VIRTUAL_NETWORKS,
   STEP_RM_NETWORK_AZURE_FIREWALLS,
 } from './steps/resource-manager/network/constants';
-import {
-  STEP_RM_STORAGE_RESOURCES,
-  STEP_RM_STORAGE_QUEUES,
-  STEP_RM_STORAGE_TABLES,
-} from './steps/resource-manager/storage/constants';
+import { steps as storageSteps } from './steps/resource-manager/storage/constants';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources/constants';
 import { STEP_RM_SUBSCRIPTIONS } from './steps/resource-manager/subscriptions/constants';
 import {
@@ -148,9 +144,9 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_DATABASE_MYSQL_DATABASES,
       STEP_RM_DATABASE_POSTGRESQL_DATABASES,
       STEP_RM_DATABASE_SQL_DATABASES,
-      STEP_RM_STORAGE_RESOURCES,
-      STEP_RM_STORAGE_QUEUES,
-      STEP_RM_STORAGE_TABLES,
+      storageSteps.STORAGE_RESOURCES,
+      storageSteps.STORAGE_QUEUES,
+      storageSteps.STORAGE_TABLES,
       STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,
       STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
       STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS,

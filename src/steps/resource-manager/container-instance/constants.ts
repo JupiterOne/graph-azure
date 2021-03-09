@@ -2,7 +2,7 @@ import {
   generateRelationshipType,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { STORAGE_FILE_SHARE_ENTITY_METADATA } from '../storage';
+import { entities as storageEntities } from '../storage';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 export const STEP_RM_CONTAINER_GROUPS = 'rm-container-groups';
@@ -69,10 +69,10 @@ export const ContainerInstanceRelationships = {
     _type: generateRelationshipType(
       RelationshipClass.USES,
       ContainerInstanceEntities.CONTAINER_VOLUME,
-      STORAGE_FILE_SHARE_ENTITY_METADATA,
+      storageEntities.STORAGE_FILE_SHARE,
     ),
     sourceType: ContainerInstanceEntities.CONTAINER_VOLUME._type,
     _class: RelationshipClass.USES,
-    targetType: STORAGE_FILE_SHARE_ENTITY_METADATA._type,
+    targetType: storageEntities.STORAGE_FILE_SHARE._type,
   },
 };

@@ -14,13 +14,7 @@ import {
 import { AzureWebLinker } from '../../../azure';
 import { resourceGroupName } from '../../../azure/utils';
 import flatten from '../utils/flatten';
-import {
-  STORAGE_ACCOUNT_ENTITY_METADATA,
-  STORAGE_CONTAINER_ENTITY_METADATA,
-  STORAGE_FILE_SHARE_ENTITY_METADATA,
-  STORAGE_QUEUE_ENTITY_METADATA,
-  STORAGE_TABLE_ENTITY_METADATA,
-} from './constants';
+import { entities } from './constants';
 
 /**
  * J1 entity properties cannot be arrays of objects; create an array of string endpoints
@@ -64,8 +58,8 @@ export function createStorageAccountEntity(
       source: data,
       assign: {
         _key: data.id,
-        _type: STORAGE_ACCOUNT_ENTITY_METADATA._type,
-        _class: STORAGE_ACCOUNT_ENTITY_METADATA._class,
+        _type: entities.STORAGE_ACCOUNT._type,
+        _class: entities.STORAGE_ACCOUNT._class,
         displayName: data.name,
         webLink: webLinker.portalResourceUrl(data.id),
         region: data.location,
@@ -92,6 +86,8 @@ export function createStorageAccountEntity(
             ? encryptedServices.queue?.enabled
             : undefined,
         allowBlobPublicAccess: data.allowBlobPublicAccess,
+        networkRuleSetDefaultAction: data.networkRuleSet?.defaultAction,
+        networkRuleSetBypass: data.networkRuleSet?.bypass,
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,
@@ -122,8 +118,8 @@ export function createStorageContainerEntity(
     entityData: {
       source: data,
       assign: {
-        _type: STORAGE_CONTAINER_ENTITY_METADATA._type,
-        _class: STORAGE_CONTAINER_ENTITY_METADATA._class,
+        _type: entities.STORAGE_CONTAINER._type,
+        _class: entities.STORAGE_CONTAINER._class,
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
         public: !!(
@@ -153,8 +149,8 @@ export function createStorageFileShareEntity(
     entityData: {
       source: data,
       assign: {
-        _type: STORAGE_FILE_SHARE_ENTITY_METADATA._type,
-        _class: STORAGE_FILE_SHARE_ENTITY_METADATA._class,
+        _type: entities.STORAGE_FILE_SHARE._type,
+        _class: entities.STORAGE_FILE_SHARE._class,
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
         classification: null,
@@ -173,8 +169,8 @@ export function createStorageQueueEntity(
     entityData: {
       source: data,
       assign: {
-        _type: STORAGE_QUEUE_ENTITY_METADATA._type,
-        _class: STORAGE_QUEUE_ENTITY_METADATA._class,
+        _type: entities.STORAGE_QUEUE._type,
+        _class: entities.STORAGE_QUEUE._class,
         webLink: webLinker.portalResourceUrl(data.id),
         name: data.name,
         displayName: data.name,
@@ -195,8 +191,8 @@ export function createStorageTableEntity(
     entityData: {
       source: data,
       assign: {
-        _type: STORAGE_TABLE_ENTITY_METADATA._type,
-        _class: STORAGE_TABLE_ENTITY_METADATA._class,
+        _type: entities.STORAGE_TABLE._type,
+        _class: entities.STORAGE_TABLE._class,
         webLink: webLinker.portalResourceUrl(data.id),
         name: data.name,
         displayName: data.name,

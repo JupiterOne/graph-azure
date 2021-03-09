@@ -333,6 +333,7 @@ describe('createStorageAccountEntity BlobStorage', () => {
       enableHttpsTrafficOnly: true,
       'tag.environment': 'j1dev',
       'encryption.keySource': 'Microsoft.Storage',
+      networkRuleSetDefaultAction: 'Allow',
     };
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data);

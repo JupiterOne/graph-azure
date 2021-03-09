@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `networkRuleSetDefaultAction` property to `azure_storage_account`.
+
 ### Changed
 
 - [#230](https://github.com/JupiterOne/graph-azure/issues/230) - Change job log

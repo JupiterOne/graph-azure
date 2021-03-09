@@ -86,6 +86,7 @@ export function createStorageAccountEntity(
             ? encryptedServices.queue?.enabled
             : undefined,
         allowBlobPublicAccess: data.allowBlobPublicAccess,
+        networkRuleSetDefaultAction: data.networkRuleSet?.defaultAction,
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,

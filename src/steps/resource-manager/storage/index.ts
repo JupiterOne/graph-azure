@@ -41,8 +41,16 @@ export async function fetchStorageResources(
   const keyVaultEntityMap = await buildKeyVaultEntityMap(executionContext);
 
   await client.iterateStorageAccounts(async (storageAccount) => {
+    const storageBlobServiceProperties = await client.getBlobServiceProperties({
+      name: storageAccount.name!,
+      id: storageAccount.id!,
+    });
     const storageAccountEntity = await jobState.addEntity(
-      createStorageAccountEntity(webLinker, storageAccount),
+      createStorageAccountEntity(
+        webLinker,
+        storageAccount,
+        storageBlobServiceProperties,
+      ),
     );
     await createResourceGroupResourceRelationship(
       executionContext,

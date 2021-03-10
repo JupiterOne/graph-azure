@@ -5,10 +5,12 @@ import {
   StorageQueue,
   Table,
   Endpoints,
+  BlobServiceProperties,
 } from '@azure/arm-storage/esm/models';
 import {
   createIntegrationEntity,
   Entity,
+  setRawData,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
@@ -51,9 +53,10 @@ function getArrayOfStorageAccountEndpoints(
 export function createStorageAccountEntity(
   webLinker: AzureWebLinker,
   data: StorageAccount,
+  storageBlobServiceProperties: BlobServiceProperties,
 ): Entity {
   const encryptedServices = data.encryption?.services;
-  return createIntegrationEntity({
+  const storageAccountEntity = createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
@@ -88,6 +91,10 @@ export function createStorageAccountEntity(
         allowBlobPublicAccess: data.allowBlobPublicAccess,
         networkRuleSetDefaultAction: data.networkRuleSet?.defaultAction,
         networkRuleSetBypass: data.networkRuleSet?.bypass,
+        blobSoftDeleteEnabled:
+          storageBlobServiceProperties?.deleteRetentionPolicy?.enabled,
+        blobSoftDeleteRetentionDays:
+          storageBlobServiceProperties?.deleteRetentionPolicy?.days,
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,
@@ -98,6 +105,12 @@ export function createStorageAccountEntity(
       tagProperties: ['environment'],
     },
   });
+  setRawData(storageAccountEntity, {
+    name: 'blobServiceProperties',
+    rawData: storageBlobServiceProperties,
+  });
+
+  return storageAccountEntity;
 }
 
 /**

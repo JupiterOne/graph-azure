@@ -27,6 +27,7 @@ import {
   GROUP_MEMBER_RELATIONSHIP_TYPE,
   GROUP_MEMBER_ENTITY_CLASS,
 } from './constants';
+import { filterGraphObjects } from '../../../test/helpers/filterGraphObjects';
 
 let recording: Recording;
 
@@ -99,23 +100,6 @@ function separateActiveDirectoryRelationships(relationships: Relationship[]) {
     mappedGroupMemberRelationships,
     restRelationships: restAfterMappedGroupMembers,
   };
-}
-
-function filterGraphObjects<T = Entity | Relationship>(
-  graphObjects: T[],
-  filter: (graphObject: T) => boolean,
-): { targets: T[]; rest: T[] } {
-  const targets: T[] = [];
-  const rest: T[] = [];
-
-  for (const graphObject of graphObjects) {
-    if (filter(graphObject)) {
-      targets.push(graphObject);
-    } else {
-      rest.push(graphObject);
-    }
-  }
-  return { targets, rest };
 }
 
 test('active directory steps', async () => {

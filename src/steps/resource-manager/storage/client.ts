@@ -6,6 +6,7 @@ import {
   Table,
   StorageQueue,
   Kind,
+  BlobServicesGetServicePropertiesResponse,
 } from '@azure/arm-storage/esm/models';
 
 import {
@@ -28,6 +29,21 @@ export class StorageClient extends Client {
       resourceDescription: 'storage.storageAccounts',
       callback,
     });
+  }
+
+  public async getBlobServiceProperties(storageAccount: {
+    name: string;
+    id: string;
+  }): Promise<BlobServicesGetServicePropertiesResponse> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      StorageManagementClient,
+    );
+    const resourceGroup = resourceGroupName(storageAccount.id, true)!;
+    const accountName = storageAccount.name;
+    return serviceClient.blobServices.getServiceProperties(
+      resourceGroup,
+      accountName,
+    );
   }
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */

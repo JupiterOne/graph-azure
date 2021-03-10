@@ -1,4 +1,12 @@
 import { IntegrationConfig } from '../src/types';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+if (process.env.LOAD_ENV) {
+  dotenv.config({
+    path: path.join(__dirname, '../.env'),
+  });
+}
 
 // TODO use polly matching to find/replace configuration variables in files
 // in order to allow multiple devs to generate recordings & test files.

@@ -8,8 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.14.1 - 2021-03-10
+
 ### Added
 
+- Added `blobSoftDeleteEnabled` and `blobSoftDeleteRetentionDays` to
+  `azure_storage_account`
 - Added `networkRuleSetDefaultAction` and `networkRuleSetBypass` properties to
   `azure_storage_account`.
 

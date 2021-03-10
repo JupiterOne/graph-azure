@@ -80,7 +80,33 @@ export function getMatchRequestsBy({ config }: { config: IntegrationConfig }) {
     headers: false,
     url: {
       pathname: (pathname) => {
-        return pathname.replace(config.directoryId, 'directory-id');
+        pathname = pathname.replace(config.directoryId, 'directory-id');
+        if (!(pathname as string).startsWith('//subscriptions')) {
+          // Paths that start with `//subscriptions` are an indication that an _exact_ resource ID was used to
+          // create the request, meaning the REST endpoint originated from an earlier API response.
+          //
+          // ``` typescript
+          // const resourceId = '/subscriptions/<s-id>/resourceGroups/<rg-id>/providers/Microsoft.KeyVault/vaults/<kv-id>
+          // const path = `https://management.azure.com/${resourceId}/providers/microsoft.insights/diagnosticSettings`;
+          // const response = await fetch(path);
+          // ```
+          //
+          // Paths that do _not_ start with `//subscriptions`, but contain a subscription ID, may be
+          // fetching all resources for a subscription, meaning the REST endpoint originated from the
+          // instance config (and should be replaced in the recording).
+          //
+          // ``` typescript
+          // const resourceGroupName = 'j1dev';
+          // const keyVaultName = 'ndowmon11-j1dev';
+          // const path = `https://management.azure.com/subscriptions/${config.subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.KeyVault/vaults/${keyVaultName}`;
+          // const response = await fetch(path);
+          // ``
+          pathname = pathname.replace(
+            config.subscriptionId || 'subscription-id',
+            'subscription-id',
+          );
+        }
+        return pathname;
       },
     },
   };

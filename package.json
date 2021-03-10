@@ -4,9 +4,8 @@
   "description": "A graph conversion tool for https://azure.microsoft.com/.",
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/graph-azure",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "MPL-2.0",
   "files": [
-    "LICENSE",
     "dist"
   ],
   "publishConfig": {

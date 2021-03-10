@@ -22,7 +22,6 @@
     "type-check": "tsc",
     "test": "LOAD_ENV=1 jest",
     "test:ci": "yarn lint && yarn type-check && yarn jest",
-    "prebuild": "yarn test:ci",
     "prepush": "yarn test:ci",
     "build": "tsc -p tsconfig.dist.json --declaration",
     "prepack": "yarn build",

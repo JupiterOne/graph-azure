@@ -53,7 +53,7 @@ function getArrayOfStorageAccountEndpoints(
 export function createStorageAccountEntity(
   webLinker: AzureWebLinker,
   data: StorageAccount,
-  storageBlobServiceProperties?: BlobServiceProperties,
+  storageBlobServiceProperties: BlobServiceProperties,
 ): Entity {
   const encryptedServices = data.encryption?.services;
   const storageAccountEntity = createIntegrationEntity({
@@ -105,12 +105,10 @@ export function createStorageAccountEntity(
       tagProperties: ['environment'],
     },
   });
-  if (storageBlobServiceProperties) {
-    setRawData(storageAccountEntity, {
-      name: 'blobServiceProperties',
-      rawData: storageBlobServiceProperties,
-    });
-  }
+  setRawData(storageAccountEntity, {
+    name: 'blobServiceProperties',
+    rawData: storageBlobServiceProperties,
+  });
 
   return storageAccountEntity;
 }

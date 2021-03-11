@@ -3,7 +3,8 @@ import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault/constants';
 
 // Step IDs
 export const steps = {
-  STORAGE_RESOURCES: 'rm-storage-resources',
+  STORAGE_ACCOUNTS: 'rm-storage-resources',
+  STORAGE_CONTAINERS: 'rm-storage-containers',
   STORAGE_QUEUES: 'rm-storage-queues',
   STORAGE_TABLES: 'rm-storage-tables',
 };

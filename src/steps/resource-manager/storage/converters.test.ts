@@ -240,9 +240,14 @@ describe('createStorageBlobContainerEntity', () => {
   };
 
   test('properties transferred', () => {
-    const storageContainerEntity = createStorageContainerEntity(
+    const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
+      {},
+    );
+    const storageContainerEntity = createStorageContainerEntity(
+      webLinker,
+      storageAccountEntity,
       data,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
@@ -252,9 +257,14 @@ describe('createStorageBlobContainerEntity', () => {
   });
 
   test('public container', () => {
-    const storageContainerEntity = createStorageContainerEntity(
+    const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
+      {},
+    );
+    const storageContainerEntity = createStorageContainerEntity(
+      webLinker,
+      storageAccountEntity,
       {
         ...data,
         publicAccess: 'Container',
@@ -274,9 +284,14 @@ describe('createStorageBlobContainerEntity', () => {
   });
 
   test('public blob', () => {
-    const storageContainerEntity = createStorageContainerEntity(
+    const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
+      {},
+    );
+    const storageContainerEntity = createStorageContainerEntity(
+      webLinker,
+      storageAccountEntity,
       {
         ...data,
         publicAccess: 'Blob',
@@ -295,8 +310,39 @@ describe('createStorageBlobContainerEntity', () => {
     });
   });
 
-  test('encryption not enabled', () => {
+  test('encryption enabled', () => {
+    const storageAccountEntity = createStorageAccountEntity(
+      webLinker,
+      {
+        ...storageAccount,
+        encryption: {
+          keySource: 'Microsoft.Storage',
+          services: {
+            ...storageAccount.encryption?.services,
+            blob: { enabled: true },
+          },
+        },
+      },
+      {},
+    );
+
     const storageContainerEntity = createStorageContainerEntity(
+      webLinker,
+      storageAccountEntity,
+      data,
+    );
+    expect(storageContainerEntity).toMatchGraphObjectSchema({
+      _class: entities.STORAGE_CONTAINER._class,
+    });
+
+    expect(storageContainerEntity).toEqual({
+      ...entity,
+      encrypted: true,
+    });
+  });
+
+  test('encryption not enabled', () => {
+    const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       {
         ...storageAccount,
@@ -308,6 +354,12 @@ describe('createStorageBlobContainerEntity', () => {
           },
         },
       },
+      {},
+    );
+
+    const storageContainerEntity = createStorageContainerEntity(
+      webLinker,
+      storageAccountEntity,
       data,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
@@ -321,15 +373,17 @@ describe('createStorageBlobContainerEntity', () => {
   });
 
   test('encryption service not provided', () => {
-    const storageContainerEntity = createStorageContainerEntity(
+    const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       {
         ...storageAccount,
-        encryption: {
-          keySource: 'Microsoft.Storage',
-          services: {},
-        },
+        encryption: { keySource: 'Microsoft.Storage', services: {} },
       },
+      {},
+    );
+    const storageContainerEntity = createStorageContainerEntity(
+      webLinker,
+      storageAccountEntity,
       data,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({

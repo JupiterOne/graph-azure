@@ -98,7 +98,7 @@ export const RESOURCE_ID_TYPES_MAP: ResourceIdMap[] = [
         EOL_MATCHER,
     ),
     _type: storageEntities.STORAGE_ACCOUNT._type,
-    dependsOn: [storageSteps.STORAGE_RESOURCES],
+    dependsOn: [storageSteps.STORAGE_ACCOUNTS],
   },
   {
     resourceIdMatcher: new RegExp(

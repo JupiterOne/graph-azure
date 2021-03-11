@@ -74,7 +74,7 @@ export const monitorSteps: Step<
       MonitorRelationships.SUBSCRIPTION_HAS_MONITOR_LOG_PROFILE,
       MonitorRelationships.MONITOR_LOG_PROFILE_USES_STORAGE_ACCOUNT,
     ],
-    dependsOn: [STEP_RM_SUBSCRIPTIONS, storageSteps.STORAGE_RESOURCES],
+    dependsOn: [STEP_RM_SUBSCRIPTIONS, storageSteps.STORAGE_ACCOUNTS],
     executionHandler: fetchLogProfiles,
   },
 ];

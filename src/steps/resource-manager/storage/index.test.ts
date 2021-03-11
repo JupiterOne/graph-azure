@@ -1,7 +1,8 @@
 import {
-  fetchStorageResources,
+  fetchStorageAccounts,
   fetchStorageQueues,
   fetchStorageTables,
+  fetchStorageContainers,
 } from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
@@ -25,7 +26,7 @@ afterEach(async () => {
   }
 });
 
-describe('rm-storage-resources', () => {
+describe('rm-storage-accounts', () => {
   async function getSetupEntities() {
     const setupContext = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -57,11 +58,6 @@ describe('rm-storage-resources', () => {
       rest,
       (e) => e._type === entities.STORAGE_ACCOUNT._type,
     ));
-    let storageContainerEntities: Entity[] = [];
-    ({ targets: storageContainerEntities, rest } = filterGraphObjects(
-      rest,
-      (e) => e._type === entities.STORAGE_CONTAINER._type,
-    ));
     let storageFileShareEntities: Entity[] = [];
     ({ targets: storageFileShareEntities, rest } = filterGraphObjects(
       rest,
@@ -70,7 +66,6 @@ describe('rm-storage-resources', () => {
 
     return {
       storageAccountEntities,
-      storageContainerEntities,
       storageFileShareEntities,
       rest,
     };
@@ -80,14 +75,6 @@ describe('rm-storage-resources', () => {
     collectedRelationships: Relationship[],
   ) {
     let rest: Relationship[] = collectedRelationships;
-    let storageAccountContainerRelationships: Relationship[] = [];
-    ({
-      targets: storageAccountContainerRelationships,
-      rest,
-    } = filterGraphObjects(
-      rest,
-      (e) => e._type === relationships.STORAGE_ACCOUNT_HAS_CONTAINER._type,
-    ));
     let storageAccountFileShareRelationships: Relationship[] = [];
     ({
       targets: storageAccountFileShareRelationships,
@@ -106,7 +93,6 @@ describe('rm-storage-resources', () => {
     ));
 
     return {
-      storageAccountContainerRelationships,
       storageAccountFileShareRelationships,
       storageAccountKeyVaultRelationships,
       rest,
@@ -131,11 +117,10 @@ describe('rm-storage-resources', () => {
       },
     });
 
-    await fetchStorageResources(context);
+    await fetchStorageAccounts(context);
 
     const {
       storageAccountEntities,
-      storageContainerEntities,
       storageFileShareEntities,
       rest: restEntities,
     } = separateStorageEntities(context.jobState.collectedEntities);
@@ -143,11 +128,6 @@ describe('rm-storage-resources', () => {
     expect(storageAccountEntities.length).toBeGreaterThan(0);
     expect(storageAccountEntities).toMatchGraphObjectSchema({
       _class: entities.STORAGE_ACCOUNT._class,
-    });
-
-    expect(storageContainerEntities.length).toBeGreaterThan(0);
-    expect(storageContainerEntities).toMatchGraphObjectSchema({
-      _class: entities.STORAGE_CONTAINER._class,
     });
 
     expect(storageFileShareEntities.length).toBeGreaterThan(0);
@@ -158,16 +138,10 @@ describe('rm-storage-resources', () => {
     expect(restEntities.length).toBe(0);
 
     const {
-      storageAccountContainerRelationships,
       storageAccountFileShareRelationships,
       storageAccountKeyVaultRelationships,
       rest: restRelationships,
     } = separateStorageRelationships(context.jobState.collectedRelationships);
-
-    expect(storageAccountContainerRelationships.length).toBeGreaterThan(0);
-    expect(
-      storageAccountContainerRelationships,
-    ).toMatchDirectRelationshipSchema({});
 
     expect(storageAccountFileShareRelationships.length).toBeGreaterThan(0);
     expect(
@@ -181,6 +155,70 @@ describe('rm-storage-resources', () => {
 
     expect(restRelationships.length).toBe(0);
   });
+});
+
+describe.only('rm-storage-containers', () => {
+  async function getSetupEntities() {
+    const setupContext = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+    });
+
+    await fetchAccount(setupContext);
+    const accountEntities = setupContext.jobState.collectedEntities.filter(
+      (e) => e._type === ACCOUNT_ENTITY_TYPE,
+    );
+    expect(accountEntities.length).toBe(1);
+    const accountEntity = accountEntities[0];
+
+    await fetchStorageAccounts(setupContext);
+    console.log(setupContext.jobState.collectedEntities);
+    const j1devStorageAccountEntities = setupContext.jobState.collectedEntities.filter(
+      (e) =>
+        e._type === entities.STORAGE_ACCOUNT._type &&
+        e.displayName?.endsWith('j1dev'),
+    );
+    expect(j1devStorageAccountEntities.length).toBe(1);
+    const storageAccountEntity = j1devStorageAccountEntities[0];
+
+    return { accountEntity, storageAccountEntity };
+  }
+
+  test('step', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-storage-containers',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity, storageAccountEntity } = await getSetupEntities();
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [storageAccountEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchStorageContainers(context);
+
+    const storageContainerEntities = context.jobState.collectedEntities;
+
+    expect(storageContainerEntities.length).toBeGreaterThan(0);
+    expect(storageContainerEntities).toMatchGraphObjectSchema({
+      _class: entities.STORAGE_CONTAINER._class,
+    });
+
+    const storageAccountContainerRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(storageAccountContainerRelationships.length).toBeGreaterThan(0);
+    expect(
+      storageAccountContainerRelationships,
+    ).toMatchDirectRelationshipSchema({});
+  }, 20000);
 });
 
 test('step - storage queues', async () => {

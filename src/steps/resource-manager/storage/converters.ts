@@ -124,7 +124,7 @@ export function createStorageAccountEntity(
  */
 export function createStorageContainerEntity(
   webLinker: AzureWebLinker,
-  account: StorageAccount,
+  storageAccountEntity: Entity,
   data: BlobContainer,
 ): Entity {
   return createIntegrationEntity({
@@ -140,7 +140,7 @@ export function createStorageContainerEntity(
         ),
         publicAccess: data.publicAccess,
         classification: null,
-        encrypted: !!account.encryption?.services?.blob?.enabled,
+        encrypted: storageAccountEntity.encryptedBlob || false,
       },
     },
   });

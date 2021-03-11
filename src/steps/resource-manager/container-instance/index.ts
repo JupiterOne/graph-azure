@@ -236,7 +236,7 @@ export const containerInstanceSteps: Step<
     dependsOn: [
       STEP_AD_ACCOUNT,
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
-      storageSteps.STORAGE_RESOURCES,
+      storageSteps.STORAGE_ACCOUNTS,
     ],
     executionHandler: fetchContainerGroups,
   },

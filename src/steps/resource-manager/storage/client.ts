@@ -46,9 +46,11 @@ export class StorageClient extends Client {
     );
   }
 
-  /* eslint-disable @typescript-eslint/no-non-null-assertion */
   public async iterateStorageBlobContainers(
-    storageAccount: StorageAccount,
+    storageAccount: {
+      name: string;
+      id: string;
+    },
     callback: (e: BlobContainer) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(

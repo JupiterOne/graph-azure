@@ -470,9 +470,14 @@ describe('createStorageFileShareEntity', () => {
   };
 
   test('properties transferred', () => {
-    const storageShareEntity = createStorageFileShareEntity(
+    const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
+      {},
+    );
+    const storageShareEntity = createStorageFileShareEntity(
+      webLinker,
+      storageAccountEntity,
       data,
     );
     expect(storageShareEntity).toMatchGraphObjectSchema({
@@ -482,7 +487,7 @@ describe('createStorageFileShareEntity', () => {
   });
 
   test('encryption not enabled', () => {
-    const storageShareEntity = createStorageFileShareEntity(
+    const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       {
         ...storageAccount,
@@ -494,6 +499,11 @@ describe('createStorageFileShareEntity', () => {
           },
         },
       },
+      {},
+    );
+    const storageShareEntity = createStorageFileShareEntity(
+      webLinker,
+      storageAccountEntity,
       data,
     );
     expect(storageShareEntity).toMatchGraphObjectSchema({
@@ -506,15 +516,17 @@ describe('createStorageFileShareEntity', () => {
   });
 
   test('encryption service not provided', () => {
-    const storageShareEntity = createStorageFileShareEntity(
+    const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       {
         ...storageAccount,
-        encryption: {
-          keySource: 'Microsoft.Storage',
-          services: {},
-        },
+        encryption: { keySource: 'Microsoft.Storage', services: {} },
       },
+      {},
+    );
+    const storageShareEntity = createStorageFileShareEntity(
+      webLinker,
+      storageAccountEntity,
       data,
     );
     expect(storageShareEntity).toMatchGraphObjectSchema({

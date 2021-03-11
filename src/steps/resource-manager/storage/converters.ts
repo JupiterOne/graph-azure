@@ -155,7 +155,7 @@ export function createStorageContainerEntity(
  */
 export function createStorageFileShareEntity(
   webLinker: AzureWebLinker,
-  account: StorageAccount,
+  storageAccountEntity: Entity,
   data: FileShare,
 ): Entity {
   return createIntegrationEntity({
@@ -167,7 +167,7 @@ export function createStorageFileShareEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
         classification: null,
-        encrypted: !!account.encryption?.services?.file?.enabled,
+        encrypted: storageAccountEntity.encryptedFileShare || false,
       },
     },
   });

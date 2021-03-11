@@ -5,6 +5,7 @@ import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault/constants';
 export const steps = {
   STORAGE_ACCOUNTS: 'rm-storage-resources',
   STORAGE_CONTAINERS: 'rm-storage-containers',
+  STORAGE_FILE_SHARES: 'rm-storage-file-shares',
   STORAGE_QUEUES: 'rm-storage-queues',
   STORAGE_TABLES: 'rm-storage-tables',
 };

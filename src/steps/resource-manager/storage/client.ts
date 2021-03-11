@@ -176,7 +176,10 @@ export class StorageClient extends Client {
   }
 
   public async iterateFileShares(
-    storageAccount: StorageAccount,
+    storageAccount: {
+      name: string;
+      id: string;
+    },
     callback: (e: FileShare) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(

@@ -146,6 +146,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_DATABASE_SQL_DATABASES,
       storageSteps.STORAGE_ACCOUNTS,
       storageSteps.STORAGE_CONTAINERS,
+      storageSteps.STORAGE_FILE_SHARES,
       storageSteps.STORAGE_QUEUES,
       storageSteps.STORAGE_TABLES,
       STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,

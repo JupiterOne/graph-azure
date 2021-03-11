@@ -7,7 +7,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
+import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
 import { StorageClient } from './client';
@@ -55,15 +55,6 @@ export async function fetchStorageAccounts(
     await createResourceGroupResourceRelationship(
       executionContext,
       storageAccountEntity,
-    );
-
-    await synchronizeStorageAccount(
-      executionContext,
-      accountEntity,
-      webLinker,
-      storageAccount,
-      storageAccountEntity,
-      client,
     );
 
     if (storageAccountUsesKeyVault(storageAccount)) {
@@ -148,94 +139,43 @@ async function associateStorageAccountWithKeyVault(
   );
 }
 
-async function synchronizeStorageAccount(
-  context: IntegrationStepContext,
-  accountEntity: Entity,
-  webLinker: AzureWebLinker,
-  storageAccount: StorageAccount,
-  storageAccountEntity: Entity,
-  client: StorageClient,
+export async function fetchStorageFileShares(
+  executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { logger } = context;
+  const { instance, logger, jobState } = executionContext;
+  const client = new StorageClient(instance.config, logger);
 
-  const storageAccountLogInfo = {
-    storageAccount: {
-      id: storageAccount.id,
-      kind: storageAccount.kind,
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  await jobState.iterateEntities(
+    { _type: entities.STORAGE_ACCOUNT._type },
+    async (storageAccountEntity) => {
+      await client.iterateFileShares(
+        (storageAccountEntity as unknown) as {
+          name: string;
+          id: string;
+        },
+        async (fileShare) => {
+          const fileShareEntity = createStorageFileShareEntity(
+            webLinker,
+            storageAccountEntity,
+            fileShare,
+          );
+
+          await jobState.addEntity(fileShareEntity);
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: storageAccountEntity,
+              to: fileShareEntity,
+            }),
+          );
+        },
+      );
     },
-  };
-
-  if (storageAccount.primaryEndpoints) {
-    for (const s of Object.keys(storageAccount.primaryEndpoints)) {
-      const logInfo = { ...storageAccountLogInfo, service: s };
-
-      const synchronizer = storageServiceSynchronizers[s];
-      if (synchronizer) {
-        logger.info(logInfo, 'Processing storage account service...');
-        await synchronizer(
-          context,
-          accountEntity,
-          webLinker,
-          storageAccount,
-          storageAccountEntity,
-          client,
-        );
-      } else {
-        logger.warn(logInfo, 'Unhandled storage account service!');
-      }
-    }
-  } else {
-    logger.info(
-      storageAccountLogInfo,
-      'Storage account has no registered service endpoints, nothing to synchronize',
-    );
-  }
-}
-
-const storageServiceSynchronizers: {
-  [service: string]: (
-    context: IntegrationStepContext,
-    accountEntity: Entity,
-    webLinker: AzureWebLinker,
-    storageAccount: StorageAccount,
-    storageAccountEntity: Entity,
-    client: StorageClient,
-  ) => Promise<void>;
-} = {
-  file: synchronizeFileStorage,
-};
-
-/**
- * Synchronize File Shares in the File storage service. The service entity is
- * created whether or not there are any File Shares.
- */
-async function synchronizeFileStorage(
-  context: IntegrationStepContext,
-  accountEntity: Entity,
-  webLinker: AzureWebLinker,
-  storageAccount: StorageAccount,
-  storageAccountEntity: Entity,
-  client: StorageClient,
-): Promise<void> {
-  const { jobState } = context;
-
-  await client.iterateFileShares(storageAccount, async (e) => {
-    const fileShareEntity = createStorageFileShareEntity(
-      webLinker,
-      storageAccount,
-      e,
-    );
-
-    await jobState.addEntity(fileShareEntity);
-
-    await jobState.addRelationship(
-      createDirectRelationship({
-        _class: RelationshipClass.HAS,
-        from: storageAccountEntity,
-        to: fileShareEntity,
-      }),
-    );
-  });
+  );
 }
 
 export async function fetchStorageContainers(
@@ -363,12 +303,11 @@ export const storageSteps: Step<
   {
     id: steps.STORAGE_ACCOUNTS,
     name: 'Storage Accounts',
-    entities: [entities.STORAGE_ACCOUNT, entities.STORAGE_FILE_SHARE],
+    entities: [entities.STORAGE_ACCOUNT],
     relationships: [
       createResourceGroupResourceRelationshipMetadata(
         entities.STORAGE_ACCOUNT._type,
       ),
-      relationships.STORAGE_ACCOUNT_HAS_FILE_SHARE,
       relationships.STORAGE_ACCOUNT_USES_KEY_VAULT,
     ],
     dependsOn: [
@@ -377,6 +316,14 @@ export const storageSteps: Step<
       STEP_RM_KEYVAULT_VAULTS,
     ],
     executionHandler: fetchStorageAccounts,
+  },
+  {
+    id: steps.STORAGE_FILE_SHARES,
+    name: 'Storage File Shares',
+    entities: [entities.STORAGE_FILE_SHARE],
+    relationships: [relationships.STORAGE_ACCOUNT_HAS_FILE_SHARE],
+    dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_ACCOUNTS],
+    executionHandler: fetchStorageFileShares,
   },
   {
     id: steps.STORAGE_CONTAINERS,

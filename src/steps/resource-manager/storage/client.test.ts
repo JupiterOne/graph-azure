@@ -15,7 +15,7 @@ import {
 import config, {
   configFromEnv,
 } from '../../../../test/integrationInstanceConfig';
-import { StorageClient } from './client';
+import { StorageClient, createStorageAccountServiceClient } from './client';
 import { IntegrationConfig } from '../../../types';
 import {
   setupAzureRecording,
@@ -61,6 +61,59 @@ describe('iterateStorageAccounts', () => {
         }),
       }),
     ]);
+  });
+});
+
+describe('createStorageAccountServiceClient', () => {
+  async function getSetupData(integrationConfig: IntegrationConfig) {
+    const client = new StorageClient(
+      integrationConfig,
+      createMockIntegrationLogger(),
+    );
+
+    const storageAccounts: StorageAccount[] = [];
+    await client.iterateStorageAccounts((sa) => {
+      storageAccounts.push(sa);
+    });
+
+    const j1devStorageAccounts = storageAccounts.filter((sa) =>
+      sa.name?.endsWith('j1dev'),
+    );
+    expect(j1devStorageAccounts.length).toBe(1);
+    const storageAccount = j1devStorageAccounts[0];
+    return { storageAccount };
+  }
+
+  describe('getBlobServiceProperties', () => {
+    test('success', async () => {
+      recording = setupAzureRecording({
+        directory: __dirname,
+        name: 'storageAccountServiceClient-getBlobServiceProperties',
+        options: {
+          matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        },
+      });
+
+      const { storageAccount } = await getSetupData(configFromEnv);
+      const storageAccountServiceClient = createStorageAccountServiceClient({
+        config: configFromEnv,
+        logger: createMockIntegrationLogger(),
+        storageAccountName: storageAccount.name!,
+      });
+
+      const response = await storageAccountServiceClient.getBlobServiceProperties();
+
+      expect(response).toMatchObject({
+        blobAnalyticsLogging: {
+          read: expect.any(Boolean),
+          write: expect.any(Boolean),
+          deleteProperty: expect.any(Boolean),
+        },
+        deleteRetentionPolicy: {
+          enabled: expect.any(Boolean),
+        },
+      });
+    });
   });
 });
 

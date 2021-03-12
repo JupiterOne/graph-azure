@@ -1,5 +1,9 @@
 import { StorageManagementClient } from '@azure/arm-storage';
 import {
+  BlobServiceClient,
+  ServiceGetPropertiesResponse,
+} from '@azure/storage-blob';
+import {
   BlobContainer,
   FileShare,
   StorageAccount,
@@ -14,6 +18,34 @@ import {
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
+import { IntegrationConfig } from '../../../types';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
+import { ClientSecretCredential } from '@azure/identity';
+
+export function createStorageAccountServiceClient(options: {
+  config: IntegrationConfig;
+  logger: IntegrationLogger;
+  storageAccountName: string;
+}) {
+  const { config, storageAccountName } = options;
+  const credential = new ClientSecretCredential(
+    config.directoryId,
+    config.clientId,
+    config.clientSecret,
+  );
+
+  return {
+    getBlobServiceProperties: async (): Promise<
+      ServiceGetPropertiesResponse
+    > => {
+      const client = new BlobServiceClient(
+        `https://${storageAccountName}.blob.core.windows.net`,
+        credential,
+      );
+      return client.getProperties();
+    },
+  };
+}
 
 export class StorageClient extends Client {
   public async iterateStorageAccounts(

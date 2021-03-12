@@ -10,7 +10,7 @@ import {
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
-import { StorageClient } from './client';
+import { StorageClient, createStorageAccountServiceClient } from './client';
 import { steps, entities, relationships } from './constants';
 import {
   createStorageContainerEntity,
@@ -41,10 +41,13 @@ export async function fetchStorageAccounts(
   const keyVaultEntityMap = await buildKeyVaultEntityMap(executionContext);
 
   await client.iterateStorageAccounts(async (storageAccount) => {
-    const storageBlobServiceProperties = await client.getBlobServiceProperties({
-      name: storageAccount.name!,
-      id: storageAccount.id!,
+    const storageAccountServiceClient = createStorageAccountServiceClient({
+      config: instance.config,
+      logger,
+      storageAccountName: storageAccount.name!,
     });
+
+    const storageBlobServiceProperties = await storageAccountServiceClient.getBlobServiceProperties();
     const storageAccountEntity = await jobState.addEntity(
       createStorageAccountEntity(
         webLinker,

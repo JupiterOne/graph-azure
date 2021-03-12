@@ -5,7 +5,6 @@ import {
   StorageQueue,
   Table,
   Kind,
-  BlobServiceProperties,
 } from '@azure/arm-storage/esm/models';
 import {
   createMockIntegrationLogger,
@@ -114,40 +113,6 @@ describe('createStorageAccountServiceClient', () => {
         },
       });
     });
-  });
-});
-
-describe('getBlobServiceProperties', () => {
-  test('all', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'getBlobServiceProperties',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
-      },
-    });
-
-    const client = new StorageClient(
-      configFromEnv,
-      createMockIntegrationLogger(),
-    );
-
-    const b: BlobServiceProperties[] = [];
-    await client.iterateStorageAccounts(async (sa) => {
-      b.push(
-        await client.getBlobServiceProperties({ name: sa.name!, id: sa.id! }),
-      );
-    });
-
-    expect(b).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          deleteRetentionPolicy: {
-            enabled: expect.any(Boolean),
-          },
-        }),
-      ]),
-    );
   });
 });
 

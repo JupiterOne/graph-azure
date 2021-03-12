@@ -1,8 +1,5 @@
 import { StorageManagementClient } from '@azure/arm-storage';
-import {
-  BlobServiceClient,
-  ServiceGetPropertiesResponse,
-} from '@azure/storage-blob';
+import { BlobServiceClient } from '@azure/storage-blob';
 import {
   BlobContainer,
   FileShare,
@@ -10,7 +7,6 @@ import {
   Table,
   StorageQueue,
   Kind,
-  BlobServicesGetServicePropertiesResponse,
 } from '@azure/arm-storage/esm/models';
 
 import {
@@ -35,14 +31,13 @@ export function createStorageAccountServiceClient(options: {
   );
 
   return {
-    getBlobServiceProperties: async (): Promise<
-      ServiceGetPropertiesResponse
-    > => {
+    getBlobServiceProperties: async () => {
       const client = new BlobServiceClient(
         `https://${storageAccountName}.blob.core.windows.net`,
         credential,
       );
-      return client.getProperties();
+      const response = await client.getProperties();
+      return response._response.parsedBody;
     },
   };
 }
@@ -61,21 +56,6 @@ export class StorageClient extends Client {
       resourceDescription: 'storage.storageAccounts',
       callback,
     });
-  }
-
-  public async getBlobServiceProperties(storageAccount: {
-    name: string;
-    id: string;
-  }): Promise<BlobServicesGetServicePropertiesResponse> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      StorageManagementClient,
-    );
-    const resourceGroup = resourceGroupName(storageAccount.id, true)!;
-    const accountName = storageAccount.name;
-    return serviceClient.blobServices.getServiceProperties(
-      resourceGroup,
-      accountName,
-    );
   }
 
   public async iterateStorageBlobContainers(

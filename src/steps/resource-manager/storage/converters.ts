@@ -5,8 +5,8 @@ import {
   StorageQueue,
   Table,
   Endpoints,
-  BlobServiceProperties,
 } from '@azure/arm-storage/esm/models';
+import { BlobServiceProperties } from '@azure/storage-blob';
 import {
   createIntegrationEntity,
   Entity,
@@ -95,6 +95,12 @@ export function createStorageAccountEntity(
           storageBlobServiceProperties?.deleteRetentionPolicy?.enabled,
         blobSoftDeleteRetentionDays:
           storageBlobServiceProperties?.deleteRetentionPolicy?.days,
+        blobAnalyticsLoggingReadEnabled:
+          storageBlobServiceProperties.blobAnalyticsLogging?.read,
+        blobAnalyticsLoggingWriteEnabled:
+          storageBlobServiceProperties.blobAnalyticsLogging?.write,
+        blobAnalyticsLoggingDeleteEnabled:
+          storageBlobServiceProperties.blobAnalyticsLogging?.deleteProperty,
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,

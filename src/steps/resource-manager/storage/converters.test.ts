@@ -3,8 +3,8 @@ import {
   FileShare,
   StorageAccount,
   StorageQueue,
-  BlobServiceProperties,
 } from '@azure/arm-storage/esm/models';
+import { BlobServiceProperties } from '@azure/storage-blob';
 
 import { createAzureWebLinker } from '../../../azure';
 import {
@@ -81,13 +81,15 @@ describe('createStorageAccountEntity', () => {
     blobServiceProperties?: Partial<BlobServiceProperties>,
   ): BlobServiceProperties {
     return {
-      id:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev/blobServices/default',
-      name: 'default',
-      type: 'Microsoft.Storage/storageAccounts/blobServices',
-      cors: { corsRules: [] },
+      blobAnalyticsLogging: {
+        version: '1.0',
+        deleteProperty: true,
+        read: true,
+        write: true,
+        retentionPolicy: { enabled: true, days: 7 },
+      },
+      cors: [],
       deleteRetentionPolicy: { enabled: true, days: 7 },
-      sku: { name: 'Standard_LRS', tier: 'Standard' },
       ...blobServiceProperties,
     };
   }
@@ -138,6 +140,9 @@ describe('createStorageAccountEntity', () => {
       'encryption.keyVaultProperties.keyVersion': 'version',
       blobSoftDeleteEnabled: true,
       blobSoftDeleteRetentionDays: 7,
+      blobAnalyticsLoggingReadEnabled: true,
+      blobAnalyticsLoggingWriteEnabled: true,
+      blobAnalyticsLoggingDeleteEnabled: true,
     };
 
     const storageAccountEntity = createStorageAccountEntity(

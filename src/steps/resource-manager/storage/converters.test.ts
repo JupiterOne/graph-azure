@@ -15,6 +15,7 @@ import {
 } from './converters';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { entities } from './constants';
+import { QueueServiceProperties } from '@azure/storage-queue';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 
@@ -94,9 +95,26 @@ describe('createStorageAccountEntity', () => {
     };
   }
 
+  function createMockQueueServiceProperties(
+    queueServiceProperties?: Partial<QueueServiceProperties>,
+  ): QueueServiceProperties {
+    return {
+      queueAnalyticsLogging: {
+        version: '1.0',
+        deleteProperty: true,
+        read: true,
+        write: true,
+        retentionPolicy: { enabled: true, days: 7 },
+      },
+      cors: [],
+      ...queueServiceProperties,
+    };
+  }
+
   test('Storage (Classic)', () => {
     const data = createMockStorageAccount();
     const blobServiceProperties = createMockBlobServiceProperties();
+    const queueServiceProperties = createMockQueueServiceProperties();
     const entity = {
       _key:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
@@ -105,6 +123,7 @@ describe('createStorageAccountEntity', () => {
       _rawData: [
         { name: 'default', rawData: data },
         { name: 'blobServiceProperties', rawData: blobServiceProperties },
+        { name: 'queueServiceProperties', rawData: queueServiceProperties },
       ],
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
@@ -143,13 +162,15 @@ describe('createStorageAccountEntity', () => {
       blobAnalyticsLoggingReadEnabled: true,
       blobAnalyticsLoggingWriteEnabled: true,
       blobAnalyticsLoggingDeleteEnabled: true,
+      queueAnalyticsLoggingReadEnabled: true,
+      queueAnalyticsLoggingWriteEnabled: true,
+      queueAnalyticsLoggingDeleteEnabled: true,
     };
 
-    const storageAccountEntity = createStorageAccountEntity(
-      webLinker,
-      data,
-      blobServiceProperties,
-    );
+    const storageAccountEntity = createStorageAccountEntity(webLinker, data, {
+      blob: blobServiceProperties,
+      queue: queueServiceProperties,
+    });
     expect(storageAccountEntity).toMatchGraphObjectSchema({
       _class: entities.STORAGE_ACCOUNT._class,
       schema: {
@@ -248,7 +269,7 @@ describe('createStorageBlobContainerEntity', () => {
     const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
-      {},
+      { blob: {}, queue: {} },
     );
     const storageContainerEntity = createStorageContainerEntity(
       webLinker,
@@ -265,7 +286,7 @@ describe('createStorageBlobContainerEntity', () => {
     const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
-      {},
+      { blob: {}, queue: {} },
     );
     const storageContainerEntity = createStorageContainerEntity(
       webLinker,
@@ -292,7 +313,7 @@ describe('createStorageBlobContainerEntity', () => {
     const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
-      {},
+      { blob: {}, queue: {} },
     );
     const storageContainerEntity = createStorageContainerEntity(
       webLinker,
@@ -328,7 +349,7 @@ describe('createStorageBlobContainerEntity', () => {
           },
         },
       },
-      {},
+      { blob: {}, queue: {} },
     );
 
     const storageContainerEntity = createStorageContainerEntity(
@@ -359,7 +380,7 @@ describe('createStorageBlobContainerEntity', () => {
           },
         },
       },
-      {},
+      { blob: {}, queue: {} },
     );
 
     const storageContainerEntity = createStorageContainerEntity(
@@ -384,7 +405,7 @@ describe('createStorageBlobContainerEntity', () => {
         ...storageAccount,
         encryption: { keySource: 'Microsoft.Storage', services: {} },
       },
-      {},
+      { blob: {}, queue: {} },
     );
     const storageContainerEntity = createStorageContainerEntity(
       webLinker,
@@ -478,7 +499,7 @@ describe('createStorageFileShareEntity', () => {
     const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
-      {},
+      { blob: {}, queue: {} },
     );
     const storageShareEntity = createStorageFileShareEntity(
       webLinker,
@@ -504,7 +525,10 @@ describe('createStorageFileShareEntity', () => {
           },
         },
       },
-      {},
+      {
+        blob: {},
+        queue: {},
+      },
     );
     const storageShareEntity = createStorageFileShareEntity(
       webLinker,
@@ -527,7 +551,7 @@ describe('createStorageFileShareEntity', () => {
         ...storageAccount,
         encryption: { keySource: 'Microsoft.Storage', services: {} },
       },
-      {},
+      { blob: {}, queue: {} },
     );
     const storageShareEntity = createStorageFileShareEntity(
       webLinker,

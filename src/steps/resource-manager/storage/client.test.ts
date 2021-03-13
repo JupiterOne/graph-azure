@@ -64,9 +64,16 @@ describe('iterateStorageAccounts', () => {
 });
 
 describe('createStorageAccountServiceClient', () => {
-  async function getSetupData(integrationConfig: IntegrationConfig) {
+  async function getSetupData() {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'storageAccountServiceClient-getSetupData',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
     const client = new StorageClient(
-      integrationConfig,
+      configFromEnv,
       createMockIntegrationLogger(),
     );
 
@@ -80,11 +87,15 @@ describe('createStorageAccountServiceClient', () => {
     );
     expect(j1devStorageAccounts.length).toBe(1);
     const storageAccount = j1devStorageAccounts[0];
+
+    await recording.stop();
     return { storageAccount };
   }
 
   describe('getBlobServiceProperties', () => {
     test('success', async () => {
+      const { storageAccount } = await getSetupData();
+
       recording = setupAzureRecording({
         directory: __dirname,
         name: 'storageAccountServiceClient-getBlobServiceProperties',
@@ -93,11 +104,13 @@ describe('createStorageAccountServiceClient', () => {
         },
       });
 
-      const { storageAccount } = await getSetupData(configFromEnv);
       const storageAccountServiceClient = createStorageAccountServiceClient({
         config: configFromEnv,
         logger: createMockIntegrationLogger(),
-        storageAccountName: storageAccount.name!,
+        storageAccount: {
+          name: storageAccount.name!,
+          kind: storageAccount.kind!,
+        },
       });
 
       const response = await storageAccountServiceClient.getBlobServiceProperties();
@@ -110,6 +123,39 @@ describe('createStorageAccountServiceClient', () => {
         },
         deleteRetentionPolicy: {
           enabled: expect.any(Boolean),
+        },
+      });
+    });
+  });
+
+  describe('getQueueServiceProperties', () => {
+    test('success', async () => {
+      const { storageAccount } = await getSetupData();
+
+      recording = setupAzureRecording({
+        directory: __dirname,
+        name: 'storageAccountServiceClient-getQueueServiceProperties',
+        options: {
+          matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        },
+      });
+
+      const storageAccountServiceClient = createStorageAccountServiceClient({
+        config: configFromEnv,
+        logger: createMockIntegrationLogger(),
+        storageAccount: {
+          name: storageAccount.name!,
+          kind: storageAccount.kind!,
+        },
+      });
+
+      const response = await storageAccountServiceClient.getQueueServiceProperties();
+
+      expect(response).toMatchObject({
+        queueAnalyticsLogging: {
+          read: expect.any(Boolean),
+          write: expect.any(Boolean),
+          deleteProperty: expect.any(Boolean),
         },
       });
     });

@@ -113,7 +113,7 @@ describe('iterateStorageBlobContainers', () => {
         id:
           '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
         name: 'j1dev',
-      } as StorageAccount,
+      },
       (e) => {
         containers.push(e);
       },
@@ -160,7 +160,7 @@ describe('iterateStorageBlobContainers', () => {
             id:
               '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
             name: 'j1dev',
-          } as StorageAccount,
+          },
           (e) => {
             containers.push(e);
           },
@@ -195,7 +195,7 @@ describe('iterateFileShares', () => {
         id:
           '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
         name: 'j1dev',
-      } as StorageAccount,
+      },
       (e) => {
         resources.push(e);
       },

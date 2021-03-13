@@ -124,7 +124,7 @@ export function createStorageAccountEntity(
  */
 export function createStorageContainerEntity(
   webLinker: AzureWebLinker,
-  account: StorageAccount,
+  storageAccountEntity: Entity,
   data: BlobContainer,
 ): Entity {
   return createIntegrationEntity({
@@ -140,7 +140,7 @@ export function createStorageContainerEntity(
         ),
         publicAccess: data.publicAccess,
         classification: null,
-        encrypted: !!account.encryption?.services?.blob?.enabled,
+        encrypted: storageAccountEntity.encryptedBlob || false,
       },
     },
   });
@@ -155,7 +155,7 @@ export function createStorageContainerEntity(
  */
 export function createStorageFileShareEntity(
   webLinker: AzureWebLinker,
-  account: StorageAccount,
+  storageAccountEntity: Entity,
   data: FileShare,
 ): Entity {
   return createIntegrationEntity({
@@ -167,7 +167,7 @@ export function createStorageFileShareEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
         classification: null,
-        encrypted: !!account.encryption?.services?.file?.enabled,
+        encrypted: storageAccountEntity.encryptedFileShare || false,
       },
     },
   });

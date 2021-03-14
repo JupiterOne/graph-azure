@@ -57,6 +57,7 @@
     "@azure/keyvault-keys": "^4.0.2",
     "@azure/ms-rest-nodeauth": "^2.0.5",
     "@azure/storage-blob": "^12.5.0",
+    "@azure/storage-queue": "^12.4.0",
     "@jupiterone/data-model": "^0.16.5",
     "@lifeomic/attempt": "^3.0.0",
     "@microsoft/microsoft-graph-client": "^2.0.0",

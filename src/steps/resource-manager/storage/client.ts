@@ -1,5 +1,6 @@
 import { StorageManagementClient } from '@azure/arm-storage';
 import { BlobServiceClient } from '@azure/storage-blob';
+import { QueueServiceClient } from '@azure/storage-queue';
 import {
   BlobContainer,
   FileShare,
@@ -21,9 +22,9 @@ import { ClientSecretCredential } from '@azure/identity';
 export function createStorageAccountServiceClient(options: {
   config: IntegrationConfig;
   logger: IntegrationLogger;
-  storageAccountName: string;
+  storageAccount: { name: string; kind: Kind };
 }) {
-  const { config, storageAccountName } = options;
+  const { config, storageAccount } = options;
   const credential = new ClientSecretCredential(
     config.directoryId,
     config.clientId,
@@ -33,11 +34,22 @@ export function createStorageAccountServiceClient(options: {
   return {
     getBlobServiceProperties: async () => {
       const client = new BlobServiceClient(
-        `https://${storageAccountName}.blob.core.windows.net`,
+        `https://${storageAccount.name}.blob.core.windows.net`,
         credential,
       );
       const response = await client.getProperties();
       return response._response.parsedBody;
+    },
+
+    getQueueServiceProperties: async () => {
+      if (isServiceEnabledForKind.queue(storageAccount.kind)) {
+        const client = new QueueServiceClient(
+          `https://${storageAccount.name}.queue.core.windows.net`,
+          credential,
+        );
+        const response = await client.getProperties();
+        return response._response.parsedBody;
+      }
     },
   };
 }
@@ -100,7 +112,7 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name!;
 
-    if ((['Storage', 'StorageV2'] as Kind[]).includes(storageAccount.kind)) {
+    if (isServiceEnabledForKind.queue(storageAccount.kind)) {
       try {
         await iterateAllResources({
           logger: this.logger,
@@ -149,7 +161,7 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name;
 
-    if ((['Storage', 'StorageV2'] as Kind[]).includes(storageAccount.kind)) {
+    if (isServiceEnabledForKind.table(storageAccount.kind)) {
       try {
         await iterateAllResources({
           logger: this.logger,
@@ -218,3 +230,12 @@ export class StorageClient extends Client {
     });
   }
 }
+
+const isServiceEnabledForKind = {
+  table: (kind: Kind) => {
+    return (['Storage', 'StorageV2'] as Kind[]).includes(kind);
+  },
+  queue: (kind: Kind) => {
+    return (['Storage', 'StorageV2'] as Kind[]).includes(kind);
+  },
+};

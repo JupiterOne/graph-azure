@@ -33,6 +33,24 @@ export async function fetchStorageAccounts(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
+  async function getStorageAccountServiceProperties(storageAccount: {
+    name: string;
+    kind: Kind;
+  }) {
+    const storageAccountServiceClient = createStorageAccountServiceClient({
+      config: instance.config,
+      logger,
+      storageAccount,
+    });
+
+    const storageBlobServiceProperties = await storageAccountServiceClient.getBlobServiceProperties();
+    const storageQueueServiceProperties = await storageAccountServiceClient.getQueueServiceProperties();
+
+    return {
+      blob: storageBlobServiceProperties,
+      queue: storageQueueServiceProperties,
+    };
+  }
   const client = new StorageClient(instance.config, logger);
 
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
@@ -41,18 +59,14 @@ export async function fetchStorageAccounts(
   const keyVaultEntityMap = await buildKeyVaultEntityMap(executionContext);
 
   await client.iterateStorageAccounts(async (storageAccount) => {
-    const storageAccountServiceClient = createStorageAccountServiceClient({
-      config: instance.config,
-      logger,
-      storageAccountName: storageAccount.name!,
-    });
-
-    const storageBlobServiceProperties = await storageAccountServiceClient.getBlobServiceProperties();
+    const storageAccountServiceProperties = await getStorageAccountServiceProperties(
+      { name: storageAccount.name!, kind: storageAccount.kind! },
+    );
     const storageAccountEntity = await jobState.addEntity(
       createStorageAccountEntity(
         webLinker,
         storageAccount,
-        storageBlobServiceProperties,
+        storageAccountServiceProperties,
       ),
     );
     await createResourceGroupResourceRelationship(

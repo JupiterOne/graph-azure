@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.14.2 - 2021-03-16
+
 ### Added
 
 - Added `queueAnalyticsLoggingReadEnabled`, `queueAnalyticsLoggingWriteEnabled`,

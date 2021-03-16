@@ -5,8 +5,8 @@ import {
   StorageQueue,
   Table,
   Endpoints,
-  BlobServiceProperties,
 } from '@azure/arm-storage/esm/models';
+import { BlobServiceProperties } from '@azure/storage-blob';
 import {
   createIntegrationEntity,
   Entity,
@@ -17,6 +17,7 @@ import { AzureWebLinker } from '../../../azure';
 import { resourceGroupName } from '../../../azure/utils';
 import flatten from '../utils/flatten';
 import { entities } from './constants';
+import { QueueServiceProperties } from '@azure/storage-queue';
 
 /**
  * J1 entity properties cannot be arrays of objects; create an array of string endpoints
@@ -53,7 +54,10 @@ function getArrayOfStorageAccountEndpoints(
 export function createStorageAccountEntity(
   webLinker: AzureWebLinker,
   data: StorageAccount,
-  storageBlobServiceProperties: BlobServiceProperties,
+  storageAccountServiceProperties: {
+    blob: BlobServiceProperties;
+    queue?: QueueServiceProperties;
+  },
 ): Entity {
   const encryptedServices = data.encryption?.services;
   const storageAccountEntity = createIntegrationEntity({
@@ -92,9 +96,23 @@ export function createStorageAccountEntity(
         networkRuleSetDefaultAction: data.networkRuleSet?.defaultAction,
         networkRuleSetBypass: data.networkRuleSet?.bypass,
         blobSoftDeleteEnabled:
-          storageBlobServiceProperties?.deleteRetentionPolicy?.enabled,
+          storageAccountServiceProperties.blob.deleteRetentionPolicy?.enabled,
         blobSoftDeleteRetentionDays:
-          storageBlobServiceProperties?.deleteRetentionPolicy?.days,
+          storageAccountServiceProperties.blob.deleteRetentionPolicy?.days,
+        blobAnalyticsLoggingReadEnabled:
+          storageAccountServiceProperties.blob.blobAnalyticsLogging?.read,
+        blobAnalyticsLoggingWriteEnabled:
+          storageAccountServiceProperties.blob.blobAnalyticsLogging?.write,
+        blobAnalyticsLoggingDeleteEnabled:
+          storageAccountServiceProperties.blob.blobAnalyticsLogging
+            ?.deleteProperty,
+        queueAnalyticsLoggingReadEnabled:
+          storageAccountServiceProperties.queue?.queueAnalyticsLogging?.read,
+        queueAnalyticsLoggingWriteEnabled:
+          storageAccountServiceProperties.queue?.queueAnalyticsLogging?.write,
+        queueAnalyticsLoggingDeleteEnabled:
+          storageAccountServiceProperties.queue?.queueAnalyticsLogging
+            ?.deleteProperty,
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,
@@ -107,8 +125,14 @@ export function createStorageAccountEntity(
   });
   setRawData(storageAccountEntity, {
     name: 'blobServiceProperties',
-    rawData: storageBlobServiceProperties,
+    rawData: storageAccountServiceProperties.blob,
   });
+  if (storageAccountServiceProperties.queue) {
+    setRawData(storageAccountEntity, {
+      name: 'queueServiceProperties',
+      rawData: storageAccountServiceProperties.queue,
+    });
+  }
 
   return storageAccountEntity;
 }

@@ -3,8 +3,8 @@ import {
   FileShare,
   StorageAccount,
   StorageQueue,
-  BlobServiceProperties,
 } from '@azure/arm-storage/esm/models';
+import { BlobServiceProperties } from '@azure/storage-blob';
 
 import { createAzureWebLinker } from '../../../azure';
 import {
@@ -15,6 +15,7 @@ import {
 } from './converters';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { entities } from './constants';
+import { QueueServiceProperties } from '@azure/storage-queue';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 
@@ -81,20 +82,39 @@ describe('createStorageAccountEntity', () => {
     blobServiceProperties?: Partial<BlobServiceProperties>,
   ): BlobServiceProperties {
     return {
-      id:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev/blobServices/default',
-      name: 'default',
-      type: 'Microsoft.Storage/storageAccounts/blobServices',
-      cors: { corsRules: [] },
+      blobAnalyticsLogging: {
+        version: '1.0',
+        deleteProperty: true,
+        read: true,
+        write: true,
+        retentionPolicy: { enabled: true, days: 7 },
+      },
+      cors: [],
       deleteRetentionPolicy: { enabled: true, days: 7 },
-      sku: { name: 'Standard_LRS', tier: 'Standard' },
       ...blobServiceProperties,
+    };
+  }
+
+  function createMockQueueServiceProperties(
+    queueServiceProperties?: Partial<QueueServiceProperties>,
+  ): QueueServiceProperties {
+    return {
+      queueAnalyticsLogging: {
+        version: '1.0',
+        deleteProperty: true,
+        read: true,
+        write: true,
+        retentionPolicy: { enabled: true, days: 7 },
+      },
+      cors: [],
+      ...queueServiceProperties,
     };
   }
 
   test('Storage (Classic)', () => {
     const data = createMockStorageAccount();
     const blobServiceProperties = createMockBlobServiceProperties();
+    const queueServiceProperties = createMockQueueServiceProperties();
     const entity = {
       _key:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
@@ -103,6 +123,7 @@ describe('createStorageAccountEntity', () => {
       _rawData: [
         { name: 'default', rawData: data },
         { name: 'blobServiceProperties', rawData: blobServiceProperties },
+        { name: 'queueServiceProperties', rawData: queueServiceProperties },
       ],
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
@@ -138,13 +159,18 @@ describe('createStorageAccountEntity', () => {
       'encryption.keyVaultProperties.keyVersion': 'version',
       blobSoftDeleteEnabled: true,
       blobSoftDeleteRetentionDays: 7,
+      blobAnalyticsLoggingReadEnabled: true,
+      blobAnalyticsLoggingWriteEnabled: true,
+      blobAnalyticsLoggingDeleteEnabled: true,
+      queueAnalyticsLoggingReadEnabled: true,
+      queueAnalyticsLoggingWriteEnabled: true,
+      queueAnalyticsLoggingDeleteEnabled: true,
     };
 
-    const storageAccountEntity = createStorageAccountEntity(
-      webLinker,
-      data,
-      blobServiceProperties,
-    );
+    const storageAccountEntity = createStorageAccountEntity(webLinker, data, {
+      blob: blobServiceProperties,
+      queue: queueServiceProperties,
+    });
     expect(storageAccountEntity).toMatchGraphObjectSchema({
       _class: entities.STORAGE_ACCOUNT._class,
       schema: {
@@ -243,7 +269,7 @@ describe('createStorageBlobContainerEntity', () => {
     const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
-      {},
+      { blob: {}, queue: {} },
     );
     const storageContainerEntity = createStorageContainerEntity(
       webLinker,
@@ -260,7 +286,7 @@ describe('createStorageBlobContainerEntity', () => {
     const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
-      {},
+      { blob: {}, queue: {} },
     );
     const storageContainerEntity = createStorageContainerEntity(
       webLinker,
@@ -287,7 +313,7 @@ describe('createStorageBlobContainerEntity', () => {
     const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
-      {},
+      { blob: {}, queue: {} },
     );
     const storageContainerEntity = createStorageContainerEntity(
       webLinker,
@@ -323,7 +349,7 @@ describe('createStorageBlobContainerEntity', () => {
           },
         },
       },
-      {},
+      { blob: {}, queue: {} },
     );
 
     const storageContainerEntity = createStorageContainerEntity(
@@ -354,7 +380,7 @@ describe('createStorageBlobContainerEntity', () => {
           },
         },
       },
-      {},
+      { blob: {}, queue: {} },
     );
 
     const storageContainerEntity = createStorageContainerEntity(
@@ -379,7 +405,7 @@ describe('createStorageBlobContainerEntity', () => {
         ...storageAccount,
         encryption: { keySource: 'Microsoft.Storage', services: {} },
       },
-      {},
+      { blob: {}, queue: {} },
     );
     const storageContainerEntity = createStorageContainerEntity(
       webLinker,
@@ -473,7 +499,7 @@ describe('createStorageFileShareEntity', () => {
     const storageAccountEntity = createStorageAccountEntity(
       webLinker,
       storageAccount,
-      {},
+      { blob: {}, queue: {} },
     );
     const storageShareEntity = createStorageFileShareEntity(
       webLinker,
@@ -499,7 +525,10 @@ describe('createStorageFileShareEntity', () => {
           },
         },
       },
-      {},
+      {
+        blob: {},
+        queue: {},
+      },
     );
     const storageShareEntity = createStorageFileShareEntity(
       webLinker,
@@ -522,7 +551,7 @@ describe('createStorageFileShareEntity', () => {
         ...storageAccount,
         encryption: { keySource: 'Microsoft.Storage', services: {} },
       },
-      {},
+      { blob: {}, queue: {} },
     );
     const storageShareEntity = createStorageFileShareEntity(
       webLinker,

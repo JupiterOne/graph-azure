@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `queueAnalyticsLoggingReadEnabled`, `queueAnalyticsLoggingWriteEnabled`,
+  and `queueAnalyticsLoggingDeleteEnabled` to `azure_storage_account`.
+- Added `blobAnalyticsLoggingReadEnabled`, `blobAnalyticsLoggingWriteEnabled`,
+  and `blobAnalyticsLoggingDeleteEnabled` to `azure_storage_account`.
+
 ## 5.14.1 - 2021-03-10
 
 ### Added

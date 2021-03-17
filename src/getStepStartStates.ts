@@ -31,8 +31,8 @@ import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MYSQL_DATABASES,
   STEP_RM_DATABASE_POSTGRESQL_DATABASES,
-  STEP_RM_DATABASE_SQL_DATABASES,
 } from './steps/resource-manager/databases/constants';
+import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sql/constants';
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice/constants';
 import { STEP_RM_KEYVAULT_VAULTS } from './steps/resource-manager/key-vault/constants';
 import {
@@ -143,7 +143,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_DATABASE_MARIADB_DATABASES,
       STEP_RM_DATABASE_MYSQL_DATABASES,
       STEP_RM_DATABASE_POSTGRESQL_DATABASES,
-      STEP_RM_DATABASE_SQL_DATABASES,
+      sqlDatabaseSteps.DATABASES,
       storageSteps.STORAGE_ACCOUNTS,
       storageSteps.STORAGE_CONTAINERS,
       storageSteps.STORAGE_FILE_SHARES,

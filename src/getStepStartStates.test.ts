@@ -21,8 +21,8 @@ import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MYSQL_DATABASES,
   STEP_RM_DATABASE_POSTGRESQL_DATABASES,
-  STEP_RM_DATABASE_SQL_DATABASES,
 } from './steps/resource-manager/databases';
+import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sql/constants';
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice';
 import { STEP_RM_KEYVAULT_VAULTS } from './steps/resource-manager/key-vault';
 import {
@@ -126,7 +126,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
-      [STEP_RM_DATABASE_SQL_DATABASES]: { disabled: true },
+      [sqlDatabaseSteps.DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: true },
       [storageSteps.STORAGE_ACCOUNTS]: { disabled: true },
       [storageSteps.STORAGE_CONTAINERS]: { disabled: true },
@@ -205,7 +205,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
-      [STEP_RM_DATABASE_SQL_DATABASES]: { disabled: true },
+      [sqlDatabaseSteps.DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: true },
       [storageSteps.STORAGE_ACCOUNTS]: { disabled: true },
       [storageSteps.STORAGE_CONTAINERS]: { disabled: true },
@@ -284,7 +284,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: false },
-      [STEP_RM_DATABASE_SQL_DATABASES]: { disabled: false },
+      [sqlDatabaseSteps.DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: false },
       [storageSteps.STORAGE_CONTAINERS]: { disabled: false },
       [storageSteps.STORAGE_FILE_SHARES]: { disabled: false },

@@ -8,7 +8,11 @@ import {
   RM_DATABASE_SERVER_ENTITY_CLASS,
 } from '../constants';
 
-export const SQLEntities = {
+export const steps = {
+  DATABASES: 'rm-database-sql-databases',
+};
+
+export const entities = {
   SERVER: {
     _type: 'azure_sql_server',
     _class: RM_DATABASE_SERVER_ENTITY_CLASS,
@@ -22,19 +26,19 @@ export const SQLEntities = {
   },
 };
 
-export const SQLRelationships = {
+export const relationships = {
   RESOURCE_GROUP_HAS_SQL_SERVER: createResourceGroupResourceRelationshipMetadata(
-    SQLEntities.SERVER._type,
+    entities.SERVER._type,
   ),
 
   SQL_SERVER_HAS_SQL_DATABASE: {
     _type: generateRelationshipType(
       RelationshipClass.HAS,
-      SQLEntities.SERVER._type,
-      SQLEntities.DATABASE._type,
+      entities.SERVER._type,
+      entities.DATABASE._type,
     ),
-    sourceType: SQLEntities.SERVER._type,
+    sourceType: entities.SERVER._type,
     _class: RelationshipClass.HAS,
-    targetType: SQLEntities.DATABASE._type,
+    targetType: entities.DATABASE._type,
   },
 };

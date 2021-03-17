@@ -8,7 +8,7 @@ import { createMockAzureStepExecutionContext } from '../../../../../test/createM
 import { IntegrationConfig } from '../../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
 import { fetchSQLDatabases } from '.';
-import { SQLEntities, SQLRelationships } from './constants';
+import { entities, relationships } from './constants';
 import { MonitorEntities, MonitorRelationships } from '../../monitor/constants';
 
 let recording: Recording;
@@ -67,8 +67,8 @@ describe('step = SQL servers and databases', () => {
       expect.objectContaining({
         id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver`,
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver`,
-        _class: SQLEntities.SERVER._class,
-        _type: SQLEntities.SERVER._type,
+        _class: entities.SERVER._class,
+        _type: entities.SERVER._type,
         administratorLogin: '****REDACTED****',
         administratorLoginPassword: '****REDACTED****',
         alertAdmins: false,
@@ -106,12 +106,12 @@ describe('step = SQL servers and databases', () => {
     const { collectedRelationships } = context.jobState;
 
     expect(collectedRelationships).toContainEqual({
-      _type: SQLRelationships.RESOURCE_GROUP_HAS_SQL_SERVER._type,
-      _class: SQLRelationships.RESOURCE_GROUP_HAS_SQL_SERVER._class,
+      _type: relationships.RESOURCE_GROUP_HAS_SQL_SERVER._type,
+      _class: relationships.RESOURCE_GROUP_HAS_SQL_SERVER._class,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver`,
       _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver`,
-      displayName: SQLRelationships.RESOURCE_GROUP_HAS_SQL_SERVER._class,
+      displayName: relationships.RESOURCE_GROUP_HAS_SQL_SERVER._class,
     });
   });
 
@@ -122,8 +122,8 @@ describe('step = SQL servers and databases', () => {
       expect.objectContaining({
         id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/databases/j1dev-sqldatabase`,
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/databases/j1dev-sqldatabase`,
-        _class: SQLEntities.DATABASE._class,
-        _type: SQLEntities.DATABASE._type,
+        _class: entities.DATABASE._class,
+        _type: entities.DATABASE._type,
         active: true,
         auditLogAccessKey: undefined,
         auditLogDestination: '',
@@ -159,12 +159,12 @@ describe('step = SQL servers and databases', () => {
     const { collectedRelationships } = context.jobState;
 
     expect(collectedRelationships).toContainEqual({
-      _type: SQLRelationships.SQL_SERVER_HAS_SQL_DATABASE._type,
-      _class: SQLRelationships.SQL_SERVER_HAS_SQL_DATABASE._class,
+      _type: relationships.SQL_SERVER_HAS_SQL_DATABASE._type,
+      _class: relationships.SQL_SERVER_HAS_SQL_DATABASE._class,
       _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver`,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/databases/j1dev-sqldatabase`,
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/databases/j1dev-sqldatabase`,
-      displayName: SQLRelationships.SQL_SERVER_HAS_SQL_DATABASE._class,
+      displayName: relationships.SQL_SERVER_HAS_SQL_DATABASE._class,
     });
   });
 
@@ -175,8 +175,8 @@ describe('step = SQL servers and databases', () => {
       expect.objectContaining({
         id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/databases/master`,
         _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/databases/master`,
-        _class: SQLEntities.DATABASE._class,
-        _type: SQLEntities.DATABASE._type,
+        _class: entities.DATABASE._class,
+        _type: entities.DATABASE._type,
         active: true,
         auditLogAccessKey: undefined,
         auditLogDestination: '',
@@ -212,12 +212,12 @@ describe('step = SQL servers and databases', () => {
     const { collectedRelationships } = context.jobState;
 
     expect(collectedRelationships).toContainEqual({
-      _type: SQLRelationships.SQL_SERVER_HAS_SQL_DATABASE._type,
-      _class: SQLRelationships.SQL_SERVER_HAS_SQL_DATABASE._class,
+      _type: relationships.SQL_SERVER_HAS_SQL_DATABASE._type,
+      _class: relationships.SQL_SERVER_HAS_SQL_DATABASE._class,
       _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver`,
       _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/databases/master`,
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/databases/master`,
-      displayName: SQLRelationships.SQL_SERVER_HAS_SQL_DATABASE._class,
+      displayName: relationships.SQL_SERVER_HAS_SQL_DATABASE._class,
     });
   });
 

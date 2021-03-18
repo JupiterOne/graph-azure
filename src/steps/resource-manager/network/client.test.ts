@@ -1,21 +1,31 @@
 import {
   AzureFirewall,
+  FlowLog,
   NetworkInterface,
   NetworkSecurityGroup,
+  NetworkWatcher,
   PublicIPAddress,
   VirtualNetwork,
 } from '@azure/arm-network/esm/models';
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
+  getMatchRequestsBy,
   Recording,
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { IntegrationConfig } from '../../../types';
 import { NetworkClient } from './client';
 
 let recording: Recording;
 let config: IntegrationConfig;
+
+afterEach(async () => {
+  if (recording) {
+    await recording.stop();
+  }
+});
 
 describe('iterateAzureFirewalls', () => {
   let azureFirewalls: AzureFirewall[];
@@ -670,5 +680,83 @@ describe('iterateVirtualNetworks', () => {
         virtualNetworkPeerings: [],
       }),
     );
+  });
+});
+
+describe('iterateNetworkWatchers', () => {
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateNetworkWatchers',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new NetworkClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+
+    const networkWatchers: NetworkWatcher[] = [];
+
+    /**
+     * Azure auto-provisions a `NetworkWatcherRG` resource group in every subscription:
+     * https://docs.microsoft.com/en-us/answers/questions/27211/what-is-the-networkwatcherrg.html
+     */
+    await client.iterateNetworkWatchers('NetworkWatcherRG', (watcher) => {
+      networkWatchers.push(watcher);
+    });
+
+    expect(networkWatchers.length).toBeGreaterThan(0);
+  });
+});
+
+describe('iterateNetworkSecurityGroupFlowLogs', () => {
+  async function getSetupData(networkClient: NetworkClient) {
+    const networkWatchers: NetworkWatcher[] = [];
+    await networkClient.iterateNetworkWatchers(
+      'NetworkWatcherRG',
+      (watcher) => {
+        networkWatchers.push(watcher);
+      },
+    );
+
+    expect(networkWatchers.length).toBeGreaterThan(0);
+    return { networkWatchers };
+  }
+  /**
+   * NOTE: No terraform exists for Flow Logs, because they are dependent on Network
+   * Watchers, which are auto-provisioned by Azure and thus would require manual importing
+   * before they can be managed by this project's terraform. When re-executing this
+   * test, please ensure FLow Logs are provisioned manually in the Azure Portal.
+   */
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateNetworkSecurityGroupFlowLogs',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+    const client = new NetworkClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+    const { networkWatchers } = await getSetupData(client);
+
+    const flowLogs: FlowLog[] = [];
+    for (const networkWatcher of networkWatchers) {
+      await client.iterateNetworkSecurityGroupFlowLogs(
+        {
+          id: networkWatcher.id!,
+          name: networkWatcher.name!,
+        },
+        (flowLog) => {
+          flowLogs.push(flowLog);
+        },
+      );
+    }
+    expect(flowLogs.length).toBeGreaterThan(0);
   });
 });

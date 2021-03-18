@@ -2,11 +2,13 @@ import map from 'lodash.map';
 
 import {
   AzureFirewall,
+  FlowLog,
   FrontendIPConfiguration,
   IPConfiguration,
   LoadBalancer,
   NetworkInterface,
   NetworkSecurityGroup,
+  NetworkWatcher,
   PublicIPAddress,
   Subnet,
   VirtualNetwork,
@@ -241,6 +243,53 @@ export function createVirtualNetworkEntity(
         resourceGroup: resourceGroupName(data.id),
       },
       tagProperties: ['environment'],
+    },
+  });
+}
+
+export function createNetworkWatcherEntity(
+  webLinker: AzureWebLinker,
+  data: NetworkWatcher,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _type: NetworkEntities.NETWORK_WATCHER._type,
+        _class: NetworkEntities.NETWORK_WATCHER._class,
+        _key: data.id,
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        location: data.location,
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+
+export function createNsgFlowLogEntity(
+  webLinker: AzureWebLinker,
+  data: FlowLog,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _type: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._type,
+        _class: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._class,
+        _key: data.id,
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        location: data.location,
+        targetResourceId: data.targetResourceId,
+        storageId: data.storageId,
+        enabled: data.enabled,
+        'retentionPolicy.enabled': data.retentionPolicy?.enabled,
+        'retentionPolicy.days': data.retentionPolicy?.days,
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
     },
   });
 }

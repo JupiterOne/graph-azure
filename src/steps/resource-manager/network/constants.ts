@@ -2,6 +2,7 @@ import {
   RelationshipClass,
   generateRelationshipType,
 } from '@jupiterone/integration-sdk-core';
+import { entities as storageEntities } from '../storage';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 // Step IDs
@@ -13,6 +14,8 @@ export const STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS =
 export const STEP_RM_NETWORK_VIRTUAL_NETWORKS = 'rm-network-virtual-networks';
 export const STEP_RM_NETWORK_LOAD_BALANCERS = 'rm-network-load-balancers';
 export const STEP_RM_NETWORK_AZURE_FIREWALLS = 'rm-network-azure-firewalls';
+export const STEP_RM_NETWORK_WATCHERS = 'rm-network-watchers';
+export const STEP_RM_NETWORK_FLOW_LOGS = 'rm-network-flow-logs';
 
 // Graph objects
 export const NetworkEntities = {
@@ -21,41 +24,45 @@ export const NetworkEntities = {
     _class: ['Firewall'],
     resourceName: '[RM] Network Azure Firewall',
   },
-
   VIRTUAL_NETWORK: {
     _type: 'azure_vnet',
     _class: ['Network'],
     resourceName: '[RM] Virtual Network',
   },
-
   SECURITY_GROUP: {
     _type: 'azure_security_group',
     _class: ['Firewall'],
     resourceName: '[RM] Security Group',
   },
-
   PUBLIC_IP_ADDRESS: {
     _type: 'azure_public_ip',
     _class: 'IpAddress',
     resourceName: '[RM] Public IP Address',
   },
-
   SUBNET: {
     _type: 'azure_subnet',
     _class: 'Network',
     resourceName: '[RM] Subnet',
   },
-
   NETWORK_INTERFACE: {
     _type: 'azure_nic',
     _class: 'NetworkInterface',
     resourceName: '[RM] Network Interface',
   },
-
   LOAD_BALANCER: {
     _type: 'azure_lb',
     _class: ['Gateway'],
     resourceName: '[RM] Load Balancer',
+  },
+  NETWORK_WATCHER: {
+    _type: 'azure_network_watcher',
+    _class: ['Resource'],
+    resourceName: '[RM] Network Watcher',
+  },
+  SECURITY_GROUP_FLOW_LOGS: {
+    _type: 'azure_security_group_flow_logs',
+    _class: ['Logs'],
+    resourceName: '[RM] Security Group Flow Logs',
   },
 };
 
@@ -81,6 +88,9 @@ export const NetworkRelationships = {
   ),
   RESOURCE_GROUP_HAS_NETWORK_LOAD_BALANCER: createResourceGroupResourceRelationshipMetadata(
     NetworkEntities.LOAD_BALANCER._type,
+  ),
+  RESOURCE_GROUP_HAS_NETWORK_WATCHER: createResourceGroupResourceRelationshipMetadata(
+    NetworkEntities.NETWORK_WATCHER._type,
   ),
   NETWORK_VIRTUAL_NETWORK_CONTAINS_NETWORK_SUBNET: {
     _type: generateRelationshipType(
@@ -145,5 +155,23 @@ export const NetworkRelationships = {
     sourceType: NetworkEntities.SUBNET._type,
     _class: RelationshipClass.DENIES,
     targetType: NetworkEntities.SECURITY_GROUP._type,
+  },
+  NETWORK_WATCHER_HAS_FLOW_LOGS: {
+    _type: 'azure_network_watcher_has_security_group_flow_logs',
+    sourceType: NetworkEntities.NETWORK_WATCHER._type,
+    _class: RelationshipClass.HAS,
+    targetType: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._type,
+  },
+  NETWORK_SECURITY_GROUP_HAS_FLOW_LOGS: {
+    _type: 'azure_security_group_has_flow_logs',
+    sourceType: NetworkEntities.SECURITY_GROUP._type,
+    _class: RelationshipClass.HAS,
+    targetType: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._type,
+  },
+  NETWORK_SECURITY_GROUP_FLOW_LOGS_USES_STORAGE_ACCOUNT: {
+    _type: 'azure_security_group_flow_logs_uses_storage_account',
+    sourceType: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._type,
+    _class: RelationshipClass.USES,
+    targetType: storageEntities.STORAGE_ACCOUNT._type,
   },
 };

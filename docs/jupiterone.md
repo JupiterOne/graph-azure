@@ -127,6 +127,7 @@ The following entities are created:
 | [RM] MySQL Server                      | `azure_mysql_server`                  | `Database`, `DataStore`, `Host`    |
 | [RM] Network Azure Firewall            | `azure_network_azure_firewall`        | `Firewall`                         |
 | [RM] Network Interface                 | `azure_nic`                           | `NetworkInterface`                 |
+| [RM] Network Watcher                   | `azure_network_watcher`               | `Resource`                         |
 | [RM] Policy Assignment                 | `azure_policy_assignment`             | `ControlPolicy`                    |
 | [RM] PostgreSQL Database               | `azure_postgresql_database`           | `Database`, `DataStore`            |
 | [RM] PostgreSQL Server                 | `azure_postgresql_server`             | `Database`, `DataStore`, `Host`    |
@@ -144,6 +145,7 @@ The following entities are created:
 | [RM] Security Assessment               | `azure_security_assessment`           | `Assessment`                       |
 | [RM] Security Contact                  | `azure_security_center_contact`       | `Resource`                         |
 | [RM] Security Group                    | `azure_security_group`                | `Firewall`                         |
+| [RM] Security Group Flow Logs          | `azure_security_group_flow_logs`      | `Logs`                             |
 | [RM] Service Bus Namespace             | `azure_service_bus_namespace`         | `Service`                          |
 | [RM] Service Bus Queue                 | `azure_service_bus_queue`             | `Queue`                            |
 | [RM] Service Bus Subscription          | `azure_service_bus_subscription`      | `Subscription`                     |
@@ -193,6 +195,7 @@ The following relationships are created/mapped:
 | `azure_mariadb_server`            | **HAS**               | `azure_mariadb_database`              |
 | `azure_monitor_log_profile`       | **USES**              | `azure_storage_account`               |
 | `azure_mysql_server`              | **HAS**               | `azure_mysql_database`                |
+| `azure_network_watcher`           | **HAS**               | `azure_security_group_flow_logs`      |
 | `azure_postgresql_server`         | **HAS**               | `azure_postgresql_database`           |
 | `azure_private_dns_zone`          | **HAS**               | `azure_private_dns_record_set`        |
 | `azure_redis_cache`               | **CONNECTS**          | `azure_redis_cache`                   |
@@ -213,6 +216,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`            | **HAS**               | `azure_mariadb_server`                |
 | `azure_resource_group`            | **HAS**               | `azure_mysql_server`                  |
 | `azure_resource_group`            | **HAS**               | `azure_network_azure_firewall`        |
+| `azure_resource_group`            | **HAS**               | `azure_network_watcher`               |
 | `azure_resource_group`            | **HAS**               | `azure_nic`                           |
 | `azure_resource_group`            | **HAS**               | `azure_postgresql_server`             |
 | `azure_resource_group`            | **HAS**               | `azure_private_dns_zone`              |
@@ -253,6 +257,8 @@ The following relationships are created/mapped:
 | `azure_role_assignment`           | **ASSIGNED**          | `azure_user`                          |
 | `azure_role_assignment`           | **ASSIGNED**          | `azure_user_group`                    |
 | `azure_role_assignment`           | **USES**              | `azure_role_definition`               |
+| `azure_security_group_flow_logs`  | **USES**              | `azure_storage_account`               |
+| `azure_security_group`            | **HAS**               | `azure_security_group_flow_logs`      |
 | `azure_security_group`            | **PROTECTS**          | `azure_nic`                           |
 | `azure_security_group`            | **PROTECTS**          | `azure_subnet`                        |
 | `azure_security_group`            | **ALLOWS**            | `azure_subnet`                        |

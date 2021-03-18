@@ -86,7 +86,6 @@ The following entities are created:
 
 | Resources                              | Entity `_type`                        | Entity `_class`                    |
 | -------------------------------------- | ------------------------------------- | ---------------------------------- |
-| SQL Server Firewall Rule               | `azure_sql_server_firewall_rule`      | `Firewall`                         |
 | [AD] Account                           | `azure_account`                       | `Account`                          |
 | [AD] Group                             | `azure_user_group`                    | `UserGroup`                        |
 | [AD] Group Member                      | `azure_group_member`                  | `User`                             |
@@ -141,6 +140,7 @@ The following entities are created:
 | [RM] Role Definition                   | `azure_role_definition`               | `AccessRole`                       |
 | [RM] SQL Database                      | `azure_sql_database`                  | `Database`, `DataStore`            |
 | [RM] SQL Server                        | `azure_sql_server`                    | `Database`, `DataStore`, `Host`    |
+| [RM] SQL Server Firewall Rule          | `azure_sql_server_firewall_rule`      | `Firewall`                         |
 | [RM] Security Assessment               | `azure_security_assessment`           | `Assessment`                       |
 | [RM] Security Contact                  | `azure_security_center_contact`       | `Resource`                         |
 | [RM] Security Group                    | `azure_security_group`                | `Firewall`                         |

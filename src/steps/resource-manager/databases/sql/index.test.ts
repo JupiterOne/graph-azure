@@ -3,17 +3,28 @@ import {
   MockIntegrationStepExecutionContext,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
-import { setupAzureRecording } from '../../../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../../test/createMockAzureStepExecutionContext';
 import { IntegrationConfig } from '../../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
-import { fetchSQLDatabases } from '.';
+import { fetchSQLDatabases, fetchSQLServerFirewallRules } from '.';
 import { entities, relationships } from './constants';
 import { MonitorEntities, MonitorRelationships } from '../../monitor/constants';
+import { configFromEnv } from '../../../../../test/integrationInstanceConfig';
+import { getMockAccount } from '../../../../../test/helpers/getMockAccount';
 
 let recording: Recording;
 let instanceConfig: IntegrationConfig;
 let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
+
+afterEach(async () => {
+  if (recording) {
+    await recording.stop();
+  }
+});
 
 describe('step = SQL servers and databases', () => {
   beforeAll(async () => {
@@ -284,5 +295,68 @@ describe('step = SQL servers and databases', () => {
         MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT
           ._class,
     });
+  });
+});
+
+describe('rm-database-sql-server-firewall-rules', () => {
+  async function getSetupEntities() {
+    const accountEntity = getMockAccount(configFromEnv);
+
+    const setupContext = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchSQLDatabases(setupContext);
+    const j1devSqlServerEntities = setupContext.jobState.collectedEntities.filter(
+      (e) =>
+        e._type === entities.SERVER._type &&
+        e.displayName === 'j1dev-sqlserver',
+    );
+    expect(j1devSqlServerEntities.length).toBe(1);
+    const sqlServerEntity = j1devSqlServerEntities[0];
+
+    return { accountEntity, sqlServerEntity };
+  }
+
+  test('step', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-database-sql-server-firewall-rules',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { sqlServerEntity, accountEntity } = await getSetupEntities();
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [sqlServerEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchSQLServerFirewallRules(context);
+
+    const sqlServerFirewallRuleEntities = context.jobState.collectedEntities;
+
+    expect(sqlServerFirewallRuleEntities.length).toBeGreaterThan(0);
+    expect(sqlServerFirewallRuleEntities).toMatchGraphObjectSchema({
+      _class: entities.FIREWALL_RULE._class,
+    });
+
+    const sqlServerFirewallRuleRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(sqlServerFirewallRuleRelationships.length).toBe(
+      sqlServerFirewallRuleEntities.length,
+    );
+    expect(sqlServerFirewallRuleRelationships).toMatchDirectRelationshipSchema(
+      {},
+    );
   });
 });

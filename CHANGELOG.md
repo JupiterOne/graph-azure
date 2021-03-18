@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_sql_server_firewall_rule` entities.
+
 ## 5.14.2 - 2021-03-16
 
 ### Added

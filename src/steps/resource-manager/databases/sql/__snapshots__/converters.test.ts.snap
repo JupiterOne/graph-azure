@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createSqlServerFirewallRuleEntity 1`] = `
+Object {
+  "_class": Array [
+    "Firewall",
+  ],
+  "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/firewallRules/some other rule",
+  "_rawData": Array [
+    Object {
+      "name": "default",
+      "rawData": Object {
+        "endIpAddress": "10.255.255.255",
+        "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/firewallRules/some other rule",
+        "kind": "v12.0",
+        "location": "East US",
+        "name": "some other rule",
+        "startIpAddress": "10.0.0.0",
+        "type": "Microsoft.Sql/servers/firewallRules",
+      },
+    },
+  ],
+  "_type": "azure_sql_server_firewall_rule",
+  "category": Array [
+    "host",
+  ],
+  "createdOn": undefined,
+  "displayName": "some other rule",
+  "endIpAddress": "10.255.255.255",
+  "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Sql/servers/j1dev-sqlserver/firewallRules/some other rule",
+  "kind": "v12.0",
+  "location": "East US",
+  "name": "some other rule",
+  "startIpAddress": "10.0.0.0",
+}
+`;

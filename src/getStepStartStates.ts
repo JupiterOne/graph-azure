@@ -144,6 +144,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_DATABASE_MYSQL_DATABASES,
       STEP_RM_DATABASE_POSTGRESQL_DATABASES,
       sqlDatabaseSteps.DATABASES,
+      sqlDatabaseSteps.SERVER_FIREWALL_RULES,
       storageSteps.STORAGE_ACCOUNTS,
       storageSteps.STORAGE_CONTAINERS,
       storageSteps.STORAGE_FILE_SHARES,

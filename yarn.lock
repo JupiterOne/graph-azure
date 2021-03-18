@@ -216,10 +216,10 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
-"@azure/arm-sql@^7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@azure/arm-sql/-/arm-sql-7.0.0.tgz#434c46635916a82309d43c13b764ea425ba69585"
-  integrity sha512-a//4WA/MJHgCISRda69QjOISHcCR2jHPL+askt9bh1mVUZVAEM+1MsHumpKYjVR17iXy//mVnDJJVz6j/FtnTg==
+"@azure/arm-sql@^7.0.1":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@azure/arm-sql/-/arm-sql-7.0.2.tgz#d4fbdef82cf86751d5010373f47b44d5d294bfec"
+  integrity sha512-4oNjPXnSDh+V86j5b4R88ftfj0O4RqtbAjSgb93lLkw9nfz8FPLLjlde/4OHH2tIK0CdB/0dPqb3mZrdhDhwBw==
   dependencies:
     "@azure/ms-rest-azure-js" "^2.0.1"
     "@azure/ms-rest-js" "^2.0.4"

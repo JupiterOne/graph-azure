@@ -86,6 +86,7 @@ The following entities are created:
 
 | Resources                              | Entity `_type`                        | Entity `_class`                    |
 | -------------------------------------- | ------------------------------------- | ---------------------------------- |
+| SQL Server Firewall Rule               | `azure_sql_server_firewall_rule`      | `Firewall`                         |
 | [AD] Account                           | `azure_account`                       | `Account`                          |
 | [AD] Group                             | `azure_user_group`                    | `UserGroup`                        |
 | [AD] Group Member                      | `azure_group_member`                  | `User`                             |
@@ -259,6 +260,7 @@ The following relationships are created/mapped:
 | `azure_service_bus_namespace`     | **HAS**               | `azure_service_bus_topic`             |
 | `azure_service_bus_topic`         | **HAS**               | `azure_service_bus_subscription`      |
 | `azure_sql_server`                | **HAS**               | `azure_sql_database`                  |
+| `azure_sql_server`                | **HAS**               | `azure_sql_server_firewall_rule`      |
 | `azure_storage_account`           | **HAS**               | `azure_storage_container`             |
 | `azure_storage_account`           | **HAS**               | `azure_storage_file_share`            |
 | `azure_storage_account`           | **HAS**               | `azure_storage_queue`                 |

@@ -1,9 +1,11 @@
 import { NetworkManagementClient } from '@azure/arm-network';
 import {
   AzureFirewall,
+  FlowLog,
   LoadBalancer,
   NetworkInterface,
   NetworkSecurityGroup,
+  NetworkWatcher,
   PublicIPAddress,
   VirtualNetwork,
 } from '@azure/arm-network/esm/models';
@@ -12,6 +14,7 @@ import {
   Client,
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
+import { resourceGroupName } from '../../../azure/utils';
 
 export class NetworkClient extends Client {
   /**
@@ -111,6 +114,57 @@ export class NetworkClient extends Client {
       serviceClient,
       resourceEndpoint: serviceClient.virtualNetworks,
       resourceDescription: 'network.virtualNetworks',
+      callback,
+    });
+  }
+
+  public async iterateNetworkWatchers(
+    resourceGroupName: string,
+    callback: (watcher: NetworkWatcher) => void | Promise<void>,
+  ) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => {
+          return serviceClient.networkWatchers.list(resourceGroupName);
+        },
+      },
+      resourceDescription: 'network.networkWatchers',
+      callback,
+    });
+  }
+
+  public async iterateNetworkSecurityGroupFlowLogs(
+    networkWatcher: {
+      name: string;
+      id: string;
+    },
+    callback: (nsgFlowLog: FlowLog) => void | Promise<void>,
+  ) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+    const resourceGroup = resourceGroupName(networkWatcher.id, true)!;
+    const networkWatcherName = networkWatcher.name;
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => {
+          return serviceClient.flowLogs.list(resourceGroup, networkWatcherName);
+        },
+        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
+          nextLink: string,
+        ) => {
+          return serviceClient.flowLogs.listNext(nextLink);
+        },
+      },
+      resourceDescription: 'network.networkSecurityGroupFlowLogs',
       callback,
     });
   }

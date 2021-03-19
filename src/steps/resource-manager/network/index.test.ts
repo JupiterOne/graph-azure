@@ -7,14 +7,19 @@ import {
   MockIntegrationStepExecutionContext,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
 import { fetchAccount } from '../../active-directory';
 import {
   buildSecurityGroupRuleRelationships,
   fetchAzureFirewalls,
   fetchLoadBalancers,
   fetchNetworkInterfaces,
+  fetchNetworkSecurityGroupFlowLogs,
   fetchNetworkSecurityGroups,
+  fetchNetworkWatchers,
   fetchPublicIPAddresses,
   fetchVirtualNetworks,
 } from './';
@@ -23,6 +28,11 @@ import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 import { IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { NetworkEntities, NetworkRelationships } from './constants';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
+import { RESOURCE_GROUP_ENTITY } from '../resources';
+import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
+import { entities as storageEntities, fetchStorageAccounts } from '../storage';
 
 const GUID_REGEX = new RegExp(
   '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
@@ -1889,5 +1899,222 @@ describe('step = fetch azure firewalls', () => {
             ._class,
       }),
     );
+  });
+});
+
+describe('rm-network-watchers', () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  function getSetupEntities() {
+    const accountEntity = getMockAccountEntity(configFromEnv);
+
+    /**
+     * Azure auto-provisions a `NetworkWatcherRG` resource group in every subscription:
+     * https://docs.microsoft.com/en-us/answers/questions/27211/what-is-the-networkwatcherrg.html
+     */
+    const resourceGroupEntity = {
+      name: 'NetworkWatcherRG',
+      _type: RESOURCE_GROUP_ENTITY._type,
+      _class: RESOURCE_GROUP_ENTITY._class,
+      _key: 'resource-group-key',
+    };
+
+    return { accountEntity, resourceGroupEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-network-watchers',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity, resourceGroupEntity } = getSetupEntities();
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [resourceGroupEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchNetworkWatchers(context);
+
+    const networkWatcherEntities = context.jobState.collectedEntities;
+
+    expect(networkWatcherEntities.length).toBeGreaterThan(0);
+    expect(networkWatcherEntities).toMatchGraphObjectSchema({
+      _class: NetworkEntities.NETWORK_WATCHER._class,
+    });
+
+    const networkWatcherResourceGroupRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(networkWatcherResourceGroupRelationships.length).toBe(
+      networkWatcherEntities.length,
+    );
+    expect(
+      networkWatcherResourceGroupRelationships,
+    ).toMatchDirectRelationshipSchema({});
+  });
+});
+
+describe('rm-network-flow-logs', () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    /**
+     * Azure auto-provisions a `NetworkWatcherRG` resource group in every subscription:
+     * https://docs.microsoft.com/en-us/answers/questions/27211/what-is-the-networkwatcherrg.html
+     */
+    const resourceGroupEntity = {
+      name: 'NetworkWatcherRG',
+      _type: RESOURCE_GROUP_ENTITY._type,
+      _class: RESOURCE_GROUP_ENTITY._class,
+      _key: 'resource-group-key',
+    };
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      entities: [resourceGroupEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchNetworkWatchers(context);
+    const networkWatcherEntities: Entity[] = context.jobState.collectedEntities.filter(
+      (e) => e._type === NetworkEntities.NETWORK_WATCHER._type,
+    );
+
+    await fetchNetworkSecurityGroups(context);
+    const securityGroupEntities: Entity[] = context.jobState.collectedEntities.filter(
+      (e) => e._type === NetworkEntities.SECURITY_GROUP._type,
+    );
+
+    await fetchStorageAccounts(context);
+    const storageAccountEntities: Entity[] = context.jobState.collectedEntities.filter(
+      (e) => e._type === storageEntities.STORAGE_ACCOUNT._type,
+    );
+
+    return {
+      accountEntity,
+      networkWatcherEntities,
+      securityGroupEntities,
+      storageAccountEntities,
+    };
+  }
+
+  function separateFlowLogRelationships(relationships: Relationship[]) {
+    const {
+      targets: securityGroupFlowLogsRelationships,
+      rest: restAfterSecurityGroupFlowLogs,
+    } = filterGraphObjects(
+      relationships,
+      (r) =>
+        r._type ===
+        NetworkRelationships.NETWORK_SECURITY_GROUP_HAS_FLOW_LOGS._type,
+    );
+    const {
+      targets: flowLogsStorageAccountRelationships,
+      rest: restAFterFlowLogsStorageAccounts,
+    } = filterGraphObjects(
+      restAfterSecurityGroupFlowLogs,
+      (r) =>
+        r._type ===
+        NetworkRelationships
+          .NETWORK_SECURITY_GROUP_FLOW_LOGS_USES_STORAGE_ACCOUNT._type,
+    );
+    const {
+      targets: watcherFlowLogsRelationships,
+      rest: restAfterWatcherFlowLogsRelationships,
+    } = filterGraphObjects(
+      restAFterFlowLogsStorageAccounts,
+      (r) =>
+        r._type === NetworkRelationships.NETWORK_WATCHER_HAS_FLOW_LOGS._type,
+    );
+    return {
+      securityGroupFlowLogsRelationships,
+      flowLogsStorageAccountRelationships,
+      watcherFlowLogsRelationships,
+      restRelationships: restAfterWatcherFlowLogsRelationships,
+    };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-network-flow-logs',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      accountEntity,
+      networkWatcherEntities,
+      securityGroupEntities,
+      storageAccountEntities,
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [
+        ...networkWatcherEntities,
+        ...securityGroupEntities,
+        ...storageAccountEntities,
+      ],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchNetworkSecurityGroupFlowLogs(context);
+
+    const nsgFlowLogEntities = context.jobState.collectedEntities;
+
+    expect(nsgFlowLogEntities.length).toBeGreaterThan(0);
+    expect(nsgFlowLogEntities).toMatchGraphObjectSchema({
+      _class: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._class,
+    });
+
+    const {
+      securityGroupFlowLogsRelationships,
+      flowLogsStorageAccountRelationships,
+      watcherFlowLogsRelationships,
+      restRelationships,
+    } = separateFlowLogRelationships(context.jobState.collectedRelationships);
+
+    expect(securityGroupFlowLogsRelationships.length).toBe(
+      nsgFlowLogEntities.length,
+    );
+    expect(securityGroupFlowLogsRelationships).toMatchDirectRelationshipSchema(
+      {},
+    );
+
+    expect(flowLogsStorageAccountRelationships.length).toBe(
+      nsgFlowLogEntities.length,
+    );
+    expect(flowLogsStorageAccountRelationships).toMatchDirectRelationshipSchema(
+      {},
+    );
+
+    expect(watcherFlowLogsRelationships.length).toBe(nsgFlowLogEntities.length);
+    expect(watcherFlowLogsRelationships).toMatchDirectRelationshipSchema({});
+
+    expect(restRelationships.length).toBe(0);
   });
 });

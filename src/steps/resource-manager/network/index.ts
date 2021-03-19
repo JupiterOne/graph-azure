@@ -11,6 +11,8 @@ import {
   Relationship,
   Step,
   IntegrationStepExecutionContext,
+  createDirectRelationship,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -27,6 +29,8 @@ import {
   NetworkEntities,
   NetworkRelationships,
   STEP_RM_NETWORK_AZURE_FIREWALLS,
+  STEP_RM_NETWORK_WATCHERS,
+  STEP_RM_NETWORK_FLOW_LOGS,
 } from './constants';
 import {
   createAzureFirewallEntity,
@@ -36,6 +40,8 @@ import {
   createNetworkSecurityGroupEntity,
   createNetworkSecurityGroupNicRelationship,
   createNetworkSecurityGroupSubnetRelationship,
+  createNetworkWatcherEntity,
+  createNsgFlowLogEntity,
   createPublicIPAddressEntity,
   createSecurityGroupRuleMappedRelationship,
   createSecurityGroupRuleSubnetRelationship,
@@ -44,7 +50,9 @@ import {
   createVirtualNetworkSubnetRelationship,
   processSecurityGroupRules,
 } from './converters';
-import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
+import createResourceGroupResourceRelationship, {
+  RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS,
+} from '../utils/createResourceGroupResourceRelationship';
 import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
@@ -54,6 +62,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   diagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import { steps as storageSteps } from '../storage';
 
 export * from './constants';
 
@@ -394,6 +403,113 @@ export async function buildSecurityGroupRuleRelationships(
   );
 }
 
+export async function fetchNetworkWatchers(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
+
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  await jobState.iterateEntities(
+    { _type: RESOURCE_GROUP_ENTITY._type },
+    async (resourceGroupEntity) => {
+      await client.iterateNetworkWatchers(
+        resourceGroupEntity.name as string,
+        async (networkWatcher) => {
+          const networkWatcherEntity = await jobState.addEntity(
+            createNetworkWatcherEntity(webLinker, networkWatcher),
+          );
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS,
+              from: resourceGroupEntity,
+              to: networkWatcherEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
+export async function fetchNetworkSecurityGroupFlowLogs(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
+
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  await jobState.iterateEntities(
+    { _type: NetworkEntities.NETWORK_WATCHER._type },
+    async (networkWatcherEntity) => {
+      await client.iterateNetworkSecurityGroupFlowLogs(
+        {
+          name: networkWatcherEntity.name as string,
+          id: networkWatcherEntity.id as string,
+        },
+        async (nsgFlowLog) => {
+          const nsgFlowLogEntity = await jobState.addEntity(
+            createNsgFlowLogEntity(webLinker, nsgFlowLog),
+          );
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: networkWatcherEntity,
+              to: nsgFlowLogEntity,
+            }),
+          );
+
+          const networkSecurityGroupEntity = await jobState.findEntity(
+            nsgFlowLog.targetResourceId,
+          );
+          if (networkSecurityGroupEntity) {
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.HAS,
+                from: networkSecurityGroupEntity,
+                to: nsgFlowLogEntity,
+              }),
+            );
+          } else {
+            logger.error(
+              {
+                nsgFlowLogId: nsgFlowLog.id,
+                securityGroupId: nsgFlowLog.targetResourceId,
+              },
+              'Could not find network security group by ID; no relationship can be built between flow log -> security group',
+            );
+          }
+
+          const storageAccountEntity = await jobState.findEntity(
+            nsgFlowLog.storageId,
+          );
+          if (storageAccountEntity) {
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.USES,
+                from: nsgFlowLogEntity,
+                to: storageAccountEntity,
+              }),
+            );
+          } else {
+            logger.error(
+              {
+                nsgFlowLogId: nsgFlowLog.id,
+                storageId: nsgFlowLog.storageId,
+              },
+              'Could not find storage account by ID; no relationship can be built between flow log -> storagea account',
+            );
+          }
+        },
+      );
+    },
+  );
+}
+
 export const networkSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -511,5 +627,29 @@ export const networkSteps: Step<
       STEP_RM_NETWORK_VIRTUAL_NETWORKS,
     ],
     executionHandler: buildSecurityGroupRuleRelationships,
+  },
+  {
+    id: STEP_RM_NETWORK_WATCHERS,
+    name: 'Network Watchers',
+    entities: [NetworkEntities.NETWORK_WATCHER],
+    relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_WATCHER],
+    dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchNetworkWatchers,
+  },
+  {
+    id: STEP_RM_NETWORK_FLOW_LOGS,
+    name: 'Network Securtiy Group Flow Logs',
+    entities: [NetworkEntities.SECURITY_GROUP_FLOW_LOGS],
+    relationships: [
+      NetworkRelationships.NETWORK_WATCHER_HAS_FLOW_LOGS,
+      NetworkRelationships.NETWORK_SECURITY_GROUP_HAS_FLOW_LOGS,
+      NetworkRelationships.NETWORK_SECURITY_GROUP_FLOW_LOGS_USES_STORAGE_ACCOUNT,
+    ],
+    dependsOn: [
+      STEP_RM_NETWORK_WATCHERS,
+      STEP_RM_NETWORK_SECURITY_GROUPS,
+      storageSteps.STORAGE_ACCOUNTS,
+    ],
+    executionHandler: fetchNetworkSecurityGroupFlowLogs,
   },
 ];

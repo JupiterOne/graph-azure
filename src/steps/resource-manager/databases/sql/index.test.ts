@@ -14,7 +14,7 @@ import { fetchSQLDatabases, fetchSQLServerFirewallRules } from '.';
 import { entities, relationships } from './constants';
 import { MonitorEntities, MonitorRelationships } from '../../monitor/constants';
 import { configFromEnv } from '../../../../../test/integrationInstanceConfig';
-import { getMockAccount } from '../../../../../test/helpers/getMockAccount';
+import { getMockAccountEntity } from '../../../../../test/helpers/getMockAccountEntity';
 
 let recording: Recording;
 let instanceConfig: IntegrationConfig;
@@ -300,7 +300,7 @@ describe('step = SQL servers and databases', () => {
 
 describe('rm-database-sql-server-firewall-rules', () => {
   async function getSetupEntities() {
-    const accountEntity = getMockAccount(configFromEnv);
+    const accountEntity = getMockAccountEntity(configFromEnv);
 
     const setupContext = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,

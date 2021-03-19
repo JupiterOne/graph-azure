@@ -1,21 +1,25 @@
-import { fetchSubscriptions } from '.';
+import { fetchLocations, fetchSubscriptions } from '.';
 import {
   MockIntegrationStepExecutionContext,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { MonitorEntities } from '../monitor/constants';
-import { SUBSCRIPTION_ENTITY_METADATA } from './constants';
-let recording: Recording;
+import {
+  entities,
+  relationships,
+  SUBSCRIPTION_ENTITY_METADATA,
+} from './constants';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
 
-afterAll(async () => {
-  if (recording) {
-    await recording.stop();
-  }
-});
+let recording: Recording;
 
 describe('step - subscriptions', () => {
   let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
@@ -43,6 +47,12 @@ describe('step - subscriptions', () => {
     });
 
     await fetchSubscriptions(context);
+  });
+
+  afterAll(async () => {
+    if (recording) {
+      await recording.stop();
+    }
   });
 
   it('should collect a Subscription entity', () => {
@@ -139,6 +149,70 @@ describe('step - subscriptions', () => {
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/providers/microsoft.insights/diagnosticSettings/j1dev_sub_diag_set/logs/Security/true/undefined/undefined`,
       _type: 'azure_resource_has_diagnostic_log_setting',
       displayName: 'HAS',
+    });
+  });
+});
+
+describe('rm-subscription-locations', () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    const subscriptionEntity = {
+      _key: 'subscription-entity-key',
+      _type: SUBSCRIPTION_ENTITY_METADATA._type,
+      _class: SUBSCRIPTION_ENTITY_METADATA._class,
+      subscriptionId: config.subscriptionId,
+    };
+
+    return { accountEntity, subscriptionEntity };
+  }
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-subscription-locations',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity, subscriptionEntity } = getSetupEntities(
+      configFromEnv,
+    );
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [subscriptionEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchLocations(context);
+
+    const locationEntities = context.jobState.collectedEntities;
+
+    expect(locationEntities.length).toBeGreaterThan(0);
+    expect(locationEntities).toMatchGraphObjectSchema({
+      _class: entities.LOCATION._class,
+    });
+
+    const subscriptionLocationRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(subscriptionLocationRelationships.length).toBe(
+      locationEntities.length,
+    );
+    expect(subscriptionLocationRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: { const: relationships.SUBSCRIPTION_USES_LOCATION._type },
+        },
+      },
     });
   });
 });

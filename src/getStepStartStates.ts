@@ -48,7 +48,10 @@ import {
 } from './steps/resource-manager/network/constants';
 import { steps as storageSteps } from './steps/resource-manager/storage/constants';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources/constants';
-import { STEP_RM_SUBSCRIPTIONS } from './steps/resource-manager/subscriptions/constants';
+import {
+  STEP_RM_SUBSCRIPTIONS,
+  steps as subscriptionSteps,
+} from './steps/resource-manager/subscriptions/constants';
 import {
   STEP_RM_API_MANAGEMENT_APIS,
   STEP_RM_API_MANAGEMENT_SERVICES,
@@ -162,6 +165,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS,
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
       STEP_RM_SUBSCRIPTIONS,
+      subscriptionSteps.LOCATIONS,
       STEP_RM_API_MANAGEMENT_SERVICES,
       STEP_RM_API_MANAGEMENT_APIS,
       STEP_RM_DNS_ZONES,

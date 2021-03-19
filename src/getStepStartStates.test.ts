@@ -46,7 +46,10 @@ import {
   STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,
 } from './steps/resource-manager/authorization';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources';
-import { STEP_RM_SUBSCRIPTIONS } from './steps/resource-manager/subscriptions';
+import {
+  STEP_RM_SUBSCRIPTIONS,
+  steps as subscriptionSteps,
+} from './steps/resource-manager/subscriptions/constants';
 import {
   STEP_RM_API_MANAGEMENT_SERVICES,
   STEP_RM_API_MANAGEMENT_APIS,
@@ -150,6 +153,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
       [STEP_RM_SUBSCRIPTIONS]: { disabled: true },
+      [subscriptionSteps.LOCATIONS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
       [STEP_RM_DNS_ZONES]: { disabled: true },
@@ -232,6 +236,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
       [STEP_RM_SUBSCRIPTIONS]: { disabled: true },
+      [subscriptionSteps.LOCATIONS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
       [STEP_RM_DNS_ZONES]: { disabled: true },
@@ -314,6 +319,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: false },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: false },
       [STEP_RM_SUBSCRIPTIONS]: { disabled: false },
+      [subscriptionSteps.LOCATIONS]: { disabled: false },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: false },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: false },
       [STEP_RM_DNS_ZONES]: { disabled: false },

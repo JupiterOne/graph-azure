@@ -2,7 +2,7 @@ import { fetchAssessments, fetchSecurityCenterContacts } from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
-import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions';
+import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { SecurityEntities } from './constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
@@ -32,8 +32,8 @@ test('step - security assessments', async () => {
     entities: [
       {
         _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-        _type: SUBSCRIPTION_ENTITY_METADATA._type,
-        _class: SUBSCRIPTION_ENTITY_METADATA._class,
+        _type: subscriptionEntities.SUBSCRIPTION._type,
+        _class: subscriptionEntities.SUBSCRIPTION._class,
       },
     ],
     setData: {
@@ -72,8 +72,8 @@ test('step - security center contacts', async () => {
     entities: [
       {
         _key: `/subscriptions/${instanceConfig.subscriptionId}`,
-        _type: SUBSCRIPTION_ENTITY_METADATA._type,
-        _class: SUBSCRIPTION_ENTITY_METADATA._class,
+        _type: subscriptionEntities.SUBSCRIPTION._type,
+        _class: subscriptionEntities.SUBSCRIPTION._class,
       },
     ],
     setData: {

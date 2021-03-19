@@ -20,8 +20,8 @@ import {
 } from './converters';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 import {
-  SUBSCRIPTION_ENTITY_METADATA,
-  STEP_RM_SUBSCRIPTIONS,
+  entities as subscriptionEntities,
+  steps as subscriptionSteps,
 } from '../subscriptions/constants';
 export * from './constants';
 
@@ -35,7 +35,7 @@ export async function fetchAssessments(
   const client = new SecurityClient(instance.config, logger);
 
   await jobState.iterateEntities(
-    { _type: SUBSCRIPTION_ENTITY_METADATA._type },
+    { _type: subscriptionEntities.SUBSCRIPTION._type },
     async (subscriptionEntity) => {
       await client.iterateAssessments(
         subscriptionEntity._key,
@@ -110,7 +110,7 @@ export const securitySteps: Step<
     relationships: [
       SecurityRelationships.SUBSCRIPTION_HAS_SECURITY_CENTER_CONTACT,
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SUBSCRIPTIONS],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTIONS],
     executionHandler: fetchSecurityCenterContacts,
   },
 ];

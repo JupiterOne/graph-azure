@@ -1,12 +1,14 @@
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
+  getMatchRequestsBy,
   Recording,
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { J1SubscriptionClient } from './client';
-import { Subscription } from '@azure/arm-subscriptions/esm/models';
+import { Location, Subscription } from '@azure/arm-subscriptions/esm/models';
 import { IntegrationConfig } from '../../../types';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 
 // developer used different creds than ~/test/integrationInstanceConfig
 const config: IntegrationConfig = {
@@ -53,5 +55,30 @@ describe('iterateSubscriptions', () => {
         subscriptionPolicies: expect.any(Object),
       }),
     );
+  });
+});
+
+describe('iterateLocations', () => {
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateLocations',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+    const client = new J1SubscriptionClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+
+    const subscriptionId = configFromEnv.subscriptionId!;
+
+    const locations: Location[] = [];
+    await client.iterateLocations(subscriptionId, (location) => {
+      locations.push(location);
+    });
+
+    expect(locations.length).toBeGreaterThan(0);
   });
 });

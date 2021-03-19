@@ -118,6 +118,7 @@ The following entities are created:
 | [RM] Image                             | `azure_image`                         | `Image`                            |
 | [RM] Key Vault                         | `azure_keyvault_service`              | `Service`                          |
 | [RM] Load Balancer                     | `azure_lb`                            | `Gateway`                          |
+| [RM] Location                          | `azure_location`                      | `Site`                             |
 | [RM] MariaDB Database                  | `azure_mariadb_database`              | `Database`, `DataStore`            |
 | [RM] MariaDB Server                    | `azure_mariadb_server`                | `Database`, `DataStore`, `Host`    |
 | [RM] Monitor Diagnostic Log Setting    | `azure_diagnostic_log_setting`        | `Configuration`                    |
@@ -277,6 +278,7 @@ The following relationships are created/mapped:
 | `azure_subscription`              | **HAS**               | `azure_resource_group`                |
 | `azure_subscription`              | **HAS**               | `azure_security_center_contact`       |
 | `azure_subscription`              | **PERFORMED**         | `azure_security_assessment`           |
+| `azure_subscription`              | **USES**              | `azure_location`                      |
 | `azure_vm`                        | **USES**              | `azure_managed_disk`                  |
 | `azure_vm`                        | **USES**              | `azure_nic`                           |
 | `azure_vm`                        | **USES**              | `azure_public_ip`                     |

@@ -1,7 +1,7 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 import { ANY_SCOPE } from '../constants';
 import { entities as storageEntities } from '../storage/constants';
-import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions/constants';
+import { entities as subscriptionEntities } from '../subscriptions/constants';
 
 export const MonitorSteps = {
   MONITOR_LOG_PROFILES: 'rm-monitor-log-profiles',
@@ -30,7 +30,7 @@ export const MonitorEntities = {
 export const MonitorRelationships = {
   SUBSCRIPTION_HAS_MONITOR_LOG_PROFILE: {
     _type: 'azure_subscription_has_monitor_log_profile',
-    sourceType: SUBSCRIPTION_ENTITY_METADATA._type,
+    sourceType: subscriptionEntities.SUBSCRIPTION._type,
     _class: RelationshipClass.HAS,
     targetType: MonitorEntities.MONITOR_LOG_PROFILE._type,
   },

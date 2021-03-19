@@ -21,9 +21,9 @@ import {
 import { createResourceGroupEntity } from './converters';
 import { SUBSCRIPTION_MATCHER } from '../utils/matchers';
 import {
-  SUBSCRIPTION_ENTITY_METADATA,
-  STEP_RM_SUBSCRIPTIONS,
-} from '../subscriptions';
+  entities as subscriptionEntities,
+  steps as subscriptionSteps,
+} from '../subscriptions/constants';
 export * from './constants';
 
 const subscriptionRegex = new RegExp(SUBSCRIPTION_MATCHER);
@@ -31,10 +31,10 @@ const subscriptionRegex = new RegExp(SUBSCRIPTION_MATCHER);
 const SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS = RelationshipClass.HAS;
 const SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_METADATA: StepRelationshipMetadata = {
   _class: SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS,
-  sourceType: SUBSCRIPTION_ENTITY_METADATA._type,
+  sourceType: subscriptionEntities.SUBSCRIPTION._type,
   _type: generateRelationshipType(
     SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS,
-    SUBSCRIPTION_ENTITY_METADATA._type,
+    subscriptionEntities.SUBSCRIPTION._type,
     RESOURCE_GROUP_ENTITY._type,
   ),
   targetType: RESOURCE_GROUP_ENTITY._type,
@@ -101,7 +101,7 @@ export const resourcesSteps: Step<
     name: 'Resource Groups',
     entities: [RESOURCE_GROUP_ENTITY],
     relationships: [SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_METADATA],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SUBSCRIPTIONS],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTIONS],
     executionHandler: fetchResourceGroups,
   },
 ];

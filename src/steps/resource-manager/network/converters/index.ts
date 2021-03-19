@@ -262,6 +262,7 @@ export function createNetworkWatcherEntity(
         name: data.name,
         type: data.type,
         location: data.location,
+        provisioningState: data.provisioningState,
         webLink: webLinker.portalResourceUrl(data.id),
       },
     },

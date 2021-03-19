@@ -15,15 +15,8 @@ import {
   diagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { J1SubscriptionClient } from './client';
-import {
-  entities,
-  relationships,
-  steps,
-  STEP_RM_SUBSCRIPTIONS,
-  SUBSCRIPTION_ENTITY_METADATA,
-} from './constants';
+import { entities, relationships, steps } from './constants';
 import { createLocationEntity, createSubscriptionEntity } from './converters';
-export * from './constants';
 
 export async function fetchSubscriptions(
   executionContext: IntegrationStepContext,
@@ -57,7 +50,7 @@ export async function fetchLocations(
   const client = new J1SubscriptionClient(instance.config, logger);
 
   await jobState.iterateEntities(
-    { _type: SUBSCRIPTION_ENTITY_METADATA._type },
+    { _type: entities.SUBSCRIPTION._type },
     async (subscriptionEntity) => {
       await client.iterateLocations(
         subscriptionEntity.subscriptionId as string,
@@ -82,12 +75,9 @@ export const subscriptionSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
   {
-    id: STEP_RM_SUBSCRIPTIONS,
+    id: steps.SUBSCRIPTIONS,
     name: 'Subscriptions',
-    entities: [
-      SUBSCRIPTION_ENTITY_METADATA,
-      ...diagnosticSettingsEntitiesForResource,
-    ],
+    entities: [entities.SUBSCRIPTION, ...diagnosticSettingsEntitiesForResource],
     relationships: [...diagnosticSettingsRelationshipsForResource],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscriptions,
@@ -97,7 +87,7 @@ export const subscriptionSteps: Step<
     name: 'Subscription Locations',
     entities: [entities.LOCATION],
     relationships: [relationships.SUBSCRIPTION_USES_LOCATION],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SUBSCRIPTIONS],
+    dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTIONS],
     executionHandler: fetchLocations,
   },
 ];

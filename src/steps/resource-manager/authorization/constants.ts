@@ -28,9 +28,9 @@ import {
   RESOURCE_GROUP_MATCHER,
 } from '../utils/matchers';
 import {
-  SUBSCRIPTION_ENTITY_METADATA,
-  STEP_RM_SUBSCRIPTIONS,
-} from '../subscriptions';
+  entities as subscriptionEntities,
+  steps as subscriptionSteps,
+} from '../subscriptions/constants';
 
 // Fetch Role Assignments
 export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS =
@@ -157,8 +157,8 @@ export const SCOPE_TYPES_MAP: ResourceIdMap[] = [
   ...RESOURCE_ID_TYPES_MAP,
   {
     resourceIdMatcher: new RegExp(SUBSCRIPTION_MATCHER + EOL_MATCHER),
-    _type: SUBSCRIPTION_ENTITY_METADATA._type,
-    dependsOn: [STEP_RM_SUBSCRIPTIONS],
+    _type: subscriptionEntities.SUBSCRIPTION._type,
+    dependsOn: [subscriptionSteps.SUBSCRIPTIONS],
   },
   {
     resourceIdMatcher: new RegExp(RESOURCE_GROUP_MATCHER + EOL_MATCHER),

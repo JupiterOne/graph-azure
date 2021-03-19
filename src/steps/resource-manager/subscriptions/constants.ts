@@ -1,16 +1,16 @@
-import {
-  RelationshipClass,
-  StepEntityMetadata,
-} from '@jupiterone/integration-sdk-core';
-
-// Fetch Resource Groups
-export const STEP_RM_SUBSCRIPTIONS = 'rm-subscriptions';
+import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 export const steps = {
+  SUBSCRIPTIONS: 'rm-subscriptions',
   LOCATIONS: 'rm-subscription-locations',
 };
 
 export const entities = {
+  SUBSCRIPTION: {
+    _type: 'azure_subscription',
+    _class: ['Account'],
+    resourceName: '[RM] Subscription',
+  },
   LOCATION: {
     _type: 'azure_location',
     _class: ['Site'],
@@ -18,16 +18,10 @@ export const entities = {
   },
 };
 
-export const SUBSCRIPTION_ENTITY_METADATA: StepEntityMetadata = {
-  _type: 'azure_subscription',
-  _class: ['Account'],
-  resourceName: '[RM] Subscription',
-};
-
 export const relationships = {
   SUBSCRIPTION_USES_LOCATION: {
     _type: 'azure_subscription_uses_location',
-    sourceType: SUBSCRIPTION_ENTITY_METADATA._type,
+    sourceType: entities.SUBSCRIPTION._type,
     _class: RelationshipClass.USES,
     targetType: entities.LOCATION._type,
   },

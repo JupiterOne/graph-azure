@@ -11,11 +11,7 @@ import {
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { MonitorEntities } from '../monitor/constants';
-import {
-  entities,
-  relationships,
-  SUBSCRIPTION_ENTITY_METADATA,
-} from './constants';
+import { entities, relationships } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
 
@@ -60,8 +56,8 @@ describe('step - subscriptions', () => {
 
     expect(collectedEntities).toContainEqual(
       expect.objectContaining({
-        _class: SUBSCRIPTION_ENTITY_METADATA._class,
-        _type: SUBSCRIPTION_ENTITY_METADATA._type,
+        _class: entities.SUBSCRIPTION._class,
+        _type: entities.SUBSCRIPTION._type,
         _key: `/subscriptions/${instanceConfig.subscriptionId}`,
         id: `/subscriptions/${instanceConfig.subscriptionId}`,
         name: expect.any(String),
@@ -164,8 +160,8 @@ describe('rm-subscription-locations', () => {
 
     const subscriptionEntity = {
       _key: 'subscription-entity-key',
-      _type: SUBSCRIPTION_ENTITY_METADATA._type,
-      _class: SUBSCRIPTION_ENTITY_METADATA._class,
+      _type: entities.SUBSCRIPTION._type,
+      _class: entities.SUBSCRIPTION._class,
       subscriptionId: config.subscriptionId,
     };
 

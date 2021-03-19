@@ -4,7 +4,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
-import { entities, SUBSCRIPTION_ENTITY_METADATA } from './constants';
+import { entities } from './constants';
 import { Subscription, Location } from '@azure/arm-subscriptions/esm/models';
 
 export function createSubscriptionEntity(
@@ -16,8 +16,8 @@ export function createSubscriptionEntity(
       source: data,
       assign: {
         _key: data.id as string,
-        _type: SUBSCRIPTION_ENTITY_METADATA._type,
-        _class: SUBSCRIPTION_ENTITY_METADATA._class,
+        _type: entities.SUBSCRIPTION._type,
+        _class: entities.SUBSCRIPTION._class,
         id: data.id,
         subscriptionId: data.subscriptionId,
         state: data.state,

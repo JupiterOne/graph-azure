@@ -8,7 +8,7 @@ import {
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   KEY_VAULT_SERVICE_ENTITY_CLASS,
 } from '../key-vault';
-import { SUBSCRIPTION_ENTITY_METADATA } from '../subscriptions';
+import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { entities as storageEntities } from '../storage';
 import { SecurityEntities } from '../security';
 import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
@@ -66,8 +66,8 @@ test('step - recommendations', async () => {
       },
       {
         _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-        _type: SUBSCRIPTION_ENTITY_METADATA._type,
-        _class: SUBSCRIPTION_ENTITY_METADATA._class,
+        _type: subscriptionEntities.SUBSCRIPTION._type,
+        _class: subscriptionEntities.SUBSCRIPTION._class,
       },
       {
         _key:

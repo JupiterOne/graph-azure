@@ -8,33 +8,47 @@ import {
   RM_DATABASE_SERVER_ENTITY_CLASS,
 } from '../constants';
 
-export const SQLEntities = {
+export const steps = {
+  DATABASES: 'rm-database-sql-databases',
+  SERVER_FIREWALL_RULES: 'rm-database-sql-server-firewall-rules',
+};
+
+export const entities = {
   SERVER: {
     _type: 'azure_sql_server',
     _class: RM_DATABASE_SERVER_ENTITY_CLASS,
     resourceName: '[RM] SQL Server',
   },
-
   DATABASE: {
     _type: 'azure_sql_database',
     _class: RM_DATABASE_ENTITY_CLASS,
     resourceName: '[RM] SQL Database',
   },
+  FIREWALL_RULE: {
+    _type: 'azure_sql_server_firewall_rule',
+    _class: ['Firewall'],
+    resourceName: '[RM] SQL Server Firewall Rule',
+  },
 };
 
-export const SQLRelationships = {
+export const relationships = {
   RESOURCE_GROUP_HAS_SQL_SERVER: createResourceGroupResourceRelationshipMetadata(
-    SQLEntities.SERVER._type,
+    entities.SERVER._type,
   ),
-
   SQL_SERVER_HAS_SQL_DATABASE: {
     _type: generateRelationshipType(
       RelationshipClass.HAS,
-      SQLEntities.SERVER._type,
-      SQLEntities.DATABASE._type,
+      entities.SERVER._type,
+      entities.DATABASE._type,
     ),
-    sourceType: SQLEntities.SERVER._type,
+    sourceType: entities.SERVER._type,
     _class: RelationshipClass.HAS,
-    targetType: SQLEntities.DATABASE._type,
+    targetType: entities.DATABASE._type,
+  },
+  SQL_SERVER_HAS_FIREWALL_RULE: {
+    _type: 'azure_sql_server_has_firewall_rule',
+    sourceType: entities.SERVER._type,
+    _class: RelationshipClass.HAS,
+    targetType: entities.FIREWALL_RULE._type,
   },
 };

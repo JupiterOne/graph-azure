@@ -3,7 +3,6 @@ import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MYSQL_DATABASES,
   STEP_RM_DATABASE_POSTGRESQL_DATABASES,
-  STEP_RM_DATABASE_SQL_DATABASES,
 } from './constants';
 import {
   fetchMariaDBDatabases,
@@ -20,7 +19,7 @@ import {
   PostgreSQLEntities,
   PostgreSQLRelationships,
 } from './postgresql';
-import { fetchSQLDatabases, SQLEntities, SQLRelationships } from './sql';
+import { sqlSteps } from './sql';
 import {
   Step,
   IntegrationStepExecutionContext,
@@ -85,20 +84,5 @@ export const databaseSteps: Step<
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPostgreSQLDatabases,
   },
-  {
-    id: STEP_RM_DATABASE_SQL_DATABASES,
-    name: 'SQL Databases',
-    entities: [
-      SQLEntities.SERVER,
-      SQLEntities.DATABASE,
-      ...diagnosticSettingsEntitiesForResource,
-    ],
-    relationships: [
-      SQLRelationships.RESOURCE_GROUP_HAS_SQL_SERVER,
-      SQLRelationships.SQL_SERVER_HAS_SQL_DATABASE,
-      ...diagnosticSettingsRelationshipsForResource,
-    ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    executionHandler: fetchSQLDatabases,
-  },
+  ...sqlSteps,
 ];

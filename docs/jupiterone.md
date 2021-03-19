@@ -140,6 +140,7 @@ The following entities are created:
 | [RM] Role Definition                   | `azure_role_definition`               | `AccessRole`                       |
 | [RM] SQL Database                      | `azure_sql_database`                  | `Database`, `DataStore`            |
 | [RM] SQL Server                        | `azure_sql_server`                    | `Database`, `DataStore`, `Host`    |
+| [RM] SQL Server Firewall Rule          | `azure_sql_server_firewall_rule`      | `Firewall`                         |
 | [RM] Security Assessment               | `azure_security_assessment`           | `Assessment`                       |
 | [RM] Security Contact                  | `azure_security_center_contact`       | `Resource`                         |
 | [RM] Security Group                    | `azure_security_group`                | `Firewall`                         |
@@ -259,6 +260,7 @@ The following relationships are created/mapped:
 | `azure_service_bus_namespace`     | **HAS**               | `azure_service_bus_topic`             |
 | `azure_service_bus_topic`         | **HAS**               | `azure_service_bus_subscription`      |
 | `azure_sql_server`                | **HAS**               | `azure_sql_database`                  |
+| `azure_sql_server`                | **HAS**               | `azure_sql_server_firewall_rule`      |
 | `azure_storage_account`           | **HAS**               | `azure_storage_container`             |
 | `azure_storage_account`           | **HAS**               | `azure_storage_file_share`            |
 | `azure_storage_account`           | **HAS**               | `azure_storage_queue`                 |

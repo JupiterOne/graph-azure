@@ -1,5 +1,4 @@
 // Step IDs
-export const STEP_RM_DATABASE_SQL_DATABASES = 'rm-database-sql-databases';
 export const STEP_RM_DATABASE_POSTGRESQL_DATABASES =
   'rm-database-postgresql-databases';
 export const STEP_RM_DATABASE_MARIADB_DATABASES =

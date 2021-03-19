@@ -1,10 +1,16 @@
 import {
   DatabaseBlobAuditingPoliciesGetResponse,
+  FirewallRule,
   ServerBlobAuditingPoliciesGetResponse,
   ServerSecurityAlertPoliciesGetResponse,
   TransparentDataEncryptionsGetResponse,
 } from '@azure/arm-sql/esm/models';
-import { Entity, setRawData } from '@jupiterone/integration-sdk-core';
+import {
+  createIntegrationEntity,
+  Entity,
+  setRawData,
+} from '@jupiterone/integration-sdk-core';
+import { entities } from './constants';
 
 const ENABLED_PATTERN = /enabled/i;
 
@@ -86,4 +92,24 @@ export function setDatabaseEncryption(
   if (status) {
     databaseEntity.encrypted = ENABLED_PATTERN.test(status);
   }
+}
+
+export function createSqlServerFirewallRuleEntity(firewallRule: FirewallRule) {
+  return createIntegrationEntity({
+    entityData: {
+      source: firewallRule,
+      assign: {
+        _key: firewallRule.id,
+        _type: entities.FIREWALL_RULE._type,
+        _class: entities.FIREWALL_RULE._class,
+        name: firewallRule.name,
+        id: firewallRule.id,
+        category: ['host'],
+        kind: firewallRule.kind,
+        location: firewallRule.location,
+        startIpAddress: firewallRule.startIpAddress,
+        endIpAddress: firewallRule.endIpAddress,
+      },
+    },
+  });
 }

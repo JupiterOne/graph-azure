@@ -2,6 +2,7 @@ import { SqlManagementClient } from '@azure/arm-sql';
 import {
   Database,
   DatabaseBlobAuditingPoliciesGetResponse,
+  FirewallRule,
   Server,
   ServerBlobAuditingPoliciesGetResponse,
   ServerSecurityAlertPoliciesGetResponse,
@@ -178,5 +179,35 @@ export class SQLClient extends Client {
         'Failed to obtain security alert policies for server',
       );
     }
+  }
+
+  public async iteraetServerFirewallRules(
+    server: {
+      id?: string;
+      name?: string;
+    },
+    callback: (r: FirewallRule) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      SqlManagementClient,
+    );
+
+    const resourceGroup = resourceGroupName(server.id, true);
+    const serverName = server.name as string;
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => {
+          return serviceClient.firewallRules.listByServer(
+            resourceGroup,
+            serverName,
+          );
+        },
+      },
+      resourceDescription: 'sql.firewallRules',
+      callback,
+    });
   }
 }

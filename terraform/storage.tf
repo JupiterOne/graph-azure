@@ -151,6 +151,16 @@ resource "azurerm_sql_server" "j1dev" {
   }
 }
 
+resource "azurerm_sql_firewall_rule" "j1dev" {
+  count = local.storage_sql_servers_count
+
+  name                = "j1dev"
+  resource_group_name = azurerm_resource_group.j1dev.name
+  server_name         = azurerm_sql_server.j1dev[0].name
+  start_ip_address    = "10.0.17.62"
+  end_ip_address      = "10.0.17.62"
+}
+
 data "azurerm_monitor_diagnostic_categories" "j1dev_sql_cat" {
   count       = local.storage_sql_servers_count
   resource_id = azurerm_sql_server.j1dev[0].id

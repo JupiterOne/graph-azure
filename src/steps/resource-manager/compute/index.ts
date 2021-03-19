@@ -2,6 +2,9 @@ import {
   Entity,
   Step,
   IntegrationStepExecutionContext,
+  Relationship,
+  createDirectRelationship,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -24,13 +27,13 @@ import {
 import {
   createDiskEntity,
   createImageEntity,
-  createVirtualMachineDiskRelationships,
   createVirtualMachineEntity,
 } from './converters';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import { VirtualMachine } from '@azure/arm-compute/esm/models';
 
 export * from './constants';
 
@@ -54,10 +57,87 @@ export async function fetchVirtualMachines(
 
     if (vm.storageProfile) {
       await jobState.addRelationships(
-        createVirtualMachineDiskRelationships(vm),
+        await createVirtualMachineDiskRelationships(
+          vm,
+          virtualMachineEntity,
+          executionContext,
+        ),
       );
     }
   });
+}
+
+export async function createVirtualMachineDiskRelationships(
+  vm: VirtualMachine,
+  vmEntity: Entity,
+  context: IntegrationStepExecutionContext,
+): Promise<Relationship[]> {
+  enum DiskType {
+    OS_DISK = 'osDisk',
+    DATA_DISK = 'dataDisk',
+  }
+
+  async function createManagedDiskRelationship(options: {
+    diskType: DiskType;
+    diskId: string;
+    vmEntity: Entity;
+    context: IntegrationStepExecutionContext;
+  }): Promise<Relationship | undefined> {
+    const { diskType, diskId, vmEntity, context } = options;
+    const { jobState, logger } = context;
+    const managedDiskEntity = await jobState.findEntity(diskId);
+    if (managedDiskEntity) {
+      return createDirectRelationship({
+        _class: RelationshipClass.USES,
+        from: vmEntity,
+        to: managedDiskEntity,
+        properties: {
+          [diskType]: true,
+        },
+      });
+    } else {
+      logger.error(
+        {
+          virtualMachineId: vmEntity.id,
+          managedDiskId: diskId,
+          diskType,
+        },
+        'Could not find managed disk defined by virtual machine.',
+      );
+    }
+  }
+
+  const relationships: Relationship[] = [];
+
+  if (vm.storageProfile) {
+    if (vm.storageProfile.osDisk?.managedDisk?.id) {
+      const osDiskRelationship = await createManagedDiskRelationship({
+        diskType: DiskType.OS_DISK,
+        vmEntity,
+        context,
+        diskId: vm.storageProfile.osDisk.managedDisk.id,
+      });
+      if (osDiskRelationship) {
+        relationships.push(osDiskRelationship);
+      }
+    }
+
+    for (const disk of vm.storageProfile.dataDisks || []) {
+      if (disk.managedDisk?.id) {
+        const dataDiskRelationship = await createManagedDiskRelationship({
+          diskType: DiskType.DATA_DISK,
+          vmEntity,
+          context,
+          diskId: disk.managedDisk.id,
+        });
+        if (dataDiskRelationship) {
+          relationships.push(dataDiskRelationship);
+        }
+      }
+    }
+  }
+
+  return relationships;
 }
 
 export async function fetchVirtualMachineImages(

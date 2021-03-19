@@ -1,16 +1,8 @@
 import { Disk, VirtualMachine } from '@azure/arm-compute/esm/models';
-import {
-  convertProperties,
-  createDirectRelationship,
-  RelationshipClass,
-} from '@jupiterone/integration-sdk-core';
+import { convertProperties } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import {
-  createDiskEntity,
-  createVirtualMachineDiskRelationships,
-  createVirtualMachineEntity,
-} from './converters';
+import { createDiskEntity, createVirtualMachineEntity } from './converters';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 
@@ -154,7 +146,7 @@ describe('createVirtualMachineEntity', () => {
       _key:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
       _type: 'azure_vm',
-      _class: 'Host',
+      _class: ['Host'],
       _rawData: [{ name: 'default', rawData: data }],
       displayName: 'j1dev',
       vmId: '2ed98ec3-b9a4-4126-926e-081889e3bc3a',
@@ -172,84 +164,5 @@ describe('createVirtualMachineEntity', () => {
       ),
       'tag.environment': 'j1dev',
     });
-  });
-});
-
-describe('createVirtualMachineDiskRelationships', () => {
-  test('properties transferred', () => {
-    const vm: Partial<VirtualMachine> = {
-      id:
-        '/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/j1',
-      storageProfile: {
-        imageReference: {
-          publisher: 'Canonical',
-          offer: 'UbuntuServer',
-          sku: '18.04-LTS',
-          version: 'latest',
-          exactVersion: '18.04.202002080',
-        },
-        osDisk: {
-          osType: 'Linux',
-          name: 'j1_disk1_xyz',
-          caching: 'ReadWrite',
-          createOption: 'FromImage',
-          diskSizeGB: 30,
-          managedDisk: {
-            id:
-              '/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/disks/j1_disk1_xyz',
-            storageAccountType: 'StandardSSD_LRS',
-          },
-        },
-        dataDisks: [],
-      },
-    };
-
-    expect(createVirtualMachineDiskRelationships(vm as VirtualMachine)).toEqual(
-      [
-        createDirectRelationship({
-          _class: RelationshipClass.USES,
-          fromKey:
-            '/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/j1',
-          fromType: 'azure_vm',
-          toKey:
-            '/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/disks/j1_disk1_xyz',
-          toType: 'azure_managed_disk',
-          properties: {
-            osDisk: true,
-          },
-        }),
-      ],
-    );
-  });
-
-  test('unattached disk produces no relationship', () => {
-    const vm: Partial<VirtualMachine> = {
-      id:
-        '/subscriptions/uuid/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/j1',
-      storageProfile: {
-        imageReference: {
-          publisher: 'Canonical',
-          offer: 'UbuntuServer',
-          sku: '18.04-LTS',
-          version: 'latest',
-          exactVersion: '18.04.202002080',
-        },
-        osDisk: {
-          osType: 'Linux',
-          name: 'j1_disk1_xyz',
-          caching: 'ReadWrite',
-          createOption: 'FromImage',
-          diskSizeGB: 30,
-          managedDisk: {
-            storageAccountType: 'StandardSSD_LRS',
-          },
-        },
-        dataDisks: [],
-      },
-    };
-
-    expect(createVirtualMachineDiskRelationships(vm as VirtualMachine)).toEqual(
-      [],
-    );
   });
 });

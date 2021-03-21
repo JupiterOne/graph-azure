@@ -72,6 +72,7 @@ describe('createDiskEntity', () => {
       ),
       'tag.environment': 'j1dev',
       encrypted: true,
+      encryption: 'EncryptionAtRestWithPlatformKey',
       state: 'unattached',
       attached: false,
     });

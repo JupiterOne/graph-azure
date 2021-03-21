@@ -98,6 +98,7 @@ export function createDiskEntity(
     createdOn: getTime(data.timeCreated),
     webLink: webLinker.portalResourceUrl(data.id),
     encrypted: !!data.encryption?.type,
+    encryption: data.encryption?.type,
     state: data.diskState?.toLowerCase(),
     attached: data.diskState === 'Attached',
   };

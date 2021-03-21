@@ -1,4 +1,10 @@
-import { Disk, Image, VirtualMachine } from '@azure/arm-compute/esm/models';
+import {
+  DataDisk,
+  Disk,
+  Image,
+  OSDisk,
+  VirtualMachine,
+} from '@azure/arm-compute/esm/models';
 import {
   assignTags,
   convertProperties,
@@ -53,12 +59,27 @@ export function createVirtualMachineEntity(
     resourceGroup: resourceGroupName(data.id),
     state: data.provisioningState,
     vmSize: data.hardwareProfile && data.hardwareProfile.vmSize,
+    usesManagedDisks: usesManagedDisks(
+      data.storageProfile?.osDisk,
+      data.storageProfile?.dataDisks,
+    ),
     webLink: webLinker.portalResourceUrl(data.id),
   };
 
   assignTags(entity, data.tags);
 
   return entity;
+}
+
+function usesManagedDisks(osDisk?: OSDisk, dataDisks?: DataDisk[]) {
+  function usesManagedDisk(disk: OSDisk | DataDisk | undefined) {
+    return disk?.managedDisk !== undefined;
+  }
+
+  return (
+    usesManagedDisk(osDisk) &&
+    (dataDisks || []).every((d) => usesManagedDisk(d))
+  );
 }
 
 export function createDiskEntity(
@@ -106,3 +127,7 @@ export function createImageEntity(
 
   return entity;
 }
+
+export const testFunctions = {
+  usesManagedDisks,
+};

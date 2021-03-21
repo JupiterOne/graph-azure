@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Added
 
+- Added `azure_vm.usesManagedDisk` property.
 - Added `azure_location` entities.
 - Added `azure_network_watcher` entities.
 - Added `azure_security_group_flow_logs` entities.

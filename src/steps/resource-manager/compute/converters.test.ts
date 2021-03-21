@@ -1,8 +1,19 @@
-import { Disk, VirtualMachine } from '@azure/arm-compute/esm/models';
+import {
+  DataDisk,
+  Disk,
+  OSDisk,
+  VirtualMachine,
+} from '@azure/arm-compute/esm/models';
 import { convertProperties } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { createDiskEntity, createVirtualMachineEntity } from './converters';
+import {
+  createDiskEntity,
+  createVirtualMachineEntity,
+  testFunctions,
+} from './converters';
+
+const { usesManagedDisks } = testFunctions;
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 
@@ -158,11 +169,56 @@ describe('createVirtualMachineEntity', () => {
       resourceGroup: 'j1dev',
       region: 'eastus',
       state: 'Succeeded',
+      usesManagedDisks: true,
       vmSize: 'Standard_DS1_v2',
       webLink: webLinker.portalResourceUrl(
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
       ),
       'tag.environment': 'j1dev',
     });
+  });
+});
+
+describe('usesManagedDisks', () => {
+  test('should return false if os disk = undefined & data disks = undefined', () => {
+    // this case isn't strictly possible, since VMs do need an OS disk to operate.
+    expect(usesManagedDisks(undefined, undefined)).toBe(false);
+  });
+
+  test('should return true if using managed OS disk & data disks', () => {
+    const osDisk: OSDisk = { managedDisk: {}, createOption: 'FromImage' };
+    const dataDisks: DataDisk[] = [
+      { managedDisk: {}, lun: 0, createOption: 'FromImage' },
+    ];
+    expect(usesManagedDisks(osDisk, dataDisks)).toBe(true);
+  });
+
+  test('should return true if using managed OS disk (dataDisks = undefined)', () => {
+    const osDisk: OSDisk = { managedDisk: {}, createOption: 'FromImage' };
+    const dataDisks = undefined;
+    expect(usesManagedDisks(osDisk, dataDisks)).toBe(true);
+  });
+
+  test('should return true if using managed OS disk (dataDisks = [])', () => {
+    const osDisk: OSDisk = { managedDisk: {}, createOption: 'FromImage' };
+    const dataDisks: DataDisk[] = [];
+    expect(usesManagedDisks(osDisk, dataDisks)).toBe(true);
+  });
+
+  test('should return false if not using managed OS disk but managed data disks', () => {
+    const osDisk: OSDisk = { createOption: 'FromImage' };
+    const dataDisks: DataDisk[] = [
+      { managedDisk: {}, lun: 0, createOption: 'FromImage' },
+    ];
+    expect(usesManagedDisks(osDisk, dataDisks)).toBe(false);
+  });
+
+  test('should return false if using one non-managed data disk but managed OS disk & other data disks', () => {
+    const osDisk: OSDisk = { managedDisk: {}, createOption: 'FromImage' };
+    const dataDisks: DataDisk[] = [
+      { managedDisk: {}, lun: 0, createOption: 'FromImage' },
+      { lun: 1, createOption: 'FromImage' },
+    ];
+    expect(usesManagedDisks(osDisk, dataDisks)).toBe(false);
   });
 });

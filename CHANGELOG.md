@@ -10,10 +10,19 @@ and this project adheres to
 
 ### Added
 
+- Added `azure_managed_disk.encryption` property.
+- Added `azure_vm.usesManagedDisks` property.
 - Added `azure_location` entities.
 - Added `azure_network_watcher` entities.
 - Added `azure_security_group_flow_logs` entities.
 - Added `azure_sql_server_firewall_rule` entities.
+
+### Fixed
+
+- Fixed broken relationships between VM and disk entities. Previously, some
+  relationships between VM and disk did not match case-sensitive, and created
+  unresolvable relationships. Relationships will now be created based on
+  case-insensitive matching of VM and disk IDs.
 
 ## 5.14.2 - 2021-03-16
 

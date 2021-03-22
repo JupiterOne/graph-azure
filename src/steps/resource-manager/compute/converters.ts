@@ -1,12 +1,15 @@
-import { Disk, Image, VirtualMachine } from '@azure/arm-compute/esm/models';
+import {
+  DataDisk,
+  Disk,
+  Image,
+  OSDisk,
+  VirtualMachine,
+} from '@azure/arm-compute/esm/models';
 import {
   assignTags,
   convertProperties,
-  createDirectRelationship,
   Entity,
   getTime,
-  Relationship,
-  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
@@ -56,12 +59,27 @@ export function createVirtualMachineEntity(
     resourceGroup: resourceGroupName(data.id),
     state: data.provisioningState,
     vmSize: data.hardwareProfile && data.hardwareProfile.vmSize,
+    usesManagedDisks: usesManagedDisks(
+      data.storageProfile?.osDisk,
+      data.storageProfile?.dataDisks,
+    ),
     webLink: webLinker.portalResourceUrl(data.id),
   };
 
   assignTags(entity, data.tags);
 
   return entity;
+}
+
+function usesManagedDisks(osDisk?: OSDisk, dataDisks?: DataDisk[]) {
+  function usesManagedDisk(disk: OSDisk | DataDisk | undefined) {
+    return disk?.managedDisk !== undefined;
+  }
+
+  return (
+    usesManagedDisk(osDisk) &&
+    (dataDisks || []).every((d) => usesManagedDisk(d))
+  );
 }
 
 export function createDiskEntity(
@@ -80,6 +98,7 @@ export function createDiskEntity(
     createdOn: getTime(data.timeCreated),
     webLink: webLinker.portalResourceUrl(data.id),
     encrypted: !!data.encryption?.type,
+    encryption: data.encryption?.type,
     state: data.diskState?.toLowerCase(),
     attached: data.diskState === 'Attached',
   };
@@ -110,44 +129,6 @@ export function createImageEntity(
   return entity;
 }
 
-export function createVirtualMachineDiskRelationships(
-  vm: VirtualMachine,
-): Relationship[] {
-  const relationships: Relationship[] = [];
-
-  if (vm.storageProfile) {
-    if (vm.storageProfile.osDisk?.managedDisk?.id) {
-      relationships.push(
-        createDirectRelationship({
-          _class: RelationshipClass.USES,
-          fromKey: vm.id as string,
-          fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
-          toKey: vm.storageProfile.osDisk.managedDisk.id,
-          toType: DISK_ENTITY_TYPE,
-          properties: {
-            osDisk: true,
-          },
-        }),
-      );
-    }
-
-    for (const disk of vm.storageProfile.dataDisks || []) {
-      if (disk.managedDisk?.id) {
-        relationships.push(
-          createDirectRelationship({
-            _class: RelationshipClass.USES,
-            fromKey: vm.id as string,
-            fromType: VIRTUAL_MACHINE_ENTITY_TYPE,
-            toKey: disk.managedDisk.id,
-            toType: DISK_ENTITY_TYPE,
-            properties: {
-              dataDisk: true,
-            },
-          }),
-        );
-      }
-    }
-  }
-
-  return relationships;
-}
+export const testFunctions = {
+  usesManagedDisks,
+};

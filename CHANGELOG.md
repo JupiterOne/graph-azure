@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.15.0 - 2021-03-22
+
 ### Added
 
 - Added `azure_managed_disk.encryption` property.

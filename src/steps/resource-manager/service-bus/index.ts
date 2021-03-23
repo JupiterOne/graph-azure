@@ -33,8 +33,7 @@ export async function fetchServiceBusNamespaces(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
-
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ServiceBusClient(instance.config, logger);
 
@@ -56,8 +55,7 @@ export async function fetchServiceBusQueues(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
-
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ServiceBusClient(instance.config, logger);
 
@@ -87,8 +85,7 @@ export async function fetchServiceBusTopics(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
-
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ServiceBusClient(instance.config, logger);
 
@@ -132,8 +129,7 @@ export async function fetchServiceBusSubscriptions(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
-
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ServiceBusClient(instance.config, logger);
 

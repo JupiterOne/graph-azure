@@ -35,7 +35,7 @@ export async function fetchRedisCaches(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new RedisCacheClient(instance.config, logger);
 
@@ -65,7 +65,7 @@ export async function fetchRedisFirewallRules(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new RedisCacheClient(instance.config, logger);
 
@@ -104,7 +104,7 @@ export async function fetchRedisLinkedServers(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new RedisCacheClient(instance.config, logger);
 

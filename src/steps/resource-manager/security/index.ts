@@ -29,8 +29,7 @@ export async function fetchAssessments(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
-
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new SecurityClient(instance.config, logger);
 
@@ -66,8 +65,7 @@ export async function fetchSecurityCenterContacts(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
-
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new SecurityClient(instance.config, logger);
 

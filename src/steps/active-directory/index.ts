@@ -66,7 +66,7 @@ export async function fetchUsers(
   const { logger, instance, jobState } = executionContext;
   const graphClient = new DirectoryGraphClient(logger, instance.config);
 
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   await graphClient.iterateUsers(async (user) => {
     const userEntity = createUserEntity(user);
     await jobState.addEntity(userEntity);
@@ -83,7 +83,7 @@ export async function fetchGroups(
   logger.debug('Initializing directory graph client');
   const graphClient = new DirectoryGraphClient(logger, instance.config);
 
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   logger.debug('Iterating groups');
   await graphClient.iterateGroups(async (group) => {
     logger.debug({ id: group.id }, 'Creating graph objects for group');

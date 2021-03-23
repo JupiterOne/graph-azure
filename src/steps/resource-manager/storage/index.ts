@@ -53,7 +53,7 @@ export async function fetchStorageAccounts(
   }
   const client = new StorageClient(instance.config, logger);
 
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   const keyVaultEntityMap = await buildKeyVaultEntityMap(executionContext);
@@ -162,7 +162,7 @@ export async function fetchStorageFileShares(
   const { instance, logger, jobState } = executionContext;
   const client = new StorageClient(instance.config, logger);
 
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await jobState.iterateEntities(
@@ -201,7 +201,7 @@ export async function fetchStorageContainers(
   const { instance, logger, jobState } = executionContext;
   const client = new StorageClient(instance.config, logger);
 
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await jobState.iterateEntities(
@@ -240,7 +240,7 @@ export async function fetchStorageQueues(
   const { instance, logger, jobState } = executionContext;
   const client = new StorageClient(instance.config, logger);
 
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await jobState.iterateEntities(
@@ -280,7 +280,7 @@ export async function fetchStorageTables(
   const { instance, logger, jobState } = executionContext;
   const client = new StorageClient(instance.config, logger);
 
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await jobState.iterateEntities(

@@ -284,6 +284,7 @@ The following relationships are created/mapped:
 | `azure_vm`                        | **USES**              | `azure_managed_disk`                  |
 | `azure_vm`                        | **USES**              | `azure_nic`                           |
 | `azure_vm`                        | **USES**              | `azure_public_ip`                     |
+| `azure_vm`                        | **USES**              | `azure_storage_account`               |
 | `azure_vnet`                      | **CONTAINS**          | `azure_subnet`                        |
 
 <!--

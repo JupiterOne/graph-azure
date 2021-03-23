@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Added
 
+- Added `azure_vm|USES|azure_storage_account` relationships.
 - Added `azure_vm_extension` entities.
 
 ## 5.16.0 - 2021-03-23

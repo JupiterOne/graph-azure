@@ -11,7 +11,12 @@ import {
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { MonitorEntities } from '../monitor/constants';
-import { entities, relationships } from './constants';
+import {
+  entities,
+  relationships,
+  setDataKeys,
+  SetDataTypes,
+} from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
 
@@ -210,5 +215,12 @@ describe('rm-subscription-locations', () => {
         },
       },
     });
+
+    const locationNameMap = await context.jobState.getData<
+      SetDataTypes['locationNameMap']
+    >(setDataKeys.locationNameMap);
+
+    expect(locationNameMap).not.toBeUndefined();
+    expect(Object.values(locationNameMap!)).toEqual(locationEntities);
   });
 });

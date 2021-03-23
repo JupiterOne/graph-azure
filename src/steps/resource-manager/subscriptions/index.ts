@@ -14,7 +14,13 @@ import {
   diagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { J1SubscriptionClient } from './client';
-import { entities, relationships, steps } from './constants';
+import {
+  setDataKeys,
+  SetDataTypes,
+  entities,
+  relationships,
+  steps,
+} from './constants';
 import { createLocationEntity, createSubscriptionEntity } from './converters';
 
 export async function fetchSubscriptions(
@@ -46,6 +52,8 @@ export async function fetchLocations(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new J1SubscriptionClient(instance.config, logger);
 
+  const locationNameMap: SetDataTypes['locationNameMap'] = {};
+
   await jobState.iterateEntities(
     { _type: entities.SUBSCRIPTION._type },
     async (subscriptionEntity) => {
@@ -62,10 +70,22 @@ export async function fetchLocations(
               to: locationEntity,
             }),
           );
+          if (location.name) {
+            locationNameMap[location.name!] = locationEntity;
+          } else {
+            logger.error(
+              {
+                locationId: location.id,
+                locationName: location.name,
+              },
+              'ERROR: Azure location.name property is undefined; cannot add to locationNameMap!',
+            );
+          }
         },
       );
     },
   );
+  jobState.setData(setDataKeys.locationNameMap, locationNameMap);
 }
 
 export const subscriptionSteps: Step<

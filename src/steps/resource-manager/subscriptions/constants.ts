@@ -1,8 +1,16 @@
-import { RelationshipClass } from '@jupiterone/integration-sdk-core';
+import { Entity, RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 export const steps = {
   SUBSCRIPTIONS: 'rm-subscriptions',
   LOCATIONS: 'rm-subscription-locations',
+};
+
+export const setDataKeys = {
+  locationNameMap: 'DATA_LOCATION_NAME_MAP',
+};
+
+export type SetDataTypes = {
+  locationNameMap: { [name: string]: Entity };
 };
 
 export const entities = {

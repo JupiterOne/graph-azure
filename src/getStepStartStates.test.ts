@@ -35,6 +35,7 @@ import {
   STEP_RM_NETWORK_AZURE_FIREWALLS,
   STEP_RM_NETWORK_WATCHERS,
   STEP_RM_NETWORK_FLOW_LOGS,
+  STEP_RM_NETWORK_LOCATION_WATCHERS,
 } from './steps/resource-manager/network';
 import { steps as storageSteps } from './steps/resource-manager/storage';
 import { IntegrationConfig } from './types';
@@ -123,6 +124,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_NETWORK_AZURE_FIREWALLS]: { disabled: true },
       [STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES]: { disabled: true },
       [STEP_RM_NETWORK_WATCHERS]: { disabled: true },
+      [STEP_RM_NETWORK_LOCATION_WATCHERS]: { disabled: true },
       [STEP_RM_NETWORK_FLOW_LOGS]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
@@ -206,6 +208,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_NETWORK_AZURE_FIREWALLS]: { disabled: true },
       [STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES]: { disabled: true },
       [STEP_RM_NETWORK_WATCHERS]: { disabled: true },
+      [STEP_RM_NETWORK_LOCATION_WATCHERS]: { disabled: true },
       [STEP_RM_NETWORK_FLOW_LOGS]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
@@ -289,6 +292,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_NETWORK_AZURE_FIREWALLS]: { disabled: false },
       [STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES]: { disabled: false },
       [STEP_RM_NETWORK_WATCHERS]: { disabled: false },
+      [STEP_RM_NETWORK_LOCATION_WATCHERS]: { disabled: false },
       [STEP_RM_NETWORK_FLOW_LOGS]: { disabled: false },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: false },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: false },

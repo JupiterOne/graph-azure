@@ -13,6 +13,7 @@ import {
   IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
+  IntegrationError,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -31,6 +32,7 @@ import {
   STEP_RM_NETWORK_AZURE_FIREWALLS,
   STEP_RM_NETWORK_WATCHERS,
   STEP_RM_NETWORK_FLOW_LOGS,
+  STEP_RM_NETWORK_LOCATION_WATCHERS,
 } from './constants';
 import {
   createAzureFirewallEntity,
@@ -63,6 +65,11 @@ import {
   diagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { steps as storageSteps } from '../storage';
+import {
+  setDataKeys as subscriptionsSetDataKeys,
+  SetDataTypes as SubscriptionSetDataTypes,
+  steps as subscriptionSteps,
+} from '../subscriptions/constants';
 
 export * from './constants';
 
@@ -434,6 +441,50 @@ export async function fetchNetworkWatchers(
   );
 }
 
+export async function buildLocationNetworkWatcherRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  const locationNameMap = await jobState.getData<
+    SubscriptionSetDataTypes['locationNameMap']
+  >(subscriptionsSetDataKeys.locationNameMap);
+  if (!locationNameMap) {
+    throw new IntegrationError({
+      message:
+        'Could not find locationNameMap data in job state; cannot build location => network watcher relationships.',
+      code: 'LOCATION_NAME_MAP_NOT_FOUND',
+    });
+  }
+
+  const locations = Object.keys(locationNameMap);
+  await jobState.iterateEntities(
+    { _type: NetworkEntities.NETWORK_WATCHER._type },
+    async (networkWatcherEntity) => {
+      const locationEntity =
+        locationNameMap[networkWatcherEntity.location as string];
+
+      if (locationEntity) {
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.HAS,
+            from: locationEntity,
+            to: networkWatcherEntity,
+          }),
+        );
+      } else {
+        logger.warn(
+          {
+            networkWatcherLocation: networkWatcherEntity.location,
+            locations,
+          },
+          'WARNING: Could not find matching location for network watcher. The locationNameMap may be constructed incorrectly',
+        );
+      }
+    },
+  );
+}
+
 export async function fetchNetworkSecurityGroupFlowLogs(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -633,8 +684,16 @@ export const networkSteps: Step<
     name: 'Network Watchers',
     entities: [NetworkEntities.NETWORK_WATCHER],
     relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_WATCHER],
-    dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchNetworkWatchers,
+  },
+  {
+    id: STEP_RM_NETWORK_LOCATION_WATCHERS,
+    name: 'Location-Network Watcher Relationships',
+    entities: [],
+    relationships: [NetworkRelationships.LOCATION_HAS_NETWORK_WATCHER],
+    dependsOn: [STEP_RM_NETWORK_WATCHERS, subscriptionSteps.LOCATIONS],
+    executionHandler: buildLocationNetworkWatcherRelationships,
   },
   {
     id: STEP_RM_NETWORK_FLOW_LOGS,

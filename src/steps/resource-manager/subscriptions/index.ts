@@ -14,7 +14,13 @@ import {
   diagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { J1SubscriptionClient } from './client';
-import { entities, relationships, steps } from './constants';
+import {
+  setDataKeys,
+  SetDataTypes,
+  entities,
+  relationships,
+  steps,
+} from './constants';
 import { createLocationEntity, createSubscriptionEntity } from './converters';
 
 export async function fetchSubscriptions(
@@ -46,6 +52,8 @@ export async function fetchLocations(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new J1SubscriptionClient(instance.config, logger);
 
+  const locationNameMap: SetDataTypes['locationNameMap'] = {};
+
   await jobState.iterateEntities(
     { _type: entities.SUBSCRIPTION._type },
     async (subscriptionEntity) => {
@@ -62,10 +70,35 @@ export async function fetchLocations(
               to: locationEntity,
             }),
           );
+          if (location.name) {
+            if (locationNameMap[location.name!] !== undefined) {
+              // In order to future-proof this function (considering a world where more than
+              // 1 subscription is ingested in an integration), alert the operators if more
+              // than one location name exists.
+              logger.error(
+                {
+                  newLocationId: location.id,
+                  currentLocationId: locationNameMap[location.name!]?.id,
+                },
+                'ERROR: Multiple azure_location entities were encountered with the same `name`. There may be multiple subscriptions ingested, which this function is not equipped to handle.',
+              );
+            } else {
+              locationNameMap[location.name!] = locationEntity;
+            }
+          } else {
+            logger.error(
+              {
+                locationId: location.id,
+                locationName: location.name,
+              },
+              'ERROR: Azure location.name property is undefined; cannot add to locationNameMap!',
+            );
+          }
         },
       );
     },
   );
+  await jobState.setData(setDataKeys.locationNameMap, locationNameMap);
 }
 
 export const subscriptionSteps: Step<

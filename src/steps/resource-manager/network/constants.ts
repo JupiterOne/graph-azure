@@ -3,6 +3,7 @@ import {
   generateRelationshipType,
 } from '@jupiterone/integration-sdk-core';
 import { entities as storageEntities } from '../storage';
+import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 // Step IDs
@@ -16,6 +17,8 @@ export const STEP_RM_NETWORK_LOAD_BALANCERS = 'rm-network-load-balancers';
 export const STEP_RM_NETWORK_AZURE_FIREWALLS = 'rm-network-azure-firewalls';
 export const STEP_RM_NETWORK_WATCHERS = 'rm-network-watchers';
 export const STEP_RM_NETWORK_FLOW_LOGS = 'rm-network-flow-logs';
+export const STEP_RM_NETWORK_LOCATION_WATCHERS =
+  'rm-network-location-watcher-relationships';
 
 // Graph objects
 export const NetworkEntities = {
@@ -155,6 +158,12 @@ export const NetworkRelationships = {
     sourceType: NetworkEntities.SUBNET._type,
     _class: RelationshipClass.DENIES,
     targetType: NetworkEntities.SECURITY_GROUP._type,
+  },
+  LOCATION_HAS_NETWORK_WATCHER: {
+    _type: 'azure_location_has_network_watcher',
+    sourceType: subscriptionEntities.LOCATION._type,
+    _class: RelationshipClass.HAS,
+    targetType: NetworkEntities.NETWORK_WATCHER._type,
   },
   NETWORK_WATCHER_HAS_FLOW_LOGS: {
     _type: 'azure_network_watcher_has_security_group_flow_logs',

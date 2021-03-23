@@ -193,6 +193,7 @@ The following relationships are created/mapped:
 | `azure_user_group`                | **HAS**               | `azure_group_member`                  |
 | `azure_user_group`                | **HAS**               | `azure_user`                          |
 | `azure_lb`                        | **CONNECTS**          | `azure_nic`                           |
+| `azure_location`                  | **HAS**               | `azure_network_watcher`               |
 | `azure_mariadb_server`            | **HAS**               | `azure_mariadb_database`              |
 | `azure_monitor_log_profile`       | **USES**              | `azure_storage_account`               |
 | `azure_mysql_server`              | **HAS**               | `azure_mysql_database`                |

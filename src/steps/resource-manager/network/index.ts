@@ -17,7 +17,7 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
 import { NetworkClient } from './client';
 import {
   STEP_RM_NETWORK_INTERFACES,
@@ -76,7 +76,7 @@ export async function fetchAzureFirewalls(
   const { instance, logger, jobState } = executionContext;
   const client = new NetworkClient(instance.config, logger);
 
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await jobState.iterateEntities(
@@ -113,7 +113,7 @@ export async function fetchNetworkInterfaces(
   const { instance, logger, jobState } = executionContext;
   const client = new NetworkClient(instance.config, logger);
 
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   const publicIpAddresses = (await jobState.getData<PublicIPAddress[]>(
@@ -158,7 +158,7 @@ export async function fetchPublicIPAddresses(
   const { instance, logger, jobState } = executionContext;
   const client = new NetworkClient(instance.config, logger);
 
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   const publicIpAddresses: PublicIPAddress[] = [];
@@ -188,7 +188,7 @@ export async function fetchLoadBalancers(
   const { instance, logger, jobState } = executionContext;
   const client = new NetworkClient(instance.config, logger);
 
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   // A load balancer with multiple ip addresses through a single nic should not
@@ -257,7 +257,7 @@ export async function fetchNetworkSecurityGroups(
   const { instance, logger, jobState } = executionContext;
   const client = new NetworkClient(instance.config, logger);
 
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   const subnetSecurityGroupMap: SubnetSecurityGroupMap = {};
@@ -297,7 +297,7 @@ export async function fetchVirtualNetworks(
   const { instance, logger, jobState } = executionContext;
   const client = new NetworkClient(instance.config, logger);
 
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   const subnetSecurityGroupMap =
@@ -409,7 +409,7 @@ export async function fetchNetworkWatchers(
   const { instance, logger, jobState } = executionContext;
   const client = new NetworkClient(instance.config, logger);
 
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await jobState.iterateEntities(
@@ -440,7 +440,7 @@ export async function fetchNetworkSecurityGroupFlowLogs(
   const { instance, logger, jobState } = executionContext;
   const client = new NetworkClient(instance.config, logger);
 
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await jobState.iterateEntities(

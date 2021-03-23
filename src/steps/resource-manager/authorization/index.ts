@@ -10,7 +10,7 @@ import {
 import { createAzureWebLinker, AzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import {
-  ACCOUNT_ENTITY_TYPE,
+  getAccountEntity,
   STEP_AD_ACCOUNT,
   STEP_AD_USERS,
   USER_ENTITY_TYPE,
@@ -132,7 +132,7 @@ export async function fetchRoleAssignments(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new AuthorizationClient(instance.config, logger);
 
@@ -227,7 +227,7 @@ export async function fetchRoleDefinitions(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new AuthorizationClient(instance.config, logger);
 
@@ -266,7 +266,7 @@ export async function fetchClassicAdministrators(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new AuthorizationClient(instance.config, logger);
 

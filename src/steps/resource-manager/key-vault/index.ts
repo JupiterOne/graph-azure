@@ -1,6 +1,5 @@
 import {
   createDirectRelationship,
-  Entity,
   RelationshipClass,
   Step,
   IntegrationStepExecutionContext,
@@ -30,6 +29,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   diagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import { getAccountEntity } from '../../active-directory';
 
 export * from './constants';
 
@@ -37,7 +37,7 @@ export async function fetchKeyVaults(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new KeyVaultClient(instance.config, logger);
 

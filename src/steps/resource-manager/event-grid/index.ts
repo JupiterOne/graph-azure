@@ -1,5 +1,4 @@
 import {
-  Entity,
   Step,
   IntegrationStepExecutionContext,
   createDirectRelationship,
@@ -7,7 +6,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
 import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
@@ -45,7 +44,7 @@ export async function fetchEventGridDomains(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new EventGridClient(instance.config, logger);
 
@@ -78,7 +77,7 @@ export async function fetchEventGridDomainTopics(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new EventGridClient(instance.config, logger);
 
@@ -114,7 +113,7 @@ export async function fetchEventGridDomainTopicSubscriptions(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new EventGridClient(instance.config, logger);
 
@@ -156,7 +155,7 @@ export async function fetchEventGridTopics(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new EventGridClient(instance.config, logger);
 
@@ -189,7 +188,7 @@ export async function fetchEventGridTopicSubscriptions(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = (await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE))!;
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new EventGridClient(instance.config, logger);
 

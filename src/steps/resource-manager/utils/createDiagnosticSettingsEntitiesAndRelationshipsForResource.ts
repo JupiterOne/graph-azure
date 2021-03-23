@@ -8,7 +8,6 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { MonitorClient } from '../monitor/client';
 import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 import {
@@ -18,6 +17,7 @@ import {
 import { DiagnosticSettingsResource } from '@azure/arm-monitor/esm/models';
 import { entities as storageEntities } from '../storage/constants';
 import { ANY_SCOPE } from '../constants';
+import { getAccountEntity } from '../../active-directory';
 
 /**
  * Creates a direct/explicit relationship between an Azure Scope and an Azure Diagnostic Log Setting or Azure Diagnostic Metric Setting
@@ -96,7 +96,7 @@ export async function createDiagnosticSettingsEntitiesAndRelationshipsForResourc
   resourceEntity: Entity,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new MonitorClient(instance.config, logger);
 

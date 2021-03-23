@@ -1,12 +1,11 @@
 import {
   createDirectRelationship,
-  Entity,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../../azure';
 import { IntegrationStepContext } from '../../../../types';
-import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
+import { getAccountEntity } from '../../../active-directory';
 import { createDatabaseEntity, createDbServerEntity } from '../converters';
 import { MySQLClient } from './client';
 import { MySQLEntities } from './constants';
@@ -19,8 +18,7 @@ export async function fetchMySQLDatabases(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
-
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new MySQLClient(instance.config, logger);
 

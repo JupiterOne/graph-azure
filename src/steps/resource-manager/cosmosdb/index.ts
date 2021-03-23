@@ -1,6 +1,5 @@
 import {
   createDirectRelationship,
-  Entity,
   RelationshipClass,
   Step,
   IntegrationStepExecutionContext,
@@ -8,7 +7,7 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
 import { CosmosDBClient } from './client';
 import {
   RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
@@ -33,7 +32,7 @@ export async function fetchCosmosDBSqlDatabases(
   const { instance, logger, jobState } = executionContext;
   const client = new CosmosDBClient(instance.config, logger);
 
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 
   await client.iterateAccounts(async (account) => {

@@ -1,6 +1,5 @@
 import {
   createDirectRelationship,
-  Entity,
   IntegrationStepExecutionContext,
   RelationshipClass,
   Step,
@@ -8,10 +7,7 @@ import {
 
 import { createAzureWebLinker } from '../../../../azure';
 import { IntegrationConfig, IntegrationStepContext } from '../../../../types';
-import {
-  ACCOUNT_ENTITY_TYPE,
-  STEP_AD_ACCOUNT,
-} from '../../../active-directory';
+import { getAccountEntity, STEP_AD_ACCOUNT } from '../../../active-directory';
 import { createDatabaseEntity, createDbServerEntity } from '../converters';
 import { SQLClient } from './client';
 import { steps, entities, relationships } from './constants';
@@ -33,8 +29,7 @@ export async function fetchSQLDatabases(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
-
+  const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new SQLClient(instance.config, logger);
 

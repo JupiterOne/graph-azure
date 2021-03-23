@@ -13,6 +13,7 @@ import {
 } from '../../../../test/helpers/recording';
 import { fetchAccount } from '../../active-directory';
 import {
+  buildLocationNetworkWatcherRelationships,
   buildSecurityGroupRuleRelationships,
   fetchAzureFirewalls,
   fetchLoadBalancers,
@@ -30,9 +31,14 @@ import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { NetworkEntities, NetworkRelationships } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
-import { RESOURCE_GROUP_ENTITY } from '../resources';
+import { fetchResourceGroups, RESOURCE_GROUP_ENTITY } from '../resources';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import { entities as storageEntities, fetchStorageAccounts } from '../storage';
+import { fetchLocations, fetchSubscriptions } from '../subscriptions';
+import { setDataKeys as subscriptionSetDataKeys } from '../subscriptions/constants';
+import { createAzureWebLinker } from '../../../azure';
+import { createLocationEntity } from '../subscriptions/converters';
+import { createNetworkWatcherEntity } from './converters';
 
 const GUID_REGEX = new RegExp(
   '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
@@ -2116,5 +2122,134 @@ describe('rm-network-flow-logs', () => {
     expect(watcherFlowLogsRelationships).toMatchDirectRelationshipSchema({});
 
     expect(restRelationships.length).toBe(0);
+  });
+});
+
+describe('rm-network-location-watcher-relationships', () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  describe('success', () => {
+    async function getSetupEntities(config: IntegrationConfig) {
+      const context = createMockAzureStepExecutionContext({
+        instanceConfig: config,
+        setData: {
+          [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(config),
+        },
+      });
+
+      await fetchSubscriptions(context);
+      await fetchLocations(context);
+
+      const locationNameMap = context.jobState.getData(
+        subscriptionSetDataKeys.locationNameMap,
+      );
+      expect(locationNameMap).not.toBeUndefined();
+
+      await fetchResourceGroups(context);
+      await fetchNetworkWatchers(context);
+
+      const networkWatcherEntities = context.jobState.collectedEntities.filter(
+        (e) => e._type === NetworkEntities.NETWORK_WATCHER._type,
+      );
+      expect(networkWatcherEntities.length).toBeGreaterThan(0);
+
+      return {
+        locationNameMap,
+        networkWatcherEntities,
+      };
+    }
+
+    test('success', async () => {
+      recording = setupAzureRecording({
+        directory: __dirname,
+        name: 'rm-network-location-watcher-relationships',
+        options: {
+          matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        },
+      });
+
+      const {
+        locationNameMap,
+        networkWatcherEntities,
+      } = await getSetupEntities(configFromEnv);
+
+      const context = createMockAzureStepExecutionContext({
+        instanceConfig: configFromEnv,
+        entities: networkWatcherEntities,
+        setData: {
+          [subscriptionSetDataKeys.locationNameMap]: locationNameMap,
+        },
+      });
+
+      await buildLocationNetworkWatcherRelationships(context);
+
+      const locationNetworkWatcherRelationships =
+        context.jobState.collectedRelationships;
+
+      expect(locationNetworkWatcherRelationships.length).toBe(
+        networkWatcherEntities.length,
+      );
+      expect(
+        locationNetworkWatcherRelationships,
+      ).toMatchDirectRelationshipSchema({
+        schema: {
+          properties: {
+            _type: {
+              const: NetworkRelationships.LOCATION_HAS_NETWORK_WATCHER._type,
+            },
+          },
+        },
+      });
+    });
+  });
+
+  test('should throw if no locationNameMap', async () => {
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {},
+    });
+
+    await expect(
+      buildLocationNetworkWatcherRelationships(context),
+    ).rejects.toThrow(
+      'Could not find locationNameMap data in job state; cannot build location => network watcher relationships.',
+    );
+  });
+
+  test('should log if location not found in locationNameMap', async () => {
+    const webLinker = createAzureWebLinker('hostname');
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [
+        createNetworkWatcherEntity(webLinker, {
+          id: 'network-watcher-id',
+          location: 'fake-location',
+        }),
+      ],
+      setData: {
+        [subscriptionSetDataKeys.locationNameMap]: {
+          'real-location': createLocationEntity(webLinker, {
+            name: 'real-location',
+            id: 'location-id',
+          }),
+        },
+      },
+    });
+
+    const loggerWarnSpy = jest.spyOn(context.logger, 'warn');
+
+    await buildLocationNetworkWatcherRelationships(context);
+
+    expect(context.jobState.collectedEntities).toEqual([]);
+
+    expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
+    expect(loggerWarnSpy).toHaveBeenCalledWith(
+      { locations: ['real-location'], networkWatcherLocation: 'fake-location' },
+      'WARNING: Could not find matching location for network watcher. The locationNameMap may be constructed incorrectly',
+    );
   });
 });

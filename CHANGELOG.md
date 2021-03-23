@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Changed
 
+- Added `azure_location|HAS|azure_network_watcher` relationships.
 - Upgraded `@jupiterone/integration-sdk-*@5.11.0`.
 
 ## 5.15.0 - 2021-03-22

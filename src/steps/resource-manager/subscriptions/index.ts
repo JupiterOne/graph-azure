@@ -85,7 +85,7 @@ export async function fetchLocations(
       );
     },
   );
-  jobState.setData(setDataKeys.locationNameMap, locationNameMap);
+  await jobState.setData(setDataKeys.locationNameMap, locationNameMap);
 }
 
 export const subscriptionSteps: Step<

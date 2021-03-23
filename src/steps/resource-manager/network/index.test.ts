@@ -10,6 +10,7 @@ import {
 import {
   getMatchRequestsBy,
   setupAzureRecording,
+  shouldReplaceSubscriptionId,
 } from '../../../../test/helpers/recording';
 import { fetchAccount } from '../../active-directory';
 import {
@@ -2163,12 +2164,49 @@ describe('rm-network-location-watcher-relationships', () => {
       };
     }
 
+    function isListLocationsEndpoint(path: string) {
+      /**
+       * The Locations step uses jobState.iterateEntities({ _type: 'azure_subscription' }), so the
+       * API calls from this endpoint are dependent on results from the previous "azure_subscription" step.
+       *
+       * When a subscription ID from this endpoint is encountered, the `matchRequestsBy` function
+       * should _not_ replace it with a default, to ensure future recording calls will match.
+       */
+      return listLocationsEndpointRegex.test(path);
+    }
+
+    const listLocationsEndpointRegex = new RegExp(
+      '^/subscriptions/([^/]+)/locations$',
+    );
+
     test('success', async () => {
+      const matchRequestsBy = getMatchRequestsBy({ config: configFromEnv });
       recording = setupAzureRecording({
         directory: __dirname,
         name: 'rm-network-location-watcher-relationships',
         options: {
-          matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+          matchRequestsBy: {
+            ...matchRequestsBy,
+            url: {
+              ...(matchRequestsBy?.url as any),
+              pathname: (pathname: string): string => {
+                pathname = pathname.replace(
+                  configFromEnv.directoryId,
+                  'directory-id',
+                );
+                if (
+                  shouldReplaceSubscriptionId(pathname) &&
+                  !isListLocationsEndpoint(pathname)
+                ) {
+                  pathname = pathname.replace(
+                    configFromEnv.subscriptionId || 'subscription-id',
+                    'subscription-id',
+                  );
+                }
+                return pathname;
+              },
+            },
+          },
         },
       });
 

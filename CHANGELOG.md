@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_vm_extension` entities.
+
 ## 5.16.0 - 2021-03-23
 
 ### Changed

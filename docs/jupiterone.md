@@ -159,6 +159,7 @@ The following entities are created:
 | [RM] Subnet                            | `azure_subnet`                        | `Network`                          |
 | [RM] Subscription                      | `azure_subscription`                  | `Account`                          |
 | [RM] Virtual Machine                   | `azure_vm`                            | `Host`                             |
+| [RM] Virtual Machine Extension         | `azure_vm_extension`                  | `Application`                      |
 | [RM] Virtual Network                   | `azure_vnet`                          | `Network`                          |
 
 ### Relationships

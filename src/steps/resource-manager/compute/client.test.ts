@@ -118,7 +118,7 @@ describe('iterateVirtualMachineExtensions', () => {
         name: virtualMachine.name!,
         id: virtualMachine.id!,
       },
-      async (e) => {
+      (e) => {
         extensions.push(e);
       },
     );

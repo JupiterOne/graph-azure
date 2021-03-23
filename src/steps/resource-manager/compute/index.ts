@@ -23,11 +23,16 @@ import {
   DISK_ENTITY_CLASS,
   VIRTUAL_MACHINE_DISK_RELATIONSHIP_CLASS,
   VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
+  steps,
+  entities,
 } from './constants';
 import {
   createDiskEntity,
   createImageEntity,
   createVirtualMachineEntity,
+  createVirtualMachineExtensionEntity,
+  getVirtualMachineExtensionKey,
+  VirtualMachineExtensionSharedProperties,
 } from './converters';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
@@ -174,6 +179,70 @@ export async function fetchVirtualMachineDisks(
   });
 }
 
+export async function fetchVirtualMachineExtensions(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+
+  const client = new ComputeClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
+    async (vmEntity) => {
+      await client.iterateVirtualMachineExtensions(
+        {
+          name: vmEntity.name as string,
+          id: vmEntity.id as string,
+        },
+        async (vmExtension) => {
+          const {
+            id,
+            location,
+            provisioningState,
+            ...vmExtensionSharedProperties
+          } = vmExtension;
+          const vmExtensionEntity = await findOrCreateVirtualMachineExtensionEntity(
+            vmExtensionSharedProperties,
+            executionContext,
+          );
+
+          // const vmExtensionEntity = await jobState.addEntity(createVirtualMachineExtensionEntity(webLinker, vmExtension))
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.USES,
+              from: vmEntity,
+              to: vmExtensionEntity,
+              properties: {
+                id,
+                location,
+                provisioningState,
+              },
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
+async function findOrCreateVirtualMachineExtensionEntity(
+  extension: VirtualMachineExtensionSharedProperties,
+  context: IntegrationStepContext,
+): Promise<Entity> {
+  let entity = await context.jobState.findEntity(
+    getVirtualMachineExtensionKey(extension),
+  );
+
+  if (!entity) {
+    entity = await context.jobState.addEntity(
+      createVirtualMachineExtensionEntity(extension),
+    );
+  }
+
+  return entity;
+}
+
 export const computeSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -238,5 +307,13 @@ export const computeSteps: Step<
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
     ],
     executionHandler: fetchVirtualMachines,
+  },
+  {
+    id: steps.VIRTUAL_MACHINE_EXTENSIONS,
+    name: 'Virtual Machine Extensions',
+    entities: [entities.VIRTUAL_MACHINE_EXTENSION],
+    relationships: [],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_COMPUTE_VIRTUAL_MACHINES],
+    executionHandler: fetchVirtualMachineExtensions,
   },
 ];

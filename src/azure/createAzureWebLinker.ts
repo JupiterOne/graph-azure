@@ -1,3 +1,5 @@
+import { JobState } from '@jupiterone/integration-sdk-core';
+import { getAccountEntity } from '../steps/active-directory';
 import { AzureWebLinker } from './types';
 
 /**
@@ -30,4 +32,11 @@ export default function createAzureWebLinker(
       }
     },
   };
+}
+
+export async function getAzureWebLinker(
+  jobState: JobState,
+): Promise<AzureWebLinker> {
+  const accountEntity = await getAccountEntity(jobState);
+  return createAzureWebLinker(accountEntity.defaultDomain as string);
 }

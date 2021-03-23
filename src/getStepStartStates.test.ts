@@ -15,6 +15,7 @@ import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
   STEP_RM_COMPUTE_VIRTUAL_MACHINES,
+  steps as computeSteps,
 } from './steps/resource-manager/compute';
 import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb';
 import {
@@ -129,6 +130,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
+      [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
@@ -213,6 +215,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
+      [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
@@ -297,6 +300,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: false },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: false },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: false },
+      [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: false },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: false },

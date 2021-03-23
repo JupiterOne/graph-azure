@@ -25,6 +25,7 @@ import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
   STEP_RM_COMPUTE_VIRTUAL_MACHINES,
+  steps as computeSteps,
 } from './steps/resource-manager/compute/constants';
 import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb/constants';
 import {
@@ -145,6 +146,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
       STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
       STEP_RM_COMPUTE_VIRTUAL_MACHINES,
+      computeSteps.VIRTUAL_MACHINE_EXTENSIONS,
       STEP_RM_COSMOSDB_SQL_DATABASES,
       STEP_RM_DATABASE_MARIADB_DATABASES,
       STEP_RM_DATABASE_MYSQL_DATABASES,

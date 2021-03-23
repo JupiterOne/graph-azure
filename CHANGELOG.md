@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.16.0 - 2021-03-23
+
 ### Changed
 
 - Added `azure_location|HAS|azure_network_watcher` relationships.

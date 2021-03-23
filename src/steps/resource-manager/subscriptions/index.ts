@@ -71,7 +71,20 @@ export async function fetchLocations(
             }),
           );
           if (location.name) {
-            locationNameMap[location.name!] = locationEntity;
+            if (locationNameMap[location.name!] !== undefined) {
+              // In order to future-proof this function (considering a world where more than
+              // 1 subscription is ingested in an integration), alert the operators if more
+              // than one location name exists.
+              logger.error(
+                {
+                  newLocationId: location.id,
+                  currentLocationId: locationNameMap[location.name!]?.id,
+                },
+                'ERROR: Multiple azure_location entities were encountered with the same `name`. There may be multiple subscriptions ingested, which this function is not equipped to handle.',
+              );
+            } else {
+              locationNameMap[location.name!] = locationEntity;
+            }
           } else {
             logger.error(
               {

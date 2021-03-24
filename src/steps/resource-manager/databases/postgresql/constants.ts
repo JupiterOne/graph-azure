@@ -8,6 +8,11 @@ import {
   RM_DATABASE_SERVER_ENTITY_CLASS,
 } from '../constants';
 
+export const steps = {
+  SERVERS: 'rm-database-postgresql-servers',
+  DATABASES: 'rm-database-postgresql-databases',
+};
+
 export const PostgreSQLEntities = {
   SERVER: {
     _type: 'azure_postgresql_server',

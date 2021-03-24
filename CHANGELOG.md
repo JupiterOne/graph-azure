@@ -10,6 +10,12 @@ and this project adheres to
 
 ### Added
 
+- Added the following properties to `azure_postgresql_server`:
+  - `configurations.log_checkpoints`
+  - `configurations.log_connections`
+  - `configurations.log_disconnections`
+  - `configurations.connection_throttling`
+  - `configurations.log_retention_days`
 - Added `azure_security_center_subscription_pricing` entities.
 - Added `azure_vm|USES|azure_storage_account` relationships.
 - Added `azure_vm_extension` entities.

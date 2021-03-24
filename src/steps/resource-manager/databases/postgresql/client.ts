@@ -1,5 +1,6 @@
 import { PostgreSQLManagementClient } from '@azure/arm-postgresql';
 import { Database, Server } from '@azure/arm-postgresql/esm/models';
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 
 import {
   Client,
@@ -21,6 +22,36 @@ export class PostgreSQLClient extends Client {
       resourceDescription: 'postgresql.servers',
       callback,
     });
+  }
+
+  public async getServerConfigurations(server: { name: string; id: string }) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PostgreSQLManagementClient,
+    );
+
+    const resourceGroup = resourceGroupName(server.id, true);
+    const serverName = server.name;
+
+    try {
+      const response = serviceClient.configurations.listByServer(
+        resourceGroup,
+        serverName,
+      );
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err: new IntegrationProviderAPIError({
+            endpoint: 'postgresql.servers.configurations',
+            status: err.status,
+            statusText: err.statusText,
+            cause: err,
+          }),
+          server: server.id,
+        },
+        'Failed to obtain configurations for server.',
+      );
+    }
   }
 
   public async iterateDatabases(

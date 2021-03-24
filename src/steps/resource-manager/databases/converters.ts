@@ -7,6 +7,7 @@ import {
   Server as MySQLServer,
 } from '@azure/arm-mysql/esm/models';
 import {
+  Configuration as PostgreSQLServerConfiguration,
   Database as PostgreSQLDatabase,
   Server as PostgreSQLServer,
 } from '@azure/arm-postgresql/esm/models';
@@ -18,6 +19,7 @@ import {
   convertProperties,
   createIntegrationEntity,
   Entity,
+  setRawData,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
@@ -54,10 +56,11 @@ export function createDbServerEntity(
   webLinker: AzureWebLinker,
   data: MySQLServer | SQLServer | MariaDBServer | PostgreSQLServer,
   _type: string,
+  configurations?: PostgreSQLServerConfiguration[],
 ): Entity {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const anyServer = data as any;
-  return createIntegrationEntity({
+  const serverEntity = createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
@@ -76,7 +79,42 @@ export function createDbServerEntity(
         administratorLoginPassword: REDACTED_VALUE,
         classification: null,
         encrypted: null,
+        'configurations.logCheckpoints': getConfiguration(
+          configurations,
+          'log_checkpoints',
+        ),
+        'configurations.logConnections': getConfiguration(
+          configurations,
+          'log_connections',
+        ),
+        'configurations.logDisconnections': getConfiguration(
+          configurations,
+          'log_disconnections',
+        ),
+        'configurations.connectionThrottling': getConfiguration(
+          configurations,
+          'connection_throttling',
+        ),
+        'configurations.logRetentionDays': getConfiguration(
+          configurations,
+          'log_retention_days',
+        ),
       },
     },
   });
+
+  if (configurations) {
+    setRawData(serverEntity, {
+      name: 'serverConfigurations',
+      rawData: configurations,
+    });
+  }
+  return serverEntity;
+}
+
+function getConfiguration(
+  configurations: PostgreSQLServerConfiguration[] | undefined,
+  propertyName: string,
+) {
+  return configurations?.find((c) => c.name === propertyName)?.value;
 }

@@ -98,6 +98,7 @@ export function createDbServerEntity(
         'configurations.logRetentionDays': getConfiguration(
           configurations,
           'log_retention_days',
+          'number',
         ),
       },
     },
@@ -115,6 +116,18 @@ export function createDbServerEntity(
 function getConfiguration(
   configurations: PostgreSQLServerConfiguration[] | undefined,
   propertyName: string,
+  type: 'string' | 'number' = 'string',
 ) {
-  return configurations?.find((c) => c.name === propertyName)?.value;
+  const value = configurations?.find((c) => c.name === propertyName)?.value;
+  if (type === 'number') {
+    const numericValue = Number(value);
+    if (!isNaN(numericValue)) {
+      return numericValue;
+    }
+  }
+  return value;
 }
+
+export const testFunctions = {
+  getConfiguration,
+};

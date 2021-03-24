@@ -154,7 +154,7 @@ describe('iterateFirewallRules', () => {
     const client = new SQLClient(configFromEnv, createMockIntegrationLogger());
 
     const firewallRules: FirewallRule[] = [];
-    await client.iteraetServerFirewallRules(sqlServer, (f) => {
+    await client.iterateServerFirewallRules(sqlServer, (f) => {
       firewallRules.push(f);
     });
 

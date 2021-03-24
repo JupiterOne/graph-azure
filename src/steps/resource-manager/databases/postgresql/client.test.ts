@@ -6,7 +6,11 @@ import {
   setupAzureRecording,
 } from '../../../../../test/helpers/recording';
 import { IntegrationConfig } from '../../../../types';
-import { Database, Server } from '@azure/arm-postgresql/esm/models';
+import {
+  Database,
+  FirewallRule,
+  Server,
+} from '@azure/arm-postgresql/esm/models';
 import { configFromEnv } from '../../../../../test/integrationInstanceConfig';
 
 let recording: Recording;
@@ -213,5 +217,47 @@ describe('getServerParameters', () => {
 
     expect(serverParameters).not.toBeUndefined();
     expect(serverParameters?.length).toBeGreaterThan(0);
+  });
+});
+
+describe('iterateFirewallRules', () => {
+  async function getSetupData(client: PostgreSQLClient) {
+    const sqlServers: Server[] = [];
+
+    await client.iterateServers((s) => {
+      sqlServers.push(s);
+    });
+
+    const j1devPostgreSqlServers = sqlServers.filter(
+      (s) => s.name === 'j1dev-psqlserver',
+    );
+    expect(j1devPostgreSqlServers.length).toBe(1);
+
+    return {
+      postgreSqlServer: j1devPostgreSqlServers[0],
+    };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateFirewallRules',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new PostgreSQLClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+    const { postgreSqlServer } = await getSetupData(client);
+
+    const firewallRules: FirewallRule[] = [];
+    await client.iterateServerFirewallRules(postgreSqlServer, (f) => {
+      firewallRules.push(f);
+    });
+
+    expect(firewallRules.length).toBeGreaterThan(0);
   });
 });

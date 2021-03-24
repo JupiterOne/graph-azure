@@ -24,6 +24,7 @@ import {
 } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../../resources/constants';
 import { Server } from '@azure/arm-postgresql/esm/models';
+import { createPosgreSqlServerFirewallRuleEntity } from './converters';
 
 export async function fetchPostgreSQLServers(
   executionContext: IntegrationStepContext,
@@ -92,6 +93,42 @@ export async function fetchPostgreSQLDatabases(
   );
 }
 
+export async function fetchPostgreSqlServerFirewallRules(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new PostgreSQLClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: PostgreSQLEntities.SERVER._type },
+    async (sqlServerEntity) => {
+      await client.iterateServerFirewallRules(
+        {
+          id: sqlServerEntity.id as string,
+          name: sqlServerEntity.name as string,
+        },
+        async (firewallRule) => {
+          const firewallRuleEntity = await jobState.addEntity(
+            createPosgreSqlServerFirewallRuleEntity(firewallRule),
+          );
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: sqlServerEntity,
+              to: firewallRuleEntity,
+              properties: {
+                _type:
+                  PostgreSQLRelationships.POSTGRESQL_SERVER_HAS_FIREWALL_RULE
+                    ._type,
+              },
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
 export const postgreSqlSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -118,5 +155,15 @@ export const postgreSqlSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
     executionHandler: fetchPostgreSQLDatabases,
+  },
+  {
+    id: steps.SERVER_FIREWALL_RULES,
+    name: 'PostgreSQL Server Firewall Rules',
+    entities: [PostgreSQLEntities.FIREWALL_RULE],
+    relationships: [
+      PostgreSQLRelationships.POSTGRESQL_SERVER_HAS_FIREWALL_RULE,
+    ],
+    dependsOn: [steps.SERVERS],
+    executionHandler: fetchPostgreSqlServerFirewallRules,
   },
 ];

@@ -7,7 +7,11 @@ import {
 import { createMockAzureStepExecutionContext } from '../../../../../test/createMockAzureStepExecutionContext';
 import { IntegrationConfig } from '../../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
-import { fetchPostgreSQLDatabases, fetchPostgreSQLServers } from '.';
+import {
+  fetchPostgreSQLDatabases,
+  fetchPostgreSQLServers,
+  fetchPostgreSqlServerFirewallRules,
+} from '.';
 import { PostgreSQLEntities, PostgreSQLRelationships } from './constants';
 import { configFromEnv } from '../../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../../test/helpers/getMockAccountEntity';
@@ -108,7 +112,7 @@ describe('rm-database-postgresql-servers', () => {
   });
 });
 
-describe.only('rm-database-postgresql-databases', () => {
+describe('rm-database-postgresql-databases', () => {
   async function getSetupEntities(config: IntegrationConfig) {
     const accountEntity = getMockAccountEntity(config);
 
@@ -173,6 +177,79 @@ describe.only('rm-database-postgresql-databases', () => {
             const:
               PostgreSQLRelationships.POSTGRESQL_SERVER_HAS_POSTGRESQL_DATABASE
                 ._type,
+          },
+        },
+      },
+    });
+  });
+});
+
+describe('rm-database-postgresql-server-firewall-rules', () => {
+  async function getSetupEntities() {
+    const accountEntity = getMockAccountEntity(configFromEnv);
+
+    const setupContext = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchPostgreSQLServers(setupContext);
+    const j1devPostgreSqlServerEntities = setupContext.jobState.collectedEntities.filter(
+      (e) =>
+        e._type === PostgreSQLEntities.SERVER._type &&
+        e.displayName === 'j1dev-psqlserver',
+    );
+    expect(j1devPostgreSqlServerEntities.length).toBe(1);
+    const sqlServerEntity = j1devPostgreSqlServerEntities[0];
+
+    return { accountEntity, sqlServerEntity };
+  }
+
+  test('step', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-database-postgresql-server-firewall-rules',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { sqlServerEntity, accountEntity } = await getSetupEntities();
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [sqlServerEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchPostgreSqlServerFirewallRules(context);
+
+    const postgreSqlServerFirewallRuleEntities =
+      context.jobState.collectedEntities;
+
+    expect(postgreSqlServerFirewallRuleEntities.length).toBeGreaterThan(0);
+    expect(postgreSqlServerFirewallRuleEntities).toMatchGraphObjectSchema({
+      _class: PostgreSQLEntities.FIREWALL_RULE._class,
+    });
+
+    const postgreSqlServerFirewallRuleRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(postgreSqlServerFirewallRuleRelationships.length).toBe(
+      postgreSqlServerFirewallRuleEntities.length,
+    );
+    expect(
+      postgreSqlServerFirewallRuleRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              PostgreSQLRelationships.POSTGRESQL_SERVER_HAS_FIREWALL_RULE._type,
           },
         },
       },

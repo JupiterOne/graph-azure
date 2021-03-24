@@ -15,6 +15,7 @@ import { SecurityEntities, SecurityRelationships } from './constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
+import { v4 as uuid } from 'uuid';
 
 let recording: Recording;
 
@@ -117,7 +118,7 @@ describe('rm-security-center-pricing-configs', () => {
   function getSetupEntities(config: IntegrationConfig) {
     const accountEntity = getMockAccountEntity(config);
 
-    const subscriptionId = `/subscriptions/${configFromEnv.subscriptionId}`;
+    const subscriptionId = `/subscriptions/${config.subscriptionId}`;
     const subscriptionEntity = {
       _key: subscriptionId,
       _type: 'subscription-type',
@@ -127,21 +128,42 @@ describe('rm-security-center-pricing-configs', () => {
     return { accountEntity, subscriptionEntity };
   }
 
+  function getConfigForTest(config: IntegrationConfig): IntegrationConfig {
+    // The Azure Subscription Client has some validation before sending requests to
+    // this endpoint that requires "subscriptionId" to be a UUID.
+    //
+    // When running tests in CI, we set the value of `config.subscriptionId` to "subscriptionId",
+    // causing the Azure SDK to throw the following:
+    //
+    // "subscriptionId" with value "subscriptionId" should satisfy the constraint
+    // "Pattern": /^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$/.
+
+    const subscriptionIdValidationRegex = /^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$/;
+    return {
+      ...config,
+      subscriptionId: subscriptionIdValidationRegex.test(
+        config.subscriptionId || '',
+      )
+        ? config.subscriptionId
+        : uuid(),
+    };
+  }
+
   test('success', async () => {
+    const config = getConfigForTest(configFromEnv);
+
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'rm-security-center-pricing-configs',
       options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        matchRequestsBy: getMatchRequestsBy({ config }),
       },
     });
 
-    const { accountEntity, subscriptionEntity } = getSetupEntities(
-      configFromEnv,
-    );
+    const { accountEntity, subscriptionEntity } = getSetupEntities(config);
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
+      instanceConfig: config,
       entities: [subscriptionEntity],
       setData: {
         [ACCOUNT_ENTITY_TYPE]: accountEntity,

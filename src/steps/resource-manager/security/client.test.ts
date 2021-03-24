@@ -1,15 +1,18 @@
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
+  getMatchRequestsBy,
   Recording,
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { SecurityClient } from './client';
 import { IntegrationConfig } from '../../../types';
 import {
+  Pricing,
   SecurityAssessment,
   SecurityContact,
 } from '@azure/arm-security/esm/models';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 
 let recording: Recording;
 
@@ -94,5 +97,29 @@ describe('iterate security contacts', () => {
         type: 'Microsoft.Security/securityContact',
       }),
     );
+  });
+});
+
+describe('iteratePricings', () => {
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iteratePricings',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new SecurityClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+
+    const pricings: Pricing[] = [];
+    await client.iteratePricings((pricing) => {
+      pricings.push(pricing);
+    });
+
+    expect(pricings.length).toBeGreaterThan(0);
   });
 });

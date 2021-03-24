@@ -1,11 +1,21 @@
-import { fetchAssessments, fetchSecurityCenterContacts } from '.';
+import {
+  fetchAssessments,
+  fetchSecurityCenterContacts,
+  fetchSecurityCenterPricingConfigurations,
+} from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-import { SecurityEntities } from './constants';
+import { SecurityEntities, SecurityRelationships } from './constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
+
 let recording: Recording;
 
 afterEach(async () => {
@@ -101,4 +111,66 @@ test('step - security center contacts', async () => {
       displayName: 'HAS',
     }),
   );
+});
+
+describe('rm-security-center-pricing-configs', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    const subscriptionId = `/subscriptions/${configFromEnv.subscriptionId}`;
+    const subscriptionEntity = {
+      _key: subscriptionId,
+      _type: 'subscription-type',
+      _class: 'subscription-class',
+    };
+
+    return { accountEntity, subscriptionEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-security-center-pricing-configs',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity, subscriptionEntity } = getSetupEntities(
+      configFromEnv,
+    );
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [subscriptionEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchSecurityCenterPricingConfigurations(context);
+
+    const pricingEntities = context.jobState.collectedEntities;
+
+    expect(pricingEntities.length).toBeGreaterThan(0);
+    expect(pricingEntities).toMatchGraphObjectSchema({
+      _class: SecurityEntities.SUBSCRIPTION_PRICING._class,
+    });
+
+    const subscriptionPricingRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(subscriptionPricingRelationships.length).toBe(
+      pricingEntities.length,
+    );
+    expect(subscriptionPricingRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const: SecurityRelationships.SUBSCRIPTION_HAS_PRICING_CONFIG._type,
+          },
+        },
+      },
+    });
+  });
 });

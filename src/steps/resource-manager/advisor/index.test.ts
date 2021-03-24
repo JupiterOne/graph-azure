@@ -10,7 +10,7 @@ import {
 } from '../key-vault';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { entities as storageEntities } from '../storage';
-import { SecurityEntities } from '../security';
+import { SecurityEntities } from '../security/constants';
 import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 

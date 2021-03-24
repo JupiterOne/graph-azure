@@ -10,6 +10,7 @@ import {
   SecurityAssessment,
   AzureResourceDetails,
   SecurityContact,
+  Pricing,
 } from '@azure/arm-security/esm/models';
 
 function findSecurityAssessmentScannedResourceId(
@@ -79,6 +80,27 @@ export function createSecurityContactEntity(
         phone: data.phone,
         alertNotifications: data.alertNotifications,
         alertsToAdmins: data.alertsToAdmins,
+      },
+    },
+  });
+}
+
+export function createPricingConfigEntity(
+  webLinker: AzureWebLinker,
+  data: Pricing,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id,
+        _type: SecurityEntities.SUBSCRIPTION_PRICING._type,
+        _class: SecurityEntities.SUBSCRIPTION_PRICING._class,
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        pricingTier: data.pricingTier,
+        webLink: webLinker.portalResourceUrl(data.id),
       },
     },
   });

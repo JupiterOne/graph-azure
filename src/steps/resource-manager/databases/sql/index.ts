@@ -77,9 +77,6 @@ export async function fetchSQLServerDiagnosticSettings(
   await jobState.iterateEntities(
     { _type: entities.SERVER._type },
     async (serverEntity) => {
-      const server = getRawData<Server>(serverEntity, 'default');
-      if (!server) return;
-
       await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
         executionContext,
         serverEntity,

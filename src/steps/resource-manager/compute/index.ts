@@ -5,6 +5,7 @@ import {
   Relationship,
   createDirectRelationship,
   RelationshipClass,
+  getRawData,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -16,15 +17,14 @@ import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
   STEP_RM_COMPUTE_VIRTUAL_MACHINES,
-  VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
   VIRTUAL_MACHINE_ENTITY_CLASS,
   DISK_ENTITY_CLASS,
-  VIRTUAL_MACHINE_DISK_RELATIONSHIP_CLASS,
   VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
   steps,
   entities,
+  relationships,
 } from './constants';
 import {
   createDiskEntity,
@@ -39,6 +39,11 @@ import createResourceGroupResourceRelationship, {
 } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 import { VirtualMachine } from '@azure/arm-compute/esm/models';
+import {
+  entities as storageEntities,
+  steps as storageSteps,
+} from '../storage/constants';
+import { StorageAccount } from '@azure/arm-storage/esm/models';
 
 export * from './constants';
 
@@ -58,23 +63,62 @@ export async function fetchVirtualMachines(
       executionContext,
       virtualMachineEntity,
     );
-
-    if (vm.storageProfile) {
-      await jobState.addRelationships(
-        await createVirtualMachineDiskRelationships(
-          vm,
-          virtualMachineEntity,
-          executionContext,
-        ),
-      );
-    }
   });
+}
+
+export async function buildVirtualMachineDiskRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  const blobHostnameStorageAccountMap: { [blobHostname: string]: Entity } = {};
+  await jobState.iterateEntities(
+    { _type: storageEntities.STORAGE_ACCOUNT._type },
+    (storageAccountEntity) => {
+      const storageAccount = getRawData<StorageAccount>(storageAccountEntity);
+
+      const storageAccountBlobEndpoint = storageAccount?.primaryEndpoints?.blob;
+
+      if (!storageAccountBlobEndpoint) {
+        logger.warn(
+          {
+            storageAccountId: storageAccount?.id,
+            storageAccountBlobEndpoint,
+          },
+          'Could not find blob endpoint for storage account; not adding storage account to blobEndpointStorageAccountMap',
+        );
+        return;
+      }
+
+      const blobHostname = new URL(storageAccountBlobEndpoint).hostname;
+      blobHostnameStorageAccountMap[blobHostname] = storageAccountEntity;
+    },
+  );
+
+  await jobState.iterateEntities(
+    { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
+    async (vmEntity) => {
+      const vm = getRawData<VirtualMachine>(vmEntity);
+
+      if (vm?.storageProfile) {
+        await jobState.addRelationships(
+          await createVirtualMachineDiskRelationships(
+            vm,
+            vmEntity,
+            executionContext,
+            blobHostnameStorageAccountMap,
+          ),
+        );
+      }
+    },
+  );
 }
 
 export async function createVirtualMachineDiskRelationships(
   vm: VirtualMachine,
   vmEntity: Entity,
-  context: IntegrationStepExecutionContext,
+  context: IntegrationStepContext,
+  blobHostnameStorageAccountMap: { [blobHostname: string]: Entity },
 ): Promise<Relationship[]> {
   enum DiskType {
     OS_DISK = 'osDisk',
@@ -85,7 +129,7 @@ export async function createVirtualMachineDiskRelationships(
     diskType: DiskType;
     diskId: string;
     vmEntity: Entity;
-    context: IntegrationStepExecutionContext;
+    context: IntegrationStepContext;
   }): Promise<Relationship | undefined> {
     const { diskType, diskId, vmEntity, context } = options;
     const { jobState, logger } = context;
@@ -111,6 +155,39 @@ export async function createVirtualMachineDiskRelationships(
     }
   }
 
+  function createUnmanagedDiskRelationship(options: {
+    diskType: DiskType;
+    vmEntity: Entity;
+    context: IntegrationStepContext;
+    vhdUri: string;
+  }): Relationship | undefined {
+    const { diskType, vmEntity, vhdUri } = options;
+
+    const blobHostname = new URL(vhdUri).hostname;
+    const storageAccountEntity = blobHostnameStorageAccountMap[blobHostname];
+
+    if (storageAccountEntity) {
+      return createDirectRelationship({
+        from: vmEntity,
+        _class: RelationshipClass.USES,
+        to: storageAccountEntity,
+        properties: {
+          vhdUri,
+          diskType,
+        },
+      });
+    } else {
+      context.logger.error(
+        {
+          vhdUri,
+          diskType,
+          storageAccountHostnames: Object.keys(blobHostnameStorageAccountMap),
+        },
+        'Could not find storage account for unmanaged disk defined by virtual machine.',
+      );
+    }
+  }
+
   const relationships: Relationship[] = [];
 
   if (vm.storageProfile) {
@@ -124,6 +201,25 @@ export async function createVirtualMachineDiskRelationships(
       if (osDiskRelationship) {
         relationships.push(osDiskRelationship);
       }
+    } else if (vm.storageProfile.osDisk?.vhd?.uri) {
+      const osDiskRelationship = createUnmanagedDiskRelationship({
+        diskType: DiskType.OS_DISK,
+        vmEntity,
+        context,
+        vhdUri: vm.storageProfile.osDisk.vhd.uri,
+      });
+      if (osDiskRelationship) {
+        relationships.push(osDiskRelationship);
+      }
+    } else {
+      context.logger.warn(
+        {
+          id: vm.id,
+          'osDisk.managedDisk': vm.storageProfile.osDisk?.managedDisk,
+          'osDisk.vhd': vm.storageProfile.osDisk?.vhd,
+        },
+        'No storage profile found for this VM OS disk.',
+      );
     }
 
     for (const disk of vm.storageProfile.dataDisks || []) {
@@ -137,6 +233,26 @@ export async function createVirtualMachineDiskRelationships(
         if (dataDiskRelationship) {
           relationships.push(dataDiskRelationship);
         }
+      } else if (disk.vhd?.uri) {
+        const dataDiskRelationship = createUnmanagedDiskRelationship({
+          diskType: DiskType.DATA_DISK,
+          vmEntity,
+          context,
+          vhdUri: disk.vhd.uri,
+        });
+        if (dataDiskRelationship) {
+          relationships.push(dataDiskRelationship);
+        }
+      } else {
+        context.logger.warn(
+          {
+            id: vm.id,
+            'dataDisk.lun': disk.lun,
+            'dataDisk.managedDisk': disk.managedDisk,
+            'dataDisk.vhd': disk.vhd,
+          },
+          'No storage profile found for this VM Data disk.',
+        );
       }
     }
   }
@@ -205,8 +321,6 @@ export async function fetchVirtualMachineExtensions(
             vmExtensionSharedProperties,
             executionContext,
           );
-
-          // const vmExtensionEntity = await jobState.addEntity(createVirtualMachineExtensionEntity(webLinker, vmExtension))
 
           await jobState.addRelationship(
             createDirectRelationship({
@@ -291,22 +405,27 @@ export const computeSteps: Step<
       },
     ],
     relationships: [
-      {
-        _type: VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
-        sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
-        _class: VIRTUAL_MACHINE_DISK_RELATIONSHIP_CLASS,
-        targetType: DISK_ENTITY_TYPE,
-      },
       createResourceGroupResourceRelationshipMetadata(
         VIRTUAL_MACHINE_ENTITY_TYPE,
       ),
     ],
-    dependsOn: [
-      STEP_AD_ACCOUNT,
-      STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
-      STEP_RM_RESOURCES_RESOURCE_GROUPS,
-    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachines,
+  },
+  {
+    id: steps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS,
+    name: 'Virtual Machine Disk Relationships',
+    entities: [],
+    relationships: [
+      relationships.VIRTUAL_MACHINE_USES_UNMANAGED_DISK,
+      relationships.VIRTUAL_MACHINE_USES_MANAGED_DISK,
+    ],
+    dependsOn: [
+      STEP_RM_COMPUTE_VIRTUAL_MACHINES,
+      STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
+      storageSteps.STORAGE_ACCOUNTS,
+    ],
+    executionHandler: buildVirtualMachineDiskRelationships,
   },
   {
     id: steps.VIRTUAL_MACHINE_EXTENSIONS,

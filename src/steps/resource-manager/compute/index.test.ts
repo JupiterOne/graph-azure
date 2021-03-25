@@ -1,7 +1,7 @@
 import { Disk, VirtualMachine } from '@azure/arm-compute/esm/models';
+import { StorageAccount } from '@azure/arm-storage/esm/models';
 import {
-  createVirtualMachineDiskRelationships,
-  fetchVirtualMachineDisks,
+  buildVirtualMachineDiskRelationships,
   fetchVirtualMachineExtensions,
   fetchVirtualMachines,
 } from '.';
@@ -16,11 +16,10 @@ import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { createStorageAccountEntity } from '../storage/converters';
 import {
-  DISK_ENTITY_TYPE,
   entities,
   relationships,
-  VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_ENTITY_CLASS,
   VIRTUAL_MACHINE_ENTITY_TYPE,
 } from './constants';
@@ -35,27 +34,6 @@ afterEach(async () => {
 });
 
 describe('rm-compute-virtual-machines', () => {
-  async function getSetupEntities(config: IntegrationConfig) {
-    const accountEntity = getMockAccountEntity(config);
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: config,
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
-      },
-    });
-
-    await fetchVirtualMachineDisks(context);
-    const virtualMachineDiskEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === DISK_ENTITY_TYPE,
-    );
-    expect(virtualMachineDiskEntities.length).toBeGreaterThan(0);
-
-    return {
-      accountEntity,
-      virtualMachineDiskEntities,
-    };
-  }
   test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
@@ -64,16 +42,11 @@ describe('rm-compute-virtual-machines', () => {
         matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
       },
     });
-    const {
-      accountEntity,
-      virtualMachineDiskEntities,
-    } = await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
-      entities: [...virtualMachineDiskEntities],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(configFromEnv),
       },
     });
 
@@ -86,107 +59,351 @@ describe('rm-compute-virtual-machines', () => {
       _class: VIRTUAL_MACHINE_ENTITY_CLASS,
     });
 
-    const virtualMachineDiskRelationships =
-      context.jobState.collectedRelationships;
-
-    expect(virtualMachineDiskRelationships.length).toBeGreaterThan(0);
-    expect(virtualMachineDiskRelationships).toMatchDirectRelationshipSchema({
-      schema: {
-        properties: {
-          _type: { const: VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE },
-        },
-      },
-    });
+    expect(context.jobState.collectedRelationships.length).toBe(0);
   });
 });
 
-describe('createVirtualMachineDiskRelationships', () => {
-  const virtualMachine: VirtualMachine = {
-    id:
-      '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
-    location: 'eastus',
-    storageProfile: {
-      osDisk: {
-        createOption: 'FromImage',
-        managedDisk: {
-          id:
-            '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
-        },
-      },
-    },
-  };
-
+describe('rm-compute-virtual-machine-disk-relationships', () => {
   const webLinker = createAzureWebLinker('www.default-domain.com');
-  const vmEntity = createVirtualMachineEntity(webLinker, virtualMachine);
 
-  test('should create relationship if disk in job state', async () => {
-    const disk: Disk = {
-      id:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
-      location: 'eastus',
-      creationData: {
-        createOption: 'FromImage',
-      },
-    };
+  describe('managed disk', () => {
+    describe('os disk', () => {
+      const virtualMachine: VirtualMachine = {
+        id:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+        location: 'eastus',
+        storageProfile: {
+          osDisk: {
+            createOption: 'FromImage',
+            managedDisk: {
+              id:
+                '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
+            },
+          },
+        },
+      };
 
-    const diskEntity = createDiskEntity(webLinker, disk);
+      const vmEntity = createVirtualMachineEntity(webLinker, virtualMachine);
 
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [diskEntity],
+      test('should create relationship if disk in job state', async () => {
+        const disk: Disk = {
+          id:
+            '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
+          location: 'eastus',
+          creationData: {
+            createOption: 'FromImage',
+          },
+        };
+
+        const diskEntity = createDiskEntity(webLinker, disk);
+
+        const context = createMockAzureStepExecutionContext({
+          instanceConfig: configFromEnv,
+          entities: [diskEntity, vmEntity],
+        });
+
+        await buildVirtualMachineDiskRelationships(context);
+
+        expect(context.jobState.collectedEntities.length).toBe(0);
+
+        expect(context.jobState.collectedRelationships.length).toBe(1);
+        expect(
+          context.jobState.collectedRelationships,
+        ).toMatchDirectRelationshipSchema({
+          schema: {
+            properties: {
+              _type: {
+                const: relationships.VIRTUAL_MACHINE_USES_MANAGED_DISK._type,
+              },
+              osDisk: { const: true },
+            },
+          },
+        });
+        expect(
+          context.jobState.collectedRelationships[0]._toEntityKey,
+        ).not.toEqual(virtualMachine.storageProfile?.osDisk?.managedDisk?.id);
+      });
+
+      test('should log if disk is not in job state', async () => {
+        const context = createMockAzureStepExecutionContext({
+          instanceConfig: configFromEnv,
+          entities: [vmEntity],
+        });
+
+        const loggerErrorSpy = jest.spyOn(context.logger, 'error');
+
+        await buildVirtualMachineDiskRelationships(context);
+
+        expect(context.jobState.collectedEntities).toEqual([]);
+        expect(context.jobState.collectedRelationships).toEqual([]);
+        expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
+          {
+            diskType: 'osDisk',
+            managedDiskId:
+              '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
+            virtualMachineId:
+              '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+          },
+          'Could not find managed disk defined by virtual machine.',
+        );
+      });
     });
 
-    const response = await createVirtualMachineDiskRelationships(
-      virtualMachine,
-      vmEntity,
-      context,
-    );
-
-    expect(response).toEqual([
-      {
-        _key:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev|uses|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
-        _type: 'azure_vm_uses_managed_disk',
-        _class: 'USES',
-        _fromEntityKey:
+    describe('data disk', () => {
+      const virtualMachine: VirtualMachine = {
+        id:
           '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
-        _toEntityKey:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
-        displayName: 'USES',
-        osDisk: true,
-      },
-    ]);
-    expect(response[0]._toEntityKey).not.toEqual(
-      virtualMachine.storageProfile?.osDisk?.managedDisk?.id,
-    );
+        location: 'eastus',
+        storageProfile: {
+          dataDisks: [
+            {
+              lun: 0,
+              createOption: 'FromImage',
+              managedDisk: {
+                id:
+                  '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
+              },
+            },
+          ],
+        },
+      };
+
+      const vmEntity = createVirtualMachineEntity(webLinker, virtualMachine);
+
+      test('should create relationship if disk in job state', async () => {
+        const disk: Disk = {
+          id:
+            '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
+          location: 'eastus',
+          creationData: {
+            createOption: 'FromImage',
+          },
+        };
+
+        const diskEntity = createDiskEntity(webLinker, disk);
+
+        const context = createMockAzureStepExecutionContext({
+          instanceConfig: configFromEnv,
+          entities: [diskEntity, vmEntity],
+        });
+
+        await buildVirtualMachineDiskRelationships(context);
+
+        expect(context.jobState.collectedEntities.length).toBe(0);
+
+        expect(context.jobState.collectedRelationships.length).toBe(1);
+        expect(
+          context.jobState.collectedRelationships,
+        ).toMatchDirectRelationshipSchema({
+          schema: {
+            properties: {
+              _type: {
+                const: relationships.VIRTUAL_MACHINE_USES_MANAGED_DISK._type,
+              },
+              dataDisk: { const: true },
+            },
+          },
+        });
+        expect(
+          context.jobState.collectedRelationships[0]._toEntityKey,
+        ).not.toEqual(virtualMachine.storageProfile?.osDisk?.managedDisk?.id);
+      });
+
+      test('should log if disk is not in job state', async () => {
+        const context = createMockAzureStepExecutionContext({
+          instanceConfig: configFromEnv,
+          entities: [vmEntity],
+        });
+
+        const loggerErrorSpy = jest.spyOn(context.logger, 'error');
+
+        await buildVirtualMachineDiskRelationships(context);
+
+        expect(context.jobState.collectedEntities).toEqual([]);
+        expect(context.jobState.collectedRelationships).toEqual([]);
+        expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
+          {
+            diskType: 'dataDisk',
+            managedDiskId:
+              '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
+            virtualMachineId:
+              '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+          },
+          'Could not find managed disk defined by virtual machine.',
+        );
+      });
+    });
   });
 
-  test('should log if disk is not in job state', async () => {
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [],
+  describe('unmanaged disk', () => {
+    describe('os disk', () => {
+      const virtualMachine: VirtualMachine = {
+        id:
+          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+        location: 'eastus',
+        storageProfile: {
+          osDisk: {
+            createOption: 'FromImage',
+            vhd: {
+              uri:
+                'https://j1dev.blob.core.windows.net/vhds/non-managed-os20210321180131.vhd',
+            },
+          },
+        },
+      };
+
+      const vmEntity = createVirtualMachineEntity(webLinker, virtualMachine);
+
+      test('should create relationship if disk in job state', async () => {
+        const storageAccount: StorageAccount = {
+          id: 'some-storage-account-id',
+          location: 'eastus',
+          primaryEndpoints: {
+            blob: 'https://j1dev.blob.core.windows.net/',
+          },
+        };
+
+        const storageAccountEntity = createStorageAccountEntity(
+          webLinker,
+          storageAccount,
+          { blob: {} },
+        );
+
+        const context = createMockAzureStepExecutionContext({
+          instanceConfig: configFromEnv,
+          entities: [storageAccountEntity, vmEntity],
+        });
+
+        await buildVirtualMachineDiskRelationships(context);
+
+        expect(context.jobState.collectedEntities.length).toBe(0);
+
+        expect(context.jobState.collectedRelationships.length).toBe(1);
+        expect(
+          context.jobState.collectedRelationships,
+        ).toMatchDirectRelationshipSchema({
+          schema: {
+            properties: {
+              _type: {
+                const: relationships.VIRTUAL_MACHINE_USES_UNMANAGED_DISK._type,
+              },
+              osDisk: { const: true },
+            },
+          },
+        });
+      });
+
+      test('should log if disk is not in job state', async () => {
+        const context = createMockAzureStepExecutionContext({
+          instanceConfig: configFromEnv,
+          entities: [vmEntity],
+        });
+
+        const loggerErrorSpy = jest.spyOn(context.logger, 'error');
+
+        await buildVirtualMachineDiskRelationships(context);
+
+        expect(context.jobState.collectedEntities).toEqual([]);
+        expect(context.jobState.collectedRelationships).toEqual([]);
+        expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
+          {
+            diskType: 'osDisk',
+            vhdUri:
+              'https://j1dev.blob.core.windows.net/vhds/non-managed-os20210321180131.vhd',
+            storageAccountHostnames: [],
+          },
+          'Could not find storage account for unmanaged disk defined by virtual machine.',
+        );
+      });
     });
 
-    const loggerErrorSpy = jest.spyOn(context.logger, 'error');
-
-    const response = await createVirtualMachineDiskRelationships(
-      virtualMachine,
-      vmEntity,
-      context,
-    );
-
-    expect(response).toEqual([]);
-    expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
-    expect(loggerErrorSpy).toHaveBeenCalledWith(
-      {
-        diskType: 'osDisk',
-        managedDiskId:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
-        virtualMachineId:
+    describe('data disk', () => {
+      const virtualMachine: VirtualMachine = {
+        id:
           '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
-      },
-      'Could not find managed disk defined by virtual machine.',
-    );
+        location: 'eastus',
+        storageProfile: {
+          dataDisks: [
+            {
+              lun: 0,
+              createOption: 'FromImage',
+              vhd: {
+                uri:
+                  'https://j1dev.blob.core.windows.net/vhds/non-managed-os20210321180131.vhd',
+              },
+            },
+          ],
+        },
+      };
+
+      const vmEntity = createVirtualMachineEntity(webLinker, virtualMachine);
+
+      test('should create relationship if disk in job state', async () => {
+        const storageAccount: StorageAccount = {
+          id: 'some-storage-account-id',
+          location: 'eastus',
+          primaryEndpoints: {
+            blob: 'https://j1dev.blob.core.windows.net/',
+          },
+        };
+
+        const storageAccountEntity = createStorageAccountEntity(
+          webLinker,
+          storageAccount,
+          { blob: {} },
+        );
+
+        const context = createMockAzureStepExecutionContext({
+          instanceConfig: configFromEnv,
+          entities: [storageAccountEntity, vmEntity],
+        });
+
+        await buildVirtualMachineDiskRelationships(context);
+
+        expect(context.jobState.collectedEntities.length).toBe(0);
+
+        expect(context.jobState.collectedRelationships.length).toBe(1);
+        expect(
+          context.jobState.collectedRelationships,
+        ).toMatchDirectRelationshipSchema({
+          schema: {
+            properties: {
+              _type: {
+                const: relationships.VIRTUAL_MACHINE_USES_UNMANAGED_DISK._type,
+              },
+              osDisk: { const: true },
+            },
+          },
+        });
+      });
+
+      test('should log if disk is not in job state', async () => {
+        const context = createMockAzureStepExecutionContext({
+          instanceConfig: configFromEnv,
+          entities: [vmEntity],
+        });
+
+        const loggerErrorSpy = jest.spyOn(context.logger, 'error');
+
+        await buildVirtualMachineDiskRelationships(context);
+
+        expect(context.jobState.collectedEntities).toEqual([]);
+        expect(context.jobState.collectedRelationships).toEqual([]);
+        expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
+          {
+            diskType: 'dataDisk',
+            vhdUri:
+              'https://j1dev.blob.core.windows.net/vhds/non-managed-os20210321180131.vhd',
+            storageAccountHostnames: [],
+          },
+          'Could not find storage account for unmanaged disk defined by virtual machine.',
+        );
+      });
+    });
   });
 });
 

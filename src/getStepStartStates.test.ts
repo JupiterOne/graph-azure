@@ -21,8 +21,8 @@ import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosd
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MYSQL_DATABASES,
-  STEP_RM_DATABASE_POSTGRESQL_DATABASES,
 } from './steps/resource-manager/databases';
+import { steps as postgreSqlDatabaseSteps } from './steps/resource-manager/databases/postgresql/constants';
 import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sql/constants';
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice';
 import { STEP_RM_KEYVAULT_VAULTS } from './steps/resource-manager/key-vault';
@@ -95,7 +95,7 @@ import {
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
 } from './steps/resource-manager/event-grid';
 import { AdvisorSteps } from './steps/resource-manager/advisor';
-import { SecuritySteps } from './steps/resource-manager/security';
+import { SecuritySteps } from './steps/resource-manager/security/constants';
 import { PolicySteps } from './steps/resource-manager/policy/constants';
 import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 
@@ -131,12 +131,15 @@ describe('getStepStartStates', () => {
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
+      [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
       [sqlDatabaseSteps.DATABASES]: { disabled: true },
       [sqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: true },
-      [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: true },
+      [postgreSqlDatabaseSteps.SERVERS]: { disabled: true },
+      [postgreSqlDatabaseSteps.DATABASES]: { disabled: true },
+      [postgreSqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: true },
       [storageSteps.STORAGE_ACCOUNTS]: { disabled: true },
       [storageSteps.STORAGE_CONTAINERS]: { disabled: true },
       [storageSteps.STORAGE_FILE_SHARES]: { disabled: true },
@@ -183,9 +186,10 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
-      [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
+      [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
+      [SecuritySteps.PRICING_CONFIGURATIONS]: { disabled: true },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
     });
   });
@@ -216,12 +220,15 @@ describe('getStepStartStates', () => {
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
+      [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
       [sqlDatabaseSteps.DATABASES]: { disabled: true },
       [sqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: true },
-      [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: true },
+      [postgreSqlDatabaseSteps.SERVERS]: { disabled: true },
+      [postgreSqlDatabaseSteps.DATABASES]: { disabled: true },
+      [postgreSqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: true },
       [storageSteps.STORAGE_ACCOUNTS]: { disabled: true },
       [storageSteps.STORAGE_CONTAINERS]: { disabled: true },
       [storageSteps.STORAGE_FILE_SHARES]: { disabled: true },
@@ -268,9 +275,10 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
-      [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
+      [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
+      [SecuritySteps.PRICING_CONFIGURATIONS]: { disabled: true },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
     });
   });
@@ -301,12 +309,15 @@ describe('getStepStartStates', () => {
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: false },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: false },
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: false },
+      [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: false },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: false },
       [sqlDatabaseSteps.DATABASES]: { disabled: false },
       [sqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: false },
-      [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: false },
+      [postgreSqlDatabaseSteps.SERVERS]: { disabled: false },
+      [postgreSqlDatabaseSteps.DATABASES]: { disabled: false },
+      [postgreSqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: false },
       [storageSteps.STORAGE_CONTAINERS]: { disabled: false },
       [storageSteps.STORAGE_FILE_SHARES]: { disabled: false },
       [storageSteps.STORAGE_ACCOUNTS]: { disabled: false },
@@ -353,9 +364,10 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: false },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: false },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: false },
-      [SecuritySteps.ASSESSMENTS]: { disabled: false },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: false },
+      [SecuritySteps.ASSESSMENTS]: { disabled: false },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: false },
+      [SecuritySteps.PRICING_CONFIGURATIONS]: { disabled: false },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: false },
     });
   });

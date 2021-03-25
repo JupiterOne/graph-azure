@@ -7,6 +7,7 @@ import {
   Server as MySQLServer,
 } from '@azure/arm-mysql/esm/models';
 import {
+  Configuration as PostgreSQLServerConfiguration,
   Database as PostgreSQLDatabase,
   Server as PostgreSQLServer,
 } from '@azure/arm-postgresql/esm/models';
@@ -18,6 +19,7 @@ import {
   convertProperties,
   createIntegrationEntity,
   Entity,
+  setRawData,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
@@ -54,10 +56,11 @@ export function createDbServerEntity(
   webLinker: AzureWebLinker,
   data: MySQLServer | SQLServer | MariaDBServer | PostgreSQLServer,
   _type: string,
+  configurations?: PostgreSQLServerConfiguration[],
 ): Entity {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const anyServer = data as any;
-  return createIntegrationEntity({
+  const serverEntity = createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
@@ -76,7 +79,55 @@ export function createDbServerEntity(
         administratorLoginPassword: REDACTED_VALUE,
         classification: null,
         encrypted: null,
+        'configuration.logCheckpoints': getConfiguration(
+          configurations,
+          'log_checkpoints',
+        ),
+        'configuration.logConnections': getConfiguration(
+          configurations,
+          'log_connections',
+        ),
+        'configuration.logDisconnections': getConfiguration(
+          configurations,
+          'log_disconnections',
+        ),
+        'configuration.connectionThrottling': getConfiguration(
+          configurations,
+          'connection_throttling',
+        ),
+        'configuration.logRetentionDays': getConfiguration(
+          configurations,
+          'log_retention_days',
+          'number',
+        ),
       },
     },
   });
+
+  if (configurations) {
+    setRawData(serverEntity, {
+      name: 'serverConfigurations',
+      rawData: configurations,
+    });
+  }
+  return serverEntity;
 }
+
+function getConfiguration(
+  configurations: PostgreSQLServerConfiguration[] | undefined,
+  propertyName: string,
+  type: 'string' | 'number' = 'string',
+) {
+  const value = configurations?.find((c) => c.name === propertyName)?.value;
+  if (type === 'number') {
+    const numericValue = Number(value);
+    if (!isNaN(numericValue)) {
+      return numericValue;
+    }
+  }
+  return value;
+}
+
+export const testFunctions = {
+  getConfiguration,
+};

@@ -31,8 +31,8 @@ import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosd
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MYSQL_DATABASES,
-  STEP_RM_DATABASE_POSTGRESQL_DATABASES,
 } from './steps/resource-manager/databases/constants';
+import { steps as postgreSqlDatabaseSteps } from './steps/resource-manager/databases/postgresql/constants';
 import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sql/constants';
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice/constants';
 import { STEP_RM_KEYVAULT_VAULTS } from './steps/resource-manager/key-vault/constants';
@@ -147,10 +147,13 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
       STEP_RM_COMPUTE_VIRTUAL_MACHINES,
       computeSteps.VIRTUAL_MACHINE_EXTENSIONS,
+      computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS,
       STEP_RM_COSMOSDB_SQL_DATABASES,
       STEP_RM_DATABASE_MARIADB_DATABASES,
       STEP_RM_DATABASE_MYSQL_DATABASES,
-      STEP_RM_DATABASE_POSTGRESQL_DATABASES,
+      postgreSqlDatabaseSteps.SERVERS,
+      postgreSqlDatabaseSteps.DATABASES,
+      postgreSqlDatabaseSteps.SERVER_FIREWALL_RULES,
       sqlDatabaseSteps.DATABASES,
       sqlDatabaseSteps.SERVER_FIREWALL_RULES,
       storageSteps.STORAGE_ACCOUNTS,
@@ -196,6 +199,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
       SecuritySteps.ASSESSMENTS,
       SecuritySteps.SECURITY_CENTER_CONTACTS,
+      SecuritySteps.PRICING_CONFIGURATIONS,
       MonitorSteps.MONITOR_LOG_PROFILES,
     ],
     executeLastSteps: [

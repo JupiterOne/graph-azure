@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Added
 
+- Added `azure_security_center_subscription_pricing` entities.
 - Added `azure_vm|USES|azure_storage_account` relationships.
 - Added `azure_vm_extension` entities.
 

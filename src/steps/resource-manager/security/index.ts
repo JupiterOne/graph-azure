@@ -15,6 +15,7 @@ import {
 } from './constants';
 import {
   createAssessmentEntity,
+  createPricingConfigEntity,
   createSecurityContactEntity,
 } from './converters';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
@@ -22,7 +23,6 @@ import {
   entities as subscriptionEntities,
   steps as subscriptionSteps,
 } from '../subscriptions/constants';
-export * from './constants';
 
 export async function fetchAssessments(
   executionContext: IntegrationStepContext,
@@ -89,6 +89,37 @@ export async function fetchSecurityCenterContacts(
   });
 }
 
+export async function fetchSecurityCenterPricingConfigurations(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new SecurityClient(instance.config, logger);
+
+  const subscriptionId = `/subscriptions/${instance.config.subscriptionId}`;
+  const subscriptionEntity = await jobState.findEntity(subscriptionId);
+
+  await client.iteratePricings(async (pricing) => {
+    const pricingConfigEntity = await jobState.addEntity(
+      createPricingConfigEntity(webLinker, pricing),
+    );
+
+    if (!subscriptionEntity) return;
+
+    await jobState.addRelationship(
+      createDirectRelationship({
+        _class: SecurityRelationships.SUBSCRIPTION_HAS_PRICING_CONFIG._class,
+        from: subscriptionEntity,
+        to: pricingConfigEntity,
+        properties: {
+          _type: SecurityRelationships.SUBSCRIPTION_HAS_PRICING_CONFIG._type,
+        },
+      }),
+    );
+  });
+}
+
 export const securitySteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -109,5 +140,13 @@ export const securitySteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTIONS],
     executionHandler: fetchSecurityCenterContacts,
+  },
+  {
+    id: SecuritySteps.PRICING_CONFIGURATIONS,
+    name: 'Security Center Pricing Configurations',
+    entities: [SecurityEntities.SUBSCRIPTION_PRICING],
+    relationships: [SecurityRelationships.SUBSCRIPTION_HAS_PRICING_CONFIG],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTIONS],
+    executionHandler: fetchSecurityCenterPricingConfigurations,
   },
 ];

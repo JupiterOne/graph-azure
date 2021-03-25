@@ -95,7 +95,7 @@ import {
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
 } from './steps/resource-manager/event-grid';
 import { AdvisorSteps } from './steps/resource-manager/advisor';
-import { SecuritySteps } from './steps/resource-manager/security';
+import { SecuritySteps } from './steps/resource-manager/security/constants';
 import { PolicySteps } from './steps/resource-manager/policy/constants';
 import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 
@@ -184,9 +184,10 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
-      [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
+      [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
+      [SecuritySteps.PRICING_CONFIGURATIONS]: { disabled: true },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
     });
   });
@@ -270,9 +271,10 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
-      [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
+      [SecuritySteps.ASSESSMENTS]: { disabled: true },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
+      [SecuritySteps.PRICING_CONFIGURATIONS]: { disabled: true },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
     });
   });
@@ -356,9 +358,10 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: false },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: false },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: false },
-      [SecuritySteps.ASSESSMENTS]: { disabled: false },
       [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: false },
+      [SecuritySteps.ASSESSMENTS]: { disabled: false },
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: false },
+      [SecuritySteps.PRICING_CONFIGURATIONS]: { disabled: false },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: false },
     });
   });

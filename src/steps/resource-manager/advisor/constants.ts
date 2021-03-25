@@ -1,5 +1,5 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
-import { SecurityEntities } from '../security';
+import { SecurityEntities } from '../security/constants';
 import { ANY_SCOPE } from '../constants';
 
 export const AdvisorSteps = {

@@ -181,7 +181,7 @@ export class SQLClient extends Client {
     }
   }
 
-  public async iteraetServerFirewallRules(
+  public async iterateServerFirewallRules(
     server: {
       id?: string;
       name?: string;

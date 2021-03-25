@@ -21,8 +21,8 @@ import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosd
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MYSQL_DATABASES,
-  STEP_RM_DATABASE_POSTGRESQL_DATABASES,
 } from './steps/resource-manager/databases';
+import { steps as postgreSqlDatabaseSteps } from './steps/resource-manager/databases/postgresql/constants';
 import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sql/constants';
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice';
 import { STEP_RM_KEYVAULT_VAULTS } from './steps/resource-manager/key-vault';
@@ -137,7 +137,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
       [sqlDatabaseSteps.DATABASES]: { disabled: true },
       [sqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: true },
-      [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: true },
+      [postgreSqlDatabaseSteps.SERVERS]: { disabled: true },
+      [postgreSqlDatabaseSteps.DATABASES]: { disabled: true },
+      [postgreSqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: true },
       [storageSteps.STORAGE_ACCOUNTS]: { disabled: true },
       [storageSteps.STORAGE_CONTAINERS]: { disabled: true },
       [storageSteps.STORAGE_FILE_SHARES]: { disabled: true },
@@ -224,7 +226,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
       [sqlDatabaseSteps.DATABASES]: { disabled: true },
       [sqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: true },
-      [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: true },
+      [postgreSqlDatabaseSteps.SERVERS]: { disabled: true },
+      [postgreSqlDatabaseSteps.DATABASES]: { disabled: true },
+      [postgreSqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: true },
       [storageSteps.STORAGE_ACCOUNTS]: { disabled: true },
       [storageSteps.STORAGE_CONTAINERS]: { disabled: true },
       [storageSteps.STORAGE_FILE_SHARES]: { disabled: true },
@@ -311,7 +315,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: false },
       [sqlDatabaseSteps.DATABASES]: { disabled: false },
       [sqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: false },
-      [STEP_RM_DATABASE_POSTGRESQL_DATABASES]: { disabled: false },
+      [postgreSqlDatabaseSteps.SERVERS]: { disabled: false },
+      [postgreSqlDatabaseSteps.DATABASES]: { disabled: false },
+      [postgreSqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: false },
       [storageSteps.STORAGE_CONTAINERS]: { disabled: false },
       [storageSteps.STORAGE_FILE_SHARES]: { disabled: false },
       [storageSteps.STORAGE_ACCOUNTS]: { disabled: false },

@@ -110,7 +110,7 @@ export async function fetchSQLServerFirewallRules(
   await jobState.iterateEntities(
     { _type: entities.SERVER._type },
     async (sqlServerEntity) => {
-      await client.iteraetServerFirewallRules(
+      await client.iterateServerFirewallRules(
         {
           id: sqlServerEntity.id as string,
           name: sqlServerEntity.name as string,

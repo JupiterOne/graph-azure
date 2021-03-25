@@ -10,6 +10,13 @@ and this project adheres to
 
 ### Added
 
+- Added `azure_postgresql_server_firewall_rule` entities.
+- Added the following properties to `azure_postgresql_server`:
+  - `configuration.logCheckpoints`
+  - `configuration.logConnections`
+  - `configuration.logDisconnections`
+  - `configuration.logRetentionDays`
+  - `configuration.connectionThrottling`
 - Added `azure_security_center_subscription_pricing` entities.
 - Added `azure_vm|USES|azure_storage_account` relationships.
 - Added `azure_vm_extension` entities.

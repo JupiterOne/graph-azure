@@ -130,14 +130,13 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
           entities: [vmEntity],
         });
 
-        const loggerErrorSpy = jest.spyOn(context.logger, 'error');
+        const loggerWarnSpy = jest.spyOn(context.logger, 'warn');
 
         await buildVirtualMachineDiskRelationships(context);
 
         expect(context.jobState.collectedEntities).toEqual([]);
         expect(context.jobState.collectedRelationships).toEqual([]);
-        expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(loggerWarnSpy).toHaveBeenCalledWith(
           {
             diskType: 'osDisk',
             managedDiskId:
@@ -216,14 +215,13 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
           entities: [vmEntity],
         });
 
-        const loggerErrorSpy = jest.spyOn(context.logger, 'error');
+        const loggerWarnSpy = jest.spyOn(context.logger, 'warn');
 
         await buildVirtualMachineDiskRelationships(context);
 
         expect(context.jobState.collectedEntities).toEqual([]);
         expect(context.jobState.collectedRelationships).toEqual([]);
-        expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(loggerWarnSpy).toHaveBeenCalledWith(
           {
             diskType: 'dataDisk',
             managedDiskId:
@@ -301,14 +299,13 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
           entities: [vmEntity],
         });
 
-        const loggerErrorSpy = jest.spyOn(context.logger, 'error');
+        const loggerWarnSpy = jest.spyOn(context.logger, 'warn');
 
         await buildVirtualMachineDiskRelationships(context);
 
         expect(context.jobState.collectedEntities).toEqual([]);
         expect(context.jobState.collectedRelationships).toEqual([]);
-        expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(loggerWarnSpy).toHaveBeenCalledWith(
           {
             diskType: 'osDisk',
             vhdUri:
@@ -386,14 +383,13 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
           entities: [vmEntity],
         });
 
-        const loggerErrorSpy = jest.spyOn(context.logger, 'error');
+        const loggerWarnSpy = jest.spyOn(context.logger, 'warn');
 
         await buildVirtualMachineDiskRelationships(context);
 
         expect(context.jobState.collectedEntities).toEqual([]);
         expect(context.jobState.collectedRelationships).toEqual([]);
-        expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(loggerWarnSpy).toHaveBeenCalledWith(
           {
             diskType: 'dataDisk',
             vhdUri:

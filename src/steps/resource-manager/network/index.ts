@@ -526,7 +526,7 @@ export async function fetchNetworkSecurityGroupFlowLogs(
               }),
             );
           } else {
-            logger.error(
+            logger.warn(
               {
                 nsgFlowLogId: nsgFlowLog.id,
                 securityGroupId: nsgFlowLog.targetResourceId,
@@ -547,12 +547,12 @@ export async function fetchNetworkSecurityGroupFlowLogs(
               }),
             );
           } else {
-            logger.error(
+            logger.warn(
               {
                 nsgFlowLogId: nsgFlowLog.id,
                 storageId: nsgFlowLog.storageId,
               },
-              'Could not find storage account by ID; no relationship can be built between flow log -> storagea account',
+              'Could not find storage account by ID; no relationship can be built between flow log -> storage account',
             );
           }
         },

@@ -144,7 +144,7 @@ export async function createVirtualMachineDiskRelationships(
         },
       });
     } else {
-      logger.error(
+      logger.warn(
         {
           virtualMachineId: vmEntity.id,
           managedDiskId: diskId,
@@ -177,7 +177,7 @@ export async function createVirtualMachineDiskRelationships(
         },
       });
     } else {
-      context.logger.error(
+      context.logger.warn(
         {
           vhdUri,
           diskType,

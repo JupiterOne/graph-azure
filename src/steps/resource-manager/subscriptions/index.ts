@@ -75,7 +75,7 @@ export async function fetchLocations(
               // In order to future-proof this function (considering a world where more than
               // 1 subscription is ingested in an integration), alert the operators if more
               // than one location name exists.
-              logger.error(
+              logger.warn(
                 {
                   newLocationId: location.id,
                   currentLocationId: locationNameMap[location.name!]?.id,
@@ -86,7 +86,7 @@ export async function fetchLocations(
               locationNameMap[location.name!] = locationEntity;
             }
           } else {
-            logger.error(
+            logger.warn(
               {
                 locationId: location.id,
                 locationName: location.name,

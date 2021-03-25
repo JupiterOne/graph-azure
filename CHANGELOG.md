@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.17.0 - 2021-03-25
+
 ### Added
 
 - Added `azure_postgresql_server_firewall_rule` entities.

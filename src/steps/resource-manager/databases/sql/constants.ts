@@ -11,6 +11,7 @@ import {
 export const steps = {
   DATABASES: 'rm-database-sql-databases',
   SERVER_FIREWALL_RULES: 'rm-database-sql-server-firewall-rules',
+  SERVER_AD_ADMINS: 'rm-database-sql-server-active-directory-admins',
 };
 
 export const entities = {
@@ -28,6 +29,11 @@ export const entities = {
     _type: 'azure_sql_server_firewall_rule',
     _class: ['Firewall'],
     resourceName: '[RM] SQL Server Firewall Rule',
+  },
+  ACTIVE_DIRECTORY_ADMIN: {
+    _type: 'azure_sql_server_active_directory_admin',
+    _class: ['AccessRole'],
+    resourceName: '[RM] SQL Server Active Directory Admin',
   },
 };
 
@@ -50,5 +56,11 @@ export const relationships = {
     sourceType: entities.SERVER._type,
     _class: RelationshipClass.HAS,
     targetType: entities.FIREWALL_RULE._type,
+  },
+  SQL_SERVER_HAS_AD_ADMIN: {
+    _type: 'azure_sql_server_has_active_directory_admin',
+    sourceType: entities.SERVER._type,
+    _class: RelationshipClass.HAS,
+    targetType: entities.ACTIVE_DIRECTORY_ADMIN._type,
   },
 };

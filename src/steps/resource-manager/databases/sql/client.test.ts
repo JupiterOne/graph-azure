@@ -1,4 +1,9 @@
-import { Database, FirewallRule, Server } from '@azure/arm-sql/esm/models';
+import {
+  Database,
+  FirewallRule,
+  Server,
+  ServerAzureADAdministrator,
+} from '@azure/arm-sql/esm/models';
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
@@ -159,5 +164,51 @@ describe('iterateFirewallRules', () => {
     });
 
     expect(firewallRules.length).toBeGreaterThan(0);
+  });
+});
+
+describe('iterateServerActiveDirectoryAdministrators', () => {
+  async function getSetupData() {
+    const client = new SQLClient(configFromEnv, createMockIntegrationLogger());
+
+    const sqlServers: Server[] = [];
+
+    await client.iterateServers((s) => {
+      sqlServers.push(s);
+    });
+
+    const j1devSqlServers = sqlServers.filter(
+      (s) => s.name === 'j1dev-sqlserver',
+    );
+    expect(j1devSqlServers.length).toBe(1);
+    const sqlServer = j1devSqlServers[0];
+
+    return {
+      sqlServer,
+    };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateServerActiveDirectoryAdministrators',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { sqlServer } = await getSetupData();
+
+    const client = new SQLClient(configFromEnv, createMockIntegrationLogger());
+
+    const activeDirectoryAdmins: ServerAzureADAdministrator[] = [];
+    await client.iterateServerActiveDirectoryAdministrators(
+      { name: sqlServer.name!, id: sqlServer.id! },
+      (admin) => {
+        activeDirectoryAdmins.push(admin);
+      },
+    );
+
+    expect(activeDirectoryAdmins.length).toBeGreaterThan(0);
   });
 });

@@ -1,6 +1,7 @@
 import {
   DatabaseBlobAuditingPoliciesGetResponse,
   FirewallRule,
+  ServerAzureADAdministrator,
   ServerBlobAuditingPoliciesGetResponse,
   ServerSecurityAlertPoliciesGetResponse,
   TransparentDataEncryptionsGetResponse,
@@ -109,6 +110,27 @@ export function createSqlServerFirewallRuleEntity(firewallRule: FirewallRule) {
         location: firewallRule.location,
         startIpAddress: firewallRule.startIpAddress,
         endIpAddress: firewallRule.endIpAddress,
+      },
+    },
+  });
+}
+
+export function createSqlServerActiveDirectoryAdmin(
+  admin: ServerAzureADAdministrator,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: admin,
+      assign: {
+        _key: admin.id,
+        _type: entities.ACTIVE_DIRECTORY_ADMIN._type,
+        _class: entities.ACTIVE_DIRECTORY_ADMIN._class,
+        name: admin.name,
+        id: admin.id,
+        type: admin.type,
+        tenantId: admin.tenantId,
+        login: admin.login,
+        sid: admin.sid,
       },
     },
   });

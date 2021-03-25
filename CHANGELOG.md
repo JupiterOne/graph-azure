@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_sql_server_active_directory_admin` entities.
+
 ## 5.17.0 - 2021-03-25
 
 ### Added

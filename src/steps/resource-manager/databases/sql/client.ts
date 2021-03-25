@@ -4,6 +4,7 @@ import {
   DatabaseBlobAuditingPoliciesGetResponse,
   FirewallRule,
   Server,
+  ServerAzureADAdministrator,
   ServerBlobAuditingPoliciesGetResponse,
   ServerSecurityAlertPoliciesGetResponse,
   TransparentDataEncryptionsGetResponse,
@@ -60,6 +61,33 @@ export class SQLClient extends Client {
         },
       },
       resourceDescription: 'sql.databases',
+      callback,
+    });
+  }
+
+  public async iterateServerActiveDirectoryAdministrators(
+    server: { name: string; id: string },
+    callback: (admin: ServerAzureADAdministrator) => void | Promise<void>,
+  ) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      SqlManagementClient,
+    );
+
+    const resourceGroup = resourceGroupName(server.id, true);
+    const serverName = server.name;
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => {
+          return serviceClient.serverAzureADAdministrators.listByServer(
+            resourceGroup,
+            serverName,
+          );
+        },
+      },
+      resourceDescription: 'sql.server.activeDirectoryAdmins',
       callback,
     });
   }

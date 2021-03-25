@@ -19,6 +19,9 @@ export const entities = {
     _type: 'azure_sql_server',
     _class: RM_DATABASE_SERVER_ENTITY_CLASS,
     resourceName: '[RM] SQL Server',
+    rawDataKeys: {
+      ENCRYPTION_PROTECTOR: 'encryptionProtector',
+    },
   },
   DATABASE: {
     _type: 'azure_sql_database',

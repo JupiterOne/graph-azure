@@ -30,7 +30,7 @@ afterEach(async () => {
   }
 });
 
-describe('step = SQL servers and databases', () => {
+describe.skip('step = SQL servers and databases', () => {
   beforeAll(async () => {
     instanceConfig = {
       clientId: process.env.CLIENT_ID || 'clientId',

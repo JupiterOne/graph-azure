@@ -17,6 +17,7 @@ import {
   setAuditingStatus,
   setDatabaseEncryption,
   setServerSecurityAlerting,
+  setServerEncryptionProtector,
 } from './converters';
 import createResourceGroupResourceRelationship from '../../utils/createResourceGroupResourceRelationship';
 import {
@@ -48,6 +49,13 @@ export async function fetchSQLDatabases(
     setServerSecurityAlerting(
       serverEntity,
       await client.fetchServerSecurityAlertPolicies(server),
+    );
+    setServerEncryptionProtector(
+      serverEntity,
+      await client.fetchServerEncryptionProtector({
+        name: server.name!,
+        id: server.id!,
+      }),
     );
 
     await jobState.addEntity(serverEntity);

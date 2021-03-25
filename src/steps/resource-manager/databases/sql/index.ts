@@ -66,12 +66,26 @@ export async function fetchSQLServers(
       executionContext,
       serverEntity,
     );
-
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-      executionContext,
-      serverEntity,
-    );
   });
+}
+
+export async function fetchSQLServerDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: entities.SERVER._type },
+    async (serverEntity) => {
+      const server = getRawData<Server>(serverEntity, 'default');
+      if (!server) return;
+
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        serverEntity,
+      );
+    },
+  );
 }
 
 export async function fetchSQLDatabases(
@@ -191,13 +205,18 @@ export const sqlSteps: Step<
   {
     id: steps.SERVERS,
     name: 'SQL Servers',
-    entities: [entities.SERVER, ...diagnosticSettingsEntitiesForResource],
-    relationships: [
-      relationships.RESOURCE_GROUP_HAS_SQL_SERVER,
-      ...diagnosticSettingsRelationshipsForResource,
-    ],
+    entities: [entities.SERVER],
+    relationships: [relationships.RESOURCE_GROUP_HAS_SQL_SERVER],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchSQLServers,
+  },
+  {
+    id: steps.SERVER_DIAGNOSTIC_SETTINGS,
+    name: 'SQL Server Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
+    relationships: [...diagnosticSettingsRelationshipsForResource],
+    dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
+    executionHandler: fetchSQLServerDiagnosticSettings,
   },
   {
     id: steps.DATABASES,

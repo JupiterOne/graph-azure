@@ -2,6 +2,7 @@ import { ComputeManagementClient } from '@azure/arm-compute';
 import {
   Disk,
   VirtualMachine,
+  VirtualMachineExtension,
   VirtualMachineImage,
 } from '@azure/arm-compute/esm/models';
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
@@ -10,6 +11,7 @@ import {
   Client,
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
+import { resourceGroupName } from '../../../azure/utils';
 
 export class ComputeClient extends Client {
   public async iterateVirtualMachines(
@@ -23,6 +25,40 @@ export class ComputeClient extends Client {
       serviceClient,
       resourceEndpoint: serviceClient.virtualMachines,
       resourceDescription: 'compute.virtualMachines',
+      callback,
+    });
+  }
+
+  public async iterateVirtualMachineExtensions(
+    virtualMachine: {
+      name: string;
+      id: string;
+    },
+    callback: (e: VirtualMachineExtension) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ComputeManagementClient,
+    );
+
+    const resourceGroup = resourceGroupName(virtualMachine.id);
+    const vmName = virtualMachine.name;
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => {
+          const response = await serviceClient.virtualMachineExtensions.list(
+            resourceGroup!,
+            vmName,
+          );
+          const virtualMachineExtensions = response.value!;
+          return Object.assign(virtualMachineExtensions, {
+            _response: response._response,
+          });
+        },
+      },
+      resourceDescription: 'compute.virtualMachine.extensions',
       callback,
     });
   }

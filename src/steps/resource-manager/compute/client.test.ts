@@ -1,12 +1,19 @@
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
+  getMatchRequestsBy,
   Recording,
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
-import config from '../../../../test/integrationInstanceConfig';
+import config, {
+  configFromEnv,
+} from '../../../../test/integrationInstanceConfig';
 import { ComputeClient } from './client';
-import { VirtualMachine, Disk } from '@azure/arm-compute/esm/models';
+import {
+  VirtualMachine,
+  Disk,
+  VirtualMachineExtension,
+} from '@azure/arm-compute/esm/models';
 
 let recording: Recording;
 
@@ -71,5 +78,51 @@ describe('iterateVirtualMachineDisks', () => {
         }),
       }),
     ]);
+  });
+});
+
+describe('iterateVirtualMachineExtensions', () => {
+  async function getSetupEntities(client: ComputeClient) {
+    const virtualMachines: VirtualMachine[] = [];
+    await client.iterateVirtualMachines((vm) => {
+      virtualMachines.push(vm);
+    });
+
+    const j1devVirtualMachines = virtualMachines.filter(
+      (vm) => vm.name === 'j1dev',
+    );
+
+    expect(j1devVirtualMachines.length).toBe(1);
+    const virtualMachine = j1devVirtualMachines[0];
+
+    return { virtualMachine };
+  }
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateVirtualMachineExtensions',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new ComputeClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+    const { virtualMachine } = await getSetupEntities(client);
+
+    const extensions: VirtualMachineExtension[] = [];
+    await client.iterateVirtualMachineExtensions(
+      {
+        name: virtualMachine.name!,
+        id: virtualMachine.id!,
+      },
+      (e) => {
+        extensions.push(e);
+      },
+    );
+
+    expect(extensions.length).toBeGreaterThan(0);
   });
 });

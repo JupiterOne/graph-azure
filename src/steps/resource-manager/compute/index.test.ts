@@ -2,6 +2,7 @@ import { Disk, VirtualMachine } from '@azure/arm-compute/esm/models';
 import {
   createVirtualMachineDiskRelationships,
   fetchVirtualMachineDisks,
+  fetchVirtualMachineExtensions,
   fetchVirtualMachines,
 } from '.';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
@@ -17,8 +18,11 @@ import { IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import {
   DISK_ENTITY_TYPE,
+  entities,
+  relationships,
   VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
   VIRTUAL_MACHINE_ENTITY_CLASS,
+  VIRTUAL_MACHINE_ENTITY_TYPE,
 } from './constants';
 import { createDiskEntity, createVirtualMachineEntity } from './converters';
 
@@ -183,5 +187,74 @@ describe('createVirtualMachineDiskRelationships', () => {
       },
       'Could not find managed disk defined by virtual machine.',
     );
+  });
+});
+
+describe('rm-compute-virtual-machine-extensions', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchVirtualMachines(context);
+
+    const vmEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
+    );
+
+    return { accountEntity, vmEntities };
+  }
+
+  function hasDuplicates(array: any[]): boolean {
+    return new Set(array).size !== array.length;
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-compute-virtual-machine-extensions',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      accountEntity,
+      vmEntities: virtualMachineEntities,
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...virtualMachineEntities],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchVirtualMachineExtensions(context);
+
+    const vmExtensionEntities = context.jobState.collectedEntities;
+
+    expect(vmExtensionEntities.length).toBeGreaterThan(0);
+    expect(vmExtensionEntities).toMatchGraphObjectSchema({
+      _class: entities.VIRTUAL_MACHINE_EXTENSION._class,
+    });
+
+    expect(hasDuplicates(vmExtensionEntities.map((e) => e.name))).toBe(false);
+
+    const vmVmExtensionRelationships = context.jobState.collectedRelationships;
+
+    expect(vmVmExtensionRelationships.length).toBeGreaterThan(0);
+    expect(vmVmExtensionRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: { const: relationships.VIRTUAL_MACHINE_USES_EXTENSION._type },
+        },
+      },
+    });
   });
 });

@@ -4,10 +4,12 @@ import {
   Image,
   OSDisk,
   VirtualMachine,
+  VirtualMachineExtension,
 } from '@azure/arm-compute/esm/models';
 import {
   assignTags,
   convertProperties,
+  createIntegrationEntity,
   Entity,
   getTime,
 } from '@jupiterone/integration-sdk-core';
@@ -17,6 +19,7 @@ import { resourceGroupName } from '../../../azure/utils';
 import {
   DISK_ENTITY_CLASS,
   DISK_ENTITY_TYPE,
+  entities,
   VIRTUAL_MACHINE_ENTITY_CLASS,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
@@ -127,6 +130,33 @@ export function createImageEntity(
   assignTags(entity, data.tags);
 
   return entity;
+}
+
+export type VirtualMachineExtensionSharedProperties = Omit<
+  VirtualMachineExtension,
+  'id' | 'location' | 'provisioningState'
+>;
+
+export function createVirtualMachineExtensionEntity(
+  data: VirtualMachineExtensionSharedProperties,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: getVirtualMachineExtensionKey(data),
+        _type: entities.VIRTUAL_MACHINE_EXTENSION._type,
+        _class: entities.VIRTUAL_MACHINE_EXTENSION._class,
+        name: data.name,
+      },
+    },
+  });
+}
+
+export function getVirtualMachineExtensionKey(
+  data: VirtualMachineExtensionSharedProperties,
+) {
+  return `vm-extension:${data.publisher || 'unknown-publisher'}:${data.name!}`;
 }
 
 export const testFunctions = {

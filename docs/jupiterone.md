@@ -143,6 +143,7 @@ The following entities are created:
 | [RM] Role Definition                      | `azure_role_definition`                      | `AccessRole`                       |
 | [RM] SQL Database                         | `azure_sql_database`                         | `Database`, `DataStore`            |
 | [RM] SQL Server                           | `azure_sql_server`                           | `Database`, `DataStore`, `Host`    |
+| [RM] SQL Server Active Directory Admin    | `azure_sql_server_active_directory_admin`    | `AccessRole`                       |
 | [RM] SQL Server Firewall Rule             | `azure_sql_server_firewall_rule`             | `Firewall`                         |
 | [RM] Security Assessment                  | `azure_security_assessment`                  | `Assessment`                       |
 | [RM] Security Center Subscription Pricing | `azure_security_center_subscription_pricing` | `Configuration`                    |
@@ -271,6 +272,7 @@ The following relationships are created/mapped:
 | `azure_service_bus_namespace`     | **HAS**               | `azure_service_bus_queue`                    |
 | `azure_service_bus_namespace`     | **HAS**               | `azure_service_bus_topic`                    |
 | `azure_service_bus_topic`         | **HAS**               | `azure_service_bus_subscription`             |
+| `azure_sql_server`                | **HAS**               | `azure_sql_server_active_directory_admin`    |
 | `azure_sql_server`                | **HAS**               | `azure_sql_database`                         |
 | `azure_sql_server`                | **HAS**               | `azure_sql_server_firewall_rule`             |
 | `azure_storage_account`           | **HAS**               | `azure_storage_container`                    |

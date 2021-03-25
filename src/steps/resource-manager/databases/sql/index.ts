@@ -13,6 +13,7 @@ import { SQLClient } from './client';
 import { steps, entities, relationships } from './constants';
 import {
   createSqlServerFirewallRuleEntity,
+  createSqlServerActiveDirectoryAdmin,
   setAuditingStatus,
   setDatabaseEncryption,
   setServerSecurityAlerting,
@@ -135,6 +136,39 @@ export async function fetchSQLServerFirewallRules(
   );
 }
 
+export async function fetchSQLServerActiveDirectoryAdmins(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new SQLClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: entities.SERVER._type },
+    async (sqlServerEntity) => {
+      await client.iterateServerActiveDirectoryAdministrators(
+        {
+          id: sqlServerEntity.id as string,
+          name: sqlServerEntity.name as string,
+        },
+        async (admin) => {
+          const adminEntity = await jobState.addEntity(
+            createSqlServerActiveDirectoryAdmin(admin),
+          );
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: sqlServerEntity,
+              to: adminEntity,
+            }),
+          );
+
+          // TODO create IS mapped relationship between AD Admin and principal.
+        },
+      );
+    },
+  );
+}
+
 export const sqlSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -161,5 +195,13 @@ export const sqlSteps: Step<
     relationships: [relationships.SQL_SERVER_HAS_FIREWALL_RULE],
     dependsOn: [steps.DATABASES],
     executionHandler: fetchSQLServerFirewallRules,
+  },
+  {
+    id: steps.SERVER_AD_ADMINS,
+    name: 'SQL Server Active Directory Admins',
+    entities: [entities.ACTIVE_DIRECTORY_ADMIN],
+    relationships: [relationships.SQL_SERVER_HAS_AD_ADMIN],
+    dependsOn: [steps.DATABASES],
+    executionHandler: fetchSQLServerActiveDirectoryAdmins,
   },
 ];

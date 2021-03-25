@@ -10,7 +10,11 @@ import {
 import { createMockAzureStepExecutionContext } from '../../../../../test/createMockAzureStepExecutionContext';
 import { IntegrationConfig } from '../../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
-import { fetchSQLDatabases, fetchSQLServerFirewallRules } from '.';
+import {
+  fetchSQLDatabases,
+  fetchSQLServerActiveDirectoryAdmins,
+  fetchSQLServerFirewallRules,
+} from '.';
 import { entities, relationships } from './constants';
 import { MonitorEntities, MonitorRelationships } from '../../monitor/constants';
 import { configFromEnv } from '../../../../../test/integrationInstanceConfig';
@@ -358,5 +362,75 @@ describe('rm-database-sql-server-firewall-rules', () => {
     expect(sqlServerFirewallRuleRelationships).toMatchDirectRelationshipSchema(
       {},
     );
+  });
+});
+
+describe('rm-database-sql-server-active-directory-admins', () => {
+  async function getSetupEntities() {
+    const accountEntity = getMockAccountEntity(configFromEnv);
+
+    const setupContext = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchSQLDatabases(setupContext);
+    const j1devSqlServerEntities = setupContext.jobState.collectedEntities.filter(
+      (e) =>
+        e._type === entities.SERVER._type &&
+        e.displayName === 'j1dev-sqlserver',
+    );
+    expect(j1devSqlServerEntities.length).toBe(1);
+    const sqlServerEntity = j1devSqlServerEntities[0];
+
+    return { accountEntity, sqlServerEntity };
+  }
+
+  test('step', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-database-sql-server-active-directory-admins',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { sqlServerEntity, accountEntity } = await getSetupEntities();
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [sqlServerEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchSQLServerActiveDirectoryAdmins(context);
+
+    const sqlServerActiveDirectoryAdminEntities =
+      context.jobState.collectedEntities;
+
+    expect(sqlServerActiveDirectoryAdminEntities.length).toBeGreaterThan(0);
+    expect(sqlServerActiveDirectoryAdminEntities).toMatchGraphObjectSchema({
+      _class: entities.ACTIVE_DIRECTORY_ADMIN._class,
+    });
+
+    const sqlServerActiveDirectoryAdminRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(sqlServerActiveDirectoryAdminRelationships.length).toBe(
+      sqlServerActiveDirectoryAdminEntities.length,
+    );
+    expect(
+      sqlServerActiveDirectoryAdminRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: { const: relationships.SQL_SERVER_HAS_AD_ADMIN._type },
+        },
+      },
+    });
   });
 });

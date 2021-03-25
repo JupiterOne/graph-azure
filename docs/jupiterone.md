@@ -132,6 +132,7 @@ The following entities are created:
 | [RM] Policy Assignment                    | `azure_policy_assignment`                    | `ControlPolicy`                    |
 | [RM] PostgreSQL Database                  | `azure_postgresql_database`                  | `Database`, `DataStore`            |
 | [RM] PostgreSQL Server                    | `azure_postgresql_server`                    | `Database`, `DataStore`, `Host`    |
+| [RM] PostgreSQL Server Firewall Rule      | `azure_postgresql_server_firewall_rule`      | `Firewall`                         |
 | [RM] Private DNS Record Set               | `azure_private_dns_record_set`               | `DomainRecord`                     |
 | [RM] Private DNS Zone                     | `azure_private_dns_zone`                     | `DomainZone`                       |
 | [RM] Public IP Address                    | `azure_public_ip`                            | `IpAddress`                        |
@@ -201,6 +202,7 @@ The following relationships are created/mapped:
 | `azure_mysql_server`              | **HAS**               | `azure_mysql_database`                       |
 | `azure_network_watcher`           | **HAS**               | `azure_security_group_flow_logs`             |
 | `azure_postgresql_server`         | **HAS**               | `azure_postgresql_database`                  |
+| `azure_postgresql_server`         | **HAS**               | `azure_postgresql_server_firewall_rule`      |
 | `azure_private_dns_zone`          | **HAS**               | `azure_private_dns_record_set`               |
 | `azure_redis_cache`               | **CONNECTS**          | `azure_redis_cache`                          |
 | `azure_redis_cache`               | **HAS**               | `azure_firewall_rule`                        |

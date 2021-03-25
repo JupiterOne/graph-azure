@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Added
 
+- Added `azure_postgresql_server_firewall_rule` entities.
 - Added the following properties to `azure_postgresql_server`:
   - `configurations.log_checkpoints`
   - `configurations.log_connections`

@@ -1,5 +1,9 @@
 import { PostgreSQLManagementClient } from '@azure/arm-postgresql';
-import { Database, Server } from '@azure/arm-postgresql/esm/models';
+import {
+  Database,
+  FirewallRule,
+  Server,
+} from '@azure/arm-postgresql/esm/models';
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 
 import {
@@ -79,6 +83,36 @@ export class PostgreSQLClient extends Client {
         },
       },
       resourceDescription: 'postgresql.databases',
+      callback,
+    });
+  }
+
+  public async iterateServerFirewallRules(
+    server: {
+      id?: string;
+      name?: string;
+    },
+    callback: (r: FirewallRule) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PostgreSQLManagementClient,
+    );
+
+    const resourceGroup = resourceGroupName(server.id, true);
+    const serverName = server.name as string;
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => {
+          return serviceClient.firewallRules.listByServer(
+            resourceGroup,
+            serverName,
+          );
+        },
+      },
+      resourceDescription: 'postgresql.firewallRules',
       callback,
     });
   }

@@ -79,23 +79,23 @@ export function createDbServerEntity(
         administratorLoginPassword: REDACTED_VALUE,
         classification: null,
         encrypted: null,
-        'configurations.logCheckpoints': getConfiguration(
+        'configuration.logCheckpoints': getConfiguration(
           configurations,
           'log_checkpoints',
         ),
-        'configurations.logConnections': getConfiguration(
+        'configuration.logConnections': getConfiguration(
           configurations,
           'log_connections',
         ),
-        'configurations.logDisconnections': getConfiguration(
+        'configuration.logDisconnections': getConfiguration(
           configurations,
           'log_disconnections',
         ),
-        'configurations.connectionThrottling': getConfiguration(
+        'configuration.connectionThrottling': getConfiguration(
           configurations,
           'connection_throttling',
         ),
-        'configurations.logRetentionDays': getConfiguration(
+        'configuration.logRetentionDays': getConfiguration(
           configurations,
           'log_retention_days',
           'number',

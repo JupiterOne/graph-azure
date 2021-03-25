@@ -1,5 +1,6 @@
 import {
   createDirectRelationship,
+  getRawData,
   IntegrationStepExecutionContext,
   RelationshipClass,
   Step,
@@ -26,8 +27,9 @@ import {
   diagnosticSettingsRelationshipsForResource,
 } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../../resources/constants';
+import { Server } from '@azure/arm-sql/esm/models';
 
-export async function fetchSQLDatabases(
+export async function fetchSQLServers(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
@@ -69,8 +71,23 @@ export async function fetchSQLDatabases(
       executionContext,
       serverEntity,
     );
+  });
+}
 
-    try {
+export async function fetchSQLDatabases(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new SQLClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: entities.SERVER._type },
+    async (serverEntity) => {
+      const server = getRawData<Server>(serverEntity, 'default');
+      if (!server) return;
+
       await client.iterateDatabases(server, async (database) => {
         const databaseEntity = createDatabaseEntity(
           webLinker,
@@ -97,17 +114,8 @@ export async function fetchSQLDatabases(
           }),
         );
       });
-    } catch (err) {
-      logger.warn(
-        { err, server: { id: server.id, type: server.type } },
-        'Failure fetching databases for server',
-      );
-      // In the case this is a transient failure, ideally we would avoid
-      // deleting previously ingested databases for this server. That would
-      // require that we process each server independently, and have a way
-      // to communicate to the synchronizer that only a subset is partial.
-    }
-  });
+    },
+  );
 }
 
 export async function fetchSQLServerFirewallRules(
@@ -181,19 +189,22 @@ export const sqlSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
   {
-    id: steps.DATABASES,
-    name: 'SQL Databases',
-    entities: [
-      entities.SERVER,
-      entities.DATABASE,
-      ...diagnosticSettingsEntitiesForResource,
-    ],
+    id: steps.SERVERS,
+    name: 'SQL Servers',
+    entities: [entities.SERVER, ...diagnosticSettingsEntitiesForResource],
     relationships: [
       relationships.RESOURCE_GROUP_HAS_SQL_SERVER,
-      relationships.SQL_SERVER_HAS_SQL_DATABASE,
       ...diagnosticSettingsRelationshipsForResource,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchSQLServers,
+  },
+  {
+    id: steps.DATABASES,
+    name: 'SQL Databases',
+    entities: [entities.DATABASE],
+    relationships: [relationships.SQL_SERVER_HAS_SQL_DATABASE],
+    dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
     executionHandler: fetchSQLDatabases,
   },
   {
@@ -201,7 +212,7 @@ export const sqlSteps: Step<
     name: 'SQL Server Firewall Rules',
     entities: [entities.FIREWALL_RULE],
     relationships: [relationships.SQL_SERVER_HAS_FIREWALL_RULE],
-    dependsOn: [steps.DATABASES],
+    dependsOn: [steps.SERVERS],
     executionHandler: fetchSQLServerFirewallRules,
   },
   {
@@ -209,7 +220,7 @@ export const sqlSteps: Step<
     name: 'SQL Server Active Directory Admins',
     entities: [entities.ACTIVE_DIRECTORY_ADMIN],
     relationships: [relationships.SQL_SERVER_HAS_AD_ADMIN],
-    dependsOn: [steps.DATABASES],
+    dependsOn: [steps.SERVERS],
     executionHandler: fetchSQLServerActiveDirectoryAdmins,
   },
 ];

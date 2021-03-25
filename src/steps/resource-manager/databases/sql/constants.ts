@@ -9,6 +9,7 @@ import {
 } from '../constants';
 
 export const steps = {
+  SERVERS: 'rm-database-sql-servers',
   DATABASES: 'rm-database-sql-databases',
   SERVER_FIREWALL_RULES: 'rm-database-sql-server-firewall-rules',
   SERVER_AD_ADMINS: 'rm-database-sql-server-active-directory-admins',

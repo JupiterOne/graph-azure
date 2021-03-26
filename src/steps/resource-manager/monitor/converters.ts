@@ -8,9 +8,7 @@ import {
   DiagnosticSettingsResource,
   LogProfileResource,
   LogSettings,
-  MetricSettings,
 } from '@azure/arm-monitor/esm/models';
-import { normalizeId } from '../utils/normalizeId';
 
 export function createMonitorLogProfileEntity(
   webLinker: AzureWebLinker,
@@ -38,83 +36,46 @@ export function createMonitorLogProfileEntity(
   });
 }
 
-function createSettingEntity(
+export function createDiagnosticSettingsEntity(
   webLinker: AzureWebLinker,
-  diagnosticSetting: DiagnosticSettingsResource,
-  setting: MetricSettings,
-  _type: string,
-  _class: string | string[],
-  id: string,
+  data: DiagnosticSettingsResource,
 ): Entity {
-  const {
-    storageAccountId,
-    serviceBusRuleId,
-    eventHubAuthorizationRuleId,
-    eventHubName,
-    workspaceId,
-    logAnalyticsDestinationType,
-  } = diagnosticSetting;
-
-  const { retentionPolicy, enabled, category, timeGrain } = setting;
-  const normalizedId = normalizeId(id);
-
   return createIntegrationEntity({
     entityData: {
-      source: diagnosticSetting,
+      source: data,
       assign: {
-        _key: normalizedId,
-        _type,
-        _class,
-        webLink: webLinker.portalResourceUrl(normalizeId(diagnosticSetting.id)),
-        storageAccountId,
-        serviceBusRuleId,
-        eventHubAuthorizationRuleId,
-        eventHubName,
-        workspaceId,
-        logAnalyticsDestinationType,
-        category,
-        enabled,
-        timeGrain,
-        'retentionPolicy.days': retentionPolicy?.days,
-        'retentionPolicy.enabled': retentionPolicy?.enabled,
-        id: normalizedId,
+        _key: data.id!,
+        _type: MonitorEntities.DIAGNOSTIC_SETTINGS._type,
+        _class: MonitorEntities.DIAGNOSTIC_SETTINGS._class,
+        id: data.id,
+        webLink: webLinker.portalResourceUrl(data.id),
+        name: data.name,
+        storageAccountId: data.storageAccountId,
+        eventHubName: data.eventHubName,
+        eventHubAuthorizationRuleId: data.eventHubAuthorizationRuleId,
+        workspaceId: data.workspaceId,
+        logAnalyticsDestinationType: data.logAnalyticsDestinationType,
+        serviceBusRuleId: data.serviceBusRuleId,
+        type: data.type,
+        'log.Administrative': getLog(data.logs, 'Administrative')?.enabled,
+        'log.Alert': getLog(data.logs, 'Alert')?.enabled,
+        'log.Policy': getLog(data.logs, 'Policy')?.enabled,
+        'log.Security': getLog(data.logs, 'Security')?.enabled,
       },
     },
   });
 }
 
-export function createDiagnosticLogSettingEntity(
-  webLinker: AzureWebLinker,
-  diagnosticSetting: DiagnosticSettingsResource,
-  setting: LogSettings,
-): Entity {
-  const { category, enabled, retentionPolicy } = setting;
-  const id = `${diagnosticSetting.id}/logs/${category}/${enabled}/${retentionPolicy?.days}/${retentionPolicy?.enabled}`;
+function getLog(logs: LogSettings[] | undefined, category: string) {
+  if (!logs) return;
 
-  return createSettingEntity(
-    webLinker,
-    diagnosticSetting,
-    setting,
-    MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
-    MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
-    id,
-  );
-}
+  const log = logs.find((l) => l.category === category);
 
-export function createDiagnosticMetricSettingEntity(
-  webLinker: AzureWebLinker,
-  diagnosticSetting: DiagnosticSettingsResource,
-  setting: MetricSettings,
-): Entity {
-  const { category, enabled, timeGrain, retentionPolicy } = setting;
-  const id = `${diagnosticSetting.id}/metrics/${category}/${enabled}/${timeGrain}/${retentionPolicy?.days}/${retentionPolicy?.enabled}`;
-
-  return createSettingEntity(
-    webLinker,
-    diagnosticSetting,
-    setting,
-    MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
-    MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
-    id,
-  );
+  if (log) {
+    return {
+      enabled: log.enabled,
+      retentionPolicyEnabled: log.retentionPolicy?.enabled,
+      retentionPolicyDays: log.retentionPolicy?.days,
+    };
+  }
 }

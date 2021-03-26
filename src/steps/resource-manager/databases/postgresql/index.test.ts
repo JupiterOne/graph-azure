@@ -43,10 +43,9 @@ describe('rm-database-postgresql-servers', () => {
       entities,
       (e) => e._type === PostgreSQLEntities.SERVER._type,
     );
-    // Don't care how many diagnostic logs / metrics exist... just want to be sure no additional entities exist.
+    // Don't care how many diagnostic settings exist... just want to be sure no additional entities exist.
     const {
-      // diagnosticLogEntities,
-      // diagnosticMetricEntities,
+      // diagnosticSettingsEntities,
       rest: restAfterDiagnosticSettings,
     } = separateDiagnosticSettingsEntities(restAfterPostgreSql);
     return {
@@ -58,12 +57,10 @@ describe('rm-database-postgresql-servers', () => {
   function separatePostgresQLServerRelationships(
     relationships: Relationship[],
   ) {
-    // Don't care how many diagnostic logs / metrics exist... just want to be sure no additional relationships exist.
+    // Don't care how many diagnostic settings exist... just want to be sure no additional relationships exist.
     const {
-      // diagnosticLogRelationships,
-      // diagnosticMetricRelationships,
-      // diagnosticLogStorageRelationships,
-      // diagnosticMetricStorageRelationships,
+      // diagnosticSettingsRelationships,
+      // diagnosticSettingsStorageRelationships,
       rest: restAfterDiagnosticSettings,
     } = separateDiagnosticSettingsRelationships(relationships);
     return {

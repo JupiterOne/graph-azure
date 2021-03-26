@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Changed the way that Diagnostic Settings are ingested. Previously, each `log`
+  and `metric` enumerated within a Diagnostic Settings Resource was created as
+  its own entity. This change creates a single `azure_diagnostic_settings`
+  entity, which contains all `log`s and `metric`s in raw data. Special `log`s
+  and `metric`s can be exposed as properties on the `azure_diagnostic_settings`
+  entity.
+
 ## 5.18.0 - 2021-03-26
 
 ### Added

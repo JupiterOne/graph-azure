@@ -126,40 +126,28 @@ describe('rm-sql-server-diagnostic-settings', () => {
     await fetchSQLServerDiagnosticSettings(context);
 
     const {
-      diagnosticLogEntities,
-      diagnosticMetricEntities,
+      diagnosticSettingsEntities,
       rest: restEntities,
     } = separateDiagnosticSettingsEntities(context.jobState.collectedEntities);
 
-    // There is no diagnostic log entity provisioned in terraform
-    // expect(diagnosticLogEntities.length).toBeGreaterThan(0);
-    // expect(diagnosticLogEntities).toMatchGraphObjectSchema({
-    //   _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
-    // });
-
-    expect(diagnosticMetricEntities.length).toBeGreaterThan(0);
-    expect(diagnosticMetricEntities).toMatchGraphObjectSchema({
-      _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
+    expect(diagnosticSettingsEntities.length).toBeGreaterThan(0);
+    expect(diagnosticSettingsEntities).toMatchGraphObjectSchema({
+      _class: MonitorEntities.DIAGNOSTIC_SETTINGS._class,
     });
 
     expect(restEntities).toHaveLength(0);
 
     const {
-      diagnosticLogRelationships,
-      diagnosticMetricRelationships,
+      diagnosticSettingsRelationships,
       // We have not fetched the storage account that these point to, so they may not exist in the job state.
-      // diagnosticLogStorageRelationships,
-      // diagnosticMetricStorageRelationships,
+      // diagnosticSettingsStorageRelationships,
       rest: restRelationships,
     } = separateDiagnosticSettingsRelationships(
       context.jobState.collectedRelationships,
     );
 
-    expect(diagnosticLogRelationships.length).toBe(
-      diagnosticLogEntities.length,
-    );
-    expect(diagnosticMetricRelationships.length).toBe(
-      diagnosticMetricEntities.length,
+    expect(diagnosticSettingsRelationships.length).toBe(
+      diagnosticSettingsEntities.length,
     );
     expect(restRelationships).toHaveLength(0);
     expect(

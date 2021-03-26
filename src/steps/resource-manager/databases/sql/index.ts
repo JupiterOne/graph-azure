@@ -24,7 +24,7 @@ import createResourceGroupResourceRelationship from '../../utils/createResourceG
 import {
   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../../resources/constants';
 import { Server } from '@azure/arm-sql/esm/models';
@@ -211,7 +211,9 @@ export const sqlSteps: Step<
     id: steps.SERVER_DIAGNOSTIC_SETTINGS,
     name: 'SQL Server Diagnostic Settings',
     entities: [...diagnosticSettingsEntitiesForResource],
-    relationships: [...diagnosticSettingsRelationshipsForResource],
+    relationships: [
+      ...getDiagnosticSettingsRelationshipsForResource(entities.SERVER._type),
+    ],
     dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
     executionHandler: fetchSQLServerDiagnosticSettings,
   },

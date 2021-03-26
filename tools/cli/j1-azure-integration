@@ -1,0 +1,10 @@
+#!/usr/bin/env ts-node
+
+const { createCli } = require('../../cli');
+
+createCli()
+  .parseAsync(process.argv)
+  .catch(err => {
+    console.error(err);
+    process.exitCode = 1;
+  })

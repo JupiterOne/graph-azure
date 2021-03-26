@@ -21,7 +21,7 @@ import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 import {
   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 export * from './constants';
 
@@ -96,7 +96,9 @@ export const cdnSteps: Step<
     entities: [CdnEntities.PROFILE, ...diagnosticSettingsEntitiesForResource],
     relationships: [
       CdnRelationships.RESOURCE_GROUP_HAS_PROFILE,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        CdnEntities.PROFILE._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchProfiles,
@@ -107,7 +109,9 @@ export const cdnSteps: Step<
     entities: [CdnEntities.ENDPOINT, ...diagnosticSettingsEntitiesForResource],
     relationships: [
       CdnRelationships.PROFILE_HAS_ENDPOINT,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        CdnEntities.ENDPOINT._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CDN_PROFILE],
     executionHandler: fetchEndpoints,

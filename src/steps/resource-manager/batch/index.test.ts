@@ -12,7 +12,6 @@ import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-import { MonitorEntities } from '../monitor/constants';
 import { BatchEntities } from './constants';
 
 let recording: Recording;
@@ -93,111 +92,6 @@ describe('step - batch accounts', () => {
       _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
       _type: 'azure_resource_group_has_batch_account',
       displayName: 'HAS',
-    });
-  });
-
-  it('should collect an Azure Diagnostic Log Setting entity', () => {
-    const { collectedEntities } = context.jobState;
-
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/logs/ServiceLog/true/1/true`,
-        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
-        category: 'ServiceLog',
-        displayName: 'j1dev_batch_diag_set',
-        enabled: true,
-        eventHubAuthorizationRuleId: null,
-        eventHubName: null,
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/logs/ServiceLog/true/1/true`,
-        logAnalyticsDestinationType: null,
-        name: 'j1dev_batch_diag_set',
-        'retentionPolicy.days': 1,
-        'retentionPolicy.enabled': true,
-        serviceBusRuleId: null,
-        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set`,
-        workspaceId: null,
-      }),
-    );
-  });
-
-  it('should create an Azure Diagnostic Metric Setting Entity', () => {
-    const { collectedEntities } = context.jobState;
-
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/metrics/AllMetrics/true/undefined/1/true`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/metrics/AllMetrics/true/undefined/1/true`,
-        _type: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
-        _class: MonitorEntities.DIAGNOSTIC_METRIC_SETTING._class,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set`,
-        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        eventHubAuthorizationRuleId: null,
-        eventHubName: null,
-        logAnalyticsDestinationType: null,
-        serviceBusRuleId: null,
-        workspaceId: null,
-        displayName: 'j1dev_batch_diag_set',
-        name: 'j1dev_batch_diag_set',
-        category: 'AllMetrics',
-        enabled: true,
-        'retentionPolicy.days': 1,
-        'retentionPolicy.enabled': true,
-        timeGrain: undefined,
-      }),
-    );
-  });
-
-  it('should collect an Azure Batch Account has Azure Diagnostic Log Setting relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual({
-      _class: 'HAS',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/logs/ServiceLog/true/1/true`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/logs/ServiceLog/true/1/true`,
-      _type: 'azure_resource_has_diagnostic_log_setting',
-      displayName: 'HAS',
-    });
-  });
-
-  it('should collect an Azure Batch Account has Diagnostic Metric Setting relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual({
-      _class: 'HAS',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/metrics/AllMetrics/true/undefined/1/true`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/metrics/AllMetrics/true/undefined/1/true`,
-      _type: 'azure_resource_has_diagnostic_metric_setting',
-      displayName: 'HAS',
-    });
-  });
-
-  it('should collect an Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual({
-      _class: 'USES',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/logs/ServiceLog/true/1/true`,
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/logs/ServiceLog/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-      _type: 'azure_diagnostic_log_setting_uses_storage_account',
-      displayName: 'USES',
-    });
-  });
-
-  it('should collect an Azure Diagnostic Metric Setting uses Azure Storage Account relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual({
-      _class: 'USES',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/metrics/AllMetrics/true/undefined/1/true`,
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.batch/batchaccounts/j1devbatchaccount/providers/microsoft.insights/diagnosticSettings/j1dev_batch_diag_set/metrics/AllMetrics/true/undefined/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-      _type: 'azure_diagnostic_metric_setting_uses_storage_account',
-      displayName: 'USES',
     });
   });
 });

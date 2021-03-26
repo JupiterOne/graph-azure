@@ -46,38 +46,6 @@ data "azurerm_monitor_diagnostic_categories" "j1dev_nv_ds_cat" {
   resource_id = azurerm_virtual_network.j1dev.id
 }
 
-resource "azurerm_monitor_diagnostic_setting" "j1dev_vn_diag_set" {
-  name               = "j1dev_vn_diag_set"
-  target_resource_id = azurerm_virtual_network.j1dev.id
-  storage_account_id = azurerm_storage_account.j1dev.id
-
-  dynamic log {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_nv_ds_cat.logs)
-    content {
-      category = log.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-
-  dynamic metric {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_nv_ds_cat.metrics)
-    content {
-      category = metric.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-}
-
 resource "azurerm_subnet" "j1dev" {
   name                 = "j1dev"
   resource_group_name  = azurerm_resource_group.j1dev.name
@@ -112,38 +80,6 @@ data "azurerm_monitor_diagnostic_categories" "j1dev_pub_ip_ds_cat" {
   resource_id = azurerm_public_ip.j1dev.id
 }
 
-resource "azurerm_monitor_diagnostic_setting" "j1dev_pub_ip_diag_set" {
-  name               = "j1dev_pub_ip_diag_set"
-  target_resource_id = azurerm_public_ip.j1dev.id
-  storage_account_id = azurerm_storage_account.j1dev.id
-
-  dynamic log {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_pub_ip_ds_cat.logs)
-    content {
-      category = log.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-
-  dynamic metric {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_pub_ip_ds_cat.metrics)
-    content {
-      category = metric.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-}
-
 resource "azurerm_public_ip" "j1dev_lb_ip" {
   name                = "j1dev_lb_ip"
   location            = "eastus"
@@ -168,38 +104,6 @@ resource "azurerm_lb" "j1dev" {
 
 data "azurerm_monitor_diagnostic_categories" "j1dev_lb_ds_cat" {
   resource_id = azurerm_lb.j1dev.id
-}
-
-resource "azurerm_monitor_diagnostic_setting" "j1dev_lb_diag_set" {
-  name               = "j1dev_lb_diag_set"
-  target_resource_id = azurerm_lb.j1dev.id
-  storage_account_id = azurerm_storage_account.j1dev.id
-
-  dynamic log {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_lb_ds_cat.logs)
-    content {
-      category = log.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-
-  dynamic metric {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_lb_ds_cat.metrics)
-    content {
-      category = metric.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
 }
 
 resource "azurerm_network_security_group" "j1dev" {
@@ -395,37 +299,4 @@ resource "azurerm_firewall" "j1dev_firewall" {
 data "azurerm_monitor_diagnostic_categories" "j1dev_firewall_ds_cat" {
   count       = local.network_azure_firewall_count
   resource_id = azurerm_firewall.j1dev_firewall[0].id
-}
-
-resource "azurerm_monitor_diagnostic_setting" "j1dev_firewall_diag_set" {
-  count              = local.network_azure_firewall_count
-  name               = "j1dev_firewall_diag_set"
-  target_resource_id = azurerm_firewall.j1dev_firewall[0].id
-  storage_account_id = azurerm_storage_account.j1dev.id
-
-  dynamic log {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_firewall_ds_cat[0].logs)
-    content {
-      category = log.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-
-  dynamic metric {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_firewall_ds_cat[0].metrics)
-    content {
-      category = metric.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
 }

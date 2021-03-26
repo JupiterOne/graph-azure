@@ -35,7 +35,7 @@ import {
 import {
   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
@@ -240,7 +240,9 @@ export const eventGridSteps: Step<
     ],
     relationships: [
       EventGridRelationships.RESOURCE_GROUP_HAS_DOMAIN,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        EventGridEntities.DOMAIN._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridDomains,
@@ -279,7 +281,9 @@ export const eventGridSteps: Step<
     ],
     relationships: [
       EventGridRelationships.RESOURCE_GROUP_HAS_TOPIC,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        EventGridEntities.TOPIC._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridTopics,

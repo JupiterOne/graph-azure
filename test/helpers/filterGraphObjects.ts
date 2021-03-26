@@ -22,25 +22,14 @@ export function filterGraphObjects<T = Entity | Relationship>(
 }
 
 export function separateDiagnosticSettingsEntities(entities: Entity[]) {
-  const {
-    targets: diagnosticLogEntities,
-    rest: restAfterDiagnosticLog,
-  } = filterGraphObjects(
+  const { targets: diagnosticSettingsEntities, rest } = filterGraphObjects(
     entities,
-    (e) => e._type === MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
-  );
-  const {
-    targets: diagnosticMetricEntities,
-    rest: restAfterDiagnosticMetric,
-  } = filterGraphObjects(
-    restAfterDiagnosticLog,
-    (e) => e._type === MonitorEntities.DIAGNOSTIC_METRIC_SETTING._type,
+    (e) => e._type === MonitorEntities.DIAGNOSTIC_SETTINGS._type,
   );
 
   return {
-    diagnosticLogEntities,
-    diagnosticMetricEntities,
-    rest: restAfterDiagnosticMetric,
+    diagnosticSettingsEntities,
+    rest,
   };
 }
 
@@ -48,49 +37,27 @@ export function separateDiagnosticSettingsRelationships(
   relationships: Relationship[],
 ) {
   const {
-    targets: diagnosticLogRelationships,
-    rest: restAfterDiagnosticLog,
+    targets: diagnosticSettingsRelationships,
+    rest: restAfterDiagnosticSettings,
   } = filterGraphObjects(
     relationships,
     (e) =>
       e._type ===
-      MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_LOG_SETTING
-        ._type,
+      MonitorRelationships.AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTINGS._type,
   );
   const {
-    targets: diagnosticMetricRelationships,
-    rest: restAfterDiagnosticMetric,
+    targets: diagnosticSettingsStorageRelationships,
+    rest: restAFterDiagnosticSettingsStorage,
   } = filterGraphObjects(
-    restAfterDiagnosticLog,
+    restAfterDiagnosticSettings,
     (e) =>
       e._type ===
-      MonitorRelationships.AZURE_RESOURCE_HAS_MONITOR_DIAGNOSTIC_METRIC_SETTING
-        ._type,
-  );
-  const {
-    targets: diagnosticLogStorageRelationships,
-    rest: restAfterDiagnosticLogStorage,
-  } = filterGraphObjects(
-    restAfterDiagnosticMetric,
-    (e) =>
-      e._type ===
-      MonitorRelationships.DIAGNOSTIC_LOG_SETTING_USES_STORAGE_ACCOUNT._type,
-  );
-  const {
-    targets: diagnosticMetricStorageRelationships,
-    rest: restAfterDiagnosticMetricStorage,
-  } = filterGraphObjects(
-    restAfterDiagnosticLogStorage,
-    (e) =>
-      e._type ===
-      MonitorRelationships.DIAGNOSTIC_METRIC_SETTING_USES_STORAGE_ACCOUNT._type,
+      MonitorRelationships.DIAGNOSTIC_SETTINGS_USES_STORAGE_ACCOUNT._type,
   );
 
   return {
-    diagnosticLogRelationships,
-    diagnosticMetricRelationships,
-    diagnosticLogStorageRelationships,
-    diagnosticMetricStorageRelationships,
-    rest: restAfterDiagnosticMetricStorage,
+    diagnosticSettingsRelationships: diagnosticSettingsRelationships,
+    diagnosticSettingsStorageRelationships: diagnosticSettingsStorageRelationships,
+    rest: restAFterDiagnosticSettingsStorage,
   };
 }

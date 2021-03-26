@@ -24,7 +24,7 @@ import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 import {
   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 export * from './constants';
 
@@ -103,7 +103,9 @@ export const containerRegistrySteps: Step<
     ],
     relationships: [
       ContainerRegistryRelationships.RESOURCE_GROUP_HAS_ZONE,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        ContainerRegistryEntities.REGISTRY._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchContainerRegistries,

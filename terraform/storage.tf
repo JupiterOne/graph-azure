@@ -103,39 +103,6 @@ data "azurerm_monitor_diagnostic_categories" "j1dev_pgsql_cat" {
   resource_id = azurerm_postgresql_server.j1dev[0].id
 }
 
-resource "azurerm_monitor_diagnostic_setting" "j1dev_pgsql_diag_set" {
-  count              = local.storage_postgresql_servers_count
-  name               = "j1dev_pgsql_diag_set"
-  target_resource_id = azurerm_postgresql_server.j1dev[0].id
-  storage_account_id = azurerm_storage_account.j1dev.id
-
-  dynamic log {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_pgsql_cat[0].logs)
-    content {
-      category = log.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-
-  dynamic metric {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_pgsql_cat[0].metrics)
-    content {
-      category = metric.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-}
-
 resource "azurerm_sql_server" "j1dev" {
   count = local.storage_sql_servers_count
 
@@ -244,39 +211,6 @@ data "azurerm_monitor_diagnostic_categories" "j1dev_mysql_cat" {
   resource_id = azurerm_mysql_server.j1dev[0].id
 }
 
-resource "azurerm_monitor_diagnostic_setting" "j1dev_mysql_diag_set" {
-  count              = local.storage_mysql_servers_count
-  name               = "j1dev_mysql_diag_set"
-  target_resource_id = azurerm_mysql_server.j1dev[0].id
-  storage_account_id = azurerm_storage_account.j1dev.id
-
-  dynamic log {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_mysql_cat[0].logs)
-    content {
-      category = log.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-
-  dynamic metric {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_mysql_cat[0].metrics)
-    content {
-      category = metric.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-}
-
 resource "azurerm_mysql_database" "j1dev" {
   count = local.storage_mysql_databases_count
 
@@ -314,39 +248,6 @@ resource "azurerm_mariadb_server" "j1dev" {
 data "azurerm_monitor_diagnostic_categories" "j1dev_mariadb_cat" {
   count       = local.storage_mariadb_servers_count
   resource_id = azurerm_mariadb_server.j1dev[0].id
-}
-
-resource "azurerm_monitor_diagnostic_setting" "j1dev_mariadb_diag_set" {
-  count              = local.storage_mariadb_servers_count
-  name               = "j1dev_mariadb_diag_set"
-  target_resource_id = azurerm_mariadb_server.j1dev[0].id
-  storage_account_id = azurerm_storage_account.j1dev.id
-
-  dynamic log {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_mariadb_cat[0].logs)
-    content {
-      category = log.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-
-  dynamic metric {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_mariadb_cat[0].metrics)
-    content {
-      category = metric.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
 }
 
 resource "azurerm_mariadb_database" "j1dev" {

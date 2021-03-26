@@ -23,7 +23,7 @@ import { IntegrationConfig } from '../../../types';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 import {
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
@@ -42,7 +42,9 @@ export const databaseSteps: Step<
     relationships: [
       MariaDBRelationships.RESOURCE_GROUP_HAS_MARIADB_SERVER,
       MariaDBRelationships.MARIADB_SERVER_HAS_MARIADB_DATABASE,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        MariaDBEntities.SERVER._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMariaDBDatabases,
@@ -58,7 +60,9 @@ export const databaseSteps: Step<
     relationships: [
       MySQLRelationships.RESOURCE_GROUP_HAS_MYSQL_SERVER,
       MySQLRelationships.MYSQL_SERVER_HAS_MYSQL_DATABASE,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        MySQLEntities.SERVER._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMySQLDatabases,

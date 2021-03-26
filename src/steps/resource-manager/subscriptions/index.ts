@@ -11,7 +11,7 @@ import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
 import {
   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { J1SubscriptionClient } from './client';
 import {
@@ -108,7 +108,11 @@ export const subscriptionSteps: Step<
     id: steps.SUBSCRIPTIONS,
     name: 'Subscriptions',
     entities: [entities.SUBSCRIPTION, ...diagnosticSettingsEntitiesForResource],
-    relationships: [...diagnosticSettingsRelationshipsForResource],
+    relationships: [
+      ...getDiagnosticSettingsRelationshipsForResource(
+        entities.SUBSCRIPTION._type,
+      ),
+    ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscriptions,
   },

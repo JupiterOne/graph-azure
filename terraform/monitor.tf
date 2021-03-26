@@ -41,29 +41,3 @@ resource "azurerm_monitor_log_profile" "j1dev_log_profile" {
     days    = 365
   }
 }
-
-resource "azurerm_monitor_diagnostic_setting" "j1dev_sub_diag_set" {
-  name               = "j1dev_sub_diag_set"
-  target_resource_id = data.azurerm_subscription.j1dev.id
-  storage_account_id = azurerm_storage_account.j1dev.id
-
-  log {
-    category = "Policy"
-    enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 1
-    }
-  }
-
-  log {
-    category = "Security"
-    enabled  = true
-
-    retention_policy {
-      enabled = false
-      days    = 1
-    }
-  }
-}

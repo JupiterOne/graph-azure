@@ -22,6 +22,8 @@
     "test": "LOAD_ENV=1 jest",
     "test:ci": "yarn lint && yarn type-check && yarn jest",
     "prepush": "yarn test:ci",
+    "document:diagnostic-settings": "./tools/cli/j1-azure-integration document-diagnostic-settings",
+    "precommit": "yarn document:diagnostic-settings && git add docs/jupiterone.md && lint-staged",
     "build": "tsc -p tsconfig.dist.json --declaration",
     "prepack": "yarn build",
     "tf": "cd terraform && env `grep -v '^#' .env` terraform $1"
@@ -102,7 +104,7 @@
     "remark-preset-lint-markdown-style-guide": "^2.1.2",
     "remark-preset-lint-recommended": "^3.0.2",
     "ts-jest": "^25.3.1",
-    "ts-node": "^8.8.2",
+    "ts-node": "^9.1.1",
     "typescript": "^3.8.3",
     "uuid": "^8.3.2"
   }

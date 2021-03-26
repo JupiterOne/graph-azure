@@ -297,6 +297,45 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 -->
 <!-- {J1_DOCUMENTATION_MARKER_END} -->
 
+<!-- {J1_DOCUMENTATION_DIAGNOSTIC_SETTINGS_MARKER_START} -->
+<!--
+********************************************************************************
+NOTE: ALL OF THE FOLLOWING DOCUMENTATION IS GENERATED USING THE
+"j1-azure-integration document-diagnostic-settings" COMMAND. DO NOT EDIT BY HAND!
+********************************************************************************
+-->
+
+## Diagnostic Settings
+
+The JupiterOne graph-azure project currently ingests diagnostic settings for the
+following entities:
+
+- azure_api_management_service
+- azure_batch_account
+- azure_cdn_endpoint
+- azure_cdn_profile
+- azure_container_registry
+- azure_event_grid_domain
+- azure_event_grid_topic
+- azure_keyvault_service
+- azure_lb
+- azure_mariadb_server
+- azure_mysql_server
+- azure_network_azure_firewall
+- azure_postgresql_server
+- azure_public_ip
+- azure_security_group
+- azure_sql_server
+- azure_subscription
+- azure_vnet
+
+<!--
+********************************************************************************
+END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
+********************************************************************************
+-->
+<!-- {J1_DOCUMENTATION_DIAGNOSTIC_SETTINGS_MARKER_END} -->
+
 [1]: https://docs.microsoft.com/en-us/graph/auth-v2-service
 [2]:
   https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-api-authentication

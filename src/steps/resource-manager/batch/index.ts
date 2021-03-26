@@ -31,7 +31,7 @@ import { resourceGroupName } from '../../../azure/utils';
 import {
   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export * from './constants';
@@ -198,7 +198,9 @@ export const batchSteps: Step<
     ],
     relationships: [
       BatchAccountRelationships.RESOURCE_GROUP_HAS_BATCH_ACCOUNT,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        BatchEntities.BATCH_ACCOUNT._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchBatchAccounts,

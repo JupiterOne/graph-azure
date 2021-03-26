@@ -27,7 +27,7 @@ import createResourceGroupResourceRelationship, {
 import {
   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { getAccountEntity } from '../../active-directory';
 
@@ -87,7 +87,9 @@ export const keyvaultSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         KEY_VAULT_SERVICE_ENTITY_TYPE,
       ),
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        KEY_VAULT_SERVICE_ENTITY_TYPE,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,

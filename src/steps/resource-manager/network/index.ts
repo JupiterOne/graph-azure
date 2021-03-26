@@ -62,7 +62,7 @@ import {
 import {
   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { steps as storageSteps } from '../storage';
 import {
@@ -573,7 +573,9 @@ export const networkSteps: Step<
     ],
     relationships: [
       NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_PUBLIC_IP_ADDRESS,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        NetworkEntities.PUBLIC_IP_ADDRESS._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPublicIPAddresses,
@@ -604,7 +606,9 @@ export const networkSteps: Step<
       NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_VIRTUAL_NETWORK,
       NetworkRelationships.NETWORK_VIRTUAL_NETWORK_CONTAINS_NETWORK_SUBNET,
       NetworkRelationships.NETWORK_SECURITY_GROUP_PROTECTS_NETWORK_SUBNET,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        NetworkEntities.VIRTUAL_NETWORK._type,
+      ),
     ],
     dependsOn: [
       STEP_AD_ACCOUNT,
@@ -623,7 +627,9 @@ export const networkSteps: Step<
     relationships: [
       NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_SECURITY_GROUP,
       NetworkRelationships.NETWORK_SECURITY_GROUP_PROTECTS_NETWORK_INTERFACE,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        NetworkEntities.SECURITY_GROUP._type,
+      ),
     ],
     // SECURITY_GROUP_RULE_RELATIONSHIP_TYPE doesn't seem to exist here.
     dependsOn: [
@@ -643,7 +649,9 @@ export const networkSteps: Step<
     relationships: [
       NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_LOAD_BALANCER,
       NetworkRelationships.NETWORK_LOAD_BALANCER_CONNECTS_NETWORK_INTERFACE,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        NetworkEntities.LOAD_BALANCER._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchLoadBalancers,
@@ -657,7 +665,9 @@ export const networkSteps: Step<
     ],
     relationships: [
       NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        NetworkEntities.AZURE_FIREWALL._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAzureFirewalls,

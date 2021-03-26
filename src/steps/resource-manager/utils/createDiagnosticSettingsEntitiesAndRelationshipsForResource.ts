@@ -64,7 +64,16 @@ export const diagnosticSettingsEntitiesForResource = [
   MonitorEntities.DIAGNOSTIC_SETTINGS,
 ];
 
-export const diagnosticSettingsRelationshipsForResource = [
-  MonitorRelationships.DIAGNOSTIC_SETTINGS_USES_STORAGE_ACCOUNT,
-  MonitorRelationships.AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTINGS,
-];
+export function getDiagnosticSettingsRelationshipsForResource(
+  resourceType: string,
+) {
+  return [
+    MonitorRelationships.DIAGNOSTIC_SETTINGS_USES_STORAGE_ACCOUNT,
+    // See `./cli/commands/documentDiagnosticSettings for information
+    // about the `resourceType` property and its usage.
+    {
+      ...MonitorRelationships.AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTINGS,
+      resourceType,
+    },
+  ];
+}

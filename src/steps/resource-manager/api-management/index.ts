@@ -24,7 +24,7 @@ import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 import {
   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 export * from './constants';
 
@@ -97,7 +97,9 @@ export const apiManagementSteps: Step<
     ],
     relationships: [
       ApiManagementRelationships.RESOURCE_GROUP_HAS_SERVICE,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        ApiManagementEntities.SERVICE._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApiManagementServices,

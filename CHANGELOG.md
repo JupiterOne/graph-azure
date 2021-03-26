@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `./tools/cli/j1-azure-integration document-diagnostic-settings` command
+  to automatcially document which Azure resources currently ingest diagnostic
+  settings.
+
 ### Changed
 
 - Changed the way that Diagnostic Settings are ingested. Previously, each `log`

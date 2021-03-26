@@ -20,7 +20,7 @@ import createResourceGroupResourceRelationship from '../../utils/createResourceG
 import {
   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
   diagnosticSettingsEntitiesForResource,
-  diagnosticSettingsRelationshipsForResource,
+  getDiagnosticSettingsRelationshipsForResource,
 } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../../resources/constants';
 import { Server } from '@azure/arm-postgresql/esm/models';
@@ -141,7 +141,9 @@ export const postgreSqlSteps: Step<
     ],
     relationships: [
       PostgreSQLRelationships.RESOURCE_GROUP_HAS_POSTGRESQL_SERVER,
-      ...diagnosticSettingsRelationshipsForResource,
+      ...getDiagnosticSettingsRelationshipsForResource(
+        PostgreSQLEntities.SERVER._type,
+      ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPostgreSQLServers,

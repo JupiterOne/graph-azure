@@ -9,6 +9,8 @@ import {
 } from '../constants';
 
 export const steps = {
+  SERVERS: 'rm-database-sql-servers',
+  SERVER_DIAGNOSTIC_SETTINGS: 'rm-sql-server-diagnostic-settings',
   DATABASES: 'rm-database-sql-databases',
   SERVER_FIREWALL_RULES: 'rm-database-sql-server-firewall-rules',
   SERVER_AD_ADMINS: 'rm-database-sql-server-active-directory-admins',
@@ -19,6 +21,9 @@ export const entities = {
     _type: 'azure_sql_server',
     _class: RM_DATABASE_SERVER_ENTITY_CLASS,
     resourceName: '[RM] SQL Server',
+    rawDataKeys: {
+      ENCRYPTION_PROTECTOR: 'encryptionProtector',
+    },
   },
   DATABASE: {
     _type: 'azure_sql_database',

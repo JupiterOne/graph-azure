@@ -154,6 +154,8 @@ export function getResourceManagerSteps(): GetApiSteps {
       postgreSqlDatabaseSteps.SERVERS,
       postgreSqlDatabaseSteps.DATABASES,
       postgreSqlDatabaseSteps.SERVER_FIREWALL_RULES,
+      sqlDatabaseSteps.SERVERS,
+      sqlDatabaseSteps.SERVER_DIAGNOSTIC_SETTINGS,
       sqlDatabaseSteps.DATABASES,
       sqlDatabaseSteps.SERVER_FIREWALL_RULES,
       sqlDatabaseSteps.SERVER_AD_ADMINS,

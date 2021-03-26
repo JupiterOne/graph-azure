@@ -10,6 +10,9 @@ and this project adheres to
 
 ### Added
 
+- Added the following properties to `azure_sql_server`:
+  - `encryptionProtector.serverKeyName`
+  - `encryptionProtector.serverKeyType`
 - Added `azure_sql_server_active_directory_admin` entities.
 
 ## 5.17.0 - 2021-03-25

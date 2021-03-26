@@ -212,3 +212,46 @@ describe('iterateServerActiveDirectoryAdministrators', () => {
     expect(activeDirectoryAdmins.length).toBeGreaterThan(0);
   });
 });
+
+describe('fetchServerEncryptionProtector', () => {
+  async function getSetupData(client: SQLClient) {
+    const sqlServers: Server[] = [];
+    await client.iterateServers((s) => {
+      sqlServers.push(s);
+    });
+
+    const j1devSqlServers = sqlServers.filter(
+      (s) => s.name === 'j1dev-sqlserver',
+    );
+    expect(j1devSqlServers.length).toBe(1);
+    const sqlServer = j1devSqlServers[0];
+
+    return {
+      sqlServer,
+    };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'fetchServerEncryptionProtector',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new SQLClient(configFromEnv, createMockIntegrationLogger());
+
+    const { sqlServer } = await getSetupData(client);
+
+    const response = await client.fetchServerEncryptionProtector({
+      name: sqlServer.name!,
+      id: sqlServer.id!,
+    });
+
+    response?.serverKeyType;
+    expect(response).toMatchObject({
+      serverKeyType: expect.stringMatching(/ServiceManaged|AzureKeyVault/),
+    });
+  });
+});

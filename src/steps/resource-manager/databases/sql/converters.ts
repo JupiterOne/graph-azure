@@ -5,6 +5,7 @@ import {
   ServerBlobAuditingPoliciesGetResponse,
   ServerSecurityAlertPoliciesGetResponse,
   TransparentDataEncryptionsGetResponse,
+  EncryptionProtectorsGetResponse,
 } from '@azure/arm-sql/esm/models';
 import {
   createIntegrationEntity,
@@ -72,6 +73,23 @@ export function setServerSecurityAlerting(
       alertOnAllThreats: alertingEnabled && !hasDisabledAlerts,
     });
   }
+}
+
+export function setServerEncryptionProtector(
+  serverEntity: Entity,
+  encryptionProtector: EncryptionProtectorsGetResponse | undefined,
+): void {
+  if (!encryptionProtector) return;
+
+  setRawData(serverEntity, {
+    name: entities.SERVER.rawDataKeys.ENCRYPTION_PROTECTOR,
+    rawData: encryptionProtector,
+  });
+
+  Object.assign(serverEntity, {
+    'encryptionProtector.serverKeyName': encryptionProtector.serverKeyName,
+    'encryptionProtector.serverKeyType': encryptionProtector.serverKeyType,
+  });
 }
 
 export function setDatabaseEncryption(

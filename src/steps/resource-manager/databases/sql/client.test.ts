@@ -249,7 +249,6 @@ describe('fetchServerEncryptionProtector', () => {
       id: sqlServer.id!,
     });
 
-    response?.serverKeyType;
     expect(response).toMatchObject({
       serverKeyType: expect.stringMatching(/ServiceManaged|AzureKeyVault/),
     });

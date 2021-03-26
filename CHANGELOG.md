@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.18.0 - 2021-03-26
+
 ### Added
 
 - Added the following properties to `azure_sql_server`:

@@ -16,7 +16,6 @@ import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { EventGridEntities } from './constants';
-import { MonitorEntities } from '../monitor/constants';
 
 let recording: Recording;
 let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
@@ -88,32 +87,6 @@ describe('step = event grid domains', () => {
     );
   });
 
-  it('should collect an Azure Diagnostic Log Settings entity', () => {
-    const { collectedEntities } = context.jobState;
-
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true`,
-        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
-        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
-        category: 'DeliveryFailures',
-        displayName: 'j1dev_evt_grd_dom_dg_set',
-        enabled: true,
-        eventHubAuthorizationRuleId: null,
-        eventHubName: null,
-        logAnalyticsDestinationType: null,
-        name: 'j1dev_evt_grd_dom_dg_set',
-        'retentionPolicy.days': 1,
-        'retentionPolicy.enabled': true,
-        serviceBusRuleId: null,
-        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set`,
-        workspaceId: null,
-      }),
-    );
-  });
-
   it('should collect an Azure Resource Group has Azure Event Grid Domain relationship', () => {
     const { collectedRelationships } = context.jobState;
 
@@ -127,32 +100,6 @@ describe('step = event grid domains', () => {
         displayName: 'HAS',
       }),
     );
-  });
-
-  it('should collect an Azure Event Grid Domain has Azure Diagnostic Log Settings relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual({
-      _class: 'HAS',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain`,
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true`,
-      _type: 'azure_resource_has_diagnostic_log_setting',
-      displayName: 'HAS',
-    });
-  });
-
-  it('should collect an Azure Diagnostic Log Settings uses Azure Storage Account relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual({
-      _class: 'USES',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true`,
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/domains/j1dev-event-grid-domain/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_dom_dg_set/logs/DeliveryFailures/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-      _type: 'azure_diagnostic_log_setting_uses_storage_account',
-      displayName: 'USES',
-    });
   });
 });
 
@@ -379,32 +326,6 @@ describe('step = event grid topics', () => {
     );
   });
 
-  it('should collect an Azure Diagnostic Log Setting entity', () => {
-    const { collectedEntities } = context.jobState;
-
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true`,
-        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
-        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
-        category: 'DeliveryFailures',
-        displayName: 'j1dev_evt_grd_tp_dg_set',
-        enabled: true,
-        eventHubAuthorizationRuleId: null,
-        eventHubName: null,
-        logAnalyticsDestinationType: null,
-        name: 'j1dev_evt_grd_tp_dg_set',
-        'retentionPolicy.days': 1,
-        'retentionPolicy.enabled': true,
-        serviceBusRuleId: null,
-        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set`,
-        workspaceId: null,
-      }),
-    );
-  });
-
   it('should collect an Azure Resource Group has an Azure Event Grid Topic relationship', () => {
     const { collectedRelationships } = context.jobState;
 
@@ -416,36 +337,6 @@ describe('step = event grid topics', () => {
         _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
         _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
         displayName: 'HAS',
-      }),
-    );
-  });
-
-  it('should collect an Azure Event Grid Topic has Azure Diagnostic Log Setting relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _class: 'HAS',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.EventGrid/topics/j1dev-event-grid-topic|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true`,
-        _type: 'azure_resource_has_diagnostic_log_setting',
-        displayName: 'HAS',
-      }),
-    );
-  });
-
-  it('should collect an Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _class: 'USES',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.eventgrid/topics/j1dev-event-grid-topic/providers/microsoft.insights/diagnosticSettings/j1dev_evt_grd_tp_dg_set/logs/DeliveryFailures/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        _type: 'azure_diagnostic_log_setting_uses_storage_account',
-        displayName: 'USES',
       }),
     );
   });

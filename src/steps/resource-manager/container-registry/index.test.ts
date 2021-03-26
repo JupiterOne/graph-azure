@@ -8,7 +8,6 @@ import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { ContainerRegistryEntities } from './constants';
-import { MonitorEntities } from '../monitor/constants';
 
 let recording: Recording;
 let instanceConfig: IntegrationConfig;
@@ -77,32 +76,6 @@ describe('step - container registries', () => {
     );
   });
 
-  it('should collect an Azure Diagnostic Log Settings entity', () => {
-    const { collectedEntities } = context.jobState;
-
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.containerregistry/registries/${instanceConfig.developerId}j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cont_reg_diag_set/logs/ContainerRegistryLoginEvents/true/1/true`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.containerregistry/registries/${instanceConfig.developerId}j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cont_reg_diag_set/logs/ContainerRegistryLoginEvents/true/1/true`,
-        _class: MonitorEntities.DIAGNOSTIC_LOG_SETTING._class,
-        _type: MonitorEntities.DIAGNOSTIC_LOG_SETTING._type,
-        category: 'ContainerRegistryLoginEvents',
-        displayName: 'j1dev_cont_reg_diag_set',
-        enabled: true,
-        eventHubAuthorizationRuleId: null,
-        eventHubName: null,
-        logAnalyticsDestinationType: null,
-        name: 'j1dev_cont_reg_diag_set',
-        'retentionPolicy.days': 1,
-        'retentionPolicy.enabled': true,
-        serviceBusRuleId: null,
-        storageAccountId: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.containerregistry/registries/${instanceConfig.developerId}j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cont_reg_diag_set`,
-        workspaceId: null,
-      }),
-    );
-  });
-
   it('should collect an Azure Resource Group has Azure Container Registry relationship', () => {
     const { collectedRelationships } = context.jobState;
 
@@ -114,36 +87,6 @@ describe('step - container registries', () => {
         _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
         _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/${instanceConfig.developerId}j1dev`,
         displayName: 'HAS',
-      }),
-    );
-  });
-
-  it('should collect an Azure Container Registry has Azure Diagnostic Log Setting relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _class: 'HAS',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/${instanceConfig.developerId}j1dev`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.ContainerRegistry/registries/${instanceConfig.developerId}j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.containerregistry/registries/${instanceConfig.developerId}j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cont_reg_diag_set/logs/ContainerRegistryLoginEvents/true/1/true`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.containerregistry/registries/${instanceConfig.developerId}j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cont_reg_diag_set/logs/ContainerRegistryLoginEvents/true/1/true`,
-        _type: 'azure_resource_has_diagnostic_log_setting',
-        displayName: 'HAS',
-      }),
-    );
-  });
-
-  it('should collect an Azure Diagnostic Log Setting uses Azure Storage Account relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _class: 'USES',
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.containerregistry/registries/${instanceConfig.developerId}j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cont_reg_diag_set/logs/ContainerRegistryLoginEvents/true/1/true`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourcegroups/j1dev/providers/microsoft.containerregistry/registries/${instanceConfig.developerId}j1dev/providers/microsoft.insights/diagnosticSettings/j1dev_cont_reg_diag_set/logs/ContainerRegistryLoginEvents/true/1/true|uses|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/${instanceConfig.developerId}j1dev`,
-        _type: 'azure_diagnostic_log_setting_uses_storage_account',
-        displayName: 'USES',
       }),
     );
   });

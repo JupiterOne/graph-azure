@@ -20,39 +20,6 @@ data "azurerm_monitor_diagnostic_categories" "j1dev_cdn_prof_cat" {
   resource_id = azurerm_cdn_profile.j1dev[0].id
 }
 
-resource "azurerm_monitor_diagnostic_setting" "j1dev_cdn_prof_diag_set" {
-  count              = local.cdn_resource_count
-  name               = "j1dev_cdn_prof_diag_set"
-  target_resource_id = azurerm_cdn_profile.j1dev[0].id
-  storage_account_id = azurerm_storage_account.j1dev.id
-
-  dynamic log {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_cdn_prof_cat[0].logs)
-    content {
-      category = log.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-
-  dynamic metric {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_cdn_prof_cat[0].metrics)
-    content {
-      category = metric.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-}
-
 resource "azurerm_cdn_endpoint" "j1dev" {
   count               = local.cdn_resource_count
   name                = "j1dev"
@@ -70,37 +37,4 @@ resource "azurerm_cdn_endpoint" "j1dev" {
 data "azurerm_monitor_diagnostic_categories" "j1dev_cdn_endpt_cat" {
   count       = local.cdn_resource_count
   resource_id = azurerm_cdn_endpoint.j1dev[0].id
-}
-
-resource "azurerm_monitor_diagnostic_setting" "j1dev_cdn_endpt_diag_set" {
-  count              = local.cdn_resource_count
-  name               = "j1dev_cdn_endpt_diag_set"
-  target_resource_id = azurerm_cdn_endpoint.j1dev[0].id
-  storage_account_id = azurerm_storage_account.j1dev.id
-
-  dynamic log {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_cdn_endpt_cat[0].logs)
-    content {
-      category = log.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
-
-  dynamic metric {
-    for_each = sort(data.azurerm_monitor_diagnostic_categories.j1dev_cdn_endpt_cat[0].metrics)
-    content {
-      category = metric.value
-      enabled  = true
-
-      retention_policy {
-        enabled = true
-        days    = 1
-      }
-    }
-  }
 }

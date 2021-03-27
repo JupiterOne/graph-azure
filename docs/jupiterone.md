@@ -307,6 +307,10 @@ NOTE: ALL OF THE FOLLOWING DOCUMENTATION IS GENERATED USING THE
 
 ## Diagnostic Settings
 
+Azure Diagnostic Settings are supported on many Azure resources. A list of
+supported services / metrics can be found in
+[Azure documentation](https://docs.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported).
+
 The JupiterOne graph-azure project currently ingests diagnostic settings for the
 following entities:
 

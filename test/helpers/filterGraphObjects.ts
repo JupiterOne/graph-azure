@@ -24,7 +24,7 @@ export function filterGraphObjects<T = Entity | Relationship>(
 export function separateDiagnosticSettingsEntities(entities: Entity[]) {
   const { targets: diagnosticSettingsEntities, rest } = filterGraphObjects(
     entities,
-    (e) => e._type === MonitorEntities.DIAGNOSTIC_SETTINGS._type,
+    (e) => e._type === MonitorEntities.DIAGNOSTIC_SETTING._type,
   );
 
   return {
@@ -43,7 +43,7 @@ export function separateDiagnosticSettingsRelationships(
     relationships,
     (e) =>
       e._type ===
-      MonitorRelationships.AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTINGS._type,
+      MonitorRelationships.AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTING._type,
   );
   const {
     targets: diagnosticSettingsStorageRelationships,
@@ -52,7 +52,7 @@ export function separateDiagnosticSettingsRelationships(
     restAfterDiagnosticSettings,
     (e) =>
       e._type ===
-      MonitorRelationships.DIAGNOSTIC_SETTINGS_USES_STORAGE_ACCOUNT._type,
+      MonitorRelationships.DIAGNOSTIC_SETTING_USES_STORAGE_ACCOUNT._type,
   );
 
   return {

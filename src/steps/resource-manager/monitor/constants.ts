@@ -13,8 +13,8 @@ export const MonitorEntities = {
     _class: ['Configuration'],
     resourceName: '[RM] Monitor Log Profile',
   },
-  DIAGNOSTIC_SETTINGS: {
-    _type: 'azure_diagnostic_settings',
+  DIAGNOSTIC_SETTING: {
+    _type: 'azure_diagnostic_setting',
     _class: ['Configuration'],
     resourceName: '[RM] Monitor Diagnostic Settings Resource',
   },
@@ -33,15 +33,15 @@ export const MonitorRelationships = {
     _class: RelationshipClass.USES,
     targetType: storageEntities.STORAGE_ACCOUNT._type,
   },
-  AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTINGS: {
-    _type: 'azure_resource_has_diagnostic_settings',
+  AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTING: {
+    _type: 'azure_resource_has_diagnostic_setting',
     sourceType: ANY_SCOPE,
     _class: RelationshipClass.HAS,
-    targetType: MonitorEntities.DIAGNOSTIC_SETTINGS._type,
+    targetType: MonitorEntities.DIAGNOSTIC_SETTING._type,
   },
-  DIAGNOSTIC_SETTINGS_USES_STORAGE_ACCOUNT: {
-    _type: 'azure_diagnostic_settings_uses_storage_account',
-    sourceType: MonitorEntities.DIAGNOSTIC_SETTINGS._type,
+  DIAGNOSTIC_SETTING_USES_STORAGE_ACCOUNT: {
+    _type: 'azure_diagnostic_setting_uses_storage_account',
+    sourceType: MonitorEntities.DIAGNOSTIC_SETTING._type,
     _class: RelationshipClass.USES,
     targetType: storageEntities.STORAGE_ACCOUNT._type,
   },

@@ -77,7 +77,7 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
 
     expect(diagnosticSettingsEntities.length).toBeGreaterThan(0);
     expect(diagnosticSettingsEntities).toMatchGraphObjectSchema({
-      _class: MonitorEntities.DIAGNOSTIC_SETTINGS._class,
+      _class: MonitorEntities.DIAGNOSTIC_SETTING._class,
     });
 
     const {
@@ -96,7 +96,7 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
         properties: {
           _type: {
             const:
-              MonitorRelationships.AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTINGS._type,
+              MonitorRelationships.AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTING._type,
           },
         },
       },
@@ -112,7 +112,7 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
         properties: {
           _type: {
             const:
-              MonitorRelationships.DIAGNOSTIC_SETTINGS_USES_STORAGE_ACCOUNT
+              MonitorRelationships.DIAGNOSTIC_SETTING_USES_STORAGE_ACCOUNT
                 ._type,
           },
         },

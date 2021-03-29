@@ -121,7 +121,7 @@ The following entities are created:
 | [RM] Location                             | `azure_location`                             | `Site`                             |
 | [RM] MariaDB Database                     | `azure_mariadb_database`                     | `Database`, `DataStore`            |
 | [RM] MariaDB Server                       | `azure_mariadb_server`                       | `Database`, `DataStore`, `Host`    |
-| [RM] Monitor Diagnostic Settings Resource | `azure_diagnostic_settings`                  | `Configuration`                    |
+| [RM] Monitor Diagnostic Settings Resource | `azure_diagnostic_setting`                   | `Configuration`                    |
 | [RM] Monitor Log Profile                  | `azure_monitor_log_profile`                  | `Configuration`                    |
 | [RM] MySQL Database                       | `azure_mysql_database`                       | `Database`, `DataStore`            |
 | [RM] MySQL Server                         | `azure_mysql_server`                         | `Database`, `DataStore`, `Host`    |
@@ -186,7 +186,7 @@ The following relationships are created/mapped:
 | `azure_container`                | **USES**              | `azure_container_volume`                     |
 | `azure_container_volume`         | **USES**              | `azure_storage_file_share`                   |
 | `azure_cosmosdb_account`         | **HAS**               | `azure_cosmosdb_sql_database`                |
-| `azure_diagnostic_settings`      | **USES**              | `azure_storage_account`                      |
+| `azure_diagnostic_setting`       | **USES**              | `azure_storage_account`                      |
 | `azure_dns_zone`                 | **HAS**               | `azure_dns_record_set`                       |
 | `azure_event_grid_domain`        | **HAS**               | `azure_event_grid_domain_topic`              |
 | `azure_event_grid_domain_topic`  | **HAS**               | `azure_event_grid_topic_subscription`        |
@@ -233,7 +233,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`           | **HAS**               | `azure_storage_account`                      |
 | `azure_resource_group`           | **HAS**               | `azure_vm`                                   |
 | `azure_resource_group`           | **HAS**               | `azure_vnet`                                 |
-| `ANY_SCOPE`                      | **HAS**               | `azure_diagnostic_settings`                  |
+| `ANY_SCOPE`                      | **HAS**               | `azure_diagnostic_setting`                   |
 | `ANY_SCOPE`                      | **HAS**               | `azure_advisor_recommendation`               |
 | `ANY_SCOPE`                      | **HAS**               | `azure_policy_assignment`                    |
 | `azure_role_assignment`          | **ALLOWS**            | `azure_api_management_service`               |

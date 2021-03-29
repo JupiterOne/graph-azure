@@ -49,7 +49,7 @@ async function executeDocumentAction(
     for (const relationship of step.relationships) {
       if (
         relationship._type ===
-        MonitorRelationships.AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTINGS._type
+        MonitorRelationships.AZURE_RESOURCE_HAS_DIAGNOSTIC_SETTING._type
       ) {
         diagnosticSettingsRelationships.push(relationship);
       }

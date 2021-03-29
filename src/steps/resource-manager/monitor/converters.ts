@@ -36,7 +36,7 @@ export function createMonitorLogProfileEntity(
   });
 }
 
-export function createDiagnosticSettingsEntity(
+export function createDiagnosticSettingEntity(
   webLinker: AzureWebLinker,
   data: DiagnosticSettingsResource,
 ): Entity {
@@ -45,8 +45,8 @@ export function createDiagnosticSettingsEntity(
       source: data,
       assign: {
         _key: data.id!,
-        _type: MonitorEntities.DIAGNOSTIC_SETTINGS._type,
-        _class: MonitorEntities.DIAGNOSTIC_SETTINGS._class,
+        _type: MonitorEntities.DIAGNOSTIC_SETTING._type,
+        _class: MonitorEntities.DIAGNOSTIC_SETTING._class,
         id: data.id,
         webLink: webLinker.portalResourceUrl(data.id),
         name: data.name,

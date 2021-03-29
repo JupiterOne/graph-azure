@@ -57,10 +57,18 @@ export function createDiagnosticSettingEntity(
         logAnalyticsDestinationType: data.logAnalyticsDestinationType,
         serviceBusRuleId: data.serviceBusRuleId,
         type: data.type,
-        'log.Administrative': getLog(data.logs, 'Administrative')?.enabled,
-        'log.Alert': getLog(data.logs, 'Alert')?.enabled,
-        'log.Policy': getLog(data.logs, 'Policy')?.enabled,
-        'log.Security': getLog(data.logs, 'Security')?.enabled,
+        'log.Administrative.enabled': getLog(data.logs, 'Administrative')
+          ?.enabled,
+        'log.Alert.enabled': getLog(data.logs, 'Alert')?.enabled,
+        'log.Policy.enabled': getLog(data.logs, 'Policy')?.enabled,
+        'log.Security.enabled': getLog(data.logs, 'Security')?.enabled,
+        'log.AuditEvent.enabled': getLog(data.logs, 'AuditEvent')?.enabled,
+        'log.AuditEvent.retentionPolicy.days': getLog(data.logs, 'AuditEvent')
+          ?.retentionPolicy.days,
+        'log.AuditEvent.retentionPolicy.enabled': getLog(
+          data.logs,
+          'AuditEvent',
+        )?.retentionPolicy.enabled,
       },
     },
   });
@@ -74,8 +82,10 @@ function getLog(logs: LogSettings[] | undefined, category: string) {
   if (log) {
     return {
       enabled: log.enabled,
-      retentionPolicyEnabled: log.retentionPolicy?.enabled,
-      retentionPolicyDays: log.retentionPolicy?.days,
+      retentionPolicy: {
+        enabled: log.retentionPolicy?.enabled,
+        days: log.retentionPolicy?.days,
+      },
     };
   }
 }

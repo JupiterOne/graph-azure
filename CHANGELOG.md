@@ -10,6 +10,14 @@ and this project adheres to
 
 ### Added
 
+- Added `azure_diagnostic_setting` entity, including the following properties:
+  - `log.Administrative.enabled`
+  - `log.Alert.enabled`
+  - `log.Policy.enabled`
+  - `log.Security.enabled`
+  - `log.AuditEvent.enabled`
+  - `log.AuditEvent.retentionPolicy.enabled`
+  - `log.AuditEvent.retentionPolicy.enabled`
 - Added `./tools/cli/j1-azure-integration document-diagnostic-settings` command
   to automatcially document which Azure resources currently ingest diagnostic
   settings.

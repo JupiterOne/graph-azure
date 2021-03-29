@@ -28,6 +28,7 @@ resource "azurerm_monitor_log_profile" "j1dev_log_profile" {
   ]
 
   locations = [
+    "eastus",
     "westus",
     "global",
   ]

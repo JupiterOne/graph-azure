@@ -16,8 +16,8 @@ import {
   ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   STEP_RM_KEYVAULT_VAULTS,
-  KEY_VAULT_SERVICE_ENTITY_CLASS,
   ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
+  entities,
 } from './constants';
 import { createKeyVaultEntity } from './converters';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
@@ -59,6 +59,7 @@ export async function fetchKeyVaults(
     await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
       executionContext,
       vaultEntity,
+      entities.KEY_VAULT,
     );
   });
 }
@@ -69,14 +70,7 @@ export const keyvaultSteps: Step<
   {
     id: STEP_RM_KEYVAULT_VAULTS,
     name: 'Key Vaults',
-    entities: [
-      {
-        resourceName: '[RM] Key Vault',
-        _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
-        _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
-      },
-      ...diagnosticSettingsEntitiesForResource,
-    ],
+    entities: [entities.KEY_VAULT, ...diagnosticSettingsEntitiesForResource],
     relationships: [
       {
         _type: ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
@@ -87,9 +81,7 @@ export const keyvaultSteps: Step<
       createResourceGroupResourceRelationshipMetadata(
         KEY_VAULT_SERVICE_ENTITY_TYPE,
       ),
-      ...getDiagnosticSettingsRelationshipsForResource(
-        KEY_VAULT_SERVICE_ENTITY_TYPE,
-      ),
+      ...getDiagnosticSettingsRelationshipsForResource(entities.KEY_VAULT),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,

@@ -111,19 +111,34 @@ function getDefaultDocumentationFilePath(
 function generateDiagnosticSettingsDocumentationFromMetadata(
   diagnosticSettingsRelationshipMetadata: (StepRelationshipMetadata & {
     resourceType?: string;
+    logCategories?: string[];
   })[],
 ): string {
-  const entityTypesWithDiagnosticSettings: string[] = [];
+  const diagnosticSettingsMetadata: {
+    resourceType: string;
+    logCategories: string[] | undefined;
+  }[] = [];
 
   for (const relationshipMetadata of diagnosticSettingsRelationshipMetadata) {
     if (relationshipMetadata.resourceType) {
-      entityTypesWithDiagnosticSettings.push(relationshipMetadata.resourceType);
+      diagnosticSettingsMetadata.push({
+        resourceType: relationshipMetadata.resourceType,
+        logCategories: relationshipMetadata.logCategories,
+      });
     }
   }
 
   let diagnosticSettingsListSection = '';
-  for (const entityType of entityTypesWithDiagnosticSettings.sort()) {
-    diagnosticSettingsListSection += `- ${entityType}\n`;
+  for (const metadata of diagnosticSettingsMetadata.sort((a, b) =>
+    a.resourceType > b.resourceType ? 1 : -1,
+  )) {
+    diagnosticSettingsListSection += `- ${metadata.resourceType}\n`;
+    if (metadata.logCategories) {
+      diagnosticSettingsListSection += `  - Log Categories:\n`;
+      for (const category of metadata.logCategories) {
+        diagnosticSettingsListSection += `    - ${category}\n`;
+      }
+    }
   }
 
   return `${J1_DOCUMENTATION_DIAGNOSTIC_SETTINGS_MARKER_START}

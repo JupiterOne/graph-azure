@@ -42,9 +42,7 @@ export const databaseSteps: Step<
     relationships: [
       MariaDBRelationships.RESOURCE_GROUP_HAS_MARIADB_SERVER,
       MariaDBRelationships.MARIADB_SERVER_HAS_MARIADB_DATABASE,
-      ...getDiagnosticSettingsRelationshipsForResource(
-        MariaDBEntities.SERVER._type,
-      ),
+      ...getDiagnosticSettingsRelationshipsForResource(MariaDBEntities.SERVER),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMariaDBDatabases,
@@ -60,9 +58,7 @@ export const databaseSteps: Step<
     relationships: [
       MySQLRelationships.RESOURCE_GROUP_HAS_MYSQL_SERVER,
       MySQLRelationships.MYSQL_SERVER_HAS_MYSQL_DATABASE,
-      ...getDiagnosticSettingsRelationshipsForResource(
-        MySQLEntities.SERVER._type,
-      ),
+      ...getDiagnosticSettingsRelationshipsForResource(MySQLEntities.SERVER),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMySQLDatabases,

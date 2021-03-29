@@ -574,7 +574,7 @@ export const networkSteps: Step<
     relationships: [
       NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_PUBLIC_IP_ADDRESS,
       ...getDiagnosticSettingsRelationshipsForResource(
-        NetworkEntities.PUBLIC_IP_ADDRESS._type,
+        NetworkEntities.PUBLIC_IP_ADDRESS,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
@@ -607,7 +607,7 @@ export const networkSteps: Step<
       NetworkRelationships.NETWORK_VIRTUAL_NETWORK_CONTAINS_NETWORK_SUBNET,
       NetworkRelationships.NETWORK_SECURITY_GROUP_PROTECTS_NETWORK_SUBNET,
       ...getDiagnosticSettingsRelationshipsForResource(
-        NetworkEntities.VIRTUAL_NETWORK._type,
+        NetworkEntities.VIRTUAL_NETWORK,
       ),
     ],
     dependsOn: [
@@ -628,7 +628,7 @@ export const networkSteps: Step<
       NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_SECURITY_GROUP,
       NetworkRelationships.NETWORK_SECURITY_GROUP_PROTECTS_NETWORK_INTERFACE,
       ...getDiagnosticSettingsRelationshipsForResource(
-        NetworkEntities.SECURITY_GROUP._type,
+        NetworkEntities.SECURITY_GROUP,
       ),
     ],
     // SECURITY_GROUP_RULE_RELATIONSHIP_TYPE doesn't seem to exist here.
@@ -650,7 +650,7 @@ export const networkSteps: Step<
       NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_LOAD_BALANCER,
       NetworkRelationships.NETWORK_LOAD_BALANCER_CONNECTS_NETWORK_INTERFACE,
       ...getDiagnosticSettingsRelationshipsForResource(
-        NetworkEntities.LOAD_BALANCER._type,
+        NetworkEntities.LOAD_BALANCER,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
@@ -666,7 +666,7 @@ export const networkSteps: Step<
     relationships: [
       NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL,
       ...getDiagnosticSettingsRelationshipsForResource(
-        NetworkEntities.AZURE_FIREWALL._type,
+        NetworkEntities.AZURE_FIREWALL,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],

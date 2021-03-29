@@ -142,7 +142,7 @@ export const postgreSqlSteps: Step<
     relationships: [
       PostgreSQLRelationships.RESOURCE_GROUP_HAS_POSTGRESQL_SERVER,
       ...getDiagnosticSettingsRelationshipsForResource(
-        PostgreSQLEntities.SERVER._type,
+        PostgreSQLEntities.SERVER,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],

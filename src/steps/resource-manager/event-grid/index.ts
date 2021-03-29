@@ -241,7 +241,7 @@ export const eventGridSteps: Step<
     relationships: [
       EventGridRelationships.RESOURCE_GROUP_HAS_DOMAIN,
       ...getDiagnosticSettingsRelationshipsForResource(
-        EventGridEntities.DOMAIN._type,
+        EventGridEntities.DOMAIN,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
@@ -281,9 +281,7 @@ export const eventGridSteps: Step<
     ],
     relationships: [
       EventGridRelationships.RESOURCE_GROUP_HAS_TOPIC,
-      ...getDiagnosticSettingsRelationshipsForResource(
-        EventGridEntities.TOPIC._type,
-      ),
+      ...getDiagnosticSettingsRelationshipsForResource(EventGridEntities.TOPIC),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridTopics,

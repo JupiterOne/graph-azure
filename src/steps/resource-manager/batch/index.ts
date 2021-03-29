@@ -199,7 +199,7 @@ export const batchSteps: Step<
     relationships: [
       BatchAccountRelationships.RESOURCE_GROUP_HAS_BATCH_ACCOUNT,
       ...getDiagnosticSettingsRelationshipsForResource(
-        BatchEntities.BATCH_ACCOUNT._type,
+        BatchEntities.BATCH_ACCOUNT,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],

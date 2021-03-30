@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Added
 
+- Added `azure_monitor_activity_log_alert_monitors_scope` relationships
 - Added `azure_monitor_activity_log_alert` entities
 
 ## 5.19.0 - 2021-03-26

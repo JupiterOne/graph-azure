@@ -25,6 +25,8 @@ import {
   createMonitorLogProfileEntity,
 } from './converters';
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
+import { ActivityLogAlertResource } from '@azure/arm-monitor/esm/models';
+import { getResourceManagerSteps } from '../../../getStepStartStates';
 
 export async function fetchLogProfiles(
   executionContext: IntegrationStepContext,
@@ -115,6 +117,42 @@ export async function fetchActivityLogAlerts(
   );
 }
 
+export async function buildActivityLogScopeRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: MonitorEntities.ACTIVITY_LOG_ALERT._type },
+    async (alertEntity) => {
+      const alert = getRawData<ActivityLogAlertResource>(alertEntity);
+      if (!alert) return;
+
+      for (const scopeId of alert.scopes) {
+        const scopeEntity = await jobState.findEntity(scopeId);
+
+        if (!scopeEntity) {
+          logger.info(
+            {
+              alertId: alert.id,
+              scopeId,
+            },
+            'Could not find existing entity with matching scope.',
+          );
+          return;
+        }
+
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: alertEntity,
+            _class: RelationshipClass.MONITORS,
+            to: scopeEntity,
+          }),
+        );
+      }
+    },
+  );
+}
+
 export const monitorSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -136,5 +174,16 @@ export const monitorSteps: Step<
     relationships: [MonitorRelationships.RESOURCE_GROUP_HAS_ACTIVITY_LOG_ALERT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchActivityLogAlerts,
+  },
+  {
+    id: MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,
+    name: 'Monitor Activity Log Alert -> Scope Relationships',
+    entities: [],
+    relationships: [MonitorRelationships.ACTIVITY_LOG_ALERT_MONITORS_SCOPE],
+    dependsOn: [
+      MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS,
+      ...getResourceManagerSteps().executeFirstSteps,
+    ],
+    executionHandler: buildActivityLogScopeRelationships,
   },
 ];

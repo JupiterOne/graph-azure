@@ -7,6 +7,8 @@ import { createResourceGroupResourceRelationshipMetadata } from '../utils/create
 export const MonitorSteps = {
   MONITOR_LOG_PROFILES: 'rm-monitor-log-profiles',
   MONITOR_ACTIVITY_LOG_ALERTS: 'rm-monitor-activity-log-alerts',
+  MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS:
+    'rm-monitor-activity-log-alert-scope-relationships',
 };
 
 const stringSchema = { type: 'string' };
@@ -82,4 +84,10 @@ export const MonitorRelationships = {
   RESOURCE_GROUP_HAS_ACTIVITY_LOG_ALERT: createResourceGroupResourceRelationshipMetadata(
     MonitorEntities.ACTIVITY_LOG_ALERT._type,
   ),
+  ACTIVITY_LOG_ALERT_MONITORS_SCOPE: {
+    _type: 'azure_monitor_activity_log_alert_monitors_azure_scope',
+    sourceType: MonitorEntities.ACTIVITY_LOG_ALERT._type,
+    _class: RelationshipClass.MONITORS,
+    targetType: ANY_SCOPE,
+  },
 };

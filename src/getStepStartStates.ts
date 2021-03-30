@@ -209,6 +209,7 @@ export function getResourceManagerSteps(): GetApiSteps {
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,
       PolicySteps.POLICY_ASSIGNMENTS,
+      MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,
     ],
   };
 }

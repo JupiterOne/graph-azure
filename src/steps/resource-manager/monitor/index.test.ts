@@ -6,13 +6,21 @@ import {
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-import { fetchActivityLogAlerts, fetchLogProfiles } from '.';
+import {
+  buildActivityLogScopeRelationships,
+  fetchActivityLogAlerts,
+  fetchLogProfiles,
+} from '.';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import {
   getMockAccountEntity,
   getMockResourceGroupEntity,
+  getMockSubscriptionEntity,
 } from '../../../../test/helpers/getMockEntity';
 import { MonitorEntities, MonitorRelationships } from './constants';
+import { Entity, getRawData } from '@jupiterone/integration-sdk-core';
+import { ActivityLogAlertResource } from '@azure/arm-monitor/esm/models';
+import { EOL_MATCHER, SUBSCRIPTION_MATCHER } from '../utils/matchers';
 
 let recording: Recording;
 
@@ -144,5 +152,101 @@ describe('rm-monitor-activity-log-alerts', () => {
         },
       },
     });
+  });
+});
+
+describe('rm-monitor-activity-log-alert-scope-relationships', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const subscriptionIdRegex = new RegExp(SUBSCRIPTION_MATCHER + EOL_MATCHER);
+
+    function isSubscriptionId(scope: string) {
+      return subscriptionIdRegex.test(scope);
+    }
+
+    function getSubscriptionIdFromActivityLogAlertEntity(e: Entity): string {
+      const alert = getRawData<ActivityLogAlertResource>(e);
+
+      for (const scope of alert?.scopes || []) {
+        if (isSubscriptionId(scope)) {
+          const subscriptionPrefixLength = '/subscriptions/'.length;
+          return scope.substring(subscriptionPrefixLength);
+        }
+      }
+      return 'subscription-id';
+    }
+
+    const accountEntity = getMockAccountEntity(config);
+    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      entities: [resourceGroupEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchActivityLogAlerts(context);
+
+    const activityLogAlertEntitiesWithSubscriptionScope = context.jobState.collectedEntities.filter(
+      (a) => {
+        const alert = getRawData<ActivityLogAlertResource>(a);
+
+        return alert?.scopes.some((s) => isSubscriptionId(s));
+      },
+    );
+
+    expect(
+      activityLogAlertEntitiesWithSubscriptionScope.length,
+    ).toBeGreaterThan(0);
+
+    const scopeSubscriptionId = getSubscriptionIdFromActivityLogAlertEntity(
+      activityLogAlertEntitiesWithSubscriptionScope[0],
+    );
+
+    const subscriptionEntity = getMockSubscriptionEntity({
+      ...config,
+      // In this case, subscriptionId is a constant from the `scope` property of an activityLogAlertEntity.
+      // In order to properly create a relationship, we'll need the target `subscriptionId` to match the `scope` from the alert.
+      subscriptionId: scopeSubscriptionId,
+    });
+
+    return {
+      accountEntity,
+      activityLogAlertEntities: activityLogAlertEntitiesWithSubscriptionScope,
+      subscriptionEntity,
+    };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-monitor-activity-log-alert-scope-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      accountEntity,
+      subscriptionEntity,
+      activityLogAlertEntities,
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [subscriptionEntity, ...activityLogAlertEntities],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await buildActivityLogScopeRelationships(context);
+
+    const activityLogScopeRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(activityLogScopeRelationships.length).toBeGreaterThan(0);
+    expect(activityLogScopeRelationships).toMatchDirectRelationshipSchema({});
   });
 });

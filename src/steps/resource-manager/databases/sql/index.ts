@@ -212,7 +212,7 @@ export const sqlSteps: Step<
     name: 'SQL Server Diagnostic Settings',
     entities: [...diagnosticSettingsEntitiesForResource],
     relationships: [
-      ...getDiagnosticSettingsRelationshipsForResource(entities.SERVER._type),
+      ...getDiagnosticSettingsRelationshipsForResource(entities.SERVER),
     ],
     dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
     executionHandler: fetchSQLServerDiagnosticSettings,

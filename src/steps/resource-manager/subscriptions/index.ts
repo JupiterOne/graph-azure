@@ -40,6 +40,7 @@ export async function fetchSubscriptions(
     await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
       executionContext,
       subscriptionEntity,
+      entities.SUBSCRIPTION,
     );
   });
 }
@@ -109,9 +110,7 @@ export const subscriptionSteps: Step<
     name: 'Subscriptions',
     entities: [entities.SUBSCRIPTION, ...diagnosticSettingsEntitiesForResource],
     relationships: [
-      ...getDiagnosticSettingsRelationshipsForResource(
-        entities.SUBSCRIPTION._type,
-      ),
+      ...getDiagnosticSettingsRelationshipsForResource(entities.SUBSCRIPTION),
     ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscriptions,

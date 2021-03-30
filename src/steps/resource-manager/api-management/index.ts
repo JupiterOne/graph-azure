@@ -98,7 +98,7 @@ export const apiManagementSteps: Step<
     relationships: [
       ApiManagementRelationships.RESOURCE_GROUP_HAS_SERVICE,
       ...getDiagnosticSettingsRelationshipsForResource(
-        ApiManagementEntities.SERVICE._type,
+        ApiManagementEntities.SERVICE,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],

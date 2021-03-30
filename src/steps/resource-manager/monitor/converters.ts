@@ -39,6 +39,7 @@ export function createMonitorLogProfileEntity(
 export function createDiagnosticSettingEntity(
   webLinker: AzureWebLinker,
   data: DiagnosticSettingsResource,
+  diagnosticLogCategories: string[] | undefined,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
@@ -57,21 +58,48 @@ export function createDiagnosticSettingEntity(
         logAnalyticsDestinationType: data.logAnalyticsDestinationType,
         serviceBusRuleId: data.serviceBusRuleId,
         type: data.type,
-        'log.Administrative.enabled': getLog(data.logs, 'Administrative')
-          ?.enabled,
-        'log.Alert.enabled': getLog(data.logs, 'Alert')?.enabled,
-        'log.Policy.enabled': getLog(data.logs, 'Policy')?.enabled,
-        'log.Security.enabled': getLog(data.logs, 'Security')?.enabled,
-        'log.AuditEvent.enabled': getLog(data.logs, 'AuditEvent')?.enabled,
-        'log.AuditEvent.retentionPolicy.days': getLog(data.logs, 'AuditEvent')
-          ?.retentionPolicy.days,
-        'log.AuditEvent.retentionPolicy.enabled': getLog(
+        ...getPropertiesForDiagnosticLogCategories(
           data.logs,
-          'AuditEvent',
-        )?.retentionPolicy.enabled,
+          diagnosticLogCategories,
+        ),
       },
     },
   });
+}
+
+/**
+ * Azure diagnostic settings contain an arbitrary `category` property, and each
+ * individual Azure resource may utilize a unique set of diagnostic log categories.
+ */
+function getPropertiesForDiagnosticLogCategories(
+  logSettings: LogSettings[] | undefined,
+  diagnosticLogCategories: string[] = [],
+) {
+  if (!logSettings) return;
+
+  const diagnosticLogProperties: {
+    [key: string]: boolean | number | undefined;
+  } = {};
+  for (const category of diagnosticLogCategories) {
+    const log = getLog(logSettings, category);
+
+    if (log) {
+      // Given a `category` of "Administrative":
+      //
+      // Create the following three properties:
+      // {
+      //   'log.Administrative.enabled': log.enabled,
+      //   'log.Administrative.retentionPolicy.days': log.retentionPolicy.days,
+      //   'log.Administrative.retentionPolicy.enabled': log.retentionPolicy.enabled,
+      // }
+      diagnosticLogProperties[`log.${category}.enabled`] = log.enabled;
+      diagnosticLogProperties[`log.${category}.retentionPolicy.days`] =
+        log.retentionPolicy.days;
+      diagnosticLogProperties[`log.${category}.retentionPolicy.enabled`] =
+        log.retentionPolicy.enabled;
+    }
+  }
+  return diagnosticLogProperties;
 }
 
 function getLog(logs: LogSettings[] | undefined, category: string) {

@@ -10,14 +10,15 @@ and this project adheres to
 
 ### Added
 
-- Added `azure_diagnostic_setting` entity, including the following properties:
-  - `log.Administrative.enabled`
-  - `log.Alert.enabled`
-  - `log.Policy.enabled`
-  - `log.Security.enabled`
-  - `log.AuditEvent.enabled`
-  - `log.AuditEvent.retentionPolicy.enabled`
-  - `log.AuditEvent.retentionPolicy.enabled`
+- Added the following log categories to `azure_diagnostic_settings` for
+  `azure_subscription` entities:
+  - `log.Administrative`
+  - `log.Alert`
+  - `log.Policy`
+  - `log.Security`
+- Added the following log categories to `azure_diagnostic_settings` for
+  `azure_keyvault_service` entities:
+  - `log.AuditEvent`
 - Added `./tools/cli/j1-azure-integration document-diagnostic-settings` command
   to automatcially document which Azure resources currently ingest diagnostic
   settings.

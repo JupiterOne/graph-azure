@@ -18,6 +18,7 @@ export const entities = {
     _type: 'azure_subscription',
     _class: ['Account'],
     resourceName: '[RM] Subscription',
+    diagnosticLogCategories: ['Administrative', 'Alert', 'Policy', 'Security'],
   },
   LOCATION: {
     _type: 'azure_location',

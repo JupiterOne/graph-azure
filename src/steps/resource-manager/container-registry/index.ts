@@ -104,7 +104,7 @@ export const containerRegistrySteps: Step<
     relationships: [
       ContainerRegistryRelationships.RESOURCE_GROUP_HAS_ZONE,
       ...getDiagnosticSettingsRelationshipsForResource(
-        ContainerRegistryEntities.REGISTRY._type,
+        ContainerRegistryEntities.REGISTRY,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],

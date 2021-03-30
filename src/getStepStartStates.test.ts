@@ -194,6 +194,10 @@ describe('getStepStartStates', () => {
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
       [SecuritySteps.PRICING_CONFIGURATIONS]: { disabled: true },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
+      [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS]: { disabled: true },
+      [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS]: {
+        disabled: true,
+      },
     });
   });
 
@@ -286,6 +290,10 @@ describe('getStepStartStates', () => {
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
       [SecuritySteps.PRICING_CONFIGURATIONS]: { disabled: true },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
+      [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS]: { disabled: true },
+      [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS]: {
+        disabled: true,
+      },
     });
   });
 
@@ -378,6 +386,10 @@ describe('getStepStartStates', () => {
       [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: false },
       [SecuritySteps.PRICING_CONFIGURATIONS]: { disabled: false },
       [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: false },
+      [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS]: { disabled: false },
+      [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS]: {
+        disabled: false,
+      },
     });
   });
 });

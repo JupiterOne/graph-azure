@@ -11,7 +11,7 @@ import {
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 import { separateDiagnosticSettingsRelationships } from '../../../../test/helpers/filterGraphObjects';
-import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 
 let recording: Recording;
 

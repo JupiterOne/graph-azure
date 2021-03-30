@@ -17,7 +17,7 @@ import {
   SetDataTypes,
 } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
-import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 
 let recording: Recording;
 

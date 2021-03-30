@@ -1,14 +1,17 @@
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 import {
+  getMatchRequestsBy,
   Recording,
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { IntegrationConfig } from '../../../types';
 import { MonitorClient } from './client';
 import {
+  ActivityLogAlertResource,
   DiagnosticSettingsResource,
   LogProfileResource,
 } from '@azure/arm-monitor/esm/models';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 
 let recording: Recording;
 
@@ -130,5 +133,33 @@ describe('iterateDiagnosticSettings', () => {
         workspaceId: null,
       }),
     );
+  });
+});
+
+describe('iterateActivityLogAlerts', () => {
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateActivityLogAlerts',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const resourceGroup = {
+      name: 'j1dev',
+    };
+
+    const client = new MonitorClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+
+    const activityLogAlerts: ActivityLogAlertResource[] = [];
+    await client.iterateActivityLogAlerts(resourceGroup, (e) => {
+      activityLogAlerts.push(e);
+    });
+
+    expect(activityLogAlerts.length).toBeGreaterThan(0);
   });
 });

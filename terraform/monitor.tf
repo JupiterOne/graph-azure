@@ -42,3 +42,14 @@ resource "azurerm_monitor_log_profile" "j1dev_log_profile" {
     days    = 365
   }
 }
+
+resource "azurerm_monitor_activity_log_alert" "j1dev" {
+  name                = "j1dev"
+  resource_group_name = azurerm_resource_group.j1dev.name
+  scopes              = [data.azurerm_subscription.j1dev.id]
+
+  criteria {
+    operation_name = "Microsoft.Authorization/policyAssignments/write"
+    category       = "Administrative"
+  }
+}

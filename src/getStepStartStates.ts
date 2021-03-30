@@ -204,10 +204,12 @@ export function getResourceManagerSteps(): GetApiSteps {
       SecuritySteps.SECURITY_CENTER_CONTACTS,
       SecuritySteps.PRICING_CONFIGURATIONS,
       MonitorSteps.MONITOR_LOG_PROFILES,
+      MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS,
     ],
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,
       PolicySteps.POLICY_ASSIGNMENTS,
+      MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,
     ],
   };
 }

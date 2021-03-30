@@ -4,6 +4,7 @@ import {
 } from '../../../azure/resource-manager/client';
 import { MonitorManagementClient } from '@azure/arm-monitor';
 import {
+  ActivityLogAlertResource,
   DiagnosticSettingsResource,
   LogProfileResource,
 } from '@azure/arm-monitor/esm/models';
@@ -66,6 +67,30 @@ export class MonitorClient extends Client {
         },
       },
       resourceDescription: 'monitor.diagnosticSetting',
+      callback,
+    });
+  }
+
+  public async iterateActivityLogAlerts(
+    resourceGroup: {
+      name: string;
+    },
+    callback: (a: ActivityLogAlertResource) => void | Promise<void>,
+  ) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      MonitorManagementClient,
+    );
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.activityLogAlerts.listByResourceGroup(
+            resourceGroup.name,
+          ),
+      },
+      resourceDescription: 'monitor.activityLogAlerts',
       callback,
     });
   }

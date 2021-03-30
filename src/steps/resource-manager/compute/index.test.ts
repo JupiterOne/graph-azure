@@ -6,7 +6,7 @@ import {
   fetchVirtualMachines,
 } from '.';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 import {
   getMatchRequestsBy,
   Recording,

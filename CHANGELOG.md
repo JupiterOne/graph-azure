@@ -8,8 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.19.0 - 2021-03-26
+
 ### Added
 
+- Added `secureTransport` property to the following entities:
+  - `azure_sql_server`
+  - `azure_mariadb_server`
+  - `azure_mysql_server`
+  - `azure_postgresql_server`
 - Added the following log categories to `azure_diagnostic_settings` for
   `azure_subscription` entities:
   - `log.Administrative`

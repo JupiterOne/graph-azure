@@ -1,9 +1,18 @@
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-import { fetchLogProfiles } from '.';
+import { fetchActivityLogAlerts, fetchLogProfiles } from '.';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import {
+  getMockAccountEntity,
+  getMockResourceGroupEntity,
+} from '../../../../test/helpers/getMockEntity';
+import { MonitorEntities, MonitorRelationships } from './constants';
 
 let recording: Recording;
 
@@ -76,4 +85,64 @@ test('step = monitor log profiles', async () => {
       displayName: 'USES',
     }),
   );
+});
+
+describe('rm-monitor-activity-log-alerts', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+
+    return { accountEntity, resourceGroupEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-monitor-activity-log-alerts',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity, resourceGroupEntity } = getSetupEntities(
+      configFromEnv,
+    );
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [resourceGroupEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchActivityLogAlerts(context);
+
+    const activityLogAlertEntities = context.jobState.collectedEntities;
+
+    expect(activityLogAlertEntities.length).toBeGreaterThan(0);
+    expect(activityLogAlertEntities).toMatchGraphObjectSchema({
+      _class: MonitorEntities.ACTIVITY_LOG_ALERT._class,
+      schema: MonitorEntities.ACTIVITY_LOG_ALERT.schema,
+    });
+
+    const resourceGroupActivityLogAlertRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(resourceGroupActivityLogAlertRelationships.length).toBe(
+      activityLogAlertEntities.length,
+    );
+    expect(
+      resourceGroupActivityLogAlertRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              MonitorRelationships.RESOURCE_GROUP_HAS_ACTIVITY_LOG_ALERT._type,
+          },
+        },
+      },
+    });
+  });
 });

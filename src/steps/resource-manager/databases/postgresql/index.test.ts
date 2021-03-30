@@ -14,7 +14,7 @@ import {
 } from '.';
 import { PostgreSQLEntities, PostgreSQLRelationships } from './constants';
 import { configFromEnv } from '../../../../../test/integrationInstanceConfig';
-import { getMockAccountEntity } from '../../../../../test/helpers/getMockAccountEntity';
+import { getMockAccountEntity } from '../../../../../test/helpers/getMockEntity';
 import {
   filterGraphObjects,
   separateDiagnosticSettingsEntities,

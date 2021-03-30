@@ -3,19 +3,28 @@ import {
   IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
+  getRawData,
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { getAccountEntity } from '../../active-directory';
+import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
 import { steps as storageSteps } from '../storage/constants';
 import { steps as subscriptionSteps } from '../subscriptions/constants';
+import {
+  RESOURCE_GROUP_ENTITY,
+  STEP_RM_RESOURCES_RESOURCE_GROUPS,
+} from '../resources/constants';
 import { MonitorClient } from './client';
 import {
   MonitorSteps,
   MonitorEntities,
   MonitorRelationships,
 } from './constants';
-import { createMonitorLogProfileEntity } from './converters';
+import {
+  createActivityLogAlertEntity,
+  createMonitorLogProfileEntity,
+} from './converters';
+import { ResourceGroup } from '@azure/arm-resources/esm/models';
 
 export async function fetchLogProfiles(
   executionContext: IntegrationStepContext,
@@ -62,6 +71,50 @@ export async function fetchLogProfiles(
   });
 }
 
+export async function fetchActivityLogAlerts(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new MonitorClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: RESOURCE_GROUP_ENTITY._type },
+    async (resourceGroupEntity) => {
+      const resourceGroup = getRawData<ResourceGroup>(resourceGroupEntity);
+      if (!resourceGroup) {
+        logger.warn(
+          {
+            id: resourceGroupEntity.id,
+            _key: resourceGroupEntity._key,
+            name: resourceGroupEntity.name,
+          },
+          'Could not fetch raw data from resource group.',
+        );
+        return;
+      }
+
+      await client.iterateActivityLogAlerts(
+        { name: resourceGroup.name! },
+        async (alert) => {
+          const alertEntity = await jobState.addEntity(
+            createActivityLogAlertEntity(webLinker, alert),
+          );
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              from: resourceGroupEntity,
+              _class: RelationshipClass.HAS,
+              to: alertEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
 export const monitorSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -75,5 +128,13 @@ export const monitorSteps: Step<
     ],
     dependsOn: [subscriptionSteps.SUBSCRIPTIONS, storageSteps.STORAGE_ACCOUNTS],
     executionHandler: fetchLogProfiles,
+  },
+  {
+    id: MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS,
+    name: 'Monitor Activity Log Alerts',
+    entities: [MonitorEntities.ACTIVITY_LOG_ALERT],
+    relationships: [MonitorRelationships.RESOURCE_GROUP_HAS_ACTIVITY_LOG_ALERT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchActivityLogAlerts,
   },
 ];

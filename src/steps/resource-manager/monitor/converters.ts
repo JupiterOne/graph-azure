@@ -5,9 +5,12 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { MonitorEntities } from './constants';
 import {
+  ActivityLogAlertResource,
+  ActivityLogAlertAllOfCondition,
   DiagnosticSettingsResource,
   LogProfileResource,
   LogSettings,
+  ActivityLogAlertLeafCondition,
 } from '@azure/arm-monitor/esm/models';
 
 export function createMonitorLogProfileEntity(
@@ -34,6 +37,64 @@ export function createMonitorLogProfileEntity(
       },
     },
   });
+}
+
+export function createActivityLogAlertEntity(
+  webLinker: AzureWebLinker,
+  data: ActivityLogAlertResource,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id,
+        _type: MonitorEntities.ACTIVITY_LOG_ALERT._type,
+        _class: MonitorEntities.ACTIVITY_LOG_ALERT._class,
+        id: data.id,
+        name: data.name,
+        description: data.description,
+        enabled: data.enabled,
+        scopes: data.scopes,
+        'condition.category': getConditionProperty(data.condition, 'category'),
+        'condition.operationName': getConditionProperty(
+          data.condition,
+          'operationName',
+        ),
+        'condition.level': getConditionProperty(data.condition, 'level'),
+        'condition.status': getConditionProperty(data.condition, 'status'),
+        'condition.caller': getConditionProperty(data.condition, 'caller'),
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+
+/**
+ * Azure SDK for JS typing is missing the `containsAny` property returned from this API:
+ *
+ * {
+ *   "field": "status",
+ *   "equals": null,
+ *   "containsAny": [ "failed" ],
+ *   "odata.type": null
+ * }
+ */
+interface ActivityLogAlertAllOfConditionWithContainsAny
+  extends ActivityLogAlertAllOfCondition {
+  allOf: (ActivityLogAlertLeafCondition & { containsAny?: string[] | null })[];
+}
+
+const defaultConditionValue = 'ANY';
+
+function getConditionProperty(
+  condition: ActivityLogAlertAllOfConditionWithContainsAny,
+  conditionName: 'category' | 'operationName' | 'level' | 'status' | 'caller',
+): string | string[] | null {
+  const conditionField = condition.allOf.find((c) => c.field === conditionName);
+
+  if (!conditionField) return defaultConditionValue;
+  if (conditionField.equals) return conditionField.equals;
+  return conditionField.containsAny as string[];
 }
 
 export function createDiagnosticSettingEntity(

@@ -121,6 +121,7 @@ The following entities are created:
 | [RM] Location                             | `azure_location`                             | `Site`                             |
 | [RM] MariaDB Database                     | `azure_mariadb_database`                     | `Database`, `DataStore`            |
 | [RM] MariaDB Server                       | `azure_mariadb_server`                       | `Database`, `DataStore`, `Host`    |
+| [RM] Monitor Activity Log Alert           | `azure_monitor_activity_log_alert`           | `Rule`                             |
 | [RM] Monitor Diagnostic Settings Resource | `azure_diagnostic_setting`                   | `Configuration`                    |
 | [RM] Monitor Log Profile                  | `azure_monitor_log_profile`                  | `Configuration`                    |
 | [RM] MySQL Database                       | `azure_mysql_database`                       | `Database`, `DataStore`            |
@@ -219,6 +220,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`           | **HAS**               | `azure_lb`                                   |
 | `azure_resource_group`           | **HAS**               | `azure_managed_disk`                         |
 | `azure_resource_group`           | **HAS**               | `azure_mariadb_server`                       |
+| `azure_resource_group`           | **HAS**               | `azure_monitor_activity_log_alert`           |
 | `azure_resource_group`           | **HAS**               | `azure_mysql_server`                         |
 | `azure_resource_group`           | **HAS**               | `azure_network_azure_firewall`               |
 | `azure_resource_group`           | **HAS**               | `azure_network_watcher`                      |

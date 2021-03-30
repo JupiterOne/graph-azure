@@ -14,7 +14,7 @@ import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { SecurityEntities, SecurityRelationships } from './constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
-import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 import { v4 as uuid } from 'uuid';
 
 let recording: Recording;

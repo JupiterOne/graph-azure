@@ -30,7 +30,7 @@ import { IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { NetworkEntities, NetworkRelationships } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
-import { getMockAccountEntity } from '../../../../test/helpers/getMockAccountEntity';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 import { fetchResourceGroups, RESOURCE_GROUP_ENTITY } from '../resources';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import { entities as storageEntities, fetchStorageAccounts } from '../storage';

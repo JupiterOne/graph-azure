@@ -129,8 +129,8 @@ function generateDiagnosticSettingsDocumentationFromMetadata(
   }
 
   let diagnosticSettingsListSection = '';
-  for (const metadata of diagnosticSettingsMetadata.sort((a, b) =>
-    a.resourceType > b.resourceType ? 1 : -1,
+  for (const metadata of sortDiagnosticSettingsMetadata(
+    diagnosticSettingsMetadata,
   )) {
     diagnosticSettingsListSection += `- ${metadata.resourceType}\n`;
     if (metadata.logCategories) {
@@ -165,6 +165,17 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 ********************************************************************************
 -->
 ${J1_DOCUMENTATION_DIAGNOSTIC_SETTINGS_MARKER_END}`;
+}
+
+function sortDiagnosticSettingsMetadata(
+  diagnosticSettingsMetadata: {
+    resourceType: string;
+    logCategories?: string[];
+  }[],
+) {
+  return diagnosticSettingsMetadata.sort((a, b) =>
+    a.resourceType > b.resourceType ? 1 : -1,
+  );
 }
 
 function replaceBetweenDocumentMarkers(

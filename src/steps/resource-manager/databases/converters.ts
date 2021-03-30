@@ -79,6 +79,7 @@ export function createDbServerEntity(
         administratorLoginPassword: REDACTED_VALUE,
         classification: null,
         encrypted: null,
+        secureTransport: anyServer.sslEnforcement === 'Enabled',
         'configuration.logCheckpoints': getConfiguration(
           configurations,
           'log_checkpoints',

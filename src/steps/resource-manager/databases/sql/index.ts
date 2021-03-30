@@ -60,6 +60,10 @@ export async function fetchSQLServers(
       }),
     );
 
+    // Per Microsoft Azure documentation, TLS is always enabled on SQL servers:
+    // https://docs.microsoft.com/en-us/azure/azure-sql/database/security-overview#transport-layer-security-encryption-in-transit
+    serverEntity.secureTransport = true;
+
     await jobState.addEntity(serverEntity);
 
     await createResourceGroupResourceRelationship(

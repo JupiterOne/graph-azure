@@ -23,3 +23,22 @@ resource "azurerm_resource_group" "j1dev" {
 
 data "azurerm_subscription" "j1dev" {
 }
+
+resource "azurerm_monitor_diagnostic_setting" "j1dev_subscription" {
+  name               = "j1dev"
+  target_resource_id = data.azurerm_subscription.j1dev.id
+  storage_account_id = azurerm_storage_account.j1dev.id
+
+  log {
+    category = "Administrative"
+  }
+  log {
+    category = "Alert"
+  }
+  log {
+    category = "Policy"
+  }
+  log {
+    category = "Security"
+  }
+}

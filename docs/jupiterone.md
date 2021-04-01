@@ -8,6 +8,31 @@ metadata and analyze resource relationships. Customers authorize access by
 creating a Service Principal (App Registration) and providing the credentials to
 JupiterOne.
 
+## Azure + JupiterOne Integration Benefits 
+
+- Visualize Azure cloud resources in the JupiterOne graph.
+- Map Azure users to employees in your JupiterOne account.
+- Monitor visibility and governance of your Azure cloud environment by
+  leveraging hundreds of out of the box queries.
+- Monitor compliance against the Azure CIS Framework and other security
+  benchmarks using the JupiterOne compliance app.
+- Monitor Azure vulnerabilities and findings from multiple services within the
+  alerts app.
+- Monitor changes to your Azure cloud resources using multiple JupiterOne alert
+  rule packs specific to Azure.
+
+## How it Works
+
+- JupiterOne periodically fetches users and cloud resources from Azure to update the graph.
+- Write JupiterOne queries to review and monitor updates to the graph, or leverage existing queries.
+- Configure alerts to take action when the JupiterOne graph changes, or leverage existing alerts.
+
+## Requirements
+
+- JupiterOne requires the API credentials for the Azure endpoint, specifically the Directory (tenant) id,
+the Application (client) id, and the Application (client) secret with the correct permissions assigned.
+- You must have permission in JupiterOne to install new integrations.
+
 ## Integration Instance Configuration
 
 The integration is triggered by an event containing the information for a

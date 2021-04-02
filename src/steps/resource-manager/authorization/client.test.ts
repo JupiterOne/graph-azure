@@ -1,6 +1,7 @@
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
+  getMatchRequestsBy,
   Recording,
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
@@ -8,8 +9,10 @@ import { AuthorizationClient } from './client';
 import {
   RoleAssignment,
   ClassicAdministrator,
+  RoleDefinition,
 } from '@azure/arm-authorization/esm/models';
 import { IntegrationConfig } from '../../../types';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 
 // developer used different creds than ~/test/integrationInstanceConfig
 const config: IntegrationConfig = {
@@ -23,56 +26,6 @@ let recording: Recording;
 
 afterEach(async () => {
   await recording.stop();
-});
-
-describe('getRoleDefinition', () => {
-  test('CustomRole', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'iterateRoleDefinitions-custom',
-    });
-
-    const client = new AuthorizationClient(
-      config,
-      createMockIntegrationLogger(),
-      true,
-    );
-
-    const customRole = await client.getRoleDefinition(
-      '/providers/Microsoft.Authorization/roleDefinitions/8bfcfc94-cf28-d595-8e3d-851a1eb7c8fa',
-    );
-
-    expect(customRole).toMatchObject(
-      expect.objectContaining({
-        roleName: 'j1dev-subscription',
-        roleType: 'CustomRole',
-      }),
-    );
-  });
-
-  test('BuiltInRole', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'iterateRoleDefinitions-builtIn',
-    });
-
-    const client = new AuthorizationClient(
-      config,
-      createMockIntegrationLogger(),
-      true,
-    );
-
-    const builtInRole = await client.getRoleDefinition(
-      '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
-    );
-
-    expect(builtInRole).toMatchObject(
-      expect.objectContaining({
-        roleName: 'Contributor',
-        roleType: 'BuiltInRole',
-      }),
-    );
-  });
 });
 
 describe('iterateRoleAssignments', () => {
@@ -139,5 +92,35 @@ describe('iterateClassicAdministrators', () => {
         role: 'CoAdministrator',
       }),
     ]);
+  });
+});
+
+describe('iterateRoleDefinitions', () => {
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateRoleDefinitions',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          shouldReplaceSubscriptionId: () => true,
+        }),
+      },
+    });
+
+    const client = new AuthorizationClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+
+    const roleDefinitions: RoleDefinition[] = [];
+    await client.iterateRoleDefinitions(
+      `/subscriptions/${configFromEnv.subscriptionId}`,
+      (rd) => {
+        roleDefinitions.push(rd);
+      },
+    );
+
+    expect(roleDefinitions.length).toBeGreaterThan(0);
   });
 });

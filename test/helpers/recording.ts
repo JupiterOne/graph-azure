@@ -81,9 +81,11 @@ type MatchRequestsBy = Required<
 
 export function getMatchRequestsBy({
   config,
+  shouldReplaceSubscriptionId = defaultShouldReplaceSubscriptionId,
   options,
 }: {
   config: IntegrationConfig;
+  shouldReplaceSubscriptionId?: (pathname: string) => boolean;
   options?: MatchRequestsBy;
 }): MatchRequestsBy {
   return {
@@ -104,7 +106,7 @@ export function getMatchRequestsBy({
   };
 }
 
-export function shouldReplaceSubscriptionId(pathname: string): boolean {
+export function defaultShouldReplaceSubscriptionId(pathname: string): boolean {
   if (pathname.startsWith('//subscriptions')) {
     // Paths that start with `//subscriptions` are an indication that an _exact_ resource ID was used to
     // create the request, meaning the REST endpoint originated from an earlier API response.

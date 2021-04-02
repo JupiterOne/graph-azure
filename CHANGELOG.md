@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `azure_subscription_contains_role_definition` relationships
+
 ### 5.20.0 - 2021-03-30
 
 ### Added

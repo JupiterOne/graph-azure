@@ -40,13 +40,7 @@ import {
 } from './steps/resource-manager/network';
 import { steps as storageSteps } from './steps/resource-manager/storage';
 import { IntegrationConfig } from './types';
-import {
-  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS,
-  STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS,
-  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS,
-  STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS,
-  STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,
-} from './steps/resource-manager/authorization';
+import { steps as authorizationSteps } from './steps/resource-manager/authorization/constants';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources';
 import { steps as subscriptionSteps } from './steps/resource-manager/subscriptions/constants';
 import {
@@ -149,15 +143,12 @@ describe('getStepStartStates', () => {
       [storageSteps.STORAGE_QUEUES]: { disabled: true },
       [storageSteps.STORAGE_TABLES]: { disabled: true },
       [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: true },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: { disabled: true },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS]: {
-        disabled: true,
-      },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS]: {
-        disabled: true,
-      },
-      [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: true },
-      [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENTS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENT_PRINCIPALS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENT_SCOPES]: { disabled: true },
+      [authorizationSteps.ROLE_DEFINITIONS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: true },
+      [authorizationSteps.CLASSIC_ADMINS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTIONS]: { disabled: true },
       [subscriptionSteps.LOCATIONS]: { disabled: true },
@@ -245,15 +236,12 @@ describe('getStepStartStates', () => {
       [storageSteps.STORAGE_QUEUES]: { disabled: true },
       [storageSteps.STORAGE_TABLES]: { disabled: true },
       [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: true },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: { disabled: true },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS]: {
-        disabled: true,
-      },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS]: {
-        disabled: true,
-      },
-      [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: true },
-      [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENTS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENT_PRINCIPALS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENT_SCOPES]: { disabled: true },
+      [authorizationSteps.ROLE_DEFINITIONS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: true },
+      [authorizationSteps.CLASSIC_ADMINS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTIONS]: { disabled: true },
       [subscriptionSteps.LOCATIONS]: { disabled: true },
@@ -341,15 +329,12 @@ describe('getStepStartStates', () => {
       [storageSteps.STORAGE_QUEUES]: { disabled: false },
       [storageSteps.STORAGE_TABLES]: { disabled: false },
       [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: false },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS]: { disabled: false },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS]: {
-        disabled: false,
-      },
-      [STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS]: {
-        disabled: false,
-      },
-      [STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS]: { disabled: false },
-      [STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS]: { disabled: false },
+      [authorizationSteps.ROLE_ASSIGNMENTS]: { disabled: false },
+      [authorizationSteps.ROLE_ASSIGNMENT_PRINCIPALS]: { disabled: false },
+      [authorizationSteps.ROLE_ASSIGNMENT_SCOPES]: { disabled: false },
+      [authorizationSteps.ROLE_DEFINITIONS]: { disabled: false },
+      [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: false },
+      [authorizationSteps.CLASSIC_ADMINS]: { disabled: false },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: false },
       [subscriptionSteps.SUBSCRIPTIONS]: { disabled: false },
       [subscriptionSteps.LOCATIONS]: { disabled: false },

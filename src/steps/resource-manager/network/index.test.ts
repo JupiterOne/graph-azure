@@ -10,7 +10,7 @@ import {
 import {
   getMatchRequestsBy,
   setupAzureRecording,
-  shouldReplaceSubscriptionId,
+  defaultShouldReplaceSubscriptionId,
 } from '../../../../test/helpers/recording';
 import { fetchAccount } from '../../active-directory';
 import {
@@ -1366,33 +1366,19 @@ describe('rm-network-location-watcher-relationships', () => {
     );
 
     test('success', async () => {
-      const matchRequestsBy = getMatchRequestsBy({ config: configFromEnv });
       recording = setupAzureRecording({
         directory: __dirname,
         name: 'rm-network-location-watcher-relationships',
         options: {
-          matchRequestsBy: {
-            ...matchRequestsBy,
-            url: {
-              ...(matchRequestsBy?.url as any),
-              pathname: (pathname: string): string => {
-                pathname = pathname.replace(
-                  configFromEnv.directoryId,
-                  'directory-id',
-                );
-                if (
-                  shouldReplaceSubscriptionId(pathname) &&
-                  !isListLocationsEndpoint(pathname)
-                ) {
-                  pathname = pathname.replace(
-                    configFromEnv.subscriptionId || 'subscription-id',
-                    'subscription-id',
-                  );
-                }
-                return pathname;
-              },
+          matchRequestsBy: getMatchRequestsBy({
+            config: configFromEnv,
+            shouldReplaceSubscriptionId: (pathname) => {
+              return (
+                defaultShouldReplaceSubscriptionId(pathname) &&
+                !isListLocationsEndpoint(pathname)
+              );
             },
-          },
+          }),
         },
       });
 

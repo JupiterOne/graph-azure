@@ -1,5 +1,4 @@
 import {
-  findOrCreateRoleDefinitionEntity,
   findOrBuildPrincipalEntityForRoleAssignment,
   fetchClassicAdministrators,
   fetchRoleAssignments,
@@ -7,18 +6,26 @@ import {
   fetchRoleDefinitions,
   buildRoleAssignmentScopeRelationships,
 } from '.';
-import instanceConfig from '../../../../test/integrationInstanceConfig';
+import instanceConfig, {
+  configFromEnv,
+} from '../../../../test/integrationInstanceConfig';
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
-import { AuthorizationClient } from './client';
 import { Entity } from '@jupiterone/integration-sdk-core';
-import { entities, getJupiterTypeForPrincipalType } from './constants';
+import {
+  entities,
+  getJupiterTypeForPrincipalType,
+  relationships,
+} from './constants';
 import {
   PrincipalType,
   RoleAssignment,
 } from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
 import {
   USER_ENTITY_TYPE,
   USER_ENTITY_CLASS,
@@ -26,6 +33,10 @@ import {
 } from '../../active-directory';
 import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import {
+  getMockAccountEntity,
+  getMockSubscriptionEntity,
+} from '../../../../test/helpers/getMockEntity';
 
 let recording: Recording;
 
@@ -33,163 +44,6 @@ afterEach(async () => {
   if (recording) {
     await recording.stop();
   }
-});
-
-describe('#findOrCreateRoleDefinitionEntity', () => {
-  test('should find entity that exists in the job state', async () => {
-    const client = ({
-      // eslint-disable-next-line @typescript-eslint/require-await
-      getRoleDefinition: async () => {
-        throw new Error(
-          'should not have called client.getRoleDefinition if entity exists in job state!',
-        );
-      },
-    } as unknown) as AuthorizationClient;
-    const webLinker = {
-      portalResourceUrl: () => {
-        throw new Error(
-          'should not have called webLinker.portalResourceUrl if entity exists in job state!',
-        );
-      },
-    };
-
-    const fullyQualifiedRoleDefinitionId =
-      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleDefinitions/role-definition-id';
-    const roleAssignment: RoleAssignment = {
-      id:
-        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
-      name: 'role-assignment-name',
-      type: 'Microsoft.Authorization/roleAssignments',
-      scope: '/subscriptions/subscription-id',
-      principalId: 'user-1',
-      principalType: 'User' as PrincipalType,
-      roleDefinitionId: fullyQualifiedRoleDefinitionId,
-    };
-
-    const roleDefinitionEntity: Entity = {
-      _key: roleAssignment.roleDefinitionId as string,
-      _type: entities.ROLE_DEFINITION._type,
-      _class: entities.ROLE_DEFINITION._class,
-    };
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig,
-      entities: [roleDefinitionEntity],
-    });
-
-    const result = await findOrCreateRoleDefinitionEntity(context, {
-      client,
-      webLinker,
-      roleDefinitionId: roleAssignment.roleDefinitionId as string,
-    });
-
-    expect(result).toBe(roleDefinitionEntity);
-  });
-
-  test('should create entity that does not exist in the job state', async () => {
-    const fullyQualifiedRoleDefinitionId =
-      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleDefinitions/role-definition-id';
-    const roleAssignment: RoleAssignment = {
-      id:
-        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
-      name: 'role-assignment-name',
-      type: 'Microsoft.Authorization/roleAssignments',
-      scope: '/subscriptions/subscription-id',
-      principalId: 'user-1',
-      principalType: 'User' as PrincipalType,
-      roleDefinitionId: fullyQualifiedRoleDefinitionId,
-    };
-
-    const roleDefinitionId = roleAssignment.roleDefinitionId as string;
-    const getRoleDefinitionMock = jest.fn().mockResolvedValue({
-      id: roleDefinitionId,
-      name: 'role-definition-name',
-      type: 'Microsoft.Authorization/roleDefinitions',
-      roleName: 'Reader',
-      description: 'Lets you view everything, but not make any changes.',
-      roleType: 'BuiltInRole',
-      permissions: [
-        {
-          actions: ['*/read'],
-          notActions: [],
-          dataActions: [],
-          notDataActions: [],
-        },
-      ],
-      assignableScopes: ['/'],
-    });
-    const client = ({
-      getRoleDefinition: getRoleDefinitionMock,
-    } as unknown) as AuthorizationClient;
-    const portalResourceUrl = () =>
-      `https://portal.azure.com/#@user.onmicrosoft.com/resource${roleDefinitionId}`;
-    const webLinker = { portalResourceUrl };
-
-    const roleDefinitionEntity: Entity = {
-      _key: roleAssignment.roleDefinitionId as string,
-      _type: entities.ROLE_DEFINITION._type,
-      _class: entities.ROLE_DEFINITION._class,
-    };
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig,
-      entities: [],
-    });
-
-    const result = await findOrCreateRoleDefinitionEntity(context, {
-      client,
-      webLinker,
-      roleDefinitionId: roleAssignment.roleDefinitionId as string,
-    });
-
-    expect(getRoleDefinitionMock).toHaveBeenCalledTimes(1);
-    expect(result).toMatchObject(roleDefinitionEntity);
-  });
-
-  test('should throw if client.getRoleDefinition returns undefined', async () => {
-    const fullyQualifiedRoleDefinitionId =
-      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleDefinitions/role-definition-id';
-    const roleAssignment: RoleAssignment = {
-      id:
-        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
-      name: 'role-assignment-name',
-      type: 'Microsoft.Authorization/roleAssignments',
-      scope: '/subscriptions/subscription-id',
-      principalId: 'user-1',
-      principalType: 'User' as PrincipalType,
-      roleDefinitionId: fullyQualifiedRoleDefinitionId,
-    };
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig,
-      entities: [],
-    });
-    const loggerWarnMock = jest.spyOn(context.logger, 'warn');
-
-    const options = {
-      client: ({
-        getRoleDefinition: jest.fn().mockResolvedValue(undefined),
-      } as unknown) as AuthorizationClient,
-      webLinker: {
-        portalResourceUrl: jest
-          .fn()
-          .mockRejectedValue(
-            new Error(
-              'should not have called webLinker.portalResourceUrl if client.getRoleDefinition returns undefined!',
-            ),
-          ),
-      },
-      roleDefinitionId: roleAssignment.roleDefinitionId as string,
-    };
-
-    await expect(
-      findOrCreateRoleDefinitionEntity(context, options),
-    ).rejects.toThrow(
-      'AuthorizationClient.getRoleDefinition returned "undefined" for roleDefinitionId.',
-    );
-
-    expect(loggerWarnMock).toHaveBeenCalledTimes(1);
-  });
 });
 
 describe('#findOrBuildTargetEntityForRoleDefinition', () => {
@@ -455,7 +309,7 @@ test('step - role assignment scope relationships', async () => {
   ]);
 });
 
-test('step - role definitions', async () => {
+test.skip('step - role definitions', async () => {
   const instanceConfig: IntegrationConfig = {
     clientId: process.env.CLIENT_ID || 'clientId',
     clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
@@ -546,6 +400,65 @@ test('step - role definitions', async () => {
       displayName: 'USES',
     },
   ]);
+});
+
+describe('rm-authorization-role-definitions', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const subscriptionEntity = getMockSubscriptionEntity(config);
+    return { accountEntity, subscriptionEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-authorization-role-definitions',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          shouldReplaceSubscriptionId: () => true,
+        }),
+      },
+    });
+
+    const { accountEntity, subscriptionEntity } = getSetupEntities(
+      configFromEnv,
+    );
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [subscriptionEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchRoleDefinitions(context);
+
+    const roleDefinitionEntities = context.jobState.collectedEntities;
+
+    expect(roleDefinitionEntities.length).toBeGreaterThan(0);
+    expect(roleDefinitionEntities).toMatchGraphObjectSchema({
+      _class: entities.ROLE_DEFINITION._class,
+    });
+
+    const subscriptionRoleDefinitionRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(subscriptionRoleDefinitionRelationships.length).toBe(
+      roleDefinitionEntities.length,
+    );
+    expect(
+      subscriptionRoleDefinitionRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const: relationships.SUBSCRIPTION_CONTAINS_ROLE_DEFINITION._type,
+          },
+        },
+      },
+    });
+  });
 });
 
 test('step - classic administrators', async () => {

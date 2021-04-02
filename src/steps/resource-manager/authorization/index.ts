@@ -2,19 +2,23 @@ import {
   Entity,
   createDirectRelationship,
   createMappedRelationship,
-  IntegrationError,
   Step,
   IntegrationStepExecutionContext,
   RelationshipClass,
+  getRawData,
 } from '@jupiterone/integration-sdk-core';
 
-import { createAzureWebLinker, AzureWebLinker } from '../../../azure';
+import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import {
   getAccountEntity,
   STEP_AD_ACCOUNT,
   STEP_AD_USERS,
 } from '../../active-directory';
+import {
+  steps as subscriptionSteps,
+  entities as subscriptionEntities,
+} from '../subscriptions/constants';
 import { AuthorizationClient } from './client';
 import {
   steps,
@@ -31,53 +35,16 @@ import {
   createClassicAdministratorHasUserRelationship,
   createRoleAssignmentEntity,
 } from './converters';
-import { PrincipalType } from '@azure/arm-authorization/esm/models';
+import {
+  PrincipalType,
+  RoleAssignment,
+} from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
 import findOrBuildResourceEntityFromResourceId, {
   PlaceholderEntity,
   isPlaceholderEntity,
 } from '../utils/findOrBuildResourceEntityFromResourceId';
-
-/**
- * Tries to fetch the role definition from the present job state.
- * If the definition is not in the job state, calls Azure client and builds entity
- * If Azure client doesn't return a role definition, throws Integration Error.
- * @throws IntegrationError
- */
-export async function findOrCreateRoleDefinitionEntity(
-  executionContext: IntegrationStepContext,
-  options: {
-    client: AuthorizationClient;
-    webLinker: AzureWebLinker;
-    roleDefinitionId: string;
-  },
-): Promise<Entity> {
-  const { jobState, logger } = executionContext;
-  const { client, webLinker, roleDefinitionId } = options;
-  let roleDefinitionEntity = await jobState.findEntity(roleDefinitionId);
-  if (roleDefinitionEntity === null) {
-    // entity does not already exist in job state - create it.
-    const roleDefinition = await client.getRoleDefinition(roleDefinitionId);
-    if (roleDefinition !== undefined) {
-      roleDefinitionEntity = createRoleDefinitionEntity(
-        webLinker,
-        roleDefinition,
-      );
-      await jobState.addEntity(roleDefinitionEntity);
-    } else {
-      logger.warn(
-        { roleDefinitionId },
-        'AuthorizationClient.getRoleDefinition returned "undefined" for roleDefinitionId.',
-      );
-      throw new IntegrationError({
-        message:
-          'AuthorizationClient.getRoleDefinition returned "undefined" for roleDefinitionId.',
-        code: 'AZURE_ROLE_DEFINITION_MISSING',
-      });
-    }
-  }
-  return roleDefinitionEntity;
-}
+import { Subscription } from '@azure/arm-subscriptions/esm/models';
 
 /**
  * Tries to fetch the principal entity from the job state.
@@ -214,25 +181,76 @@ export async function fetchRoleDefinitions(
   const client = new AuthorizationClient(instance.config, logger);
 
   await jobState.iterateEntities(
+    { _type: subscriptionEntities.SUBSCRIPTION._type },
+    async (subscriptionEntity) => {
+      const subscription = getRawData<Subscription>(subscriptionEntity);
+
+      if (!subscription?.id) return;
+
+      await client.iterateRoleDefinitions(
+        subscription.id,
+        async (roleDefinition) => {
+          const roleDefinitionEntity = await jobState.addEntity(
+            createRoleDefinitionEntity(webLinker, roleDefinition),
+          );
+          await jobState.addRelationship(
+            createDirectRelationship({
+              from: subscriptionEntity,
+              _class: RelationshipClass.CONTAINS,
+              to: roleDefinitionEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
+export async function buildRoleAssignmentDefinitionRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  await jobState.iterateEntities(
     { _type: entities.ROLE_ASSIGNMENT._type },
     async (roleAssignmentEntity: Entity) => {
-      const roleDefinitionId = roleAssignmentEntity.roleDefinitionId as string;
-      let roleDefinitionEntity: Entity;
-      try {
-        roleDefinitionEntity = await findOrCreateRoleDefinitionEntity(
-          executionContext,
-          { webLinker, roleDefinitionId, client },
-        );
-      } catch (err) {
+      const roleAssignment = getRawData<RoleAssignment>(roleAssignmentEntity);
+
+      if (!roleAssignment) {
         logger.warn(
           {
-            err,
-            roleAssignment: roleAssignmentEntity,
+            _key: roleAssignmentEntity._key,
+            rawDataNames: roleAssignmentEntity._rawData?.map((r) => r.name),
           },
-          'Could not find or create Azure Role Definition.',
+          'Could not find default roleAssignment in roleAssignmentEntity._rawData',
         );
         return;
       }
+
+      if (!roleAssignment.roleDefinitionId) {
+        logger.warn(
+          {
+            roleAssignmentId: roleAssignment.id,
+          },
+          'Role Assignment has no roleDefinitionId',
+        );
+        return;
+      }
+      const roleDefinitionEntity = await jobState.findEntity(
+        roleAssignment.roleDefinitionId,
+      );
+
+      if (!roleDefinitionEntity) {
+        logger.warn(
+          {
+            roleAssignmentId: roleAssignment.id,
+            roleDefinitionId: roleAssignment.roleDefinitionId,
+          },
+          'Could not find roleDefinition for roleDefinitionId in jobState',
+        );
+        return;
+      }
+
       await jobState.addRelationship(
         createDirectRelationship({
           _class: RelationshipClass.USES,
@@ -300,9 +318,17 @@ export const authorizationSteps: Step<
     id: steps.ROLE_DEFINITIONS,
     name: 'Role Definitions',
     entities: [entities.ROLE_DEFINITION],
-    relationships: [relationships.ROLE_ASSIGNMENT_USES_DEFINITION],
-    dependsOn: [STEP_AD_ACCOUNT, steps.ROLE_ASSIGNMENTS],
+    relationships: [relationships.SUBSCRIPTION_CONTAINS_ROLE_DEFINITION],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTIONS],
     executionHandler: fetchRoleDefinitions,
+  },
+  {
+    id: steps.ROLE_ASSIGNMENT_DEFINITIONS,
+    name: 'Role Assignment -> Role Definition Relationships',
+    entities: [],
+    relationships: [relationships.ROLE_ASSIGNMENT_USES_DEFINITION],
+    dependsOn: [steps.ROLE_ASSIGNMENTS, steps.ROLE_DEFINITIONS],
+    executionHandler: buildRoleAssignmentDefinitionRelationships,
   },
   {
     id: steps.CLASSIC_ADMINS,

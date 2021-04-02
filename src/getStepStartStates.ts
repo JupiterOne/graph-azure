@@ -163,6 +163,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       authorizationSteps.ROLE_ASSIGNMENT_PRINCIPALS,
       authorizationSteps.ROLE_ASSIGNMENT_SCOPES,
       authorizationSteps.ROLE_DEFINITIONS,
+      authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS,
       authorizationSteps.CLASSIC_ADMINS,
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
       subscriptionSteps.SUBSCRIPTIONS,

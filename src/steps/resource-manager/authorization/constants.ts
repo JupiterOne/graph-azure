@@ -39,6 +39,8 @@ export const steps = {
   ROLE_ASSIGNMENT_SCOPES:
     'rm-authorization-role-assignment-scope-relationships',
   ROLE_DEFINITIONS: 'rm-authorization-role-definitions',
+  ROLE_ASSIGNMENT_DEFINITIONS:
+    'rm-authorization-role-assignment-definition-relationships',
   CLASSIC_ADMINS: 'rm-authorization-classic-administrators',
 };
 
@@ -210,6 +212,12 @@ export const relationships = {
     _type: 'azure_role_assignment_uses_definition',
     sourceType: entities.ROLE_ASSIGNMENT._type,
     _class: RelationshipClass.USES,
+    targetType: entities.ROLE_DEFINITION._type,
+  },
+  SUBSCRIPTION_CONTAINS_ROLE_DEFINITION: {
+    _type: 'azure_subscription_contains_role_definition',
+    sourceType: subscriptionEntities.SUBSCRIPTION._type,
+    _class: RelationshipClass.CONTAINS,
     targetType: entities.ROLE_DEFINITION._type,
   },
   ROLE_ASSIGNMENT_ALLOWS_SCOPES: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,

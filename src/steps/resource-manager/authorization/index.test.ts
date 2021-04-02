@@ -12,13 +12,7 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { AuthorizationClient } from './client';
 import { Entity } from '@jupiterone/integration-sdk-core';
-import {
-  ROLE_DEFINITION_ENTITY_TYPE,
-  ROLE_DEFINITION_ENTITY_CLASS,
-  getJupiterTypeForPrincipalType,
-  ROLE_ASSIGNMENT_ENTITY_TYPE,
-  ROLE_ASSIGNMENT_ENTITY_CLASS,
-} from './constants';
+import { entities, getJupiterTypeForPrincipalType } from './constants';
 import {
   PrincipalType,
   RoleAssignment,
@@ -74,8 +68,8 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
 
     const roleDefinitionEntity: Entity = {
       _key: roleAssignment.roleDefinitionId as string,
-      _type: ROLE_DEFINITION_ENTITY_TYPE,
-      _class: ROLE_DEFINITION_ENTITY_CLASS,
+      _type: entities.ROLE_DEFINITION._type,
+      _class: entities.ROLE_DEFINITION._class,
     };
 
     const context = createMockAzureStepExecutionContext({
@@ -133,8 +127,8 @@ describe('#findOrCreateRoleDefinitionEntity', () => {
 
     const roleDefinitionEntity: Entity = {
       _key: roleAssignment.roleDefinitionId as string,
-      _type: ROLE_DEFINITION_ENTITY_TYPE,
-      _class: ROLE_DEFINITION_ENTITY_CLASS,
+      _type: entities.ROLE_DEFINITION._type,
+      _class: entities.ROLE_DEFINITION._class,
     };
 
     const context = createMockAzureStepExecutionContext({
@@ -342,8 +336,8 @@ test('step - role assignment principal relationships', async () => {
   const roleAssignmentDirectEntity = {
     _key:
       '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
-    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
-    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    _type: entities.ROLE_ASSIGNMENT._type,
+    _class: entities.ROLE_ASSIGNMENT._class,
     principalId: userEntityId,
     principalType: 'User' as PrincipalType,
   };
@@ -351,8 +345,8 @@ test('step - role assignment principal relationships', async () => {
   const roleAssignmentMappedEntity = {
     _key:
       '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
-    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
-    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    _type: entities.ROLE_ASSIGNMENT._type,
+    _class: entities.ROLE_ASSIGNMENT._class,
     principalId: 'unknown-principal-id',
     principalType: 'User' as PrincipalType,
   };
@@ -421,16 +415,16 @@ test('step - role assignment scope relationships', async () => {
   const roleAssignmentDirectEntity = {
     _key:
       '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
-    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
-    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    _type: entities.ROLE_ASSIGNMENT._type,
+    _class: entities.ROLE_ASSIGNMENT._class,
     scope: keyVaultId,
   };
 
   const roleAssignmentMappedEntity = {
     _key:
       '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
-    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
-    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    _type: entities.ROLE_ASSIGNMENT._type,
+    _class: entities.ROLE_ASSIGNMENT._class,
     scope: keyVaultPrefix + 'some-non-keyvault',
   };
 
@@ -477,8 +471,8 @@ test('step - role definitions', async () => {
   const roleAssignmentEntity = {
     _key:
       '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-1',
-    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
-    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    _type: entities.ROLE_ASSIGNMENT._type,
+    _class: entities.ROLE_ASSIGNMENT._class,
     roleDefinitionId:
       '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
   };
@@ -486,8 +480,8 @@ test('step - role definitions', async () => {
   const roleAssignmentEntityTwo = {
     _key:
       '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
-    _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
-    _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+    _type: entities.ROLE_ASSIGNMENT._type,
+    _class: entities.ROLE_ASSIGNMENT._class,
     roleDefinitionId:
       '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
   };

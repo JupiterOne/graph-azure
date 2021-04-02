@@ -14,16 +14,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
-import {
-  ROLE_DEFINITION_ENTITY_CLASS,
-  ROLE_DEFINITION_ENTITY_TYPE,
-  CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
-  CLASSIC_ADMINISTRATOR_ENTITY_CLASS,
-  CLASSIC_ADMINISTRATOR_ENTITY_KEY,
-  ROLE_ASSIGNMENT_ENTITY_TYPE,
-  ROLE_ASSIGNMENT_ENTITY_CLASS,
-  CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE,
-} from './constants';
+import { entities, relationships } from './constants';
 import { USER_ENTITY_TYPE } from '../../active-directory';
 
 export function createClassicAdministratorEntity(): Entity {
@@ -31,9 +22,9 @@ export function createClassicAdministratorEntity(): Entity {
     entityData: {
       source: {},
       assign: {
-        _key: CLASSIC_ADMINISTRATOR_ENTITY_KEY,
-        _type: CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
-        _class: CLASSIC_ADMINISTRATOR_ENTITY_CLASS,
+        _key: entities.CLASSIC_ADMIN._key,
+        _type: entities.CLASSIC_ADMIN._type,
+        _class: entities.CLASSIC_ADMIN._class,
         name: 'Azure Classic Administrator',
       },
     },
@@ -48,7 +39,7 @@ export function createClassicAdministratorHasUserRelationship(options: {
   const { webLinker, classicAdministratorGroupEntity, data } = options;
   return createMappedRelationship({
     _class: RelationshipClass.HAS,
-    _type: CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE,
+    _type: relationships.CLASSIC_ADMIN_GROUP_HAS_USER._type,
     _mapping: {
       relationshipDirection: RelationshipDirection.FORWARD,
       sourceEntityKey: classicAdministratorGroupEntity._key,
@@ -78,8 +69,8 @@ export function createRoleAssignmentEntity(
       source: data,
       assign: {
         _key: data.id as string,
-        _type: ROLE_ASSIGNMENT_ENTITY_TYPE,
-        _class: ROLE_ASSIGNMENT_ENTITY_CLASS,
+        _type: entities.ROLE_ASSIGNMENT._type,
+        _class: entities.ROLE_ASSIGNMENT._class,
         name: data.name,
         displayName: data.name,
         type: data.type,
@@ -101,8 +92,8 @@ export function createRoleDefinitionEntity(
   const entity = {
     ...convertProperties(data),
     _key: data.id as string,
-    _type: ROLE_DEFINITION_ENTITY_TYPE,
-    _class: ROLE_DEFINITION_ENTITY_CLASS,
+    _type: entities.ROLE_DEFINITION._type,
+    _class: entities.ROLE_DEFINITION._class,
     _rawData: [{ name: 'default', rawData: data }],
     displayName: data.roleName,
     description: data.description,

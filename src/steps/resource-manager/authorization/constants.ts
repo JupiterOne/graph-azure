@@ -32,19 +32,34 @@ import {
   steps as subscriptionSteps,
 } from '../subscriptions/constants';
 
-// Fetch Role Assignments
-export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENTS =
-  'rm-authorization-role-assignments';
+export const steps = {
+  ROLE_ASSIGNMENTS: 'rm-authorization-role-assignments',
+  ROLE_ASSIGNMENT_PRINCIPALS:
+    'rm-authorization-role-assignment-principal-relationships',
+  ROLE_ASSIGNMENT_SCOPES:
+    'rm-authorization-role-assignment-scope-relationships',
+  ROLE_DEFINITIONS: 'rm-authorization-role-definitions',
+  CLASSIC_ADMINS: 'rm-authorization-classic-administrators',
+};
 
-export const ROLE_ASSIGNMENT_ENTITY_TYPE = 'azure_role_assignment';
-export const ROLE_ASSIGNMENT_ENTITY_CLASS = ['AccessPolicy'];
-
-// Build Role Assignment to Principal Relationships
-export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS =
-  'rm-authorization-role-assignment-principal-relationships';
-
-export const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS =
-  RelationshipClass.ASSIGNED;
+export const entities = {
+  ROLE_DEFINITION: {
+    _type: 'azure_role_definition',
+    _class: ['AccessRole'],
+    resourceName: '[RM] Role Definition',
+  },
+  CLASSIC_ADMIN: {
+    _key: 'azure_classic_admin_group',
+    _type: 'azure_classic_admin_group',
+    _class: 'UserGroup',
+    resourceName: '[RM] Classic Admin',
+  },
+  ROLE_ASSIGNMENT: {
+    _type: 'azure_role_assignment',
+    _class: ['AccessPolicy'],
+    resourceName: '[RM] Role Assignment',
+  },
+};
 
 interface RoleAssignmentPrincipalMap {
   principalType: PrincipalType;
@@ -52,7 +67,7 @@ interface RoleAssignmentPrincipalMap {
   dependsOn: string[];
 }
 
-export const ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP: RoleAssignmentPrincipalMap[] = [
+const ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP: RoleAssignmentPrincipalMap[] = [
   {
     principalType: 'Application',
     type: 'azure_application',
@@ -105,13 +120,12 @@ export const ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP: RoleAssignmentPrincipalMap[] =
   },
 ];
 
-export const ROLE_ASSIGNMENT_DEFAULT_PRINCIPAL_TYPE =
-  'azure_unknown_principal_type';
+const ROLE_ASSIGNMENT_DEFAULT_PRINCIPAL_TYPE = 'azure_unknown_principal_type';
 
 export const ROLE_ASSIGNMENT_PRINCIPAL_DEPENDS_ON = ([] as string[]).concat(
   ...ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP.map((t) => t.dependsOn),
 );
-export const ROLE_ASSIGNMENT_PRINCIPAL_ENTITY_TYPES = ([] as string[]).concat(
+const ROLE_ASSIGNMENT_PRINCIPAL_ENTITY_TYPES = ([] as string[]).concat(
   ...ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP.map((t) => t.type),
 );
 
@@ -125,22 +139,22 @@ export function getJupiterTypeForPrincipalType(
   );
 }
 
-export function createRoleAssignmentPrincipalRelationshipType(
+function createRoleAssignmentPrincipalRelationshipType(
   targetEntityType: string,
 ): StepRelationshipMetadata {
   return {
     _type: generateRelationshipType(
-      ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS,
-      ROLE_ASSIGNMENT_ENTITY_TYPE,
+      RelationshipClass.ASSIGNED,
+      entities.ROLE_ASSIGNMENT._type,
       targetEntityType,
     ),
-    sourceType: ROLE_ASSIGNMENT_ENTITY_TYPE,
-    _class: ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_CLASS,
+    sourceType: entities.ROLE_ASSIGNMENT._type,
+    _class: RelationshipClass.ASSIGNED,
     targetType: targetEntityType,
   };
 }
 
-export const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_TYPES = [
+const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS = [
   createRoleAssignmentPrincipalRelationshipType(
     ROLE_ASSIGNMENT_DEFAULT_PRINCIPAL_TYPE,
   ),
@@ -148,10 +162,6 @@ export const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIP_TYPES = [
     createRoleAssignmentPrincipalRelationshipType,
   ),
 ];
-
-// Build Role Assignment to Scope Relationships
-export const STEP_RM_AUTHORIZATION_ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS =
-  'rm-authorization-role-assignment-scope-relationships';
 
 export const SCOPE_TYPES_MAP: ResourceIdMap[] = [
   ...RESOURCE_ID_TYPES_MAP,
@@ -168,57 +178,40 @@ export const SCOPE_TYPES_MAP: ResourceIdMap[] = [
 ];
 
 export const SCOPE_MATCHER_DEPENDS_ON = makeMatcherDependsOn(SCOPE_TYPES_MAP);
-export const SCOPE_MATCHER_ENTITY_TYPES = makeMatcherEntityTypes(
-  SCOPE_TYPES_MAP,
-);
+const SCOPE_MATCHER_ENTITY_TYPES = makeMatcherEntityTypes(SCOPE_TYPES_MAP);
 
-export const ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS =
-  RelationshipClass.ALLOWS;
-
-export function createRoleAssignmentScopeRelationshipType(
+function createRoleAssignmentScopeRelationshipType(
   targetEntityType: string,
 ): StepRelationshipMetadata {
   return {
     _type: generateRelationshipType(
-      ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
-      ROLE_ASSIGNMENT_ENTITY_TYPE,
+      RelationshipClass.ALLOWS,
+      entities.ROLE_ASSIGNMENT._type,
       targetEntityType,
     ),
-    sourceType: ROLE_ASSIGNMENT_ENTITY_TYPE,
-    _class: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_CLASS,
+    sourceType: entities.ROLE_ASSIGNMENT._type,
+    _class: RelationshipClass.ALLOWS,
     targetType: targetEntityType,
   };
 }
 
-export const ROLE_ASSIGNMENT_SCOPE_RELATIONSHIP_TYPES = [
+const ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS = [
   ...SCOPE_MATCHER_ENTITY_TYPES.map(createRoleAssignmentScopeRelationshipType),
 ];
 
-// Fetch Role Definitions
-export const STEP_RM_AUTHORIZATION_ROLE_DEFINITIONS =
-  'rm-authorization-role-definitions';
-
-export const ROLE_DEFINITION_ENTITY_TYPE = 'azure_role_definition';
-export const ROLE_DEFINITION_ENTITY_CLASS = ['AccessRole'];
-
-export const ROLE_DEFINITION_RELATIONSHIP_CLASS = RelationshipClass.USES;
-export const ROLE_DEFINITION_RELATIONSHIP_TYPE = generateRelationshipType(
-  ROLE_DEFINITION_RELATIONSHIP_CLASS,
-  ROLE_ASSIGNMENT_ENTITY_TYPE,
-  ROLE_DEFINITION_ENTITY_TYPE,
-);
-
-// Fetch Classic Administrators
-export const STEP_RM_AUTHORIZATION_CLASSIC_ADMINISTRATORS =
-  'rm-authorization-classic-administrators';
-
-export const CLASSIC_ADMINISTRATOR_ENTITY_KEY = 'azure_classic_admin_group';
-export const CLASSIC_ADMINISTRATOR_ENTITY_TYPE = 'azure_classic_admin_group';
-export const CLASSIC_ADMINISTRATOR_ENTITY_CLASS = 'UserGroup';
-
-export const CLASSIC_ADMINISTRATOR_RELATIONSHIP_CLASS = RelationshipClass.HAS;
-export const CLASSIC_ADMINISTRATOR_RELATIONSHIP_TYPE = generateRelationshipType(
-  CLASSIC_ADMINISTRATOR_RELATIONSHIP_CLASS,
-  CLASSIC_ADMINISTRATOR_ENTITY_TYPE,
-  USER_ENTITY_TYPE,
-);
+export const relationships = {
+  CLASSIC_ADMIN_GROUP_HAS_USER: {
+    _type: 'azure_classic_admin_group_has_user',
+    sourceType: entities.CLASSIC_ADMIN._type,
+    _class: RelationshipClass.HAS,
+    targetType: USER_ENTITY_TYPE,
+  },
+  ROLE_ASSIGNMENT_USES_DEFINITION: {
+    _type: 'azure_role_assignment_uses_definition',
+    sourceType: entities.ROLE_ASSIGNMENT._type,
+    _class: RelationshipClass.USES,
+    targetType: entities.ROLE_DEFINITION._type,
+  },
+  ROLE_ASSIGNMENT_ALLOWS_SCOPES: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,
+  ROLE_ASSIGNMENT_ASSIGNED_PRINCIPALS: ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS,
+};

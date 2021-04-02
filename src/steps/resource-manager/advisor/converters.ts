@@ -50,7 +50,7 @@ export function createRecommendationEntity(
         _type: AdvisorEntities.RECOMMENDATION._type,
         _class: AdvisorEntities.RECOMMENDATION._class,
         id: data.id,
-        name: data.name,
+        name: data.shortDescription?.solution,
         category: data.category,
         assessment: data.extendedProperties?.assessmentKey,
         severity: data.impact,

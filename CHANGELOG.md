@@ -8,21 +8,23 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.21.0 - 2021-04-02
+
 ### Added
 
 - Added `azure_subscription_contains_role_definition` relationships
-
-### 5.20.0 - 2021-03-30
-
-### Added
-
-- Added `azure_monitor_activity_log_alert_monitors_scope` relationships
-- Added `azure_monitor_activity_log_alert` entities
 
 ### Changed
 
 - Changed `azure_advisor_recommendation.name` to use `shortDescription.solution`
   instead of `name`, because `name` returned from the Azure API is a UUID.
+
+## 5.20.0 - 2021-03-30
+
+### Added
+
+- Added `azure_monitor_activity_log_alert_monitors_scope` relationships
+- Added `azure_monitor_activity_log_alert` entities
 
 ## 5.19.0 - 2021-03-30
 

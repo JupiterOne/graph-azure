@@ -399,6 +399,64 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
           'Could not find storage account for unmanaged disk defined by virtual machine.',
         );
       });
+
+      test('should create different relationship _keys when disk uses same storage account', async () => {
+        const virtualMachineWithMultipleDataDisks = virtualMachine;
+
+        virtualMachineWithMultipleDataDisks.storageProfile?.dataDisks?.push({
+          lun: 1,
+          createOption: 'FromImage',
+          vhd: {
+            uri:
+              'https://j1dev.blob.core.windows.net/vhds/non-managed-os00000000000000.vhd',
+          },
+        });
+
+        const vmWithMultipleDataDisksEntity = createVirtualMachineEntity(
+          webLinker,
+          virtualMachineWithMultipleDataDisks,
+        );
+
+        const storageAccount: StorageAccount = {
+          id: 'some-storage-account-id',
+          location: 'eastus',
+          primaryEndpoints: {
+            blob: 'https://j1dev.blob.core.windows.net/',
+          },
+        };
+
+        const storageAccountEntity = createStorageAccountEntity(
+          webLinker,
+          storageAccount,
+          { blob: {} },
+        );
+
+        const context = createMockAzureStepExecutionContext({
+          instanceConfig: configFromEnv,
+          entities: [storageAccountEntity, vmWithMultipleDataDisksEntity],
+        });
+
+        await buildVirtualMachineDiskRelationships(context);
+
+        expect(context.jobState.collectedEntities.length).toBe(0);
+
+        expect(context.jobState.collectedRelationships.length).toBe(2);
+        expect(context.jobState.collectedRelationships[0]._key).not.toBe(
+          context.jobState.collectedRelationships[1]._key,
+        );
+        expect(
+          context.jobState.collectedRelationships,
+        ).toMatchDirectRelationshipSchema({
+          schema: {
+            properties: {
+              _type: {
+                const: relationships.VIRTUAL_MACHINE_USES_UNMANAGED_DISK._type,
+              },
+              osDisk: { const: true },
+            },
+          },
+        });
+      });
     });
   });
 });

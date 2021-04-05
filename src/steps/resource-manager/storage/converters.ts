@@ -55,7 +55,7 @@ export function createStorageAccountEntity(
   webLinker: AzureWebLinker,
   data: StorageAccount,
   storageAccountServiceProperties: {
-    blob: BlobServiceProperties;
+    blob?: BlobServiceProperties;
     queue?: QueueServiceProperties;
   },
 ): Entity {
@@ -96,15 +96,15 @@ export function createStorageAccountEntity(
         networkRuleSetDefaultAction: data.networkRuleSet?.defaultAction,
         networkRuleSetBypass: data.networkRuleSet?.bypass,
         blobSoftDeleteEnabled:
-          storageAccountServiceProperties.blob.deleteRetentionPolicy?.enabled,
+          storageAccountServiceProperties.blob?.deleteRetentionPolicy?.enabled,
         blobSoftDeleteRetentionDays:
-          storageAccountServiceProperties.blob.deleteRetentionPolicy?.days,
+          storageAccountServiceProperties.blob?.deleteRetentionPolicy?.days,
         blobAnalyticsLoggingReadEnabled:
-          storageAccountServiceProperties.blob.blobAnalyticsLogging?.read,
+          storageAccountServiceProperties.blob?.blobAnalyticsLogging?.read,
         blobAnalyticsLoggingWriteEnabled:
-          storageAccountServiceProperties.blob.blobAnalyticsLogging?.write,
+          storageAccountServiceProperties.blob?.blobAnalyticsLogging?.write,
         blobAnalyticsLoggingDeleteEnabled:
-          storageAccountServiceProperties.blob.blobAnalyticsLogging
+          storageAccountServiceProperties.blob?.blobAnalyticsLogging
             ?.deleteProperty,
         queueAnalyticsLoggingReadEnabled:
           storageAccountServiceProperties.queue?.queueAnalyticsLogging?.read,

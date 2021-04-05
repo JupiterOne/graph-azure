@@ -24,7 +24,7 @@ export function createStorageAccountServiceClient(options: {
   logger: IntegrationLogger;
   storageAccount: { name: string; kind: Kind };
 }) {
-  const { config, storageAccount } = options;
+  const { config, logger, storageAccount } = options;
   const credential = new ClientSecretCredential(
     config.directoryId,
     config.clientId,
@@ -37,8 +37,18 @@ export function createStorageAccountServiceClient(options: {
         `https://${storageAccount.name}.blob.core.windows.net`,
         credential,
       );
-      const response = await client.getProperties();
-      return response._response.parsedBody;
+      try {
+        const response = await client.getProperties();
+        return response._response.parsedBody;
+      } catch (e) {
+        logger.warn(
+          {
+            storageAccount,
+            e,
+          },
+          'Failed to get blob service properties for storage account',
+        );
+      }
     },
 
     getQueueServiceProperties: async () => {
@@ -47,8 +57,18 @@ export function createStorageAccountServiceClient(options: {
           `https://${storageAccount.name}.queue.core.windows.net`,
           credential,
         );
-        const response = await client.getProperties();
-        return response._response.parsedBody;
+        try {
+          const response = await client.getProperties();
+          return response._response.parsedBody;
+        } catch (e) {
+          logger.warn(
+            {
+              storageAccount,
+              e,
+            },
+            'Failed to get queue service properties for storage account',
+          );
+        }
       }
     },
   };

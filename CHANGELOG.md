@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Changed
 
+- Handle errors thrown from `getBlobServiceProperties()` instead of allowing
+  storage account step to fail.
 - Changed `_key` property on `azure_vm_uses_storage_account` to fix
   `DuplicateKeyError`s when multiple data disks point to the same storage
   account.

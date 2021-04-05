@@ -14,7 +14,7 @@ JupiterOne.
 - Map Azure users to employees in your JupiterOne account.
 - Monitor visibility and governance of your Azure cloud environment by
   leveraging hundreds of out of the box queries.
-- Monitor compliance against the Azure CIS Framework and other security
+- Monitor compliance against the Azure CIS Benchmarks framework and other security
   benchmarks using the JupiterOne compliance app.
 - Monitor Azure vulnerabilities and findings from multiple services within the
   alerts app.

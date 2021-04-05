@@ -99,7 +99,7 @@ information:
 1. From the configuration **Gear Icon**, select **Integrations**.
 2. Scroll to the **Azure** integration tile and click it.
 3. Click the **Add Configuration** button and configure the following settings:
-- Enter the **Account Name** by which you'd like to identify this AWS
+- Enter the **Account Name** by which you'd like to identify this Azure
    account in JupiterOne. Ingested entities will have this value stored in
    `tag.AccountName` when **Tag with Account Name** is checked.
 - Enter a **Description** that will further assist your team when identifying

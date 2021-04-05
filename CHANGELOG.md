@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Changed `_key` property on `azure_vm_uses_storage_account` to fix
+  `DuplicateKeyError`s when multiple data disks point to the same storage
+  account.
+
 ## 5.21.0 - 2021-04-02
 
 ### Added

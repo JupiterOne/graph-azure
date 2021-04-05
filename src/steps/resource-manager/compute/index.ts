@@ -6,6 +6,7 @@ import {
   createDirectRelationship,
   RelationshipClass,
   getRawData,
+  generateRelationshipKey,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -172,6 +173,11 @@ export async function createVirtualMachineDiskRelationships(
         _class: RelationshipClass.USES,
         to: storageAccountEntity,
         properties: {
+          _key: generateRelationshipKey(
+            RelationshipClass.USES,
+            vmEntity,
+            vhdUri,
+          ),
           vhdUri,
           diskType,
         },

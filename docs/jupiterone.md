@@ -1,12 +1,4 @@
-# JupiterOne Managed Integration for Microsoft Azure
-
-## Overview
-
-JupiterOne provides a managed integration for Microsoft Azure. The integration
-connects directly to Microsoft 365 and Azure Resource Manager APIs to obtain
-metadata and analyze resource relationships. Customers authorize access by
-creating a Service Principal (App Registration) and providing the credentials to
-JupiterOne.
+# Integration with JupiterOne
 
 ## Azure + JupiterOne Integration Benefits 
 
@@ -33,7 +25,15 @@ JupiterOne.
 the Application (client) id, and the Application (client) secret with the correct permissions assigned.
 - You must have permission in JupiterOne to install new integrations.
 
-## Integration Instance Configuration
+## Support
+
+If you need help with this integration, please contact
+[JupiterOne Support](https://support.jupiterone.io).
+
+## Integration Walkthrough
+
+Customers authorize access by creating a Service Principal (App Registration) 
+and providing the credentials to JupiterOne.
 
 The integration is triggered by an event containing the information for a
 specific integration instance. Users configure the integration by providing API
@@ -42,6 +42,8 @@ credentials obtained through the Azure portal.
 Azure Active Directory is authenticated and accessed through the [Microsoft
 Graph API][1]. Azure Resource Manager is authenticated and accessed through
 [Resource Manager APIs][2].
+
+### In Azure
 
 To create the App Registration:
 
@@ -57,7 +59,7 @@ To create the App Registration:
 1. Create a new client secret
 1. Copy the generated secret (you only get one chance!)
 
-### APIPermissions
+#### APIPermissions
 
 Grant permission to read Microsoft Graph information:
 
@@ -91,6 +93,28 @@ information:
 1. Select **Role** "Reader", **Assign access to** "Azure AD user, group, or
    service principal"
 1. Search for the App "JupiterOne"
+
+### In JupiterOne
+
+1. From the configuration **Gear Icon**, select **Integrations**.
+2. Scroll to the **Azure** integration tile and click it.
+3. Click the **Add Configuration** button and configure the following settings:
+- Enter the **Account Name** by which you'd like to identify this AWS
+   account in JupiterOne. Ingested entities will have this value stored in
+   `tag.AccountName` when **Tag with Account Name** is checked.
+- Enter a **Description** that will further assist your team when identifying
+   the integration instance.
+- Select a **Polling Interval** that you feel is sufficient for your monitoring
+   needs. You may leave this as `DISABLED` and manually execute the integration.
+- Enter the **Directory (tenant) ID** of the Active Directory to target in Azure
+API requests.
+- Enter the **Application (client) ID** created for JupiterOne, used to authenticate
+with Azure.
+- Enter the **Application (client) Secret** associated with the application ID, used
+to authenticate with Azure.
+- Select the option **Ingest Active Directory** to ingest Directory information, and
+should only be anbled in one integration instance per Directory.
+4. Click **Create Configuration** once all values are provided.
 
 <!-- {J1_DOCUMENTATION_MARKER_START} -->
 <!--
@@ -333,7 +357,7 @@ NOTE: ALL OF THE FOLLOWING DOCUMENTATION IS GENERATED USING THE
 ********************************************************************************
 -->
 
-## Diagnostic Settings
+### Diagnostic Settings
 
 Azure Diagnostic Settings are supported on many Azure resources. A list of
 supported services / metrics can be found in

@@ -14,9 +14,7 @@ import { isJson } from '../../utils/isJson';
  * TODO Can this be replaced by `import { ClientSecretCredential } from
  * "@azure/identity";`? YES! See Microsoft 365 integration.
  */
-export default async function authenticate(
-  config: IntegrationConfig,
-): Promise<string> {
+export async function authenticate(config: IntegrationConfig): Promise<string> {
   const endpoint = `https://login.microsoftonline.com/${config.directoryId}/oauth2/v2.0/token`;
   const response = await fetch(endpoint, {
     method: 'post',

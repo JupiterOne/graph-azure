@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Changed
 
+- Improved error messaging when `Directory.Read.All` permission is not present
+  and `config.ingestActiveDirectory=true`.
 - Handle errors thrown from `getBlobServiceProperties()` instead of allowing
   storage account step to fail.
 - Changed `_key` property on `azure_vm_uses_storage_account` to fix

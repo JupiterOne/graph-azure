@@ -5,8 +5,8 @@ import {
   User,
 } from '@microsoft/microsoft-graph-types';
 
-import { GraphClient } from '../../azure/graph/client';
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
+import { GraphClient, IterableGraphResponse } from '../../azure/graph/client';
+import { permissions } from '../constants';
 
 export enum MemberType {
   USER = '#microsoft.graph.user',
@@ -39,25 +39,22 @@ export class DirectoryGraphClient extends GraphClient {
     IdentitySecurityDefaultsEnforcementPolicy | undefined
   > {
     const path = '/policies/identitySecurityDefaultsEnforcementPolicy';
-    let response;
     try {
-      response = await this.request<IdentitySecurityDefaultsEnforcementPolicy>(
-        this.client.api(path),
-      );
-    } catch (err) {
-      if (err instanceof IntegrationProviderAPIError) {
-        if (
-          err._cause?.message ===
-          'You cannot perform the requested operation, required scopes are missing in the token.'
-        ) {
-          this.logger.publishEvent({
-            name: 'auth',
-            description: `Unable to fetch data from ${path}. See https://github.com/JupiterOne/graph-azure/blob/master/docs/jupiterone.md#permissions for more information about optional permissions for this integration.`,
-          });
-          return;
-        }
-      }
+      await this.enforceApiPermission(path, permissions.graph.POLICY_READ_ALL);
+    } catch (e) {
+      this.logger.publishEvent({
+        name: 'auth',
+        description: `Unable to fetch data from ${path}. See https://github.com/JupiterOne/graph-azure/blob/master/docs/jupiterone.md#permissions for more information about optional permissions for this integration.`,
+      });
+      return;
+    }
 
+    try {
+      const response = await this.request<
+        IdentitySecurityDefaultsEnforcementPolicy
+      >(this.client.api(path));
+      return response;
+    } catch (err) {
       // This endpoint is brittle, since it behaves differently whether the default directory (tenant) is a "personal"
       // account or a "school/work" account. In order to protect us from execution failures during an important active directory
       // step, we'll never throw an error here but _explicitly_ warn operators (developers) using logger.error, and
@@ -71,15 +68,18 @@ export class DirectoryGraphClient extends GraphClient {
         // pass
       }
     }
-    return response;
   }
 
   // https://docs.microsoft.com/en-us/graph/api/directoryrole-list?view=graph-rest-1.0&tabs=http
   public async iterateDirectoryRoles(
     callback: (role: DirectoryRole) => void | Promise<void>,
   ): Promise<void> {
+    const resourceUrl = '/directoryRoles';
     this.logger.info('Iterating directory roles.');
-    return this.iterateResources({ resourceUrl: '/directoryRoles', callback });
+    return this.iterateResources({
+      resourceUrl,
+      callback,
+    });
   }
 
   // https://docs.microsoft.com/en-us/graph/api/directoryrole-list-members?view=graph-rest-1.0&tabs=http
@@ -87,9 +87,10 @@ export class DirectoryGraphClient extends GraphClient {
     roleId: string,
     callback: (member: DirectoryObject) => void | Promise<void>,
   ): Promise<void> {
+    const resourceUrl = `/directoryRoles/${roleId}/members`;
     this.logger.info({ roleId }, 'Iterating directory role members.');
     return this.iterateResources({
-      resourceUrl: `/directoryRoles/${roleId}/members`,
+      resourceUrl,
       callback,
     });
   }
@@ -98,8 +99,12 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateGroups(
     callback: (user: Group) => void | Promise<void>,
   ): Promise<void> {
+    const resourceUrl = '/groups';
     this.logger.info('Iterating groups.');
-    return this.iterateResources({ resourceUrl: '/groups', callback });
+    return this.iterateResources({
+      resourceUrl,
+      callback,
+    });
   }
 
   // https://docs.microsoft.com/en-us/graph/api/group-list-members?view=graph-rest-1.0&tabs=http
@@ -110,10 +115,11 @@ export class DirectoryGraphClient extends GraphClient {
     },
     callback: (user: GroupMember) => void | Promise<void>,
   ): Promise<void> {
+    const resourceUrl = `/groups/${input.groupId}/members`;
     this.logger.info({ groupId: input.groupId }, 'Iterating group members.');
 
     return this.iterateResources({
-      resourceUrl: `/groups/${input.groupId}/members`,
+      resourceUrl,
       options: { select: input.select },
       callback,
     });
@@ -123,6 +129,7 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateUsers(
     callback: (user: User) => void | Promise<void>,
   ): Promise<void> {
+    const resourceUrl = '/users';
     this.logger.info('Iterating users.');
     const defaultSelect = [
       'businessPhones',
@@ -139,7 +146,7 @@ export class DirectoryGraphClient extends GraphClient {
     ];
     const select = [...defaultSelect, 'userType'];
     return this.iterateResources({
-      resourceUrl: '/users',
+      resourceUrl,
       options: { select },
       callback,
     });
@@ -149,9 +156,10 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateServicePrincipals(
     callback: (a: any) => void | Promise<void>,
   ): Promise<void> {
+    const resourceUrl = '/servicePrincipals';
     this.logger.info('Iterating service principals.');
     return this.iterateResources({
-      resourceUrl: '/servicePrincipals',
+      resourceUrl,
       callback,
     });
   }
@@ -169,12 +177,11 @@ export class DirectoryGraphClient extends GraphClient {
     let nextLink: string | undefined;
     do {
       let api = this.client.api(nextLink || resourceUrl);
-      api.select;
       if (options?.select) {
         api = api.select(options.select);
       }
 
-      const response = await this.request(api);
+      const response = await this.request<IterableGraphResponse<T>>(api);
       if (response) {
         nextLink = response['@odata.nextLink'];
         for (const value of response.value) {

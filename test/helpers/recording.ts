@@ -1,6 +1,5 @@
-import { gunzipSync } from 'zlib';
-
 import {
+  mutations,
   Recording,
   RecordingEntry,
   setupRecording,
@@ -11,45 +10,30 @@ import { IntegrationConfig } from '../../src/types';
 
 export { Recording };
 
-export function setupAzureRecording(
-  input: Omit<SetupRecordingInput, 'mutateEntry'>,
-): Recording {
+export const azureMutations = {
+  ...mutations,
+  mutateAccessToken,
+};
+
+export function setupAzureRecording(input: SetupRecordingInput): Recording {
   return setupRecording({
-    ...input,
     mutateEntry: mutateRecordingEntry,
+    ...input,
   });
 }
 
 function mutateRecordingEntry(entry: RecordingEntry): void {
-  let responseText = entry.response.content.text;
+  azureMutations.unzipGzippedRecordingEntry(entry);
+  azureMutations.mutateAccessToken(entry, () => '[REDACTED]');
+}
+
+function mutateAccessToken(
+  entry: RecordingEntry,
+  mutation: (accessToken: string) => string,
+) {
+  const responseText = entry.response.content.text;
   if (!responseText) {
     return;
-  }
-
-  const contentEncoding = entry.response.headers.find(
-    (e) => e.name === 'content-encoding',
-  );
-  const transferEncoding = entry.response.headers.find(
-    (e) => e.name === 'transfer-encoding',
-  );
-
-  if (contentEncoding && contentEncoding.value === 'gzip') {
-    const chunkBuffers: Buffer[] = [];
-    const hexChunks = JSON.parse(responseText) as string[];
-    hexChunks.forEach((chunk) => {
-      const chunkBuffer = Buffer.from(chunk, 'hex');
-      chunkBuffers.push(chunkBuffer);
-    });
-
-    responseText = gunzipSync(Buffer.concat(chunkBuffers)).toString('utf-8');
-
-    // Remove encoding/chunking since content is now unzipped
-    entry.response.headers = entry.response.headers.filter(
-      (e) => e && e !== contentEncoding && e !== transferEncoding,
-    );
-    // Remove recording binary marker
-    delete (entry.response.content as any)._isBinary;
-    entry.response.content.text = responseText;
   }
 
   if (isJson(responseText)) {
@@ -65,7 +49,7 @@ function mutateRecordingEntry(entry: RecordingEntry): void {
           {
             ...responseJson,
             /* eslint-disable-next-line @typescript-eslint/camelcase */
-            access_token: '[REDACTED]',
+            access_token: mutation(responseJson.access_token),
           },
           null,
           0,

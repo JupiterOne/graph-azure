@@ -108,7 +108,7 @@ export function createDbServerEntity(
   if (configurations) {
     setRawData(serverEntity, {
       name: 'serverConfigurations',
-      rawData: configurations,
+      rawData: { configurations },
     });
   }
   return serverEntity;

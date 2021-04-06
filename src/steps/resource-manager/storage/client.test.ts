@@ -21,6 +21,8 @@ import {
   getMatchRequestsBy,
 } from '../../../../test/helpers/recording';
 
+import * as baseClient from '../../../azure/resource-manager/client';
+
 let recording: Recording;
 
 afterEach(async () => {
@@ -177,6 +179,7 @@ describe('iterateStorageBlobContainers', () => {
         id:
           '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
         name: 'j1dev',
+        kind: 'StorageV2',
       },
       (e) => {
         containers.push(e);
@@ -224,6 +227,7 @@ describe('iterateStorageBlobContainers', () => {
             id:
               '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
             name: 'j1dev',
+            kind: 'StorageV2',
           },
           (e) => {
             containers.push(e);
@@ -259,6 +263,7 @@ describe('iterateFileShares', () => {
         id:
           '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
         name: 'j1dev',
+        kind: 'StorageV2',
       },
       (e) => {
         resources.push(e);
@@ -316,31 +321,7 @@ describe('iterateQueues', () => {
     ]);
   });
 
-  test('skips when FeatureNotSupportedForAccount', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'iterateQueues-FeatureNotSupportedForAccount',
-    });
-
-    const client = new StorageClient(config, createMockIntegrationLogger());
-
-    const resources: StorageQueue[] = [];
-    await client.iterateQueues(
-      {
-        id:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage',
-        name: 'ndowmon1j1devblobstorage',
-        kind: 'BlobStorage',
-      },
-      (e) => {
-        resources.push(e);
-      },
-    );
-
-    expect(resources).toEqual([]);
-  });
-
-  test('logs when storage account does not support queues', async () => {
+  test('skips endpoint when storage account does not support queues', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateQueeus-unsupported-account',
@@ -348,29 +329,20 @@ describe('iterateQueues', () => {
     });
 
     const client = new StorageClient(config, createMockIntegrationLogger());
-    const loggerInfoSpy = jest.spyOn(client.logger, 'info');
+    const iterateAllResourcesSpy = jest.spyOn(
+      baseClient,
+      'iterateAllResources',
+    );
 
     const storageAccount = {
       id:
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage',
       name: 'ndowmon1j1devblobstorage',
-      kind: 'Storage' as Kind, // Set `Kind` to 'Storage` instead of 'BlobStorage' so the API is called on an invalid storage account.
+      kind: 'BlobStorage' as Kind,
     };
 
     await client.iterateQueues(storageAccount, jest.fn());
-    expect(loggerInfoSpy).toHaveBeenLastCalledWith(
-      {
-        err: expect.objectContaining({
-          _cause: expect.objectContaining({
-            code: 'FeatureNotSupportedForAccount',
-          }),
-        }),
-        resourceGroupName: 'j1dev',
-        storageAccountName: 'ndowmon1j1devblobstorage',
-        storageAccountKind: 'Storage',
-      },
-      'Could not fetch queues for storage account kind.',
-    );
+    expect(iterateAllResourcesSpy).not.toHaveBeenCalled();
   });
 });
 
@@ -415,7 +387,7 @@ describe('iterateTables', () => {
     ]);
   });
 
-  test('logs when storage account does not support tables', async () => {
+  test('skips endpoint when storage account does not support tables', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateTables-unsupported-account',
@@ -423,28 +395,19 @@ describe('iterateTables', () => {
     });
 
     const client = new StorageClient(config, createMockIntegrationLogger());
-    const loggerInfoSpy = jest.spyOn(client.logger, 'info');
+    const iterateAllResourcesSpy = jest.spyOn(
+      baseClient,
+      'iterateAllResources',
+    );
 
     const storageAccount = {
       id:
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage',
       name: 'ndowmon1j1devblobstorage',
-      kind: 'Storage' as Kind, // Set `Kind` to 'Storage` instead of 'BlobStorage' so the API is called on an invalid storage account.
+      kind: 'BlobStorage' as Kind,
     };
 
     await client.iterateTables(storageAccount, jest.fn());
-    expect(loggerInfoSpy).toHaveBeenLastCalledWith(
-      {
-        err: expect.objectContaining({
-          _cause: expect.objectContaining({
-            code: 'OperationNotAllowedOnKind',
-          }),
-        }),
-        resourceGroupName: 'j1dev',
-        storageAccountName: 'ndowmon1j1devblobstorage',
-        storageAccountKind: 'Storage',
-      },
-      'Could not fetch tables for storage account kind.',
-    );
+    expect(iterateAllResourcesSpy).not.toHaveBeenCalled();
   });
 });

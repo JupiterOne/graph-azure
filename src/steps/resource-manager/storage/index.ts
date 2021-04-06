@@ -5,6 +5,7 @@ import {
   Step,
   IntegrationStepExecutionContext,
   RelationshipClass,
+  getRawData,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -27,6 +28,7 @@ import {
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   STEP_RM_KEYVAULT_VAULTS,
 } from '../key-vault/constants';
+import { Vault } from '@azure/arm-keyvault/esm/models';
 export * from './constants';
 
 export async function fetchStorageAccounts(
@@ -94,10 +96,10 @@ async function buildKeyVaultEntityMap(
   await jobState.iterateEntities(
     { _type: KEY_VAULT_SERVICE_ENTITY_TYPE },
     (keyVaultEntity) => {
-      const keyVaultRawData = keyVaultEntity?._rawData?.[0]?.rawData;
+      const keyVaultRawData = getRawData<Vault>(keyVaultEntity);
       if (!keyVaultRawData) return;
 
-      const rawVaultUri: string = keyVaultRawData.properties?.vaultUri;
+      const rawVaultUri = keyVaultRawData.properties?.vaultUri;
       if (!rawVaultUri) return;
 
       // NOTE: sometimes the URI is returned with a trailing slash. We must remove it to make sure it matches the URI on the Storage Account
@@ -168,10 +170,14 @@ export async function fetchStorageFileShares(
   await jobState.iterateEntities(
     { _type: entities.STORAGE_ACCOUNT._type },
     async (storageAccountEntity) => {
+      const storageAccount = getRawData<StorageAccount>(storageAccountEntity);
+      if (!storageAccount) return;
+
       await client.iterateFileShares(
-        (storageAccountEntity as unknown) as {
-          name: string;
-          id: string;
+        {
+          name: storageAccount.name!,
+          id: storageAccount.id!,
+          kind: storageAccount.kind!,
         },
         async (fileShare) => {
           const fileShareEntity = createStorageFileShareEntity(
@@ -207,10 +213,14 @@ export async function fetchStorageContainers(
   await jobState.iterateEntities(
     { _type: entities.STORAGE_ACCOUNT._type },
     async (storageAccountEntity) => {
+      const storageAccount = getRawData<StorageAccount>(storageAccountEntity);
+      if (!storageAccount) return;
+
       await client.iterateStorageBlobContainers(
-        (storageAccountEntity as unknown) as {
-          name: string;
-          id: string;
+        {
+          name: storageAccount.name!,
+          id: storageAccount.id!,
+          kind: storageAccount.kind!,
         },
         async (container) => {
           const containerEntity = createStorageContainerEntity(
@@ -246,11 +256,14 @@ export async function fetchStorageQueues(
   await jobState.iterateEntities(
     { _type: entities.STORAGE_ACCOUNT._type },
     async (storageAccountEntity) => {
+      const storageAccount = getRawData<StorageAccount>(storageAccountEntity);
+      if (!storageAccount) return;
+
       await client.iterateQueues(
-        (storageAccountEntity as unknown) as {
-          name: string;
-          id: string;
-          kind: Kind;
+        {
+          name: storageAccount.name!,
+          id: storageAccount.id!,
+          kind: storageAccount.kind!,
         },
         async (e) => {
           const queueEntity = createStorageQueueEntity(
@@ -286,11 +299,14 @@ export async function fetchStorageTables(
   await jobState.iterateEntities(
     { _type: entities.STORAGE_ACCOUNT._type },
     async (storageAccountEntity) => {
+      const storageAccount = getRawData<StorageAccount>(storageAccountEntity);
+      if (!storageAccount) return;
+
       await client.iterateTables(
-        (storageAccountEntity as unknown) as {
-          name: string;
-          id: string;
-          kind: Kind;
+        {
+          name: storageAccount.name!,
+          id: storageAccount.id!,
+          kind: storageAccount.kind!,
         },
         async (e) => {
           const tableEntity = createStorageTableEntity(

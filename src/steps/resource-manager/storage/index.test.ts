@@ -237,6 +237,16 @@ test('step - storage queues', async () => {
         id: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev`,
         name: `ndowmon1j1dev`,
         kind: 'StorageV2',
+        _rawData: [
+          {
+            name: 'default',
+            rawData: {
+              id: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev`,
+              name: `ndowmon1j1dev`,
+              kind: 'StorageV2',
+            },
+          },
+        ],
       },
       {
         _class: ['Service'],
@@ -245,6 +255,17 @@ test('step - storage queues', async () => {
         id: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage`,
         name: `ndowmon1j1devblobstorage`,
         kind: 'BlockBlobStorage',
+
+        _rawData: [
+          {
+            name: 'default',
+            rawData: {
+              id: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage`,
+              name: `ndowmon1j1devblobstorage`,
+              kind: 'BlockBlobStorage',
+            },
+          },
+        ],
       },
     ],
     setData: {
@@ -315,6 +336,16 @@ test('step - storage tables', async () => {
         id: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev`,
         name: `ndowmon1j1dev`,
         kind: 'StorageV2',
+        _rawData: [
+          {
+            name: 'default',
+            rawData: {
+              id: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev`,
+              name: `ndowmon1j1dev`,
+              kind: 'StorageV2',
+            },
+          },
+        ],
       },
       {
         _class: ['Service'],
@@ -323,6 +354,16 @@ test('step - storage tables', async () => {
         id: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage`,
         name: `ndowmon1j1devblobstorage`,
         kind: 'BlockBlobStorage',
+        _rawData: [
+          {
+            name: 'default',
+            rawData: {
+              id: `/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage`,
+              name: `ndowmon1j1devblobstorage`,
+              kind: 'BlockBlobStorage',
+            },
+          },
+        ],
       },
     ],
     setData: {

@@ -5,6 +5,7 @@ import {
   Step,
   IntegrationStepExecutionContext,
   RelationshipClass,
+  getRawData,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -168,10 +169,14 @@ export async function fetchStorageFileShares(
   await jobState.iterateEntities(
     { _type: entities.STORAGE_ACCOUNT._type },
     async (storageAccountEntity) => {
+      const storageAccount = getRawData<StorageAccount>(storageAccountEntity);
+      if (!storageAccount) return;
+
       await client.iterateFileShares(
-        (storageAccountEntity as unknown) as {
-          name: string;
-          id: string;
+        {
+          name: storageAccount.name!,
+          id: storageAccount.id!,
+          kind: storageAccount.kind!,
         },
         async (fileShare) => {
           const fileShareEntity = createStorageFileShareEntity(
@@ -207,10 +212,14 @@ export async function fetchStorageContainers(
   await jobState.iterateEntities(
     { _type: entities.STORAGE_ACCOUNT._type },
     async (storageAccountEntity) => {
+      const storageAccount = getRawData<StorageAccount>(storageAccountEntity);
+      if (!storageAccount) return;
+
       await client.iterateStorageBlobContainers(
-        (storageAccountEntity as unknown) as {
-          name: string;
-          id: string;
+        {
+          name: storageAccount.name!,
+          id: storageAccount.id!,
+          kind: storageAccount.kind!,
         },
         async (container) => {
           const containerEntity = createStorageContainerEntity(
@@ -246,11 +255,14 @@ export async function fetchStorageQueues(
   await jobState.iterateEntities(
     { _type: entities.STORAGE_ACCOUNT._type },
     async (storageAccountEntity) => {
+      const storageAccount = getRawData<StorageAccount>(storageAccountEntity);
+      if (!storageAccount) return;
+
       await client.iterateQueues(
-        (storageAccountEntity as unknown) as {
-          name: string;
-          id: string;
-          kind: Kind;
+        {
+          name: storageAccount.name!,
+          id: storageAccount.id!,
+          kind: storageAccount.kind!,
         },
         async (e) => {
           const queueEntity = createStorageQueueEntity(
@@ -286,11 +298,14 @@ export async function fetchStorageTables(
   await jobState.iterateEntities(
     { _type: entities.STORAGE_ACCOUNT._type },
     async (storageAccountEntity) => {
+      const storageAccount = getRawData<StorageAccount>(storageAccountEntity);
+      if (!storageAccount) return;
+
       await client.iterateTables(
-        (storageAccountEntity as unknown) as {
-          name: string;
-          id: string;
-          kind: Kind;
+        {
+          name: storageAccount.name!,
+          id: storageAccount.id!,
+          kind: storageAccount.kind!,
         },
         async (e) => {
           const tableEntity = createStorageTableEntity(

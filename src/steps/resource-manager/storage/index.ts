@@ -28,6 +28,7 @@ import {
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   STEP_RM_KEYVAULT_VAULTS,
 } from '../key-vault/constants';
+import { Vault } from '@azure/arm-keyvault/esm/models';
 export * from './constants';
 
 export async function fetchStorageAccounts(
@@ -95,10 +96,10 @@ async function buildKeyVaultEntityMap(
   await jobState.iterateEntities(
     { _type: KEY_VAULT_SERVICE_ENTITY_TYPE },
     (keyVaultEntity) => {
-      const keyVaultRawData = keyVaultEntity?._rawData?.[0]?.rawData;
+      const keyVaultRawData = getRawData<Vault>(keyVaultEntity);
       if (!keyVaultRawData) return;
 
-      const rawVaultUri: string = keyVaultRawData.properties?.vaultUri;
+      const rawVaultUri = keyVaultRawData.properties?.vaultUri;
       if (!rawVaultUri) return;
 
       // NOTE: sometimes the URI is returned with a trailing slash. We must remove it to make sure it matches the URI on the Storage Account

@@ -17,10 +17,13 @@ import { authenticate } from './authenticate';
 import { retry } from '@lifeomic/attempt';
 import { permissions } from '../../steps/constants';
 
-interface AzureGraphResponse<TResponseType = any> {
-  value: TResponseType[];
+export type IterableGraphResponse<T> = {
+  value: T[];
+};
+
+type AzureGraphResponse<TResponseType = any> = TResponseType & {
   ['@odata.nextLink']?: string;
-}
+};
 
 /**
  * Pagination: https://docs.microsoft.com/en-us/graph/paging
@@ -102,7 +105,7 @@ export abstract class GraphClient {
   }
 
   public async fetchOrganization(): Promise<Organization> {
-    const response = await this.request<Organization>(
+    const response = await this.request<IterableGraphResponse<Organization>>(
       this.client.api('/organization'),
     );
     return response!.value[0];

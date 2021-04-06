@@ -5,7 +5,7 @@ import {
   User,
 } from '@microsoft/microsoft-graph-types';
 
-import { GraphClient } from '../../azure/graph/client';
+import { GraphClient, IterableGraphResponse } from '../../azure/graph/client';
 import { permissions } from '../constants';
 
 export enum MemberType {
@@ -53,7 +53,7 @@ export class DirectoryGraphClient extends GraphClient {
       const response = await this.request<
         IdentitySecurityDefaultsEnforcementPolicy
       >(this.client.api(path));
-      return response as any;
+      return response;
     } catch (err) {
       // This endpoint is brittle, since it behaves differently whether the default directory (tenant) is a "personal"
       // account or a "school/work" account. In order to protect us from execution failures during an important active directory
@@ -181,7 +181,7 @@ export class DirectoryGraphClient extends GraphClient {
         api = api.select(options.select);
       }
 
-      const response = await this.request(api);
+      const response = await this.request<IterableGraphResponse<T>>(api);
       if (response) {
         nextLink = response['@odata.nextLink'];
         for (const value of response.value) {

@@ -123,10 +123,12 @@ export function createStorageAccountEntity(
       tagProperties: ['environment'],
     },
   });
-  setRawData(storageAccountEntity, {
-    name: 'blobServiceProperties',
-    rawData: storageAccountServiceProperties.blob,
-  });
+  if (storageAccountServiceProperties.blob) {
+    setRawData(storageAccountEntity, {
+      name: 'blobServiceProperties',
+      rawData: storageAccountServiceProperties.blob,
+    });
+  }
   if (storageAccountServiceProperties.queue) {
     setRawData(storageAccountEntity, {
       name: 'queueServiceProperties',

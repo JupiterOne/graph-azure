@@ -23,24 +23,21 @@ let recording: Recording;
 
 describe('step - subscriptions', () => {
   let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
-  let instanceConfig: IntegrationConfig;
 
   beforeAll(async () => {
-    instanceConfig = {
-      clientId: process.env.CLIENT_ID || 'clientId',
-      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-      directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
-      subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
-      developerId: 'keionned',
-    };
-
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'resource-manager-step-resource-groups',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          shouldReplaceSubscriptionId: () => true,
+        }),
+      },
     });
 
     context = createMockAzureStepExecutionContext({
-      instanceConfig,
+      instanceConfig: configFromEnv,
       setData: {
         [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
       },
@@ -62,14 +59,14 @@ describe('step - subscriptions', () => {
       expect.objectContaining({
         _class: entities.SUBSCRIPTION._class,
         _type: entities.SUBSCRIPTION._type,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}`,
-        id: `/subscriptions/${instanceConfig.subscriptionId}`,
+        _key: `/subscriptions/${configFromEnv.subscriptionId}`,
+        id: `/subscriptions/${configFromEnv.subscriptionId}`,
         name: expect.any(String),
         displayName: expect.any(String),
-        subscriptionId: instanceConfig.subscriptionId,
+        subscriptionId: configFromEnv.subscriptionId,
         state: 'Enabled',
         authorizationSource: 'RoleBased',
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${configFromEnv.subscriptionId}`,
       }),
     );
   });

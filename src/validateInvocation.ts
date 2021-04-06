@@ -4,8 +4,8 @@ import {
   IntegrationError,
 } from '@jupiterone/integration-sdk-core';
 
-import { default as authenticateGraph } from './azure/graph/authenticate';
 import { validateResourceManagerInvocation } from './azure/resource-manager/authenticate';
+import { DirectoryGraphClient } from './steps/active-directory/client';
 import { IntegrationConfig } from './types';
 import { hasSubscriptionId } from './utils/hasSubscriptionId';
 
@@ -20,14 +20,14 @@ export default async function validateInvocation(
     );
   }
 
-  try {
-    await authenticateGraph(config);
-  } catch (err) {
-    if (!(err instanceof IntegrationError)) {
-      throw new IntegrationValidationError(err);
-    } else {
-      throw err;
-    }
+  const directoryClient = new DirectoryGraphClient(
+    validationContext.logger,
+    config,
+  );
+  await directoryClient.validate();
+
+  if (config.ingestActiveDirectory) {
+    await directoryClient.validateDirectoryPermissions();
   }
 
   if (hasSubscriptionId(config)) {

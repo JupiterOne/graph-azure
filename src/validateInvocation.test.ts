@@ -7,7 +7,12 @@ import { createMockExecutionContext } from '@jupiterone/integration-sdk-testing'
 import { IntegrationConfig } from './types';
 import validateInvocation from './validateInvocation';
 
-import { Recording, setupAzureRecording } from '../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  Recording,
+  setupAzureRecording,
+} from '../test/helpers/recording';
+import { configFromEnv } from '../test/integrationInstanceConfig';
 
 it('should reject', async () => {
   const executionContext = createMockExecutionContext<IntegrationConfig>({
@@ -46,17 +51,17 @@ describe('validateInvocation recordings', () => {
     await recording.stop();
   });
 
-  const config: IntegrationConfig = {
-    clientId: process.env.CLIENT_ID || 'clientId',
-    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
-    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-  };
-
   test('validates with subscriptionId', async () => {
+    const config = {
+      ...configFromEnv,
+      subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+    };
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'validateInvocationWithValidSubscriptionId',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config }),
+      },
     });
 
     const executionContext = createMockExecutionContext({
@@ -72,11 +77,14 @@ describe('validateInvocation recordings', () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'validateInvocationWithEmptySubscriptionId',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
     });
 
     const executionContext = createMockExecutionContext({
       instanceConfig: {
-        ...config,
+        ...configFromEnv,
         subscriptionId: '',
       },
     });
@@ -90,11 +98,14 @@ describe('validateInvocation recordings', () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'validateInvocationWithUndefinedSubscriptionId',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
     });
 
     const executionContext = createMockExecutionContext({
       instanceConfig: {
-        ...config,
+        ...configFromEnv,
         subscriptionId: undefined,
       },
     });
@@ -109,13 +120,14 @@ describe('validateInvocation recordings', () => {
       directory: __dirname,
       name: 'validateInvocationWithInvalidDirectoryId',
       options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
         recordFailedRequests: true,
       },
     });
 
     const executionContext = createMockExecutionContext({
       instanceConfig: {
-        ...config,
+        ...configFromEnv,
         directoryId: 'some-fake-directory-id',
       },
     });
@@ -138,13 +150,14 @@ describe('validateInvocation recordings', () => {
       directory: __dirname,
       name: 'validateInvocationWithInvalidSubscriptionId',
       options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
         recordFailedRequests: true,
       },
     });
 
     const executionContext = createMockExecutionContext({
       instanceConfig: {
-        ...config,
+        ...configFromEnv,
         subscriptionId: 'some-fake-subscription-id',
       },
     });
@@ -167,13 +180,14 @@ describe('validateInvocation recordings', () => {
       directory: __dirname,
       name: 'validateInvocationWithInvalidInputInDirectoryId',
       options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
         recordFailedRequests: true,
       },
     });
 
     const executionContext = createMockExecutionContext({
       instanceConfig: {
-        ...config,
+        ...configFromEnv,
         directoryId:
           '%22%3E%3Cscript%20src=https://hgxxss.xss.ht%3E%3C/script%3E',
       },

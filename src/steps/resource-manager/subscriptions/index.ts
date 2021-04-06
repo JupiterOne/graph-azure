@@ -32,14 +32,14 @@ export async function fetchSubscriptions(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new J1SubscriptionClient(instance.config, logger);
 
-  if (!process.env.subsccriptionId) {
+  if (!instance.config.subscriptionId) {
     // This should never happen as getStepStartStates should turn off this step if there is no subscriptionId
     throw new IntegrationConfigLoadError(
       'You need to provide a subscriptionId in order to ingest a subscription',
     );
   }
   const subscription = await client.fetchSubscription(
-    process.env.subsccriptionId,
+    instance.config.subscriptionId,
   );
   if (subscription) {
     const subscriptionEntity = createSubscriptionEntity(

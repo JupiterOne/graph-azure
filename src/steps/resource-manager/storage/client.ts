@@ -94,6 +94,7 @@ export class StorageClient extends Client {
     storageAccount: {
       name: string;
       id: string;
+      kind: Kind;
     },
     callback: (e: BlobContainer) => void | Promise<void>,
   ): Promise<void> {
@@ -103,7 +104,9 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name!;
 
-    return iterateAllResources({
+    if (!isServiceEnabledForKind.blob(storageAccount.kind)) return;
+
+    await iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
@@ -132,42 +135,22 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name!;
 
-    if (isServiceEnabledForKind.queue(storageAccount.kind)) {
-      try {
-        await iterateAllResources({
-          logger: this.logger,
-          serviceClient,
-          resourceEndpoint: {
-            list: async () => {
-              return serviceClient.queue.list(resourceGroup, accountName);
-            },
-            listNext: async (nextLink: string) => {
-              return serviceClient.queue.listNext(nextLink);
-            },
-          },
-          resourceDescription: 'storage.queues',
-          callback,
-        });
-      } catch (err) {
-        const azureErrorCode = err._cause?.code;
-        if (
-          azureErrorCode === 'FeatureNotSupportedForAccount' ||
-          azureErrorCode === 'OperationNotAllowedOnKind'
-        ) {
-          this.logger.info(
-            {
-              err,
-              resourceGroupName: resourceGroup,
-              storageAccountName: accountName,
-              storageAccountKind: storageAccount.kind,
-            },
-            'Could not fetch queues for storage account kind.',
-          );
-        } else {
-          throw err;
-        }
-      }
-    }
+    if (!isServiceEnabledForKind.queue(storageAccount.kind)) return;
+
+    await iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => {
+          return serviceClient.queue.list(resourceGroup, accountName);
+        },
+        listNext: async (nextLink: string) => {
+          return serviceClient.queue.listNext(nextLink);
+        },
+      },
+      resourceDescription: 'storage.queues',
+      callback,
+    });
   }
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -181,48 +164,29 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name;
 
-    if (isServiceEnabledForKind.table(storageAccount.kind)) {
-      try {
-        await iterateAllResources({
-          logger: this.logger,
-          serviceClient,
-          resourceEndpoint: {
-            list: async () => {
-              return serviceClient.table.list(resourceGroup, accountName);
-            },
-            listNext: async (nextLink: string) => {
-              return serviceClient.table.listNext(nextLink);
-            },
-          },
-          resourceDescription: 'storage.tables',
-          callback,
-        });
-      } catch (err) {
-        const azureErrorCode = err._cause?.code;
-        if (
-          azureErrorCode === 'FeatureNotSupportedForAccount' ||
-          azureErrorCode === 'OperationNotAllowedOnKind'
-        ) {
-          this.logger.info(
-            {
-              err,
-              resourceGroupName: resourceGroup,
-              storageAccountName: accountName,
-              storageAccountKind: storageAccount.kind,
-            },
-            'Could not fetch tables for storage account kind.',
-          );
-        } else {
-          throw err;
-        }
-      }
-    }
+    if (!isServiceEnabledForKind.table(storageAccount.kind)) return;
+
+    await iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => {
+          return serviceClient.table.list(resourceGroup, accountName);
+        },
+        listNext: async (nextLink: string) => {
+          return serviceClient.table.listNext(nextLink);
+        },
+      },
+      resourceDescription: 'storage.tables',
+      callback,
+    });
   }
 
   public async iterateFileShares(
     storageAccount: {
       name: string;
       id: string;
+      kind: Kind;
     },
     callback: (e: FileShare) => void | Promise<void>,
   ): Promise<void> {
@@ -232,7 +196,9 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name!;
 
-    return iterateAllResources({
+    if (!isServiceEnabledForKind.fileShare(storageAccount.kind)) return;
+
+    await iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
@@ -253,9 +219,54 @@ export class StorageClient extends Client {
 
 const isServiceEnabledForKind = {
   table: (kind: Kind) => {
-    return (['Storage', 'StorageV2'] as Kind[]).includes(kind);
+    return getSupportedServicesForKind(kind).includes(StorageService.TABLE);
   },
   queue: (kind: Kind) => {
-    return (['Storage', 'StorageV2'] as Kind[]).includes(kind);
+    return getSupportedServicesForKind(kind).includes(StorageService.QUEUE);
+  },
+  fileShare: (kind: Kind) => {
+    return getSupportedServicesForKind(kind).includes(
+      StorageService.FILE_SHARE,
+    );
+  },
+  blob: (kind: Kind) => {
+    return getSupportedServicesForKind(kind).includes(StorageService.BLOB);
   },
 };
+
+enum StorageService {
+  TABLE = 'TABLE',
+  FILE_SHARE = 'FILE_SHARE',
+  QUEUE = 'QUEUE',
+  BLOB = 'BLOB',
+}
+
+/**
+ * See Azure documentation for available services by each account kind:
+ *
+ * https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
+ */
+function getSupportedServicesForKind(kind: Kind): StorageService[] {
+  switch (kind) {
+    case 'Storage':
+      return [
+        StorageService.BLOB,
+        StorageService.FILE_SHARE,
+        StorageService.QUEUE,
+        StorageService.TABLE,
+      ];
+    case 'StorageV2':
+      return [
+        StorageService.BLOB,
+        StorageService.FILE_SHARE,
+        StorageService.QUEUE,
+        StorageService.TABLE,
+      ];
+    case 'FileStorage':
+      return [StorageService.FILE_SHARE];
+    case 'BlobStorage':
+      return [StorageService.BLOB];
+    case 'BlockBlobStorage':
+      return [StorageService.BLOB];
+  }
+}

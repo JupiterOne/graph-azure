@@ -13,8 +13,15 @@ and this project adheres to
 - Only igest the subscription resource provided in the `subscriptionId` config
   field.
 
+## 5.21.1 - 2021-04-06
+
 ### Changed
 
+- Upgraded `@jupiterone/integration-sdk-*@5.11.2`
+- Added checks to ensure storage account `Kind` supports file and blobs before
+  attempting to fetch file and blob resources.
+- Improved error messaging when `Directory.Read.All` permission is not present
+  and `config.ingestActiveDirectory=true`.
 - Handle errors thrown from `getBlobServiceProperties()` instead of allowing
   storage account step to fail.
 - Changed `_key` property on `azure_vm_uses_storage_account` to fix

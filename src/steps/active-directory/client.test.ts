@@ -1,7 +1,4 @@
-import {
-  createMockIntegrationLogger,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 import {
   DirectoryObject,
   DirectoryRole,
@@ -13,6 +10,8 @@ import config, { configFromEnv } from '../../../test/integrationInstanceConfig';
 import { DirectoryGraphClient, GroupMember } from './client';
 import { IntegrationConfig } from '../../types';
 import {
+  Recording,
+  azureMutations,
   setupAzureRecording,
   getMatchRequestsBy,
 } from '../../../test/helpers/recording';
@@ -40,13 +39,19 @@ afterEach(async () => {
  * It also requires an additional permission, Policy.Read.All.
  */
 describe('fetchIdentitySecurityDefaultsEnforcementPolicy', () => {
-  // When re-recording this test, ensure it is recorded with a school/work active directory account.
+  // When re-recording this test, ensure it is recorded using a service principal with Policy.Read.All
   test('should fetch for account with permission Policy.Read.All', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'fetchIdentitySecurityDefaultsEnforcementPolicy-with-permission',
       options: {
         matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+      mutateEntry: (entry) => {
+        azureMutations.unzipGzippedRecordingEntry(entry);
+        azureMutations.mutateAccessToken(entry, (accessToken) =>
+          ['[REDACTED]', accessToken.split('.')[1], '[REDACTED]'].join('.'),
+        );
       },
     });
 
@@ -58,14 +63,19 @@ describe('fetchIdentitySecurityDefaultsEnforcementPolicy', () => {
     });
   });
 
-  // When re-recording this test, ensure it is recorded with a school/work active directory account.
+  // When re-recording this test, ensure it is recorded using a service principal without Policy.Read.All
   test('should inform user if not granted permission Policy.Read.All', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'fetchIdentitySecurityDefaultsEnforcementPolicy-without-permission',
       options: {
         matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
-        recordFailedRequests: true,
+      },
+      mutateEntry: (entry) => {
+        azureMutations.unzipGzippedRecordingEntry(entry);
+        azureMutations.mutateAccessToken(entry, (accessToken) =>
+          ['[REDACTED]', accessToken.split('.')[1], '[REDACTED]'].join('.'),
+        );
       },
     });
     const publishEventSpy = jest.spyOn(logger, 'publishEvent');

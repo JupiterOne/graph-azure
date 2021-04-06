@@ -1414,7 +1414,7 @@ describe('rm-network-location-watcher-relationships', () => {
           },
         },
       });
-    });
+    }, 10000);
   });
 
   test('should throw if no locationNameMap', async () => {

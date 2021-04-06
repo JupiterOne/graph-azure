@@ -2,7 +2,7 @@ import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import { Recording } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../test/integrationInstanceConfig';
-import authenticate from './authenticate';
+import { authenticate } from './authenticate';
 import { setupAzureRecording } from '../../../test/helpers/recording';
 
 let recording: Recording;

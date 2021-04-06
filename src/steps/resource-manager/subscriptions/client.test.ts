@@ -7,18 +7,10 @@ import {
 } from '../../../../test/helpers/recording';
 import { J1SubscriptionClient } from './client';
 import { Location, Subscription } from '@azure/arm-subscriptions/esm/models';
-import { IntegrationConfig } from '../../../types';
-import { configFromEnv } from '../../../../test/integrationInstanceConfig';
-
-// developer used different creds than ~/test/integrationInstanceConfig
-const config: IntegrationConfig = {
-  clientId: process.env.CLIENT_ID || 'clientId',
-  clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-  directoryId:
-    process.env.DIRECTORY_ID || '992d7bbe-b367-459c-a10f-cf3fd16103ab',
-  subscriptionId:
-    process.env.SUBSCRIPTION_ID || 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-};
+import {
+  config,
+  configFromEnv,
+} from '../../../../test/integrationInstanceConfig';
 
 let recording: Recording;
 
@@ -90,14 +82,19 @@ describe('fetchSubscription', () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'fetchSubscription',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
     });
 
     const client = new J1SubscriptionClient(
-      config,
+      configFromEnv,
       createMockIntegrationLogger(),
     );
 
-    const subscription = await client.fetchSubscription(config.subscriptionId!);
+    const subscription = await client.fetchSubscription(
+      configFromEnv.subscriptionId!,
+    );
 
     expect(subscription).toMatchObject({
       authorizationSource: expect.any(String),
@@ -115,10 +112,13 @@ describe('fetchSubscriptions', () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'fetchSubscriptions',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
     });
 
     const client = new J1SubscriptionClient(
-      config,
+      configFromEnv,
       createMockIntegrationLogger(),
     );
 

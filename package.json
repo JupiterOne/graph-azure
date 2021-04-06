@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-azure",
-  "version": "5.21.0",
+  "version": "5.21.1",
   "description": "A graph conversion tool for https://azure.microsoft.com/.",
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/graph-azure",
@@ -74,12 +74,12 @@
     "@azure/ms-rest-js": "^2.0.0"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^5.11.0"
+    "@jupiterone/integration-sdk-core": "^5.11.2"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^5.11.0",
-    "@jupiterone/integration-sdk-dev-tools": "^5.11.0",
-    "@jupiterone/integration-sdk-testing": "^5.11.0",
+    "@jupiterone/integration-sdk-core": "^5.11.2",
+    "@jupiterone/integration-sdk-dev-tools": "^5.11.2",
+    "@jupiterone/integration-sdk-testing": "^5.11.2",
     "@microsoft/microsoft-graph-types": "^1.10.0",
     "@types/fs-extra": "^5.0.5",
     "@types/jest": "^25.2.1",

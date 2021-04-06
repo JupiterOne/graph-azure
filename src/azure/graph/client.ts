@@ -1,6 +1,8 @@
 import {
   IntegrationLogger,
   IntegrationProviderAPIError,
+  IntegrationProviderAuthorizationError,
+  IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 import { FetchError } from 'node-fetch';
 import {
@@ -11,13 +13,17 @@ import {
 import { Organization } from '@microsoft/microsoft-graph-types';
 
 import { IntegrationConfig } from '../../types';
-import authenticate from './authenticate';
+import { authenticate } from './authenticate';
 import { retry } from '@lifeomic/attempt';
+import { permissions } from '../../steps/constants';
 
-interface AzureGraphResponse<TResponseType = any> {
-  value: TResponseType[];
+export type IterableGraphResponse<T> = {
+  value: T[];
+};
+
+type AzureGraphResponse<TResponseType = any> = TResponseType & {
   ['@odata.nextLink']?: string;
-}
+};
 
 /**
  * Pagination: https://docs.microsoft.com/en-us/graph/paging
@@ -26,14 +32,54 @@ interface AzureGraphResponse<TResponseType = any> {
  */
 export abstract class GraphClient {
   protected client: Client;
+  private authenticationProvider: AuthenticationProvider;
 
   constructor(
     readonly logger: IntegrationLogger,
     readonly config: IntegrationConfig,
   ) {
+    this.authenticationProvider = new GraphAuthenticationProvider(config);
     this.client = Client.initWithMiddleware({
-      authProvider: new GraphAuthenticationProvider(config),
+      authProvider: this.authenticationProvider,
     });
+  }
+
+  private async getAccessTokenPermissions(): Promise<string[]> {
+    const accessToken = await this.authenticationProvider.getAccessToken();
+    return getRolesFromAccessToken(accessToken);
+  }
+
+  protected async enforceApiPermission(
+    endpoint: string,
+    permission: string,
+  ): Promise<void> {
+    if (!(await this.getAccessTokenPermissions()).includes(permission)) {
+      throw new IntegrationProviderAuthorizationError({
+        endpoint,
+        status: 'MISSING_API_PERMISSION',
+        statusText: 'Missing API permission required to access this endpoint',
+        resourceType: [permission],
+      });
+    }
+  }
+
+  public async validate(): Promise<void> {
+    try {
+      await this.authenticationProvider.getAccessToken();
+    } catch (e) {
+      throw new IntegrationValidationError(e);
+    }
+  }
+
+  public async validateDirectoryPermissions(): Promise<void> {
+    try {
+      await this.enforceApiPermission(
+        '/organization',
+        permissions.graph.DIRECTORY_READ_ALL,
+      );
+    } catch (e) {
+      throw new IntegrationValidationError(e);
+    }
   }
 
   public async fetchMetadata(): Promise<AzureGraphResponse | undefined> {
@@ -41,7 +87,7 @@ export abstract class GraphClient {
   }
 
   public async fetchOrganization(): Promise<Organization> {
-    const response = await this.request<Organization>(
+    const response = await this.request<IterableGraphResponse<Organization>>(
       this.client.api('/organization'),
     );
     return response!.value[0];
@@ -104,7 +150,7 @@ export abstract class GraphClient {
           cause: err,
           endpoint,
           status: err.statusCode,
-          statusText: err.statusText,
+          statusText: err.statusText || err.message,
         });
       }
 
@@ -133,3 +179,22 @@ class GraphAuthenticationProvider implements AuthenticationProvider {
     return this.accessToken;
   }
 }
+
+function getRolesFromAccessToken(accessToken: string) {
+  function parseJwtPayload(jwt: string): { roles?: string[] } | undefined {
+    try {
+      const encodedPayload = jwt.split('.')[1];
+      const decodedPayload = Buffer.from(encodedPayload, 'base64').toString();
+      return JSON.parse(decodedPayload);
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  const payload = parseJwtPayload(accessToken);
+  return payload?.roles || [];
+}
+
+export const testFunctions = {
+  getRolesFromAccessToken,
+};

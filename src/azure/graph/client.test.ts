@@ -5,9 +5,11 @@ import {
 import { FetchError } from 'node-fetch';
 
 import config from '../../../test/integrationInstanceConfig';
-import { GraphClient } from './client';
+import { GraphClient, testFunctions } from './client';
 import { setupAzureRecording } from '../../../test/helpers/recording';
 import { GraphRequest } from '@microsoft/microsoft-graph-client';
+
+const { getRolesFromAccessToken } = testFunctions;
 
 class AnyGraphClient extends GraphClient {}
 
@@ -17,6 +19,46 @@ afterEach(async () => {
   if (recording) {
     await recording.stop();
   }
+});
+
+describe('getRolesFromAccessToken', () => {
+  test('should return roles if in access_token.payload.roles', () => {
+    const payload = { roles: ['Directory.Read.All'] };
+    const base64Payload = Buffer.from(
+      JSON.stringify(payload),
+      'ascii',
+    ).toString('Base64');
+    const accessToken = `header.${base64Payload}.signature`;
+    expect(getRolesFromAccessToken(accessToken)).toEqual([
+      'Directory.Read.All',
+    ]);
+  });
+
+  test('should return [] if access_token.payload.roles = []', () => {
+    const payload = { roles: [] };
+    const base64Payload = Buffer.from(
+      JSON.stringify(payload),
+      'ascii',
+    ).toString('Base64');
+    const accessToken = `header.${base64Payload}.signature`;
+    expect(getRolesFromAccessToken(accessToken)).toEqual([]);
+  });
+
+  test('should return [] if access_token.payload.roles = undefined', () => {
+    const payload = {};
+    const base64Payload = Buffer.from(
+      JSON.stringify(payload),
+      'ascii',
+    ).toString('Base64');
+    const accessToken = `header.${base64Payload}.signature`;
+    expect(getRolesFromAccessToken(accessToken)).toEqual([]);
+  });
+
+  test('should return [] if access_token.payload is not valid', () => {
+    const payload = 'non-encoded-string';
+    const accessToken = `header.${payload}.signature`;
+    expect(getRolesFromAccessToken(accessToken)).toEqual([]);
+  });
 });
 
 test('accessToken fetched and cached', async () => {

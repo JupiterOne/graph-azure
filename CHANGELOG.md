@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.21.1 - 2021-04-06
+
 ### Changed
 
 - Upgraded `@jupiterone/integration-sdk-*@5.11.2`

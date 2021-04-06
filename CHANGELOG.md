@@ -10,6 +10,11 @@ and this project adheres to
 
 ### Changed
 
+- Only igest the subscription resource provided in the `subscriptionId` config
+  field.
+
+### Changed
+
 - Handle errors thrown from `getBlobServiceProperties()` instead of allowing
   storage account step to fail.
 - Changed `_key` property on `azure_vm_uses_storage_account` to fix

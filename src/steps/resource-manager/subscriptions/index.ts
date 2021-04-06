@@ -3,6 +3,7 @@ import {
   IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
+  IntegrationConfigLoadError,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -31,7 +32,16 @@ export async function fetchSubscriptions(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new J1SubscriptionClient(instance.config, logger);
 
-  await client.iterateSubscriptions(async (subscription) => {
+  if (!process.env.subsccriptionId) {
+    // This should never happen as getStepStartStates should turn off this step if there is no subscriptionId
+    throw new IntegrationConfigLoadError(
+      'You need to provide a subscriptionId in order to ingest a subscription',
+    );
+  }
+  const subscription = await client.fetchSubscription(
+    process.env.subsccriptionId,
+  );
+  if (subscription) {
     const subscriptionEntity = createSubscriptionEntity(
       webLinker,
       subscription,
@@ -42,7 +52,7 @@ export async function fetchSubscriptions(
       subscriptionEntity,
       entities.SUBSCRIPTION,
     );
-  });
+  }
 }
 
 export async function fetchLocations(

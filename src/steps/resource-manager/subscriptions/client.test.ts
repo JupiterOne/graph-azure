@@ -14,8 +14,10 @@ import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 const config: IntegrationConfig = {
   clientId: process.env.CLIENT_ID || 'clientId',
   clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-  directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
-  subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+  directoryId:
+    process.env.DIRECTORY_ID || '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+  subscriptionId:
+    process.env.SUBSCRIPTION_ID || 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
 };
 
 let recording: Recording;
@@ -80,5 +82,57 @@ describe('iterateLocations', () => {
     });
 
     expect(locations.length).toBeGreaterThan(0);
+  });
+});
+
+describe('fetchSubscription', () => {
+  test('fetchSubscription', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'fetchSubscription',
+    });
+
+    const client = new J1SubscriptionClient(
+      config,
+      createMockIntegrationLogger(),
+    );
+
+    const subscription = await client.fetchSubscription(config.subscriptionId!);
+
+    expect(subscription).toMatchObject({
+      authorizationSource: expect.any(String),
+      displayName: expect.any(String),
+      id: expect.any(String),
+      state: expect.any(String),
+      subscriptionId: expect.any(String),
+      subscriptionPolicies: expect.any(Object),
+    });
+  });
+});
+
+describe('fetchSubscriptions', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'fetchSubscriptions',
+    });
+
+    const client = new J1SubscriptionClient(
+      config,
+      createMockIntegrationLogger(),
+    );
+
+    const subscriptions = await client.fetchSubscriptions();
+
+    expect(subscriptions).toContainEqual(
+      expect.objectContaining({
+        authorizationSource: expect.any(String),
+        displayName: expect.any(String),
+        id: expect.any(String),
+        state: expect.any(String),
+        subscriptionId: expect.any(String),
+        subscriptionPolicies: expect.any(Object),
+      }),
+    );
   });
 });

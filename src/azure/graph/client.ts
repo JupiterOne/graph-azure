@@ -45,24 +45,6 @@ export abstract class GraphClient {
   }
 
   private async getAccessTokenPermissions(): Promise<string[]> {
-    function getRolesFromAccessToken(accessToken: string) {
-      function parseJwtPayload(jwt: string): { roles?: string[] } | undefined {
-        try {
-          const encodedPayload = jwt.split('.')[1];
-          const decodedPayload = Buffer.from(
-            encodedPayload,
-            'base64',
-          ).toString();
-          return JSON.parse(decodedPayload);
-        } catch (e) {
-          return undefined;
-        }
-      }
-
-      const payload = parseJwtPayload(accessToken);
-      return payload?.roles || [];
-    }
-
     const accessToken = await this.authenticationProvider.getAccessToken();
     return getRolesFromAccessToken(accessToken);
   }
@@ -197,3 +179,22 @@ class GraphAuthenticationProvider implements AuthenticationProvider {
     return this.accessToken;
   }
 }
+
+function getRolesFromAccessToken(accessToken: string) {
+  function parseJwtPayload(jwt: string): { roles?: string[] } | undefined {
+    try {
+      const encodedPayload = jwt.split('.')[1];
+      const decodedPayload = Buffer.from(encodedPayload, 'base64').toString();
+      return JSON.parse(decodedPayload);
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  const payload = parseJwtPayload(accessToken);
+  return payload?.roles || [];
+}
+
+export const testFunctions = {
+  getRolesFromAccessToken,
+};

@@ -22,6 +22,10 @@ and this project adheres to
 
 - An `IntegrationError` to `fetchSubscription` if the subscription could not be
   found.
+ 
+### Removed
+
+- `SubscriptionId` check when creating an authenticated service client.
 
 ## 5.21.1 - 2021-04-06
 

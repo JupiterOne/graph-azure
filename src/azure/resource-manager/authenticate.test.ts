@@ -43,7 +43,7 @@ describe('validateResourceManagerInvocation', () => {
         subscriptionId: undefined,
       }),
     ).rejects.toThrow(
-      'Cannot use Azure Resource Manager APIs without subscriptionId',
+      'subscriptionId not found in tenant specified by directoryId',
     );
   });
 });

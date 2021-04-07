@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Removed
+
+- `SubscriptionId` check when creating an authenticated service client.
+
 ## 5.21.1 - 2021-04-06
 
 ### Changed

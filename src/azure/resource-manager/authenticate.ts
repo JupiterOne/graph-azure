@@ -51,12 +51,6 @@ export async function authenticate(
 export async function loginWithServicePrincipalSecretWithAuthResponse(
   config: IntegrationConfig,
 ): Promise<msRestNodeAuth.AuthResponse> {
-  if (!config.subscriptionId) {
-    throw new Error(
-      'Cannot use Azure Resource Manager APIs without subscriptionId',
-    );
-  }
-
   const response = await msRestNodeAuth.loginWithServicePrincipalSecretWithAuthResponse(
     config.clientId,
     config.clientSecret,

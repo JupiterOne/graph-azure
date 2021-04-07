@@ -10,8 +10,10 @@ and this project adheres to
 
 ### Changed
 
-- Only igest the subscription resource provided in the `subscriptionId` config
-  field.
+- Only ingest an entity for the subscription identified by the `subscriptionId` config
+  field. Previously, the integration would create an entity for every subscription, though
+  none of the resources would be ingested. This new behavior limits the scope to the
+  subscription defined by `subscriptionId`.
 
 ## 5.21.1 - 2021-04-06
 

@@ -112,8 +112,8 @@ API requests.
 with Azure.
 - Enter the **Application (client) Secret** associated with the application ID, used
 to authenticate with Azure.
-- Select the option **Ingest Active Directory** to ingest Directory information, and
-should only be anbled in one integration instance per Directory.
+- Select the option **Ingest Active Directory** to ingest Directory information. This
+  should only be enabled in one integration instance per Directory.
 4. Click **Create Configuration** once all values are provided.
 
 <!-- {J1_DOCUMENTATION_MARKER_START} -->

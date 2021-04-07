@@ -1,4 +1,4 @@
-import { fetchLocations, fetchSubscriptions } from '.';
+import { fetchLocations, fetchSubscription } from '.';
 import {
   MockIntegrationStepExecutionContext,
   Recording,
@@ -18,13 +18,20 @@ import {
 } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
+import { IntegrationError } from '@jupiterone/integration-sdk-core';
 
 let recording: Recording;
 
-describe('step - subscriptions', () => {
+describe('step - subscription', () => {
   let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
 
-  beforeAll(async () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  it('should collect a Subscription entity based on config.subscriptionId', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'resource-manager-step-resource-groups',
@@ -43,16 +50,8 @@ describe('step - subscriptions', () => {
       },
     });
 
-    await fetchSubscriptions(context);
-  });
+    await fetchSubscription(context);
 
-  afterAll(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
-
-  it('should collect a Subscription entity', () => {
     const { collectedEntities } = context.jobState;
 
     expect(collectedEntities).toContainEqual(
@@ -69,6 +68,31 @@ describe('step - subscriptions', () => {
         webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${configFromEnv.subscriptionId}`,
       }),
     );
+  });
+
+  it('should throw an error if a subscription could not be found ', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-resource-groups-error',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          shouldReplaceSubscriptionId: () => true,
+        }),
+        recordFailedRequests: true,
+      },
+    });
+
+    const fakeSubscriptionId = '123456e8-4ba7-457b-8d50-471c39f52dcb';
+    context = createMockAzureStepExecutionContext({
+      instanceConfig: { ...configFromEnv, subscriptionId: fakeSubscriptionId },
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      },
+    });
+    await expect(
+      async () => await fetchSubscription(context),
+    ).rejects.toThrowError(IntegrationError);
   });
 });
 

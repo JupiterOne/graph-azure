@@ -34,7 +34,7 @@ import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 import { fetchResourceGroups, RESOURCE_GROUP_ENTITY } from '../resources';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import { entities as storageEntities, fetchStorageAccounts } from '../storage';
-import { fetchLocations, fetchSubscriptions } from '../subscriptions';
+import { fetchLocations, fetchSubscription } from '../subscriptions';
 import { setDataKeys as subscriptionSetDataKeys } from '../subscriptions/constants';
 import { createAzureWebLinker } from '../../../azure';
 import { createLocationEntity } from '../subscriptions/converters';
@@ -1328,7 +1328,7 @@ describe('rm-network-location-watcher-relationships', () => {
         },
       });
 
-      await fetchSubscriptions(context);
+      await fetchSubscription(context);
       await fetchLocations(context);
 
       const locationNameMap = context.jobState.getData(

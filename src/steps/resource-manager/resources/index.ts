@@ -100,7 +100,7 @@ export const resourcesSteps: Step<
     name: 'Resource Groups',
     entities: [RESOURCE_GROUP_ENTITY],
     relationships: [SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_METADATA],
-    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTIONS],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchResourceGroups,
   },
 ];

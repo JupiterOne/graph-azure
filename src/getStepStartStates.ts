@@ -166,7 +166,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS,
       authorizationSteps.CLASSIC_ADMINS,
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
-      subscriptionSteps.SUBSCRIPTIONS,
+      subscriptionSteps.SUBSCRIPTION,
       subscriptionSteps.LOCATIONS,
       STEP_RM_API_MANAGEMENT_SERVICES,
       STEP_RM_API_MANAGEMENT_APIS,

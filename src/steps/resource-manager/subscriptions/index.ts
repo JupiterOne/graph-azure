@@ -4,6 +4,7 @@ import {
   createDirectRelationship,
   RelationshipClass,
   IntegrationConfigLoadError,
+  IntegrationError,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -24,7 +25,7 @@ import {
 } from './constants';
 import { createLocationEntity, createSubscriptionEntity } from './converters';
 
-export async function fetchSubscriptions(
+export async function fetchSubscription(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
@@ -52,6 +53,12 @@ export async function fetchSubscriptions(
       subscriptionEntity,
       entities.SUBSCRIPTION,
     );
+  } else {
+    throw new IntegrationError({
+      message:
+        'Unable to find the subscription using the provided "Subscription ID"',
+      code: 'MISSING_SUBSCRIPTION',
+    });
   }
 }
 
@@ -116,21 +123,21 @@ export const subscriptionSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
   {
-    id: steps.SUBSCRIPTIONS,
+    id: steps.SUBSCRIPTION,
     name: 'Subscriptions',
     entities: [entities.SUBSCRIPTION, ...diagnosticSettingsEntitiesForResource],
     relationships: [
       ...getDiagnosticSettingsRelationshipsForResource(entities.SUBSCRIPTION),
     ],
     dependsOn: [STEP_AD_ACCOUNT],
-    executionHandler: fetchSubscriptions,
+    executionHandler: fetchSubscription,
   },
   {
     id: steps.LOCATIONS,
     name: 'Subscription Locations',
     entities: [entities.LOCATION],
     relationships: [relationships.SUBSCRIPTION_USES_LOCATION],
-    dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTIONS],
+    dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTION],
     executionHandler: fetchLocations,
   },
 ];

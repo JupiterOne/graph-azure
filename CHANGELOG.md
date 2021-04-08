@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.22.0 - 2021-04-06
+
 ### Changed
 
 - Only ingest an entity for the subscription identified by the `subscriptionId`
@@ -22,7 +24,7 @@ and this project adheres to
 
 - An `IntegrationError` to `fetchSubscription` if the subscription could not be
   found.
- 
+
 ### Removed
 
 - `SubscriptionId` check when creating an authenticated service client.

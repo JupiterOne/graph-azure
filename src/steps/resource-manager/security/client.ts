@@ -3,6 +3,7 @@ import {
   Pricing,
   SecurityAssessment,
   SecurityContact,
+  Setting,
 } from '@azure/arm-security/esm/models';
 import {
   Client,
@@ -54,6 +55,22 @@ export class SecurityClient extends Client {
         },
       },
       resourceDescription: 'security.pricings',
+      callback,
+    });
+  }
+
+  public async iterateSettings(
+    callback: (s: Setting) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      SecurityCenter,
+    );
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: serviceClient.settings,
+      resourceDescription: 'security.settings',
       callback,
     });
   }

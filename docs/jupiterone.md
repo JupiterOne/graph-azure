@@ -146,6 +146,7 @@ The following entities are created:
 | [RM] SQL Server Active Directory Admin    | `azure_sql_server_active_directory_admin`    | `AccessRole`                       |
 | [RM] SQL Server Firewall Rule             | `azure_sql_server_firewall_rule`             | `Firewall`                         |
 | [RM] Security Assessment                  | `azure_security_assessment`                  | `Assessment`                       |
+| [RM] Security Center Setting              | `azure_security_center_setting`              | `Configuration`                    |
 | [RM] Security Center Subscription Pricing | `azure_security_center_subscription_pricing` | `Configuration`                    |
 | [RM] Security Contact                     | `azure_security_center_contact`              | `Resource`                         |
 | [RM] Security Group                       | `azure_security_group`                       | `Firewall`                         |
@@ -285,6 +286,7 @@ The following relationships are created/mapped:
 | `azure_subscription`               | **HAS**               | `azure_monitor_log_profile`                  |
 | `azure_subscription`               | **HAS**               | `azure_resource_group`                       |
 | `azure_subscription`               | **HAS**               | `azure_security_center_contact`              |
+| `azure_subscription`               | **HAS**               | `azure_security_center_setting`              |
 | `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing` |
 | `azure_subscription`               | **PERFORMED**         | `azure_security_assessment`                  |
 | `azure_subscription`               | **USES**              | `azure_location`                             |

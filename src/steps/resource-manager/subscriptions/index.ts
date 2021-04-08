@@ -48,11 +48,6 @@ export async function fetchSubscription(
       subscription,
     );
     await jobState.addEntity(subscriptionEntity);
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-      executionContext,
-      subscriptionEntity,
-      entities.SUBSCRIPTION,
-    );
   } else {
     throw new IntegrationError({
       message:
@@ -60,6 +55,22 @@ export async function fetchSubscription(
       code: 'MISSING_SUBSCRIPTION',
     });
   }
+}
+
+export async function fetchSubscriptionDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: entities.SUBSCRIPTION._type },
+    async (subscriptionEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        subscriptionEntity,
+      );
+    },
+  );
 }
 
 export async function fetchLocations(
@@ -125,12 +136,20 @@ export const subscriptionSteps: Step<
   {
     id: steps.SUBSCRIPTION,
     name: 'Subscriptions',
-    entities: [entities.SUBSCRIPTION, ...diagnosticSettingsEntitiesForResource],
+    entities: [entities.SUBSCRIPTION],
+    relationships: [],
+    dependsOn: [STEP_AD_ACCOUNT],
+    executionHandler: fetchSubscription,
+  },
+  {
+    id: steps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS,
+    name: 'Subscription Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
     relationships: [
       ...getDiagnosticSettingsRelationshipsForResource(entities.SUBSCRIPTION),
     ],
     dependsOn: [STEP_AD_ACCOUNT],
-    executionHandler: fetchSubscription,
+    executionHandler: fetchSubscriptionDiagnosticSettings,
   },
   {
     id: steps.LOCATIONS,

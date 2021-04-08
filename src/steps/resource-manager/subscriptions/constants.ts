@@ -2,6 +2,7 @@ import { Entity, RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 export const steps = {
   SUBSCRIPTION: 'rm-subscription',
+  SUBSCRIPTION_DIAGNOSTIC_SETTINGS: 'rm-subscription-diagnostic-settings',
   LOCATIONS: 'rm-subscription-locations',
 };
 

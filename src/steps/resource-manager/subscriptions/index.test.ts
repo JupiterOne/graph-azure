@@ -22,7 +22,7 @@ import { IntegrationError } from '@jupiterone/integration-sdk-core';
 
 let recording: Recording;
 
-describe('step - subscription', () => {
+describe('rm-subscription', () => {
   let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
 
   afterEach(async () => {
@@ -34,11 +34,10 @@ describe('step - subscription', () => {
   it('should collect a Subscription entity based on config.subscriptionId', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: 'resource-manager-step-resource-groups',
+      name: 'rm-subscription',
       options: {
         matchRequestsBy: getMatchRequestsBy({
           config: configFromEnv,
-          shouldReplaceSubscriptionId: () => true,
         }),
       },
     });
@@ -58,14 +57,10 @@ describe('step - subscription', () => {
       expect.objectContaining({
         _class: entities.SUBSCRIPTION._class,
         _type: entities.SUBSCRIPTION._type,
-        _key: `/subscriptions/${configFromEnv.subscriptionId}`,
-        id: `/subscriptions/${configFromEnv.subscriptionId}`,
         name: expect.any(String),
         displayName: expect.any(String),
-        subscriptionId: configFromEnv.subscriptionId,
         state: 'Enabled',
         authorizationSource: 'RoleBased',
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${configFromEnv.subscriptionId}`,
       }),
     );
   });
@@ -73,7 +68,7 @@ describe('step - subscription', () => {
   it('should throw an error if a subscription could not be found ', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: 'resource-manager-step-resource-groups-error',
+      name: 'rm-subscription-error',
       options: {
         matchRequestsBy: getMatchRequestsBy({
           config: configFromEnv,
@@ -94,6 +89,10 @@ describe('step - subscription', () => {
       async () => await fetchSubscription(context),
     ).rejects.toThrowError(IntegrationError);
   });
+});
+
+describe.skip('rm-subscription-diagnostic-settings', () => {
+  // Not implementing tests for diagnostic settings at this time.
 });
 
 describe('rm-subscription-locations', () => {

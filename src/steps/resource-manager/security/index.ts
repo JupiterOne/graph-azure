@@ -138,7 +138,7 @@ export const securitySteps: Step<
     relationships: [
       SecurityRelationships.SUBSCRIPTION_HAS_SECURITY_CENTER_CONTACT,
     ],
-    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTIONS],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterContacts,
   },
   {
@@ -146,7 +146,7 @@ export const securitySteps: Step<
     name: 'Security Center Pricing Configurations',
     entities: [SecurityEntities.SUBSCRIPTION_PRICING],
     relationships: [SecurityRelationships.SUBSCRIPTION_HAS_PRICING_CONFIG],
-    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTIONS],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterPricingConfigurations,
   },
 ];

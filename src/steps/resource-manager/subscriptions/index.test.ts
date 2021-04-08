@@ -1,4 +1,4 @@
-import { fetchLocations, fetchSubscriptions } from '.';
+import { fetchLocations, fetchSubscription } from '.';
 import {
   MockIntegrationStepExecutionContext,
   Recording,
@@ -18,60 +18,81 @@ import {
 } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
+import { IntegrationError } from '@jupiterone/integration-sdk-core';
 
 let recording: Recording;
 
-describe('step - subscriptions', () => {
+describe('step - subscription', () => {
   let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
-  let instanceConfig: IntegrationConfig;
 
-  beforeAll(async () => {
-    instanceConfig = {
-      clientId: process.env.CLIENT_ID || 'clientId',
-      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-      directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
-      subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
-      developerId: 'keionned',
-    };
-
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'resource-manager-step-resource-groups',
-    });
-
-    context = createMockAzureStepExecutionContext({
-      instanceConfig,
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
-      },
-    });
-
-    await fetchSubscriptions(context);
-  });
-
-  afterAll(async () => {
+  afterEach(async () => {
     if (recording) {
       await recording.stop();
     }
   });
 
-  it('should collect a Subscription entity', () => {
+  it('should collect a Subscription entity based on config.subscriptionId', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-resource-groups',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          shouldReplaceSubscriptionId: () => true,
+        }),
+      },
+    });
+
+    context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      },
+    });
+
+    await fetchSubscription(context);
+
     const { collectedEntities } = context.jobState;
 
     expect(collectedEntities).toContainEqual(
       expect.objectContaining({
         _class: entities.SUBSCRIPTION._class,
         _type: entities.SUBSCRIPTION._type,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}`,
-        id: `/subscriptions/${instanceConfig.subscriptionId}`,
+        _key: `/subscriptions/${configFromEnv.subscriptionId}`,
+        id: `/subscriptions/${configFromEnv.subscriptionId}`,
         name: expect.any(String),
         displayName: expect.any(String),
-        subscriptionId: instanceConfig.subscriptionId,
+        subscriptionId: configFromEnv.subscriptionId,
         state: 'Enabled',
         authorizationSource: 'RoleBased',
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}`,
+        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${configFromEnv.subscriptionId}`,
       }),
     );
+  });
+
+  it('should throw an error if a subscription could not be found ', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-resource-groups-error',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          shouldReplaceSubscriptionId: () => true,
+        }),
+        recordFailedRequests: true,
+      },
+    });
+
+    const fakeSubscriptionId = '123456e8-4ba7-457b-8d50-471c39f52dcb';
+    context = createMockAzureStepExecutionContext({
+      instanceConfig: { ...configFromEnv, subscriptionId: fakeSubscriptionId },
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      },
+    });
+    await expect(
+      async () => await fetchSubscription(context),
+    ).rejects.toThrowError(IntegrationError);
   });
 });
 

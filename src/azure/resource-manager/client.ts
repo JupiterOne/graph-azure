@@ -35,10 +35,14 @@ export interface ListResourcesEndpoint {
   listNext?(nextLink: string): Promise<ResourceListResponse<any>>;
 }
 
-export interface ResourceListResponse<T> extends Array<T> {
+type ResourceResponse = {
   readonly _response: HttpResponse;
   readonly nextLink?: string;
-}
+};
+
+export type ResourceListResponse<T> = Array<T> & ResourceResponse;
+
+export type ResourceGetResponse<T> = T & ResourceResponse;
 
 export abstract class Client {
   private auth: AzureManagementClientCredentials;
@@ -252,14 +256,14 @@ export interface IterateAllResourcesOptions<ServiceClientType, ResourceType> {
  * Call an azure endpoint that returns a ResourceListResponse. Explicitly handle
  * known API errors that we may encounter, including retries.
  */
-export async function request<T = any>(
-  resourceListCallback: () => Promise<ResourceListResponse<T>>,
+export async function request<T extends ResourceResponse>(
+  resourceListCallback: () => Promise<T>,
   logger: IntegrationLogger,
   resourceDescription: string,
   endpointRatePeriod: number,
-): Promise<ResourceListResponse<T> | undefined> {
+): Promise<T | undefined> {
   try {
-    const response = await retryResourceRequest(
+    const response = await retryResourceRequest<T>(
       resourceListCallback,
       endpointRatePeriod,
       logger,

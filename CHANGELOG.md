@@ -8,6 +8,21 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Only ingest an entity for the subscription identified by the `subscriptionId`
+  config field. Previously, the integration would create an entity for every
+  subscription, though none of the resources would be ingested. This new
+  behavior limits the scope to the subscription defined by `subscriptionId`.
+- `Subscriptions` to `subscription` where relevant.
+- `fetchSubscriptions` to now return tag data. This will be used for deciding
+  which subscriptions should be created.
+
+### Added
+
+- An `IntegrationError` to `fetchSubscription` if the subscription could not be
+  found.
+ 
 ### Removed
 
 - `SubscriptionId` check when creating an authenticated service client.

@@ -3,6 +3,8 @@ import {
   IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
+  IntegrationConfigLoadError,
+  IntegrationError,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -23,7 +25,7 @@ import {
 } from './constants';
 import { createLocationEntity, createSubscriptionEntity } from './converters';
 
-export async function fetchSubscriptions(
+export async function fetchSubscription(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
@@ -31,7 +33,16 @@ export async function fetchSubscriptions(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new J1SubscriptionClient(instance.config, logger);
 
-  await client.iterateSubscriptions(async (subscription) => {
+  if (!instance.config.subscriptionId) {
+    // This should never happen as getStepStartStates should turn off this step if there is no subscriptionId
+    throw new IntegrationConfigLoadError(
+      'You need to provide a subscriptionId in order to ingest a subscription',
+    );
+  }
+  const subscription = await client.fetchSubscription(
+    instance.config.subscriptionId,
+  );
+  if (subscription) {
     const subscriptionEntity = createSubscriptionEntity(
       webLinker,
       subscription,
@@ -42,7 +53,13 @@ export async function fetchSubscriptions(
       subscriptionEntity,
       entities.SUBSCRIPTION,
     );
-  });
+  } else {
+    throw new IntegrationError({
+      message:
+        'Unable to find the subscription using the provided "Subscription ID"',
+      code: 'MISSING_SUBSCRIPTION',
+    });
+  }
 }
 
 export async function fetchLocations(
@@ -106,21 +123,21 @@ export const subscriptionSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
   {
-    id: steps.SUBSCRIPTIONS,
+    id: steps.SUBSCRIPTION,
     name: 'Subscriptions',
     entities: [entities.SUBSCRIPTION, ...diagnosticSettingsEntitiesForResource],
     relationships: [
       ...getDiagnosticSettingsRelationshipsForResource(entities.SUBSCRIPTION),
     ],
     dependsOn: [STEP_AD_ACCOUNT],
-    executionHandler: fetchSubscriptions,
+    executionHandler: fetchSubscription,
   },
   {
     id: steps.LOCATIONS,
     name: 'Subscription Locations',
     entities: [entities.LOCATION],
     relationships: [relationships.SUBSCRIPTION_USES_LOCATION],
-    dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTIONS],
+    dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTION],
     executionHandler: fetchLocations,
   },
 ];

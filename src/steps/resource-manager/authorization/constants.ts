@@ -170,7 +170,7 @@ export const SCOPE_TYPES_MAP: ResourceIdMap[] = [
   {
     resourceIdMatcher: new RegExp(SUBSCRIPTION_MATCHER + EOL_MATCHER),
     _type: subscriptionEntities.SUBSCRIPTION._type,
-    dependsOn: [subscriptionSteps.SUBSCRIPTIONS],
+    dependsOn: [subscriptionSteps.SUBSCRIPTION],
   },
   {
     resourceIdMatcher: new RegExp(RESOURCE_GROUP_MATCHER + EOL_MATCHER),

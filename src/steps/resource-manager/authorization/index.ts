@@ -319,7 +319,7 @@ export const authorizationSteps: Step<
     name: 'Role Definitions',
     entities: [entities.ROLE_DEFINITION],
     relationships: [relationships.SUBSCRIPTION_CONTAINS_ROLE_DEFINITION],
-    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTIONS],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchRoleDefinitions,
   },
   {

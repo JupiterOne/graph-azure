@@ -16,6 +16,7 @@ import {
 import {
   createAssessmentEntity,
   createPricingConfigEntity,
+  createSecurityCenterSettingEntity,
   createSecurityContactEntity,
 } from './converters';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
@@ -120,6 +121,37 @@ export async function fetchSecurityCenterPricingConfigurations(
   });
 }
 
+export async function fetchSecurityCenterSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new SecurityClient(instance.config, logger);
+
+  const subscriptionId = `/subscriptions/${instance.config.subscriptionId}`;
+  const subscriptionEntity = await jobState.findEntity(subscriptionId);
+
+  await client.iterateSettings(async (setting) => {
+    const securityCenterSettingEntity = await jobState.addEntity(
+      createSecurityCenterSettingEntity(webLinker, setting),
+    );
+
+    if (!subscriptionEntity) return;
+
+    await jobState.addRelationship(
+      createDirectRelationship({
+        _class: SecurityRelationships.SUBSCRIPTION_HAS_SETTING._class,
+        from: subscriptionEntity,
+        to: securityCenterSettingEntity,
+        properties: {
+          _type: SecurityRelationships.SUBSCRIPTION_HAS_SETTING._type,
+        },
+      }),
+    );
+  });
+}
+
 export const securitySteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -148,5 +180,13 @@ export const securitySteps: Step<
     relationships: [SecurityRelationships.SUBSCRIPTION_HAS_PRICING_CONFIG],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterPricingConfigurations,
+  },
+  {
+    id: SecuritySteps.SETTINGS,
+    name: 'Security Center Settings',
+    entities: [SecurityEntities.SETTING],
+    relationships: [SecurityRelationships.SUBSCRIPTION_HAS_SETTING],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
+    executionHandler: fetchSecurityCenterSettings,
   },
 ];

@@ -5,6 +5,7 @@ export const SecuritySteps = {
   ASSESSMENTS: 'rm-security-assessments',
   SECURITY_CENTER_CONTACTS: 'rm-security-center-contacts',
   PRICING_CONFIGURATIONS: 'rm-security-center-pricing-configs',
+  SETTINGS: 'rm-security-center-settings',
 };
 
 export const SecurityEntities = {
@@ -22,6 +23,20 @@ export const SecurityEntities = {
     _type: 'azure_security_center_subscription_pricing',
     _class: ['Configuration'],
     resourceName: '[RM] Security Center Subscription Pricing',
+  },
+  SETTING: {
+    _type: 'azure_security_center_setting',
+    _class: ['Configuration'],
+    resourceName: '[RM] Security Center Setting',
+    schema: {
+      properties: {
+        id: { type: 'string' },
+        name: { type: 'string' },
+        type: { type: 'string' },
+        kind: { type: 'string' },
+      },
+      required: ['id', 'name', 'type', 'kind'],
+    },
   },
 };
 
@@ -44,5 +59,11 @@ export const SecurityRelationships = {
     sourceType: subscriptionEntities.SUBSCRIPTION._type,
     _class: RelationshipClass.HAS,
     targetType: SecurityEntities.SUBSCRIPTION_PRICING._type,
+  },
+  SUBSCRIPTION_HAS_SETTING: {
+    _type: 'azure_subscription_has_security_center_setting',
+    sourceType: subscriptionEntities.SUBSCRIPTION._type,
+    _class: RelationshipClass.HAS,
+    targetType: SecurityEntities.SETTING._type,
   },
 };

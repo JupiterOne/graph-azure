@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added support for ingesting the following **new** resources:
+
+  | Service         | Resource / Entity               |
+  | --------------- | ------------------------------- |
+  | Security Center | `azure_security_center_setting` |
+
 ## 5.22.0 - 2021-04-06
 
 ### Changed

@@ -12,9 +12,10 @@ and this project adheres to
 
 - Added support for ingesting the following **new** resources:
 
-  | Service         | Resource / Entity               |
-  | --------------- | ------------------------------- |
-  | Security Center | `azure_security_center_setting` |
+  | Service         | Resource / Entity                                 |
+  | --------------- | ------------------------------------------------- |
+  | Security Center | `azure_security_center_setting`                   |
+  | Security Center | `azure_security_center_auto_provisioning_setting` |
 
 ## 5.22.0 - 2021-04-06
 

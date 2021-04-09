@@ -8,6 +8,7 @@ import {
 import { SecurityClient } from './client';
 import { IntegrationConfig } from '../../../types';
 import {
+  AutoProvisioningSetting,
   Pricing,
   SecurityAssessment,
   SecurityContact,
@@ -141,6 +142,29 @@ describe('iterateSettings', () => {
 
     const settings: Setting[] = [];
     await client.iterateSettings((setting) => {
+      settings.push(setting);
+    });
+
+    expect(settings.length).toBeGreaterThan(0);
+  });
+});
+
+describe('iterateAutoProvisioningSettings', () => {
+  test('success', async () => {
+    const config = getConfigForTest(configFromEnv);
+
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateAutoProvisioningSettings',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config }),
+      },
+    });
+
+    const client = new SecurityClient(config, createMockIntegrationLogger());
+
+    const settings: AutoProvisioningSetting[] = [];
+    await client.iterateAutoProvisioningSettings((setting) => {
       settings.push(setting);
     });
 

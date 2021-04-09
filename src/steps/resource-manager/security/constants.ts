@@ -6,6 +6,7 @@ export const SecuritySteps = {
   SECURITY_CENTER_CONTACTS: 'rm-security-center-contacts',
   PRICING_CONFIGURATIONS: 'rm-security-center-pricing-configs',
   SETTINGS: 'rm-security-center-settings',
+  AUTO_PROVISIONING_SETTINGS: 'rm-security-center-auto-provisioning-settings',
 };
 
 export const SecurityEntities = {
@@ -38,6 +39,20 @@ export const SecurityEntities = {
       required: ['id', 'name', 'type', 'kind'],
     },
   },
+  AUTO_PROVISIONING_SETTING: {
+    _type: 'azure_security_center_auto_provisioning_setting',
+    _class: ['Configuration'],
+    resourceName: '[RM] Security Center Auto Provisioning Setting',
+    schema: {
+      properties: {
+        id: { type: 'string' },
+        name: { type: 'string' },
+        type: { type: 'string' },
+        autoProvision: { type: 'string' },
+      },
+      required: ['id', 'name', 'type', 'autoProvision'],
+    },
+  },
 };
 
 export const SecurityRelationships = {
@@ -65,5 +80,11 @@ export const SecurityRelationships = {
     sourceType: subscriptionEntities.SUBSCRIPTION._type,
     _class: RelationshipClass.HAS,
     targetType: SecurityEntities.SETTING._type,
+  },
+  SUBSCRIPTION_HAS_AUTO_PROVISIONING_SETTING: {
+    _type: 'azure_subscription_has_security_center_auto_provisioning_setting',
+    sourceType: subscriptionEntities.SUBSCRIPTION._type,
+    _class: RelationshipClass.HAS,
+    targetType: SecurityEntities.AUTO_PROVISIONING_SETTING._type,
   },
 };

@@ -1,5 +1,6 @@
 import {
   fetchAssessments,
+  fetchSecurityCenterAutoProvisioningSettings,
   fetchSecurityCenterContacts,
   fetchSecurityCenterPricingConfigurations,
   fetchSecurityCenterSettings,
@@ -15,7 +16,10 @@ import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { SecurityEntities, SecurityRelationships } from './constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
-import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
+import {
+  getMockAccountEntity,
+  getMockSubscriptionEntity,
+} from '../../../../test/helpers/getMockEntity';
 import { getConfigForTest } from './__tests__/utils';
 
 let recording: Recording;
@@ -118,14 +122,7 @@ test('step - security center contacts', async () => {
 describe('rm-security-center-pricing-configs', () => {
   function getSetupEntities(config: IntegrationConfig) {
     const accountEntity = getMockAccountEntity(config);
-
-    const subscriptionId = `/subscriptions/${config.subscriptionId}`;
-    const subscriptionEntity = {
-      _key: subscriptionId,
-      _type: 'subscription-type',
-      _class: 'subscription-class',
-    };
-
+    const subscriptionEntity = getMockSubscriptionEntity(config);
     return { accountEntity, subscriptionEntity };
   }
 
@@ -180,14 +177,7 @@ describe('rm-security-center-pricing-configs', () => {
 describe('rm-security-center-settings', () => {
   function getSetupEntities(config: IntegrationConfig) {
     const accountEntity = getMockAccountEntity(config);
-
-    const subscriptionId = `/subscriptions/${config.subscriptionId}`;
-    const subscriptionEntity = {
-      _key: subscriptionId,
-      _type: 'subscription-type',
-      _class: 'subscription-class',
-    };
-
+    const subscriptionEntity = getMockSubscriptionEntity(config);
     return { accountEntity, subscriptionEntity };
   }
 
@@ -233,6 +223,71 @@ describe('rm-security-center-settings', () => {
         properties: {
           _type: {
             const: SecurityRelationships.SUBSCRIPTION_HAS_SETTING._type,
+          },
+        },
+      },
+    });
+  });
+});
+
+describe('rm-security-center-auto-provisioning-settings', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const subscriptionEntity = getMockSubscriptionEntity(config);
+    return { accountEntity, subscriptionEntity };
+  }
+
+  test('success', async () => {
+    const config = getConfigForTest(configFromEnv);
+
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-security-center-auto-provisioning-settings',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config }),
+      },
+    });
+
+    const { accountEntity, subscriptionEntity } = getSetupEntities(config);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      entities: [subscriptionEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchSecurityCenterAutoProvisioningSettings(context);
+
+    const securityCenterAutoProvisioningSettingEntities =
+      context.jobState.collectedEntities;
+
+    expect(
+      securityCenterAutoProvisioningSettingEntities.length,
+    ).toBeGreaterThan(0);
+    expect(
+      securityCenterAutoProvisioningSettingEntities,
+    ).toMatchGraphObjectSchema({
+      _class: SecurityEntities.AUTO_PROVISIONING_SETTING._class,
+      schema: SecurityEntities.AUTO_PROVISIONING_SETTING.schema,
+    });
+
+    const subscriptionAutoProvisioningSettingRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(subscriptionAutoProvisioningSettingRelationships.length).toBe(
+      securityCenterAutoProvisioningSettingEntities.length,
+    );
+    expect(
+      subscriptionAutoProvisioningSettingRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              SecurityRelationships.SUBSCRIPTION_HAS_AUTO_PROVISIONING_SETTING
+                ._type,
           },
         },
       },

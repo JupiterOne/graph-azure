@@ -16,6 +16,7 @@ import {
 import {
   createAssessmentEntity,
   createPricingConfigEntity,
+  createSecurityCenterAutoProvisioningSettingEntity,
   createSecurityCenterSettingEntity,
   createSecurityContactEntity,
 } from './converters';
@@ -152,6 +153,41 @@ export async function fetchSecurityCenterSettings(
   });
 }
 
+export async function fetchSecurityCenterAutoProvisioningSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new SecurityClient(instance.config, logger);
+
+  const subscriptionId = `/subscriptions/${instance.config.subscriptionId}`;
+  const subscriptionEntity = await jobState.findEntity(subscriptionId);
+
+  await client.iterateAutoProvisioningSettings(async (setting) => {
+    const securityCenterAutoProvisioningSettingEntity = await jobState.addEntity(
+      createSecurityCenterAutoProvisioningSettingEntity(webLinker, setting),
+    );
+
+    if (!subscriptionEntity) return;
+
+    await jobState.addRelationship(
+      createDirectRelationship({
+        _class:
+          SecurityRelationships.SUBSCRIPTION_HAS_AUTO_PROVISIONING_SETTING
+            ._class,
+        from: subscriptionEntity,
+        to: securityCenterAutoProvisioningSettingEntity,
+        properties: {
+          _type:
+            SecurityRelationships.SUBSCRIPTION_HAS_AUTO_PROVISIONING_SETTING
+              ._type,
+        },
+      }),
+    );
+  });
+}
+
 export const securitySteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -188,5 +224,15 @@ export const securitySteps: Step<
     relationships: [SecurityRelationships.SUBSCRIPTION_HAS_SETTING],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterSettings,
+  },
+  {
+    id: SecuritySteps.AUTO_PROVISIONING_SETTINGS,
+    name: 'Security Center Auto-Provisioning Settings',
+    entities: [SecurityEntities.AUTO_PROVISIONING_SETTING],
+    relationships: [
+      SecurityRelationships.SUBSCRIPTION_HAS_AUTO_PROVISIONING_SETTING,
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
+    executionHandler: fetchSecurityCenterAutoProvisioningSettings,
   },
 ];

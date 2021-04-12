@@ -16,6 +16,8 @@ and this project adheres to
   | --------------- | ------------------------------------------------- |
   | Security Center | `azure_security_center_setting`                   |
   | Security Center | `azure_security_center_auto_provisioning_setting` |
+  | Policy          | `azure_policy_definition`                         |
+  | Policy          | `azure_policy_set_definition`                     |
 
 ## 5.22.0 - 2021-04-06
 

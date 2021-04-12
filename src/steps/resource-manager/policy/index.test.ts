@@ -1,15 +1,20 @@
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-import { fetchPolicyAssignments } from '.';
-const instanceConfig: IntegrationConfig = {
-  clientId: process.env.CLIENT_ID || 'clientId',
-  clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-  directoryId: 'bcd90474-9b62-4040-9d7b-8af257b1427d',
-  subscriptionId: '40474ebe-55a2-4071-8fa8-b610acdd8e56',
-};
+import {
+  fetchPolicyAssignments,
+  fetchPolicyDefinitionsForAssignments,
+} from '.';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
+import { PolicyEntities, PolicyRelationships } from './constants';
+import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
+import { Entity, Relationship } from '@jupiterone/integration-sdk-core';
 
 let recording: Recording;
 
@@ -19,60 +24,223 @@ afterEach(async () => {
   }
 });
 
-test('step = policy assignments', async () => {
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'resource-manager-step-redis-caches',
-  });
+describe('rm-policy-assignments', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
 
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig,
-    entities: [
-      {
-        _key: `/subscriptions/${instanceConfig.subscriptionId}`,
-        _class: ['Group'],
-        _type: 'azure_subscription',
-        id: `/subscriptions/${instanceConfig.subscriptionId}`,
+    return { accountEntity };
+  }
+  test('sucess', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-policy-assignments',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
       },
-      {
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev-policy-resource-group`,
-        _type: 'azure_resource_group',
-        _class: ['Group'],
-        name: 'j1dev-policy-resource-group',
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev-policy-resource-group`,
+    });
+
+    const { accountEntity } = getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
       },
-    ],
-    setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
-    },
+    });
+
+    await fetchPolicyAssignments(context);
+
+    const policyAssignmentEntities = context.jobState.collectedEntities;
+
+    expect(policyAssignmentEntities.length).toBeGreaterThan(0);
+    expect(policyAssignmentEntities).toMatchGraphObjectSchema({
+      _class: PolicyEntities.POLICY_ASSIGNMENT._class,
+    });
+
+    expect(context.jobState.collectedRelationships).toHaveLength(0);
   });
+});
 
-  await fetchPolicyAssignments(context);
+describe.only('rm-policy-definitions', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
 
-  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
-  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: ['ControlPolicy'],
-  });
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
 
-  expect(context.jobState.collectedRelationships).toContainEqual(
-    expect.objectContaining({
-      _key: `/subscriptions/${instanceConfig.subscriptionId}|has|/subscriptions/${instanceConfig.subscriptionId}/providers/Microsoft.Authorization/policyAssignments/SecurityCenterBuiltIn`,
-      _type: 'azure_resource_has_policy_assignment',
-      _class: 'HAS',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/providers/Microsoft.Authorization/policyAssignments/SecurityCenterBuiltIn`,
-      displayName: 'HAS',
-    }),
-  );
+    await fetchPolicyAssignments(context);
 
-  expect(context.jobState.collectedRelationships).toContainEqual(
-    expect.objectContaining({
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev-policy-resource-group|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev-policy-resource-group/providers/Microsoft.Authorization/policyAssignments/j1dev-policy-assignment`,
-      _type: 'azure_resource_has_policy_assignment',
-      _class: 'HAS',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev-policy-resource-group`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev-policy-resource-group/providers/Microsoft.Authorization/policyAssignments/j1dev-policy-assignment`,
-      displayName: 'HAS',
-    }),
-  );
+    const policyAssignmentEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === PolicyEntities.POLICY_ASSIGNMENT._type,
+    );
+    expect(policyAssignmentEntities.length).toBeGreaterThan(0);
+
+    return {
+      accountEntity,
+      policyAssignmentEntities: [policyAssignmentEntities[0]],
+    };
+  }
+
+  function separatePolicyDefinitionEntities(collectedEntities: Entity[]) {
+    const {
+      targets: policyDefinitionEntities,
+      rest: restAfterPolicyDefinitions,
+    } = filterGraphObjects(
+      collectedEntities,
+      (e) => e._type === PolicyEntities.POLICY_DEFINITION._type,
+    );
+    const {
+      targets: policySetDefinitionEntites,
+      rest: restAfterPolicySetDefinitions,
+    } = filterGraphObjects(
+      restAfterPolicyDefinitions,
+      (e) => e._type === PolicyEntities.POLICY_SET_DEFINITION._type,
+    );
+
+    return {
+      policyDefinitionEntities,
+      policySetDefinitionEntites,
+      rest: restAfterPolicySetDefinitions,
+    };
+  }
+
+  function separatePolicyDefinitionRelationships(
+    collectedRelationships: Relationship[],
+  ) {
+    const {
+      targets: policyAssignmentDefinitionRelationships,
+      rest: restAfterPolicyAssignmentDefinitions,
+    } = filterGraphObjects(
+      collectedRelationships,
+      (e) =>
+        e._type ===
+        PolicyRelationships.AZURE_POLICY_ASSIGNMENT_USES_POLICY_DEFINITION
+          ._type,
+    );
+    const {
+      targets: policyAssignmentSetDefinitionRelationships,
+      rest: restAfterPolicyAssignmentSetDefinitions,
+    } = filterGraphObjects(
+      restAfterPolicyAssignmentDefinitions,
+      (e) =>
+        e._type ===
+        PolicyRelationships.AZURE_POLICY_ASSIGNMENT_USES_POLICY_SET_DEFINITION
+          ._type,
+    );
+    const {
+      targets: policySetDefinitionRelationships,
+      rest: restAfterPolicySetDefinitions,
+    } = filterGraphObjects(
+      restAfterPolicyAssignmentSetDefinitions,
+      (e) =>
+        e._type ===
+        PolicyRelationships.AZURE_POLICY_SET_DEFINITION_CONTAINS_DEFINITION
+          ._type,
+    );
+
+    return {
+      policyAssignmentDefinitionRelationships,
+      policyAssignmentSetDefinitionRelationships,
+      policySetDefinitionRelationships,
+      rest: restAfterPolicySetDefinitions,
+    };
+  }
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-policy-definitions',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity, policyAssignmentEntities } = await getSetupEntities(
+      configFromEnv,
+    );
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...policyAssignmentEntities],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchPolicyDefinitionsForAssignments(context);
+
+    const {
+      policyDefinitionEntities,
+      policySetDefinitionEntites,
+      rest: restEntities,
+    } = separatePolicyDefinitionEntities(context.jobState.collectedEntities);
+
+    expect(policyDefinitionEntities.length).toBeGreaterThan(0);
+    expect(policyDefinitionEntities).toMatchGraphObjectSchema({
+      _class: PolicyEntities.POLICY_DEFINITION._class,
+    });
+
+    expect(policySetDefinitionEntites.length).toBeGreaterThan(0);
+    expect(policySetDefinitionEntites).toMatchGraphObjectSchema({
+      _class: PolicyEntities.POLICY_SET_DEFINITION._class,
+    });
+
+    expect(restEntities).toHaveLength(0);
+
+    const {
+      policyAssignmentDefinitionRelationships,
+      policyAssignmentSetDefinitionRelationships,
+      policySetDefinitionRelationships,
+      rest: restRelationships,
+    } = separatePolicyDefinitionRelationships(
+      context.jobState.collectedRelationships,
+    );
+
+    expect(
+      policyAssignmentDefinitionRelationships.length +
+        policyAssignmentSetDefinitionRelationships.length,
+    ).toBe(policyAssignmentEntities.length);
+    expect(
+      policyAssignmentDefinitionRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              PolicyRelationships.AZURE_POLICY_ASSIGNMENT_USES_POLICY_DEFINITION
+                ._type,
+          },
+        },
+      },
+    });
+    expect(
+      policyAssignmentSetDefinitionRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              PolicyRelationships
+                .AZURE_POLICY_ASSIGNMENT_USES_POLICY_SET_DEFINITION._type,
+          },
+        },
+      },
+    });
+    expect(policySetDefinitionRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              PolicyRelationships
+                .AZURE_POLICY_SET_DEFINITION_CONTAINS_DEFINITION._type,
+          },
+        },
+      },
+    });
+
+    expect(restRelationships).toHaveLength(0);
+  }, 150000);
 });

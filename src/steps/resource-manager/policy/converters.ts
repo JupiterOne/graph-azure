@@ -6,7 +6,11 @@ import {
 import { parseTimePropertyValue } from '@jupiterone/integration-sdk-core/dist/src/data/converters';
 import flatten from '../utils/flatten';
 import { PolicyEntities } from './constants';
-import { PolicyAssignment } from '@azure/arm-policy/esm/models';
+import {
+  PolicyAssignment,
+  PolicyDefinition,
+  PolicySetDefinition,
+} from '@azure/arm-policy/esm/models';
 
 export function createPolicyAssignmentEntity(
   webLinker: AzureWebLinker,
@@ -37,6 +41,53 @@ export function createPolicyAssignmentEntity(
         ...(createdOn && { createdOn }),
         ...(updatedBy && { updatedBy }),
         ...(updatedOn && { updatedOn }),
+      },
+    },
+  });
+}
+
+export function createPolicyDefinitionEntity(
+  webLinker: AzureWebLinker,
+  data: PolicyDefinition,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id,
+        _type: PolicyEntities.POLICY_DEFINITION._type,
+        _class: PolicyEntities.POLICY_DEFINITION._class,
+        id: data.id,
+        name: data.name,
+        displayName: data.displayName,
+        description: data.description,
+        type: data.type,
+        policyType: data.policyType,
+        mode: data.mode,
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+
+export function createPolicySetDefinitionEntity(
+  webLinker: AzureWebLinker,
+  data: PolicySetDefinition,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id,
+        _type: PolicyEntities.POLICY_SET_DEFINITION._type,
+        _class: PolicyEntities.POLICY_SET_DEFINITION._class,
+        id: data.id,
+        name: data.name,
+        displayName: data.displayName,
+        description: data.description,
+        type: data.type,
+        policyType: data.policyType,
+        webLink: webLinker.portalResourceUrl(data.id),
       },
     },
   });

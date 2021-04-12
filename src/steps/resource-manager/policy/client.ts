@@ -3,7 +3,11 @@ import {
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
 import { PolicyClient } from '@azure/arm-policy';
-import { PolicyAssignment } from '@azure/arm-policy/esm/models';
+import {
+  PolicyAssignment,
+  PolicyDefinition,
+  PolicySetDefinition,
+} from '@azure/arm-policy/esm/models';
 
 export class AzurePolicyClient extends Client {
   /**
@@ -27,4 +31,103 @@ export class AzurePolicyClient extends Client {
       callback,
     });
   }
+
+  public async getPolicySetDefinition(
+    policySetDefinitionId: string,
+  ): Promise<PolicySetDefinition | undefined> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PolicyClient,
+    );
+
+    const name = getNameFromPolicyDefinitionId(policySetDefinitionId);
+    try {
+      const response = await serviceClient.policySetDefinitions.get(name);
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err,
+          policyDefinitionId: policySetDefinitionId,
+          policyDefinitionName: name,
+        },
+        'Error calling policySetDefintitions.get',
+      );
+    }
+  }
+
+  public async getBuiltInPolicySetDefinition(
+    policySetDefinitionId: string,
+  ): Promise<PolicySetDefinition | undefined> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PolicyClient,
+    );
+
+    const name = getNameFromPolicyDefinitionId(policySetDefinitionId);
+    try {
+      const response = await serviceClient.policySetDefinitions.getBuiltIn(
+        name,
+      );
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err,
+          policyDefinitionId: policySetDefinitionId,
+          policyDefinitionName: name,
+        },
+        'Error calling policySetDefintitions.getBuiltIn',
+      );
+    }
+  }
+
+  public async getPolicyDefinition(
+    policyDefinitionId: string,
+  ): Promise<PolicyDefinition | undefined> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PolicyClient,
+    );
+
+    const name = getNameFromPolicyDefinitionId(policyDefinitionId);
+    try {
+      const response = await serviceClient.policyDefinitions.get(name);
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err,
+          policyDefinitionId,
+          name,
+        },
+        'Error calling policyDefinitions.get',
+      );
+    }
+  }
+
+  public async getBuiltInPolicyDefinition(
+    policyDefinitionId: string,
+  ): Promise<PolicyDefinition | undefined> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PolicyClient,
+    );
+
+    const name = getNameFromPolicyDefinitionId(policyDefinitionId);
+    try {
+      const response = await serviceClient.policyDefinitions.getBuiltIn(name);
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err,
+          policyDefinitionId,
+          name,
+        },
+        'Error calling policyDefinitions.getBuiltIn',
+      );
+    }
+  }
+}
+
+function getNameFromPolicyDefinitionId(policyDefinitionId: string) {
+  const slashDelimetedSegements = policyDefinitionId.split('/');
+  return slashDelimetedSegements[slashDelimetedSegements.length - 1];
 }

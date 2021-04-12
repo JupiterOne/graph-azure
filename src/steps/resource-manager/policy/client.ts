@@ -3,7 +3,11 @@ import {
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
 import { PolicyClient } from '@azure/arm-policy';
-import { PolicyAssignment } from '@azure/arm-policy/esm/models';
+import {
+  PolicyAssignment,
+  PolicyDefinition,
+  PolicySetDefinition,
+} from '@azure/arm-policy/esm/models';
 
 export class AzurePolicyClient extends Client {
   /**
@@ -26,5 +30,43 @@ export class AzurePolicyClient extends Client {
       resourceDescription: 'policy.assignment',
       callback,
     });
+  }
+
+  public async getPolicySetDefinition(
+    name: string,
+  ): Promise<PolicySetDefinition> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PolicyClient,
+    );
+
+    return serviceClient.policySetDefinitions.get(name);
+  }
+
+  public async getBuiltInPolicySetDefinition(
+    name: string,
+  ): Promise<PolicySetDefinition> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PolicyClient,
+    );
+
+    return serviceClient.policySetDefinitions.getBuiltIn(name);
+  }
+
+  public async getPolicyDefinition(name: string): Promise<PolicyDefinition> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PolicyClient,
+    );
+
+    return serviceClient.policyDefinitions.get(name);
+  }
+
+  public async getBuiltInPolicyDefinition(
+    name: string,
+  ): Promise<PolicyDefinition> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PolicyClient,
+    );
+
+    return serviceClient.policyDefinitions.getBuiltIn(name);
   }
 }

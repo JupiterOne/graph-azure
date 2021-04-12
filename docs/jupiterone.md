@@ -1,13 +1,13 @@
 # Integration with JupiterOne
 
-## Azure + JupiterOne Integration Benefits 
+## Azure + JupiterOne Integration Benefits
 
 - Visualize Azure cloud resources in the JupiterOne graph.
 - Map Azure users to employees in your JupiterOne account.
 - Monitor visibility and governance of your Azure cloud environment by
   leveraging hundreds of out of the box queries.
-- Monitor compliance against the Azure CIS Benchmarks framework and other security
-  benchmarks using the JupiterOne compliance app.
+- Monitor compliance against the Azure CIS Benchmarks framework and other
+  security benchmarks using the JupiterOne compliance app.
 - Monitor Azure vulnerabilities and findings from multiple services within the
   alerts app.
 - Monitor changes to your Azure cloud resources using multiple JupiterOne alert
@@ -15,14 +15,18 @@
 
 ## How it Works
 
-- JupiterOne periodically fetches users and cloud resources from Azure to update the graph.
-- Write JupiterOne queries to review and monitor updates to the graph, or leverage existing queries.
-- Configure alerts to take action when the JupiterOne graph changes, or leverage existing alerts.
+- JupiterOne periodically fetches users and cloud resources from Azure to update
+  the graph.
+- Write JupiterOne queries to review and monitor updates to the graph, or
+  leverage existing queries.
+- Configure alerts to take action when the JupiterOne graph changes, or leverage
+  existing alerts.
 
 ## Requirements
 
-- JupiterOne requires the API credentials for the Azure endpoint, specifically the Directory (tenant) id,
-the Application (client) id, and the Application (client) secret with the correct permissions assigned.
+- JupiterOne requires the API credentials for the Azure endpoint, specifically
+  the Directory (tenant) id, the Application (client) id, and the Application
+  (client) secret with the correct permissions assigned.
 - You must have permission in JupiterOne to install new integrations.
 
 ## Support
@@ -32,7 +36,7 @@ If you need help with this integration, please contact
 
 ## Integration Walkthrough
 
-Customers authorize access by creating a Service Principal (App Registration) 
+Customers authorize access by creating a Service Principal (App Registration)
 and providing the credentials to JupiterOne.
 
 The integration is triggered by an event containing the information for a
@@ -99,21 +103,23 @@ information:
 1. From the configuration **Gear Icon**, select **Integrations**.
 2. Scroll to the **Azure** integration tile and click it.
 3. Click the **Add Configuration** button and configure the following settings:
-- Enter the **Account Name** by which you'd like to identify this Azure
-   account in JupiterOne. Ingested entities will have this value stored in
-   `tag.AccountName` when **Tag with Account Name** is checked.
+
+- Enter the **Account Name** by which you'd like to identify this Azure account
+  in JupiterOne. Ingested entities will have this value stored in
+  `tag.AccountName` when **Tag with Account Name** is checked.
 - Enter a **Description** that will further assist your team when identifying
-   the integration instance.
+  the integration instance.
 - Select a **Polling Interval** that you feel is sufficient for your monitoring
-   needs. You may leave this as `DISABLED` and manually execute the integration.
+  needs. You may leave this as `DISABLED` and manually execute the integration.
 - Enter the **Directory (tenant) ID** of the Active Directory to target in Azure
-API requests.
-- Enter the **Application (client) ID** created for JupiterOne, used to authenticate
-with Azure.
-- Enter the **Application (client) Secret** associated with the application ID, used
-to authenticate with Azure.
-- Select the option **Ingest Active Directory** to ingest Directory information. This
-  should only be enabled in one integration instance per Directory.
+  API requests.
+- Enter the **Application (client) ID** created for JupiterOne, used to
+  authenticate with Azure.
+- Enter the **Application (client) Secret** associated with the application ID,
+  used to authenticate with Azure.
+- Select the option **Ingest Active Directory** to ingest Directory information.
+  This should only be enabled in one integration instance per Directory.
+
 4. Click **Create Configuration** once all values are provided.
 
 <!-- {J1_DOCUMENTATION_MARKER_START} -->
@@ -367,7 +373,7 @@ NOTE: ALL OF THE FOLLOWING DOCUMENTATION IS GENERATED USING THE
 ********************************************************************************
 -->
 
-### Diagnostic Settings
+## Diagnostic Settings
 
 Azure Diagnostic Settings are supported on many Azure resources. A list of
 supported services / metrics can be found in

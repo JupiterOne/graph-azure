@@ -3,23 +3,15 @@ import {
   RelationshipClass,
   Step,
   IntegrationStepExecutionContext,
+  getRawData,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import {
-  ACCOUNT_ENTITY_TYPE,
-  STEP_AD_ACCOUNT,
-} from '../../active-directory/constants';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { KeyVaultClient } from './client';
-import {
-  ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
-  KEY_VAULT_SERVICE_ENTITY_TYPE,
-  STEP_RM_KEYVAULT_VAULTS,
-  ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
-  entities,
-} from './constants';
-import { createKeyVaultEntity } from './converters';
+import { entities, steps, relationships } from './constants';
+import { createKeyEntity, createKeyVaultEntity } from './converters';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
@@ -30,8 +22,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { getAccountEntity } from '../../active-directory';
-
-export * from './constants';
+import { Vault } from '@azure/arm-keyvault/esm/models';
 
 export async function fetchKeyVaults(
   executionContext: IntegrationStepContext,
@@ -55,35 +46,85 @@ export async function fetchKeyVaults(
         to: vaultEntity,
       }),
     );
-
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-      executionContext,
-      vaultEntity,
-      entities.KEY_VAULT,
-    );
   });
+}
+
+export async function fetchKeyVaultDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: entities.KEY_VAULT._type },
+    async (keyVaultEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        keyVaultEntity,
+      );
+    },
+  );
+}
+
+export async function fetchKeys(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new KeyVaultClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: entities.KEY_VAULT._type },
+    async (keyVaultEntity) => {
+      const keyVault = getRawData<Vault>(keyVaultEntity);
+      if (!keyVault) return;
+
+      await client.iterateKeys(keyVault, async (keyProperties) => {
+        const keyEntity = await jobState.addEntity(
+          createKeyEntity(webLinker, keyProperties),
+        );
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: keyVaultEntity,
+            _class: RelationshipClass.HAS,
+            to: keyEntity,
+          }),
+        );
+      });
+    },
+  );
 }
 
 export const keyvaultSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
   {
-    id: STEP_RM_KEYVAULT_VAULTS,
+    id: steps.VAULTS,
     name: 'Key Vaults',
-    entities: [entities.KEY_VAULT, ...diagnosticSettingsEntitiesForResource],
+    entities: [entities.KEY_VAULT],
     relationships: [
-      {
-        _type: ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
-        sourceType: ACCOUNT_ENTITY_TYPE,
-        _class: ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
-        targetType: KEY_VAULT_SERVICE_ENTITY_TYPE,
-      },
-      createResourceGroupResourceRelationshipMetadata(
-        KEY_VAULT_SERVICE_ENTITY_TYPE,
-      ),
-      ...getDiagnosticSettingsRelationshipsForResource(entities.KEY_VAULT),
+      relationships.ACCOUNT_HAS_KEY_VAULT,
+      createResourceGroupResourceRelationshipMetadata(entities.KEY_VAULT._type),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,
+  },
+  {
+    id: steps.VAULT_DIAGNOSTIC_SETTINGS,
+    name: 'Key Vault Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
+    relationships: [
+      ...getDiagnosticSettingsRelationshipsForResource(entities.KEY_VAULT),
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, steps.VAULTS],
+    executionHandler: fetchKeyVaults,
+  },
+  {
+    id: steps.KEYS,
+    name: 'Key Vault Keys',
+    entities: [entities.KEY],
+    relationships: [relationships.KEY_VAULT_HAS_KEY],
+    dependsOn: [STEP_AD_ACCOUNT, steps.VAULTS],
+    executionHandler: fetchKeys,
   },
 ];

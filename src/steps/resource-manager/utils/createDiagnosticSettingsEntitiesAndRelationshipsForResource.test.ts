@@ -4,10 +4,7 @@ import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from './createDiagnosticSettingsEntitiesAndRelationshipsForResource';
-import {
-  KEY_VAULT_SERVICE_ENTITY_CLASS,
-  KEY_VAULT_SERVICE_ENTITY_TYPE,
-} from '../key-vault';
+import { entities as keyvaultEntities } from '../key-vault/constants';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 import { separateDiagnosticSettingsRelationships } from '../../../../test/helpers/filterGraphObjects';
@@ -36,8 +33,8 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
 
     const keyVaultEntity: Entity = {
       id: keyVaultId,
-      _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
-      _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
+      _class: keyvaultEntities.KEY_VAULT._class,
+      _type: keyvaultEntities.KEY_VAULT._type,
       _key: keyVaultId,
     };
 

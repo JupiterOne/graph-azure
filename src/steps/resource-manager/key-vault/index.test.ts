@@ -1,117 +1,127 @@
-import {
-  MockIntegrationStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-import { fetchKeyVaults } from '.';
-import {
-  KEY_VAULT_SERVICE_ENTITY_CLASS,
-  KEY_VAULT_SERVICE_ENTITY_TYPE,
-} from './constants';
+import { fetchKeys, fetchKeyVaults } from '.';
+import { entities, relationships } from './constants';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 
 let recording: Recording;
-let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
-let instanceConfig: IntegrationConfig;
 
-describe('step = key vaults', () => {
-  beforeAll(async () => {
-    instanceConfig = {
-      clientId: process.env.CLIENT_ID || 'clientId',
-      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
-      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
-      developerId: 'keionned',
-    };
+afterEach(async () => {
+  if (recording) {
+    await recording.stop();
+  }
+});
 
-    context = createMockAzureStepExecutionContext({
-      instanceConfig,
-      entities: [
-        {
-          _key: `/subscriptions/${instanceConfig.subscriptionId}`,
-          _class: ['Account'],
-          _type: 'azure_subscription',
-          id: `/subscriptions/${instanceConfig.subscriptionId}`,
-        },
-        {
-          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
-          _type: 'azure_resource_group',
-          _class: ['Group'],
-          name: 'j1dev',
-          location: 'eastus',
-          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
-        },
-      ],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: {
-          defaultDomain: 'www.fake-domain.com',
-          _type: ACCOUNT_ENTITY_TYPE,
-          _key: 'azure_account_id',
-          id: 'azure_account_id',
-        },
+describe('rm-keyvault-vaults', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    return { accountEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-keyvault-vaults',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
       },
     });
 
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'resource-manager-step-key-vaults',
+    const { accountEntity } = getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
     });
 
     await fetchKeyVaults(context);
-  });
 
-  afterAll(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
+    const keyVaultEntities = context.jobState.collectedEntities;
 
-  it('should collect an Azure Key Vault entity', () => {
-    const { collectedEntities } = context.jobState;
+    expect(keyVaultEntities.length).toBeGreaterThan(0);
+    expect(keyVaultEntities).toMatchGraphObjectSchema({
+      _class: entities.KEY_VAULT._class,
+    });
 
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
-        _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
-        category: ['infrastructure'],
-        displayName: `${instanceConfig.developerId}1-j1dev`,
-        region: 'eastus',
-        resourceGroup: 'j1dev',
-        endpoints: [
-          `https://${instanceConfig.developerId}1-j1dev.vault.azure.net/`,
-        ],
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-      }),
+    // const keyVaultKeyRelationships = context.jobState.collectedRelationships;
+
+    // expect(keyVaultEntities.length).toBe(keyVaultKeyRelationships.length);
+    // expect(keyVaultKeyRelationships).toMatchDirectRelationshipSchema({
+    //   schema: { properties: { _type: { const: relationships.KEY_VAULT_HAS_KEY._type }}},
+    // });
+  }, 10000);
+});
+
+describe('rm-keyvault-keys', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchKeyVaults(context);
+
+    const j1devKeyVaultEntities = context.jobState.collectedEntities.filter(
+      (e) => (e.name as string).endsWith('-j1dev'),
     );
-  });
+    expect(j1devKeyVaultEntities).toHaveLength(1);
 
-  it('should collect an Azure Account has Azure Key Vault relationship', () => {
-    const { collectedRelationships } = context.jobState;
+    return { accountEntity, keyVaultEntities: j1devKeyVaultEntities };
+  }
 
-    expect(collectedRelationships).toContainEqual({
-      _class: 'HAS',
-      _fromEntityKey: 'azure_account_id',
-      _key: `azure_account_id|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-      _type: 'azure_account_has_keyvault_service',
-      displayName: 'HAS',
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-keyvault-keys',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        recordFailedRequests: true,
+      },
     });
-  });
 
-  it('should collect an Azure Resource Group has Azure Key Vault relationship', () => {
-    const { collectedRelationships } = context.jobState;
+    const { accountEntity, keyVaultEntities } = await getSetupEntities(
+      configFromEnv,
+    );
 
-    expect(collectedRelationships).toContainEqual({
-      _class: 'HAS',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-      _type: 'azure_resource_group_has_keyvault_service',
-      displayName: 'HAS',
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...keyVaultEntities],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
     });
-  });
+
+    await fetchKeys(context);
+
+    const keyEntities = context.jobState.collectedEntities;
+
+    expect(keyEntities.length).toBeGreaterThan(0);
+    expect(keyEntities).toMatchGraphObjectSchema({
+      _class: entities.KEY._class,
+      schema: entities.KEY.schema,
+    });
+
+    const keyVaultKeyRelationships = context.jobState.collectedRelationships;
+
+    expect(keyEntities.length).toBe(keyVaultKeyRelationships.length);
+    expect(keyVaultKeyRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: { _type: { const: relationships.KEY_VAULT_HAS_KEY._type } },
+      },
+    });
+  }, 10000);
 });

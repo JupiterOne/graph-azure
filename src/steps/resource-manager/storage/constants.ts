@@ -1,5 +1,5 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
-import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault/constants';
+import { entities as keyvaultEntities } from '../key-vault/constants';
 
 // Step IDs
 export const steps = {
@@ -74,6 +74,6 @@ export const relationships = {
     _type: 'azure_storage_account_uses_keyvault_service',
     sourceType: entities.STORAGE_ACCOUNT._type,
     _class: RelationshipClass.USES,
-    targetType: KEY_VAULT_SERVICE_ENTITY_TYPE,
+    targetType: keyvaultEntities.KEY_VAULT._type,
   },
 };

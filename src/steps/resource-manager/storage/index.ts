@@ -25,8 +25,8 @@ import createResourceGroupResourceRelationship, {
 } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 import {
-  KEY_VAULT_SERVICE_ENTITY_TYPE,
-  STEP_RM_KEYVAULT_VAULTS,
+  steps as keyvaultSteps,
+  entities as keyvaultEntities,
 } from '../key-vault/constants';
 import { Vault } from '@azure/arm-keyvault/esm/models';
 export * from './constants';
@@ -94,7 +94,7 @@ async function buildKeyVaultEntityMap(
   const { jobState } = executionContext;
 
   await jobState.iterateEntities(
-    { _type: KEY_VAULT_SERVICE_ENTITY_TYPE },
+    { _type: keyvaultEntities.KEY_VAULT._type },
     (keyVaultEntity) => {
       const keyVaultRawData = getRawData<Vault>(keyVaultEntity);
       if (!keyVaultRawData) return;
@@ -346,7 +346,7 @@ export const storageSteps: Step<
     dependsOn: [
       STEP_AD_ACCOUNT,
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
-      STEP_RM_KEYVAULT_VAULTS,
+      keyvaultSteps.VAULTS,
     ],
     executionHandler: fetchStorageAccounts,
   },

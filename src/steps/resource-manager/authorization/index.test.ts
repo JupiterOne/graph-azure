@@ -31,7 +31,7 @@ import {
   USER_ENTITY_CLASS,
   ACCOUNT_ENTITY_TYPE,
 } from '../../active-directory';
-import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
+import { entities as keyvaultEntities } from '../key-vault/constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import {
   getMockAccountEntity,
@@ -262,8 +262,8 @@ test('step - role assignment scope relationships', async () => {
 
   const keyVaultEntity = {
     _key: keyVaultId,
-    _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
-    _class: ['Service'],
+    _type: keyvaultEntities.KEY_VAULT._type,
+    _class: keyvaultEntities.KEY_VAULT._class,
   };
 
   const roleAssignmentDirectEntity = {

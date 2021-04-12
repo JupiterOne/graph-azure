@@ -34,6 +34,7 @@ export class KeyVaultClient extends Client {
     });
   }
 
+  // TODO appropriately expose auth errors to user.
   public async iterateKeys(
     vault: Vault,
     callback: (resource: KeyProperties) => void | Promise<void>,

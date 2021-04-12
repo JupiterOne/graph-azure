@@ -1,29 +1,39 @@
-import {
-  generateRelationshipType,
-  RelationshipClass,
-} from '@jupiterone/integration-sdk-core';
+import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 
-// Step IDs
-export const STEP_RM_KEYVAULT_VAULTS = 'rm-keyvault-vaults';
-
-// Graph objects
-export const KEY_VAULT_SERVICE_ENTITY_TYPE = 'azure_keyvault_service';
-export const KEY_VAULT_SERVICE_ENTITY_CLASS = ['Service'];
+export const steps = {
+  VAULTS: 'rm-keyvault-vaults',
+  VAULT_DIAGNOSTIC_SETTINGS: 'rm-keyvault-diagnostic-settings',
+  KEYS: 'rm-keyvault-keys',
+};
 
 export const entities = {
   KEY_VAULT: {
-    _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
-    _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
+    _type: 'azure_keyvault_service',
+    _class: ['Service'],
     resourceName: '[RM] Key Vault',
     diagnosticLogCategories: ['AuditEvent'],
   },
+  KEY: {
+    _type: 'azure_keyvault_key',
+    _class: ['Key'],
+    resourceName: '[RM] Key Vault Key',
+    schema: {},
+  },
 };
 
-export const ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS = RelationshipClass.HAS;
-export const ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE = generateRelationshipType(
-  ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
-  ACCOUNT_ENTITY_TYPE,
-  KEY_VAULT_SERVICE_ENTITY_TYPE,
-);
+export const relationships = {
+  ACCOUNT_HAS_KEY_VAULT: {
+    _type: 'azure_account_has_keyvault_service',
+    sourceType: ACCOUNT_ENTITY_TYPE,
+    _class: RelationshipClass.HAS,
+    targetType: entities.KEY_VAULT._type,
+  },
+  KEY_VAULT_HAS_KEY: {
+    _type: 'azure_keyvault_service_has_key',
+    sourceType: entities.KEY_VAULT._type,
+    _class: RelationshipClass.HAS,
+    targetType: entities.KEY._type,
+  },
+};

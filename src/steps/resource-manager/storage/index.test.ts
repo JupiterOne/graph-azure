@@ -14,7 +14,8 @@ import {
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE, fetchAccount } from '../../active-directory';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
-import { fetchKeyVaults, KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
+import { fetchKeyVaults } from '../key-vault';
+import { entities as keyvaultEntities } from '../key-vault/constants';
 import { entities } from './constants';
 
 let recording: Recording;
@@ -41,7 +42,7 @@ describe('rm-storage-accounts', () => {
     await fetchKeyVaults(setupContext);
     const j1devKeyVaultEntities = setupContext.jobState.collectedEntities.filter(
       (e) =>
-        e._type === KEY_VAULT_SERVICE_ENTITY_TYPE &&
+        e._type === keyvaultEntities.KEY_VAULT._type &&
         e.displayName?.endsWith('j1dev'),
     );
     expect(j1devKeyVaultEntities.length).toBe(1);

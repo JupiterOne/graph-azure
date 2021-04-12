@@ -4,10 +4,7 @@ import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { AdvisorEntities, AdvisorRelationships } from './constants';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-import {
-  KEY_VAULT_SERVICE_ENTITY_TYPE,
-  KEY_VAULT_SERVICE_ENTITY_CLASS,
-} from '../key-vault';
+import { entities as keyvaultEntities } from '../key-vault/constants';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { entities as storageEntities } from '../storage';
 import { SecurityEntities } from '../security/constants';
@@ -61,8 +58,8 @@ test('step - recommendations', async () => {
       {
         _key:
           '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/ndowmon1-j1dev',
-        _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
-        _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
+        _type: keyvaultEntities.KEY_VAULT._type,
+        _class: keyvaultEntities.KEY_VAULT._class,
       },
       {
         _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7',

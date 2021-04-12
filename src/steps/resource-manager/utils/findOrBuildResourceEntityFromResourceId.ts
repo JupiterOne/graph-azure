@@ -1,9 +1,9 @@
 import { IntegrationStepContext } from '../../../types';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import {
-  KEY_VAULT_SERVICE_ENTITY_TYPE,
-  STEP_RM_KEYVAULT_VAULTS,
-} from '../key-vault';
+  steps as keyvaultSteps,
+  entities as keyvaultEntities,
+} from '../key-vault/constants';
 import {
   STEP_RM_NETWORK_INTERFACES,
   STEP_RM_NETWORK_SECURITY_GROUPS,
@@ -43,8 +43,8 @@ export const RESOURCE_ID_TYPES_MAP: ResourceIdMap[] = [
         EOL_MATCHER,
     ),
     azureType: 'Microsoft.KeyVault/vault',
-    _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
-    dependsOn: [STEP_RM_KEYVAULT_VAULTS],
+    _type: keyvaultEntities.KEY_VAULT._type,
+    dependsOn: [keyvaultSteps.VAULTS],
   },
   {
     resourceIdMatcher: new RegExp(

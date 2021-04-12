@@ -29,7 +29,7 @@ import {
 import { steps as postgreSqlDatabaseSteps } from './steps/resource-manager/databases/postgresql/constants';
 import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sql/constants';
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice/constants';
-import { STEP_RM_KEYVAULT_VAULTS } from './steps/resource-manager/key-vault/constants';
+import { steps as keyvaultSteps } from './steps/resource-manager/key-vault/constants';
 import {
   STEP_RM_NETWORK_INTERFACES,
   STEP_RM_NETWORK_LOAD_BALANCERS,
@@ -126,7 +126,9 @@ export function getActiveDirectorySteps(): GetApiSteps {
 export function getResourceManagerSteps(): GetApiSteps {
   return {
     executeFirstSteps: [
-      STEP_RM_KEYVAULT_VAULTS,
+      keyvaultSteps.VAULTS,
+      keyvaultSteps.VAULT_DIAGNOSTIC_SETTINGS,
+      keyvaultSteps.KEYS,
       STEP_RM_NETWORK_VIRTUAL_NETWORKS,
       STEP_RM_NETWORK_SECURITY_GROUPS,
       STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,

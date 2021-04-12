@@ -1,7 +1,7 @@
 import findOrBuildResourceEntityFromResourceId from './findOrBuildResourceEntityFromResourceId';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import instanceConfig from '../../../../test/integrationInstanceConfig';
-import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
+import { entities as keyvaultEntities } from '../key-vault/constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
 describe('#findOrBuildResourceEntityFromResourceId', () => {
@@ -10,7 +10,7 @@ describe('#findOrBuildResourceEntityFromResourceId', () => {
       '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id';
     const targetEntity: Entity = {
       _class: ['Service'],
-      _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
+      _type: keyvaultEntities.KEY_VAULT._type,
       _key: id,
     };
 
@@ -40,7 +40,7 @@ describe('#findOrBuildResourceEntityFromResourceId', () => {
     });
 
     expect(response).toEqual({
-      _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
+      _type: keyvaultEntities.KEY_VAULT._type,
       _key: id,
     });
   });

@@ -61,7 +61,7 @@ describe('rm-policy-assignments', () => {
   });
 });
 
-describe.only('rm-policy-definitions', () => {
+describe('rm-policy-definitions', () => {
   async function getSetupEntities(config: IntegrationConfig) {
     const accountEntity = getMockAccountEntity(config);
 

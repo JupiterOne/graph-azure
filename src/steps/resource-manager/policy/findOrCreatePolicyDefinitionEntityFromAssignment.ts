@@ -88,13 +88,25 @@ async function findOrCreatePolicyDefinitionEntity(
     return;
   }
 
+  const name = getNameFromPolicyDefinitionId(policyDefinitionId);
+  if (!name) {
+    logger.warn(
+      {
+        parentId,
+        policyDefinitionId,
+      },
+      'Warning: Could not parse name from policy definition ID.',
+    );
+    return;
+  }
+
   switch (type) {
     case PolicyDefinitionType.POLICY_DEFINITION: {
       const policyDefinition = await getPolicyDefinition(
         client,
         policyDefinitionId,
+        name,
       );
-      if (!policyDefinition) return; // TODO warn message
       return jobState.addEntity(
         createPolicyDefinitionEntity(webLinker, policyDefinition),
       );
@@ -103,8 +115,8 @@ async function findOrCreatePolicyDefinitionEntity(
       const policySetDefinition = await getPolicySetDefinition(
         client,
         policyDefinitionId,
+        name,
       );
-      if (!policySetDefinition) return; // TODO warn message
       const policySetDefinitionEntity = await jobState.addEntity(
         createPolicySetDefinitionEntity(webLinker, policySetDefinition),
       );
@@ -122,22 +134,24 @@ async function findOrCreatePolicyDefinitionEntity(
 async function getPolicyDefinition(
   client: AzurePolicyClient,
   policyDefinitionId: string,
-): Promise<PolicyDefinition | undefined> {
+  name: string,
+): Promise<PolicyDefinition> {
   if (isBuiltInDefinition(policyDefinitionId)) {
-    return client.getBuiltInPolicyDefinition(policyDefinitionId);
+    return client.getBuiltInPolicyDefinition(name);
   } else {
-    return client.getPolicyDefinition(policyDefinitionId);
+    return client.getPolicyDefinition(name);
   }
 }
 
 async function getPolicySetDefinition(
   client: AzurePolicyClient,
   policyDefinitionId: string,
-): Promise<PolicySetDefinition | undefined> {
+  name: string,
+): Promise<PolicySetDefinition> {
   if (isBuiltInDefinition(policyDefinitionId)) {
-    return client.getBuiltInPolicySetDefinition(policyDefinitionId);
+    return client.getBuiltInPolicySetDefinition(name);
   } else {
-    return client.getPolicySetDefinition(policyDefinitionId);
+    return client.getPolicySetDefinition(name);
   }
 }
 
@@ -150,7 +164,7 @@ async function findOrCreatePolicyDefinitionGraphObjectsFromPolicySetDefinition(
   policySetDefinition: PolicySetDefinition,
   policySetDefinitionEntity: Entity,
 ): Promise<void> {
-  const { jobState } = executionContext;
+  const { logger, jobState } = executionContext;
 
   for (const policyDefinitionReference of policySetDefinition.policyDefinitions) {
     const policyDefinitionEntity = await findOrCreatePolicyDefinitionEntity(
@@ -176,7 +190,13 @@ async function findOrCreatePolicyDefinitionGraphObjectsFromPolicySetDefinition(
         }),
       );
     } else {
-      // TODO warn
+      logger.warn(
+        {
+          policySetDefinitionId: policySetDefinition.id,
+          policyDefinitionReference,
+        },
+        'WARNING: Cannot find policy definition defined by policy set definition',
+      );
     }
   }
 }
@@ -230,4 +250,9 @@ function getPolicyDefinitionType(policyDefinitionId: string) {
   if (policySetDefinitionRegex.test(policyDefinitionId)) {
     return PolicyDefinitionType.POLICY_SET_DEFINITION;
   }
+}
+
+function getNameFromPolicyDefinitionId(policyDefinitionId: string) {
+  const slashDelimetedSegements = policyDefinitionId.split('/');
+  return slashDelimetedSegements[slashDelimetedSegements.length - 1];
 }

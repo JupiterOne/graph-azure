@@ -123,6 +123,7 @@ export function createSecurityCenterSettingEntity(
         name: data.name,
         type: data.type,
         kind: data.kind,
+        enabled: (data as any).properties?.enabled,
         webLink: webLinker.portalResourceUrl(data.id),
       },
     },

@@ -35,8 +35,9 @@ export const SecurityEntities = {
         name: { type: 'string' },
         type: { type: 'string' },
         kind: { type: 'string' },
+        enabled: { type: 'boolean' },
       },
-      required: ['id', 'name', 'type', 'kind'],
+      required: ['id', 'name', 'type', 'kind', 'enabled'],
     },
   },
   AUTO_PROVISIONING_SETTING: {

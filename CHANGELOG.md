@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.23.1 - 2021-04-13
+
 ### Added
 
 - Added the `enabled` property to `azure_security_center_setting` entities.

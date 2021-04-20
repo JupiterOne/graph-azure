@@ -2,6 +2,7 @@ import {
   createDirectRelationship,
   RelationshipClass,
   Entity,
+  generateRelationshipKey,
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';
@@ -186,6 +187,11 @@ async function findOrCreatePolicyDefinitionGraphObjectsFromPolicySetDefinition(
             // the following properties have invalid types for edges:
             // parameters: policyDefinitionReference.parameters,
             // groupNames: policyDefinitionReference.groupNames,
+            _key: generateRelationshipKey(
+              RelationshipClass.CONTAINS,
+              policySetDefinitionEntity,
+              policyDefinitionReference.policyDefinitionReferenceId!,
+            ),
           },
         }),
       );

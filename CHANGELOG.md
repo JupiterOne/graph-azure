@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.23.2 - 2021-04-20
+
 ### Changed
 
 - Changed `_key` property for

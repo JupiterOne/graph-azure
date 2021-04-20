@@ -8,6 +8,7 @@ import {
   Table,
   StorageQueue,
   Kind,
+  SkuTier,
 } from '@azure/arm-storage/esm/models';
 
 import {
@@ -22,7 +23,7 @@ import { ClientSecretCredential } from '@azure/identity';
 export function createStorageAccountServiceClient(options: {
   config: IntegrationConfig;
   logger: IntegrationLogger;
-  storageAccount: { name: string; kind: Kind };
+  storageAccount: { name: string; kind: Kind; skuTier: SkuTier };
 }) {
   const { config, logger, storageAccount } = options;
   const credential = new ClientSecretCredential(
@@ -33,26 +34,38 @@ export function createStorageAccountServiceClient(options: {
 
   return {
     getBlobServiceProperties: async () => {
-      const client = new BlobServiceClient(
-        `https://${storageAccount.name}.blob.core.windows.net`,
-        credential,
-      );
-      try {
-        const response = await client.getProperties();
-        return response._response.parsedBody;
-      } catch (e) {
-        logger.warn(
-          {
-            storageAccount,
-            e,
-          },
-          'Failed to get blob service properties for storage account',
+      if (
+        isServiceEnabledForKindAndTier.blob(
+          storageAccount.kind,
+          storageAccount.skuTier,
+        )
+      ) {
+        const client = new BlobServiceClient(
+          `https://${storageAccount.name}.blob.core.windows.net`,
+          credential,
         );
+        try {
+          const response = await client.getProperties();
+          return response._response.parsedBody;
+        } catch (e) {
+          logger.warn(
+            {
+              storageAccount,
+              e,
+            },
+            'Failed to get blob service properties for storage account',
+          );
+        }
       }
     },
 
     getQueueServiceProperties: async () => {
-      if (isServiceEnabledForKind.queue(storageAccount.kind)) {
+      if (
+        isServiceEnabledForKindAndTier.queue(
+          storageAccount.kind,
+          storageAccount.skuTier,
+        )
+      ) {
         const client = new QueueServiceClient(
           `https://${storageAccount.name}.queue.core.windows.net`,
           credential,
@@ -95,6 +108,7 @@ export class StorageClient extends Client {
       name: string;
       id: string;
       kind: Kind;
+      skuTier: SkuTier;
     },
     callback: (e: BlobContainer) => void | Promise<void>,
   ): Promise<void> {
@@ -104,7 +118,13 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name!;
 
-    if (!isServiceEnabledForKind.blob(storageAccount.kind)) return;
+    if (
+      !isServiceEnabledForKindAndTier.blob(
+        storageAccount.kind,
+        storageAccount.skuTier,
+      )
+    )
+      return;
 
     await iterateAllResources({
       logger: this.logger,
@@ -126,7 +146,7 @@ export class StorageClient extends Client {
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   public async iterateQueues(
-    storageAccount: { name: string; id: string; kind: Kind },
+    storageAccount: { name: string; id: string; kind: Kind; skuTier: SkuTier },
     callback: (e: StorageQueue) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
@@ -135,7 +155,13 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name!;
 
-    if (!isServiceEnabledForKind.queue(storageAccount.kind)) return;
+    if (
+      !isServiceEnabledForKindAndTier.queue(
+        storageAccount.kind,
+        storageAccount.skuTier,
+      )
+    )
+      return;
 
     await iterateAllResources({
       logger: this.logger,
@@ -155,7 +181,7 @@ export class StorageClient extends Client {
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   public async iterateTables(
-    storageAccount: { name: string; id: string; kind: Kind },
+    storageAccount: { name: string; id: string; kind: Kind; skuTier: SkuTier },
     callback: (e: Table) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
@@ -164,7 +190,13 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name;
 
-    if (!isServiceEnabledForKind.table(storageAccount.kind)) return;
+    if (
+      !isServiceEnabledForKindAndTier.table(
+        storageAccount.kind,
+        storageAccount.skuTier,
+      )
+    )
+      return;
 
     await iterateAllResources({
       logger: this.logger,
@@ -187,6 +219,7 @@ export class StorageClient extends Client {
       name: string;
       id: string;
       kind: Kind;
+      skuTier: SkuTier;
     },
     callback: (e: FileShare) => void | Promise<void>,
   ): Promise<void> {
@@ -196,7 +229,13 @@ export class StorageClient extends Client {
     const resourceGroup = resourceGroupName(storageAccount.id, true)!;
     const accountName = storageAccount.name!;
 
-    if (!isServiceEnabledForKind.fileShare(storageAccount.kind)) return;
+    if (
+      !isServiceEnabledForKindAndTier.fileShare(
+        storageAccount.kind,
+        storageAccount.skuTier,
+      )
+    )
+      return;
 
     await iterateAllResources({
       logger: this.logger,
@@ -217,20 +256,26 @@ export class StorageClient extends Client {
   }
 }
 
-const isServiceEnabledForKind = {
-  table: (kind: Kind) => {
-    return getSupportedServicesForKind(kind).includes(StorageService.TABLE);
+const isServiceEnabledForKindAndTier = {
+  table: (kind: Kind, tier: SkuTier) => {
+    return getSupportedServicesForKindAndTier(kind, tier).includes(
+      StorageService.TABLE,
+    );
   },
-  queue: (kind: Kind) => {
-    return getSupportedServicesForKind(kind).includes(StorageService.QUEUE);
+  queue: (kind: Kind, tier: SkuTier) => {
+    return getSupportedServicesForKindAndTier(kind, tier).includes(
+      StorageService.QUEUE,
+    );
   },
-  fileShare: (kind: Kind) => {
-    return getSupportedServicesForKind(kind).includes(
+  fileShare: (kind: Kind, tier: SkuTier) => {
+    return getSupportedServicesForKindAndTier(kind, tier).includes(
       StorageService.FILE_SHARE,
     );
   },
-  blob: (kind: Kind) => {
-    return getSupportedServicesForKind(kind).includes(StorageService.BLOB);
+  blob: (kind: Kind, tier: SkuTier) => {
+    return getSupportedServicesForKindAndTier(kind, tier).includes(
+      StorageService.BLOB,
+    );
   },
 };
 
@@ -246,22 +291,27 @@ enum StorageService {
  *
  * https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
  */
-function getSupportedServicesForKind(kind: Kind): StorageService[] {
+function getSupportedServicesForKindAndTier(
+  kind: Kind,
+  tier: SkuTier,
+): StorageService[] {
   switch (kind) {
     case 'Storage':
-      return [
-        StorageService.BLOB,
-        StorageService.FILE_SHARE,
-        StorageService.QUEUE,
-        StorageService.TABLE,
-      ];
     case 'StorageV2':
-      return [
-        StorageService.BLOB,
-        StorageService.FILE_SHARE,
-        StorageService.QUEUE,
-        StorageService.TABLE,
-      ];
+      {
+        switch (tier) {
+          case 'Standard':
+            return [
+              StorageService.BLOB,
+              StorageService.FILE_SHARE,
+              StorageService.QUEUE,
+              StorageService.TABLE,
+            ];
+          case 'Premium':
+            return [StorageService.BLOB];
+        }
+      }
+      break;
     case 'FileStorage':
       return [StorageService.FILE_SHARE];
     case 'BlobStorage':

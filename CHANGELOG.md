@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Changed logic for fetching tables/queues/fileShares of `Premium` tier
+  storageV1/storageV2 `azure_storage_account`s, because only `Standard` tier
+  storage accounts support tables/queues/fileShares.
+
 ## 5.23.2 - 2021-04-20
 
 ### Changed

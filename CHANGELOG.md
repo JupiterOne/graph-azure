@@ -8,6 +8,45 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Changed `_key` property for
+  `azure_policy_set_definition|contains|azure_policy_definition` relationship to
+  use `policyDefinitionReference.policyDefinitionReferenceId` instead of
+  `policyDefinitionReference.policyDefinitionId`. The same
+  `azure_policy_definition` can be referenced more than once in an
+  `azure_policy_set_definition` using different `parameter` properties.
+
+  Previously, the relationship `_key` used the `policyDefinitionId`, which threw
+  `DuplicateKeyError`s Example:
+
+  ```json
+  {
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b954148f-4c11-4c38-8221-be76711e194a",
+    "parameters": {
+      "operationName": {
+        "value": "Microsoft.Network/networkSecurityGroups/delete"
+      }
+    },
+    "policyDefinitionReferenceId": "CISv110x5x2x3",
+    "groupNames": [
+      "CIS_Azure_1.1.0_5.2.3"
+    ]
+  },
+  {
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b954148f-4c11-4c38-8221-be76711e194a",
+    "parameters": {
+      "operationName": {
+        "value": "Microsoft.Network/networkSecurityGroups/securityRules/write"
+      }
+    },
+    "policyDefinitionReferenceId": "CISv110x5x2x4",
+    "groupNames": [
+      "CIS_Azure_1.1.0_5.2.4"
+    ]
+  },
+  ```
+
 ## 5.23.1 - 2021-04-13
 
 ### Added

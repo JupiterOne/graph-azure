@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Changed
 
+- Upgraded `@jupiterone/integration-sdk-*@6.0.0`
 - Added try/catch logic to `AzurePolicyClient` methods for policy definitions &
   policy set definitions so step does not fail from 404s.
 

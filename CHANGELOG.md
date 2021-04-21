@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.23.3 - 2021-04-21
+
 ### Changed
 
 - Changed logic for fetching tables/queues/fileShares of `Premium` tier

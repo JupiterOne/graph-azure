@@ -113,7 +113,7 @@ describe('createStorageAccountServiceClient', () => {
         storageAccount: {
           name: storageAccount.name!,
           kind: storageAccount.kind!,
-          skuTier: storageAccount.sku?.tier!,
+          skuTier: storageAccount.sku?.tier as SkuTier,
         },
       });
 
@@ -150,7 +150,7 @@ describe('createStorageAccountServiceClient', () => {
         storageAccount: {
           name: storageAccount.name!,
           kind: storageAccount.kind!,
-          skuTier: storageAccount.sku?.tier!,
+          skuTier: storageAccount.sku?.tier as SkuTier,
         },
       });
 

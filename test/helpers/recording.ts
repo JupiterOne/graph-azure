@@ -48,7 +48,6 @@ function mutateAccessToken(
         entry.response.content.text = JSON.stringify(
           {
             ...responseJson,
-            /* eslint-disable-next-line @typescript-eslint/camelcase */
             access_token: mutation(responseJson.access_token),
           },
           null,

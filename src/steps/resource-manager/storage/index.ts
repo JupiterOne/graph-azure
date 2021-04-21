@@ -66,7 +66,7 @@ export async function fetchStorageAccounts(
       {
         name: storageAccount.name!,
         kind: storageAccount.kind!,
-        skuTier: storageAccount.sku?.tier!,
+        skuTier: storageAccount.sku?.tier as SkuTier,
       },
     );
     const storageAccountEntity = await jobState.addEntity(
@@ -183,7 +183,7 @@ export async function fetchStorageFileShares(
           name: storageAccount.name!,
           id: storageAccount.id!,
           kind: storageAccount.kind!,
-          skuTier: storageAccount.sku?.tier!,
+          skuTier: storageAccount.sku?.tier as SkuTier,
         },
         async (fileShare) => {
           const fileShareEntity = createStorageFileShareEntity(
@@ -227,7 +227,7 @@ export async function fetchStorageContainers(
           name: storageAccount.name!,
           id: storageAccount.id!,
           kind: storageAccount.kind!,
-          skuTier: storageAccount.sku?.tier!,
+          skuTier: storageAccount.sku?.tier as SkuTier,
         },
         async (container) => {
           const containerEntity = createStorageContainerEntity(
@@ -271,7 +271,7 @@ export async function fetchStorageQueues(
           name: storageAccount.name!,
           id: storageAccount.id!,
           kind: storageAccount.kind!,
-          skuTier: storageAccount.sku?.tier!,
+          skuTier: storageAccount.sku?.tier as SkuTier,
         },
         async (e) => {
           const queueEntity = createStorageQueueEntity(
@@ -315,7 +315,7 @@ export async function fetchStorageTables(
           name: storageAccount.name!,
           id: storageAccount.id!,
           kind: storageAccount.kind!,
-          skuTier: storageAccount.sku?.tier!,
+          skuTier: storageAccount.sku?.tier as SkuTier,
         },
         async (e) => {
           const tableEntity = createStorageTableEntity(

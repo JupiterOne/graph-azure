@@ -241,12 +241,12 @@ export class StorageClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
-        list: async () => {
+        list: async function listFileShares() {
           return serviceClient.fileShares.list(resourceGroup, accountName);
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
+        listNext: /* istanbul ignore next: testing iteration might be difficult */ async function listNextFileShares(
           nextLink: string,
-        ) => {
+        ) {
           return serviceClient.fileShares.listNext(nextLink);
         },
       },

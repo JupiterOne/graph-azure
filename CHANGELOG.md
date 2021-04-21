@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Added try/catch logic to `AzurePolicyClient` methods for policy definitions &
+  policy set definitions so step does not fail from 404s.
+
 ## 5.23.3 - 2021-04-21
 
 ### Changed

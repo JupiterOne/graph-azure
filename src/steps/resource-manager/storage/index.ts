@@ -1,4 +1,4 @@
-import { StorageAccount, Kind } from '@azure/arm-storage/esm/models';
+import { StorageAccount, Kind, SkuTier } from '@azure/arm-storage/esm/models';
 import {
   createDirectRelationship,
   Entity,
@@ -38,6 +38,7 @@ export async function fetchStorageAccounts(
   async function getStorageAccountServiceProperties(storageAccount: {
     name: string;
     kind: Kind;
+    skuTier: SkuTier;
   }) {
     const storageAccountServiceClient = createStorageAccountServiceClient({
       config: instance.config,
@@ -62,7 +63,11 @@ export async function fetchStorageAccounts(
 
   await client.iterateStorageAccounts(async (storageAccount) => {
     const storageAccountServiceProperties = await getStorageAccountServiceProperties(
-      { name: storageAccount.name!, kind: storageAccount.kind! },
+      {
+        name: storageAccount.name!,
+        kind: storageAccount.kind!,
+        skuTier: storageAccount.sku?.tier!,
+      },
     );
     const storageAccountEntity = await jobState.addEntity(
       createStorageAccountEntity(
@@ -178,6 +183,7 @@ export async function fetchStorageFileShares(
           name: storageAccount.name!,
           id: storageAccount.id!,
           kind: storageAccount.kind!,
+          skuTier: storageAccount.sku?.tier!,
         },
         async (fileShare) => {
           const fileShareEntity = createStorageFileShareEntity(
@@ -221,6 +227,7 @@ export async function fetchStorageContainers(
           name: storageAccount.name!,
           id: storageAccount.id!,
           kind: storageAccount.kind!,
+          skuTier: storageAccount.sku?.tier!,
         },
         async (container) => {
           const containerEntity = createStorageContainerEntity(
@@ -264,6 +271,7 @@ export async function fetchStorageQueues(
           name: storageAccount.name!,
           id: storageAccount.id!,
           kind: storageAccount.kind!,
+          skuTier: storageAccount.sku?.tier!,
         },
         async (e) => {
           const queueEntity = createStorageQueueEntity(
@@ -307,6 +315,7 @@ export async function fetchStorageTables(
           name: storageAccount.name!,
           id: storageAccount.id!,
           kind: storageAccount.kind!,
+          skuTier: storageAccount.sku?.tier!,
         },
         async (e) => {
           const tableEntity = createStorageTableEntity(

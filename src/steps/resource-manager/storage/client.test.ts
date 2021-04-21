@@ -5,6 +5,7 @@ import {
   StorageQueue,
   Table,
   Kind,
+  SkuTier,
 } from '@azure/arm-storage/esm/models';
 import {
   createMockIntegrationLogger,
@@ -112,6 +113,7 @@ describe('createStorageAccountServiceClient', () => {
         storageAccount: {
           name: storageAccount.name!,
           kind: storageAccount.kind!,
+          skuTier: storageAccount.sku?.tier!,
         },
       });
 
@@ -148,6 +150,7 @@ describe('createStorageAccountServiceClient', () => {
         storageAccount: {
           name: storageAccount.name!,
           kind: storageAccount.kind!,
+          skuTier: storageAccount.sku?.tier!,
         },
       });
 
@@ -180,6 +183,7 @@ describe('iterateStorageBlobContainers', () => {
           '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
         name: 'j1dev',
         kind: 'StorageV2',
+        skuTier: 'Standard',
       },
       (e) => {
         containers.push(e);
@@ -228,6 +232,7 @@ describe('iterateStorageBlobContainers', () => {
               '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
             name: 'j1dev',
             kind: 'StorageV2',
+            skuTier: 'Standard',
           },
           (e) => {
             containers.push(e);
@@ -264,6 +269,7 @@ describe('iterateFileShares', () => {
           '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
         name: 'j1dev',
         kind: 'StorageV2',
+        skuTier: 'Standard',
       },
       (e) => {
         resources.push(e);
@@ -305,6 +311,7 @@ describe('iterateQueues', () => {
           '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev',
         name: 'ndowmon1j1dev',
         kind: 'StorageV2',
+        skuTier: 'Standard',
       },
       (e) => {
         resources.push(e);
@@ -339,6 +346,7 @@ describe('iterateQueues', () => {
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage',
       name: 'ndowmon1j1devblobstorage',
       kind: 'BlobStorage' as Kind,
+      skuTier: 'Standard' as SkuTier,
     };
 
     await client.iterateQueues(storageAccount, jest.fn());
@@ -370,6 +378,7 @@ describe('iterateTables', () => {
           '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1dev',
         name: 'ndowmon1j1dev',
         kind: 'StorageV2',
+        skuTier: 'Standard' as SkuTier,
       },
       (e) => {
         resources.push(e);
@@ -405,6 +414,7 @@ describe('iterateTables', () => {
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/ndowmon1j1devblobstorage',
       name: 'ndowmon1j1devblobstorage',
       kind: 'BlobStorage' as Kind,
+      skuTier: 'Standard' as SkuTier,
     };
 
     await client.iterateTables(storageAccount, jest.fn());

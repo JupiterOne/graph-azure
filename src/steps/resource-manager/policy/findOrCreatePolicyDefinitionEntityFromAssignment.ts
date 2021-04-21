@@ -108,6 +108,8 @@ async function findOrCreatePolicyDefinitionEntity(
         policyDefinitionId,
         name,
       );
+      if (!policyDefinition) return;
+
       return jobState.addEntity(
         createPolicyDefinitionEntity(webLinker, policyDefinition),
       );
@@ -118,6 +120,8 @@ async function findOrCreatePolicyDefinitionEntity(
         policyDefinitionId,
         name,
       );
+      if (!policySetDefinition) return;
+
       const policySetDefinitionEntity = await jobState.addEntity(
         createPolicySetDefinitionEntity(webLinker, policySetDefinition),
       );
@@ -136,7 +140,7 @@ async function getPolicyDefinition(
   client: AzurePolicyClient,
   policyDefinitionId: string,
   name: string,
-): Promise<PolicyDefinition> {
+): Promise<PolicyDefinition | undefined> {
   if (isBuiltInDefinition(policyDefinitionId)) {
     return client.getBuiltInPolicyDefinition(name);
   } else {
@@ -148,7 +152,7 @@ async function getPolicySetDefinition(
   client: AzurePolicyClient,
   policyDefinitionId: string,
   name: string,
-): Promise<PolicySetDefinition> {
+): Promise<PolicySetDefinition | undefined> {
   if (isBuiltInDefinition(policyDefinitionId)) {
     return client.getBuiltInPolicySetDefinition(name);
   } else {

@@ -34,39 +34,81 @@ export class AzurePolicyClient extends Client {
 
   public async getPolicySetDefinition(
     name: string,
-  ): Promise<PolicySetDefinition> {
+  ): Promise<PolicySetDefinition | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
 
-    return serviceClient.policySetDefinitions.get(name);
+    try {
+      return await serviceClient.policySetDefinitions.get(name);
+    } catch (err) {
+      this.logger.warn(
+        {
+          name,
+          err,
+        },
+        'Error getting policy set definition by name.',
+      );
+    }
   }
 
   public async getBuiltInPolicySetDefinition(
     name: string,
-  ): Promise<PolicySetDefinition> {
+  ): Promise<PolicySetDefinition | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
 
-    return serviceClient.policySetDefinitions.getBuiltIn(name);
+    try {
+      return await serviceClient.policySetDefinitions.getBuiltIn(name);
+    } catch (err) {
+      this.logger.warn(
+        {
+          name,
+          err,
+        },
+        'Error getting built-in policy set definition by name.',
+      );
+    }
   }
 
-  public async getPolicyDefinition(name: string): Promise<PolicyDefinition> {
+  public async getPolicyDefinition(
+    name: string,
+  ): Promise<PolicyDefinition | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
 
-    return serviceClient.policyDefinitions.get(name);
+    try {
+      return await serviceClient.policyDefinitions.get(name);
+    } catch (err) {
+      this.logger.warn(
+        {
+          name,
+          err,
+        },
+        'Error getting policy definition by name.',
+      );
+    }
   }
 
   public async getBuiltInPolicyDefinition(
     name: string,
-  ): Promise<PolicyDefinition> {
+  ): Promise<PolicyDefinition | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
 
-    return serviceClient.policyDefinitions.getBuiltIn(name);
+    try {
+      return await serviceClient.policyDefinitions.getBuiltIn(name);
+    } catch (err) {
+      this.logger.warn(
+        {
+          name,
+          err,
+        },
+        'Error getting built-in policy definition by name.',
+      );
+    }
   }
 }

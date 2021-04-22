@@ -108,7 +108,16 @@ async function findOrCreatePolicyDefinitionEntity(
         policyDefinitionId,
         name,
       );
-      if (!policyDefinition) return;
+      if (!policyDefinition) {
+        logger.warn(
+          {
+            policyDefinitionId,
+            name,
+          },
+          'Could not find policy definition by policyDefinitionId',
+        );
+        return;
+      }
 
       return jobState.addEntity(
         createPolicyDefinitionEntity(webLinker, policyDefinition),
@@ -120,7 +129,16 @@ async function findOrCreatePolicyDefinitionEntity(
         policyDefinitionId,
         name,
       );
-      if (!policySetDefinition) return;
+      if (!policySetDefinition) {
+        logger.warn(
+          {
+            policyDefinitionId,
+            name,
+          },
+          'Could not find policy set definition by policyDefinitionId',
+        );
+        return;
+      }
 
       const policySetDefinitionEntity = await jobState.addEntity(
         createPolicySetDefinitionEntity(webLinker, policySetDefinition),

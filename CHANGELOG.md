@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.23.5 - 2021-04-26
+
+### Added
+
+- Added logger.warn statement when getPolicyDefinition API call fails.
+
 ## 5.23.4 - 2021-04-22
 
 ### Changed

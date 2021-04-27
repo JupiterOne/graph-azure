@@ -3,6 +3,7 @@ import {
   RelationshipClass,
   Entity,
   generateRelationshipKey,
+  IntegrationError,
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
 import { IntegrationStepContext } from '../../../types';
@@ -108,16 +109,6 @@ async function findOrCreatePolicyDefinitionEntity(
         policyDefinitionId,
         name,
       );
-      if (!policyDefinition) {
-        logger.warn(
-          {
-            policyDefinitionId,
-            name,
-          },
-          'Could not find policy definition by policyDefinitionId',
-        );
-        return;
-      }
 
       return jobState.addEntity(
         createPolicyDefinitionEntity(webLinker, policyDefinition),
@@ -129,16 +120,6 @@ async function findOrCreatePolicyDefinitionEntity(
         policyDefinitionId,
         name,
       );
-      if (!policySetDefinition) {
-        logger.warn(
-          {
-            policyDefinitionId,
-            name,
-          },
-          'Could not find policy set definition by policyDefinitionId',
-        );
-        return;
-      }
 
       const policySetDefinitionEntity = await jobState.addEntity(
         createPolicySetDefinitionEntity(webLinker, policySetDefinition),
@@ -158,11 +139,17 @@ async function getPolicyDefinition(
   client: AzurePolicyClient,
   policyDefinitionId: string,
   name: string,
-): Promise<PolicyDefinition | undefined> {
-  if (isBuiltInDefinition(policyDefinitionId)) {
-    return client.getBuiltInPolicyDefinition(name);
-  } else {
-    return client.getPolicyDefinition(name);
+): Promise<PolicyDefinition> {
+  switch (getDefinitionSource(policyDefinitionId)) {
+    case PolicyDefinitionSource.BUILT_IN:
+      return client.getBuiltInPolicyDefinition(name);
+    case PolicyDefinitionSource.SUBSCRIPTION:
+      return client.getPolicyDefinition(name);
+    case PolicyDefinitionSource.MANAGEMENT_GROUP:
+      return client.getManagementGroupPolicyDefinition(
+        name,
+        getManagementGroupIdFromPolicyDefinitionId(policyDefinitionId),
+      );
   }
 }
 
@@ -170,11 +157,17 @@ async function getPolicySetDefinition(
   client: AzurePolicyClient,
   policyDefinitionId: string,
   name: string,
-): Promise<PolicySetDefinition | undefined> {
-  if (isBuiltInDefinition(policyDefinitionId)) {
-    return client.getBuiltInPolicySetDefinition(name);
-  } else {
-    return client.getPolicySetDefinition(name);
+): Promise<PolicySetDefinition> {
+  switch (getDefinitionSource(policyDefinitionId)) {
+    case PolicyDefinitionSource.BUILT_IN:
+      return client.getBuiltInPolicySetDefinition(name);
+    case PolicyDefinitionSource.SUBSCRIPTION:
+      return client.getPolicySetDefinition(name);
+    case PolicyDefinitionSource.MANAGEMENT_GROUP:
+      return client.getManagementGroupPolicySetDefinition(
+        name,
+        getManagementGroupIdFromPolicyDefinitionId(policyDefinitionId),
+      );
   }
 }
 
@@ -235,11 +228,39 @@ async function findOrCreatePolicyDefinitionGraphObjectsFromPolicySetDefinition(
  * Built-in example:
  * /providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8
  *
- * Custom example:
+ * Subscription example:
  * /subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policySetDefinitions/CostManagement
+ *
+ * Management Group example:
+ * /providers/Microsoft.Management/managementGroups/JupiterOneAllSubscriptions/providers/Microsoft.Authorization/policySetDefinitions/a93f7eec-5513-4d40-9c74-2fe071ddc859
  */
-function isBuiltInDefinition(policyDefinitionId: string) {
-  return !policyDefinitionId.startsWith('/subscriptions/');
+enum PolicyDefinitionSource {
+  BUILT_IN = 'BUILT_IN',
+  SUBSCRIPTION = 'SUBSCRIPTION',
+  MANAGEMENT_GROUP = 'MANAGEMENT_GROUP',
+}
+
+function getDefinitionSource(
+  policyDefinitionId: string,
+): PolicyDefinitionSource {
+  if (policyDefinitionId.startsWith('/subscriptions/')) {
+    return PolicyDefinitionSource.SUBSCRIPTION;
+  }
+  if (
+    policyDefinitionId.startsWith(
+      '/providers/Microsoft.Management/managementGroups/',
+    )
+  ) {
+    return PolicyDefinitionSource.MANAGEMENT_GROUP;
+  }
+  if (policyDefinitionId.startsWith('/providers/Microsoft.Authorization/')) {
+    return PolicyDefinitionSource.BUILT_IN;
+  }
+
+  throw new IntegrationError({
+    message: `The policy definition ${policyDefinitionId} does not match any known sources (${PolicyDefinitionSource})`,
+    code: 'UNKNOWN_POLICY_DEFINITION_SOURCE',
+  });
 }
 
 enum PolicyDefinitionType {
@@ -262,13 +283,13 @@ const policySetDefinitionRegex = new RegExp(
 );
 
 /**
- * The name of a policy defintion or policy set definition can be a UUID or other string.
+ * Policy definition paths include either 'policyDefinitions' or 'policySetDefinitions'
  *
- * {
- *   id: '/providers/Microsoft.Authorization/policyDefinitions/0e60b895-3786-45da-8377-9c6b4b6ac5f9',
- *   name: '0e60b895-3786-45da-8377-9c6b4b6ac5f9',
- *   ...
- * }
+ * Policy definition example:
+ * /providers/Microsoft.Authorization/policyDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8
+ *
+ * Policy set definition example:
+ * /providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8
  */
 function getPolicyDefinitionType(policyDefinitionId: string) {
   if (policyDefinitionRegex.test(policyDefinitionId)) {
@@ -280,7 +301,42 @@ function getPolicyDefinitionType(policyDefinitionId: string) {
   }
 }
 
+/**
+ * The name of a policy defintion or policy set definition can be a UUID or other string.
+ *
+ * {
+ *   id: '/providers/Microsoft.Authorization/policyDefinitions/0e60b895-3786-45da-8377-9c6b4b6ac5f9',
+ *   name: '0e60b895-3786-45da-8377-9c6b4b6ac5f9',
+ *   ...
+ * }
+ */
 function getNameFromPolicyDefinitionId(policyDefinitionId: string) {
   const slashDelimetedSegements = policyDefinitionId.split('/');
   return slashDelimetedSegements[slashDelimetedSegements.length - 1];
+}
+
+/**
+ * The management group ID for a policy defintion or policy set definition can be extracted from the policy definition ID.
+ *
+ * {
+ *   id: '/providers/Microsoft.Management/managementGroups/JupiterOneAllSubscriptions/providers/Microsoft.Authorization/policySetDefinitions/a93f7eec-5513-4d40-9c74-2fe071ddc859',
+ *   name: '0e60b895-3786-45da-8377-9c6b4b6ac5f9',
+ *   managementGroupId: 'JupiterOneAllSubscriptions',
+ *   ...
+ * }
+ *
+ * id.split('/') = [
+ *   '',                           // 0
+ *   'providers',                  // 1
+ *   'Microsoft.Management',       // 2
+ *   'managementGroups',           // 3
+ *   'JupiterOneAllSubscriptions', // 4
+ *   ...
+ * ]
+ */
+function getManagementGroupIdFromPolicyDefinitionId(
+  policyDefinitionId: string,
+) {
+  const slashDelimetedSegements = policyDefinitionId.split('/');
+  return slashDelimetedSegements[4];
 }

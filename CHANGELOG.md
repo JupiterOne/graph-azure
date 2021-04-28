@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.23.6 - 2021-04-28
+
 ### Added
 
 - Added logic to handle `policyDefinition` IDs that are sourced from management

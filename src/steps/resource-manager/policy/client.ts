@@ -34,81 +34,67 @@ export class AzurePolicyClient extends Client {
 
   public async getPolicySetDefinition(
     name: string,
-  ): Promise<PolicySetDefinition | undefined> {
+  ): Promise<PolicySetDefinition> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
 
-    try {
-      return await serviceClient.policySetDefinitions.get(name);
-    } catch (err) {
-      this.logger.warn(
-        {
-          name,
-          err,
-        },
-        'Error getting policy set definition by name.',
-      );
-    }
+    return serviceClient.policySetDefinitions.get(name);
   }
 
   public async getBuiltInPolicySetDefinition(
     name: string,
-  ): Promise<PolicySetDefinition | undefined> {
+  ): Promise<PolicySetDefinition> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
 
-    try {
-      return await serviceClient.policySetDefinitions.getBuiltIn(name);
-    } catch (err) {
-      this.logger.warn(
-        {
-          name,
-          err,
-        },
-        'Error getting built-in policy set definition by name.',
-      );
-    }
+    return serviceClient.policySetDefinitions.getBuiltIn(name);
   }
 
-  public async getPolicyDefinition(
+  public async getManagementGroupPolicySetDefinition(
     name: string,
-  ): Promise<PolicyDefinition | undefined> {
+    managementGroupId: string,
+  ): Promise<PolicySetDefinition> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
 
-    try {
-      return await serviceClient.policyDefinitions.get(name);
-    } catch (err) {
-      this.logger.warn(
-        {
-          name,
-          err,
-        },
-        'Error getting policy definition by name.',
-      );
-    }
+    return serviceClient.policySetDefinitions.getAtManagementGroup(
+      name,
+      managementGroupId,
+    );
+  }
+
+  public async getPolicyDefinition(name: string): Promise<PolicyDefinition> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PolicyClient,
+    );
+
+    return serviceClient.policyDefinitions.get(name);
   }
 
   public async getBuiltInPolicyDefinition(
     name: string,
-  ): Promise<PolicyDefinition | undefined> {
+  ): Promise<PolicyDefinition> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
 
-    try {
-      return await serviceClient.policyDefinitions.getBuiltIn(name);
-    } catch (err) {
-      this.logger.warn(
-        {
-          name,
-          err,
-        },
-        'Error getting built-in policy definition by name.',
-      );
-    }
+    return serviceClient.policyDefinitions.getBuiltIn(name);
+  }
+
+  public async getManagementGroupPolicyDefinition(
+    name: string,
+    managementGroupId: string,
+  ): Promise<PolicyDefinition> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      PolicyClient,
+    );
+
+    return serviceClient.policyDefinitions.getAtManagementGroup(
+      name,
+      managementGroupId,
+    );
   }
 }

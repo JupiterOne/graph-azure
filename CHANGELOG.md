@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Renamed type `azure_network_azure_firewall` to `azure_network_firewall`
+
 ## 5.23.6 - 2021-04-28
 
 ### Added

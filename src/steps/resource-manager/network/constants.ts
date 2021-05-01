@@ -14,7 +14,7 @@ export const STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS =
   'rm-network-security-group-rules';
 export const STEP_RM_NETWORK_VIRTUAL_NETWORKS = 'rm-network-virtual-networks';
 export const STEP_RM_NETWORK_LOAD_BALANCERS = 'rm-network-load-balancers';
-export const STEP_RM_NETWORK_AZURE_FIREWALLS = 'rm-network-azure-firewalls';
+export const STEP_RM_NETWORK_FIREWALLS = 'rm-network-firewalls';
 export const STEP_RM_NETWORK_WATCHERS = 'rm-network-watchers';
 export const STEP_RM_NETWORK_FLOW_LOGS = 'rm-network-flow-logs';
 export const STEP_RM_NETWORK_LOCATION_WATCHERS =
@@ -23,9 +23,9 @@ export const STEP_RM_NETWORK_LOCATION_WATCHERS =
 // Graph objects
 export const NetworkEntities = {
   AZURE_FIREWALL: {
-    _type: 'azure_network_azure_firewall',
+    _type: 'azure_network_firewall',
     _class: ['Firewall'],
-    resourceName: '[RM] Network Azure Firewall',
+    resourceName: '[RM] Network Firewall',
   },
   VIRTUAL_NETWORK: {
     _type: 'azure_vnet',

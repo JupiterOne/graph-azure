@@ -1,32 +1,52 @@
-# DIAGNOSTIC SETTINGS NOTE:
-# When taking a recording of a request to Azure to retrieve diagnostic settings for an Azure resource, 
-# the request sometimes returns a different amount of diagnostic settings for that resource than what was specified in the terraform.
+# DIAGNOSTIC SETTINGS NOTE: When taking a recording of a request to Azure to
+# retrieve diagnostic settings for an Azure resource, the request sometimes
+# returns a different amount of diagnostic settings for that resource than what
+# was specified in the terraform.
 #
-# This occurs when specifying that Azure only create a subset of all potential diagnostic settings for a resource.
-# E.G. In terraform, you specify that only one diagnostic settings log category is enabled, although there are more log categories that can be enabled for that resource.
+# This occurs when specifying that Azure only create a subset of all potential
+# diagnostic settings for a resource. E.G. In terraform, you specify that only
+# one diagnostic settings log category is enabled, although there are more log
+# categories that can be enabled for that resource.
 #
-# This is because when you make a request to create diagnostic settings for that resource, Azure automatically creates the other diagnostic settings categories with default values.
-# The result will be that the response given from retrieving diagnostic settings for that resource return more diagnostic settings than the amount of diagnostic settings you specified in the terraform.
+# This is because when you make a request to create diagnostic settings for that
+# resource, Azure automatically creates the other diagnostic settings categories
+# with default values. The result will be that the response given from
+# retrieving diagnostic settings for that resource return more diagnostic
+# settings than the amount of diagnostic settings you specified in the
+# terraform.
 #
-# The next time you run terraform, it will see that it plans to remove the 'extra' set of diagnostic settings (the ones Azure created by default), even though you never specified to create them.
-# It will then attempt to remove the default diagnostic settings that Azure created.
+# The next time you run terraform, it will see that it plans to remove the
+# 'extra' set of diagnostic settings (the ones Azure created by default), even
+# though you never specified to create them. It will then attempt to remove the
+# default diagnostic settings that Azure created.
 #
-# If another recording of the same request to Azure to retrieve diagnostic settings is taken, you will see that either:
-# 1) Azure allows the deletion of the default diagnostic settings, resulting in inconsistent testing. You can't both assert that the default settings exist and don't exist.
-# 2) Azure does not allow the deletion of the default diagnostic settings and recreates them or ignores the request. This might result in you not understanding why more results are returned than expected in your tests.
+# If another recording of the same request to Azure to retrieve diagnostic
+# settings is taken, you will see that either:
 #
-# It was suggested that the best way to handle this problem is to supply the full available set of diagnostic settings categories for a resource in terraform. 
-# Doing this ensures that you get the same result when performing the terraform multiple times because Azure won't have the opportunity to create defaults.
-# 
-# See https://github.com/terraform-providers/terraform-provider-azurerm/issues/7235#issuecomment-647974840 for more details.
+# 1) Azure allows the deletion of the default diagnostic settings, resulting in
+#    inconsistent testing. You can't both assert that the default settings exist
+#    and don't exist.
+# 2) Azure does not allow the deletion of the default diagnostic settings and
+#    recreates them or ignores the request. This might result in you not
+#    understanding why more results are returned than expected in your tests.
+#
+# It was suggested that the best way to handle this problem is to supply the
+# full available set of diagnostic settings categories for a resource in
+# terraform. Doing this ensures that you get the same result when performing the
+# terraform multiple times because Azure won't have the opportunity to create
+# defaults.
+#
+# See
+# https://github.com/terraform-providers/terraform-provider-azurerm/issues/7235#issuecomment-647974840
+# for more details.
 
-variable "create_azure_network_azure_firewall" {
+variable "create_network_firewall" {
   type    = number
   default = 0
 }
 
 locals {
-  network_azure_firewall_count = var.create_azure_network_azure_firewall == 1 ? 1 : 0
+  network_firewall_count = var.create_network_firewall == 1 ? 1 : 0
 }
 
 #### VPC default, eastus
@@ -259,7 +279,7 @@ resource "azurerm_subnet" "j1dev_priv_two" {
 }
 
 resource "azurerm_virtual_network" "j1dev_az_fw_vm" {
-  count               = local.network_azure_firewall_count
+  count               = local.network_firewall_count
   name                = "j1dev_az_fw_vm"
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.j1dev.location
@@ -267,7 +287,7 @@ resource "azurerm_virtual_network" "j1dev_az_fw_vm" {
 }
 
 resource "azurerm_subnet" "j1dev_az_fw_subnet" {
-  count                = local.network_azure_firewall_count
+  count                = local.network_firewall_count
   name                 = "AzureFirewallSubnet"
   resource_group_name  = azurerm_resource_group.j1dev.name
   virtual_network_name = azurerm_virtual_network.j1dev_az_fw_vm[0].name
@@ -275,7 +295,7 @@ resource "azurerm_subnet" "j1dev_az_fw_subnet" {
 }
 
 resource "azurerm_public_ip" "j1dev_az_fw_pub_ip" {
-  count               = local.network_azure_firewall_count
+  count               = local.network_firewall_count
   name                = "j1dev_az_fw_pub_ip"
   location            = azurerm_resource_group.j1dev.location
   resource_group_name = azurerm_resource_group.j1dev.name
@@ -284,7 +304,7 @@ resource "azurerm_public_ip" "j1dev_az_fw_pub_ip" {
 }
 
 resource "azurerm_firewall" "j1dev_firewall" {
-  count               = local.network_azure_firewall_count
+  count               = local.network_firewall_count
   name                = "j1dev_firewall"
   location            = azurerm_resource_group.j1dev.location
   resource_group_name = azurerm_resource_group.j1dev.name
@@ -297,6 +317,6 @@ resource "azurerm_firewall" "j1dev_firewall" {
 }
 
 data "azurerm_monitor_diagnostic_categories" "j1dev_firewall_ds_cat" {
-  count       = local.network_azure_firewall_count
+  count       = local.network_firewall_count
   resource_id = azurerm_firewall.j1dev_firewall[0].id
 }

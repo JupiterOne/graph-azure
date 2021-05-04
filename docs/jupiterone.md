@@ -181,7 +181,7 @@ The following entities are created:
 | [RM] Monitor Log Profile                       | `azure_monitor_log_profile`                       | `Configuration`                    |
 | [RM] MySQL Database                            | `azure_mysql_database`                            | `Database`, `DataStore`            |
 | [RM] MySQL Server                              | `azure_mysql_server`                              | `Database`, `DataStore`, `Host`    |
-| [RM] Network Azure Firewall                    | `azure_network_azure_firewall`                    | `Firewall`                         |
+| [RM] Network Firewall                          | `azure_network_firewall`                          | `Firewall`                         |
 | [RM] Network Interface                         | `azure_nic`                                       | `NetworkInterface`                 |
 | [RM] Network Watcher                           | `azure_network_watcher`                           | `Resource`                         |
 | [RM] Policy Assignment                         | `azure_policy_assignment`                         | `ControlPolicy`                    |
@@ -285,7 +285,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`             | **HAS**               | `azure_mariadb_server`                            |
 | `azure_resource_group`             | **HAS**               | `azure_monitor_activity_log_alert`                |
 | `azure_resource_group`             | **HAS**               | `azure_mysql_server`                              |
-| `azure_resource_group`             | **HAS**               | `azure_network_azure_firewall`                    |
+| `azure_resource_group`             | **HAS**               | `azure_network_firewall`                          |
 | `azure_resource_group`             | **HAS**               | `azure_network_watcher`                           |
 | `azure_resource_group`             | **HAS**               | `azure_nic`                                       |
 | `azure_resource_group`             | **HAS**               | `azure_postgresql_server`                         |
@@ -395,7 +395,7 @@ following entities:
 - azure_lb
 - azure_mariadb_server
 - azure_mysql_server
-- azure_network_azure_firewall
+- azure_network_firewall
 - azure_postgresql_server
 - azure_public_ip
 - azure_security_group

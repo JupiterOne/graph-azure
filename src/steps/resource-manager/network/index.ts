@@ -29,7 +29,7 @@ import {
   STEP_RM_NETWORK_VIRTUAL_NETWORKS,
   NetworkEntities,
   NetworkRelationships,
-  STEP_RM_NETWORK_AZURE_FIREWALLS,
+  STEP_RM_NETWORK_FIREWALLS,
   STEP_RM_NETWORK_WATCHERS,
   STEP_RM_NETWORK_FLOW_LOGS,
   STEP_RM_NETWORK_LOCATION_WATCHERS,
@@ -657,7 +657,7 @@ export const networkSteps: Step<
     executionHandler: fetchLoadBalancers,
   },
   {
-    id: STEP_RM_NETWORK_AZURE_FIREWALLS,
+    id: STEP_RM_NETWORK_FIREWALLS,
     name: 'Network Azure Firewalls',
     entities: [
       NetworkEntities.AZURE_FIREWALL,

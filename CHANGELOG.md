@@ -8,6 +8,20 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added support for ingesting the following **new** resources:
+
+  | Service | Resource / Entity        |
+  | ------- | ------------------------ |
+  | Network | `azure_private_endpoint` |
+
+- Added support for ingesting the following **new** relationships:
+
+  | Source                 | \_class | Target                   |
+  | ---------------------- | ------- | ------------------------ |
+  | `azure_resource_group` | `HAS`   | `azure_private_endpoint` |
+
 ### Fixed
 
 - Renamed type `azure_network_azure_firewall` to `azure_network_firewall`

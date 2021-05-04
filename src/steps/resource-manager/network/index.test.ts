@@ -22,6 +22,7 @@ import {
   fetchNetworkSecurityGroupFlowLogs,
   fetchNetworkSecurityGroups,
   fetchNetworkWatchers,
+  fetchPrivateEndpoints,
   fetchPublicIPAddresses,
   fetchVirtualNetworks,
 } from './';
@@ -30,7 +31,10 @@ import { IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import { NetworkEntities, NetworkRelationships } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
-import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
+import {
+  getMockAccountEntity,
+  getMockResourceGroupEntity,
+} from '../../../../test/helpers/getMockEntity';
 import { fetchResourceGroups, RESOURCE_GROUP_ENTITY } from '../resources';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import { entities as storageEntities, fetchStorageAccounts } from '../storage';
@@ -1155,6 +1159,66 @@ describe('rm-network-watchers', () => {
     );
     expect(
       networkWatcherResourceGroupRelationships,
+    ).toMatchDirectRelationshipSchema({});
+  });
+});
+
+describe('rm-network-private-endpoints', () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+    return { accountEntity, resourceGroupEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-network-private-endpoints',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity, resourceGroupEntity } = getSetupEntities(
+      configFromEnv,
+    );
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [accountEntity, resourceGroupEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchPrivateEndpoints(context);
+
+    const privateEndpointEntities = context.jobState.collectedEntities;
+
+    expect(privateEndpointEntities.length).toBeGreaterThan(0);
+    /**
+     * The Azure private endpoint does not comply with JupiterOne's network endpoint class, because
+     * J1's NetworkEndpoint requires the "ipAddress" property. However, the Azure private endpoint
+     * relates back to a network interface, which is where the IP address is defined.
+     */
+    // expect(privateEndpointEntities).toMatchGraphObjectSchema({
+    //   _class: NetworkEntities.PRIVATE_ENDPOINT._class,
+    // });
+
+    const privateEndpointResourceGroupRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(privateEndpointResourceGroupRelationships.length).toBe(
+      privateEndpointEntities.length,
+    );
+    expect(
+      privateEndpointResourceGroupRelationships,
     ).toMatchDirectRelationshipSchema({});
   });
 });

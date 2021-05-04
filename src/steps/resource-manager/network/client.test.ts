@@ -4,6 +4,7 @@ import {
   NetworkInterface,
   NetworkSecurityGroup,
   NetworkWatcher,
+  PrivateEndpoint,
   PublicIPAddress,
   VirtualNetwork,
 } from '@azure/arm-network/esm/models';
@@ -709,6 +710,35 @@ describe('iterateNetworkWatchers', () => {
     });
 
     expect(networkWatchers.length).toBeGreaterThan(0);
+  });
+});
+
+describe('iteratePrivateEndpoints', () => {
+  function getSetupData(config: IntegrationConfig) {
+    return { resourceGroup: { name: 'j1dev' } };
+  }
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iteratePrivateEndpoints',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new NetworkClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+
+    const { resourceGroup } = getSetupData(configFromEnv);
+
+    const privateEndpoints: PrivateEndpoint[] = [];
+    await client.iteratePrivateEndpoints(resourceGroup.name!, (pe) => {
+      privateEndpoints.push(pe);
+    });
+
+    expect(privateEndpoints.length).toBeGreaterThan(0);
   });
 });
 

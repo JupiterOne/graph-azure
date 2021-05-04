@@ -17,6 +17,7 @@ export const STEP_RM_NETWORK_LOAD_BALANCERS = 'rm-network-load-balancers';
 export const STEP_RM_NETWORK_FIREWALLS = 'rm-network-firewalls';
 export const STEP_RM_NETWORK_WATCHERS = 'rm-network-watchers';
 export const STEP_RM_NETWORK_FLOW_LOGS = 'rm-network-flow-logs';
+export const STEP_RM_NETWORK_PRIVATE_ENDPOINTS = 'rm-network-private-endpoints';
 export const STEP_RM_NETWORK_LOCATION_WATCHERS =
   'rm-network-location-watcher-relationships';
 
@@ -67,6 +68,11 @@ export const NetworkEntities = {
     _class: ['Logs'],
     resourceName: '[RM] Security Group Flow Logs',
   },
+  PRIVATE_ENDPOINT: {
+    _type: 'azure_private_endpoint',
+    _class: ['NetworkEndpoint'],
+    resourceName: '[RM] Private Endpoint',
+  },
 };
 
 export const SECURITY_GROUP_RULE_RELATIONSHIP_TYPE =
@@ -94,6 +100,9 @@ export const NetworkRelationships = {
   ),
   RESOURCE_GROUP_HAS_NETWORK_WATCHER: createResourceGroupResourceRelationshipMetadata(
     NetworkEntities.NETWORK_WATCHER._type,
+  ),
+  RESOURCE_GROUP_HAS_PRIVATE_ENDPOINT: createResourceGroupResourceRelationshipMetadata(
+    NetworkEntities.PRIVATE_ENDPOINT._type,
   ),
   NETWORK_VIRTUAL_NETWORK_CONTAINS_NETWORK_SUBNET: {
     _type: generateRelationshipType(

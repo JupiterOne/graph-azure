@@ -192,6 +192,7 @@ The following entities are created:
 | [RM] PostgreSQL Server Firewall Rule           | `azure_postgresql_server_firewall_rule`           | `Firewall`                         |
 | [RM] Private DNS Record Set                    | `azure_private_dns_record_set`                    | `DomainRecord`                     |
 | [RM] Private DNS Zone                          | `azure_private_dns_zone`                          | `DomainZone`                       |
+| [RM] Private Endpoint                          | `azure_private_endpoint`                          | `NetworkEndpoint`                  |
 | [RM] Public IP Address                         | `azure_public_ip`                                 | `IpAddress`                        |
 | [RM] Redis Cache                               | `azure_redis_cache`                               | `Database`, `DataStore`, `Cluster` |
 | [RM] Redis Firewall Rule                       | `azure_firewall_rule`                             | `Firewall`                         |
@@ -290,6 +291,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`             | **HAS**               | `azure_nic`                                       |
 | `azure_resource_group`             | **HAS**               | `azure_postgresql_server`                         |
 | `azure_resource_group`             | **HAS**               | `azure_private_dns_zone`                          |
+| `azure_resource_group`             | **HAS**               | `azure_private_endpoint`                          |
 | `azure_resource_group`             | **HAS**               | `azure_public_ip`                                 |
 | `azure_resource_group`             | **HAS**               | `azure_redis_cache`                               |
 | `azure_resource_group`             | **HAS**               | `azure_security_group`                            |

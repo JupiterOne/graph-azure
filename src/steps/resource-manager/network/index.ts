@@ -33,6 +33,7 @@ import {
   STEP_RM_NETWORK_WATCHERS,
   STEP_RM_NETWORK_FLOW_LOGS,
   STEP_RM_NETWORK_LOCATION_WATCHERS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
 } from './constants';
 import {
   createAzureFirewallEntity,
@@ -44,6 +45,7 @@ import {
   createNetworkSecurityGroupSubnetRelationship,
   createNetworkWatcherEntity,
   createNsgFlowLogEntity,
+  createPrivateEndpointEntity,
   createPublicIPAddressEntity,
   createSecurityGroupRuleMappedRelationship,
   createSecurityGroupRuleSubnetRelationship,
@@ -70,6 +72,7 @@ import {
   SetDataTypes as SubscriptionSetDataTypes,
   steps as subscriptionSteps,
 } from '../subscriptions/constants';
+import { ResourceGroup } from '@azure/arm-resources/esm/models';
 
 export * from './constants';
 
@@ -441,6 +444,38 @@ export async function fetchNetworkWatchers(
   );
 }
 
+export async function fetchPrivateEndpoints(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
+
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  await jobState.iterateEntities(
+    { _type: RESOURCE_GROUP_ENTITY._type },
+    async (resourceGroupEntity) => {
+      const resourceGroup = getRawData<ResourceGroup>(resourceGroupEntity)!;
+      await client.iteratePrivateEndpoints(
+        resourceGroup.name!,
+        async (privateEndpoint) => {
+          const privateEndpointEntity = await jobState.addEntity(
+            createPrivateEndpointEntity(webLinker, privateEndpoint),
+          );
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS,
+              from: resourceGroupEntity,
+              to: privateEndpointEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
 export async function buildLocationNetworkWatcherRelationships(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -694,6 +729,14 @@ export const networkSteps: Step<
     name: 'Network Watchers',
     entities: [NetworkEntities.NETWORK_WATCHER],
     relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_WATCHER],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchNetworkWatchers,
+  },
+  {
+    id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+    name: 'Private Endpoints',
+    entities: [NetworkEntities.PRIVATE_ENDPOINT],
+    relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_PRIVATE_ENDPOINT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchNetworkWatchers,
   },

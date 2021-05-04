@@ -202,4 +202,10 @@ export const NetworkRelationships = {
     _class: RelationshipClass.HAS,
     targetType: NetworkEntities.PRIVATE_ENDPOINT._type,
   },
+  PRIVATE_ENDPOINT_USES_NIC: {
+    _type: 'azure_private_endpoint_uses_nic',
+    sourceType: NetworkEntities.PRIVATE_ENDPOINT._type,
+    _class: RelationshipClass.USES,
+    targetType: NetworkEntities.NETWORK_INTERFACE._type,
+  },
 };

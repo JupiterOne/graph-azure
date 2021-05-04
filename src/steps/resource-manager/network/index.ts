@@ -36,6 +36,7 @@ import {
   STEP_RM_NETWORK_LOCATION_WATCHERS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
 } from './constants';
 import {
   createAzureFirewallEntity,
@@ -515,6 +516,46 @@ export async function buildPrivateEndpointSubnetRelationships(
   );
 }
 
+export async function buildPrivateEndpointNetworkInterfaceRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: NetworkEntities.PRIVATE_ENDPOINT._type },
+    async (privateEndpointEntity) => {
+      const privateEndpoint = getRawData<PrivateEndpoint>(
+        privateEndpointEntity,
+      )!;
+
+      for (const networkInterface of privateEndpoint.networkInterfaces || []) {
+        const networkInterfaceEntity = await jobState.findEntity(
+          networkInterface.id!,
+        );
+
+        if (!networkInterfaceEntity) {
+          logger.info(
+            {
+              privateEndpointId: privateEndpoint.id,
+              networkInterfaceId: networkInterface.id,
+            },
+            'Could not find network interface defined by private endpoint. Skipping relationship.',
+          );
+          return;
+        }
+
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: privateEndpointEntity,
+            _class: RelationshipClass.USES,
+            to: networkInterfaceEntity,
+          }),
+        );
+      }
+    },
+  );
+}
+
 export async function buildLocationNetworkWatcherRelationships(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -789,6 +830,14 @@ export const networkSteps: Step<
       STEP_RM_NETWORK_VIRTUAL_NETWORKS,
     ],
     executionHandler: buildPrivateEndpointSubnetRelationships,
+  },
+  {
+    id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
+    name: 'Private Endpoint to Network Interface Relationships',
+    entities: [],
+    relationships: [NetworkRelationships.PRIVATE_ENDPOINT_USES_NIC],
+    dependsOn: [STEP_RM_NETWORK_PRIVATE_ENDPOINTS, STEP_RM_NETWORK_INTERFACES],
+    executionHandler: buildPrivateEndpointNetworkInterfaceRelationships,
   },
   {
     id: STEP_RM_NETWORK_LOCATION_WATCHERS,

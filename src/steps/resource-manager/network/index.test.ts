@@ -15,6 +15,7 @@ import {
 import { fetchAccount } from '../../active-directory';
 import {
   buildLocationNetworkWatcherRelationships,
+  buildPrivateEndpointNetworkInterfaceRelationships,
   buildPrivateEndpointSubnetRelationships,
   buildSecurityGroupRuleRelationships,
   fetchAzureFirewalls,
@@ -1297,6 +1298,89 @@ describe('rm-network-private-endpoint-subnet-relationships', () => {
       },
     });
   }, 10000);
+});
+
+describe('rm-network-private-endpoint-nic-relationships', () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [accountEntity, resourceGroupEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchPrivateEndpoints(context);
+
+    /**
+     * This step sets the `publicIpAddresses` raw data, which is required for
+     * fetchNetworkInterfaces.
+     */
+    await fetchPublicIPAddresses(context);
+    await fetchNetworkInterfaces(context);
+
+    const networkInterfaceEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === NetworkEntities.NETWORK_INTERFACE._type,
+    );
+    const privateEndpointEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === NetworkEntities.PRIVATE_ENDPOINT._type,
+    );
+
+    expect(privateEndpointEntities.length).toBeGreaterThan(0);
+
+    return { privateEndpointEntities, networkInterfaceEntities };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-network-private-endpoint-nic-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      networkInterfaceEntities,
+      privateEndpointEntities,
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...networkInterfaceEntities, ...privateEndpointEntities],
+    });
+
+    await buildPrivateEndpointNetworkInterfaceRelationships(context);
+
+    const privateEndpointNetworkInterfaceRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    expect(privateEndpointNetworkInterfaceRelationships.length).toBe(
+      privateEndpointEntities.length,
+    );
+    expect(
+      privateEndpointNetworkInterfaceRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const: NetworkRelationships.PRIVATE_ENDPOINT_USES_NIC._type,
+          },
+        },
+      },
+    });
+  }, 15000);
 });
 
 describe('rm-network-flow-logs', () => {

@@ -43,6 +43,7 @@ import {
   STEP_RM_NETWORK_LOCATION_WATCHERS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
 } from './steps/resource-manager/network/constants';
 import { steps as storageSteps } from './steps/resource-manager/storage/constants';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources/constants';
@@ -144,6 +145,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_COMPUTE_VIRTUAL_MACHINES,
       STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
       STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
+      STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
       computeSteps.VIRTUAL_MACHINE_EXTENSIONS,
       computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS,
       STEP_RM_COSMOSDB_SQL_DATABASES,

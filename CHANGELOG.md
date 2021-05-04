@@ -18,10 +18,11 @@ and this project adheres to
 
 - Added support for ingesting the following **new** relationships:
 
-  | Source                 | \_class | Target                   |
-  | ---------------------- | ------- | ------------------------ |
-  | `azure_resource_group` | `HAS`   | `azure_private_endpoint` |
-  | `azure_subnet`         | `HAS`   | `azure_private_endpoint` |
+  | Source                   | \_class | Target                   |
+  | ------------------------ | ------- | ------------------------ |
+  | `azure_resource_group`   | `HAS`   | `azure_private_endpoint` |
+  | `azure_subnet`           | `HAS`   | `azure_private_endpoint` |
+  | `azure_private_endpoint` | `USES`  | `azure_nic`              |
 
 ### Fixed
 

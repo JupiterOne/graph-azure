@@ -15,6 +15,7 @@ import {
 import { fetchAccount } from '../../active-directory';
 import {
   buildLocationNetworkWatcherRelationships,
+  buildPrivateEndpointSubnetRelationships,
   buildSecurityGroupRuleRelationships,
   fetchAzureFirewalls,
   fetchLoadBalancers,
@@ -1221,6 +1222,81 @@ describe('rm-network-private-endpoints', () => {
       privateEndpointResourceGroupRelationships,
     ).toMatchDirectRelationshipSchema({});
   });
+});
+
+describe('rm-network-private-endpoint-subnet-relationships', () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [accountEntity, resourceGroupEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchPrivateEndpoints(context);
+    await fetchVirtualNetworks(context);
+
+    const subnetEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === NetworkEntities.SUBNET._type,
+    );
+    const privateEndpointEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === NetworkEntities.PRIVATE_ENDPOINT._type,
+    );
+
+    expect(privateEndpointEntities.length).toBeGreaterThan(0);
+
+    return { privateEndpointEntities, subnetEntities };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-network-private-endpoint-subnet-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { subnetEntities, privateEndpointEntities } = await getSetupEntities(
+      configFromEnv,
+    );
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...subnetEntities, ...privateEndpointEntities],
+    });
+
+    await buildPrivateEndpointSubnetRelationships(context);
+
+    const privateEndpointSubnetRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    expect(privateEndpointSubnetRelationships.length).toBe(
+      privateEndpointEntities.length,
+    );
+    expect(privateEndpointSubnetRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              NetworkRelationships.NETWORK_SUBNET_HAS_PRIVATE_ENDPOINT._type,
+          },
+        },
+      },
+    });
+  }, 10000);
 });
 
 describe('rm-network-flow-logs', () => {

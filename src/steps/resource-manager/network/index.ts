@@ -2,6 +2,7 @@ import {
   LoadBalancer,
   NetworkInterfaceIPConfiguration,
   NetworkSecurityGroup,
+  PrivateEndpoint,
   PublicIPAddress,
   Subnet,
 } from '@azure/arm-network/esm/models';
@@ -34,6 +35,7 @@ import {
   STEP_RM_NETWORK_FLOW_LOGS,
   STEP_RM_NETWORK_LOCATION_WATCHERS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
 } from './constants';
 import {
   createAzureFirewallEntity,
@@ -476,6 +478,43 @@ export async function fetchPrivateEndpoints(
   );
 }
 
+export async function buildPrivateEndpointSubnetRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: NetworkEntities.PRIVATE_ENDPOINT._type },
+    async (privateEndpointEntity) => {
+      const privateEndpoint = getRawData<PrivateEndpoint>(
+        privateEndpointEntity,
+      )!;
+
+      const subnetId = privateEndpoint.subnet?.id;
+      const subnetEntity = await jobState.findEntity(subnetId!);
+
+      if (!subnetEntity) {
+        logger.info(
+          {
+            privateEndpointId: privateEndpoint.id,
+            subnetId: privateEndpoint.subnet?.id,
+          },
+          'Could not find subnet defined by private endpoint. Skipping relationship.',
+        );
+        return;
+      }
+
+      await jobState.addRelationship(
+        createDirectRelationship({
+          from: subnetEntity,
+          _class: RelationshipClass.HAS,
+          to: privateEndpointEntity,
+        }),
+      );
+    },
+  );
+}
+
 export async function buildLocationNetworkWatcherRelationships(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -739,6 +778,17 @@ export const networkSteps: Step<
     relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_PRIVATE_ENDPOINT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchNetworkWatchers,
+  },
+  {
+    id: STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
+    name: 'Private Endpoint to Subnet Relationships',
+    entities: [],
+    relationships: [NetworkRelationships.NETWORK_SUBNET_HAS_PRIVATE_ENDPOINT],
+    dependsOn: [
+      STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+      STEP_RM_NETWORK_VIRTUAL_NETWORKS,
+    ],
+    executionHandler: buildPrivateEndpointSubnetRelationships,
   },
   {
     id: STEP_RM_NETWORK_LOCATION_WATCHERS,

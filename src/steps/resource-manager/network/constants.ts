@@ -18,6 +18,10 @@ export const STEP_RM_NETWORK_FIREWALLS = 'rm-network-firewalls';
 export const STEP_RM_NETWORK_WATCHERS = 'rm-network-watchers';
 export const STEP_RM_NETWORK_FLOW_LOGS = 'rm-network-flow-logs';
 export const STEP_RM_NETWORK_PRIVATE_ENDPOINTS = 'rm-network-private-endpoints';
+export const STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS =
+  'rm-network-private-endpoint-subnet-relationships';
+export const STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS =
+  'rm-network-private-endpoint-nic-relationships';
 export const STEP_RM_NETWORK_LOCATION_WATCHERS =
   'rm-network-location-watcher-relationships';
 
@@ -191,5 +195,11 @@ export const NetworkRelationships = {
     sourceType: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._type,
     _class: RelationshipClass.USES,
     targetType: storageEntities.STORAGE_ACCOUNT._type,
+  },
+  NETWORK_SUBNET_HAS_PRIVATE_ENDPOINT: {
+    _type: 'azure_subnet_has_private_endpoint',
+    sourceType: NetworkEntities.SUBNET._type,
+    _class: RelationshipClass.HAS,
+    targetType: NetworkEntities.PRIVATE_ENDPOINT._type,
   },
 };

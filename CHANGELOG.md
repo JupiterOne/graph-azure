@@ -21,6 +21,7 @@ and this project adheres to
   | Source                 | \_class | Target                   |
   | ---------------------- | ------- | ------------------------ |
   | `azure_resource_group` | `HAS`   | `azure_private_endpoint` |
+  | `azure_subnet`         | `HAS`   | `azure_private_endpoint` |
 
 ### Fixed
 

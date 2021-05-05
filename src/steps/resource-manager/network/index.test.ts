@@ -1380,7 +1380,7 @@ describe('rm-network-private-endpoint-nic-relationships', () => {
         },
       },
     });
-  }, 15000);
+  }, 25000);
 });
 
 describe('rm-network-flow-logs', () => {

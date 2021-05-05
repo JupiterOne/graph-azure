@@ -44,6 +44,7 @@ import {
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
 } from './steps/resource-manager/network/constants';
 import { steps as storageSteps } from './steps/resource-manager/storage/constants';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources/constants';
@@ -216,6 +217,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       AdvisorSteps.RECOMMENDATIONS,
       PolicySteps.POLICY_ASSIGNMENT_SCOPE_RELATIONSHIPS,
       MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,
+      STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
     ],
   };
 }

@@ -50,14 +50,16 @@ resource "azurerm_subnet" "j1dev" {
   name                 = "j1dev"
   resource_group_name  = azurerm_resource_group.j1dev.name
   virtual_network_name = azurerm_virtual_network.j1dev.name
-  address_prefix       = "10.0.2.0/24"
+  address_prefixes     = ["10.0.2.0/24"]
+  enforce_private_link_endpoint_network_policies = true
+  enforce_private_link_service_network_policies  = false
 }
 
 resource "azurerm_subnet" "j1dev_priv_one" {
   name                 = "j1dev_priv_one"
   resource_group_name  = azurerm_resource_group.j1dev.name
   virtual_network_name = azurerm_virtual_network.j1dev.name
-  address_prefix       = "10.0.3.0/24"
+  address_prefixes     = ["10.0.3.0/24"]
 }
 
 resource "azurerm_subnet_network_security_group_association" "j1dev" {
@@ -255,7 +257,7 @@ resource "azurerm_subnet" "j1dev_priv_two" {
   name                 = "j1dev_priv_two"
   resource_group_name  = azurerm_resource_group.j1dev.name
   virtual_network_name = azurerm_virtual_network.j1dev_two.name
-  address_prefix       = "10.0.3.0/24"
+  address_prefixes     = ["10.0.3.0/24"]
 }
 
 resource "azurerm_virtual_network" "j1dev_az_fw_vm" {
@@ -272,6 +274,20 @@ resource "azurerm_subnet" "j1dev_az_fw_subnet" {
   resource_group_name  = azurerm_resource_group.j1dev.name
   virtual_network_name = azurerm_virtual_network.j1dev_az_fw_vm[0].name
   address_prefixes     = ["10.0.1.0/24"]
+}
+
+resource "azurerm_private_endpoint" "j1dev" {
+  name                = "j1dev"
+  location            = azurerm_resource_group.j1dev.location
+  resource_group_name = azurerm_resource_group.j1dev.name
+  subnet_id           = azurerm_subnet.j1dev.id
+
+  private_service_connection {
+    name                           = "j1dev"
+    private_connection_resource_id = azurerm_storage_account.j1dev.id
+    subresource_names              = ["blob"]
+    is_manual_connection           = false
+  }
 }
 
 resource "azurerm_public_ip" "j1dev_az_fw_pub_ip" {

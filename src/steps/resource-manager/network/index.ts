@@ -878,7 +878,7 @@ export const networkSteps: Step<
     entities: [NetworkEntities.PRIVATE_ENDPOINT],
     relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_PRIVATE_ENDPOINT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    executionHandler: fetchNetworkWatchers,
+    executionHandler: fetchPrivateEndpoints,
   },
   {
     id: STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,

@@ -2,6 +2,7 @@ import {
   RelationshipClass,
   generateRelationshipType,
 } from '@jupiterone/integration-sdk-core';
+import { ANY_RESOURCE } from '../constants';
 import { entities as storageEntities } from '../storage';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
@@ -22,6 +23,8 @@ export const STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS =
   'rm-network-private-endpoint-subnet-relationships';
 export const STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS =
   'rm-network-private-endpoint-nic-relationships';
+export const STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS =
+  'rm-network-private-endpoint-resource-relationships';
 export const STEP_RM_NETWORK_LOCATION_WATCHERS =
   'rm-network-location-watcher-relationships';
 
@@ -207,5 +210,11 @@ export const NetworkRelationships = {
     sourceType: NetworkEntities.PRIVATE_ENDPOINT._type,
     _class: RelationshipClass.USES,
     targetType: NetworkEntities.NETWORK_INTERFACE._type,
+  },
+  PRIVATE_ENDPOINT_CONNECTS_RESOURCE: {
+    _type: 'azure_private_endpoint_connects_resource',
+    sourceType: NetworkEntities.PRIVATE_ENDPOINT._type,
+    _class: RelationshipClass.CONNECTS,
+    targetType: ANY_RESOURCE,
   },
 };

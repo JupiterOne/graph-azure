@@ -16,6 +16,7 @@ import { fetchAccount } from '../../active-directory';
 import {
   buildLocationNetworkWatcherRelationships,
   buildPrivateEndpointNetworkInterfaceRelationships,
+  buildPrivateEndpointResourceRelationships,
   buildPrivateEndpointSubnetRelationships,
   buildSecurityGroupRuleRelationships,
   fetchAzureFirewalls,
@@ -39,7 +40,11 @@ import {
 } from '../../../../test/helpers/getMockEntity';
 import { fetchResourceGroups, RESOURCE_GROUP_ENTITY } from '../resources';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
-import { entities as storageEntities, fetchStorageAccounts } from '../storage';
+import {
+  entities,
+  entities as storageEntities,
+  fetchStorageAccounts,
+} from '../storage';
 import { fetchLocations, fetchSubscription } from '../subscriptions';
 import { setDataKeys as subscriptionSetDataKeys } from '../subscriptions/constants';
 import { createAzureWebLinker } from '../../../azure';
@@ -1298,6 +1303,78 @@ describe('rm-network-private-endpoint-subnet-relationships', () => {
       },
     });
   }, 10000);
+});
+
+describe('rm-network-private-endpoint-resource-relationships', () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [accountEntity, resourceGroupEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchStorageAccounts(context);
+    const storageAccountEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === entities.STORAGE_ACCOUNT._type,
+    );
+
+    await fetchPrivateEndpoints(context);
+    const privateEndpointEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === NetworkEntities.PRIVATE_ENDPOINT._type,
+    );
+    const j1devPrivateEndpointEntities = privateEndpointEntities.filter(
+      (e) => e.name === 'j1dev',
+    );
+    expect(j1devPrivateEndpointEntities).toHaveLength(1);
+
+    return {
+      privateEndpointEntity: j1devPrivateEndpointEntities[0],
+      storageAccountEntities,
+    };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-network-private-endpoint-resource-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      storageAccountEntities,
+      privateEndpointEntity,
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...storageAccountEntities, privateEndpointEntity],
+    });
+
+    await buildPrivateEndpointResourceRelationships(context);
+
+    const privateEndpointResourceRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    expect(privateEndpointResourceRelationships.length).toBe(1);
+    expect(
+      privateEndpointResourceRelationships,
+    ).toMatchDirectRelationshipSchema({});
+  }, 15000);
 });
 
 describe('rm-network-private-endpoint-nic-relationships', () => {

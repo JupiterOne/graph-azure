@@ -37,6 +37,7 @@ import {
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
 } from './constants';
 import {
   createAzureFirewallEntity,
@@ -76,6 +77,7 @@ import {
   steps as subscriptionSteps,
 } from '../subscriptions/constants';
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
+import { getResourceManagerSteps } from '../../../getStepStartStates';
 
 export * from './constants';
 
@@ -556,6 +558,64 @@ export async function buildPrivateEndpointNetworkInterfaceRelationships(
   );
 }
 
+export async function buildPrivateEndpointResourceRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: NetworkEntities.PRIVATE_ENDPOINT._type },
+    async (privateEndpointEntity) => {
+      const privateEndpoint = getRawData<PrivateEndpoint>(
+        privateEndpointEntity,
+      )!;
+
+      for (const privateLinkServiceConnection of privateEndpoint.privateLinkServiceConnections ||
+        []) {
+        const resourceEntity = await jobState.findEntity(
+          privateLinkServiceConnection.privateLinkServiceId!,
+        );
+
+        if (!resourceEntity) {
+          logger.info(
+            {
+              privateEndpointId: privateEndpoint.id,
+              privateLinkServiceConnectionId: privateLinkServiceConnection.id,
+            },
+            'Could not find linked resource defined by private endpoint. Skipping relationship.',
+          );
+          return;
+        }
+
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: privateEndpointEntity,
+            _class: RelationshipClass.CONNECTS,
+            to: resourceEntity,
+            properties: {
+              etag: privateLinkServiceConnection.etag,
+              name: privateLinkServiceConnection.name,
+              'privateLinkServiceConnectionState.actionsRequired':
+                privateLinkServiceConnection.privateLinkServiceConnectionState
+                  ?.actionsRequired,
+              'privateLinkServiceConnectionState.description':
+                privateLinkServiceConnection.privateLinkServiceConnectionState
+                  ?.description,
+              'privateLinkServiceConnectionState.status':
+                privateLinkServiceConnection.privateLinkServiceConnectionState
+                  ?.status,
+              privateLinkServiceId:
+                privateLinkServiceConnection.privateLinkServiceId,
+              provisioningState: privateLinkServiceConnection.provisioningState,
+              type: privateLinkServiceConnection.type,
+            },
+          }),
+        );
+      }
+    },
+  );
+}
+
 export async function buildLocationNetworkWatcherRelationships(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -838,6 +898,17 @@ export const networkSteps: Step<
     relationships: [NetworkRelationships.PRIVATE_ENDPOINT_USES_NIC],
     dependsOn: [STEP_RM_NETWORK_PRIVATE_ENDPOINTS, STEP_RM_NETWORK_INTERFACES],
     executionHandler: buildPrivateEndpointNetworkInterfaceRelationships,
+  },
+  {
+    id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
+    name: 'Private Endpoint to Resource Relationships',
+    entities: [],
+    relationships: [NetworkRelationships.PRIVATE_ENDPOINT_CONNECTS_RESOURCE],
+    dependsOn: [
+      STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+      ...getResourceManagerSteps().executeFirstSteps,
+    ],
+    executionHandler: buildPrivateEndpointResourceRelationships,
   },
   {
     id: STEP_RM_NETWORK_LOCATION_WATCHERS,

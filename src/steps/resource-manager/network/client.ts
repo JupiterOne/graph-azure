@@ -6,6 +6,7 @@ import {
   NetworkInterface,
   NetworkSecurityGroup,
   NetworkWatcher,
+  PrivateEndpoint,
   PublicIPAddress,
   VirtualNetwork,
 } from '@azure/arm-network/esm/models';
@@ -38,6 +39,28 @@ export class NetworkClient extends Client {
         listNext: serviceClient.azureFirewalls.listNext,
       },
       resourceDescription: 'network.azureFirewalls',
+      callback,
+    });
+  }
+
+  public async iteratePrivateEndpoints(
+    resourceGroupName: string,
+    callback: (pe: PrivateEndpoint) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.privateEndpoints.list(resourceGroupName),
+        listNext: async (nextPageLink: string) =>
+          serviceClient.privateEndpoints.listNext(nextPageLink),
+      },
+      resourceDescription: 'network.privateEndpoints',
       callback,
     });
   }

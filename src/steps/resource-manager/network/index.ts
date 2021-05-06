@@ -2,6 +2,7 @@ import {
   LoadBalancer,
   NetworkInterfaceIPConfiguration,
   NetworkSecurityGroup,
+  PrivateEndpoint,
   PublicIPAddress,
   Subnet,
 } from '@azure/arm-network/esm/models';
@@ -33,6 +34,10 @@ import {
   STEP_RM_NETWORK_WATCHERS,
   STEP_RM_NETWORK_FLOW_LOGS,
   STEP_RM_NETWORK_LOCATION_WATCHERS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
 } from './constants';
 import {
   createAzureFirewallEntity,
@@ -44,6 +49,7 @@ import {
   createNetworkSecurityGroupSubnetRelationship,
   createNetworkWatcherEntity,
   createNsgFlowLogEntity,
+  createPrivateEndpointEntity,
   createPublicIPAddressEntity,
   createSecurityGroupRuleMappedRelationship,
   createSecurityGroupRuleSubnetRelationship,
@@ -70,6 +76,8 @@ import {
   SetDataTypes as SubscriptionSetDataTypes,
   steps as subscriptionSteps,
 } from '../subscriptions/constants';
+import { ResourceGroup } from '@azure/arm-resources/esm/models';
+import { getResourceManagerSteps } from '../../../getStepStartStates';
 
 export * from './constants';
 
@@ -441,6 +449,173 @@ export async function fetchNetworkWatchers(
   );
 }
 
+export async function fetchPrivateEndpoints(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
+
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  await jobState.iterateEntities(
+    { _type: RESOURCE_GROUP_ENTITY._type },
+    async (resourceGroupEntity) => {
+      const resourceGroup = getRawData<ResourceGroup>(resourceGroupEntity)!;
+      await client.iteratePrivateEndpoints(
+        resourceGroup.name!,
+        async (privateEndpoint) => {
+          const privateEndpointEntity = await jobState.addEntity(
+            createPrivateEndpointEntity(webLinker, privateEndpoint),
+          );
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS,
+              from: resourceGroupEntity,
+              to: privateEndpointEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
+export async function buildPrivateEndpointSubnetRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: NetworkEntities.PRIVATE_ENDPOINT._type },
+    async (privateEndpointEntity) => {
+      const privateEndpoint = getRawData<PrivateEndpoint>(
+        privateEndpointEntity,
+      )!;
+
+      const subnetId = privateEndpoint.subnet?.id;
+      const subnetEntity = await jobState.findEntity(subnetId!);
+
+      if (!subnetEntity) {
+        logger.info(
+          {
+            privateEndpointId: privateEndpoint.id,
+            subnetId: privateEndpoint.subnet?.id,
+          },
+          'Could not find subnet defined by private endpoint. Skipping relationship.',
+        );
+        return;
+      }
+
+      await jobState.addRelationship(
+        createDirectRelationship({
+          from: subnetEntity,
+          _class: RelationshipClass.HAS,
+          to: privateEndpointEntity,
+        }),
+      );
+    },
+  );
+}
+
+export async function buildPrivateEndpointNetworkInterfaceRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: NetworkEntities.PRIVATE_ENDPOINT._type },
+    async (privateEndpointEntity) => {
+      const privateEndpoint = getRawData<PrivateEndpoint>(
+        privateEndpointEntity,
+      )!;
+
+      for (const networkInterface of privateEndpoint.networkInterfaces || []) {
+        const networkInterfaceEntity = await jobState.findEntity(
+          networkInterface.id!,
+        );
+
+        if (!networkInterfaceEntity) {
+          logger.info(
+            {
+              privateEndpointId: privateEndpoint.id,
+              networkInterfaceId: networkInterface.id,
+            },
+            'Could not find network interface defined by private endpoint. Skipping relationship.',
+          );
+          return;
+        }
+
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: privateEndpointEntity,
+            _class: RelationshipClass.USES,
+            to: networkInterfaceEntity,
+          }),
+        );
+      }
+    },
+  );
+}
+
+export async function buildPrivateEndpointResourceRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: NetworkEntities.PRIVATE_ENDPOINT._type },
+    async (privateEndpointEntity) => {
+      const privateEndpoint = getRawData<PrivateEndpoint>(
+        privateEndpointEntity,
+      )!;
+
+      for (const privateLinkServiceConnection of privateEndpoint.privateLinkServiceConnections ||
+        []) {
+        const resourceEntity = await jobState.findEntity(
+          privateLinkServiceConnection.privateLinkServiceId!,
+        );
+
+        if (!resourceEntity) {
+          logger.info(
+            {
+              privateEndpointId: privateEndpoint.id,
+              privateLinkServiceConnectionId: privateLinkServiceConnection.id,
+            },
+            'Could not find linked resource defined by private endpoint. Skipping relationship.',
+          );
+          return;
+        }
+
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: privateEndpointEntity,
+            _class: RelationshipClass.CONNECTS,
+            to: resourceEntity,
+            properties: {
+              etag: privateLinkServiceConnection.etag,
+              name: privateLinkServiceConnection.name,
+              'privateLinkServiceConnectionState.actionsRequired':
+                privateLinkServiceConnection.privateLinkServiceConnectionState
+                  ?.actionsRequired,
+              'privateLinkServiceConnectionState.description':
+                privateLinkServiceConnection.privateLinkServiceConnectionState
+                  ?.description,
+              'privateLinkServiceConnectionState.status':
+                privateLinkServiceConnection.privateLinkServiceConnectionState
+                  ?.status,
+              privateLinkServiceId:
+                privateLinkServiceConnection.privateLinkServiceId,
+              provisioningState: privateLinkServiceConnection.provisioningState,
+              type: privateLinkServiceConnection.type,
+            },
+          }),
+        );
+      }
+    },
+  );
+}
+
 export async function buildLocationNetworkWatcherRelationships(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -696,6 +871,44 @@ export const networkSteps: Step<
     relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_WATCHER],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchNetworkWatchers,
+  },
+  {
+    id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+    name: 'Private Endpoints',
+    entities: [NetworkEntities.PRIVATE_ENDPOINT],
+    relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_PRIVATE_ENDPOINT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchPrivateEndpoints,
+  },
+  {
+    id: STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
+    name: 'Private Endpoint to Subnet Relationships',
+    entities: [],
+    relationships: [NetworkRelationships.NETWORK_SUBNET_HAS_PRIVATE_ENDPOINT],
+    dependsOn: [
+      STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+      STEP_RM_NETWORK_VIRTUAL_NETWORKS,
+    ],
+    executionHandler: buildPrivateEndpointSubnetRelationships,
+  },
+  {
+    id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
+    name: 'Private Endpoint to Network Interface Relationships',
+    entities: [],
+    relationships: [NetworkRelationships.PRIVATE_ENDPOINT_USES_NIC],
+    dependsOn: [STEP_RM_NETWORK_PRIVATE_ENDPOINTS, STEP_RM_NETWORK_INTERFACES],
+    executionHandler: buildPrivateEndpointNetworkInterfaceRelationships,
+  },
+  {
+    id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
+    name: 'Private Endpoint to Resource Relationships',
+    entities: [],
+    relationships: [NetworkRelationships.PRIVATE_ENDPOINT_CONNECTS_RESOURCE],
+    dependsOn: [
+      STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+      ...getResourceManagerSteps().executeFirstSteps,
+    ],
+    executionHandler: buildPrivateEndpointResourceRelationships,
   },
   {
     id: STEP_RM_NETWORK_LOCATION_WATCHERS,

@@ -2,6 +2,7 @@ import {
   RelationshipClass,
   generateRelationshipType,
 } from '@jupiterone/integration-sdk-core';
+import { ANY_RESOURCE } from '../constants';
 import { entities as storageEntities } from '../storage';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
@@ -17,6 +18,13 @@ export const STEP_RM_NETWORK_LOAD_BALANCERS = 'rm-network-load-balancers';
 export const STEP_RM_NETWORK_FIREWALLS = 'rm-network-firewalls';
 export const STEP_RM_NETWORK_WATCHERS = 'rm-network-watchers';
 export const STEP_RM_NETWORK_FLOW_LOGS = 'rm-network-flow-logs';
+export const STEP_RM_NETWORK_PRIVATE_ENDPOINTS = 'rm-network-private-endpoints';
+export const STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS =
+  'rm-network-private-endpoint-subnet-relationships';
+export const STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS =
+  'rm-network-private-endpoint-nic-relationships';
+export const STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS =
+  'rm-network-private-endpoint-resource-relationships';
 export const STEP_RM_NETWORK_LOCATION_WATCHERS =
   'rm-network-location-watcher-relationships';
 
@@ -67,6 +75,11 @@ export const NetworkEntities = {
     _class: ['Logs'],
     resourceName: '[RM] Security Group Flow Logs',
   },
+  PRIVATE_ENDPOINT: {
+    _type: 'azure_private_endpoint',
+    _class: ['NetworkEndpoint'],
+    resourceName: '[RM] Private Endpoint',
+  },
 };
 
 export const SECURITY_GROUP_RULE_RELATIONSHIP_TYPE =
@@ -94,6 +107,9 @@ export const NetworkRelationships = {
   ),
   RESOURCE_GROUP_HAS_NETWORK_WATCHER: createResourceGroupResourceRelationshipMetadata(
     NetworkEntities.NETWORK_WATCHER._type,
+  ),
+  RESOURCE_GROUP_HAS_PRIVATE_ENDPOINT: createResourceGroupResourceRelationshipMetadata(
+    NetworkEntities.PRIVATE_ENDPOINT._type,
   ),
   NETWORK_VIRTUAL_NETWORK_CONTAINS_NETWORK_SUBNET: {
     _type: generateRelationshipType(
@@ -182,5 +198,23 @@ export const NetworkRelationships = {
     sourceType: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._type,
     _class: RelationshipClass.USES,
     targetType: storageEntities.STORAGE_ACCOUNT._type,
+  },
+  NETWORK_SUBNET_HAS_PRIVATE_ENDPOINT: {
+    _type: 'azure_subnet_has_private_endpoint',
+    sourceType: NetworkEntities.SUBNET._type,
+    _class: RelationshipClass.HAS,
+    targetType: NetworkEntities.PRIVATE_ENDPOINT._type,
+  },
+  PRIVATE_ENDPOINT_USES_NIC: {
+    _type: 'azure_private_endpoint_uses_nic',
+    sourceType: NetworkEntities.PRIVATE_ENDPOINT._type,
+    _class: RelationshipClass.USES,
+    targetType: NetworkEntities.NETWORK_INTERFACE._type,
+  },
+  PRIVATE_ENDPOINT_CONNECTS_RESOURCE: {
+    _type: 'azure_private_endpoint_connects_resource',
+    sourceType: NetworkEntities.PRIVATE_ENDPOINT._type,
+    _class: RelationshipClass.CONNECTS,
+    targetType: ANY_RESOURCE,
   },
 };

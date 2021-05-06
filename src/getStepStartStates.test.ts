@@ -37,6 +37,10 @@ import {
   STEP_RM_NETWORK_WATCHERS,
   STEP_RM_NETWORK_FLOW_LOGS,
   STEP_RM_NETWORK_LOCATION_WATCHERS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
 } from './steps/resource-manager/network';
 import { steps as storageSteps } from './steps/resource-manager/storage';
 import { IntegrationConfig } from './types';
@@ -121,6 +125,16 @@ describe('getStepStartStates', () => {
       [STEP_RM_NETWORK_WATCHERS]: { disabled: true },
       [STEP_RM_NETWORK_LOCATION_WATCHERS]: { disabled: true },
       [STEP_RM_NETWORK_FLOW_LOGS]: { disabled: true },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS]: { disabled: true },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS]: {
+        disabled: true,
+      },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
@@ -219,6 +233,16 @@ describe('getStepStartStates', () => {
       [STEP_RM_NETWORK_WATCHERS]: { disabled: true },
       [STEP_RM_NETWORK_LOCATION_WATCHERS]: { disabled: true },
       [STEP_RM_NETWORK_FLOW_LOGS]: { disabled: true },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS]: { disabled: true },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS]: {
+        disabled: true,
+      },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
@@ -317,6 +341,16 @@ describe('getStepStartStates', () => {
       [STEP_RM_NETWORK_WATCHERS]: { disabled: false },
       [STEP_RM_NETWORK_LOCATION_WATCHERS]: { disabled: false },
       [STEP_RM_NETWORK_FLOW_LOGS]: { disabled: false },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS]: { disabled: false },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS]: {
+        disabled: false,
+      },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS]: {
+        disabled: false,
+      },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS]: {
+        disabled: false,
+      },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: false },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: false },
       [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: false },

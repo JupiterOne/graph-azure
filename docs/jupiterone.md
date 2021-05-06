@@ -192,6 +192,7 @@ The following entities are created:
 | [RM] PostgreSQL Server Firewall Rule           | `azure_postgresql_server_firewall_rule`           | `Firewall`                         |
 | [RM] Private DNS Record Set                    | `azure_private_dns_record_set`                    | `DomainRecord`                     |
 | [RM] Private DNS Zone                          | `azure_private_dns_zone`                          | `DomainZone`                       |
+| [RM] Private Endpoint                          | `azure_private_endpoint`                          | `NetworkEndpoint`                  |
 | [RM] Public IP Address                         | `azure_public_ip`                                 | `IpAddress`                        |
 | [RM] Redis Cache                               | `azure_redis_cache`                               | `Database`, `DataStore`, `Cluster` |
 | [RM] Redis Firewall Rule                       | `azure_firewall_rule`                             | `Firewall`                         |
@@ -267,6 +268,8 @@ The following relationships are created/mapped:
 | `azure_postgresql_server`          | **HAS**               | `azure_postgresql_database`                       |
 | `azure_postgresql_server`          | **HAS**               | `azure_postgresql_server_firewall_rule`           |
 | `azure_private_dns_zone`           | **HAS**               | `azure_private_dns_record_set`                    |
+| `azure_private_endpoint`           | **CONNECTS**          | `ANY_RESOURCE`                                    |
+| `azure_private_endpoint`           | **USES**              | `azure_nic`                                       |
 | `azure_redis_cache`                | **CONNECTS**          | `azure_redis_cache`                               |
 | `azure_redis_cache`                | **HAS**               | `azure_firewall_rule`                             |
 | `azure_resource_group`             | **HAS**               | `azure_api_management_service`                    |
@@ -290,6 +293,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`             | **HAS**               | `azure_nic`                                       |
 | `azure_resource_group`             | **HAS**               | `azure_postgresql_server`                         |
 | `azure_resource_group`             | **HAS**               | `azure_private_dns_zone`                          |
+| `azure_resource_group`             | **HAS**               | `azure_private_endpoint`                          |
 | `azure_resource_group`             | **HAS**               | `azure_public_ip`                                 |
 | `azure_resource_group`             | **HAS**               | `azure_redis_cache`                               |
 | `azure_resource_group`             | **HAS**               | `azure_security_group`                            |
@@ -342,6 +346,7 @@ The following relationships are created/mapped:
 | `azure_storage_account`            | **HAS**               | `azure_storage_queue`                             |
 | `azure_storage_account`            | **HAS**               | `azure_storage_table`                             |
 | `azure_storage_account`            | **USES**              | `azure_keyvault_service`                          |
+| `azure_subnet`                     | **HAS**               | `azure_private_endpoint`                          |
 | `azure_subnet`                     | **HAS**               | `azure_vm`                                        |
 | `azure_subscription`               | **CONTAINS**          | `azure_role_definition`                           |
 | `azure_subscription`               | **HAS**               | `azure_monitor_log_profile`                       |

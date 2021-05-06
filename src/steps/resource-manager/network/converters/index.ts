@@ -9,6 +9,7 @@ import {
   NetworkInterface,
   NetworkSecurityGroup,
   NetworkWatcher,
+  PrivateEndpoint,
   PublicIPAddress,
   Subnet,
   VirtualNetwork,
@@ -263,6 +264,29 @@ export function createNetworkWatcherEntity(
         type: data.type,
         location: data.location,
         provisioningState: data.provisioningState,
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+
+export function createPrivateEndpointEntity(
+  webLinker: AzureWebLinker,
+  data: PrivateEndpoint,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _type: NetworkEntities.PRIVATE_ENDPOINT._type,
+        _class: NetworkEntities.PRIVATE_ENDPOINT._class,
+        _key: data.id,
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        subnetId: data.subnet?.id,
+        etag: data.etag,
+        location: data.location,
         webLink: webLinker.portalResourceUrl(data.id),
       },
     },

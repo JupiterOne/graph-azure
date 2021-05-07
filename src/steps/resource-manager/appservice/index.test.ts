@@ -1,4 +1,8 @@
-import { fetchApps, fetchAppServicePlans } from '.';
+import {
+  buildAppToPlanRelationships,
+  fetchApps,
+  fetchAppServicePlans,
+} from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import {
@@ -158,6 +162,81 @@ describe('rm-appservice-app-service-plans', () => {
           _type: {
             const:
               AppServiceRelationships.RESOURCE_GROUP_HAS_APP_SERVICE_PLAN._type,
+          },
+        },
+      },
+    });
+  });
+});
+
+describe('rm-appservice-app-plan-relationships', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchApps(context);
+    const webAppEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === AppServiceEntities.WEB_APP._type,
+    );
+    expect(webAppEntities.length).toBeGreaterThan(0);
+    const functionAppEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === AppServiceEntities.FUNCTION_APP._type,
+    );
+    expect(functionAppEntities.length).toBeGreaterThan(0);
+
+    await fetchAppServicePlans(context);
+    const appServicePlanEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === AppServiceEntities.APP_SERVICE_PLAN._type,
+    );
+    expect(appServicePlanEntities.length).toBeGreaterThan(0);
+
+    return { webAppEntities, functionAppEntities, appServicePlanEntities };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-appservice-app-plan-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      webAppEntities,
+      functionAppEntities,
+      appServicePlanEntities,
+    } = await getSetupEntities(configFromEnv);
+
+    const appEntities = [...webAppEntities, ...functionAppEntities];
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...appEntities, ...appServicePlanEntities],
+    });
+
+    await buildAppToPlanRelationships(context);
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    const appToPlanRelationships = context.jobState.collectedRelationships;
+    expect(appToPlanRelationships.length).toBeGreaterThan(0);
+    expect(appToPlanRelationships).toHaveLength(appEntities.length);
+
+    expect(appToPlanRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            enum: [
+              AppServiceRelationships.WEB_APP_USES_PLAN._type,
+              AppServiceRelationships.FUNCTION_APP_USES_PLAN._type,
+            ],
           },
         },
       },

@@ -4,6 +4,7 @@ import { createResourceGroupResourceRelationshipMetadata } from '../utils/create
 export const AppServiceSteps = {
   APPS: 'rm-appservice-apps',
   APP_SERVICE_PLANS: 'rm-appservice-app-service-plans',
+  APP_TO_SERVICE_RELATIONSHIPS: 'rm-appservice-app-plan-relationships',
 };
 
 export const AppServiceEntities = {

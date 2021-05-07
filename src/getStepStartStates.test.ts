@@ -210,6 +210,7 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [AppServiceSteps.APPS]: { disabled: true },
+      [AppServiceSteps.APP_SERVICE_PLANS]: { disabled: true },
     });
   });
 
@@ -319,6 +320,7 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [AppServiceSteps.APPS]: { disabled: true },
+      [AppServiceSteps.APP_SERVICE_PLANS]: { disabled: true },
     });
   });
 
@@ -428,6 +430,7 @@ describe('getStepStartStates', () => {
         disabled: false,
       },
       [AppServiceSteps.APPS]: { disabled: false },
+      [AppServiceSteps.APP_SERVICE_PLANS]: { disabled: false },
     });
   });
 });

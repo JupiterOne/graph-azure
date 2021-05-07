@@ -1,4 +1,4 @@
-import { fetchApps } from '.';
+import { fetchApps, fetchAppServicePlans } from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import {
@@ -105,6 +105,59 @@ describe('rm-appservice-apps', () => {
               AppServiceRelationships.RESOURCE_GROUP_HAS_WEB_APP._type,
               AppServiceRelationships.RESOURCE_GROUP_HAS_FUNCTION_APP._type,
             ],
+          },
+        },
+      },
+    });
+  });
+});
+
+describe('rm-appservice-app-service-plans', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+
+    return { accountEntity, resourceGroupEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-appservice-app-service-plans',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity, resourceGroupEntity } = getSetupEntities(
+      configFromEnv,
+    );
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [resourceGroupEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchAppServicePlans(context);
+
+    const appServicePlanEntities = context.jobState.collectedEntities;
+
+    expect(appServicePlanEntities.length).toBeGreaterThan(0);
+    expect(appServicePlanEntities).toMatchGraphObjectSchema({
+      _class: AppServiceEntities.APP_SERVICE_PLAN._class,
+    });
+
+    expect(
+      context.jobState.collectedRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              AppServiceRelationships.RESOURCE_GROUP_HAS_APP_SERVICE_PLAN._type,
           },
         },
       },

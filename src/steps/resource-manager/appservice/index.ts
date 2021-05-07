@@ -14,7 +14,7 @@ import {
   AppServiceRelationships,
   AppServiceSteps,
 } from './constants';
-import { createAppEntity } from './converters';
+import { createAppEntity, createAppServicePlanEntity } from './converters';
 import { Site } from '@azure/arm-appservice/esm/models';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
@@ -74,6 +74,22 @@ function getMetadataForApp(
   return AppServiceEntities.WEB_APP;
 }
 
+export async function fetchAppServicePlans(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new AppServiceClient(instance.config, logger);
+
+  await client.iterateAppServicePlans(async (appServicePlan) => {
+    const appEntity = await jobState.addEntity(
+      createAppServicePlanEntity(webLinker, appServicePlan),
+    );
+    await createResourceGroupResourceRelationship(executionContext, appEntity);
+  });
+}
+
 export const appServiceSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -87,5 +103,15 @@ export const appServiceSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApps,
+  },
+  {
+    id: AppServiceSteps.APP_SERVICE_PLANS,
+    name: 'App Service Plans',
+    entities: [AppServiceEntities.APP_SERVICE_PLAN],
+    relationships: [
+      AppServiceRelationships.RESOURCE_GROUP_HAS_APP_SERVICE_PLAN,
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchAppServicePlans,
   },
 ];

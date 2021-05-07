@@ -149,6 +149,7 @@ The following entities are created:
 | [RM] API Management API                        | `azure_api_management_api`                        | `ApplicationEndpoint`              |
 | [RM] API Management Service                    | `azure_api_management_service`                    | `Gateway`                          |
 | [RM] Advisor Recommendation                    | `azure_advisor_recommendation`                    | `Finding`                          |
+| [RM] App Service Plan                          | `azure_app_service_plan`                          | `Configuration`                    |
 | [RM] Azure Managed Disk                        | `azure_managed_disk`                              | `DataStore`, `Disk`                |
 | [RM] Batch Account                             | `azure_batch_account`                             | `Service`                          |
 | [RM] Batch Application                         | `azure_batch_application`                         | `Process`                          |
@@ -275,6 +276,7 @@ The following relationships are created/mapped:
 | `azure_redis_cache`                | **CONNECTS**          | `azure_redis_cache`                               |
 | `azure_redis_cache`                | **HAS**               | `azure_firewall_rule`                             |
 | `azure_resource_group`             | **HAS**               | `azure_api_management_service`                    |
+| `azure_resource_group`             | **HAS**               | `azure_app_service_plan`                          |
 | `azure_resource_group`             | **HAS**               | `azure_batch_account`                             |
 | `azure_resource_group`             | **HAS**               | `azure_cdn_profile`                               |
 | `azure_resource_group`             | **HAS**               | `azure_container_group`                           |

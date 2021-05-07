@@ -170,6 +170,7 @@ The following entities are created:
 | [RM] Event Grid Domain Topic                   | `azure_event_grid_domain_topic`                   | `Queue`                            |
 | [RM] Event Grid Topic                          | `azure_event_grid_topic`                          | `Queue`                            |
 | [RM] Event Grid Topic Subscription             | `azure_event_grid_topic_subscription`             | `Subscription`                     |
+| [RM] Function App                              | `azure_function_app`                              | `Function`                         |
 | [RM] Image                                     | `azure_image`                                     | `Image`                            |
 | [RM] Key Vault                                 | `azure_keyvault_service`                          | `Service`                          |
 | [RM] Load Balancer                             | `azure_lb`                                        | `Gateway`                          |
@@ -224,6 +225,7 @@ The following entities are created:
 | [RM] Virtual Machine                           | `azure_vm`                                        | `Host`                             |
 | [RM] Virtual Machine Extension                 | `azure_vm_extension`                              | `Application`                      |
 | [RM] Virtual Network                           | `azure_vnet`                                      | `Network`                          |
+| [RM] Web App                                   | `azure_web_app`                                   | `Application`                      |
 
 ### Relationships
 
@@ -281,6 +283,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`             | **HAS**               | `azure_dns_zone`                                  |
 | `azure_resource_group`             | **HAS**               | `azure_event_grid_domain`                         |
 | `azure_resource_group`             | **HAS**               | `azure_event_grid_topic`                          |
+| `azure_resource_group`             | **HAS**               | `azure_function_app`                              |
 | `azure_resource_group`             | **HAS**               | `azure_image`                                     |
 | `azure_resource_group`             | **HAS**               | `azure_keyvault_service`                          |
 | `azure_resource_group`             | **HAS**               | `azure_lb`                                        |
@@ -302,6 +305,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`             | **HAS**               | `azure_storage_account`                           |
 | `azure_resource_group`             | **HAS**               | `azure_vm`                                        |
 | `azure_resource_group`             | **HAS**               | `azure_vnet`                                      |
+| `azure_resource_group`             | **HAS**               | `azure_web_app`                                   |
 | `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
 | `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
 | `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |

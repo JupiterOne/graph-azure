@@ -96,6 +96,7 @@ import { AdvisorSteps } from './steps/resource-manager/advisor';
 import { SecuritySteps } from './steps/resource-manager/security/constants';
 import { PolicySteps } from './steps/resource-manager/policy/constants';
 import { MonitorSteps } from './steps/resource-manager/monitor/constants';
+import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -208,6 +209,7 @@ describe('getStepStartStates', () => {
       [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS]: {
         disabled: true,
       },
+      [AppServiceSteps.APPS]: { disabled: true },
     });
   });
 
@@ -316,6 +318,7 @@ describe('getStepStartStates', () => {
       [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS]: {
         disabled: true,
       },
+      [AppServiceSteps.APPS]: { disabled: true },
     });
   });
 
@@ -424,6 +427,7 @@ describe('getStepStartStates', () => {
       [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS]: {
         disabled: false,
       },
+      [AppServiceSteps.APPS]: { disabled: false },
     });
   });
 });

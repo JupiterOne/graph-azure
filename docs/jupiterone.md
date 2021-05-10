@@ -255,6 +255,7 @@ The following relationships are created/mapped:
 | `azure_event_grid_domain`          | **HAS**               | `azure_event_grid_domain_topic`                   |
 | `azure_event_grid_domain_topic`    | **HAS**               | `azure_event_grid_topic_subscription`             |
 | `azure_event_grid_topic`           | **HAS**               | `azure_event_grid_topic_subscription`             |
+| `azure_function_app`               | **USES**              | `azure_app_service_plan`                          |
 | `azure_user_group`                 | **HAS**               | `azure_user_group`                                |
 | `azure_user_group`                 | **HAS**               | `azure_group_member`                              |
 | `azure_user_group`                 | **HAS**               | `azure_user`                                      |
@@ -368,6 +369,7 @@ The following relationships are created/mapped:
 | `azure_vm`                         | **USES**              | `azure_public_ip`                                 |
 | `azure_vm`                         | **USES**              | `azure_storage_account`                           |
 | `azure_vnet`                       | **CONTAINS**          | `azure_subnet`                                    |
+| `azure_web_app`                    | **USES**              | `azure_app_service_plan`                          |
 
 <!--
 ********************************************************************************

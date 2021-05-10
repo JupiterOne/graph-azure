@@ -30,6 +30,8 @@ and this project adheres to
   | `azure_resource_group`   | `HAS`      | `azure_web_app`          |
   | `azure_resource_group`   | `HAS`      | `azure_function_app`     |
   | `azure_resource_group`   | `HAS`      | `azure_app_service_plan` |
+  | `azure_web_app`          | `USES`     | `azure_app_service_plan` |
+  | `azure_function_app`     | `USES`     | `azure_app_service_plan` |
 
 ### Fixed
 

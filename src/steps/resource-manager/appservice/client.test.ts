@@ -6,7 +6,7 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { AppServiceClient } from './client';
-import { Site } from '@azure/arm-appservice/esm/models';
+import { AppServicePlan, Site } from '@azure/arm-appservice/esm/models';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 
 let recording: Recording;
@@ -56,7 +56,7 @@ describe('iterateAppServicePlans', () => {
       true,
     );
 
-    const resources: Site[] = [];
+    const resources: AppServicePlan[] = [];
     await client.iterateAppServicePlans((e) => {
       resources.push(e);
     });

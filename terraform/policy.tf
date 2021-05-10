@@ -1,14 +1,4 @@
-variable "create_policy_assignment" {
-  type    = number
-  default = 0
-}
-
-locals {
-  policy_assignment_count = var.create_policy_assignment == 1 ? 1 : 0
-}
-
-resource "azurerm_policy_definition" "j1dev-policy-definition" {
-  count        = local.policy_assignment_count
+resource "azurerm_policy_definition" "j1dev_policy_definition" {
   name         = "j1dev-policy-definition"
   policy_type  = "Custom"
   mode         = "All"
@@ -44,17 +34,12 @@ PARAMETERS
 
 }
 
-resource "azurerm_resource_group" "j1dev-policy-resource-group" {
-  count    = local.policy_assignment_count
-  name     = "j1dev-policy-resource-group"
-  location = "East US"
-}
-
-resource "azurerm_policy_assignment" "j1dev-policy-assignment" {
-  count                = local.policy_assignment_count
+// Since all resources generated from this terraform are created in the `East US` region, this policy assignment,
+// which sets `allowedLocations = ["West US"]` causes resources to be out-of-compliance.
+resource "azurerm_policy_assignment" "j1dev_policy_assignment" {
   name                 = "j1dev-policy-assignment"
-  scope                = azurerm_resource_group.j1dev-policy-resource-group[0].id
-  policy_definition_id = azurerm_policy_definition.j1dev-policy-definition[0].id
+  scope                = data.azurerm_subscription.j1dev.id
+  policy_definition_id = azurerm_policy_definition.j1dev_policy_definition.id
   description          = "j1dev Policy Assignment created via Test"
   display_name         = "My Example Policy Assignment"
 
@@ -67,9 +52,13 @@ METADATA
   parameters = <<PARAMETERS
 {
   "allowedLocations": {
-    "value": [ "East US", "West US" ]
+    "value": [ "West US" ]
   }
 }
 PARAMETERS
 
 }
+
+// New policies may take up to 30 minutes to first evaluate. In order to evaluate right away, you can send 
+// an authenticated POST request to 
+// https://management.azure.com/subscriptions/{{subscription-id}}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation?api-version=2019-10-01

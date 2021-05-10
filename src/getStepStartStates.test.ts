@@ -97,6 +97,7 @@ import { SecuritySteps } from './steps/resource-manager/security/constants';
 import { PolicySteps } from './steps/resource-manager/policy/constants';
 import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
+import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -212,6 +213,7 @@ describe('getStepStartStates', () => {
       [AppServiceSteps.APPS]: { disabled: true },
       [AppServiceSteps.APP_SERVICE_PLANS]: { disabled: true },
       [AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS]: { disabled: true },
+      [PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES]: { disabled: true },
     });
   });
 
@@ -323,6 +325,7 @@ describe('getStepStartStates', () => {
       [AppServiceSteps.APPS]: { disabled: true },
       [AppServiceSteps.APP_SERVICE_PLANS]: { disabled: true },
       [AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS]: { disabled: true },
+      [PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES]: { disabled: true },
     });
   });
 
@@ -434,6 +437,7 @@ describe('getStepStartStates', () => {
       [AppServiceSteps.APPS]: { disabled: false },
       [AppServiceSteps.APP_SERVICE_PLANS]: { disabled: false },
       [AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS]: { disabled: false },
+      [PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES]: { disabled: false },
     });
   });
 });

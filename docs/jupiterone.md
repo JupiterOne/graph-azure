@@ -189,6 +189,7 @@ The following entities are created:
 | [RM] Policy Assignment                         | `azure_policy_assignment`                         | `ControlPolicy`                    |
 | [RM] Policy Definition                         | `azure_policy_definition`                         | `Rule`                             |
 | [RM] Policy Set Definition                     | `azure_policy_set_definition`                     | `Ruleset`                          |
+| [RM] Policy State                              | `azure_policy_state`                              | `Review`                           |
 | [RM] PostgreSQL Database                       | `azure_postgresql_database`                       | `Database`, `DataStore`            |
 | [RM] PostgreSQL Server                         | `azure_postgresql_server`                         | `Database`, `DataStore`, `Host`    |
 | [RM] PostgreSQL Server Firewall Rule           | `azure_postgresql_server_firewall_rule`           | `Firewall`                         |

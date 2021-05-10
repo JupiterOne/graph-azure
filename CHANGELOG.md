@@ -12,9 +12,12 @@ and this project adheres to
 
 - Added support for ingesting the following **new** resources:
 
-  | Service | Resource / Entity        |
-  | ------- | ------------------------ |
-  | Network | `azure_private_endpoint` |
+  | Service     | Resource / Entity        |
+  | ----------- | ------------------------ |
+  | Network     | `azure_private_endpoint` |
+  | App Service | `azure_web_app`          |
+  | App Service | `azure_function_app`     |
+  | App Service | `azure_app_service_plan` |
 
 - Added support for ingesting the following **new** relationships:
 
@@ -24,6 +27,11 @@ and this project adheres to
   | `azure_subnet`           | `HAS`      | `azure_private_endpoint` |
   | `azure_private_endpoint` | `USES`     | `azure_nic`              |
   | `azure_private_endpoint` | `CONNECTS` | `ANY_RESOURCE`           |
+  | `azure_resource_group`   | `HAS`      | `azure_web_app`          |
+  | `azure_resource_group`   | `HAS`      | `azure_function_app`     |
+  | `azure_resource_group`   | `HAS`      | `azure_app_service_plan` |
+  | `azure_web_app`          | `USES`     | `azure_app_service_plan` |
+  | `azure_function_app`     | `USES`     | `azure_app_service_plan` |
 
 ### Fixed
 

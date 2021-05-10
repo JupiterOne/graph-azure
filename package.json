@@ -30,6 +30,7 @@
   "dependencies": {
     "@azure/arm-advisor": "^2.0.0",
     "@azure/arm-apimanagement": "^6.0.0",
+    "@azure/arm-appservice": "^7.0.0",
     "@azure/arm-authorization": "^8.3.2",
     "@azure/arm-batch": "^4.0.0",
     "@azure/arm-cdn": "^5.0.0",

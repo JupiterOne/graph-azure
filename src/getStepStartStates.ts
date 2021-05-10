@@ -214,6 +214,8 @@ export function getResourceManagerSteps(): GetApiSteps {
       PolicySteps.POLICY_ASSIGNMENTS,
       PolicySteps.POLICY_DEFINITIONS,
       AppServiceSteps.APPS,
+      AppServiceSteps.APP_SERVICE_PLANS,
+      AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS,
     ],
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,

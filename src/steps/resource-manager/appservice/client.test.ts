@@ -6,7 +6,7 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { AppServiceClient } from './client';
-import { Site } from '@azure/arm-appservice/esm/models';
+import { AppServicePlan, Site } from '@azure/arm-appservice/esm/models';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 
 let recording: Recording;
@@ -33,6 +33,31 @@ describe('iterateApps', () => {
 
     const resources: Site[] = [];
     await client.iterateApps((e) => {
+      resources.push(e);
+    });
+
+    expect(resources.length).toBeGreaterThan(0);
+  });
+});
+
+describe('iterateAppServicePlans', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateAppServicePlans',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new AppServiceClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+      true,
+    );
+
+    const resources: AppServicePlan[] = [];
+    await client.iterateAppServicePlans((e) => {
       resources.push(e);
     });
 

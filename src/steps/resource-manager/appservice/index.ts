@@ -3,6 +3,9 @@ import {
   IntegrationStepExecutionContext,
   StepEntityMetadata,
   IntegrationLogger,
+  getRawData,
+  createDirectRelationship,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -14,7 +17,7 @@ import {
   AppServiceRelationships,
   AppServiceSteps,
 } from './constants';
-import { createAppEntity } from './converters';
+import { createAppEntity, createAppServicePlanEntity } from './converters';
 import { Site } from '@azure/arm-appservice/esm/models';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
@@ -74,6 +77,64 @@ function getMetadataForApp(
   return AppServiceEntities.WEB_APP;
 }
 
+export async function fetchAppServicePlans(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new AppServiceClient(instance.config, logger);
+
+  await client.iterateAppServicePlans(async (appServicePlan) => {
+    const appEntity = await jobState.addEntity(
+      createAppServicePlanEntity(webLinker, appServicePlan),
+    );
+    await createResourceGroupResourceRelationship(executionContext, appEntity);
+  });
+}
+
+export async function buildAppToPlanRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  for (const appEntityType of [
+    AppServiceEntities.WEB_APP._type,
+    AppServiceEntities.FUNCTION_APP._type,
+  ]) {
+    await jobState.iterateEntities(
+      { _type: appEntityType },
+      async (appEntity) => {
+        const app = getRawData<Site>(appEntity);
+
+        const appServicePlanId = app?.serverFarmId;
+        const appServicePlanEntity = await jobState.findEntity(
+          appServicePlanId!,
+        );
+
+        if (!appServicePlanEntity) {
+          logger.warn(
+            {
+              appId: app?.id,
+              appServicePlanId: app?.serverFarmId,
+            },
+            'Could not find app service plan in jobState.',
+          );
+          return;
+        }
+
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: appEntity,
+            _class: RelationshipClass.USES,
+            to: appServicePlanEntity,
+          }),
+        );
+      },
+    );
+  }
+}
+
 export const appServiceSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -87,5 +148,26 @@ export const appServiceSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApps,
+  },
+  {
+    id: AppServiceSteps.APP_SERVICE_PLANS,
+    name: 'App Service Plans',
+    entities: [AppServiceEntities.APP_SERVICE_PLAN],
+    relationships: [
+      AppServiceRelationships.RESOURCE_GROUP_HAS_APP_SERVICE_PLAN,
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchAppServicePlans,
+  },
+  {
+    id: AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS,
+    name: 'App Service App to Plan Relationships',
+    entities: [],
+    relationships: [
+      AppServiceRelationships.WEB_APP_USES_PLAN,
+      AppServiceRelationships.FUNCTION_APP_USES_PLAN,
+    ],
+    dependsOn: [AppServiceSteps.APPS, AppServiceSteps.APP_SERVICE_PLANS],
+    executionHandler: buildAppToPlanRelationships,
   },
 ];

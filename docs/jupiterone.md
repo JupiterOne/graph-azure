@@ -149,6 +149,7 @@ The following entities are created:
 | [RM] API Management API                        | `azure_api_management_api`                        | `ApplicationEndpoint`              |
 | [RM] API Management Service                    | `azure_api_management_service`                    | `Gateway`                          |
 | [RM] Advisor Recommendation                    | `azure_advisor_recommendation`                    | `Finding`                          |
+| [RM] App Service Plan                          | `azure_app_service_plan`                          | `Configuration`                    |
 | [RM] Azure Managed Disk                        | `azure_managed_disk`                              | `DataStore`, `Disk`                |
 | [RM] Batch Account                             | `azure_batch_account`                             | `Service`                          |
 | [RM] Batch Application                         | `azure_batch_application`                         | `Process`                          |
@@ -254,6 +255,7 @@ The following relationships are created/mapped:
 | `azure_event_grid_domain`          | **HAS**               | `azure_event_grid_domain_topic`                   |
 | `azure_event_grid_domain_topic`    | **HAS**               | `azure_event_grid_topic_subscription`             |
 | `azure_event_grid_topic`           | **HAS**               | `azure_event_grid_topic_subscription`             |
+| `azure_function_app`               | **USES**              | `azure_app_service_plan`                          |
 | `azure_user_group`                 | **HAS**               | `azure_user_group`                                |
 | `azure_user_group`                 | **HAS**               | `azure_group_member`                              |
 | `azure_user_group`                 | **HAS**               | `azure_user`                                      |
@@ -275,6 +277,7 @@ The following relationships are created/mapped:
 | `azure_redis_cache`                | **CONNECTS**          | `azure_redis_cache`                               |
 | `azure_redis_cache`                | **HAS**               | `azure_firewall_rule`                             |
 | `azure_resource_group`             | **HAS**               | `azure_api_management_service`                    |
+| `azure_resource_group`             | **HAS**               | `azure_app_service_plan`                          |
 | `azure_resource_group`             | **HAS**               | `azure_batch_account`                             |
 | `azure_resource_group`             | **HAS**               | `azure_cdn_profile`                               |
 | `azure_resource_group`             | **HAS**               | `azure_container_group`                           |
@@ -366,6 +369,7 @@ The following relationships are created/mapped:
 | `azure_vm`                         | **USES**              | `azure_public_ip`                                 |
 | `azure_vm`                         | **USES**              | `azure_storage_account`                           |
 | `azure_vnet`                       | **CONTAINS**          | `azure_subnet`                                    |
+| `azure_web_app`                    | **USES**              | `azure_app_service_plan`                          |
 
 <!--
 ********************************************************************************

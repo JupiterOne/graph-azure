@@ -37,6 +37,18 @@ and this project adheres to
   | `azure_policy_definition` | `DEFINES`  | `azure_policy_state`     |
   | `ANY_RESOURCE`            | `HAS`      | `azure_policy_state`     |
 
+- Added the following property to `azure_storage_account`:
+  - `networkRuleSet.allowedIpAddresses`
+
+### Changed
+
+- Changed the following property values on `azure_storage_account`:
+
+  | Previous property name        | New property name              |
+  | ----------------------------- | ------------------------------ |
+  | `networkRuleSetDefaultAction` | `networkRuleSet.defaultAction` |
+  | `networkRuleSetBypass`        | `networkRuleSet.bypass`        |
+
 ### Fixed
 
 - Renamed type `azure_network_azure_firewall` to `azure_network_firewall`

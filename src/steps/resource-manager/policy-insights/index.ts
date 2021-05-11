@@ -72,6 +72,47 @@ export async function buildPolicyStateAssignmentRelationships(
   );
 }
 
+export async function buildPolicyStateDefinitionRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: PolicyInsightEntities.POLICY_STATE._type },
+    async (policyStateEntity) => {
+      const policyState = getRawData<PolicyState>(policyStateEntity);
+
+      const policyDefinitionId = policyState?.policyDefinitionId;
+      const policyDefinitionEntity = await jobState.findEntity(
+        policyDefinitionId!,
+      );
+
+      if (!policyDefinitionEntity) {
+        logger.warn(
+          {
+            policyAssignmentId: policyState?.policyAssignmentId,
+            policyDefinitionId: policyState?.policyDefinitionId,
+            policyDefinitionReferenceId:
+              policyState?.policyDefinitionReferenceId,
+            resourceId: policyState?.resourceId,
+            timestamp: policyState?.timestamp,
+          },
+          'Could not find policy definition for policy state.',
+        );
+        return;
+      }
+
+      await jobState.addRelationship(
+        createDirectRelationship({
+          from: policyDefinitionEntity,
+          _class: RelationshipClass.DEFINES,
+          to: policyStateEntity,
+        }),
+      );
+    },
+  );
+}
+
 export const policyInsightSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -93,6 +134,19 @@ export const policyInsightSteps: Step<
     dependsOn: [
       PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
       PolicySteps.POLICY_ASSIGNMENTS,
+    ],
+    executionHandler: fetchLatestPolicyStatesForSubscription,
+  },
+  {
+    id: PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS,
+    name: 'Policy State to Policy Definitiion Relationships',
+    entities: [],
+    relationships: [
+      PolicyInsightRelationships.POLICY_DEFINITION_DEFINES_POLICY_STATE,
+    ],
+    dependsOn: [
+      PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
+      PolicySteps.POLICY_DEFINITIONS,
     ],
     executionHandler: fetchLatestPolicyStatesForSubscription,
   },

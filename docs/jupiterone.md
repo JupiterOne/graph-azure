@@ -270,6 +270,7 @@ The following relationships are created/mapped:
 | `azure_policy_assignment`          | **HAS**               | `azure_policy_state`                              |
 | `azure_policy_assignment`          | **USES**              | `azure_policy_definition`                         |
 | `azure_policy_assignment`          | **USES**              | `azure_policy_set_definition`                     |
+| `azure_policy_definition`          | **DEFINES**           | `azure_policy_state`                              |
 | `azure_policy_set_definition`      | **CONTAINS**          | `azure_policy_definition`                         |
 | `azure_postgresql_server`          | **HAS**               | `azure_postgresql_database`                       |
 | `azure_postgresql_server`          | **HAS**               | `azure_postgresql_server_firewall_rule`           |

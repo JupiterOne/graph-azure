@@ -8,12 +8,16 @@ import { createMockAzureStepExecutionContext } from '../../../../test/createMock
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import {
   buildPolicyStateAssignmentRelationships,
+  buildPolicyStateDefinitionRelationships,
   fetchLatestPolicyStatesForSubscription,
 } from '.';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 import { PolicyInsightEntities, PolicyInsightRelationships } from './constants';
-import { fetchPolicyAssignments } from '../policy';
+import {
+  fetchPolicyAssignments,
+  fetchPolicyDefinitionsForAssignments,
+} from '../policy';
 import { PolicyEntities } from '../policy/constants';
 
 let recording: Recording;
@@ -130,4 +134,76 @@ describe('rm-policy-state-to-policy-assignment-relationships', () => {
       },
     });
   });
+});
+
+describe('rm-policy-state-to-policy-definition-relationships', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchLatestPolicyStatesForSubscription(context);
+    const policyStateEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === PolicyInsightEntities.POLICY_STATE._type,
+    );
+    expect(policyStateEntities.length).toBeGreaterThan(0);
+
+    await fetchPolicyAssignments(context);
+    await fetchPolicyDefinitionsForAssignments(context);
+    const policyDefinitionEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === PolicyEntities.POLICY_DEFINITION._type,
+    );
+    expect(policyDefinitionEntities.length).toBeGreaterThan(0);
+
+    return { accountEntity, policyStateEntities, policyDefinitionEntities };
+  }
+  test('sucess', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-policy-state-to-policy-definition-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      accountEntity,
+      policyStateEntities,
+      policyDefinitionEntities,
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...policyStateEntities, ...policyDefinitionEntities],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await buildPolicyStateDefinitionRelationships(context);
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    const policyStateDefinitionRelationships =
+      context.jobState.collectedRelationships;
+    expect(policyStateDefinitionRelationships.length).toBe(
+      policyStateEntities.length,
+    );
+    expect(policyStateDefinitionRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              PolicyInsightRelationships.POLICY_DEFINITION_DEFINES_POLICY_STATE
+                ._type,
+          },
+        },
+      },
+    });
+  }, 150_000);
 });

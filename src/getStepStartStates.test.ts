@@ -217,6 +217,9 @@ describe('getStepStartStates', () => {
       [PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS]: {
         disabled: true,
       },
+      [PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS]: {
+        disabled: true,
+      },
     });
   });
 
@@ -332,6 +335,9 @@ describe('getStepStartStates', () => {
       [PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS]: {
         disabled: true,
       },
+      [PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS]: {
+        disabled: true,
+      },
     });
   });
 
@@ -445,6 +451,9 @@ describe('getStepStartStates', () => {
       [AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS]: { disabled: false },
       [PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES]: { disabled: false },
       [PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS]: {
+        disabled: false,
+      },
+      [PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS]: {
         disabled: false,
       },
     });

@@ -1,4 +1,5 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
+import { ANY_RESOURCE } from '../constants';
 import { PolicyEntities } from '../policy/constants';
 
 export const PolicyInsightSteps = {
@@ -7,6 +8,8 @@ export const PolicyInsightSteps = {
     'rm-policy-state-to-policy-assignment-relationships',
   POLICY_STATE_TO_DEFINITION_RELATIONSHIPS:
     'rm-policy-state-to-policy-definition-relationships',
+  POLICY_STATE_TO_RESOURCE_RELATIONSHIPS:
+    'rm-policy-state-to-resource-relationships',
 };
 
 export const PolicyInsightEntities = {
@@ -28,6 +31,12 @@ export const PolicyInsightRelationships = {
     _type: 'azure_policy_definition_defines_state',
     sourceType: PolicyEntities.POLICY_DEFINITION._type,
     _class: RelationshipClass.DEFINES,
+    targetType: PolicyInsightEntities.POLICY_STATE._type,
+  },
+  ANY_RESOURCE_HAS_POLICY_STATE: {
+    _type: 'azure_resource_has_policy_state',
+    sourceType: ANY_RESOURCE,
+    _class: RelationshipClass.HAS,
     targetType: PolicyInsightEntities.POLICY_STATE._type,
   },
 };

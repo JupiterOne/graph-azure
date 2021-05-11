@@ -220,6 +220,9 @@ describe('getStepStartStates', () => {
       [PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS]: {
         disabled: true,
       },
+      [PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS]: {
+        disabled: true,
+      },
     });
   });
 
@@ -338,6 +341,9 @@ describe('getStepStartStates', () => {
       [PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS]: {
         disabled: true,
       },
+      [PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS]: {
+        disabled: true,
+      },
     });
   });
 
@@ -454,6 +460,9 @@ describe('getStepStartStates', () => {
         disabled: false,
       },
       [PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS]: {
+        disabled: false,
+      },
+      [PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS]: {
         disabled: false,
       },
     });

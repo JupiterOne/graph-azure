@@ -17,6 +17,7 @@ import { AzurePolicyInsightsClient } from './client';
 import { createPolicyStateEntity } from './converters';
 import { PolicyState } from '@azure/arm-policyinsights/esm/models';
 import { PolicySteps } from '../policy/constants';
+import { getResourceManagerSteps } from '../../../getStepStartStates';
 
 export async function fetchLatestPolicyStatesForSubscription(
   executionContext: IntegrationStepContext,
@@ -113,6 +114,45 @@ export async function buildPolicyStateDefinitionRelationships(
   );
 }
 
+export async function buildPolicyStateResourceRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: PolicyInsightEntities.POLICY_STATE._type },
+    async (policyStateEntity) => {
+      const policyState = getRawData<PolicyState>(policyStateEntity);
+
+      const resourceId = policyState?.resourceId;
+      const resourceEntity = await jobState.findEntity(resourceId!);
+
+      if (!resourceEntity) {
+        logger.warn(
+          {
+            policyAssignmentId: policyState?.policyAssignmentId,
+            policyDefinitionId: policyState?.policyDefinitionId,
+            policyDefinitionReferenceId:
+              policyState?.policyDefinitionReferenceId,
+            resourceId: policyState?.resourceId,
+            timestamp: policyState?.timestamp,
+          },
+          'Could not find resource for policy state.',
+        );
+        return;
+      }
+
+      await jobState.addRelationship(
+        createDirectRelationship({
+          from: resourceEntity,
+          _class: RelationshipClass.HAS,
+          to: policyStateEntity,
+        }),
+      );
+    },
+  );
+}
+
 export const policyInsightSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -135,11 +175,11 @@ export const policyInsightSteps: Step<
       PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
       PolicySteps.POLICY_ASSIGNMENTS,
     ],
-    executionHandler: fetchLatestPolicyStatesForSubscription,
+    executionHandler: buildPolicyStateAssignmentRelationships,
   },
   {
     id: PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS,
-    name: 'Policy State to Policy Definitiion Relationships',
+    name: 'Policy State to Policy Definition Relationships',
     entities: [],
     relationships: [
       PolicyInsightRelationships.POLICY_DEFINITION_DEFINES_POLICY_STATE,
@@ -148,6 +188,17 @@ export const policyInsightSteps: Step<
       PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
       PolicySteps.POLICY_DEFINITIONS,
     ],
-    executionHandler: fetchLatestPolicyStatesForSubscription,
+    executionHandler: buildPolicyStateDefinitionRelationships,
+  },
+  {
+    id: PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS,
+    name: 'Policy State to Resource Relationships',
+    entities: [],
+    relationships: [PolicyInsightRelationships.ANY_RESOURCE_HAS_POLICY_STATE],
+    dependsOn: [
+      PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
+      ...getResourceManagerSteps().executeFirstSteps,
+    ],
+    executionHandler: buildPolicyStateResourceRelationships,
   },
 ];

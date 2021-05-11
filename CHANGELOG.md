@@ -35,6 +35,7 @@ and this project adheres to
   | `azure_function_app`      | `USES`     | `azure_app_service_plan` |
   | `azure_policy_assignment` | `HAS`      | `azure_policy_state`     |
   | `azure_policy_definition` | `DEFINES`  | `azure_policy_state`     |
+  | `ANY_RESOURCE`            | `HAS`      | `azure_policy_state`     |
 
 ### Fixed
 

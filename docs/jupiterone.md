@@ -315,6 +315,7 @@ The following relationships are created/mapped:
 | `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
 | `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
 | `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |
+| `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
 | `azure_role_assignment`            | **ALLOWS**            | `azure_api_management_service`                    |
 | `azure_role_assignment`            | **ALLOWS**            | `azure_container_registry`                        |
 | `azure_role_assignment`            | **ALLOWS**            | `azure_cosmosdb_account`                          |

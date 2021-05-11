@@ -9,6 +9,7 @@ import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import {
   buildPolicyStateAssignmentRelationships,
   buildPolicyStateDefinitionRelationships,
+  buildPolicyStateResourceRelationships,
   fetchLatestPolicyStatesForSubscription,
 } from '.';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
@@ -19,6 +20,7 @@ import {
   fetchPolicyDefinitionsForAssignments,
 } from '../policy';
 import { PolicyEntities } from '../policy/constants';
+import { fetchKeyVaults, KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
 
 let recording: Recording;
 
@@ -206,4 +208,65 @@ describe('rm-policy-state-to-policy-definition-relationships', () => {
       },
     });
   }, 150_000);
+});
+
+describe('rm-policy-state-to-resource-relationships', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchLatestPolicyStatesForSubscription(context);
+    const policyStateEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === PolicyInsightEntities.POLICY_STATE._type,
+    );
+    expect(policyStateEntities.length).toBeGreaterThan(0);
+
+    await fetchKeyVaults(context);
+    const keyVaultEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === KEY_VAULT_SERVICE_ENTITY_TYPE,
+    );
+    expect(keyVaultEntities.length).toBeGreaterThan(0);
+
+    return { accountEntity, policyStateEntities, keyVaultEntities };
+  }
+  test('sucess', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-policy-state-to-resource-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      accountEntity,
+      policyStateEntities,
+      keyVaultEntities,
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...policyStateEntities, ...keyVaultEntities],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await buildPolicyStateResourceRelationships(context);
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    const policyStateResourceRelationships =
+      context.jobState.collectedRelationships;
+    expect(policyStateResourceRelationships.length).toBeGreaterThan(0);
+    expect(policyStateResourceRelationships).toMatchDirectRelationshipSchema(
+      {},
+    );
+  });
 });

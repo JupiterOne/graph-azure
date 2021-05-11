@@ -267,6 +267,7 @@ The following relationships are created/mapped:
 | `azure_monitor_log_profile`        | **USES**              | `azure_storage_account`                           |
 | `azure_mysql_server`               | **HAS**               | `azure_mysql_database`                            |
 | `azure_network_watcher`            | **HAS**               | `azure_security_group_flow_logs`                  |
+| `azure_policy_assignment`          | **HAS**               | `azure_policy_state`                              |
 | `azure_policy_assignment`          | **USES**              | `azure_policy_definition`                         |
 | `azure_policy_assignment`          | **USES**              | `azure_policy_set_definition`                     |
 | `azure_policy_set_definition`      | **CONTAINS**          | `azure_policy_definition`                         |

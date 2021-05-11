@@ -218,6 +218,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       AppServiceSteps.APP_SERVICE_PLANS,
       AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS,
       PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
+      PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS,
     ],
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,

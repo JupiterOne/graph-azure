@@ -93,8 +93,11 @@ export function createStorageAccountEntity(
             ? encryptedServices.queue?.enabled
             : undefined,
         allowBlobPublicAccess: data.allowBlobPublicAccess,
-        networkRuleSetDefaultAction: data.networkRuleSet?.defaultAction,
-        networkRuleSetBypass: data.networkRuleSet?.bypass,
+        'networkRuleSet.defaultAction': data.networkRuleSet?.defaultAction,
+        'networkRuleSet.bypass': data.networkRuleSet?.bypass,
+        'networkRuleSet.allowedIpAddresses': data.networkRuleSet?.ipRules
+          ?.map((ipRule) => ipRule.iPAddressOrRange)
+          .join(','),
         blobSoftDeleteEnabled:
           storageAccountServiceProperties.blob?.deleteRetentionPolicy?.enabled,
         blobSoftDeleteRetentionDays:

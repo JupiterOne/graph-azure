@@ -171,6 +171,15 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
+"@azure/arm-policyinsights@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-policyinsights/-/arm-policyinsights-4.0.0.tgz#62f1a23f8220cdb8e0fbe3baa12db039817339c6"
+  integrity sha512-eVsvQTQA5PzGlAdkbpq6XBeP3EcvPkeHSBuZdJr/dNJqXcKSSI+tCmt9BXPbI3hx+W2EVL4tXtRsWbI7cM6lew==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^2.0.1"
+    "@azure/ms-rest-js" "^2.0.4"
+    tslib "^1.10.0"
+
 "@azure/arm-postgresql@^4.4.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-postgresql/-/arm-postgresql-4.4.0.tgz#57b7cb3edc9a032fe24a9aaa346bde9c27255920"

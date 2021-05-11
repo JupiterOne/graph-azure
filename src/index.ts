@@ -29,6 +29,7 @@ import { securitySteps } from './steps/resource-manager/security';
 import { policySteps } from './steps/resource-manager/policy';
 import { monitorSteps } from './steps/resource-manager/monitor';
 import { appServiceSteps } from './steps/resource-manager/appservice';
+import { policyInsightSteps } from './steps/resource-manager/policy-insights';
 
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
@@ -86,6 +87,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...policySteps,
     ...monitorSteps,
     ...appServiceSteps,
+    ...policyInsightSteps,
   ],
 
   normalizeGraphObjectKey: (_key) => _key.toLowerCase(),

@@ -189,6 +189,7 @@ The following entities are created:
 | [RM] Policy Assignment                         | `azure_policy_assignment`                         | `ControlPolicy`                    |
 | [RM] Policy Definition                         | `azure_policy_definition`                         | `Rule`                             |
 | [RM] Policy Set Definition                     | `azure_policy_set_definition`                     | `Ruleset`                          |
+| [RM] Policy State                              | `azure_policy_state`                              | `Review`                           |
 | [RM] PostgreSQL Database                       | `azure_postgresql_database`                       | `Database`, `DataStore`            |
 | [RM] PostgreSQL Server                         | `azure_postgresql_server`                         | `Database`, `DataStore`, `Host`    |
 | [RM] PostgreSQL Server Firewall Rule           | `azure_postgresql_server_firewall_rule`           | `Firewall`                         |
@@ -266,8 +267,10 @@ The following relationships are created/mapped:
 | `azure_monitor_log_profile`        | **USES**              | `azure_storage_account`                           |
 | `azure_mysql_server`               | **HAS**               | `azure_mysql_database`                            |
 | `azure_network_watcher`            | **HAS**               | `azure_security_group_flow_logs`                  |
+| `azure_policy_assignment`          | **HAS**               | `azure_policy_state`                              |
 | `azure_policy_assignment`          | **USES**              | `azure_policy_definition`                         |
 | `azure_policy_assignment`          | **USES**              | `azure_policy_set_definition`                     |
+| `azure_policy_definition`          | **DEFINES**           | `azure_policy_state`                              |
 | `azure_policy_set_definition`      | **CONTAINS**          | `azure_policy_definition`                         |
 | `azure_postgresql_server`          | **HAS**               | `azure_postgresql_database`                       |
 | `azure_postgresql_server`          | **HAS**               | `azure_postgresql_server_firewall_rule`           |
@@ -312,6 +315,7 @@ The following relationships are created/mapped:
 | `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
 | `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
 | `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |
+| `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
 | `azure_role_assignment`            | **ALLOWS**            | `azure_api_management_service`                    |
 | `azure_role_assignment`            | **ALLOWS**            | `azure_container_registry`                        |
 | `azure_role_assignment`            | **ALLOWS**            | `azure_cosmosdb_account`                          |

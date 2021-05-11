@@ -99,6 +99,7 @@ import { SecuritySteps } from './steps/resource-manager/security/constants';
 import { PolicySteps } from './steps/resource-manager/policy/constants';
 import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
+import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -216,12 +217,16 @@ export function getResourceManagerSteps(): GetApiSteps {
       AppServiceSteps.APPS,
       AppServiceSteps.APP_SERVICE_PLANS,
       AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS,
+      PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
+      PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS,
+      PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS,
     ],
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,
       PolicySteps.POLICY_ASSIGNMENT_SCOPE_RELATIONSHIPS,
       MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,
       STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
+      PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS,
     ],
   };
 }

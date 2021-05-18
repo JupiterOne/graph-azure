@@ -2,11 +2,16 @@ import { Disk, VirtualMachine } from '@azure/arm-compute/esm/models';
 import { StorageAccount } from '@azure/arm-storage/esm/models';
 import {
   buildVirtualMachineDiskRelationships,
+  fetchGalleries,
+  fetchGalleryImages,
   fetchVirtualMachineExtensions,
   fetchVirtualMachines,
 } from '.';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
+import {
+  getMockAccountEntity,
+  getMockResourceGroupEntity,
+} from '../../../../test/helpers/getMockEntity';
 import {
   getMatchRequestsBy,
   Recording,
@@ -31,6 +36,101 @@ afterEach(async () => {
   if (recording) {
     await recording.stop();
   }
+});
+
+describe('rm-compute-galleries', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const resourceGroupEntity = getMockResourceGroupEntity(
+      'j1dev',
+      '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev',
+    );
+
+    return { accountEntity, resourceGroupEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-compute-galleries',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity, resourceGroupEntity } = getSetupEntities(
+      configFromEnv,
+    );
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [resourceGroupEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchGalleries(context);
+
+    const galleryEntities = context.jobState.collectedEntities;
+
+    expect(galleryEntities.length).toBeGreaterThan(0);
+    expect(galleryEntities).toMatchGraphObjectSchema({
+      _class: entities.GALLERY._class,
+    });
+
+    expect(context.jobState.collectedRelationships.length).toBe(1);
+    expect(
+      context.jobState.collectedRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const: relationships.RESOURCE_GROUP_HAS_GALLERY._type,
+          },
+        },
+      },
+    });
+  });
+});
+
+describe('rm-compute-shared-images', () => {
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-compute-shared-images',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+    });
+
+    await fetchGalleries(context);
+    await fetchGalleryImages(context);
+    const sharedImageEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === entities.SHARED_IMAGE._type,
+    );
+
+    expect(sharedImageEntities.length).toBeGreaterThan(0);
+    expect(sharedImageEntities).toMatchGraphObjectSchema({
+      _class: entities.SHARED_IMAGE._class,
+    });
+
+    expect(context.jobState.collectedRelationships.length).toBe(1);
+    expect(
+      context.jobState.collectedRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const: relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE._type,
+          },
+        },
+      },
+    });
+  });
 });
 
 describe('rm-compute-virtual-machines', () => {

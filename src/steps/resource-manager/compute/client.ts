@@ -1,6 +1,8 @@
 import { ComputeManagementClient } from '@azure/arm-compute';
 import {
   Disk,
+  Gallery,
+  GalleryImage,
   VirtualMachine,
   VirtualMachineExtension,
   VirtualMachineImage,
@@ -101,6 +103,50 @@ export class ComputeClient extends Client {
       serviceClient,
       resourceEndpoint: serviceClient.images,
       resourceDescription: 'compute.images',
+      callback,
+    });
+  }
+
+  public async iterateGalleries(
+    callback: (e: Gallery) => void | Promise<void>,
+  ) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ComputeManagementClient,
+    );
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => serviceClient.galleries.list(),
+        listNext: serviceClient.galleries.listNext,
+      },
+      resourceDescription: 'compute.galleries',
+      callback,
+    });
+  }
+
+  public async iterateGalleryImages(
+    imageGallery: {
+      resourceGroupName: string;
+      galleryName: string;
+    },
+    callback: (e: GalleryImage) => void | Promise<void>,
+  ) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ComputeManagementClient,
+    );
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.galleryImages.listByGallery(
+            imageGallery.resourceGroupName,
+            imageGallery.galleryName,
+          ),
+        listNext: serviceClient.galleryImages.listByGalleryNext,
+      },
+      resourceDescription: 'compute.gallery.images',
       callback,
     });
   }

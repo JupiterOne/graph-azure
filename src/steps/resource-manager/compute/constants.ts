@@ -4,6 +4,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { entities as storageEntities } from '../storage/constants';
+import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 // Step IDs
 export const STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES =
@@ -13,6 +14,8 @@ export const STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS =
 export const STEP_RM_COMPUTE_VIRTUAL_MACHINES = 'rm-compute-virtual-machines';
 
 export const steps = {
+  GALLERIES: 'rm-compute-galleries',
+  SHARED_IMAGES: 'rm-compute-shared-images',
   VIRTUAL_MACHINE_EXTENSIONS: 'rm-compute-virtual-machine-extensions',
   VIRTUAL_MACHINE_DISK_RELATIONSHIPS:
     'rm-compute-virtual-machine-disk-relationships',
@@ -29,6 +32,16 @@ export const DISK_ENTITY_TYPE = 'azure_managed_disk';
 export const DISK_ENTITY_CLASS = ['DataStore', 'Disk'];
 
 export const entities = {
+  GALLERY: {
+    _type: 'azure_gallery',
+    _class: ['DataStore'],
+    resourceName: '[RM] Gallery',
+  },
+  SHARED_IMAGE: {
+    _type: 'azure_shared_image',
+    _class: ['Image'],
+    resourceName: '[RM] Shared Image',
+  },
   VIRTUAL_MACHINE_EXTENSION: {
     _type: 'azure_vm_extension',
     _class: ['Application'],
@@ -44,6 +57,15 @@ export const VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE = generateRelationshipType(
 );
 
 export const relationships = {
+  RESOURCE_GROUP_HAS_GALLERY: createResourceGroupResourceRelationshipMetadata(
+    entities.GALLERY._type,
+  ),
+  IMAGE_GALLERY_CONTAINS_SHARED_IMAGE: {
+    _type: 'azure_gallery_contains_shared_image',
+    sourceType: entities.GALLERY._type,
+    _class: RelationshipClass.CONTAINS,
+    targetType: entities.SHARED_IMAGE._type,
+  },
   VIRTUAL_MACHINE_USES_EXTENSION: {
     _type: 'azure_vm_uses_extension',
     sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,

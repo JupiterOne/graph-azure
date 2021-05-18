@@ -1,6 +1,8 @@
 import {
   DataDisk,
   Disk,
+  Gallery,
+  GalleryImage,
   Image,
   OSDisk,
   VirtualMachine,
@@ -12,6 +14,7 @@ import {
   createIntegrationEntity,
   Entity,
   getTime,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
@@ -157,6 +160,50 @@ export function getVirtualMachineExtensionKey(
   data: VirtualMachineExtensionSharedProperties,
 ) {
   return `vm-extension:${data.publisher || 'unknown-publisher'}:${data.name!}`;
+}
+
+export function createGalleryEntity(data: Gallery) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id,
+        _type: entities.GALLERY._type,
+        _class: entities.GALLERY._class,
+        displayName: data.name,
+        description: data.description,
+        region: data.location,
+        resourceGroup: resourceGroupName(data.id),
+        state: data.provisioningState,
+        type: data.type,
+        classification: null,
+        encrypted: false,
+      },
+    },
+  });
+}
+
+export function createSharedImage(data: GalleryImage) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id,
+        _type: entities.SHARED_IMAGE._type,
+        _class: entities.SHARED_IMAGE._class,
+        displayName: data.name,
+        description: data.description,
+        region: data.location,
+        resourceGroup: resourceGroupName(data.id),
+        endOfLifeDate: parseTimePropertyValue(data.endOfLifeDate),
+        osType: data.osType,
+        osState: data.osState,
+        eula: data.eula,
+        state: data.provisioningState,
+        type: data.type,
+      },
+    },
+  });
 }
 
 export const testFunctions = {

@@ -23,6 +23,8 @@ and this project adheres to
   | ---------------------- | ---------- | -------------------- |
   | `azure_resource_group` | `HAS`      | `azure_gallery`      |
   | `azure_gallery`        | `CONTAINS` | `azure_shared_image` |
+  | `azure_vm`             | `HAS`      | `azure_shared_image` |
+  | `azure_vm`             | `HAS`      | `azure_image`        |
 
 ## 5.24.0 - 2021-05-11
 

@@ -54,10 +54,12 @@ export async function fetchGalleries(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ComputeClient(instance.config, logger);
 
   await client.iterateGalleries(async (gallery) => {
-    const galleryEntity = createGalleryEntity(gallery);
+    const galleryEntity = createGalleryEntity(webLinker, gallery);
     await jobState.addEntity(galleryEntity);
 
     await createResourceGroupResourceRelationship(
@@ -71,6 +73,8 @@ export async function fetchGalleryImages(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ComputeClient(instance.config, logger);
 
   await jobState.iterateEntities(
@@ -82,7 +86,7 @@ export async function fetchGalleryImages(
           galleryName: galleryEntity?.displayName as string,
         },
         async (image) => {
-          const sharedImageEntity = createSharedImage(image);
+          const sharedImageEntity = createSharedImage(webLinker, image);
           await jobState.addEntity(sharedImageEntity);
 
           await jobState.addRelationship(

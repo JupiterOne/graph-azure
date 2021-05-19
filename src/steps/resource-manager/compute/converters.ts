@@ -162,7 +162,7 @@ export function getVirtualMachineExtensionKey(
   return `vm-extension:${data.publisher || 'unknown-publisher'}:${data.name!}`;
 }
 
-export function createGalleryEntity(data: Gallery) {
+export function createGalleryEntity(webLinker: AzureWebLinker, data: Gallery) {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -173,17 +173,21 @@ export function createGalleryEntity(data: Gallery) {
         displayName: data.name,
         description: data.description,
         region: data.location,
-        resourceGroup: resourceGroupName(data.id),
         state: data.provisioningState,
         type: data.type,
         classification: null,
         encrypted: false,
+        resourceGroup: resourceGroupName(data.id),
+        webLink: webLinker.portalResourceUrl(data.id),
       },
     },
   });
 }
 
-export function createSharedImage(data: GalleryImage) {
+export function createSharedImage(
+  webLinker: AzureWebLinker,
+  data: GalleryImage,
+) {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -194,13 +198,14 @@ export function createSharedImage(data: GalleryImage) {
         displayName: data.name,
         description: data.description,
         region: data.location,
-        resourceGroup: resourceGroupName(data.id),
         endOfLifeDate: parseTimePropertyValue(data.endOfLifeDate),
         osType: data.osType,
         osState: data.osState,
         eula: data.eula,
         state: data.provisioningState,
         type: data.type,
+        resourceGroup: resourceGroupName(data.id),
+        webLink: webLinker.portalResourceUrl(data.id),
       },
     },
   });

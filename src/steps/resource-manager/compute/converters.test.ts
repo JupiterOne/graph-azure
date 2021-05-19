@@ -241,7 +241,7 @@ describe('createGalleryEntity', () => {
       tags: {},
     };
 
-    expect(createGalleryEntity(data)).toEqual({
+    expect(createGalleryEntity(webLinker, data)).toEqual({
       name: 'testImageGallery',
       id:
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery',
@@ -253,12 +253,15 @@ describe('createGalleryEntity', () => {
       displayName: 'testImageGallery',
       region: 'eastus',
       location: 'eastus',
-      resourceGroup: 'j1dev',
       state: 'Succeeded',
       type: 'Microsoft.Compute/galleries',
       createdOn: undefined,
       classification: null,
       encrypted: false,
+      resourceGroup: 'j1dev',
+      webLink: webLinker.portalResourceUrl(
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery',
+      ),
       _rawData: [{ name: 'default', rawData: data }],
     });
   });
@@ -283,7 +286,7 @@ describe('createSharedImageEntity', () => {
       eula: 'Some eula',
     };
 
-    expect(createSharedImage(data)).toEqual({
+    expect(createSharedImage(webLinker, data)).toEqual({
       name: 'test-image-definition',
       id:
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition',
@@ -294,7 +297,6 @@ describe('createSharedImageEntity', () => {
       _class: ['Image'],
       displayName: 'test-image-definition',
       region: 'eastus',
-      resourceGroup: 'j1dev',
       osState: 'Generalized',
       osType: 'Linux',
       eula: 'Some eula',
@@ -302,6 +304,10 @@ describe('createSharedImageEntity', () => {
       type: 'Microsoft.Compute/galleries/images',
       endOfLifeDate: 1621366301861,
       createdOn: undefined,
+      resourceGroup: 'j1dev',
+      webLink: webLinker.portalResourceUrl(
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition',
+      ),
       _rawData: [{ name: 'default', rawData: data }],
     });
   });

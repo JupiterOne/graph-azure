@@ -94,6 +94,23 @@ describe('rm-compute-galleries', () => {
 });
 
 describe('rm-compute-shared-images', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+    await fetchGalleries(context);
+    const j1devGalleryEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === entities.GALLERY._type,
+    );
+    expect(j1devGalleryEntities).toHaveLength(1);
+
+    return { accountEntity, galleryEntity: j1devGalleryEntities[0] };
+  }
+
   test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
@@ -103,16 +120,18 @@ describe('rm-compute-shared-images', () => {
       },
     });
 
+    const { accountEntity, galleryEntity } = await getSetupEntities(
+      configFromEnv,
+    );
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
+      entities: [galleryEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
     });
-
-    await fetchGalleries(context);
     await fetchGalleryImages(context);
-    const sharedImageEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === entities.SHARED_IMAGE._type,
-    );
-
+    const sharedImageEntities = context.jobState.collectedEntities;
     expect(sharedImageEntities.length).toBeGreaterThan(0);
     expect(sharedImageEntities).toMatchGraphObjectSchema({
       _class: entities.SHARED_IMAGE._class,

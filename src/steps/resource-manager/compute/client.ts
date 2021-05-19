@@ -116,10 +116,7 @@ export class ComputeClient extends Client {
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
-      resourceEndpoint: {
-        list: async () => serviceClient.galleries.list(),
-        listNext: serviceClient.galleries.listNext,
-      },
+      resourceEndpoint: serviceClient.galleries,
       resourceDescription: 'compute.galleries',
       callback,
     });

@@ -29,7 +29,9 @@ import {
 } from './constants';
 import {
   createDiskEntity,
+  createGalleryEntity,
   createImageEntity,
+  createSharedImage,
   createVirtualMachineEntity,
   createVirtualMachineExtensionEntity,
   getVirtualMachineExtensionKey,
@@ -47,6 +49,58 @@ import {
 import { StorageAccount } from '@azure/arm-storage/esm/models';
 
 export * from './constants';
+
+export async function fetchGalleries(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new ComputeClient(instance.config, logger);
+
+  await client.iterateGalleries(async (gallery) => {
+    const galleryEntity = createGalleryEntity(webLinker, gallery);
+    await jobState.addEntity(galleryEntity);
+
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      galleryEntity,
+    );
+  });
+}
+
+export async function fetchGalleryImages(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new ComputeClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: entities.GALLERY._type },
+    async (galleryEntity) => {
+      await client.iterateGalleryImages(
+        {
+          resourceGroupName: galleryEntity?.resourceGroup as string,
+          galleryName: galleryEntity?.displayName as string,
+        },
+        async (image) => {
+          const sharedImageEntity = createSharedImage(webLinker, image);
+          await jobState.addEntity(sharedImageEntity);
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.CONTAINS,
+              from: galleryEntity,
+              to: sharedImageEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
 
 export async function fetchVirtualMachines(
   executionContext: IntegrationStepContext,
@@ -366,6 +420,22 @@ async function findOrCreateVirtualMachineExtensionEntity(
 export const computeSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
+  {
+    id: steps.GALLERIES,
+    name: 'Galleries',
+    entities: [entities.GALLERY],
+    relationships: [relationships.RESOURCE_GROUP_HAS_GALLERY],
+    dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchVirtualMachineImages,
+  },
+  {
+    id: steps.SHARED_IMAGES,
+    name: 'Gallery Shared Images',
+    entities: [entities.SHARED_IMAGE],
+    relationships: [relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE],
+    dependsOn: [steps.GALLERIES],
+    executionHandler: fetchGalleryImages,
+  },
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
     name: 'Virtual Machine Disk Images',

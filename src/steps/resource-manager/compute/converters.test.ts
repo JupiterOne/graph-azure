@@ -1,6 +1,8 @@
 import {
   DataDisk,
   Disk,
+  Gallery,
+  GalleryImage,
   OSDisk,
   VirtualMachine,
 } from '@azure/arm-compute/esm/models';
@@ -9,6 +11,8 @@ import { convertProperties } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import {
   createDiskEntity,
+  createGalleryEntity,
+  createSharedImage,
   createVirtualMachineEntity,
   testFunctions,
 } from './converters';
@@ -221,5 +225,90 @@ describe('usesManagedDisks', () => {
       { lun: 1, createOption: 'FromImage' },
     ];
     expect(usesManagedDisks(osDisk, dataDisks)).toBe(false);
+  });
+});
+
+describe('createGalleryEntity', () => {
+  test('properties transferred', () => {
+    const data: Gallery = {
+      name: 'testImageGallery',
+      id:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery',
+      type: 'Microsoft.Compute/galleries',
+      location: 'eastus',
+      provisioningState: 'Succeeded',
+      description: 'Some description',
+      tags: {},
+    };
+
+    expect(createGalleryEntity(webLinker, data)).toEqual({
+      name: 'testImageGallery',
+      id:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery',
+      description: 'Some description',
+      _key:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery',
+      _type: 'azure_gallery',
+      _class: ['DataStore'],
+      displayName: 'testImageGallery',
+      region: 'eastus',
+      location: 'eastus',
+      state: 'Succeeded',
+      type: 'Microsoft.Compute/galleries',
+      createdOn: undefined,
+      classification: null,
+      encrypted: false,
+      resourceGroup: 'j1dev',
+      webLink: webLinker.portalResourceUrl(
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery',
+      ),
+      _rawData: [{ name: 'default', rawData: data }],
+    });
+  });
+});
+
+describe('createSharedImageEntity', () => {
+  test('properties transferred', () => {
+    const data: GalleryImage = {
+      id:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition',
+      name: 'test-image-definition',
+      type: 'Microsoft.Compute/galleries/images',
+      location: 'eastus',
+      tags: {},
+      osType: 'Linux',
+      osState: 'Generalized',
+      description: 'Some description',
+      hyperVGeneration: 'V1',
+      identifier: { publisher: 'ndowmon', offer: 'ndowmon', sku: 'ndowmon' },
+      provisioningState: 'Succeeded',
+      endOfLifeDate: new Date(1621366301861),
+      eula: 'Some eula',
+    };
+
+    expect(createSharedImage(webLinker, data)).toEqual({
+      name: 'test-image-definition',
+      id:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition',
+      description: 'Some description',
+      _key:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition',
+      _type: 'azure_shared_image',
+      _class: ['Image'],
+      displayName: 'test-image-definition',
+      region: 'eastus',
+      osState: 'Generalized',
+      osType: 'Linux',
+      eula: 'Some eula',
+      state: 'Succeeded',
+      type: 'Microsoft.Compute/galleries/images',
+      endOfLifeDate: 1621366301861,
+      createdOn: undefined,
+      resourceGroup: 'j1dev',
+      webLink: webLinker.portalResourceUrl(
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition',
+      ),
+      _rawData: [{ name: 'default', rawData: data }],
+    });
   });
 });

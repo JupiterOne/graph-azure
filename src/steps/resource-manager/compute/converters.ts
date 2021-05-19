@@ -1,6 +1,8 @@
 import {
   DataDisk,
   Disk,
+  Gallery,
+  GalleryImage,
   Image,
   OSDisk,
   VirtualMachine,
@@ -12,6 +14,7 @@ import {
   createIntegrationEntity,
   Entity,
   getTime,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
@@ -157,6 +160,55 @@ export function getVirtualMachineExtensionKey(
   data: VirtualMachineExtensionSharedProperties,
 ) {
   return `vm-extension:${data.publisher || 'unknown-publisher'}:${data.name!}`;
+}
+
+export function createGalleryEntity(webLinker: AzureWebLinker, data: Gallery) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id,
+        _type: entities.GALLERY._type,
+        _class: entities.GALLERY._class,
+        displayName: data.name,
+        description: data.description,
+        region: data.location,
+        state: data.provisioningState,
+        type: data.type,
+        classification: null,
+        encrypted: false,
+        resourceGroup: resourceGroupName(data.id),
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+
+export function createSharedImage(
+  webLinker: AzureWebLinker,
+  data: GalleryImage,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id,
+        _type: entities.SHARED_IMAGE._type,
+        _class: entities.SHARED_IMAGE._class,
+        displayName: data.name,
+        description: data.description,
+        region: data.location,
+        endOfLifeDate: parseTimePropertyValue(data.endOfLifeDate),
+        osType: data.osType,
+        osState: data.osState,
+        eula: data.eula,
+        state: data.provisioningState,
+        type: data.type,
+        resourceGroup: resourceGroupName(data.id),
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
 }
 
 export const testFunctions = {

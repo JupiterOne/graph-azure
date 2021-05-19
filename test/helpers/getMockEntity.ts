@@ -17,11 +17,14 @@ export function getMockAccountEntity(config: IntegrationConfig) {
   });
 }
 
-export function getMockResourceGroupEntity(resourceGroupName: string) {
+export function getMockResourceGroupEntity(
+  name: string,
+  id = 'RESOURCE_GROUP_ID',
+) {
   return createResourceGroupEntity(webLinker, {
-    name: resourceGroupName,
+    name: name,
     location: 'useast1',
-    id: 'RESOURCE_GROUP_ID',
+    id: id,
   });
 }
 

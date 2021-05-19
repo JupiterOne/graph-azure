@@ -13,6 +13,8 @@ import {
   VirtualMachine,
   Disk,
   VirtualMachineExtension,
+  Gallery,
+  GalleryImage,
 } from '@azure/arm-compute/esm/models';
 
 let recording: Recording;
@@ -124,5 +126,72 @@ describe('iterateVirtualMachineExtensions', () => {
     );
 
     expect(extensions.length).toBeGreaterThan(0);
+  });
+});
+
+describe('iterateGalleries', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateGalleries',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new ComputeClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+      true,
+    );
+
+    const resources: Gallery[] = [];
+    await client.iterateGalleries((e) => {
+      resources.push(e);
+    });
+
+    expect(resources).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: 'testImageGallery',
+      }),
+    ]);
+  });
+});
+
+describe('iterateGalleryImages', () => {
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateGalleryImages',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new ComputeClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+      true,
+    );
+
+    const resources: GalleryImage[] = [];
+    await client.iterateGalleryImages(
+      { resourceGroupName: 'J1DEV', galleryName: 'testImageGallery' },
+      (e) => {
+        resources.push(e);
+      },
+    );
+
+    expect(resources).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: 'test-image-definition',
+        type: 'Microsoft.Compute/galleries/images',
+        osType: 'Linux',
+        osState: 'Generalized',
+        hyperVGeneration: 'V1',
+      }),
+    ]);
   });
 });

@@ -8,6 +8,22 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added support for ingesting the following **new** resources:
+
+  | Service       | Resource / Entity    |
+  | ------------- | -------------------- |
+  | Gallery       | `azure_gallery`      |
+  | Gallery Image | `azure_shared_image` |
+
+- Added support for ingesting the following **new** relationships:
+
+  | Source                 | \_class    | Target               |
+  | ---------------------- | ---------- | -------------------- |
+  | `azure_resource_group` | `HAS`      | `azure_gallery`      |
+  | `azure_gallery`        | `CONTAINS` | `azure_shared_image` |
+
 ## 5.24.0 - 2021-05-11
 
 ### Added

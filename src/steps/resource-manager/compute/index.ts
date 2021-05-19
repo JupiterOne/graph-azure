@@ -417,6 +417,36 @@ async function findOrCreateVirtualMachineExtensionEntity(
   return entity;
 }
 
+export async function buildVirtualMachineImageRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  const relationships: Relationship[] = [];
+
+  await jobState.iterateEntities(
+    { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
+    async (vmEntity) => {
+      const vm = getRawData<VirtualMachine>(vmEntity);
+      const imageRefId = vm?.storageProfile?.imageReference?.id;
+      if (!imageRefId) {
+        return;
+      }
+      const imageEntity = await jobState.findEntity(imageRefId);
+      if (imageEntity) {
+        relationships.push(
+          createDirectRelationship({
+            _class: RelationshipClass.USES,
+            from: vmEntity,
+            to: imageEntity,
+          }),
+        );
+      }
+    },
+  );
+
+  await jobState.addRelationships(relationships);
+}
+
 export const computeSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -510,5 +540,21 @@ export const computeSteps: Step<
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_COMPUTE_VIRTUAL_MACHINES],
     executionHandler: fetchVirtualMachineExtensions,
+  },
+  {
+    id: steps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS,
+    name: 'Virtual Machine Image and Shared Image Relationships',
+    entities: [],
+    relationships: [
+      relationships.VIRTUAL_MACHINE_USES_IMAGE,
+      relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE,
+    ],
+    dependsOn: [
+      STEP_RM_COMPUTE_VIRTUAL_MACHINES,
+      STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
+      steps.GALLERIES,
+      steps.SHARED_IMAGES,
+    ],
+    executionHandler: buildVirtualMachineImageRelationships,
   },
 ];

@@ -2,9 +2,11 @@ import { Disk, VirtualMachine } from '@azure/arm-compute/esm/models';
 import { StorageAccount } from '@azure/arm-storage/esm/models';
 import {
   buildVirtualMachineDiskRelationships,
+  buildVirtualMachineImageRelationships,
   fetchGalleries,
   fetchGalleryImages,
   fetchVirtualMachineExtensions,
+  fetchVirtualMachineImages,
   fetchVirtualMachines,
 } from '.';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
@@ -27,6 +29,7 @@ import {
   relationships,
   VIRTUAL_MACHINE_ENTITY_CLASS,
   VIRTUAL_MACHINE_ENTITY_TYPE,
+  VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
 } from './constants';
 import { createDiskEntity, createVirtualMachineEntity } from './converters';
 
@@ -645,6 +648,85 @@ describe('rm-compute-virtual-machine-extensions', () => {
           _type: { const: relationships.VIRTUAL_MACHINE_USES_EXTENSION._type },
         },
       },
+    });
+  });
+
+  describe('rm-compute-virtual-machine-image-relationships', () => {
+    async function getSetupEntities(config: IntegrationConfig) {
+      const accountEntity = getMockAccountEntity(config);
+      const context = createMockAzureStepExecutionContext({
+        instanceConfig: config,
+        setData: {
+          [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        },
+      });
+
+      await fetchVirtualMachines(context);
+      await fetchVirtualMachineImages(context);
+      await fetchGalleries(context);
+      await fetchGalleryImages(context);
+
+      const vmEntities = context.jobState.collectedEntities.filter(
+        (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
+      );
+
+      const vmImageEntities = context.jobState.collectedEntities.filter(
+        (e) => e._type === VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
+      );
+
+      const sharedImageEntities = context.jobState.collectedEntities.filter(
+        (e) => e._type === entities.SHARED_IMAGE._type,
+      );
+
+      return {
+        accountEntity,
+        vmEntities,
+        vmImageEntities,
+        sharedImageEntities,
+      };
+    }
+
+    test('success', async () => {
+      recording = setupAzureRecording({
+        directory: __dirname,
+        name: 'rm-compute-virtual-machine-image-relationships',
+        options: {
+          matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        },
+      });
+
+      const {
+        accountEntity,
+        vmEntities,
+        vmImageEntities,
+        sharedImageEntities,
+      } = await getSetupEntities(configFromEnv);
+
+      const context = createMockAzureStepExecutionContext({
+        instanceConfig: configFromEnv,
+        entities: [...vmEntities, ...vmImageEntities, ...sharedImageEntities],
+        setData: {
+          [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        },
+      });
+
+      await buildVirtualMachineImageRelationships(context);
+
+      expect(context.jobState.collectedRelationships.length).toBe(2);
+      expect(
+        context.jobState.collectedRelationships,
+      ).toMatchDirectRelationshipSchema({
+        schema: {
+          properties: {
+            _type: {
+              enum: [
+                relationships.VIRTUAL_MACHINE_USES_IMAGE._type,
+                relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE._type,
+              ],
+            },
+          },
+        },
+      });
     });
   });
 });

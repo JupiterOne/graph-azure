@@ -177,6 +177,7 @@ The following entities are created:
 | [RM] Key Vault                                 | `azure_keyvault_service`                          | `Service`                          |
 | [RM] Load Balancer                             | `azure_lb`                                        | `Gateway`                          |
 | [RM] Location                                  | `azure_location`                                  | `Site`                             |
+| [RM] Management Group                          | `azure_management_group`                          | `Group`                            |
 | [RM] MariaDB Database                          | `azure_mariadb_database`                          | `Database`, `DataStore`            |
 | [RM] MariaDB Server                            | `azure_mariadb_server`                            | `Database`, `DataStore`, `Host`    |
 | [RM] Monitor Activity Log Alert                | `azure_monitor_activity_log_alert`                | `Rule`                             |
@@ -237,6 +238,7 @@ The following relationships are created/mapped:
 
 | Source Entity `_type`              | Relationship `_class` | Target Entity `_type`                             |
 | ---------------------------------- | --------------------- | ------------------------------------------------- |
+| `azure_account`                    | **HAS**               | `azure_management_group`                          |
 | `azure_account`                    | **HAS**               | `azure_user_group`                                |
 | `azure_account`                    | **HAS**               | `azure_keyvault_service`                          |
 | `azure_account`                    | **HAS**               | `azure_user`                                      |
@@ -265,6 +267,7 @@ The following relationships are created/mapped:
 | `azure_user_group`                 | **HAS**               | `azure_user`                                      |
 | `azure_lb`                         | **CONNECTS**          | `azure_nic`                                       |
 | `azure_location`                   | **HAS**               | `azure_network_watcher`                           |
+| `azure_management_group`           | **CONTAINS**          | `azure_management_group`                          |
 | `azure_mariadb_server`             | **HAS**               | `azure_mariadb_database`                          |
 | `azure_monitor_activity_log_alert` | **MONITORS**          | `ANY_SCOPE`                                       |
 | `azure_monitor_log_profile`        | **USES**              | `azure_storage_account`                           |

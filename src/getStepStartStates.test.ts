@@ -99,6 +99,7 @@ import { PolicySteps } from './steps/resource-manager/policy/constants';
 import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
+import { steps as ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -228,6 +229,9 @@ describe('getStepStartStates', () => {
       [PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS]: {
         disabled: true,
       },
+      [ManagementGroupSteps.MANAGEMENT_GROUPS]: {
+        disabled: true,
+      },
     });
   });
 
@@ -353,6 +357,9 @@ describe('getStepStartStates', () => {
       [PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS]: {
         disabled: true,
       },
+      [ManagementGroupSteps.MANAGEMENT_GROUPS]: {
+        disabled: true,
+      },
     });
   });
 
@@ -476,6 +483,137 @@ describe('getStepStartStates', () => {
         disabled: false,
       },
       [PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS]: {
+        disabled: false,
+      },
+      [ManagementGroupSteps.MANAGEMENT_GROUPS]: {
+        disabled: true,
+      },
+    });
+  });
+
+  test('ingestManagementGroups: true', () => {
+    const context = createMockExecutionContext({
+      instanceConfig: { ingestManagementGroups: true } as IntegrationConfig,
+    });
+    const states = getStepStartStates(context);
+    expect(states).toEqual({
+      [STEP_AD_ACCOUNT]: { disabled: false },
+      [STEP_AD_GROUPS]: { disabled: true },
+      [STEP_AD_GROUP_MEMBERS]: { disabled: true },
+      [STEP_AD_USER_REGISTRATION_DETAILS]: { disabled: true },
+      [STEP_AD_USERS]: { disabled: true },
+      [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
+      [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
+      [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
+      [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
+      [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: true },
+      [STEP_RM_NETWORK_INTERFACES]: { disabled: true },
+      [STEP_RM_NETWORK_LOAD_BALANCERS]: { disabled: true },
+      [STEP_RM_NETWORK_FIREWALLS]: { disabled: true },
+      [STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES]: { disabled: true },
+      [STEP_RM_NETWORK_WATCHERS]: { disabled: true },
+      [STEP_RM_NETWORK_LOCATION_WATCHERS]: { disabled: true },
+      [STEP_RM_NETWORK_FLOW_LOGS]: { disabled: true },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS]: { disabled: true },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
+      [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
+      [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
+      [computeSteps.GALLERIES]: { disabled: true },
+      [computeSteps.SHARED_IMAGES]: { disabled: true },
+      [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
+      [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: true },
+      [computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS]: { disabled: true },
+      [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
+      [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
+      [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
+      [sqlDatabaseSteps.SERVERS]: { disabled: true },
+      [sqlDatabaseSteps.SERVER_DIAGNOSTIC_SETTINGS]: { disabled: true },
+      [sqlDatabaseSteps.DATABASES]: { disabled: true },
+      [sqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: true },
+      [sqlDatabaseSteps.SERVER_AD_ADMINS]: { disabled: true },
+      [postgreSqlDatabaseSteps.SERVERS]: { disabled: true },
+      [postgreSqlDatabaseSteps.DATABASES]: { disabled: true },
+      [postgreSqlDatabaseSteps.SERVER_FIREWALL_RULES]: { disabled: true },
+      [storageSteps.STORAGE_CONTAINERS]: { disabled: true },
+      [storageSteps.STORAGE_FILE_SHARES]: { disabled: true },
+      [storageSteps.STORAGE_ACCOUNTS]: { disabled: true },
+      [storageSteps.STORAGE_QUEUES]: { disabled: true },
+      [storageSteps.STORAGE_TABLES]: { disabled: true },
+      [STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENTS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENT_PRINCIPALS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENT_SCOPES]: { disabled: true },
+      [authorizationSteps.ROLE_DEFINITIONS]: { disabled: true },
+      [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: true },
+      [authorizationSteps.CLASSIC_ADMINS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
+      [subscriptionSteps.SUBSCRIPTION]: { disabled: true },
+      [subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS]: { disabled: true },
+      [subscriptionSteps.LOCATIONS]: { disabled: true },
+      [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
+      [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
+      [STEP_RM_DNS_ZONES]: { disabled: true },
+      [STEP_RM_DNS_RECORD_SETS]: { disabled: true },
+      [STEP_RM_PRIVATE_DNS_ZONES]: { disabled: true },
+      [STEP_RM_PRIVATE_DNS_RECORD_SETS]: { disabled: true },
+      [STEP_RM_CONTAINER_REGISTRIES]: { disabled: true },
+      [STEP_RM_CONTAINER_REGISTRY_WEBHOOKS]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_NAMESPACES]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_QUEUES]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: true },
+      [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: true },
+      [STEP_RM_CDN_PROFILE]: { disabled: true },
+      [STEP_RM_CDN_ENDPOINTS]: { disabled: true },
+      [STEP_RM_BATCH_ACCOUNT]: { disabled: true },
+      [STEP_RM_BATCH_POOL]: { disabled: true },
+      [STEP_RM_BATCH_APPLICATION]: { disabled: true },
+      [STEP_RM_BATCH_CERTIFICATE]: { disabled: true },
+      [STEP_RM_REDIS_CACHES]: { disabled: true },
+      [STEP_RM_REDIS_FIREWALL_RULES]: { disabled: true },
+      [STEP_RM_REDIS_LINKED_SERVERS]: { disabled: true },
+      [STEP_RM_CONTAINER_GROUPS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_DOMAINS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_DOMAIN_TOPICS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_TOPICS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
+      [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
+      [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
+      [PolicySteps.POLICY_ASSIGNMENTS]: { disabled: true },
+      [PolicySteps.POLICY_DEFINITIONS]: { disabled: true },
+      [PolicySteps.POLICY_ASSIGNMENT_SCOPE_RELATIONSHIPS]: { disabled: true },
+      [SecuritySteps.ASSESSMENTS]: { disabled: true },
+      [SecuritySteps.SECURITY_CENTER_CONTACTS]: { disabled: true },
+      [SecuritySteps.SETTINGS]: { disabled: true },
+      [SecuritySteps.AUTO_PROVISIONING_SETTINGS]: { disabled: true },
+      [SecuritySteps.PRICING_CONFIGURATIONS]: { disabled: true },
+      [MonitorSteps.MONITOR_LOG_PROFILES]: { disabled: true },
+      [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS]: { disabled: true },
+      [MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [AppServiceSteps.APPS]: { disabled: true },
+      [AppServiceSteps.APP_SERVICE_PLANS]: { disabled: true },
+      [AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS]: { disabled: true },
+      [PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES]: { disabled: true },
+      [PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [ManagementGroupSteps.MANAGEMENT_GROUPS]: {
         disabled: false,
       },
     });

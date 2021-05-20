@@ -30,6 +30,7 @@ import { policySteps } from './steps/resource-manager/policy';
 import { monitorSteps } from './steps/resource-manager/monitor';
 import { appServiceSteps } from './steps/resource-manager/appservice';
 import { policyInsightSteps } from './steps/resource-manager/policy-insights';
+import { managementGroupSteps } from './steps/resource-manager/management-groups';
 
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
@@ -50,6 +51,10 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
       mask: false,
     },
     ingestActiveDirectory: {
+      type: 'boolean',
+      mask: false,
+    },
+    ingestManagementGroups: {
       type: 'boolean',
       mask: false,
     },
@@ -88,6 +93,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...monitorSteps,
     ...appServiceSteps,
     ...policyInsightSteps,
+    ...managementGroupSteps,
   ],
 
   normalizeGraphObjectKey: (_key) => _key.toLowerCase(),

@@ -101,6 +101,7 @@ import { PolicySteps } from './steps/resource-manager/policy/constants';
 import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
+import { steps as ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -127,6 +128,13 @@ export function getActiveDirectorySteps(): GetApiSteps {
       STEP_AD_USERS,
       STEP_AD_SERVICE_PRINCIPALS,
     ],
+    executeLastSteps: [],
+  };
+}
+
+export function getManagementGroupSteps(): GetApiSteps {
+  return {
+    executeFirstSteps: [ManagementGroupSteps.MANAGEMENT_GROUPS],
     executeLastSteps: [],
   };
 }
@@ -243,6 +251,7 @@ export default function getStepStartStates(
 
   const activeDirectory = { disabled: !config.ingestActiveDirectory };
   const resourceManager = { disabled: !hasSubscriptionId(config) };
+  const managementGroups = { disabled: !config.ingestManagementGroups };
 
   const {
     executeFirstSteps: adFirstSteps,
@@ -252,9 +261,14 @@ export default function getStepStartStates(
     executeFirstSteps: rmFirstSteps,
     executeLastSteps: rmLastSteps,
   } = getResourceManagerSteps();
+  const {
+    executeFirstSteps: mgFirstSteps,
+    executeLastSteps: mgLastSteps,
+  } = getManagementGroupSteps();
   return {
     [STEP_AD_ACCOUNT]: { disabled: false },
     ...makeStepStartStates([...adFirstSteps, ...adLastSteps], activeDirectory),
     ...makeStepStartStates([...rmFirstSteps, ...rmLastSteps], resourceManager),
+    ...makeStepStartStates([...mgFirstSteps, ...mgLastSteps], managementGroups),
   };
 }

@@ -12,10 +12,11 @@ and this project adheres to
 
 - Added support for ingesting the following **new** resources:
 
-  | Service       | Resource / Entity    |
-  | ------------- | -------------------- |
-  | Gallery       | `azure_gallery`      |
-  | Gallery Image | `azure_shared_image` |
+  | Service           | Resource / Entity        |
+  | ----------------- | ------------------------ |
+  | Gallery           | `azure_gallery`          |
+  | Gallery Image     | `azure_shared_image`     |
+  | Management Groups | `azure_management_group` |
 
 - Added support for ingesting the following **new** relationships:
 
@@ -25,6 +26,8 @@ and this project adheres to
   | `azure_gallery`        | `CONTAINS` | `azure_shared_image` |
   | `azure_vm`             | `HAS`      | `azure_shared_image` |
   | `azure_vm`             | `HAS`      | `azure_image`        |
+  | `azure_management_group` | `CONTAINS` | `azure_management_group` |
+  | `azure_account`          | `HAS`      | `azure_management_group` |
 
 - New properties added to resources:
 

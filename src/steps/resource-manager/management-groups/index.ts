@@ -13,7 +13,11 @@ import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
 import { ManagementGroupClient } from './client';
-import { entities, relationships, steps } from './constants';
+import {
+  ManagementGroupEntities,
+  ManagementGroupRelationships,
+  ManagementGroupSteps,
+} from './constants';
 import { entities as SubscriptionEntities } from '../subscriptions/constants';
 import { createManagementGroupEntity } from './converters';
 
@@ -134,12 +138,12 @@ export const managementGroupSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
   {
-    id: steps.MANAGEMENT_GROUPS,
+    id: ManagementGroupSteps.MANAGEMENT_GROUPS,
     name: 'Management Groups',
-    entities: [entities.MANAGEMENT_GROUP],
+    entities: [ManagementGroupEntities.MANAGEMENT_GROUP],
     relationships: [
-      relationships.ACCOUNT_CONTAINS_ROOT_MANAGEMENT_GROUP,
-      relationships.MANAGEMENT_GROUP_CONTAINS_MANAGEMENT_GROUP,
+      ManagementGroupRelationships.ACCOUNT_HAS_ROOT_MANAGEMENT_GROUP,
+      ManagementGroupRelationships.MANAGEMENT_GROUP_CONTAINS_MANAGEMENT_GROUP,
     ], // TODO add support for mapped relationship documentation
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchManagementGroups,

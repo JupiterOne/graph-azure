@@ -99,7 +99,7 @@ import { PolicySteps } from './steps/resource-manager/policy/constants';
 import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
-import { steps as ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
+import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {

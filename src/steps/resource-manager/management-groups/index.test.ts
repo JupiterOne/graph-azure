@@ -6,7 +6,10 @@ import {
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-import { fetchManagementGroups } from '.';
+import {
+  fetchManagementGroups,
+  validateManagementGroupStepInvocation,
+} from '.';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 import {
@@ -116,5 +119,48 @@ describe('rm-management-groups', () => {
     // Require at least 1 management group to ensure mapped relationships work.
     expect(managementGroupSubscriptionRelationships.length).toBeGreaterThan(0);
     expect(restRelationships).toHaveLength(0);
+  });
+});
+
+describe('validateManagementGroupStepInvocation', () => {
+  test('should return undefiend when credentials allow fetching of management group', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'validateManagementGroupStepInvocation#success',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+    });
+
+    const response = await validateManagementGroupStepInvocation(context);
+
+    expect(response).toBeUndefined();
+  });
+
+  test('should throw when invalid credentials are passed', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'validateManagementGroupStepInvocation#badCredentials',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        recordFailedRequests: true,
+      },
+    });
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+    });
+
+    await expect(validateManagementGroupStepInvocation(context)).rejects
+      .toThrow(`Provider authorization failed at \
+https://management.azure.com/providers/Microsoft.Management/managementGroups/${configFromEnv.directoryId}: \
+AuthorizationFailed The client '61715bd4-dc30-4496-a937-b247655936b3' with object id '61715bd4-dc30-4496-a937-b247655936b3' \
+does not have authorization to perform action 'Microsoft.Management/managementGroups/read' over scope \
+'/providers/Microsoft.Management/managementGroups/992d7bbe-b367-459c-a10f-cf3fd16103ab' or the scope is invalid. \
+If access was recently granted, please refresh your credentials.`);
   });
 });

@@ -11,6 +11,12 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
+      - name: NPM preflight
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > .npmrc
+          npm whoami
       - id: setup-node
         name: Setup Node
         uses: actions/setup-node@v1

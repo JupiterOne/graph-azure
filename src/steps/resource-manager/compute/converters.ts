@@ -137,7 +137,7 @@ export function createImageEntity(
 
 export type VirtualMachineExtensionSharedProperties = Omit<
   VirtualMachineExtension,
-  'id' | 'location' | 'provisioningState'
+  'location' | 'provisioningState'
 >;
 
 export function createVirtualMachineExtensionEntity(
@@ -147,10 +147,13 @@ export function createVirtualMachineExtensionEntity(
     entityData: {
       source: data,
       assign: {
-        _key: getVirtualMachineExtensionKey(data),
+        _key: data.id || getVirtualMachineExtensionKey(data),
         _type: entities.VIRTUAL_MACHINE_EXTENSION._type,
         _class: entities.VIRTUAL_MACHINE_EXTENSION._class,
         name: data.name,
+        publisher: data.publisher,
+        extType: data.virtualMachineExtensionType,
+        ...convertProperties(data.settings, { prefix: 'settings' }),
       },
     },
   });

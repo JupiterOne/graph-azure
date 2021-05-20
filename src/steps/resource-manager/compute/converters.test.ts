@@ -14,7 +14,9 @@ import {
   createGalleryEntity,
   createSharedImage,
   createVirtualMachineEntity,
+  createVirtualMachineExtensionEntity,
   testFunctions,
+  VirtualMachineExtensionSharedProperties,
 } from './converters';
 
 const { usesManagedDisks } = testFunctions;
@@ -308,6 +310,48 @@ describe('createSharedImageEntity', () => {
       webLink: webLinker.portalResourceUrl(
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition',
       ),
+      _rawData: [{ name: 'default', rawData: data }],
+    });
+  });
+});
+
+describe('createVirtualMachineExtensionEntity', () => {
+  test('properties transferred', () => {
+    const data: VirtualMachineExtensionSharedProperties = {
+      name: 'TeamServicesAgentExtension',
+      id:
+        '/subscriptions/d2c1ab8d-f64d-43e2-bca3-ea3b8130679d/resourceGroups/kenan-free-trial/providers/Microsoft.Compute/virtualMachines/kenan-free-trial/extensions/TeamServicesAgentExtension',
+      type: 'Microsoft.Compute/virtualMachines/extensions',
+      autoUpgradeMinorVersion: true,
+      publisher: 'Microsoft.VisualStudio.Services',
+      virtualMachineExtensionType: 'TeamServicesAgentLinux',
+      typeHandlerVersion: '1.0',
+      settings: {
+        VSTSAccountName: 'kenanwarrenj1',
+        TeamProject: 'Test Project',
+        DeploymentGroup: 'test-deployment',
+        AgentName: 'kenan-free-trial',
+        Tags: '',
+      },
+    };
+
+    expect(createVirtualMachineExtensionEntity(data)).toEqual({
+      _key:
+        '/subscriptions/d2c1ab8d-f64d-43e2-bca3-ea3b8130679d/resourceGroups/kenan-free-trial/providers/Microsoft.Compute/virtualMachines/kenan-free-trial/extensions/TeamServicesAgentExtension',
+      _type: 'azure_vm_extension',
+      _class: ['Application'],
+      id:
+        '/subscriptions/d2c1ab8d-f64d-43e2-bca3-ea3b8130679d/resourceGroups/kenan-free-trial/providers/Microsoft.Compute/virtualMachines/kenan-free-trial/extensions/TeamServicesAgentExtension',
+      displayName: 'TeamServicesAgentExtension',
+      extType: 'TeamServicesAgentLinux',
+      name: 'TeamServicesAgentExtension',
+      publisher: 'Microsoft.VisualStudio.Services',
+      'settings.agentName': 'kenan-free-trial',
+      'settings.deploymentGroup': 'test-deployment',
+      'settings.tags': '',
+      'settings.teamProject': 'Test Project',
+      'settings.vstsAccountName': 'kenanwarrenj1',
+      createdOn: undefined,
       _rawData: [{ name: 'default', rawData: data }],
     });
   });

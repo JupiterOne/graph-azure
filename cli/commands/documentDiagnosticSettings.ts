@@ -132,7 +132,7 @@ function generateDiagnosticSettingsDocumentationFromMetadata(
   for (const metadata of sortDiagnosticSettingsMetadata(
     diagnosticSettingsMetadata,
   )) {
-    diagnosticSettingsListSection += `- ${metadata.resourceType}\n`;
+    diagnosticSettingsListSection += `- \`${metadata.resourceType}\`\n`;
     if (metadata.logCategories) {
       diagnosticSettingsListSection += `  - Log Categories:\n`;
       for (const category of metadata.logCategories) {

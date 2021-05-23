@@ -405,31 +405,31 @@ supported services / metrics can be found in
 The JupiterOne graph-azure project currently ingests diagnostic settings for the
 following entities:
 
-- azure_api_management_service
-- azure_batch_account
-- azure_cdn_endpoint
-- azure_cdn_profile
-- azure_container_registry
-- azure_event_grid_domain
-- azure_event_grid_topic
-- azure_keyvault_service
+- `azure_api_management_service`
+- `azure_batch_account`
+- `azure_cdn_endpoint`
+- `azure_cdn_profile`
+- `azure_container_registry`
+- `azure_event_grid_domain`
+- `azure_event_grid_topic`
+- `azure_keyvault_service`
   - Log Categories:
     - AuditEvent
-- azure_lb
-- azure_mariadb_server
-- azure_mysql_server
-- azure_network_firewall
-- azure_postgresql_server
-- azure_public_ip
-- azure_security_group
-- azure_sql_server
-- azure_subscription
+- `azure_lb`
+- `azure_mariadb_server`
+- `azure_mysql_server`
+- `azure_network_firewall`
+- `azure_postgresql_server`
+- `azure_public_ip`
+- `azure_security_group`
+- `azure_sql_server`
+- `azure_subscription`
   - Log Categories:
     - Administrative
     - Alert
     - Policy
     - Security
-- azure_vnet
+- `azure_vnet`
 
 <!--
 ********************************************************************************

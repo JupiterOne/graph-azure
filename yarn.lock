@@ -126,6 +126,15 @@
     "@azure/ms-rest-js" "^1.8.1"
     tslib "^1.9.3"
 
+"@azure/arm-managementgroups@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-managementgroups/-/arm-managementgroups-1.1.0.tgz#2ef8979e0fd34264f8cc8f801ddee828a924dca3"
+  integrity sha512-QWqWAjcIH9cNSlXa6Onem5kguyoECpZusjwuFG2co51wwZck5EPcbDSIzTHYPks28WfuE1JAymZmPYqdzGJPCg==
+  dependencies:
+    "@azure/ms-rest-azure-js" "^1.1.0"
+    "@azure/ms-rest-js" "^1.1.0"
+    tslib "^1.9.3"
+
 "@azure/arm-mariadb@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-mariadb/-/arm-mariadb-1.4.0.tgz#a049e0b35a1f8411df0ce483b8d704fe4d7ec599"

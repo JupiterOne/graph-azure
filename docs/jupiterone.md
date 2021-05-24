@@ -63,7 +63,7 @@ To create the App Registration:
 1. Create a new client secret
 1. Copy the generated secret (you only get one chance!)
 
-#### APIPermissions
+#### API Permissions (Azure Active Directory)
 
 Grant permission to read Microsoft Graph information:
 
@@ -83,6 +83,8 @@ Grant permission to read Microsoft Graph information:
 
 1. Grant admin consent for this directory for the permissions above
 
+#### IAM Roles (Azure Management Groups / Subscriptions)
+
 Please note that minimally [`User.Read` is required][3] even when AD ingestion
 is disabled. The integration will request Organization information to maintain
 the `Account` entity.
@@ -90,13 +92,31 @@ the `Account` entity.
 Grant the `Reader` RBAC subscription role to read Azure Resource Manager
 information:
 
-1. Navigate to **Subscriptions**, choose the subscription from which you want to
-   ingest resources
-1. Copy the **Subscription ID**
+1. Navigate to the correct scope for your integration.
+
+   _If configuring a single Azure Subscription:_
+
+   - navigate to **Subscriptions**, choose the subscription from which you want
+     to ingest resources.
+
+   _If configuring all subscriptions for a tenant (using the
+   `Configure Subscription Instances` flag in JupiterOne):_
+
+   - navigate to **Management Groups**, then to the
+     [Tenant Root Group](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#root-management-group-for-each-directory).
+
 1. Navigate to **Access control (IAM)**, then **Add role assignment**
 1. Select **Role** "Reader", **Assign access to** "Azure AD user, group, or
-   service principal"
-1. Search for the App "JupiterOne"
+   service principal", and select the App "JupiterOne"
+1. Create a custom role called "JupiterOne Reader" with the following
+   permissions:
+   - `Microsoft.PolicyInsights/policyStates/queryResults/action`
+1. Select **Role** "JupiterOne Reader", **Assign access to** "Azure AD user,
+   group, or service principal", and select the app "JupiterOne"
+1. _If configuring all subscriptions for a tenant (using the
+   `Configure Subscription Instances` flag in JupiterOne):_
+
+   - Also assign the "Management Group Reader" role to the App "JupiterOne"
 
 ### In JupiterOne
 
@@ -177,6 +197,7 @@ The following entities are created:
 | [RM] Key Vault                                 | `azure_keyvault_service`                          | `Service`                          |
 | [RM] Load Balancer                             | `azure_lb`                                        | `Gateway`                          |
 | [RM] Location                                  | `azure_location`                                  | `Site`                             |
+| [RM] Management Group                          | `azure_management_group`                          | `Group`                            |
 | [RM] MariaDB Database                          | `azure_mariadb_database`                          | `Database`, `DataStore`            |
 | [RM] MariaDB Server                            | `azure_mariadb_server`                            | `Database`, `DataStore`, `Host`    |
 | [RM] Monitor Activity Log Alert                | `azure_monitor_activity_log_alert`                | `Rule`                             |
@@ -239,6 +260,7 @@ The following relationships are created/mapped:
 | ---------------------------------- | --------------------- | ------------------------------------------------- |
 | `azure_account`                    | **HAS**               | `azure_user_group`                                |
 | `azure_account`                    | **HAS**               | `azure_keyvault_service`                          |
+| `azure_account`                    | **HAS**               | `azure_management_group`                          |
 | `azure_account`                    | **HAS**               | `azure_user`                                      |
 | `azure_api_management_service`     | **HAS**               | `azure_api_management_api`                        |
 | `azure_security_assessment`        | **IDENTIFIED**        | `azure_advisor_recommendation`                    |
@@ -265,6 +287,7 @@ The following relationships are created/mapped:
 | `azure_user_group`                 | **HAS**               | `azure_user`                                      |
 | `azure_lb`                         | **CONNECTS**          | `azure_nic`                                       |
 | `azure_location`                   | **HAS**               | `azure_network_watcher`                           |
+| `azure_management_group`           | **CONTAINS**          | `azure_management_group`                          |
 | `azure_mariadb_server`             | **HAS**               | `azure_mariadb_database`                          |
 | `azure_monitor_activity_log_alert` | **MONITORS**          | `ANY_SCOPE`                                       |
 | `azure_monitor_log_profile`        | **USES**              | `azure_storage_account`                           |

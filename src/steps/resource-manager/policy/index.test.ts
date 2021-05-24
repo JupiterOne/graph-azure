@@ -30,7 +30,7 @@ describe('rm-policy-assignments', () => {
 
     return { accountEntity };
   }
-  test('sucess', async () => {
+  test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'rm-policy-assignments',

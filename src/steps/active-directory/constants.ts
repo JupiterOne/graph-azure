@@ -2,6 +2,7 @@
 export const STEP_AD_ACCOUNT = 'ad-account';
 export const STEP_AD_GROUPS = 'ad-groups';
 export const STEP_AD_GROUP_MEMBERS = 'ad-group-members';
+export const STEP_AD_USER_REGISTRATION_DETAILS = 'ad-user-registration-details';
 export const STEP_AD_USERS = 'ad-users';
 export const STEP_AD_SERVICE_PRINCIPALS = 'ad-service-principals';
 

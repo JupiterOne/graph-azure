@@ -8,7 +8,10 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationStepContext, IntegrationConfig } from '../../types';
-import { DirectoryGraphClient } from './client';
+import {
+  CredentialUserRegistrationDetails,
+  DirectoryGraphClient,
+} from './client';
 import {
   ACCOUNT_ENTITY_TYPE,
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
@@ -24,6 +27,7 @@ import {
   STEP_AD_SERVICE_PRINCIPALS,
   SERVICE_PRINCIPAL_ENTITY_TYPE,
   SERVICE_PRINCIPAL_ENTITY_CLASS,
+  STEP_AD_USER_REGISTRATION_DETAILS,
 } from './constants';
 import {
   createAccountEntity,
@@ -76,6 +80,33 @@ export async function fetchAccount(
   await jobState.setData(ACCOUNT_ENTITY_TYPE, accountEntity);
 }
 
+export async function fetchUserRegistrationDetails(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
+
+  const userRegistrationDetailsMap = new Map<
+    string,
+    CredentialUserRegistrationDetails
+  >();
+  await graphClient.iterateCredentialUserRegistrationDetails(
+    (registrationDetails) => {
+      if (registrationDetails.id) {
+        userRegistrationDetailsMap.set(
+          registrationDetails.id,
+          registrationDetails,
+        );
+      }
+    },
+  );
+
+  await jobState.setData(
+    'userRegistrationDetailsMap',
+    userRegistrationDetailsMap,
+  );
+}
+
 export async function fetchUsers(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -83,8 +114,15 @@ export async function fetchUsers(
   const graphClient = new DirectoryGraphClient(logger, instance.config);
 
   const accountEntity = await getAccountEntity(jobState);
+  const userRegistrationDetailsMap = await jobState.getData<
+    Map<string, CredentialUserRegistrationDetails>
+  >('userRegistrationDetailsMap');
+
   await graphClient.iterateUsers(async (user) => {
-    const userEntity = createUserEntity(user);
+    const userEntity = createUserEntity(
+      user,
+      userRegistrationDetailsMap?.get(user.id as string),
+    );
     await jobState.addEntity(userEntity);
     await jobState.addRelationship(
       createAccountUserRelationship(accountEntity, userEntity),
@@ -161,6 +199,14 @@ export const activeDirectorySteps: Step<
     executionHandler: fetchAccount,
   },
   {
+    id: STEP_AD_USER_REGISTRATION_DETAILS,
+    name: 'Active Directory User Registration Details',
+    entities: [],
+    relationships: [],
+    dependsOn: [],
+    executionHandler: fetchUserRegistrationDetails,
+  },
+  {
     id: STEP_AD_USERS,
     name: 'Active Directory Users',
     entities: [
@@ -178,7 +224,7 @@ export const activeDirectorySteps: Step<
         targetType: USER_ENTITY_TYPE,
       },
     ],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_AD_USER_REGISTRATION_DETAILS],
     executionHandler: fetchUsers,
   },
   {

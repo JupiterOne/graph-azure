@@ -210,15 +210,36 @@ describe('createUserEntity', () => {
     };
   }
 
+  function getMockCredentialDetails() {
+    return {
+      userPrincipalName:
+        'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
+      userDisplayName: 'Andrew Kulakov',
+      authMethods: ['appCode'],
+      isRegistered: true,
+      isEnabled: true,
+      isCapable: true,
+      isMfaRegistered: true,
+    };
+  }
+
   test('properties transferred', () => {
     const mockUser = getMockUser();
-    const userEntity = createUserEntity(mockUser);
+    const mockCredDetails = getMockCredentialDetails();
+
+    const userEntity = createUserEntity(mockUser, mockCredDetails);
     expect(userEntity).toMatchGraphObjectSchema({ _class: USER_ENTITY_CLASS });
     expect(userEntity).toEqual({
       _class: ['User'],
       _key: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
       _type: 'azure_user',
-      _rawData: [{ name: 'default', rawData: mockUser }],
+      _rawData: [
+        { name: 'default', rawData: mockUser },
+        {
+          name: 'registrationDetails',
+          rawData: mockCredDetails,
+        },
+      ],
       createdOn: undefined,
       email: 'admin_test@dualboot.com',
       mail: 'admin_test@dualboot.com',
@@ -238,6 +259,7 @@ describe('createUserEntity', () => {
       userType: 'Member',
       userPrincipalName:
         'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
+      isMfaRegistered: true,
     });
   });
 

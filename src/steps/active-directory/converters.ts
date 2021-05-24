@@ -23,6 +23,7 @@ import {
   GroupMember,
   MemberType,
   IdentitySecurityDefaultsEnforcementPolicy,
+  CredentialUserRegistrationDetails,
 } from './client';
 import {
   ACCOUNT_ENTITY_CLASS,
@@ -113,8 +114,11 @@ export function createGroupEntity(data: Group): Entity {
   });
 }
 
-export function createUserEntity(data: User): Entity {
-  return createIntegrationEntity({
+export function createUserEntity(
+  data: User,
+  registrationDetails?: CredentialUserRegistrationDetails,
+): Entity {
+  const userEntity = createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
@@ -127,9 +131,19 @@ export function createUserEntity(data: User): Entity {
         firstName: data.givenName,
         lastName: data.surname,
         username: data.userPrincipalName,
+        isMfaRegistered: registrationDetails?.isMfaRegistered,
       },
     },
   });
+
+  if (registrationDetails) {
+    setRawData(userEntity, {
+      name: 'registrationDetails',
+      rawData: registrationDetails,
+    });
+  }
+
+  return userEntity;
 }
 
 export function createServicePrincipalEntity(data: any): Entity {

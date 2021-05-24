@@ -26,10 +26,12 @@ and this project adheres to
   | `azure_vm`             | `HAS`      | `azure_shared_image` |
   | `azure_vm`             | `HAS`      | `azure_image`        |
 
-- Changed the following property values on `azure_vm_extension`:
-  - `settings`
-  - `extType`
-  - `publisher`
+- New properties added to resources:
+
+  | Entity               | Properties                         |
+  | -------------------- | ---------------------------------- |
+  | `azure_vm_extension` | `settings`, `extType`, `publisher` |
+  | `azure_user`         | `isMfaRegistered`                  |
 
 ## 5.24.0 - 2021-05-11
 

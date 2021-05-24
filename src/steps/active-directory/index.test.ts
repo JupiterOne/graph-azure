@@ -12,6 +12,7 @@ import {
   fetchGroups,
   fetchUsers,
   fetchServicePrincipals,
+  fetchUserRegistrationDetails,
 } from './index';
 import { createMockAzureStepExecutionContext } from '../../../test/createMockAzureStepExecutionContext';
 import { Entity, Relationship } from '@jupiterone/integration-sdk-core';
@@ -114,6 +115,7 @@ test('active directory steps', async () => {
   });
 
   await fetchAccount(context);
+  await fetchUserRegistrationDetails(context);
   await fetchUsers(context);
   await fetchGroups(context);
   await fetchGroupMembers(context);

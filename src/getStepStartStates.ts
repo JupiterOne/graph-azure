@@ -13,6 +13,7 @@ import {
   STEP_AD_GROUPS,
   STEP_AD_USERS,
   STEP_AD_SERVICE_PRINCIPALS,
+  STEP_AD_USER_REGISTRATION_DETAILS,
 } from './steps/active-directory/constants';
 import { steps as authorizationSteps } from './steps/resource-manager/authorization/constants';
 import {
@@ -122,6 +123,7 @@ export function getActiveDirectorySteps(): GetApiSteps {
     executeFirstSteps: [
       STEP_AD_GROUPS,
       STEP_AD_GROUP_MEMBERS,
+      STEP_AD_USER_REGISTRATION_DETAILS,
       STEP_AD_USERS,
       STEP_AD_SERVICE_PRINCIPALS,
     ],

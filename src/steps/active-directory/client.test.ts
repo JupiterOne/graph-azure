@@ -7,7 +7,11 @@ import {
 } from '@microsoft/microsoft-graph-types';
 
 import config, { configFromEnv } from '../../../test/integrationInstanceConfig';
-import { DirectoryGraphClient, GroupMember } from './client';
+import {
+  CredentialUserRegistrationDetails,
+  DirectoryGraphClient,
+  GroupMember,
+} from './client';
 import { IntegrationConfig } from '../../types';
 import {
   Recording,
@@ -111,6 +115,37 @@ test('iterateGroups', async () => {
   resources.forEach((r) => {
     expect(r).toMatchObject({
       displayName: expect.any(String),
+    });
+  });
+});
+
+test('iterateCredentialUserRegistrationDetails', async () => {
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'iterateCredentialUserRegistrationDetails',
+    options: {
+      matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+    },
+  });
+
+  const client = new DirectoryGraphClient(logger, configFromEnv);
+
+  const resources: CredentialUserRegistrationDetails[] = [];
+  await client.iterateCredentialUserRegistrationDetails((e) => {
+    resources.push(e);
+  });
+
+  expect(resources.length).toBeGreaterThan(0);
+  resources.forEach((r) => {
+    expect(r).toMatchObject({
+      authMethods: expect.any(Array),
+      id: expect.any(String),
+      isCapable: expect.any(Boolean),
+      isEnabled: expect.any(Boolean),
+      isMfaRegistered: expect.any(Boolean),
+      isRegistered: expect.any(Boolean),
+      userDisplayName: expect.any(String),
+      userPrincipalName: expect.any(String),
     });
   });
 });

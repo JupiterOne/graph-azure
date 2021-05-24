@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.25.0 - 2021-05-24`
+
 ### Added
 
 - Added ingestion of Azure Management Groups when the
@@ -28,12 +30,12 @@ and this project adheres to
 
 - Added support for ingesting the following **new** relationships:
 
-  | Source                 | \_class    | Target               |
-  | ---------------------- | ---------- | -------------------- |
-  | `azure_resource_group` | `HAS`      | `azure_gallery`      |
-  | `azure_gallery`        | `CONTAINS` | `azure_shared_image` |
-  | `azure_vm`             | `HAS`      | `azure_shared_image` |
-  | `azure_vm`             | `HAS`      | `azure_image`        |
+  | Source                   | \_class    | Target                   |
+  | ------------------------ | ---------- | ------------------------ |
+  | `azure_resource_group`   | `HAS`      | `azure_gallery`          |
+  | `azure_gallery`          | `CONTAINS` | `azure_shared_image`     |
+  | `azure_vm`               | `HAS`      | `azure_shared_image`     |
+  | `azure_vm`               | `HAS`      | `azure_image`            |
   | `azure_management_group` | `CONTAINS` | `azure_management_group` |
   | `azure_account`          | `HAS`      | `azure_management_group` |
 

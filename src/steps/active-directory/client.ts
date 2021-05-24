@@ -1,6 +1,8 @@
+import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 import {
   DirectoryObject,
   DirectoryRole,
+  Entity,
   Group,
   User,
 } from '@microsoft/microsoft-graph-types';
@@ -31,6 +33,16 @@ export interface IdentitySecurityDefaultsEnforcementPolicy
   displayName: string;
   id: string;
   isEnabled: boolean;
+}
+
+export interface CredentialUserRegistrationDetails extends Entity {
+  userPrincipalName: string;
+  userDisplayName: string;
+  authMethods: string[];
+  isRegistered: boolean;
+  isEnabled: boolean;
+  isCapable: boolean;
+  isMfaRegistered: boolean;
 }
 
 export class DirectoryGraphClient extends GraphClient {
@@ -107,6 +119,37 @@ export class DirectoryGraphClient extends GraphClient {
     });
   }
 
+  // https://docs.microsoft.com/en-us/graph/api/group-list?view=graph-rest-1.0&tabs=http
+  public async iterateCredentialUserRegistrationDetails(
+    callback: (
+      userDetails: CredentialUserRegistrationDetails,
+    ) => void | Promise<void>,
+  ): Promise<void> {
+    try {
+      const resourceUrl = '/reports/credentialUserRegistrationDetails';
+      this.logger.info('Iterating credential user registration details.');
+
+      return this.iterateResources({
+        resourceUrl,
+        options: { useBeta: true },
+        callback,
+      });
+    } catch (err) {
+      // This reports endpoint is only enabled on premium azure instances.
+      this.logger.warn(
+        {
+          err: new IntegrationProviderAPIError({
+            endpoint: 'reports.credentialUserRegistrationDetails',
+            status: err.status,
+            statusText: err.statusText,
+            cause: err,
+          }),
+        },
+        'Failed to obtain credential user registration details',
+      );
+    }
+  }
+
   // https://docs.microsoft.com/en-us/graph/api/group-list-members?view=graph-rest-1.0&tabs=http
   public async iterateGroupMembers(
     input: {
@@ -171,12 +214,15 @@ export class DirectoryGraphClient extends GraphClient {
     callback,
   }: {
     resourceUrl: string;
-    options?: { select?: string[] };
+    options?: { select?: string[]; useBeta?: boolean };
     callback: (item: T) => void | Promise<void>;
   }): Promise<void> {
     let nextLink: string | undefined;
     do {
       let api = this.client.api(nextLink || resourceUrl);
+      if (options?.useBeta) {
+        api = api.version('beta');
+      }
       if (options?.select) {
         api = api.select(options.select);
       }

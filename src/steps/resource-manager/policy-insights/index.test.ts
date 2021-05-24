@@ -36,7 +36,7 @@ describe('rm-policy-states-for-subscription', () => {
 
     return { accountEntity };
   }
-  test('sucess', async () => {
+  test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'rm-policy-states-for-subscription',
@@ -92,7 +92,7 @@ describe('rm-policy-state-to-policy-assignment-relationships', () => {
 
     return { accountEntity, policyStateEntities, policyAssignmentEntities };
   }
-  test('sucess', async () => {
+  test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'rm-policy-state-to-policy-assignment-relationships',
@@ -164,7 +164,7 @@ describe('rm-policy-state-to-policy-definition-relationships', () => {
 
     return { accountEntity, policyStateEntities, policyDefinitionEntities };
   }
-  test('sucess', async () => {
+  test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'rm-policy-state-to-policy-definition-relationships',
@@ -235,7 +235,7 @@ describe('rm-policy-state-to-resource-relationships', () => {
 
     return { accountEntity, policyStateEntities, keyVaultEntities };
   }
-  test('sucess', async () => {
+  test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'rm-policy-state-to-resource-relationships',

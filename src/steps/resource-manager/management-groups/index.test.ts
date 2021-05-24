@@ -72,7 +72,7 @@ describe('rm-management-groups', () => {
     };
   }
 
-  test('sucess', async () => {
+  test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'rm-management-groups',

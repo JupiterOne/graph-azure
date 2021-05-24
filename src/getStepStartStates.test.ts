@@ -491,9 +491,11 @@ describe('getStepStartStates', () => {
     });
   });
 
-  test('ingestManagementGroups: true', () => {
+  test('configureSubscriptionInstances: true', () => {
     const context = createMockExecutionContext({
-      instanceConfig: { ingestManagementGroups: true } as IntegrationConfig,
+      instanceConfig: {
+        configureSubscriptionInstances: true,
+      } as IntegrationConfig,
     });
     const states = getStepStartStates(context);
     expect(states).toEqual({

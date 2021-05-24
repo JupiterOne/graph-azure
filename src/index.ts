@@ -54,7 +54,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
       type: 'boolean',
       mask: false,
     },
-    ingestManagementGroups: {
+    configureSubscriptionInstances: {
       type: 'boolean',
       mask: false,
     },

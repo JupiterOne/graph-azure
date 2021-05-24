@@ -59,5 +59,5 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
    */
   ingestActiveDirectory?: boolean;
 
-  ingestManagementGroups?: boolean;
+  configureSubscriptionInstances?: boolean;
 }

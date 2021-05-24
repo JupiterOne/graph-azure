@@ -251,7 +251,7 @@ export default function getStepStartStates(
 
   const activeDirectory = { disabled: !config.ingestActiveDirectory };
   const resourceManager = { disabled: !hasSubscriptionId(config) };
-  const managementGroups = { disabled: !config.ingestManagementGroups };
+  const managementGroups = { disabled: !config.configureSubscriptionInstances };
 
   const {
     executeFirstSteps: adFirstSteps,

@@ -265,7 +265,7 @@ export const authorizationSteps: Step<
     id: steps.ROLE_ASSIGNMENT_SCOPES,
     name: 'Role Assignment to Scope Relationships',
     entities: [],
-    relationships: relationships.ROLE_ASSIGNMENT_ALLOWS_SCOPES,
+    relationships: [relationships.ROLE_ASSIGNMENT_ALLOWS_ANY_SCOPE],
     dependsOn: [steps.ROLE_ASSIGNMENTS, ...SCOPE_MATCHER_DEPENDS_ON],
     executionHandler: buildRoleAssignmentScopeRelationships,
   },

@@ -16,7 +16,6 @@ import {
   ResourceIdMap,
   RESOURCE_ID_TYPES_MAP,
   makeMatcherDependsOn,
-  makeMatcherEntityTypes,
 } from '../utils/findOrBuildResourceEntityFromResourceId';
 import {
   RESOURCE_GROUP_ENTITY,
@@ -31,6 +30,7 @@ import {
   entities as subscriptionEntities,
   steps as subscriptionSteps,
 } from '../subscriptions/constants';
+import { ANY_SCOPE } from '../constants';
 
 export const steps = {
   ROLE_ASSIGNMENTS: 'rm-authorization-role-assignments',
@@ -180,26 +180,6 @@ export const SCOPE_TYPES_MAP: ResourceIdMap[] = [
 ];
 
 export const SCOPE_MATCHER_DEPENDS_ON = makeMatcherDependsOn(SCOPE_TYPES_MAP);
-const SCOPE_MATCHER_ENTITY_TYPES = makeMatcherEntityTypes(SCOPE_TYPES_MAP);
-
-function createRoleAssignmentScopeRelationshipType(
-  targetEntityType: string,
-): StepRelationshipMetadata {
-  return {
-    _type: generateRelationshipType(
-      RelationshipClass.ALLOWS,
-      entities.ROLE_ASSIGNMENT._type,
-      targetEntityType,
-    ),
-    sourceType: entities.ROLE_ASSIGNMENT._type,
-    _class: RelationshipClass.ALLOWS,
-    targetType: targetEntityType,
-  };
-}
-
-const ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS = [
-  ...SCOPE_MATCHER_ENTITY_TYPES.map(createRoleAssignmentScopeRelationshipType),
-];
 
 export const relationships = {
   CLASSIC_ADMIN_GROUP_HAS_USER: {
@@ -220,6 +200,11 @@ export const relationships = {
     _class: RelationshipClass.CONTAINS,
     targetType: entities.ROLE_DEFINITION._type,
   },
-  ROLE_ASSIGNMENT_ALLOWS_SCOPES: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,
+  ROLE_ASSIGNMENT_ALLOWS_ANY_SCOPE: {
+    _type: 'azure_role_assignment_allows_any_scope',
+    sourceType: entities.ROLE_ASSIGNMENT._type,
+    _class: RelationshipClass.ALLOWS,
+    targetType: ANY_SCOPE,
+  },
   ROLE_ASSIGNMENT_ASSIGNED_PRINCIPALS: ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS,
 };

@@ -20,7 +20,6 @@ import {
   steps,
   entities,
   relationships,
-  ROLE_ASSIGNMENT_PRINCIPAL_DEPENDS_ON,
   getJupiterTypeForPrincipalType,
   SCOPE_MATCHER_DEPENDS_ON,
   SCOPE_TYPES_MAP,
@@ -259,10 +258,7 @@ export const authorizationSteps: Step<
     name: 'Role Assignment to Principal Relationships',
     entities: [],
     relationships: relationships.ROLE_ASSIGNMENT_ASSIGNED_PRINCIPALS,
-    dependsOn: [
-      steps.ROLE_ASSIGNMENTS,
-      ...ROLE_ASSIGNMENT_PRINCIPAL_DEPENDS_ON, //
-    ],
+    dependsOn: [steps.ROLE_ASSIGNMENTS],
     executionHandler: buildRoleAssignmentPrincipalRelationships,
   },
   {

@@ -637,14 +637,9 @@ describe('dependencies', () => {
       ...getApiStepsResponse.executeLastSteps,
     ];
 
-    for (const stepId of activeDirectorySteps) {
-      const stepDependencies = invocationConfig.integrationSteps.find(
-        (s) => s.id === stepId,
-      );
-      expect(activeDirectorySteps).toEqual(
-        expect.arrayContaining(stepDependencies?.dependsOn || []),
-      );
-    }
+    expect(invocationConfig.integrationSteps).toHaveIsolatedDependencies(
+      activeDirectorySteps,
+    );
   });
 
   test('getResourceManagerSteps should not depend on non-active directory steps', () => {
@@ -656,17 +651,9 @@ describe('dependencies', () => {
       ...getApiStepsResponse.executeLastSteps,
     ];
 
-    for (const stepId of resourceManagerStepIds) {
-      expect(resourceManagerStepIds).toHaveIsolatedDependencies(
-        invocationConfig.integrationSteps,
-      );
-      const stepDependencies = invocationConfig.integrationSteps.find(
-        (s) => s.id === stepId,
-      );
-      expect(resourceManagerStepIds).toEqual(
-        expect.arrayContaining(stepDependencies?.dependsOn || []),
-      );
-    }
+    expect(invocationConfig.integrationSteps).toHaveIsolatedDependencies(
+      resourceManagerStepIds,
+    );
   });
 
   test('getManagementGroupSteps should not depend on non-active directory steps', () => {
@@ -678,17 +665,9 @@ describe('dependencies', () => {
       ...getApiStepsResponse.executeLastSteps,
     ];
 
-    for (const stepId of managementGroupStepIds) {
-      expect(managementGroupStepIds).toHaveIsolatedDependencies(
-        invocationConfig.integrationSteps,
-      );
-      const stepDependencies = invocationConfig.integrationSteps.find(
-        (s) => s.id === stepId,
-      );
-      expect(managementGroupStepIds).toEqual(
-        expect.arrayContaining(stepDependencies?.dependsOn || []),
-      );
-    }
+    expect(invocationConfig.integrationSteps).toHaveIsolatedDependencies(
+      managementGroupStepIds,
+    );
   });
 });
 
@@ -696,21 +675,21 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
     interface Matchers<R> {
-      toHaveIsolatedDependencies(integrationSteps: Step<any>[]): R;
+      toHaveIsolatedDependencies(stepCollection: string[]): R;
     }
   }
 }
 
 expect.extend({
   toHaveIsolatedDependencies(
-    validStepDependencies: string[],
     integrationSteps: Step<any>[],
+    stepCollection: string[],
   ) {
-    for (const stepId of validStepDependencies) {
+    for (const stepId of stepCollection) {
       const stepDependencies = integrationSteps.find((s) => s.id === stepId)
         ?.dependsOn;
       const invalidStepDependencies = stepDependencies?.filter(
-        (s) => !validStepDependencies.includes(s),
+        (s) => !stepCollection.includes(s),
       );
       if (invalidStepDependencies?.length) {
         return {

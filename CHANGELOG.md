@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Previously, JupiterOne created direct relationships between active directory
+  entities and role assignments when active directory entities were ingested in
+  the same integration as subscription entities. In an effort to ensure
+  consistent relationships are built given any integration configuration, this
+  integration now defaults to creating mapped relationships between role
+  assignments and active directory entities.
+
 ## 5.25.0 - 2021-05-24`
 
 ### Added

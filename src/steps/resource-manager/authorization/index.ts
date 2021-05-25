@@ -10,11 +10,7 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import {
-  getAccountEntity,
-  STEP_AD_ACCOUNT,
-  STEP_AD_USERS,
-} from '../../active-directory';
+import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
 import {
   steps as subscriptionSteps,
   entities as subscriptionEntities,
@@ -24,7 +20,6 @@ import {
   steps,
   entities,
   relationships,
-  ROLE_ASSIGNMENT_PRINCIPAL_DEPENDS_ON,
   getJupiterTypeForPrincipalType,
   SCOPE_MATCHER_DEPENDS_ON,
   SCOPE_TYPES_MAP,
@@ -32,50 +27,16 @@ import {
 import {
   createRoleDefinitionEntity,
   createClassicAdministratorEntity as createClassicAdministratorGroupEntity,
-  createClassicAdministratorHasUserRelationship,
+  createClassicAdministratorHasUserMappedRelationship,
   createRoleAssignmentEntity,
 } from './converters';
-import {
-  PrincipalType,
-  RoleAssignment,
-} from '@azure/arm-authorization/esm/models';
+import { RoleAssignment } from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
 import findOrBuildResourceEntityFromResourceId, {
   PlaceholderEntity,
   isPlaceholderEntity,
 } from '../utils/findOrBuildResourceEntityFromResourceId';
 import { Subscription } from '@azure/arm-subscriptions/esm/models';
-
-/**
- * Tries to fetch the principal entity from the job state.
- * If the entity is not in the job state, returns {_key, _type} for mapper.
- */
-export async function findOrBuildPrincipalEntityForRoleAssignment(
-  executionContext: IntegrationStepContext,
-  options: {
-    principalId: string;
-    principalType: string;
-  },
-): Promise<Entity | PlaceholderEntity> {
-  const { jobState } = executionContext;
-  const { principalId, principalType } = options;
-  const targetType = getJupiterTypeForPrincipalType(
-    principalType as PrincipalType,
-  );
-  const targetKey = generateEntityKey(principalId);
-  // let targetEntity: Entity | PlaceholderEntity;
-  let targetEntity:
-    | Entity
-    | PlaceholderEntity
-    | null = await jobState.findEntity(targetKey);
-  if (targetEntity === null) {
-    targetEntity = {
-      _type: targetType,
-      _key: targetKey,
-    };
-  }
-  return targetEntity;
-}
 
 export async function fetchRoleAssignments(
   executionContext: IntegrationStepContext,
@@ -97,36 +58,33 @@ export async function fetchRoleAssignments(
 export async function buildRoleAssignmentPrincipalRelationships(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { jobState } = executionContext;
+  const { jobState, logger } = executionContext;
 
   await jobState.iterateEntities(
     { _type: entities.ROLE_ASSIGNMENT._type },
     async (roleAssignmentEntity: Entity) => {
-      const targetEntity = await findOrBuildPrincipalEntityForRoleAssignment(
-        executionContext,
-        {
-          principalId: roleAssignmentEntity.principalId as string,
-          principalType: roleAssignmentEntity.principalType as string,
-        },
-      );
+      const roleAssignment = getRawData<RoleAssignment>(roleAssignmentEntity);
 
-      if (isPlaceholderEntity(targetEntity)) {
-        await jobState.addRelationship(
-          createMappedRelationship({
-            _class: RelationshipClass.ASSIGNED,
-            source: roleAssignmentEntity,
-            target: targetEntity,
-          }),
+      if (!roleAssignment) {
+        logger.warn(
+          {
+            'roleAssignmentEntity._key': roleAssignmentEntity._key,
+          },
+          'Could not fetch role assignment raw data.',
         );
-      } else {
-        await jobState.addRelationship(
-          createDirectRelationship({
-            _class: RelationshipClass.ASSIGNED,
-            from: roleAssignmentEntity,
-            to: targetEntity,
-          }),
-        );
+        return;
       }
+
+      await jobState.addRelationship(
+        createMappedRelationship({
+          _class: RelationshipClass.ASSIGNED,
+          source: roleAssignmentEntity,
+          target: {
+            _type: getJupiterTypeForPrincipalType(roleAssignment.principalType),
+            _key: generateEntityKey(roleAssignment.principalId!),
+          },
+        }),
+      );
     },
   );
 }
@@ -275,7 +233,7 @@ export async function fetchClassicAdministrators(
 
   await client.iterateClassicAdministrators(async (ca) => {
     await jobState.addRelationship(
-      createClassicAdministratorHasUserRelationship({
+      createClassicAdministratorHasUserMappedRelationship({
         webLinker,
         classicAdministratorGroupEntity,
         data: ca,
@@ -300,10 +258,7 @@ export const authorizationSteps: Step<
     name: 'Role Assignment to Principal Relationships',
     entities: [],
     relationships: relationships.ROLE_ASSIGNMENT_ASSIGNED_PRINCIPALS,
-    dependsOn: [
-      steps.ROLE_ASSIGNMENTS,
-      ...ROLE_ASSIGNMENT_PRINCIPAL_DEPENDS_ON,
-    ],
+    dependsOn: [steps.ROLE_ASSIGNMENTS],
     executionHandler: buildRoleAssignmentPrincipalRelationships,
   },
   {
@@ -335,7 +290,7 @@ export const authorizationSteps: Step<
     name: 'Classic Administrators',
     entities: [entities.CLASSIC_ADMIN],
     relationships: [relationships.CLASSIC_ADMIN_GROUP_HAS_USER],
-    dependsOn: [STEP_AD_USERS],
+    dependsOn: [],
     executionHandler: fetchClassicAdministrators,
   },
 ];

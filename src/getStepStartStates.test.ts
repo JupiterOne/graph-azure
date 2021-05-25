@@ -2,7 +2,11 @@
 
 import { createMockExecutionContext } from '@jupiterone/integration-sdk-testing';
 
-import getStepStartStates from './getStepStartStates';
+import getStepStartStates, {
+  getActiveDirectorySteps,
+  getResourceManagerSteps,
+  getManagementGroupSteps,
+} from './getStepStartStates';
 import { invocationConfig } from './index';
 import {
   STEP_AD_ACCOUNT,
@@ -100,6 +104,7 @@ import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
 import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
+import { Step } from '@jupiterone/integration-sdk-core';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -620,4 +625,83 @@ describe('getStepStartStates', () => {
       },
     });
   });
+});
+
+describe('dependencies', () => {
+  test('getActiveDirectorySteps should not depend on non-active directory steps', () => {
+    const getApiStepsResponse = getActiveDirectorySteps();
+
+    const activeDirectorySteps = [
+      STEP_AD_ACCOUNT,
+      ...getApiStepsResponse.executeFirstSteps,
+      ...getApiStepsResponse.executeLastSteps,
+    ];
+
+    expect(invocationConfig.integrationSteps).toHaveIsolatedDependencies(
+      activeDirectorySteps,
+    );
+  });
+
+  test('getResourceManagerSteps should not depend on non-active directory steps', () => {
+    const getApiStepsResponse = getResourceManagerSteps();
+
+    const resourceManagerStepIds = [
+      STEP_AD_ACCOUNT,
+      ...getApiStepsResponse.executeFirstSteps,
+      ...getApiStepsResponse.executeLastSteps,
+    ];
+
+    expect(invocationConfig.integrationSteps).toHaveIsolatedDependencies(
+      resourceManagerStepIds,
+    );
+  });
+
+  test('getManagementGroupSteps should not depend on non-active directory steps', () => {
+    const getApiStepsResponse = getManagementGroupSteps();
+
+    const managementGroupStepIds = [
+      STEP_AD_ACCOUNT,
+      ...getApiStepsResponse.executeFirstSteps,
+      ...getApiStepsResponse.executeLastSteps,
+    ];
+
+    expect(invocationConfig.integrationSteps).toHaveIsolatedDependencies(
+      managementGroupStepIds,
+    );
+  });
+});
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace jest {
+    interface Matchers<R> {
+      toHaveIsolatedDependencies(stepCollection: string[]): R;
+    }
+  }
+}
+
+expect.extend({
+  toHaveIsolatedDependencies(
+    integrationSteps: Step<any>[],
+    stepCollection: string[],
+  ) {
+    for (const stepId of stepCollection) {
+      const stepDependencies = integrationSteps.find((s) => s.id === stepId)
+        ?.dependsOn;
+      const invalidStepDependencies = stepDependencies?.filter(
+        (s) => !stepCollection.includes(s),
+      );
+      if (invalidStepDependencies?.length) {
+        return {
+          message: () =>
+            `Step '${stepId}' contains invalid step dependencies: [${invalidStepDependencies}]`,
+          pass: false,
+        };
+      }
+    }
+    return {
+      message: () => '',
+      pass: true,
+    };
+  },
 });

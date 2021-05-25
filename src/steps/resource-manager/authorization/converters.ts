@@ -31,7 +31,7 @@ export function createClassicAdministratorEntity(): Entity {
   });
 }
 
-export function createClassicAdministratorHasUserRelationship(options: {
+export function createClassicAdministratorHasUserMappedRelationship(options: {
   webLinker: AzureWebLinker;
   classicAdministratorGroupEntity: Entity;
   data: ClassicAdministrator;

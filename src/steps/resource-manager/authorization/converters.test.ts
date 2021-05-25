@@ -4,7 +4,7 @@ import { createAzureWebLinker } from '../../../azure';
 import {
   createRoleDefinitionEntity,
   createClassicAdministratorEntity,
-  createClassicAdministratorHasUserRelationship,
+  createClassicAdministratorHasUserMappedRelationship,
   createRoleAssignmentEntity,
 } from './converters';
 import {
@@ -142,7 +142,7 @@ describe('createClassicAdministratorHasUserRelationship', () => {
     };
 
     expect(
-      createClassicAdministratorHasUserRelationship({
+      createClassicAdministratorHasUserMappedRelationship({
         webLinker,
         classicAdministratorGroupEntity,
         data: classicAdministrator,

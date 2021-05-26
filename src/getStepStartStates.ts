@@ -183,7 +183,6 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,
       authorizationSteps.ROLE_ASSIGNMENTS,
       authorizationSteps.ROLE_ASSIGNMENT_PRINCIPALS,
-      authorizationSteps.ROLE_ASSIGNMENT_SCOPES,
       authorizationSteps.ROLE_DEFINITIONS,
       authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS,
       authorizationSteps.CLASSIC_ADMINS,
@@ -236,6 +235,7 @@ export function getResourceManagerSteps(): GetApiSteps {
     ],
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,
+      authorizationSteps.ROLE_ASSIGNMENT_SCOPES,
       PolicySteps.POLICY_ASSIGNMENT_SCOPE_RELATIONSHIPS,
       MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,
       STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,

@@ -22,7 +22,8 @@ import {
   fetchGroups,
   fetchServicePrincipals,
 } from '../../active-directory';
-import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
+import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault/constants';
+import { entities as SubscriptionEntities } from '../subscriptions/constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import {
   getMockAccountEntity,
@@ -31,10 +32,16 @@ import {
 import {
   Entity,
   ExplicitRelationship,
+  generateRelationshipType,
   MappedRelationship,
   Relationship,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
+import { fetchSubscription } from '../subscriptions';
+import { fetchKeyVaults } from '../key-vault';
+import { fetchManagementGroups } from '../management-groups';
+import { ManagementGroupEntities } from '../management-groups/constants';
 
 let recording: Recording;
 
@@ -215,7 +222,7 @@ describe('rm-authorization-role-assignment-principal-relationships', () => {
       mappedServicePrincipalRelationships,
       rest: restRelationships,
     } = separateRoleAssignmentPrincipalRelatinships(
-      context.jobState.collectedRelationships as MappedRelationship[],
+      context.jobState.collectedRelationships,
     );
 
     expect(directRelationships).toHaveLength(0);
@@ -307,65 +314,187 @@ expect.extend({
   },
 });
 
-test('step - role assignment scope relationships', async () => {
-  const instanceConfig: IntegrationConfig = {
-    clientId: process.env.CLIENT_ID || 'clientId',
-    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
-    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-  };
+describe('rm-authorization-role-assignment-scope-relationships', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
 
-  const keyVaultPrefix =
-    '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/';
-  const keyVaultId = keyVaultPrefix + 'key-vault-id';
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      entities: [accountEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
 
-  const keyVaultEntity = {
-    _key: keyVaultId,
-    _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
-    _class: ['Service'],
-  };
+    await fetchRoleAssignments(context);
+    const roleAssignmentEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === entities.ROLE_ASSIGNMENT._type,
+    );
+    expect(roleAssignmentEntities.length).toBeGreaterThan(0);
 
-  const roleAssignmentDirectEntity = {
-    _key:
-      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
-    _type: entities.ROLE_ASSIGNMENT._type,
-    _class: entities.ROLE_ASSIGNMENT._class,
-    scope: keyVaultId,
-  };
+    await fetchSubscription(context);
+    const subscriptionEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === SubscriptionEntities.SUBSCRIPTION._type,
+    );
+    expect(subscriptionEntities).toHaveLength(1);
 
-  const roleAssignmentMappedEntity = {
-    _key:
-      '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id-2',
-    _type: entities.ROLE_ASSIGNMENT._type,
-    _class: entities.ROLE_ASSIGNMENT._class,
-    scope: keyVaultPrefix + 'some-non-keyvault',
-  };
+    await fetchKeyVaults(context);
+    const keyVaultEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === KEY_VAULT_SERVICE_ENTITY_TYPE,
+    );
+    expect(keyVaultEntities.length).toBeGreaterThan(0);
 
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig,
-    entities: [
-      keyVaultEntity,
-      roleAssignmentDirectEntity,
-      roleAssignmentMappedEntity,
-    ],
-  });
+    await fetchManagementGroups(context);
+    const managementGroupEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === ManagementGroupEntities.MANAGEMENT_GROUP._type,
+    );
+    expect(managementGroupEntities.length).toBeGreaterThan(0);
 
-  await buildRoleAssignmentScopeRelationships(context);
+    // TODO azure allows role assignments at the special "/" scope, which is assigned over the entire tenant.
+    // We need to start ingesting the azure tenant (or possibly just use the "account" entity) and test that
+    // the scope of "/" appropriately creates a realtionship to the tenant entity.
+    // await fetchAzureTenant(context);
+    // const azureTenantEntities = context.jobState.collectedEntities.filter(
+    //   (e) => e._type === '',
+    // );
+    // expect(azureTenantEntities.length).toBeGreaterThan(0);
 
-  expect(context.jobState.collectedEntities.length).toBe(0);
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
-      _key:
-        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id|allows|/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id',
-      _type: 'azure_role_assignment_allows_keyvault_service',
-      _class: 'ALLOWS',
-      _fromEntityKey:
-        '/subscriptions/subscription-id/providers/Microsoft.Authorization/roleAssignments/role-assignment-id',
-      _toEntityKey:
-        '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft.KeyVault/vaults/key-vault-id',
-      displayName: 'ALLOWS',
-    },
-  ]);
+    return {
+      roleAssignmentEntities,
+      subscriptionEntities,
+      keyVaultEntities,
+      managementGroupEntities,
+      // azureTenantEntities,
+    };
+  }
+
+  function separateRoleAssignmentScopeRelationships(
+    collectedRelationships: Relationship[],
+  ) {
+    const {
+      targets: directRelationships,
+      rest: mappedRelationships,
+    } = filterGraphObjects(collectedRelationships, (r) => !r._mapping) as {
+      targets: ExplicitRelationship[];
+      rest: MappedRelationship[];
+    };
+    const {
+      targets: directSubscriptionRelationships,
+      rest: restDirectRelationships,
+    } = filterGraphObjects(
+      directRelationships,
+      (r) =>
+        r._type ===
+        generateRelationshipType(
+          RelationshipClass.ALLOWS,
+          entities.ROLE_ASSIGNMENT._type,
+          SubscriptionEntities.SUBSCRIPTION._type,
+        ),
+    );
+    const {
+      targets: mappedKeyVaultRelationships,
+      rest: restAfterKeyVault,
+    } = filterGraphObjects(mappedRelationships, (r) =>
+      (r._mapping.targetEntity.id as string).includes(
+        'Microsoft.KeyVault/vaults',
+      ),
+    );
+    const {
+      targets: mappedManagementGroupRelationships,
+      rest: restAfterManagementGroups,
+    } = filterGraphObjects(restAfterKeyVault, (r) =>
+      (r._mapping.targetEntity.id as string).includes(
+        'Microsoft.Management/managementGroups',
+      ),
+    );
+    // TODO add mapped tenant relationships for scope of "/"
+    // const {
+    //   targets: mappedTenantRelationships,
+    //   rest: restAfterTenant,
+    // } = filterGraphObjects(
+    //   restAfterManagementGroups,
+    //   (r) => (r._mapping.targetEntity.id as string).includes('TODO DEFINE'),
+    // );
+
+    return {
+      directSubscriptionRelationships,
+      restDirectRelationships,
+
+      mappedKeyVaultRelationships,
+      mappedManagementGroupRelationships,
+      restMappedRelationships: restAfterManagementGroups,
+      // mappedTenantRelationships,
+      // restMappedRelationships: restAfterTenant,
+    };
+  }
+
+  /**
+   * Role assignment -> scope relationships can be either direct or mapped.
+   *
+   * This test ensures the following three cases are met:
+   *   1. Direct relationships are created when the entity exists
+   *      in the target scope. We use `azure_subscription` entities
+   *      to test this case.
+   *   2. Valid mapped relationships are created when the entity is
+   *      _within_ the subscription scope, but is not currently
+   *      ingested. We use `azure_keyvault_service` entities to test
+   *      this case.
+   *   3. Valid mapped relationships are created when the entity is
+   *      _outside_ the subscription scope. We use `azure_management_group`
+   *      entities to test this case.
+   *   4. [TODO / NOT IMPLEMENTED] In the future, we also need to handle the
+   *      special case where scope = "/", which indicates permissions
+   *      at the Tenant level.
+   */
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-authorization-role-assignment-scope-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      roleAssignmentEntities,
+      subscriptionEntities,
+      ...entityTypesNotInJobState
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...roleAssignmentEntities, ...subscriptionEntities],
+    });
+
+    await buildRoleAssignmentScopeRelationships(context);
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    const {
+      directSubscriptionRelationships,
+      // restDirectRelationships, // additional direct relationships are OK in this test.
+      mappedKeyVaultRelationships,
+      mappedManagementGroupRelationships,
+      // restMappedRelationships, // additional mapped relationships are OK in this test.
+    } = separateRoleAssignmentScopeRelationships(
+      context.jobState.collectedRelationships,
+    );
+
+    expect(directSubscriptionRelationships.length).toBeGreaterThan(0);
+    expect(directSubscriptionRelationships).toMatchDirectRelationshipSchema({});
+
+    expect(mappedKeyVaultRelationships.length).toBeGreaterThan(0);
+    expect(mappedKeyVaultRelationships).toCreateValidRelationshipsToEntities(
+      entityTypesNotInJobState.keyVaultEntities,
+    );
+
+    expect(mappedManagementGroupRelationships.length).toBeGreaterThan(0);
+    expect(
+      mappedManagementGroupRelationships,
+    ).toCreateValidRelationshipsToEntities(
+      entityTypesNotInJobState.managementGroupEntities,
+    );
+  }, 20000);
 });
 
 describe('rm-authorization-role-definitions', () => {

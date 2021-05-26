@@ -12,24 +12,7 @@ import {
   StepRelationshipMetadata,
 } from '@jupiterone/integration-sdk-core';
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
-import {
-  ResourceIdMap,
-  RESOURCE_ID_TYPES_MAP,
-  makeMatcherDependsOn,
-} from '../utils/findOrBuildResourceEntityFromResourceId';
-import {
-  RESOURCE_GROUP_ENTITY,
-  STEP_RM_RESOURCES_RESOURCE_GROUPS,
-} from '../resources';
-import {
-  SUBSCRIPTION_MATCHER,
-  EOL_MATCHER,
-  RESOURCE_GROUP_MATCHER,
-} from '../utils/matchers';
-import {
-  entities as subscriptionEntities,
-  steps as subscriptionSteps,
-} from '../subscriptions/constants';
+import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { ANY_SCOPE } from '../constants';
 
 export const steps = {
@@ -164,22 +147,6 @@ const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS = [
     createRoleAssignmentPrincipalRelationshipType,
   ),
 ];
-
-export const SCOPE_TYPES_MAP: ResourceIdMap[] = [
-  ...RESOURCE_ID_TYPES_MAP,
-  {
-    resourceIdMatcher: new RegExp(SUBSCRIPTION_MATCHER + EOL_MATCHER),
-    _type: subscriptionEntities.SUBSCRIPTION._type,
-    dependsOn: [subscriptionSteps.SUBSCRIPTION],
-  },
-  {
-    resourceIdMatcher: new RegExp(RESOURCE_GROUP_MATCHER + EOL_MATCHER),
-    _type: RESOURCE_GROUP_ENTITY._type,
-    dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
-  },
-];
-
-export const SCOPE_MATCHER_DEPENDS_ON = makeMatcherDependsOn(SCOPE_TYPES_MAP);
 
 export const relationships = {
   CLASSIC_ADMIN_GROUP_HAS_USER: {

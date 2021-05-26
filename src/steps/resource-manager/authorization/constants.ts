@@ -12,25 +12,8 @@ import {
   StepRelationshipMetadata,
 } from '@jupiterone/integration-sdk-core';
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
-import {
-  ResourceIdMap,
-  RESOURCE_ID_TYPES_MAP,
-  makeMatcherDependsOn,
-  makeMatcherEntityTypes,
-} from '../utils/findOrBuildResourceEntityFromResourceId';
-import {
-  RESOURCE_GROUP_ENTITY,
-  STEP_RM_RESOURCES_RESOURCE_GROUPS,
-} from '../resources';
-import {
-  SUBSCRIPTION_MATCHER,
-  EOL_MATCHER,
-  RESOURCE_GROUP_MATCHER,
-} from '../utils/matchers';
-import {
-  entities as subscriptionEntities,
-  steps as subscriptionSteps,
-} from '../subscriptions/constants';
+import { entities as subscriptionEntities } from '../subscriptions/constants';
+import { ANY_SCOPE } from '../constants';
 
 export const steps = {
   ROLE_ASSIGNMENTS: 'rm-authorization-role-assignments',
@@ -165,42 +148,6 @@ const ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS = [
   ),
 ];
 
-export const SCOPE_TYPES_MAP: ResourceIdMap[] = [
-  ...RESOURCE_ID_TYPES_MAP,
-  {
-    resourceIdMatcher: new RegExp(SUBSCRIPTION_MATCHER + EOL_MATCHER),
-    _type: subscriptionEntities.SUBSCRIPTION._type,
-    dependsOn: [subscriptionSteps.SUBSCRIPTION],
-  },
-  {
-    resourceIdMatcher: new RegExp(RESOURCE_GROUP_MATCHER + EOL_MATCHER),
-    _type: RESOURCE_GROUP_ENTITY._type,
-    dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
-  },
-];
-
-export const SCOPE_MATCHER_DEPENDS_ON = makeMatcherDependsOn(SCOPE_TYPES_MAP);
-const SCOPE_MATCHER_ENTITY_TYPES = makeMatcherEntityTypes(SCOPE_TYPES_MAP);
-
-function createRoleAssignmentScopeRelationshipType(
-  targetEntityType: string,
-): StepRelationshipMetadata {
-  return {
-    _type: generateRelationshipType(
-      RelationshipClass.ALLOWS,
-      entities.ROLE_ASSIGNMENT._type,
-      targetEntityType,
-    ),
-    sourceType: entities.ROLE_ASSIGNMENT._type,
-    _class: RelationshipClass.ALLOWS,
-    targetType: targetEntityType,
-  };
-}
-
-const ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS = [
-  ...SCOPE_MATCHER_ENTITY_TYPES.map(createRoleAssignmentScopeRelationshipType),
-];
-
 export const relationships = {
   CLASSIC_ADMIN_GROUP_HAS_USER: {
     _type: 'azure_classic_admin_group_has_user',
@@ -220,6 +167,11 @@ export const relationships = {
     _class: RelationshipClass.CONTAINS,
     targetType: entities.ROLE_DEFINITION._type,
   },
-  ROLE_ASSIGNMENT_ALLOWS_SCOPES: ROLE_ASSIGNMENT_SCOPE_RELATIONSHIPS,
+  ROLE_ASSIGNMENT_ALLOWS_ANY_SCOPE: {
+    _type: 'azure_role_assignment_allows_any_scope',
+    sourceType: entities.ROLE_ASSIGNMENT._type,
+    _class: RelationshipClass.ALLOWS,
+    targetType: ANY_SCOPE,
+  },
   ROLE_ASSIGNMENT_ASSIGNED_PRINCIPALS: ROLE_ASSIGNMENT_PRINCIPAL_RELATIONSHIPS,
 };

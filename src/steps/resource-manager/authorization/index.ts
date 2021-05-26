@@ -21,8 +21,6 @@ import {
   entities,
   relationships,
   getJupiterTypeForPrincipalType,
-  SCOPE_MATCHER_DEPENDS_ON,
-  SCOPE_TYPES_MAP,
 } from './constants';
 import {
   createRoleDefinitionEntity,
@@ -32,11 +30,8 @@ import {
 } from './converters';
 import { RoleAssignment } from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
-import findOrBuildResourceEntityFromResourceId, {
-  PlaceholderEntity,
-  isPlaceholderEntity,
-} from '../utils/findOrBuildResourceEntityFromResourceId';
 import { Subscription } from '@azure/arm-subscriptions/esm/models';
+import { getResourceManagerSteps } from '../../../getStepStartStates';
 
 export async function fetchRoleAssignments(
   executionContext: IntegrationStepContext,
@@ -94,39 +89,47 @@ export async function buildRoleAssignmentScopeRelationships(
 ): Promise<void> {
   const { jobState, logger } = executionContext;
 
-  const missingEntities: PlaceholderEntity[] = [];
   await jobState.iterateEntities(
     { _type: entities.ROLE_ASSIGNMENT._type },
     async (roleAssignmentEntity: Entity) => {
-      const targetEntity = await findOrBuildResourceEntityFromResourceId(
-        executionContext,
-        {
-          resourceId: roleAssignmentEntity.scope as string,
-          resourceIdMap: SCOPE_TYPES_MAP,
-        },
-      );
+      const roleAssignment = getRawData<RoleAssignment>(roleAssignmentEntity);
 
-      if (targetEntity === undefined) {
-        // Target entity not found in job state - OK
-      } else if (isPlaceholderEntity(targetEntity)) {
-        missingEntities.push(targetEntity);
-      } else {
+      if (!roleAssignment) {
+        logger.warn(
+          {
+            'roleAssignmentEntity._key': roleAssignmentEntity._key,
+          },
+          'Could not fetch role assignment raw data.',
+        );
+        return;
+      }
+
+      const targetEntity = await jobState.findEntity(roleAssignment.scope!);
+
+      if (targetEntity) {
         await jobState.addRelationship(
           createDirectRelationship({
-            _class: RelationshipClass.ALLOWS,
             from: roleAssignmentEntity,
+            _class: RelationshipClass.ALLOWS,
             to: targetEntity,
           }),
         );
+        return;
       }
-    },
-  );
 
-  logger.info(
-    {
-      missingResourceIds: missingEntities.map((e) => e._key),
+      await jobState.addRelationship(
+        createMappedRelationship({
+          _class: RelationshipClass.ALLOWS,
+          source: roleAssignmentEntity,
+          targetFilterKeys: [['id']],
+          target: {
+            id: roleAssignment.scope,
+            _type: 'azure_scope',
+            _key: roleAssignment.scope!,
+          },
+        }),
+      );
     },
-    '[SKIP] Scopes in RoleAssignments do not match resources currently ingested.',
   );
 }
 
@@ -265,8 +268,11 @@ export const authorizationSteps: Step<
     id: steps.ROLE_ASSIGNMENT_SCOPES,
     name: 'Role Assignment to Scope Relationships',
     entities: [],
-    relationships: relationships.ROLE_ASSIGNMENT_ALLOWS_SCOPES,
-    dependsOn: [steps.ROLE_ASSIGNMENTS, ...SCOPE_MATCHER_DEPENDS_ON],
+    relationships: [relationships.ROLE_ASSIGNMENT_ALLOWS_ANY_SCOPE],
+    dependsOn: [
+      steps.ROLE_ASSIGNMENTS,
+      ...getResourceManagerSteps().executeFirstSteps,
+    ],
     executionHandler: buildRoleAssignmentScopeRelationships,
   },
   {

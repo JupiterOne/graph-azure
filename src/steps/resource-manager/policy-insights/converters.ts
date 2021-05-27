@@ -7,19 +7,24 @@ import {
 import { PolicyInsightEntities } from './constants';
 import { PolicyState } from '@azure/arm-policyinsights/esm/models';
 
-export function getPolicyStateKey(data: PolicyState) {
-  return `${data.policyAssignmentId}:${data.policyDefinitionId}:${data.resourceId}:${data.policyDefinitionReferenceId}:${data.timestamp}`;
+export function getPolicyStateKey(data: PolicyState, isLatest: boolean) {
+  return `${data.policyAssignmentId}:${data.policyDefinitionId}:${
+    data.resourceId
+  }:${data.policyDefinitionReferenceId}:${
+    isLatest ? 'latest' : data.timestamp
+  }`;
 }
 
 export function createPolicyStateEntity(
   webLinker: AzureWebLinker,
   data: PolicyState,
+  isLatest: boolean,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        _key: getPolicyStateKey(data),
+        _key: getPolicyStateKey(data, isLatest),
         _type: PolicyInsightEntities.POLICY_STATE._type,
         _class: PolicyInsightEntities.POLICY_STATE._class,
         name: data.policyDefinitionReferenceId,

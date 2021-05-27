@@ -28,7 +28,9 @@ export async function fetchLatestPolicyStatesForSubscription(
   const client = new AzurePolicyInsightsClient(instance.config, logger);
 
   await client.iterateLatestPolicyStatesForSubscription(async (policyState) => {
-    await jobState.addEntity(createPolicyStateEntity(webLinker, policyState));
+    await jobState.addEntity(
+      createPolicyStateEntity(webLinker, policyState, true),
+    );
   });
 }
 

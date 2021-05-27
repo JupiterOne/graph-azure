@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Changed
 
+- Changed the policy definition `_key` suffix to `:latest` instead of
+  `:${timestamp}` to reduce policy state churn during integration invocations.
 - Previously, JupiterOne created direct relationships between active directory
   entities and role assignments when active directory entities were ingested in
   the same integration as subscription entities. In an effort to ensure

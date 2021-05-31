@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added support for ingesting the following **new** relationships:
+
+  | Source     | \_class | Target                    |
+  | ---------- | ------- | ------------------------- |
+  | `azure_vm` | `USES`  | `azure_service_principal` |
+
 ## 5.25.1 - 2021-05-27
 
 ### Changed

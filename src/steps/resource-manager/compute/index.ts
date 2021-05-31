@@ -7,11 +7,16 @@ import {
   RelationshipClass,
   getRawData,
   generateRelationshipKey,
+  createMappedRelationship,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
+import {
+  getAccountEntity,
+  SERVICE_PRINCIPAL_ENTITY_TYPE,
+  STEP_AD_ACCOUNT,
+} from '../../active-directory';
 import { ComputeClient } from './client';
 import {
   DISK_ENTITY_TYPE,
@@ -447,6 +452,95 @@ export async function buildVirtualMachineImageRelationships(
   await jobState.addRelationships(relationships);
 }
 
+export async function buildVirtualMachineManagedIdentityRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState, logger } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
+    async (vmEntity) => {
+      const vm = getRawData<VirtualMachine>(vmEntity);
+
+      if (
+        vm?.identity?.type === 'SystemAssigned' ||
+        vm?.identity?.type === 'SystemAssigned, UserAssigned'
+      ) {
+        if (!vm.identity.principalId) {
+          logger.warn(
+            {
+              vmId: vm.id,
+              vmIdentity: vm.identity,
+            },
+            'Cannot create mapped relationship between virtual machine & system assigned managed identity; principal ID must be defined',
+          );
+        } else {
+          await jobState.addRelationship(
+            createMappedRelationship({
+              _class: RelationshipClass.ASSIGNED,
+              source: vmEntity,
+              target: {
+                _type: SERVICE_PRINCIPAL_ENTITY_TYPE,
+                _key: vm.identity.principalId,
+              },
+              properties: {
+                managedIdentityType: 'SystemAssigned',
+              },
+            }),
+          );
+        }
+      }
+
+      if (
+        vm?.identity?.type === 'UserAssigned' ||
+        vm?.identity?.type === 'SystemAssigned, UserAssigned'
+      ) {
+        if (!vm.identity.userAssignedIdentities) {
+          logger.warn(
+            {
+              vmId: vm.id,
+              vmIdentity: vm.identity,
+            },
+            'Cannot create mapped relationship between virtual machine & user assigned managed identity; userAssignedEntities must be defined',
+          );
+        } else {
+          for (const [azureId, userAssignedIdentity] of Object.entries(
+            vm.identity.userAssignedIdentities,
+          )) {
+            if (!userAssignedIdentity.principalId) {
+              logger.warn(
+                {
+                  vmId: vm.id,
+                  vmIdentity: vm.identity,
+                  azureId,
+                  userAssignedIdentity,
+                },
+                'Cannot create mapped relationship between virtual machine & user assigned managed identity; principal ID must be defined',
+              );
+            } else {
+              await jobState.addRelationship(
+                createMappedRelationship({
+                  _class: RelationshipClass.ASSIGNED,
+                  source: vmEntity,
+                  target: {
+                    _type: SERVICE_PRINCIPAL_ENTITY_TYPE,
+                    _key: userAssignedIdentity.principalId,
+                  },
+                  properties: {
+                    managedIdentityType: 'UserAssigned',
+                    clientId: userAssignedIdentity.clientId,
+                    azureId,
+                  },
+                }),
+              );
+            }
+          }
+        }
+      }
+    },
+  );
+}
+
 export const computeSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -556,5 +650,13 @@ export const computeSteps: Step<
       steps.SHARED_IMAGES,
     ],
     executionHandler: buildVirtualMachineImageRelationships,
+  },
+  {
+    id: steps.VIRTUAL_MACHINE_MANAGED_IDENTITY_RELATIONSHIPS,
+    name: 'Virtual Machine Managed Identity Relationships',
+    entities: [],
+    relationships: [relationships.VIRTUAL_MACHINE_USES_MANAGED_IDENTITY],
+    dependsOn: [STEP_RM_COMPUTE_VIRTUAL_MACHINES],
+    executionHandler: buildVirtualMachineManagedIdentityRelationships,
   },
 ];

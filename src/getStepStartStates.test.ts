@@ -153,6 +153,9 @@ describe('getStepStartStates', () => {
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS]: { disabled: true },
+      [computeSteps.VIRTUAL_MACHINE_MANAGED_IDENTITY_RELATIONSHIPS]: {
+        disabled: true,
+      },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
@@ -281,6 +284,9 @@ describe('getStepStartStates', () => {
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS]: { disabled: true },
+      [computeSteps.VIRTUAL_MACHINE_MANAGED_IDENTITY_RELATIONSHIPS]: {
+        disabled: true,
+      },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
@@ -409,6 +415,9 @@ describe('getStepStartStates', () => {
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: false },
       [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: false },
       [computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS]: { disabled: false },
+      [computeSteps.VIRTUAL_MACHINE_MANAGED_IDENTITY_RELATIONSHIPS]: {
+        disabled: false,
+      },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: false },
@@ -539,6 +548,9 @@ describe('getStepStartStates', () => {
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS]: { disabled: true },
+      [computeSteps.VIRTUAL_MACHINE_MANAGED_IDENTITY_RELATIONSHIPS]: {
+        disabled: true,
+      },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },

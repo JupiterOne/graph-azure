@@ -1,8 +1,14 @@
 import { Disk, VirtualMachine } from '@azure/arm-compute/esm/models';
 import { StorageAccount } from '@azure/arm-storage/esm/models';
 import {
+  Entity,
+  getRawData,
+  MappedRelationship,
+} from '@jupiterone/integration-sdk-core';
+import {
   buildVirtualMachineDiskRelationships,
   buildVirtualMachineImageRelationships,
+  buildVirtualMachineManagedIdentityRelationships,
   fetchGalleries,
   fetchGalleryImages,
   fetchVirtualMachineExtensions,
@@ -22,7 +28,11 @@ import {
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationConfig } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import {
+  ACCOUNT_ENTITY_TYPE,
+  fetchServicePrincipals,
+  SERVICE_PRINCIPAL_ENTITY_TYPE,
+} from '../../active-directory';
 import { createStorageAccountEntity } from '../storage/converters';
 import {
   entities,
@@ -650,83 +660,238 @@ describe('rm-compute-virtual-machine-extensions', () => {
       },
     });
   });
+});
 
-  describe('rm-compute-virtual-machine-image-relationships', () => {
-    async function getSetupEntities(config: IntegrationConfig) {
-      const accountEntity = getMockAccountEntity(config);
-      const context = createMockAzureStepExecutionContext({
-        instanceConfig: config,
-        setData: {
-          [ACCOUNT_ENTITY_TYPE]: accountEntity,
-        },
-      });
+describe('rm-compute-virtual-machine-image-relationships', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
 
-      await fetchVirtualMachines(context);
-      await fetchVirtualMachineImages(context);
-      await fetchGalleries(context);
-      await fetchGalleryImages(context);
+    await fetchVirtualMachines(context);
+    await fetchVirtualMachineImages(context);
+    await fetchGalleries(context);
+    await fetchGalleryImages(context);
 
-      const vmEntities = context.jobState.collectedEntities.filter(
-        (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
-      );
+    const vmEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
+    );
 
-      const vmImageEntities = context.jobState.collectedEntities.filter(
-        (e) => e._type === VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-      );
+    const vmImageEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
+    );
 
-      const sharedImageEntities = context.jobState.collectedEntities.filter(
-        (e) => e._type === entities.SHARED_IMAGE._type,
-      );
+    const sharedImageEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === entities.SHARED_IMAGE._type,
+    );
 
-      return {
-        accountEntity,
-        vmEntities,
-        vmImageEntities,
-        sharedImageEntities,
-      };
-    }
+    return {
+      accountEntity,
+      vmEntities,
+      vmImageEntities,
+      sharedImageEntities,
+    };
+  }
 
-    test('success', async () => {
-      recording = setupAzureRecording({
-        directory: __dirname,
-        name: 'rm-compute-virtual-machine-image-relationships',
-        options: {
-          matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
-        },
-      });
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-compute-virtual-machine-image-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
 
-      const {
-        accountEntity,
-        vmEntities,
-        vmImageEntities,
-        sharedImageEntities,
-      } = await getSetupEntities(configFromEnv);
+    const {
+      accountEntity,
+      vmEntities,
+      vmImageEntities,
+      sharedImageEntities,
+    } = await getSetupEntities(configFromEnv);
 
-      const context = createMockAzureStepExecutionContext({
-        instanceConfig: configFromEnv,
-        entities: [...vmEntities, ...vmImageEntities, ...sharedImageEntities],
-        setData: {
-          [ACCOUNT_ENTITY_TYPE]: accountEntity,
-        },
-      });
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [...vmEntities, ...vmImageEntities, ...sharedImageEntities],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
 
-      await buildVirtualMachineImageRelationships(context);
+    await buildVirtualMachineImageRelationships(context);
 
-      expect(context.jobState.collectedRelationships.length).toBe(2);
-      expect(
-        context.jobState.collectedRelationships,
-      ).toMatchDirectRelationshipSchema({
-        schema: {
-          properties: {
-            _type: {
-              enum: [
-                relationships.VIRTUAL_MACHINE_USES_IMAGE._type,
-                relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE._type,
-              ],
-            },
+    expect(context.jobState.collectedRelationships.length).toBe(2);
+    expect(
+      context.jobState.collectedRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            enum: [
+              relationships.VIRTUAL_MACHINE_USES_IMAGE._type,
+              relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE._type,
+            ],
           },
         },
-      });
+      },
     });
   });
+});
+
+describe('rm-compute-virtual-machine-managed-identity-relationships', () => {
+  async function getSetupData(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchVirtualMachines(context);
+
+    const vmEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
+    );
+    expect(vmEntities.length).toBeGreaterThan(0);
+    const vms = vmEntities.map(
+      (vmEntity) => getRawData<VirtualMachine>(vmEntity)!,
+    );
+
+    const systemAssignedIdentityCount = vms.filter((vm) =>
+      ['SystemAssigned, UserAssigned', 'SystemAssigned'].includes(
+        vm.identity?.type as string,
+      ),
+    ).length;
+    expect(systemAssignedIdentityCount).toBeGreaterThan(0);
+
+    const userAssignedIdentityCount = vms.reduce((lastCount, vm) => {
+      const newUserAssignedEntities = vm.identity?.userAssignedIdentities || {};
+      return lastCount + Object.keys(newUserAssignedEntities).length;
+    }, 0);
+    expect(userAssignedIdentityCount).toBeGreaterThan(0);
+
+    await fetchServicePrincipals(context);
+
+    const servicePrincipalEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === SERVICE_PRINCIPAL_ENTITY_TYPE,
+    );
+    expect(servicePrincipalEntities.length).toBeGreaterThan(0);
+
+    return {
+      accountEntity,
+      vmEntities,
+      systemAssignedIdentityCount,
+      userAssignedIdentityCount,
+      servicePrincipalEntities,
+    };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-compute-virtual-machine-managed-identity-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      accountEntity,
+      vmEntities,
+      systemAssignedIdentityCount,
+      userAssignedIdentityCount,
+      servicePrincipalEntities,
+    } = await getSetupData(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: vmEntities,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await buildVirtualMachineManagedIdentityRelationships(context);
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    expect(context.jobState.collectedRelationships).toHaveLength(
+      systemAssignedIdentityCount + userAssignedIdentityCount,
+    );
+    expect(
+      context.jobState.collectedRelationships,
+    ).toCreateValidRelationshipsToEntities(servicePrincipalEntities);
+  });
+});
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace jest {
+    interface Matchers<R> {
+      toCreateValidRelationshipsToEntities(entities: Entity[]): R;
+    }
+  }
+}
+
+expect.extend({
+  toCreateValidRelationshipsToEntities(
+    mappedRelationships: MappedRelationship[],
+    entities: Entity[],
+  ) {
+    for (const mappedRelationship of mappedRelationships) {
+      const _mapping = mappedRelationship._mapping;
+      if (!_mapping) {
+        throw new Error(
+          'expect(mappedRelationships).toCreateValidRelationshipsToEntities() requires relationships with the `_mapping` property!',
+        );
+      }
+      const targetEntity = _mapping.targetEntity;
+      for (let targetFilterKey of _mapping.targetFilterKeys) {
+        /* type TargetFilterKey = string | string[]; */
+        if (!Array.isArray(targetFilterKey)) {
+          console.warn(
+            'WARNING: Found mapped relationship with targetFilterKey of type string. Please ensure the targetFilterKey was not intended to be of type string[]',
+          );
+          targetFilterKey = [targetFilterKey];
+        }
+        const mappingTargetEntities = entities.filter((entity) =>
+          (targetFilterKey as string[]).every(
+            (k) => targetEntity[k] === entity[k],
+          ),
+        );
+
+        if (mappingTargetEntities.length === 0) {
+          return {
+            message: () =>
+              `No target entity found for mapped relationship: ${JSON.stringify(
+                mappedRelationship,
+                null,
+                2,
+              )}`,
+            pass: false,
+          };
+        } else if (mappingTargetEntities.length > 1) {
+          return {
+            message: () =>
+              `Multiple target entities found for mapped relationship [${mappingTargetEntities.map(
+                (e) => e._key,
+              )}]; expected exactly one: ${JSON.stringify(
+                mappedRelationship,
+                null,
+                2,
+              )}`,
+            pass: false,
+          };
+        }
+      }
+    }
+    return {
+      message: () => '',
+      pass: true,
+    };
+  },
 });

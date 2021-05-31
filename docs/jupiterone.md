@@ -385,6 +385,7 @@ The following relationships are created/mapped:
 | `azure_subscription`               | **USES**              | `azure_location`                                  |
 | `azure_vm`                         | **USES**              | `azure_image`                                     |
 | `azure_vm`                         | **USES**              | `azure_managed_disk`                              |
+| `azure_vm`                         | **USES**              | `azure_service_principal`                         |
 | `azure_vm`                         | **USES**              | `azure_nic`                                       |
 | `azure_vm`                         | **USES**              | `azure_public_ip`                                 |
 | `azure_vm`                         | **USES**              | `azure_shared_image`                              |

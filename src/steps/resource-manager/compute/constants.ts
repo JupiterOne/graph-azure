@@ -2,6 +2,7 @@ import {
   generateRelationshipType,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
+import { SERVICE_PRINCIPAL_ENTITY_TYPE } from '../../active-directory';
 
 import { entities as storageEntities } from '../storage/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
@@ -21,6 +22,8 @@ export const steps = {
     'rm-compute-virtual-machine-disk-relationships',
   VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS:
     'rm-compute-virtual-machine-image-relationships',
+  VIRTUAL_MACHINE_MANAGED_IDENTITY_RELATIONSHIPS:
+    'rm-compute-virtual-machine-managed-identity-relationships',
 };
 
 // Graph object
@@ -97,5 +100,11 @@ export const relationships = {
     sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
     _class: VIRTUAL_MACHINE_DISK_RELATIONSHIP_CLASS,
     targetType: DISK_ENTITY_TYPE,
+  },
+  VIRTUAL_MACHINE_USES_MANAGED_IDENTITY: {
+    _type: 'azure_vm_uses_managed_identity',
+    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    _class: RelationshipClass.USES,
+    targetType: SERVICE_PRINCIPAL_ENTITY_TYPE,
   },
 };

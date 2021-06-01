@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed a bug introduced in `5.25.1` where the
+  `rm-authorization-classic-administrators` step no longer had a dependency on
+  the `ad-account` step, causing `ACCOUNT_ENTITY_NOT_FOUND` errors.
+
 ## 5.26.0 - 2021-06-01
 
 ### Added

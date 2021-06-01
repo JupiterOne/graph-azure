@@ -28,7 +28,10 @@ import {
   createClassicAdministratorHasUserMappedRelationship,
   createRoleAssignmentEntity,
 } from './converters';
-import { RoleAssignment } from '@azure/arm-authorization/esm/models';
+import {
+  RoleAssignment,
+  RoleDefinition,
+} from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
 import { Subscription } from '@azure/arm-subscriptions/esm/models';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
@@ -42,9 +45,16 @@ export async function fetchRoleAssignments(
   const client = new AuthorizationClient(instance.config, logger);
 
   await client.iterateRoleAssignments(async (roleAssignment) => {
+    const roleDefinitionEntity = await jobState.findEntity(
+      roleAssignment.roleDefinitionId!,
+    );
+
     const roleAssignmentEntity = createRoleAssignmentEntity(
       webLinker,
       roleAssignment,
+      roleDefinitionEntity
+        ? getRawData<RoleDefinition>(roleDefinitionEntity)
+        : undefined,
     );
     await jobState.addEntity(roleAssignmentEntity);
   });
@@ -253,7 +263,7 @@ export const authorizationSteps: Step<
     name: 'Role Assignments',
     entities: [entities.ROLE_ASSIGNMENT],
     relationships: [],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, steps.ROLE_DEFINITIONS],
     executionHandler: fetchRoleAssignments,
   },
   {

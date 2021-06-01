@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- New properties added to resources:
+
+  | Entity                  | Properties                                               |
+  | ----------------------- | -------------------------------------------------------- |
+  | `azure_role_assignment` | `actions`, `dataActions`, `notActions`, `notDataActions` |
+
 ### 5.26.1 - 2021-06-01
 
 ### Fixed

@@ -296,7 +296,7 @@ export const authorizationSteps: Step<
     name: 'Classic Administrators',
     entities: [entities.CLASSIC_ADMIN],
     relationships: [relationships.CLASSIC_ADMIN_GROUP_HAS_USER],
-    dependsOn: [],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchClassicAdministrators,
   },
 ];

@@ -63,6 +63,7 @@ export function createClassicAdministratorHasUserMappedRelationship(options: {
 export function createRoleAssignmentEntity(
   webLinker: AzureWebLinker,
   data: RoleAssignment,
+  roleDefinition: RoleDefinition | undefined,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
@@ -79,10 +80,28 @@ export function createRoleAssignmentEntity(
         principalId: data.principalId,
         principalType: data.principalType,
         canDelegate: data.canDelegate,
+        ...(roleDefinition ? getActionsForRoleDefinition(roleDefinition) : {}),
         webLink: webLinker.portalResourceUrl(data.id),
       },
     },
   });
+}
+
+function getActionsForRoleDefinition(data: RoleDefinition) {
+  return {
+    actions: ([] as string[]).concat(
+      ...(data.permissions?.map((p) => p.actions || []) || []),
+    ),
+    notActions: ([] as string[]).concat(
+      ...(data.permissions?.map((p) => p.notActions || []) || []),
+    ),
+    dataActions: ([] as string[]).concat(
+      ...(data.permissions?.map((p) => p.dataActions || []) || []),
+    ),
+    notDataActions: ([] as string[]).concat(
+      ...(data.permissions?.map((p) => p.notDataActions || []) || []),
+    ),
+  };
 }
 
 export function createRoleDefinitionEntity(
@@ -97,18 +116,7 @@ export function createRoleDefinitionEntity(
     _rawData: [{ name: 'default', rawData: data }],
     displayName: data.roleName,
     description: data.description,
-    actions: ([] as string[]).concat(
-      ...(data.permissions?.map((p) => p.actions || []) || []),
-    ),
-    notActions: ([] as string[]).concat(
-      ...(data.permissions?.map((p) => p.notActions || []) || []),
-    ),
-    dataActions: ([] as string[]).concat(
-      ...(data.permissions?.map((p) => p.dataActions || []) || []),
-    ),
-    notDataActions: ([] as string[]).concat(
-      ...(data.permissions?.map((p) => p.notDataActions || []) || []),
-    ),
+    ...getActionsForRoleDefinition(data),
     webLink: webLinker.portalResourceUrl(data.id),
   };
   return entity;

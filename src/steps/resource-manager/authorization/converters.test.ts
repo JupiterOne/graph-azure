@@ -76,7 +76,7 @@ describe('createRoleAssignmentEntity', () => {
       principalType: 'ServicePrincipal',
     };
 
-    expect(createRoleAssignmentEntity(webLinker, data)).toEqual({
+    expect(createRoleAssignmentEntity(webLinker, data, undefined)).toEqual({
       _class: ['AccessPolicy'],
       _key:
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/providers/Microsoft.Authorization/roleAssignments/10000000-0000-0000-0000-000000000000',

@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+### 5.26.1 - 2021-06-01
+
 ### Fixed
 
 - Fixed a bug introduced in `5.25.1` where the

@@ -1,5 +1,7 @@
 import { IntegrationInvocationConfig } from '@jupiterone/integration-sdk-core';
 
+import { GraphClient } from './azure/graph/client';
+
 import getStepStartStates from './getStepStartStates';
 import { activeDirectorySteps } from './steps/active-directory';
 import { computeSteps } from './steps/resource-manager/compute';
@@ -97,4 +99,8 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
   ],
 
   normalizeGraphObjectKey: (_key) => _key.toLowerCase(),
+};
+
+export const clients = {
+  GraphClient,
 };

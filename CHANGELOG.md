@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### 5.27.1 - 2021-06-02
+
+### Changed
+
+- Exported `clients.GraphClient` from project index.
+
 ### 5.27.0 - 2021-06-01
 
 ### Added

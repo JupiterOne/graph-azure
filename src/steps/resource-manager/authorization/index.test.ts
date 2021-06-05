@@ -243,7 +243,7 @@ describe('rm-authorization-role-assignment-principal-relationships', () => {
     ).toCreateValidRelationshipsToEntities(servicePrincipalEntities);
 
     expect(restRelationships).toHaveLength(0);
-  });
+  }, 10_000);
 });
 
 declare global {

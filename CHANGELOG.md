@@ -15,6 +15,7 @@ and this project adheres to
   | Entity                    | Properties                                  |
   | ------------------------- | ------------------------------------------- |
   | `azure_policy_definition` | Automatically convert `metadata` to J1 tags |
+  | `azure_policy_definition` | `accountEnabled`                            |
 
 ### 5.27.1 - 2021-06-02
 

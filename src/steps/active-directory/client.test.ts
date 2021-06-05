@@ -278,6 +278,7 @@ describe('iterateUsers', () => {
       expect(r).toMatchObject({
         id: expect.any(String),
         userType: expect.stringMatching(/(Member|Guest)/),
+        accountEnabled: expect.any(Boolean),
       });
     });
   });

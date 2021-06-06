@@ -15,20 +15,19 @@ import {
   fetchUserRegistrationDetails,
 } from './index';
 import { createMockAzureStepExecutionContext } from '../../../test/createMockAzureStepExecutionContext';
-import { Entity, Relationship } from '@jupiterone/integration-sdk-core';
 import {
   ACCOUNT_ENTITY_TYPE,
   ACCOUNT_ENTITY_CLASS,
   USER_ENTITY_CLASS,
-  USER_ENTITY_TYPE,
   ACCOUNT_USER_RELATIONSHIP_TYPE,
   GROUP_ENTITY_TYPE,
   GROUP_ENTITY_CLASS,
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
   GROUP_MEMBER_RELATIONSHIP_TYPE,
-  GROUP_MEMBER_ENTITY_CLASS,
+  SERVICE_PRINCIPAL_ENTITY_TYPE,
+  SERVICE_PRINCIPAL_ENTITY_CLASS,
 } from './constants';
-import { filterGraphObjects } from '../../../test/helpers/filterGraphObjects';
+import { getMockAccountEntity } from '../../../test/helpers/getMockEntity';
 
 let recording: Recording;
 
@@ -36,198 +35,306 @@ afterEach(async () => {
   await recording.stop();
 });
 
-function separateActiveDirectoryEntities(entities: Entity[]) {
-  const {
-    targets: accountEntities,
-    rest: restAfterAccount,
-  } = filterGraphObjects(entities, (e) => e._type === ACCOUNT_ENTITY_TYPE);
-  const { targets: userEntities, rest: restAfterUsers } = filterGraphObjects(
-    restAfterAccount,
-    (e) => e._type === USER_ENTITY_TYPE,
-  );
-  const { targets: groupEntities, rest: restAfterGroups } = filterGraphObjects(
-    restAfterUsers,
-    (e) => e._type === GROUP_ENTITY_TYPE,
-  );
-  const {
-    targets: groupMemberEntities,
-    rest: restAfterGroupMembers,
-  } = filterGraphObjects(restAfterGroups, (e) => e._type === GROUP_ENTITY_TYPE);
-
-  return {
-    accountEntities,
-    userEntities,
-    groupEntities,
-    groupMemberEntities,
-    restEntities: restAfterGroupMembers,
-  };
-}
-
-function separateActiveDirectoryRelationships(relationships: Relationship[]) {
-  const {
-    targets: accountUserRelationships,
-    rest: restAfterAccountUsers,
-  } = filterGraphObjects(
-    relationships,
-    (r) => r._type === ACCOUNT_USER_RELATIONSHIP_TYPE,
-  );
-  const {
-    targets: accountGroupRelationships,
-    rest: restAfterAccountGroups,
-  } = filterGraphObjects(
-    restAfterAccountUsers,
-    (r) => r._type === ACCOUNT_GROUP_RELATIONSHIP_TYPE,
-  );
-  const {
-    targets: directGroupMemberRelationships,
-    rest: restAfterDirectGroupMembers,
-  } = filterGraphObjects(
-    restAfterAccountGroups,
-    (r) =>
-      r._type === GROUP_MEMBER_RELATIONSHIP_TYPE && r._mapping === undefined,
-  );
-  const {
-    targets: mappedGroupMemberRelationships,
-    rest: restAfterMappedGroupMembers,
-  } = filterGraphObjects(
-    restAfterDirectGroupMembers,
-    (r) =>
-      r._type === GROUP_MEMBER_RELATIONSHIP_TYPE && r._mapping !== undefined,
-  );
-  return {
-    accountUserRelationships,
-    accountGroupRelationships,
-    directGroupMemberRelationships,
-    mappedGroupMemberRelationships,
-    restRelationships: restAfterMappedGroupMembers,
-  };
-}
-
-test('active directory steps', async () => {
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'active-directory-steps',
-    options: { matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }) },
-  });
-
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig: configFromEnv,
-  });
-
-  await fetchAccount(context);
-  await fetchUserRegistrationDetails(context);
-  await fetchUsers(context);
-  await fetchGroups(context);
-  await fetchGroupMembers(context);
-
-  const {
-    accountEntities,
-    userEntities,
-    groupEntities,
-    groupMemberEntities,
-    restEntities,
-  } = separateActiveDirectoryEntities(context.jobState.collectedEntities);
-
-  expect(accountEntities.length).toBe(1);
-  expect(accountEntities).toMatchGraphObjectSchema({
-    _class: ACCOUNT_ENTITY_CLASS,
-  });
-
-  expect(userEntities.length).toBeGreaterThan(0);
-  expect(userEntities).toMatchGraphObjectSchema({ _class: USER_ENTITY_CLASS });
-
-  expect(groupEntities.length).toBeGreaterThan(0);
-  expect(groupEntities).toMatchGraphObjectSchema({
-    _class: GROUP_ENTITY_CLASS,
-  });
-
-  // expect(groupMemberEntities.length).toBeGreaterThan(0); // The 'ad-group-members' can simply return relationships in some cases.
-  expect(groupMemberEntities).toMatchGraphObjectSchema({
-    _class: GROUP_MEMBER_ENTITY_CLASS,
-  });
-
-  expect(restEntities.length).toBe(0);
-
-  const {
-    accountUserRelationships,
-    accountGroupRelationships,
-    directGroupMemberRelationships,
-    mappedGroupMemberRelationships,
-    restRelationships,
-  } = separateActiveDirectoryRelationships(
-    context.jobState.collectedRelationships,
-  );
-
-  expect(accountUserRelationships.length).toBeGreaterThan(0);
-  expect(accountUserRelationships).toMatchDirectRelationshipSchema({});
-
-  expect(accountGroupRelationships.length).toBeGreaterThan(0);
-  expect(accountGroupRelationships).toMatchDirectRelationshipSchema({});
-
-  // expect(directGroupMemberRelationships.length).toBeGreaterThan(0); // The 'ad-group-members' can simply return relationships in some cases.
-  expect(directGroupMemberRelationships).toMatchDirectRelationshipSchema({});
-
-  expect(mappedGroupMemberRelationships.length).toBeGreaterThan(0);
-  for (const mappedGroupMemberRelationship of mappedGroupMemberRelationships) {
-    expect(mappedGroupMemberRelationship).toMatchObject({
-      _class: 'HAS',
-      _key: expect.any(String),
-      _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
-      _mapping: expect.objectContaining({
-        sourceEntityKey: expect.any(String),
-        targetEntity: expect.any(Object),
-        targetFilterKeys: expect.any(Array),
-      }),
+describe('ad-account', () => {
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'ad-account',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
     });
-  }
 
-  expect(restRelationships.length).toBe(0);
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+    });
+
+    await fetchAccount(context);
+
+    const accountEntities = context.jobState.collectedEntities;
+
+    expect(accountEntities).toHaveLength(1);
+    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+      _class: ACCOUNT_ENTITY_CLASS,
+    });
+
+    expect(context.jobState.collectedRelationships).toHaveLength(0);
+  });
 });
 
-test('active directory step - service principals', async () => {
-  const instanceConfig: IntegrationConfig = {
-    clientId: process.env.CLIENT_ID || 'clientId',
-    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
-    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-  };
+describe('ad-users', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    return { accountEntity };
+  }
 
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'active-directory-step-service-principals',
-  });
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'ad-users',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
 
-  const context = createMockAzureStepExecutionContext({
-    instanceConfig,
-  });
+    const { accountEntity } = getSetupEntities(configFromEnv);
 
-  await fetchServicePrincipals(context);
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [accountEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
 
-  expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'Service',
-    schema: {
-      additionalProperties: false,
-      properties: {
-        _type: { const: 'azure_service_principal' },
-        userType: { const: 'service' },
-        username: { type: 'string' },
-        name: { type: 'string' },
-        displayName: { type: 'string' },
-        appDisplayName: { type: ['string', 'null'] },
-        appId: { type: 'string' },
-        servicePrincipalType: {
-          type: 'string',
-          enum: ['Application', 'SocialIdp'],
-        },
-        servicePrincipalNames: {
-          type: 'array',
-          items: { type: 'string' },
-        },
-        _rawData: {
-          type: 'array',
-          items: { type: 'object' },
+    await fetchUsers(context);
+
+    const userEntities = context.jobState.collectedEntities;
+
+    expect(userEntities.length).toBeGreaterThan(0);
+    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+      _class: USER_ENTITY_CLASS,
+    });
+
+    const accountUserRelationships = context.jobState.collectedRelationships;
+
+    expect(accountUserRelationships.length).toBe(userEntities.length);
+    expect(
+      context.jobState.collectedRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: { const: ACCOUNT_USER_RELATIONSHIP_TYPE },
         },
       },
-    },
+    });
+  });
+});
+
+/* TODO record this test for user registration details using valid Tenant. */
+/* See https://github.com/JupiterOne/graph-azure/issues/378 */
+describe.skip('ad-user-registration-details', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    return { accountEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'ad-user-registration-details',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity } = getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [accountEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchUserRegistrationDetails(context);
+    await fetchUsers(context);
+
+    const userEntities = context.jobState.collectedEntities;
+
+    expect(userEntities.length).toBeGreaterThan(0);
+    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+      _class: USER_ENTITY_CLASS,
+      schema: {
+        properties: {
+          isMfaRegistered: { type: 'boolean' },
+        },
+      },
+    });
+  });
+});
+
+describe('ad-groups', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    return { accountEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'ad-groups',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity } = getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [accountEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchGroups(context);
+
+    const groupEntities = context.jobState.collectedEntities;
+
+    expect(groupEntities.length).toBeGreaterThan(0);
+    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+      _class: GROUP_ENTITY_CLASS,
+    });
+
+    const accountGroupRelationships = context.jobState.collectedRelationships;
+
+    expect(accountGroupRelationships.length).toBe(groupEntities.length);
+    expect(
+      context.jobState.collectedRelationships,
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: { const: ACCOUNT_GROUP_RELATIONSHIP_TYPE },
+        },
+      },
+    });
+  });
+});
+
+describe('ad-group-members', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [accountEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchGroups(context);
+
+    const groupEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === GROUP_ENTITY_TYPE,
+    );
+    expect(groupEntities.length).toBeGreaterThan(0);
+
+    return { groupEntities };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'ad-group-members',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { groupEntities } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: groupEntities,
+    });
+
+    await fetchGroupMembers(context);
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    const groupMemberRelationships = context.jobState.collectedRelationships;
+
+    expect(groupMemberRelationships.length).toBeGreaterThan(0);
+    for (const reltationship of groupMemberRelationships) {
+      expect(reltationship).toMatchObject({
+        _class: 'HAS',
+        _key: expect.any(String),
+        _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
+        _mapping: expect.objectContaining({
+          sourceEntityKey: expect.any(String),
+          targetEntity: expect.any(Object),
+          targetFilterKeys: expect.any(Array),
+        }),
+      });
+    }
+  });
+});
+
+describe('ad-service-principals', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    return { accountEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'ad-service-principals',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity } = getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [accountEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchServicePrincipals(context);
+
+    const servicePrincipalEntities = context.jobState.collectedEntities;
+
+    expect(servicePrincipalEntities.length).toBeGreaterThan(0);
+    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+      _class: SERVICE_PRINCIPAL_ENTITY_CLASS,
+      schema: {
+        additionalProperties: false,
+        properties: {
+          _type: { const: SERVICE_PRINCIPAL_ENTITY_TYPE },
+          userType: { const: 'service' },
+          username: { type: 'string' },
+          name: { type: 'string' },
+          displayName: { type: 'string' },
+          appDisplayName: { type: ['string', 'null'] },
+          appId: { type: 'string' },
+          servicePrincipalType: {
+            type: 'string',
+            enum: ['Application', 'SocialIdp', 'ManagedIdentity'],
+          },
+          servicePrincipalNames: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+        },
+      },
+    });
+
+    expect(context.jobState.collectedRelationships).toHaveLength(0);
+
+    // /* TODO add account -> service principal relationships. */
+    // /* See https://github.com/JupiterOne/graph-azure/issues/380 */
+    // const accountServicePrincipalRelationships = context.jobState.collectedRelationships;
+
+    // expect(accountServicePrincipalRelationships.length).toBe(servicePrincipalEntities.length);
+    // expect(accountServicePrincipalRelationships).toMatchDirectRelationshipSchema({
+    //   schema: {
+    //     properties: {
+    //       _type: { const: ACCOUNT_SERVICE_PRINCIAL_RELATIONSHIP_TYPE }
+    //     }
+    //   }
+    // })
   });
 });

@@ -46,7 +46,7 @@ import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
-import { VirtualMachine } from '@azure/arm-compute/esm/models';
+import { Gallery, VirtualMachine } from '@azure/arm-compute/esm/models';
 import {
   entities as storageEntities,
   steps as storageSteps,
@@ -85,10 +85,11 @@ export async function fetchGalleryImageDefinitions(
   await jobState.iterateEntities(
     { _type: entities.GALLERY._type },
     async (galleryEntity) => {
-      await client.iterateGalleryImageDefinitions(
+      const gallery = getRawData<Gallery>(galleryEntity)!;
+      await client.iterateGalleryImages(
         {
-          resourceGroupName: galleryEntity?.resourceGroup as string,
-          galleryName: galleryEntity?.displayName as string,
+          id: gallery.id!,
+          name: gallery.name!,
         },
         async (image) => {
           const sharedImageEntity = createSharedImageDefinition(

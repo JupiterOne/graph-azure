@@ -176,6 +176,7 @@ export function createGalleryEntity(webLinker: AzureWebLinker, data: Gallery) {
         displayName: data.name,
         description: data.description,
         region: data.location,
+        location: data.location,
         state: data.provisioningState,
         type: data.type,
         classification: null,
@@ -187,7 +188,7 @@ export function createGalleryEntity(webLinker: AzureWebLinker, data: Gallery) {
   });
 }
 
-export function createSharedImage(
+export function createSharedImageDefinition(
   webLinker: AzureWebLinker,
   data: GalleryImage,
 ) {
@@ -196,8 +197,8 @@ export function createSharedImage(
       source: data,
       assign: {
         _key: data.id,
-        _type: entities.SHARED_IMAGE._type,
-        _class: entities.SHARED_IMAGE._class,
+        _type: entities.SHARED_IMAGE_DEFINITION._type,
+        _class: entities.SHARED_IMAGE_DEFINITION._class,
         displayName: data.name,
         description: data.description,
         region: data.location,

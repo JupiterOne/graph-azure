@@ -16,7 +16,8 @@ export const STEP_RM_COMPUTE_VIRTUAL_MACHINES = 'rm-compute-virtual-machines';
 
 export const steps = {
   GALLERIES: 'rm-compute-galleries',
-  SHARED_IMAGES: 'rm-compute-shared-images',
+  SHARED_IMAGE_DEFINITIONS: 'rm-compute-shared-image-definitions',
+  SHARED_IMAGE_VERSIONS: 'rm-compute-shared-image-versions',
   VIRTUAL_MACHINE_EXTENSIONS: 'rm-compute-virtual-machine-extensions',
   VIRTUAL_MACHINE_DISK_RELATIONSHIPS:
     'rm-compute-virtual-machine-disk-relationships',
@@ -39,13 +40,18 @@ export const DISK_ENTITY_CLASS = ['DataStore', 'Disk'];
 export const entities = {
   GALLERY: {
     _type: 'azure_gallery',
-    _class: ['DataStore'],
+    _class: ['Repository'],
     resourceName: '[RM] Gallery',
   },
-  SHARED_IMAGE: {
-    _type: 'azure_shared_image',
+  SHARED_IMAGE_DEFINITION: {
+    _type: 'azure_shared_image_definition',
     _class: ['Image'],
-    resourceName: '[RM] Shared Image',
+    resourceName: '[RM] Shared Image Definition',
+  },
+  SHARED_IMAGE_VERSION: {
+    _type: 'azure_shared_image_version',
+    _class: ['Image'],
+    resourceName: '[RM] Shared Image Version',
   },
   VIRTUAL_MACHINE_EXTENSION: {
     _type: 'azure_vm_extension',
@@ -65,11 +71,17 @@ export const relationships = {
   RESOURCE_GROUP_HAS_GALLERY: createResourceGroupResourceRelationshipMetadata(
     entities.GALLERY._type,
   ),
-  IMAGE_GALLERY_CONTAINS_SHARED_IMAGE: {
-    _type: 'azure_gallery_contains_shared_image',
+  IMAGE_GALLERY_CONTAINS_SHARED_IMAGE_DEFINITION: {
+    _type: 'azure_gallery_contains_shared_image_definition',
     sourceType: entities.GALLERY._type,
     _class: RelationshipClass.CONTAINS,
-    targetType: entities.SHARED_IMAGE._type,
+    targetType: entities.SHARED_IMAGE_DEFINITION._type,
+  },
+  SHARED_IMAGE_DEFINITION_HAS_VERSION: {
+    _type: 'azure_shared_image_definition_contains_version',
+    sourceType: entities.SHARED_IMAGE_DEFINITION._type,
+    _class: RelationshipClass.HAS,
+    targetType: entities.SHARED_IMAGE_VERSION._type,
   },
   VIRTUAL_MACHINE_USES_EXTENSION: {
     _type: 'azure_vm_uses_extension',
@@ -84,10 +96,10 @@ export const relationships = {
     targetType: VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
   },
   VIRTUAL_MACHINE_USES_SHARED_IMAGE: {
-    _type: 'azure_vm_uses_shared_image',
+    _type: 'azure_vm_uses_shared_image_definition',
     sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
     _class: RelationshipClass.USES,
-    targetType: entities.SHARED_IMAGE._type,
+    targetType: entities.SHARED_IMAGE_DEFINITION._type,
   },
   VIRTUAL_MACHINE_USES_UNMANAGED_DISK: {
     _type: 'azure_vm_uses_storage_account',

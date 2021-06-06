@@ -17,6 +17,12 @@ and this project adheres to
   | `azure_policy_definition` | Automatically convert `metadata` to J1 tags |
   | `azure_policy_definition` | `accountEnabled`                            |
 
+### Changed
+
+- Fixed a bug where the compute galleries execution handler was not invoked, and
+  instead the VM images execution handler was invoked twice. This caused
+  DuplicateKeyErrors in either the compute galleries step or the VM images step.
+
 ### 5.27.1 - 2021-06-02
 
 ### Changed

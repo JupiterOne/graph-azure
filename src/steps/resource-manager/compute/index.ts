@@ -550,7 +550,7 @@ export const computeSteps: Step<
     entities: [entities.GALLERY],
     relationships: [relationships.RESOURCE_GROUP_HAS_GALLERY],
     dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    executionHandler: fetchVirtualMachineImages,
+    executionHandler: fetchGalleries,
   },
   {
     id: steps.SHARED_IMAGES,

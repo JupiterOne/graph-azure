@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- New properties added to resources:
+
+  | Entity                    | Properties                                  |
+  | ------------------------- | ------------------------------------------- |
+  | `azure_policy_definition` | Automatically convert `metadata` to J1 tags |
+
 ### 5.27.1 - 2021-06-02
 
 ### Changed

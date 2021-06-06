@@ -1,5 +1,6 @@
 import { AzureWebLinker } from '../../../azure';
 import {
+  assignTags,
   createIntegrationEntity,
   Entity,
 } from '@jupiterone/integration-sdk-core';
@@ -50,7 +51,7 @@ export function createPolicyDefinitionEntity(
   webLinker: AzureWebLinker,
   data: PolicyDefinition,
 ): Entity {
-  return createIntegrationEntity({
+  const policyDefinitionEntity = createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
@@ -68,6 +69,29 @@ export function createPolicyDefinitionEntity(
       },
     },
   });
+  assignTags(
+    policyDefinitionEntity,
+    getCompatibleTagProperties(data.metadata) as { [s: string]: string },
+  ); // assignTags interface is too restrictive for k/v pairs. Assert for safety.
+
+  return policyDefinitionEntity;
+}
+
+/**
+ * Azure Policy Definitions allow arbitrary JSON to be assigned to the `metadata` property,
+ * including arrays and objects. JupiterOne requires tags of type `string | number | boolean`,
+ * so this filters out incompatible properties.
+ */
+function getCompatibleTagProperties(metadata: { [s: string]: any }) {
+  const compatibleTagProperties: {
+    [s: string]: string | number | boolean;
+  } = {};
+  for (const [k, v] of Object.entries(metadata)) {
+    if (['string', 'number', 'boolean'].includes(typeof v)) {
+      compatibleTagProperties[k] = v;
+    }
+  }
+  return compatibleTagProperties;
 }
 
 export function createPolicySetDefinitionEntity(

@@ -10,7 +10,7 @@ import {
   buildVirtualMachineImageRelationships,
   buildVirtualMachineManagedIdentityRelationships,
   fetchGalleries,
-  fetchGalleryImages,
+  fetchGalleryImageDefinitions,
   fetchVirtualMachineExtensions,
   fetchVirtualMachineImages,
   fetchVirtualMachines,
@@ -143,11 +143,11 @@ describe('rm-compute-shared-images', () => {
         [ACCOUNT_ENTITY_TYPE]: accountEntity,
       },
     });
-    await fetchGalleryImages(context);
+    await fetchGalleryImageDefinitions(context);
     const sharedImageEntities = context.jobState.collectedEntities;
     expect(sharedImageEntities.length).toBeGreaterThan(0);
     expect(sharedImageEntities).toMatchGraphObjectSchema({
-      _class: entities.SHARED_IMAGE._class,
+      _class: entities.SHARED_IMAGE_DEFINITION._class,
     });
 
     expect(context.jobState.collectedRelationships.length).toBe(1);
@@ -157,7 +157,9 @@ describe('rm-compute-shared-images', () => {
       schema: {
         properties: {
           _type: {
-            const: relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE._type,
+            const:
+              relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE_DEFINITION
+                ._type,
           },
         },
       },
@@ -675,7 +677,7 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
     await fetchVirtualMachines(context);
     await fetchVirtualMachineImages(context);
     await fetchGalleries(context);
-    await fetchGalleryImages(context);
+    await fetchGalleryImageDefinitions(context);
 
     const vmEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
@@ -686,7 +688,7 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
     );
 
     const sharedImageEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === entities.SHARED_IMAGE._type,
+      (e) => e._type === entities.SHARED_IMAGE_DEFINITION._type,
     );
 
     return {

@@ -36,7 +36,7 @@ import {
   createDiskEntity,
   createGalleryEntity,
   createImageEntity,
-  createSharedImage,
+  createSharedImageDefinition,
   createVirtualMachineEntity,
   createVirtualMachineExtensionEntity,
   getVirtualMachineExtensionKey,
@@ -74,7 +74,7 @@ export async function fetchGalleries(
   });
 }
 
-export async function fetchGalleryImages(
+export async function fetchGalleryImageDefinitions(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
@@ -85,13 +85,16 @@ export async function fetchGalleryImages(
   await jobState.iterateEntities(
     { _type: entities.GALLERY._type },
     async (galleryEntity) => {
-      await client.iterateGalleryImages(
+      await client.iterateGalleryImageDefinitions(
         {
           resourceGroupName: galleryEntity?.resourceGroup as string,
           galleryName: galleryEntity?.displayName as string,
         },
         async (image) => {
-          const sharedImageEntity = createSharedImage(webLinker, image);
+          const sharedImageEntity = createSharedImageDefinition(
+            webLinker,
+            image,
+          );
           await jobState.addEntity(sharedImageEntity);
 
           await jobState.addRelationship(
@@ -553,12 +556,14 @@ export const computeSteps: Step<
     executionHandler: fetchGalleries,
   },
   {
-    id: steps.SHARED_IMAGES,
+    id: steps.SHARED_IMAGE_DEFINITIONS,
     name: 'Gallery Shared Images',
-    entities: [entities.SHARED_IMAGE],
-    relationships: [relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE],
+    entities: [entities.SHARED_IMAGE_DEFINITION],
+    relationships: [
+      relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE_DEFINITION,
+    ],
     dependsOn: [steps.GALLERIES],
-    executionHandler: fetchGalleryImages,
+    executionHandler: fetchGalleryImageDefinitions,
   },
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
@@ -647,7 +652,7 @@ export const computeSteps: Step<
       STEP_RM_COMPUTE_VIRTUAL_MACHINES,
       STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
       steps.GALLERIES,
-      steps.SHARED_IMAGES,
+      steps.SHARED_IMAGE_DEFINITIONS,
     ],
     executionHandler: buildVirtualMachineImageRelationships,
   },

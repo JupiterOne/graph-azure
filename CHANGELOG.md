@@ -22,6 +22,10 @@ and this project adheres to
 - Fixed a bug where the compute galleries execution handler was not invoked, and
   instead the VM images execution handler was invoked twice. This caused
   DuplicateKeyErrors in either the compute galleries step or the VM images step.
+- Changed the type `azure_shared_image` to `azure_shared_image_definition`,
+  because shared images have both a _definition_, representing top-level
+  metadata, and a number of _versions_, representing discrete images.
+- Changed the `_class` of `azure_gallery` from `DataStore` to `Repository`.
 
 ### 5.27.1 - 2021-06-02
 

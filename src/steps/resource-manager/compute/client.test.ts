@@ -176,7 +176,7 @@ describe('iterateGalleryImages', () => {
     );
 
     const resources: GalleryImage[] = [];
-    await client.iterateGalleryImages(
+    await client.iterateGalleryImageDefinitions(
       { resourceGroupName: 'J1DEV', galleryName: 'testImageGallery' },
       (e) => {
         resources.push(e);

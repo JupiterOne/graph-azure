@@ -122,7 +122,7 @@ export class ComputeClient extends Client {
     });
   }
 
-  public async iterateGalleryImages(
+  public async iterateGalleryImageDefinitions(
     imageGallery: {
       resourceGroupName: string;
       galleryName: string;
@@ -143,7 +143,7 @@ export class ComputeClient extends Client {
           ),
         listNext: serviceClient.galleryImages.listByGalleryNext,
       },
-      resourceDescription: 'compute.gallery.images',
+      resourceDescription: 'compute.gallery.image.definitions',
       callback,
     });
   }

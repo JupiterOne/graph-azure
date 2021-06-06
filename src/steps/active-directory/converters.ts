@@ -132,6 +132,7 @@ export function createUserEntity(
         lastName: data.surname,
         username: data.userPrincipalName,
         isMfaRegistered: registrationDetails?.isMfaRegistered,
+        accountEnabled: data.accountEnabled,
       },
     },
   });

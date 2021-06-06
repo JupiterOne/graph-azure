@@ -187,7 +187,7 @@ export class DirectoryGraphClient extends GraphClient {
       'userPrincipalName',
       'id',
     ];
-    const select = [...defaultSelect, 'userType'];
+    const select = [...defaultSelect, 'userType', 'accountEnabled'];
     return this.iterateResources({
       resourceUrl,
       options: { select },

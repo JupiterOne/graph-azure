@@ -15,6 +15,7 @@ import {
   VirtualMachineExtension,
   Gallery,
   GalleryImage,
+  GalleryImageVersion,
 } from '@azure/arm-compute/esm/models';
 
 let recording: Recording;
@@ -160,6 +161,17 @@ describe('iterateGalleries', () => {
 });
 
 describe('iterateGalleryImages', () => {
+  async function getSetupData(client: ComputeClient) {
+    const galleries: Gallery[] = [];
+    await client.iterateGalleries((g) => {
+      galleries.push(g);
+    });
+    expect(galleries.length).toBeGreaterThan(0);
+    const gallery = galleries[0];
+
+    return { gallery };
+  }
+
   test('all', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
@@ -172,12 +184,13 @@ describe('iterateGalleryImages', () => {
     const client = new ComputeClient(
       configFromEnv,
       createMockIntegrationLogger(),
-      true,
     );
 
+    const { gallery } = await getSetupData(client);
+
     const resources: GalleryImage[] = [];
-    await client.iterateGalleryImageDefinitions(
-      { resourceGroupName: 'J1DEV', galleryName: 'testImageGallery' },
+    await client.iterateGalleryImages(
+      { id: gallery.id!, name: gallery.name! },
       (e) => {
         resources.push(e);
       },
@@ -193,5 +206,58 @@ describe('iterateGalleryImages', () => {
         hyperVGeneration: 'V1',
       }),
     ]);
+  });
+});
+
+describe('iterateGalleryImageVersions', () => {
+  async function getSetupData(client: ComputeClient) {
+    const galleries: Gallery[] = [];
+    await client.iterateGalleries((g) => {
+      galleries.push(g);
+    });
+    expect(galleries.length).toBeGreaterThan(0);
+    const gallery = galleries[0];
+
+    const images: GalleryImage[] = [];
+    await client.iterateGalleryImages(
+      {
+        id: gallery.id!,
+        name: gallery.name!,
+      },
+      (i) => {
+        images.push(i);
+      },
+    );
+    expect(images.length).toBeGreaterThan(0);
+    const image = images[0];
+
+    return { image };
+  }
+
+  test('all', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateGalleryImageVersions',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const client = new ComputeClient(
+      configFromEnv,
+      createMockIntegrationLogger(),
+    );
+
+    const { image } = await getSetupData(client);
+
+    const resources: GalleryImageVersion[] = [];
+    await client.iterateGalleryImageVersions(
+      { id: image.id!, name: image.name! },
+      (v) => {
+        resources.push(v);
+      },
+    );
+
+    expect(resources.length).toBeGreaterThan(0);
   });
 });

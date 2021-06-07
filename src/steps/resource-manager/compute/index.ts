@@ -36,7 +36,8 @@ import {
   createDiskEntity,
   createGalleryEntity,
   createImageEntity,
-  createSharedImageDefinition,
+  createSharedImage,
+  createSharedImageVersion,
   createVirtualMachineEntity,
   createVirtualMachineExtensionEntity,
   getVirtualMachineExtensionKey,
@@ -46,7 +47,11 @@ import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
-import { VirtualMachine } from '@azure/arm-compute/esm/models';
+import {
+  Gallery,
+  GalleryImage,
+  VirtualMachine,
+} from '@azure/arm-compute/esm/models';
 import {
   entities as storageEntities,
   steps as storageSteps,
@@ -74,7 +79,7 @@ export async function fetchGalleries(
   });
 }
 
-export async function fetchGalleryImageDefinitions(
+export async function fetchGalleryImages(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
@@ -85,16 +90,14 @@ export async function fetchGalleryImageDefinitions(
   await jobState.iterateEntities(
     { _type: entities.GALLERY._type },
     async (galleryEntity) => {
-      await client.iterateGalleryImageDefinitions(
+      const gallery = getRawData<Gallery>(galleryEntity)!;
+      await client.iterateGalleryImages(
         {
-          resourceGroupName: galleryEntity?.resourceGroup as string,
-          galleryName: galleryEntity?.displayName as string,
+          id: gallery.id!,
+          name: gallery.name!,
         },
         async (image) => {
-          const sharedImageEntity = createSharedImageDefinition(
-            webLinker,
-            image,
-          );
+          const sharedImageEntity = createSharedImage(webLinker, image);
           await jobState.addEntity(sharedImageEntity);
 
           await jobState.addRelationship(
@@ -102,6 +105,43 @@ export async function fetchGalleryImageDefinitions(
               _class: RelationshipClass.CONTAINS,
               from: galleryEntity,
               to: sharedImageEntity,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
+export async function fetchGalleryImageVersions(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new ComputeClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: entities.SHARED_IMAGE._type },
+    async (sharedImageEntity) => {
+      const sharedImage = getRawData<GalleryImage>(sharedImageEntity)!;
+      await client.iterateGalleryImageVersions(
+        {
+          id: sharedImage.id!,
+          name: sharedImage.name!,
+        },
+        async (imageVersion) => {
+          const imageVersionEntity = createSharedImageVersion(
+            webLinker,
+            imageVersion,
+          );
+          await jobState.addEntity(imageVersionEntity);
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: sharedImageEntity,
+              to: imageVersionEntity,
             }),
           );
         },
@@ -552,18 +592,24 @@ export const computeSteps: Step<
     name: 'Galleries',
     entities: [entities.GALLERY],
     relationships: [relationships.RESOURCE_GROUP_HAS_GALLERY],
-    dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchGalleries,
   },
   {
-    id: steps.SHARED_IMAGE_DEFINITIONS,
+    id: steps.SHARED_IMAGES,
     name: 'Gallery Shared Images',
-    entities: [entities.SHARED_IMAGE_DEFINITION],
-    relationships: [
-      relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE_DEFINITION,
-    ],
-    dependsOn: [steps.GALLERIES],
-    executionHandler: fetchGalleryImageDefinitions,
+    entities: [entities.SHARED_IMAGE],
+    relationships: [relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE],
+    dependsOn: [STEP_AD_ACCOUNT, steps.GALLERIES],
+    executionHandler: fetchGalleryImages,
+  },
+  {
+    id: steps.SHARED_IMAGE_VERSIONS,
+    name: 'Gallery Shared Images',
+    entities: [entities.SHARED_IMAGE_VERSION],
+    relationships: [relationships.SHARED_IMAGE_HAS_VERSION],
+    dependsOn: [STEP_AD_ACCOUNT, steps.SHARED_IMAGES],
+    executionHandler: fetchGalleryImageVersions,
   },
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
@@ -652,7 +698,7 @@ export const computeSteps: Step<
       STEP_RM_COMPUTE_VIRTUAL_MACHINES,
       STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
       steps.GALLERIES,
-      steps.SHARED_IMAGE_DEFINITIONS,
+      steps.SHARED_IMAGES,
     ],
     executionHandler: buildVirtualMachineImageRelationships,
   },

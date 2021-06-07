@@ -3,11 +3,15 @@ import {
   Disk,
   Gallery,
   GalleryImage,
+  GalleryImageVersion,
   VirtualMachine,
   VirtualMachineExtension,
   VirtualMachineImage,
 } from '@azure/arm-compute/esm/models';
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
+import {
+  IntegrationError,
+  IntegrationProviderAPIError,
+} from '@jupiterone/integration-sdk-core';
 
 import {
   Client,
@@ -108,7 +112,7 @@ export class ComputeClient extends Client {
   }
 
   public async iterateGalleries(
-    callback: (e: Gallery) => void | Promise<void>,
+    callback: (g: Gallery) => void | Promise<void>,
   ) {
     const serviceClient = await this.getAuthenticatedServiceClient(
       ComputeManagementClient,
@@ -122,28 +126,77 @@ export class ComputeClient extends Client {
     });
   }
 
-  public async iterateGalleryImageDefinitions(
+  public async iterateGalleryImages(
     imageGallery: {
-      resourceGroupName: string;
-      galleryName: string;
+      id: string;
+      name: string;
     },
-    callback: (e: GalleryImage) => void | Promise<void>,
+    callback: (i: GalleryImage) => void | Promise<void>,
   ) {
     const serviceClient = await this.getAuthenticatedServiceClient(
       ComputeManagementClient,
     );
+
+    const resourceGroup = resourceGroupName(imageGallery.id, true);
+    const galleryName = imageGallery.name;
+
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
         list: async () =>
-          serviceClient.galleryImages.listByGallery(
-            imageGallery.resourceGroupName,
-            imageGallery.galleryName,
-          ),
+          serviceClient.galleryImages.listByGallery(resourceGroup, galleryName),
         listNext: serviceClient.galleryImages.listByGalleryNext,
       },
       resourceDescription: 'compute.gallery.image.definitions',
+      callback,
+    });
+  }
+
+  public async iterateGalleryImageVersions(
+    imageGalleryDefinition: {
+      id: string;
+      name: string;
+    },
+    callback: (v: GalleryImageVersion) => void | Promise<void>,
+  ) {
+    function getGalleryNameFromId(id: string) {
+      const galleryNameRegex = new RegExp(
+        'providers/Microsoft.Compute/galleries/([^/]+)/',
+        'i',
+      );
+      const [_, galleryName] = id.match(galleryNameRegex) || [];
+
+      if (!galleryName) {
+        throw new IntegrationError({
+          message: 'GALLERY_NAME_NOT_FOUND',
+          code: `Could not match galleryName from resource ID: ${id}`,
+        });
+      }
+
+      return galleryName;
+    }
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ComputeManagementClient,
+    );
+
+    const resourceGroup = resourceGroupName(imageGalleryDefinition.id, true);
+    const galleryName = getGalleryNameFromId(imageGalleryDefinition.id);
+    const galleryImageName = imageGalleryDefinition.name;
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.galleryImageVersions.listByGalleryImage(
+            resourceGroup,
+            galleryName,
+            galleryImageName,
+          ),
+        listNext: serviceClient.galleryImageVersions.listByGalleryImageNext,
+      },
+      resourceDescription: 'compute.gallery.image.versions',
       callback,
     });
   }

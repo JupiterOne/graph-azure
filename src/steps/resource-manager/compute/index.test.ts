@@ -10,7 +10,8 @@ import {
   buildVirtualMachineImageRelationships,
   buildVirtualMachineManagedIdentityRelationships,
   fetchGalleries,
-  fetchGalleryImageDefinitions,
+  fetchGalleryImages,
+  fetchGalleryImageVersions,
   fetchVirtualMachineExtensions,
   fetchVirtualMachineImages,
   fetchVirtualMachines,
@@ -143,11 +144,11 @@ describe('rm-compute-shared-images', () => {
         [ACCOUNT_ENTITY_TYPE]: accountEntity,
       },
     });
-    await fetchGalleryImageDefinitions(context);
+    await fetchGalleryImages(context);
     const sharedImageEntities = context.jobState.collectedEntities;
     expect(sharedImageEntities.length).toBeGreaterThan(0);
     expect(sharedImageEntities).toMatchGraphObjectSchema({
-      _class: entities.SHARED_IMAGE_DEFINITION._class,
+      _class: entities.SHARED_IMAGE._class,
     });
 
     expect(context.jobState.collectedRelationships.length).toBe(1);
@@ -157,9 +158,75 @@ describe('rm-compute-shared-images', () => {
       schema: {
         properties: {
           _type: {
-            const:
-              relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE_DEFINITION
-                ._type,
+            const: relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE._type,
+          },
+        },
+      },
+    });
+  });
+});
+
+describe('rm-compute-shared-image-versions', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+    await fetchGalleries(context);
+    const galleryEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === entities.GALLERY._type,
+    );
+    expect(galleryEntities.length).toBeGreaterThan(0);
+
+    await fetchGalleryImages(context);
+    const galleryImageEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === entities.SHARED_IMAGE._type,
+    );
+    expect(galleryImageEntities.length).toBeGreaterThan(0);
+
+    return { accountEntity, galleryImageEntity: galleryImageEntities[0] };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-compute-shared-image-versions',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity, galleryImageEntity } = await getSetupEntities(
+      configFromEnv,
+    );
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [galleryImageEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchGalleryImageVersions(context);
+
+    const imageVersionEntities = context.jobState.collectedEntities;
+
+    expect(imageVersionEntities.length).toBeGreaterThan(0);
+    expect(imageVersionEntities).toMatchGraphObjectSchema({
+      _class: entities.SHARED_IMAGE_VERSION._class,
+    });
+
+    const imageVersionRelationships = context.jobState.collectedRelationships;
+
+    expect(imageVersionRelationships.length).toBe(1);
+    expect(imageVersionRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const: relationships.SHARED_IMAGE_HAS_VERSION._type,
           },
         },
       },
@@ -677,7 +744,7 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
     await fetchVirtualMachines(context);
     await fetchVirtualMachineImages(context);
     await fetchGalleries(context);
-    await fetchGalleryImageDefinitions(context);
+    await fetchGalleryImages(context);
 
     const vmEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
@@ -688,7 +755,7 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
     );
 
     const sharedImageEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === entities.SHARED_IMAGE_DEFINITION._type,
+      (e) => e._type === entities.SHARED_IMAGE._type,
     );
 
     return {

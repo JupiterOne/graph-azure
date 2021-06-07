@@ -12,7 +12,7 @@ import { createAzureWebLinker } from '../../../azure';
 import {
   createDiskEntity,
   createGalleryEntity,
-  createSharedImageDefinition,
+  createSharedImage,
   createVirtualMachineEntity,
   createVirtualMachineExtensionEntity,
   testFunctions,
@@ -288,14 +288,14 @@ describe('createSharedImageEntity', () => {
       eula: 'Some eula',
     };
 
-    expect(createSharedImageDefinition(webLinker, data)).toEqual({
+    expect(createSharedImage(webLinker, data)).toEqual({
       name: 'test-image-definition',
       id:
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition',
       description: 'Some description',
       _key:
         '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition',
-      _type: 'azure_shared_image_definition',
+      _type: 'azure_shared_image',
       _class: ['Image'],
       displayName: 'test-image-definition',
       region: 'eastus',

@@ -10,6 +10,18 @@ and this project adheres to
 
 ### Added
 
+- Added support for ingesting the following **new** resources:
+
+  | Service               | Resource / Entity            |
+  | --------------------- | ---------------------------- |
+  | Gallery Image Version | `azure_shared_image_version` |
+
+- Added support for ingesting the following **new** relationships:
+
+  | Source               | \_class | Target                       |
+  | -------------------- | ------- | ---------------------------- |
+  | `azure_shared_image` | `HAS`   | `azure_shared_image_version` |
+
 - New properties added to resources:
 
   | Entity                    | Properties                                  |

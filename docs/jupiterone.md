@@ -239,7 +239,8 @@ The following entities are created:
 | [RM] Service Bus Queue                         | `azure_service_bus_queue`                         | `Queue`                            |
 | [RM] Service Bus Subscription                  | `azure_service_bus_subscription`                  | `Subscription`                     |
 | [RM] Service Bus Topic                         | `azure_service_bus_topic`                         | `Queue`                            |
-| [RM] Shared Image Definition                   | `azure_shared_image_definition`                   | `Image`                            |
+| [RM] Shared Image                              | `azure_shared_image`                              | `Image`                            |
+| [RM] Shared Image Version                      | `azure_shared_image_version`                      | `Image`                            |
 | [RM] Storage Account                           | `azure_storage_account`                           | `Service`                          |
 | [RM] Storage Container                         | `azure_storage_container`                         | `DataStore`                        |
 | [RM] Storage File Share                        | `azure_storage_file_share`                        | `DataStore`                        |
@@ -281,7 +282,7 @@ The following relationships are created/mapped:
 | `azure_event_grid_domain_topic`    | **HAS**               | `azure_event_grid_topic_subscription`             |
 | `azure_event_grid_topic`           | **HAS**               | `azure_event_grid_topic_subscription`             |
 | `azure_function_app`               | **USES**              | `azure_app_service_plan`                          |
-| `azure_gallery`                    | **CONTAINS**          | `azure_shared_image_definition`                   |
+| `azure_gallery`                    | **CONTAINS**          | `azure_shared_image`                              |
 | `azure_user_group`                 | **HAS**               | `azure_user_group`                                |
 | `azure_user_group`                 | **HAS**               | `azure_group_member`                              |
 | `azure_user_group`                 | **HAS**               | `azure_user`                                      |
@@ -364,6 +365,7 @@ The following relationships are created/mapped:
 | `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_queue`                         |
 | `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_topic`                         |
 | `azure_service_bus_topic`          | **HAS**               | `azure_service_bus_subscription`                  |
+| `azure_shared_image`               | **HAS**               | `azure_shared_image_version`                      |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_server_active_directory_admin`         |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_database`                              |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_server_firewall_rule`                  |
@@ -388,7 +390,7 @@ The following relationships are created/mapped:
 | `azure_vm`                         | **USES**              | `azure_service_principal`                         |
 | `azure_vm`                         | **USES**              | `azure_nic`                                       |
 | `azure_vm`                         | **USES**              | `azure_public_ip`                                 |
-| `azure_vm`                         | **USES**              | `azure_shared_image_definition`                   |
+| `azure_vm`                         | **USES**              | `azure_shared_image`                              |
 | `azure_vm`                         | **USES**              | `azure_storage_account`                           |
 | `azure_vnet`                       | **CONTAINS**          | `azure_subnet`                                    |
 | `azure_web_app`                    | **USES**              | `azure_app_service_plan`                          |

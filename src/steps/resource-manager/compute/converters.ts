@@ -3,6 +3,7 @@ import {
   Disk,
   Gallery,
   GalleryImage,
+  GalleryImageVersion,
   Image,
   OSDisk,
   VirtualMachine,
@@ -188,7 +189,7 @@ export function createGalleryEntity(webLinker: AzureWebLinker, data: Gallery) {
   });
 }
 
-export function createSharedImageDefinition(
+export function createSharedImage(
   webLinker: AzureWebLinker,
   data: GalleryImage,
 ) {
@@ -197,8 +198,8 @@ export function createSharedImageDefinition(
       source: data,
       assign: {
         _key: data.id,
-        _type: entities.SHARED_IMAGE_DEFINITION._type,
-        _class: entities.SHARED_IMAGE_DEFINITION._class,
+        _type: entities.SHARED_IMAGE._type,
+        _class: entities.SHARED_IMAGE._class,
         displayName: data.name,
         description: data.description,
         region: data.location,
@@ -209,6 +210,29 @@ export function createSharedImageDefinition(
         state: data.provisioningState,
         type: data.type,
         resourceGroup: resourceGroupName(data.id),
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+
+export function createSharedImageVersion(
+  webLinker: AzureWebLinker,
+  data: GalleryImageVersion,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id,
+        _type: entities.SHARED_IMAGE_VERSION._type,
+        _class: entities.SHARED_IMAGE_VERSION._class,
+        id: data.id,
+        location: data.location,
+        name: data.name,
+        type: data.type,
+        provisioningState: data.provisioningState,
+        sourceId: data.storageProfile.source?.id,
         webLink: webLinker.portalResourceUrl(data.id),
       },
     },

@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- New properties added to resources:
+
+  | Entity                       | Properties                   |
+  | ---------------------------- | ---------------------------- |
+  | `azure_shared_image_version` | `publishedDate`, `createdOn` |
+
 ## 5.28.1 - 2021-06-07
 
 ### Fixed

@@ -4,6 +4,7 @@ import {
   Entity,
   getRawData,
   MappedRelationship,
+  Relationship,
 } from '@jupiterone/integration-sdk-core';
 import {
   buildVirtualMachineDiskRelationships,
@@ -17,6 +18,7 @@ import {
   fetchVirtualMachines,
 } from '.';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import {
   getMockAccountEntity,
   getMockResourceGroupEntity,
@@ -148,7 +150,7 @@ describe('rm-compute-shared-images', () => {
     const sharedImageEntities = context.jobState.collectedEntities;
     expect(sharedImageEntities.length).toBeGreaterThan(0);
     expect(sharedImageEntities).toMatchGraphObjectSchema({
-      _class: entities.SHARED_IMAGE._class,
+      _class: entities.SHARED_IMAGE_VERSION._class,
     });
 
     expect(context.jobState.collectedRelationships.length).toBe(1);
@@ -745,6 +747,7 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
     await fetchVirtualMachineImages(context);
     await fetchGalleries(context);
     await fetchGalleryImages(context);
+    await fetchGalleryImageVersions(context);
 
     const vmEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
@@ -758,11 +761,49 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
       (e) => e._type === entities.SHARED_IMAGE._type,
     );
 
+    const sharedImageVersionEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === entities.SHARED_IMAGE_VERSION._type,
+    );
+
     return {
       accountEntity,
       vmEntities,
       vmImageEntities,
       sharedImageEntities,
+      sharedImageVersionEntities,
+    };
+  }
+
+  function separateRelationships(collectedRelationships: Relationship[]) {
+    const {
+      targets: vmImageRelationships,
+      rest: restAfterImage,
+    } = filterGraphObjects(
+      collectedRelationships,
+      (r) => r._type === relationships.VIRTUAL_MACHINE_USES_IMAGE._type,
+    );
+    const {
+      targets: sharedImageRelationships,
+      rest: restAfterSharedImage,
+    } = filterGraphObjects(
+      restAfterImage,
+      (r) => r._type === relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE._type,
+    );
+    const {
+      targets: sharedImageVersionRelationships,
+      rest: restAfterSharedImageVersion,
+    } = filterGraphObjects(
+      restAfterSharedImage,
+      (r) =>
+        r._type ===
+        relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE_VERSION._type,
+    );
+
+    return {
+      vmImageRelationships,
+      sharedImageRelationships,
+      sharedImageVersionRelationships,
+      rest: restAfterSharedImageVersion,
     };
   }
 
@@ -780,11 +821,17 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
       vmEntities,
       vmImageEntities,
       sharedImageEntities,
+      sharedImageVersionEntities,
     } = await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
-      entities: [...vmEntities, ...vmImageEntities, ...sharedImageEntities],
+      entities: [
+        ...vmEntities,
+        ...vmImageEntities,
+        ...sharedImageEntities,
+        ...sharedImageVersionEntities,
+      ],
       setData: {
         [ACCOUNT_ENTITY_TYPE]: accountEntity,
       },
@@ -792,22 +839,49 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
 
     await buildVirtualMachineImageRelationships(context);
 
-    expect(context.jobState.collectedRelationships.length).toBe(2);
-    expect(
-      context.jobState.collectedRelationships,
-    ).toMatchDirectRelationshipSchema({
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    const {
+      vmImageRelationships,
+      sharedImageRelationships,
+      sharedImageVersionRelationships,
+      rest: restRelationships,
+    } = separateRelationships(context.jobState.collectedRelationships);
+
+    expect(vmImageRelationships.length).toBeGreaterThan(0);
+    expect(vmImageRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: { const: relationships.VIRTUAL_MACHINE_USES_IMAGE._type },
+        },
+      },
+    });
+
+    expect(sharedImageRelationships.length).toBeGreaterThan(0);
+    expect(sharedImageRelationships).toMatchDirectRelationshipSchema({
       schema: {
         properties: {
           _type: {
-            enum: [
-              relationships.VIRTUAL_MACHINE_USES_IMAGE._type,
-              relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE._type,
-            ],
+            const: relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE._type,
           },
         },
       },
     });
-  });
+
+    expect(sharedImageVersionRelationships.length).toBeGreaterThan(0);
+    expect(sharedImageVersionRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE_VERSION._type,
+          },
+        },
+      },
+    });
+
+    expect(restRelationships).toHaveLength(0);
+  }, 10_000);
 });
 
 describe('rm-compute-virtual-machine-managed-identity-relationships', () => {

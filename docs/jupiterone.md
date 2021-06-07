@@ -391,6 +391,7 @@ The following relationships are created/mapped:
 | `azure_vm`                         | **USES**              | `azure_nic`                                       |
 | `azure_vm`                         | **USES**              | `azure_public_ip`                                 |
 | `azure_vm`                         | **USES**              | `azure_shared_image`                              |
+| `azure_vm`                         | **USES**              | `azure_shared_image_version`                      |
 | `azure_vm`                         | **USES**              | `azure_storage_account`                           |
 | `azure_vnet`                       | **CONTAINS**          | `azure_subnet`                                    |
 | `azure_web_app`                    | **USES**              | `azure_app_service_plan`                          |

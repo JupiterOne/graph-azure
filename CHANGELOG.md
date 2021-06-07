@@ -21,6 +21,7 @@ and this project adheres to
   | Source               | \_class | Target                       |
   | -------------------- | ------- | ---------------------------- |
   | `azure_shared_image` | `HAS`   | `azure_shared_image_version` |
+  | `azure_vm`           | `USES`  | `azure_shared_image_version` |
 
 - New properties added to resources:
 

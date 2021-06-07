@@ -101,6 +101,12 @@ export const relationships = {
     _class: RelationshipClass.USES,
     targetType: entities.SHARED_IMAGE._type,
   },
+  VIRTUAL_MACHINE_USES_SHARED_IMAGE_VERSION: {
+    _type: 'azure_vm_uses_shared_image_version',
+    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    _class: RelationshipClass.USES,
+    targetType: entities.SHARED_IMAGE_VERSION._type,
+  },
   VIRTUAL_MACHINE_USES_UNMANAGED_DISK: {
     _type: 'azure_vm_uses_storage_account',
     sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,

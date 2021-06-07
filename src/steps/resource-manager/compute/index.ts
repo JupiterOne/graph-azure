@@ -475,7 +475,8 @@ export async function buildVirtualMachineImageRelationships(
     { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
     async (vmEntity) => {
       const vm = getRawData<VirtualMachine>(vmEntity);
-      const imageRefId = vm?.storageProfile?.imageReference?.id;
+      const imageReference = vm?.storageProfile?.imageReference;
+      const imageRefId = imageReference?.id;
       if (!imageRefId) {
         return;
       }
@@ -488,6 +489,34 @@ export async function buildVirtualMachineImageRelationships(
             to: imageEntity,
           }),
         );
+      }
+
+      if (imageReference?.id && imageReference.exactVersion) {
+        // The presence of an `exactVersion` property indicates this is a gallery image.
+        //
+        // Example vm.storageProfile.imageReference:
+        // imageReference: {
+        //   "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition",
+        //   "exactVersion": "0.0.0"
+        // }
+        //
+        // Example gallery image version "id":
+        // "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition/versions/0.0.0"
+        //
+        const galleryImageVersionId =
+          imageReference.id + '/versions/' + imageReference.exactVersion;
+        const galleryImageVersionEntity = await jobState.findEntity(
+          galleryImageVersionId,
+        );
+        if (galleryImageVersionEntity) {
+          relationships.push(
+            createDirectRelationship({
+              _class: RelationshipClass.USES,
+              from: vmEntity,
+              to: galleryImageVersionEntity,
+            }),
+          );
+        }
       }
     },
   );
@@ -693,12 +722,13 @@ export const computeSteps: Step<
     relationships: [
       relationships.VIRTUAL_MACHINE_USES_IMAGE,
       relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE,
+      relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE_VERSION,
     ],
     dependsOn: [
       STEP_RM_COMPUTE_VIRTUAL_MACHINES,
       STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
-      steps.GALLERIES,
       steps.SHARED_IMAGES,
+      steps.SHARED_IMAGE_VERSIONS,
     ],
     executionHandler: buildVirtualMachineImageRelationships,
   },

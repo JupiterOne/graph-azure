@@ -231,6 +231,12 @@ export function createSharedImageVersion(
         location: data.location,
         name: data.name,
         type: data.type,
+        publishedDate: parseTimePropertyValue(
+          data.publishingProfile?.publishedDate,
+        ),
+        createdOn: parseTimePropertyValue(
+          data.publishingProfile?.publishedDate,
+        ),
         provisioningState: data.provisioningState,
         sourceId: data.storageProfile.source?.id,
         webLink: webLinker.portalResourceUrl(data.id),

@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.28.1 - 2021-06-07
+
+### Fixed
+
+- Moved `@microsoft/microsft-graph-types` from dev to direct dependency, which
+  was previously causing types to fail on dependent projects after exporting
+  `clients.GraphClient` in `v5.27.1`.
+
 ## 5.28.0 - 2021-06-07
 
 ### Added

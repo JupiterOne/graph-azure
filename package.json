@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-azure",
-  "version": "5.28.0",
+  "version": "5.28.1",
   "description": "A graph conversion tool for https://azure.microsoft.com/.",
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/graph-azure",
@@ -64,6 +64,7 @@
     "@azure/storage-queue": "^12.4.0",
     "@lifeomic/attempt": "^3.0.0",
     "@microsoft/microsoft-graph-client": "^2.0.0",
+    "@microsoft/microsoft-graph-types": "^1.10.0",
     "cross-fetch": "^3.0.4",
     "lodash.map": "^4.6.0",
     "lodash.snakecase": "^4.1.1"
@@ -79,7 +80,6 @@
     "@jupiterone/integration-sdk-core": "^6.0.0",
     "@jupiterone/integration-sdk-dev-tools": "^6.0.0",
     "@jupiterone/integration-sdk-testing": "^6.0.0",
-    "@microsoft/microsoft-graph-types": "^1.10.0",
     "@types/lodash.map": "^4.6.13",
     "@types/lodash.snakecase": "^4.1.6",
     "@types/node": "^13.11.1",

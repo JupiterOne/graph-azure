@@ -286,6 +286,7 @@ The following relationships are created/mapped:
 | `azure_user_group`                 | **HAS**               | `azure_user_group`                                |
 | `azure_user_group`                 | **HAS**               | `azure_group_member`                              |
 | `azure_user_group`                 | **HAS**               | `azure_user`                                      |
+| `azure_keyvault_service`           | **ALLOWS**            | `ANY_PRINCIPAL`                                   |
 | `azure_lb`                         | **CONNECTS**          | `azure_nic`                                       |
 | `azure_location`                   | **HAS**               | `azure_network_watcher`                           |
 | `azure_management_group`           | **CONTAINS**          | `azure_management_group`                          |

@@ -12,9 +12,10 @@ and this project adheres to
 
 - Added support for ingesting the following **new** relationships:
 
-  | Source     | \_class     | Target                       |
-  | ---------- | ----------- | ---------------------------- |
-  | `azure_vm` | `GENERATED` | `azure_shared_image_version` |
+  | Source                   | \_class     | Target                       |
+  | ------------------------ | ----------- | ---------------------------- |
+  | `azure_vm`               | `GENERATED` | `azure_shared_image_version` |
+  | `azure_keyvault_service` | `ALLOWS`    | `ANY_PRINCIPAL`              |
 
 ### Changed
 

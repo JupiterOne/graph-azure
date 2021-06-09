@@ -16,6 +16,11 @@ and this project adheres to
   | ---------- | ----------- | ---------------------------- |
   | `azure_vm` | `GENERATED` | `azure_shared_image_version` |
 
+### Changed
+
+- Lowercase the `azure_vm._key` property to allow for mapped relationships
+  across different J1 subscriptions.
+
 ## 5.29.0 - 2021-06-07
 
 ### Added

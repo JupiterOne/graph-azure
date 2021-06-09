@@ -960,7 +960,7 @@ describe('rm-compute-shared-image-version-source-relationships', () => {
     });
   }, 10_000);
 
-  test.skip('success - mapped relationships', async () => {
+  test('success - mapped relationships', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'rm-compute-shared-image-version-source-relationships',
@@ -990,7 +990,6 @@ describe('rm-compute-shared-image-version-source-relationships', () => {
     const mappedImageSourceRelationships =
       context.jobState.collectedRelationships;
 
-    console.log({ keys: virtualMachineEntities.map((e) => e._key) });
     expect(mappedImageSourceRelationships).toHaveLength(1);
     expect(mappedImageSourceRelationships).toCreateValidRelationshipsToEntities(
       virtualMachineEntities,

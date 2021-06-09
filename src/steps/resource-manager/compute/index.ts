@@ -165,7 +165,6 @@ export async function buildGalleryImageVersionSourceRelationships(
       const imageVersion = getRawData<GalleryImageVersion>(imageVersionEntity);
 
       const sourceId = imageVersion?.storageProfile.source?.id;
-
       if (!sourceId) return;
 
       const sourceEntity = await jobState.findEntity(sourceId);
@@ -179,13 +178,25 @@ export async function buildGalleryImageVersionSourceRelationships(
           }),
         );
       } else {
+        /**
+         * The Azure API returns entity IDs with inconsistent casing. For example,
+         * the `sourceId` here is the UUID of an Azure virtual machine. However, in tests,
+         * we see that the ID of `azure_vm` entities are returned with all CAPS resource group,
+         * while the source ID from imageVersion.storageProfile.source.id is all lowercase
+         * resource group.
+         *
+         * To ensure this mapped relationship can be generated across subscription instances,
+         * we explicitly lowercase the `sourceId` property here, as well as the `_key` of azure_vm.
+         */
+        const lowerCaseSourceId = sourceId.toLowerCase();
+
         await jobState.addRelationship(
           createMappedRelationship({
             source: imageVersionEntity,
             _class: RelationshipClass.GENERATED,
             target: {
               _type: 'azure_image_source', // I think this is always going to be azure_vm but I'm not sure.
-              _key: sourceId, // Creating mappings in this way is dangerous considering that Azure is not always using case-sensitive IDs.
+              _key: lowerCaseSourceId,
             },
             targetFilterKeys: [['_key']],
             relationshipDirection: RelationshipDirection.REVERSE,

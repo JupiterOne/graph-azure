@@ -55,7 +55,12 @@ export function createVirtualMachineEntity(
   const entity = {
     ...convertProperties(data),
     ...osProperties,
-    _key: data.id as string,
+    /**
+     * Explicitly lowercasing the `_key` property due to inconsistent casing.
+     *
+     * See the SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS step for more details.
+     */
+    _key: data.id!.toLowerCase(),
     _type: VIRTUAL_MACHINE_ENTITY_TYPE,
     _class: VIRTUAL_MACHINE_ENTITY_CLASS,
     _rawData: [{ name: 'default', rawData: data }],

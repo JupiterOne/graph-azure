@@ -30,7 +30,10 @@ import {
 import { steps as postgreSqlDatabaseSteps } from './steps/resource-manager/databases/postgresql/constants';
 import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sql/constants';
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice';
-import { STEP_RM_KEYVAULT_VAULTS } from './steps/resource-manager/key-vault';
+import {
+  STEP_RM_KEYVAULT_VAULTS,
+  KeyVaultStepIds,
+} from './steps/resource-manager/key-vault';
 import {
   STEP_RM_NETWORK_INTERFACES,
   STEP_RM_NETWORK_LOAD_BALANCERS,
@@ -125,6 +128,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
+      [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: true },
@@ -260,6 +264,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: false },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: false },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
+      [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: true },
@@ -395,6 +400,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: false },
+      [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: false },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: false },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: false },
       [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: false },
@@ -532,6 +538,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
+      [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: true },

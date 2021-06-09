@@ -3,14 +3,29 @@ import {
   Recording,
 } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
-import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
-import { fetchKeyVaults } from '.';
 import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
+import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
+import {
+  ACCOUNT_ENTITY_TYPE,
+  fetchGroups,
+  fetchServicePrincipals,
+  fetchUsers,
+  GROUP_ENTITY_TYPE,
+  SERVICE_PRINCIPAL_ENTITY_TYPE,
+  USER_ENTITY_TYPE,
+} from '../../active-directory';
+import { buildKeyVaultAccessPolicyRelationships, fetchKeyVaults } from '.';
+import {
+  KeyVaultEntities,
   KEY_VAULT_SERVICE_ENTITY_CLASS,
   KEY_VAULT_SERVICE_ENTITY_TYPE,
 } from './constants';
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
+import { Entity, MappedRelationship } from '@jupiterone/integration-sdk-core';
 
 let recording: Recording;
 let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
@@ -114,4 +129,154 @@ describe('step = key vaults', () => {
       displayName: 'HAS',
     });
   });
+});
+
+describe('rm-keyvault-principal-relationships', () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchKeyVaults(context);
+    const keyVaultEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === KeyVaultEntities.KEY_VAULT._type,
+    );
+    expect(keyVaultEntities.length).toBeGreaterThan(0);
+
+    await fetchUsers(context);
+    const userEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === USER_ENTITY_TYPE,
+    );
+    expect(userEntities.length).toBeGreaterThan(0);
+
+    await fetchGroups(context);
+    const groupEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === GROUP_ENTITY_TYPE,
+    );
+    expect(groupEntities.length).toBeGreaterThan(0);
+
+    await fetchServicePrincipals(context);
+    const servicePrincipalEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === SERVICE_PRINCIPAL_ENTITY_TYPE,
+    );
+    expect(servicePrincipalEntities.length).toBeGreaterThan(0);
+
+    return {
+      keyVaultEntities,
+      principals: {
+        userEntities,
+        groupEntities,
+        servicePrincipalEntities,
+      },
+    };
+  }
+
+  test('sucess', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-keyvault-principal-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { keyVaultEntities, principals } = await getSetupEntities(
+      configFromEnv,
+    );
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: keyVaultEntities,
+    });
+
+    await buildKeyVaultAccessPolicyRelationships(context);
+
+    const keyVaultPrincipalMappedRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(keyVaultPrincipalMappedRelationships).toTargetEntities([
+      ...principals.userEntities,
+      ...principals.groupEntities,
+      ...principals.servicePrincipalEntities,
+    ]);
+  }, 10_000);
+});
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace jest {
+    interface Matchers<R> {
+      toTargetEntities(entities: Entity[]): R;
+    }
+  }
+}
+
+expect.extend({
+  toTargetEntities(
+    mappedRelationships: MappedRelationship[],
+    entities: Entity[],
+  ) {
+    for (const mappedRelationship of mappedRelationships) {
+      const _mapping = mappedRelationship._mapping;
+      if (!_mapping) {
+        throw new Error(
+          'expect(mappedRelationships).toCreateValidRelationshipsToEntities() requires relationships with the `_mapping` property!',
+        );
+      }
+      const targetEntity = _mapping.targetEntity;
+      for (let targetFilterKey of _mapping.targetFilterKeys) {
+        /* type TargetFilterKey = string | string[]; */
+        if (!Array.isArray(targetFilterKey)) {
+          console.warn(
+            'WARNING: Found mapped relationship with targetFilterKey of type string. Please ensure the targetFilterKey was not intended to be of type string[]',
+          );
+          targetFilterKey = [targetFilterKey];
+        }
+        const mappingTargetEntities = entities.filter((entity) =>
+          (targetFilterKey as string[]).every(
+            (k) => targetEntity[k] === entity[k],
+          ),
+        );
+
+        if (mappingTargetEntities.length === 0) {
+          return {
+            message: () =>
+              `No target entity found for mapped relationship: ${JSON.stringify(
+                mappedRelationship,
+                null,
+                2,
+              )}`,
+            pass: false,
+          };
+        } else if (mappingTargetEntities.length > 1) {
+          return {
+            message: () =>
+              `Multiple target entities found for mapped relationship [${mappingTargetEntities.map(
+                (e) => e._key,
+              )}]; expected exactly one: ${JSON.stringify(
+                mappedRelationship,
+                null,
+                2,
+              )}`,
+            pass: false,
+          };
+        }
+      }
+    }
+    return {
+      message: () => '',
+      pass: true,
+    };
+  },
 });

@@ -8,6 +8,7 @@ import {
   getRawData,
   generateRelationshipKey,
   createMappedRelationship,
+  RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -50,6 +51,7 @@ import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 import {
   Gallery,
   GalleryImage,
+  GalleryImageVersion,
   VirtualMachine,
 } from '@azure/arm-compute/esm/models';
 import {
@@ -146,6 +148,51 @@ export async function fetchGalleryImageVersions(
           );
         },
       );
+    },
+  );
+}
+
+export async function buildGalleryImageVersionSourceRelationships(
+  executionContext: IntegrationStepExecutionContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    {
+      _type: entities.SHARED_IMAGE_VERSION._type,
+    },
+    async (imageVersionEntity) => {
+      const imageVersion = getRawData<GalleryImageVersion>(imageVersionEntity);
+
+      const sourceId = imageVersion?.storageProfile.source?.id;
+
+      if (!sourceId) return;
+
+      const sourceEntity = await jobState.findEntity(sourceId);
+
+      if (sourceEntity) {
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: sourceEntity,
+            _class: RelationshipClass.GENERATED,
+            to: imageVersionEntity,
+          }),
+        );
+      } else {
+        await jobState.addRelationship(
+          createMappedRelationship({
+            source: imageVersionEntity,
+            _class: RelationshipClass.GENERATED,
+            target: {
+              _type: 'azure_image_source', // I think this is always going to be azure_vm but I'm not sure.
+              _key: sourceId, // Creating mappings in this way is dangerous considering that Azure is not always using case-sensitive IDs.
+            },
+            targetFilterKeys: [['_key']],
+            relationshipDirection: RelationshipDirection.REVERSE,
+            skipTargetCreation: false,
+          }),
+        );
+      }
     },
   );
 }
@@ -634,11 +681,21 @@ export const computeSteps: Step<
   },
   {
     id: steps.SHARED_IMAGE_VERSIONS,
-    name: 'Gallery Shared Images',
+    name: 'Gallery Shared Image Versions',
     entities: [entities.SHARED_IMAGE_VERSION],
     relationships: [relationships.SHARED_IMAGE_HAS_VERSION],
     dependsOn: [STEP_AD_ACCOUNT, steps.SHARED_IMAGES],
     executionHandler: fetchGalleryImageVersions,
+  },
+  {
+    id: steps.SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS,
+    name: 'Gallery Shared Image Version to Source Relationships',
+    entities: [],
+    relationships: [
+      relationships.VIRTUAL_MACHINE_GENERATED_SHARED_IMAGE_VERSION,
+    ],
+    dependsOn: [steps.SHARED_IMAGE_VERSIONS, STEP_RM_COMPUTE_VIRTUAL_MACHINES],
+    executionHandler: buildGalleryImageVersionSourceRelationships,
   },
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,

@@ -162,6 +162,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       computeSteps.GALLERIES,
       computeSteps.SHARED_IMAGES,
       computeSteps.SHARED_IMAGE_VERSIONS,
+      computeSteps.SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS,
       computeSteps.VIRTUAL_MACHINE_EXTENSIONS,
       computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS,
       computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS,

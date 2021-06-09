@@ -7,6 +7,7 @@ import {
   Relationship,
 } from '@jupiterone/integration-sdk-core';
 import {
+  buildGalleryImageVersionSourceRelationships,
   buildVirtualMachineDiskRelationships,
   buildVirtualMachineImageRelationships,
   buildVirtualMachineManagedIdentityRelationships,
@@ -881,6 +882,119 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
     });
 
     expect(restRelationships).toHaveLength(0);
+  }, 10_000);
+});
+
+describe('rm-compute-shared-image-version-source-relationships', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: config,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchGalleries(context);
+    await fetchGalleryImages(context);
+    await fetchGalleryImageVersions(context);
+    const imageVersionEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === entities.SHARED_IMAGE_VERSION._type,
+    );
+    expect(imageVersionEntities.length).toBeGreaterThan(0);
+
+    await fetchVirtualMachines(context);
+    const virtualMachineEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
+    );
+    expect(virtualMachineEntities.length).toBeGreaterThan(0);
+
+    return {
+      accountEntity,
+      imageVersionEntity: imageVersionEntities[0],
+      virtualMachineEntities,
+    };
+  }
+
+  test('success - direct relationships', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-compute-shared-image-version-source-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      accountEntity,
+      imageVersionEntity,
+      virtualMachineEntities,
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [imageVersionEntity, ...virtualMachineEntities],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await buildGalleryImageVersionSourceRelationships(context);
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    const directImageSourceRelationships =
+      context.jobState.collectedRelationships;
+
+    expect(directImageSourceRelationships).toHaveLength(1);
+    expect(directImageSourceRelationships).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _type: {
+            const:
+              relationships.VIRTUAL_MACHINE_GENERATED_SHARED_IMAGE_VERSION
+                ._type,
+          },
+        },
+      },
+    });
+  }, 10_000);
+
+  test.skip('success - mapped relationships', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-compute-shared-image-version-source-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const {
+      accountEntity,
+      imageVersionEntity,
+      virtualMachineEntities,
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [imageVersionEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await buildGalleryImageVersionSourceRelationships(context);
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    const mappedImageSourceRelationships =
+      context.jobState.collectedRelationships;
+
+    console.log({ keys: virtualMachineEntities.map((e) => e._key) });
+    expect(mappedImageSourceRelationships).toHaveLength(1);
+    expect(mappedImageSourceRelationships).toCreateValidRelationshipsToEntities(
+      virtualMachineEntities,
+    );
   }, 10_000);
 });
 

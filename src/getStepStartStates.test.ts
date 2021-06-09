@@ -151,6 +151,9 @@ describe('getStepStartStates', () => {
       [computeSteps.GALLERIES]: { disabled: true },
       [computeSteps.SHARED_IMAGES]: { disabled: true },
       [computeSteps.SHARED_IMAGE_VERSIONS]: { disabled: true },
+      [computeSteps.SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS]: {
+        disabled: true,
+      },
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS]: { disabled: true },
@@ -283,6 +286,9 @@ describe('getStepStartStates', () => {
       [computeSteps.GALLERIES]: { disabled: true },
       [computeSteps.SHARED_IMAGES]: { disabled: true },
       [computeSteps.SHARED_IMAGE_VERSIONS]: { disabled: true },
+      [computeSteps.SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS]: {
+        disabled: true,
+      },
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS]: { disabled: true },
@@ -415,6 +421,9 @@ describe('getStepStartStates', () => {
       [computeSteps.GALLERIES]: { disabled: false },
       [computeSteps.SHARED_IMAGES]: { disabled: false },
       [computeSteps.SHARED_IMAGE_VERSIONS]: { disabled: false },
+      [computeSteps.SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS]: {
+        disabled: false,
+      },
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: false },
       [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: false },
       [computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS]: { disabled: false },
@@ -549,6 +558,9 @@ describe('getStepStartStates', () => {
       [computeSteps.GALLERIES]: { disabled: true },
       [computeSteps.SHARED_IMAGES]: { disabled: true },
       [computeSteps.SHARED_IMAGE_VERSIONS]: { disabled: true },
+      [computeSteps.SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS]: {
+        disabled: true,
+      },
       [computeSteps.VIRTUAL_MACHINE_EXTENSIONS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS]: { disabled: true },
       [computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS]: { disabled: true },

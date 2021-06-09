@@ -18,6 +18,8 @@ export const steps = {
   GALLERIES: 'rm-compute-galleries',
   SHARED_IMAGES: 'rm-compute-shared-images',
   SHARED_IMAGE_VERSIONS: 'rm-compute-shared-image-versions',
+  SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS:
+    'rm-compute-shared-image-version-source-relationships',
   VIRTUAL_MACHINE_EXTENSIONS: 'rm-compute-virtual-machine-extensions',
   VIRTUAL_MACHINE_DISK_RELATIONSHIPS:
     'rm-compute-virtual-machine-disk-relationships',
@@ -105,6 +107,12 @@ export const relationships = {
     _type: 'azure_vm_uses_shared_image_version',
     sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
     _class: RelationshipClass.USES,
+    targetType: entities.SHARED_IMAGE_VERSION._type,
+  },
+  VIRTUAL_MACHINE_GENERATED_SHARED_IMAGE_VERSION: {
+    _type: 'azure_vm_generated_shared_image_version',
+    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    _class: RelationshipClass.GENERATED,
     targetType: entities.SHARED_IMAGE_VERSION._type,
   },
   VIRTUAL_MACHINE_USES_UNMANAGED_DISK: {

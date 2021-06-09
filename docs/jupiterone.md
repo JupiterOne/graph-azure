@@ -385,6 +385,7 @@ The following relationships are created/mapped:
 | `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing`      |
 | `azure_subscription`               | **PERFORMED**         | `azure_security_assessment`                       |
 | `azure_subscription`               | **USES**              | `azure_location`                                  |
+| `azure_vm`                         | **GENERATED**         | `azure_shared_image_version`                      |
 | `azure_vm`                         | **USES**              | `azure_image`                                     |
 | `azure_vm`                         | **USES**              | `azure_managed_disk`                              |
 | `azure_vm`                         | **USES**              | `azure_service_principal`                         |

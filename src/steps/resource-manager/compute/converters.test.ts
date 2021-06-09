@@ -162,7 +162,7 @@ describe('createVirtualMachineEntity', () => {
     expect(createVirtualMachineEntity(webLinker, data)).toEqual({
       ...convertProperties(data),
       _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourcegroups/j1dev/providers/microsoft.compute/virtualmachines/j1dev',
       _type: 'azure_vm',
       _class: ['Host'],
       _rawData: [{ name: 'default', rawData: data }],

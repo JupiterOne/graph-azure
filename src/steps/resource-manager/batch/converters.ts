@@ -24,6 +24,7 @@ export function createBatchAccountEntity(
       source: data,
       assign: {
         ...convertProperties(data),
+        function: ['batching'],
         _key: data.id as string,
         _type: BatchEntities.BATCH_ACCOUNT._type,
         _class: BatchEntities.BATCH_ACCOUNT._class,

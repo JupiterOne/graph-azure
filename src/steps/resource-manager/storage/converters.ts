@@ -67,6 +67,7 @@ export function createStorageAccountEntity(
         _key: data.id,
         _type: entities.STORAGE_ACCOUNT._type,
         _class: entities.STORAGE_ACCOUNT._class,
+        function: ['storage'],
         displayName: data.name,
         webLink: webLinker.portalResourceUrl(data.id),
         region: data.location,

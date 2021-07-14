@@ -33,6 +33,9 @@ Object {
   ],
   "createdOn": 1600198174723,
   "displayName": "ndowmon1j1dev",
+  "function": Array [
+    "event-delivery",
+  ],
   "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev",
   "location": "East US",
   "metricId": "d3803fd6-2ba4-4286-80aa-f3d613ad59a7:ndowmon1j1dev",

@@ -8,6 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Bumped `@jupiterone/integration-sdk-*@6.10.0`. This included some new required
+  properties for entities of `_class` `Service` and `User`. Added the `function`
+  property to the following entites:
+  - `azure_batch_account`
+  - `azure_storage_account`
+  - `azure_cdn_profile`
+  - `azure_event_grid_domain`
+  - `azure_service_bus_namespace`
+
 ## 5.30.0 - 2021-06-09
 
 ### Added

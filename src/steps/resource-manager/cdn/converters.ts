@@ -20,6 +20,7 @@ export function createCdnProfileEntity(
         _key: data.id as string,
         _type: CdnEntities.PROFILE._type,
         _class: CdnEntities.PROFILE._class,
+        function: ['content-distribution'],
         id: data.id,
         name: data.name,
         category: ['infrastructure'],

@@ -37,6 +37,9 @@ Object {
   "createdOn": undefined,
   "dedicatedCoreQuota": 20,
   "displayName": "j1devbatchaccount",
+  "function": Array [
+    "batching",
+  ],
   "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount",
   "location": "eastus",
   "lowPriorityCoreQuota": 10,

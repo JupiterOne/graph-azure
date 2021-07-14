@@ -30,7 +30,6 @@ import {
   getMockSubscriptionEntity,
 } from '../../../../test/helpers/getMockEntity';
 import {
-  Entity,
   ExplicitRelationship,
   generateRelationshipType,
   MappedRelationship,
@@ -228,90 +227,18 @@ describe('rm-authorization-role-assignment-principal-relationships', () => {
     expect(directRelationships).toHaveLength(0);
 
     expect(mappedUserRelationships.length).toBeGreaterThan(0);
-    expect(mappedUserRelationships).toCreateValidRelationshipsToEntities(
-      userEntities,
-    );
+    expect(mappedUserRelationships).toTargetEntities(userEntities);
 
     expect(mappedGroupRelationships.length).toBeGreaterThan(0);
-    expect(mappedGroupRelationships).toCreateValidRelationshipsToEntities(
-      groupEntities,
-    );
+    expect(mappedGroupRelationships).toTargetEntities(groupEntities);
 
     expect(mappedServicePrincipalRelationships.length).toBeGreaterThan(0);
-    expect(
-      mappedServicePrincipalRelationships,
-    ).toCreateValidRelationshipsToEntities(servicePrincipalEntities);
+    expect(mappedServicePrincipalRelationships).toTargetEntities(
+      servicePrincipalEntities,
+    );
 
     expect(restRelationships).toHaveLength(0);
   }, 10_000);
-});
-
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace jest {
-    interface Matchers<R> {
-      toCreateValidRelationshipsToEntities(entities: Entity[]): R;
-    }
-  }
-}
-
-expect.extend({
-  toCreateValidRelationshipsToEntities(
-    mappedRelationships: MappedRelationship[],
-    entities: Entity[],
-  ) {
-    for (const mappedRelationship of mappedRelationships) {
-      const _mapping = mappedRelationship._mapping;
-      if (!_mapping) {
-        throw new Error(
-          'expect(mappedRelationships).toCreateValidRelationshipsToEntities() requires relationships with the `_mapping` property!',
-        );
-      }
-      const targetEntity = _mapping.targetEntity;
-      for (let targetFilterKey of _mapping.targetFilterKeys) {
-        /* type TargetFilterKey = string | string[]; */
-        if (!Array.isArray(targetFilterKey)) {
-          console.warn(
-            'WARNING: Found mapped relationship with targetFilterKey of type string. Please ensure the targetFilterKey was not intended to be of type string[]',
-          );
-          targetFilterKey = [targetFilterKey];
-        }
-        const mappingTargetEntities = entities.filter((entity) =>
-          (targetFilterKey as string[]).every(
-            (k) => targetEntity[k] === entity[k],
-          ),
-        );
-
-        if (mappingTargetEntities.length === 0) {
-          return {
-            message: () =>
-              `No target entity found for mapped relationship: ${JSON.stringify(
-                mappedRelationship,
-                null,
-                2,
-              )}`,
-            pass: false,
-          };
-        } else if (mappingTargetEntities.length > 1) {
-          return {
-            message: () =>
-              `Multiple target entities found for mapped relationship [${mappingTargetEntities.map(
-                (e) => e._key,
-              )}]; expected exactly one: ${JSON.stringify(
-                mappedRelationship,
-                null,
-                2,
-              )}`,
-            pass: false,
-          };
-        }
-      }
-    }
-    return {
-      message: () => '',
-      pass: true,
-    };
-  },
 });
 
 describe('rm-authorization-role-assignment-scope-relationships', () => {
@@ -484,14 +411,12 @@ describe('rm-authorization-role-assignment-scope-relationships', () => {
     expect(directSubscriptionRelationships).toMatchDirectRelationshipSchema({});
 
     expect(mappedKeyVaultRelationships.length).toBeGreaterThan(0);
-    expect(mappedKeyVaultRelationships).toCreateValidRelationshipsToEntities(
+    expect(mappedKeyVaultRelationships).toTargetEntities(
       entityTypesNotInJobState.keyVaultEntities,
     );
 
     expect(mappedManagementGroupRelationships.length).toBeGreaterThan(0);
-    expect(
-      mappedManagementGroupRelationships,
-    ).toCreateValidRelationshipsToEntities(
+    expect(mappedManagementGroupRelationships).toTargetEntities(
       entityTypesNotInJobState.managementGroupEntities,
     );
   }, 20000);

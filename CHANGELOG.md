@@ -10,6 +10,9 @@ and this project adheres to
 
 ### Changed
 
+- Used `expect().toTargetEntities()` matcher from SDK, and removed local
+  implementations of `.toTargetEntities()` and
+  `.toCreateValidRelationshipsToEntities()`
 - Bumped `@jupiterone/integration-sdk-*@6.10.0`. This included some new required
   properties for entities of `_class` `Service` and `User`. Added the `function`
   property to the following entites:

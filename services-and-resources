@@ -1,0 +1,118 @@
+@azure/arm-advisor
+  ResourceRecommendationBase,
+  SuppressionContract,
+@azure/arm-apimanagement
+  ApiManagementServiceResource,
+  ApiContract,
+@azure/arm-appservice
+  AppServicePlan, 
+  Site
+@azure/arm-authorization
+  RoleDefinition,
+  RoleAssignment,
+  ClassicAdministrator,
+@azure/arm-batch
+  BatchAccount,
+  Pool,
+  Application,
+  Certificate,
+@azure/arm-cdn
+  Profile, 
+  Endpoint
+@azure/arm-compute
+  Disk,
+  Gallery,
+  GalleryImage,
+  GalleryImageVersion,
+  VirtualMachine,
+  VirtualMachineExtension,
+  VirtualMachineImage,
+@azure/arm-containerinstance
+  ContainerGroup
+@azure/arm-containerregistry
+  Registry, 
+  Webhook
+@azure/arm-cosmosdb
+  DatabaseAccountGetResults,
+  SqlDatabaseGetResults,
+@azure/arm-dns
+  Zone, 
+  RecordSet
+@azure/arm-eventgrid
+  Domain,
+  DomainTopic,
+  EventSubscription,
+  Topic,
+@azure/arm-keyvault
+  Vault
+@azure/arm-managementgroups
+  ManagementGroup
+@azure/arm-mariadb
+  Database, 
+  Server
+@azure/arm-monitor
+  ActivityLogAlertResource,
+  DiagnosticSettingsResource,
+  LogProfileResource,
+@azure/arm-mysql
+  Database, 
+  Server
+@azure/arm-network
+  AzureFirewall,
+  FlowLog,
+  LoadBalancer,
+  NetworkInterface,
+  NetworkSecurityGroup,
+  NetworkWatcher,
+  PrivateEndpoint,
+  PublicIPAddress,
+  VirtualNetwork,
+@azure/arm-policy
+  PolicyAssignment,
+  PolicyDefinition,
+  PolicySetDefinition,
+@azure/arm-policyinsights
+  PolicyState
+@azure/arm-postgresql
+  Database,
+  FirewallRule,
+  Server,
+@azure/arm-privatedns
+  PrivateZone, 
+  RecordSet
+@azure/arm-rediscache
+  RedisResource,
+  RedisFirewallRule,
+  RedisLinkedServerWithProperties,
+@azure/arm-resources
+  ResourceGroup
+@azure/arm-security
+  AutoProvisioningSetting,
+  Pricing,
+  SecurityAssessment,
+  SecurityContact,
+  Setting,
+@azure/arm-servicebus
+  SBNamespace,
+  SBQueue,
+  SBTopic,
+  SBSubscription,
+@azure/arm-sql
+  Database,
+  DatabaseBlobAuditingPoliciesGetResponse,
+  EncryptionProtectorsGetResponse,
+  FirewallRule,
+  Server,
+  ServerAzureADAdministrator,
+  ServerBlobAuditingPoliciesGetResponse,
+  ServerSecurityAlertPoliciesGetResponse,
+  TransparentDataEncryptionsGetResponse,
+@azure/arm-storage
+  BlobContainer,
+  FileShare,
+  StorageAccount,
+  Table,
+  StorageQueue,
+@azure/arm-subscriptions
+  Subscription, 
+  Location

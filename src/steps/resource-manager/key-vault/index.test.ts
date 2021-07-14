@@ -25,7 +25,6 @@ import {
 } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
-import { Entity, MappedRelationship } from '@jupiterone/integration-sdk-core';
 
 let recording: Recording;
 let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
@@ -211,72 +210,4 @@ describe('rm-keyvault-principal-relationships', () => {
       ...principals.servicePrincipalEntities,
     ]);
   }, 10_000);
-});
-
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace jest {
-    interface Matchers<R> {
-      toTargetEntities(entities: Entity[]): R;
-    }
-  }
-}
-
-expect.extend({
-  toTargetEntities(
-    mappedRelationships: MappedRelationship[],
-    entities: Entity[],
-  ) {
-    for (const mappedRelationship of mappedRelationships) {
-      const _mapping = mappedRelationship._mapping;
-      if (!_mapping) {
-        throw new Error(
-          'expect(mappedRelationships).toCreateValidRelationshipsToEntities() requires relationships with the `_mapping` property!',
-        );
-      }
-      const targetEntity = _mapping.targetEntity;
-      for (let targetFilterKey of _mapping.targetFilterKeys) {
-        /* type TargetFilterKey = string | string[]; */
-        if (!Array.isArray(targetFilterKey)) {
-          console.warn(
-            'WARNING: Found mapped relationship with targetFilterKey of type string. Please ensure the targetFilterKey was not intended to be of type string[]',
-          );
-          targetFilterKey = [targetFilterKey];
-        }
-        const mappingTargetEntities = entities.filter((entity) =>
-          (targetFilterKey as string[]).every(
-            (k) => targetEntity[k] === entity[k],
-          ),
-        );
-
-        if (mappingTargetEntities.length === 0) {
-          return {
-            message: () =>
-              `No target entity found for mapped relationship: ${JSON.stringify(
-                mappedRelationship,
-                null,
-                2,
-              )}`,
-            pass: false,
-          };
-        } else if (mappingTargetEntities.length > 1) {
-          return {
-            message: () =>
-              `Multiple target entities found for mapped relationship [${mappingTargetEntities.map(
-                (e) => e._key,
-              )}]; expected exactly one: ${JSON.stringify(
-                mappedRelationship,
-                null,
-                2,
-              )}`,
-            pass: false,
-          };
-        }
-      }
-    }
-    return {
-      message: () => '',
-      pass: true,
-    };
-  },
 });

@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Used `expect().toTargetEntities()` matcher from SDK, and removed local
+  implementations of `.toTargetEntities()` and
+  `.toCreateValidRelationshipsToEntities()`
+
 ## 5.31.1 - 2021-08-04
 
 ### Changed

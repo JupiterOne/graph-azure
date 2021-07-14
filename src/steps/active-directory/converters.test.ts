@@ -308,6 +308,7 @@ describe('createServicePrincipalEntity', () => {
         },
       ],
       _type: 'azure_service_principal',
+      function: ['service-account'],
       appDisplayName: 'app-display-name',
       appId: 'app-id',
       category: ['infrastructure'],

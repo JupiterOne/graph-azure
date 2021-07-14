@@ -21,6 +21,7 @@ export function createEventGridDomainEntity(
       source: data,
       assign: {
         ...convertProperties(data),
+        function: ['event-delivery'],
         _key: data.id as string,
         _type: EventGridEntities.DOMAIN._type,
         _class: EventGridEntities.DOMAIN._class,

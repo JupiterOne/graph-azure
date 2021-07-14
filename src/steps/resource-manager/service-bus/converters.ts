@@ -18,6 +18,7 @@ export function createServiceBusNamespaceEntity(
       source: data,
       assign: {
         ...convertProperties(data),
+        function: ['event-delivery'],
         _key: data.id as string,
         _type: ServiceBusEntities.NAMESPACE._type,
         _class: ServiceBusEntities.NAMESPACE._class,

@@ -129,6 +129,7 @@ describe('createStorageAccountEntity', () => {
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
       name: 'j1dev',
       displayName: 'j1dev',
+      function: ['storage'],
       region: 'eastus',
       environment: 'j1dev',
       encryptedBlob: true,

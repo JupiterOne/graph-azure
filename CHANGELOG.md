@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Changed
 
+- Changed `azure_group_has_member` relationships from mapped to direct, because
+  group members always exist in the same directory as the group.
 - Bumped `@jupiterone/integration-sdk-*@6.10.0`. This included some new required
   properties for entities of `_class` `Service` and `User`. Added the `function`
   property to the following entites:

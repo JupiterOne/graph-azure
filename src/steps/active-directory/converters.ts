@@ -8,20 +8,13 @@ import {
   getTime,
   IntegrationInstance,
   Relationship,
-  RelationshipDirection,
   assignTags,
-  createMappedRelationship,
   setRawData,
 } from '@jupiterone/integration-sdk-core';
 import { Group, Organization, User } from '@microsoft/microsoft-graph-types';
 
+import { generateEntityKey } from '../../utils/generateKeys';
 import {
-  generateEntityKey,
-  generateRelationshipKey,
-} from '../../utils/generateKeys';
-import {
-  GroupMember,
-  MemberType,
   IdentitySecurityDefaultsEnforcementPolicy,
   CredentialUserRegistrationDetails,
 } from './client';
@@ -31,9 +24,6 @@ import {
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
   GROUP_ENTITY_CLASS,
   GROUP_ENTITY_TYPE,
-  GROUP_MEMBER_ENTITY_CLASS,
-  GROUP_MEMBER_ENTITY_TYPE,
-  GROUP_MEMBER_RELATIONSHIP_TYPE,
   USER_ENTITY_CLASS,
   USER_ENTITY_TYPE,
   SERVICE_PRINCIPAL_ENTITY_CLASS,
@@ -205,61 +195,4 @@ export function createAccountUserRelationship(
     toType: USER_ENTITY_TYPE,
     toKey,
   });
-}
-
-export function createGroupMemberRelationship(
-  group: Entity,
-  member: GroupMember,
-): Relationship {
-  const memberEntityType = getGroupMemberEntityType(member);
-  const memberEntityClass = getGroupMemberEntityClass(member);
-
-  const groupKey = generateEntityKey(group.id);
-  const memberKey = generateEntityKey(member.id);
-
-  return createMappedRelationship({
-    _class: RelationshipClass.HAS,
-    _key: generateRelationshipKey(groupKey, memberKey),
-    _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
-    _mapping: {
-      relationshipDirection: RelationshipDirection.FORWARD,
-      sourceEntityKey: groupKey,
-      targetFilterKeys: [['_type', '_key']],
-      targetEntity: {
-        _type: memberEntityType,
-        _class: memberEntityClass,
-        _key: memberKey,
-        displayName: member.displayName,
-        jobTitle: member.jobTitle,
-        email: member.mail,
-      },
-    },
-    properties: {
-      groupId: group.id as string,
-      memberId: member.id,
-      memberType: member['@odata.type'],
-    },
-  });
-}
-
-function getGroupMemberEntityType(member: GroupMember): string {
-  switch (member['@odata.type']) {
-    case MemberType.USER:
-      return USER_ENTITY_TYPE;
-    case MemberType.GROUP:
-      return GROUP_ENTITY_TYPE;
-    default:
-      return GROUP_MEMBER_ENTITY_TYPE;
-  }
-}
-
-function getGroupMemberEntityClass(member: GroupMember): string {
-  switch (member['@odata.type']) {
-    case MemberType.USER:
-      return USER_ENTITY_CLASS;
-    case MemberType.GROUP:
-      return GROUP_ENTITY_CLASS;
-    default:
-      return GROUP_MEMBER_ENTITY_CLASS;
-  }
 }

@@ -5,6 +5,7 @@ import {
   RelationshipClass,
   JobState,
   IntegrationError,
+  createDirectRelationship,
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationStepContext, IntegrationConfig } from '../../types';
@@ -35,7 +36,6 @@ import {
   createAccountGroupRelationship,
   createAccountUserRelationship,
   createGroupEntity,
-  createGroupMemberRelationship,
   createUserEntity,
   createServicePrincipalEntity,
 } from './converters';
@@ -161,8 +161,25 @@ export async function fetchGroupMembers(
       await graphClient.iterateGroupMembers(
         { groupId: groupEntity.id as string },
         async (groupMember) => {
+          const memberEntity = await jobState.findEntity(groupMember.id!);
+
+          if (!memberEntity) {
+            logger.warn(
+              {
+                groupId: groupEntity.id,
+                groupMemberId: groupMember.id,
+                groupMemberDisplayName: groupMember.displayName,
+              },
+              'Could not find group member',
+            );
+            return;
+          }
           await jobState.addRelationship(
-            createGroupMemberRelationship(groupEntity, groupMember),
+            createDirectRelationship({
+              from: groupEntity,
+              _class: RelationshipClass.HAS,
+              to: memberEntity,
+            }),
           );
         },
       );
@@ -278,7 +295,7 @@ export const activeDirectorySteps: Step<
         targetType: GROUP_MEMBER_ENTITY_TYPE,
       },
     ],
-    dependsOn: [STEP_AD_GROUPS],
+    dependsOn: [STEP_AD_GROUPS, STEP_AD_USERS],
     executionHandler: fetchGroupMembers,
   },
   {

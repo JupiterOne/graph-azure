@@ -34,6 +34,7 @@ and this project adheres to
 
 ### Changed
 
+- Throw `IntegrationProviderAuthorizationError` on 403 response in `GraphClient`
 - Lowercase the `azure_vm._key` property to allow for mapped relationships
   across different J1 subscriptions.
 

@@ -23,6 +23,9 @@ and this project adheres to
 
 ### Fixed
 
+- Identify policy definition source (subscription, management group, or
+  built-in) using a case-insensitive switch statement, since Azure resource IDs
+  do not use consistent casing.
 - Fixed an issue where DNS Zones and Private DNS Zones threw an error if a
   subscription had not registered the `Microsoft.Network` provider
 

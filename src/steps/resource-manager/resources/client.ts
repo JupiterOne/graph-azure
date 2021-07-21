@@ -4,6 +4,14 @@ import { Client } from '../../../azure/resource-manager/client';
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 
 export class ResourcesClient extends Client {
+  public async getResourceProvider(resourceProviderNamespace: string) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ResourceManagementClient,
+    );
+
+    return serviceClient.providers.get(resourceProviderNamespace);
+  }
+
   public async iterateResourceGroups(
     callback: (rg: ResourceGroup) => void | Promise<void>,
   ): Promise<void> {

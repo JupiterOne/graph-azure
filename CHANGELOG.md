@@ -21,6 +21,11 @@ and this project adheres to
   - `azure_event_grid_domain`
   - `azure_service_bus_namespace`
 
+### Fixed
+
+- Fixed an issue where DNS Zones and Private DNS Zones threw an error if a
+  subscription had not registered the `Microsoft.Network` provider
+
 ## 5.30.0 - 2021-06-09
 
 ### Added

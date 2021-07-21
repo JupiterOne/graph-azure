@@ -13,6 +13,7 @@ export { Recording };
 export const azureMutations = {
   ...mutations,
   mutateAccessToken,
+  redactAllPropertiesExcept,
 };
 
 export function setupAzureRecording(input: SetupRecordingInput): Recording {
@@ -55,6 +56,27 @@ function mutateAccessToken(
         );
       }
     }
+  }
+}
+
+function redactAllPropertiesExcept(
+  entry: RecordingEntry,
+  requiredProperties: string[],
+) {
+  const responseText = entry.response.content.text;
+  if (!responseText) {
+    return;
+  }
+
+  if (isJson(responseText)) {
+    const responseJson = JSON.parse(responseText);
+
+    for (const key of Object.keys(responseJson)) {
+      if (!requiredProperties.includes(key)) {
+        responseJson[key] = '[REDACTED:UNUSED]';
+      }
+    }
+    entry.response.content.text = JSON.stringify(responseJson);
   }
 }
 

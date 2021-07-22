@@ -129,7 +129,7 @@ export abstract class GraphClient {
 
       // Fetch errors include the properties code, errno, message, name, stack, type.
       if (err instanceof FetchError) {
-        this.logger.error(
+        this.logger.warn(
           { err, resourceUrl: endpoint },
           'Encountered fetch error in Azure Graph client.',
         );
@@ -141,8 +141,20 @@ export abstract class GraphClient {
         });
       }
 
+      if (err.statusCode === 403) {
+        this.logger.warn(
+          { err, resourceUrl: endpoint },
+          'Encountered auth error in Azure Graph client.',
+        );
+        throw new IntegrationProviderAuthorizationError({
+          cause: err,
+          endpoint,
+          status: err.statusCode,
+          statusText: err.statusText || err.message,
+        });
+      }
       if (err.statusCode !== 404) {
-        this.logger.error(
+        this.logger.warn(
           { err, resourceUrl: endpoint },
           'Encountered error in Azure Graph client.',
         );

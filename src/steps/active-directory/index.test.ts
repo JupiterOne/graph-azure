@@ -28,6 +28,7 @@ import {
   USER_ENTITY_TYPE,
 } from './constants';
 import { getMockAccountEntity } from '../../../test/helpers/getMockEntity';
+import { IntegrationProviderAuthorizationError } from '@jupiterone/integration-sdk-core';
 
 let recording: Recording;
 
@@ -152,6 +153,31 @@ describe.skip('ad-user-registration-details', () => {
         },
       },
     });
+  });
+
+  test.only('403', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'ad-user-registration-details-403',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        recordFailedRequests: true,
+      },
+    });
+
+    const { accountEntity } = getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [accountEntity],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await expect(fetchUserRegistrationDetails(context)).rejects.toThrow(
+      IntegrationProviderAuthorizationError,
+    );
   });
 });
 

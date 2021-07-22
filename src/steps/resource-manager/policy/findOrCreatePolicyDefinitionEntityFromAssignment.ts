@@ -243,17 +243,21 @@ enum PolicyDefinitionSource {
 function getDefinitionSource(
   policyDefinitionId: string,
 ): PolicyDefinitionSource {
-  if (policyDefinitionId.startsWith('/subscriptions/')) {
+  if (policyDefinitionId.toLowerCase().startsWith('/subscriptions/')) {
     return PolicyDefinitionSource.SUBSCRIPTION;
   }
   if (
-    policyDefinitionId.startsWith(
-      '/providers/Microsoft.Management/managementGroups/',
-    )
+    policyDefinitionId
+      .toLowerCase()
+      .startsWith('/providers/microsoft.management/managementgroups/')
   ) {
     return PolicyDefinitionSource.MANAGEMENT_GROUP;
   }
-  if (policyDefinitionId.startsWith('/providers/Microsoft.Authorization/')) {
+  if (
+    policyDefinitionId
+      .toLowerCase()
+      .startsWith('/providers/microsoft.authorization/')
+  ) {
     return PolicyDefinitionSource.BUILT_IN;
   }
 

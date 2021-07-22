@@ -39,17 +39,15 @@ management groups, subscriptions, or resource groups.
 access to the `j1-production-keys` key vault?**
 
 ```J1QL
-FIND
-  azure_keyvault_service WITH
-    name = 'j1-production-keys'
-    (THAT HAS
-  azure_resource_group)? (THAT HAS
-  azure_subscription)? (THAT HAS
-  azure_management_group)? THAT ALLOWS
-  azure_role_assignment THAT ASSIGNED
-  (azure_user|azure_user_group|azure_service_principal) as principal
-RETURN
-  TREE
+FIND azure_keyvault_service 
+  WITH name = 'j1-production-keys'
+    (THAT HAS azure_resource_group)? 
+    (THAT HAS azure_subscription)? 
+    (THAT HAS azure_management_group)? 
+    THAT ALLOWS azure_role_assignment 
+    THAT ASSIGNED 
+      (azure_user|azure_user_group|azure_service_principal) as principal
+RETURN TREE
 ```
 
 Using this query structure, JupiterOne users can expressively interrogate their
@@ -63,17 +61,14 @@ queries to help you get started.
 _Users should never have access to secrets in production accounts._
 
 ```J1QL
-FIND
-  azure_keyvault_service (THAT HAS
-  azure_resource_group)? (THAT HAS
-  azure_subscription)? (THAT HAS
-  azure_management_group)? THAT ALLOWS
-  azure_role_assignment WITH
-    dataActions = 'Microsoft.KeyVault/vaults/secrets/getSecret/action'
-    THAT ASSIGNED
-  (azure_user|azure_user_group) as principal
-RETURN
-  TREE
+FIND azure_keyvault_service 
+  (THAT HAS azure_resource_group)? 
+  (THAT HAS azure_subscription)? 
+  (THAT HAS azure_management_group)? 
+  THAT ALLOWS azure_role_assignment 
+    WITH dataActions = 'Microsoft.KeyVault/vaults/secrets/getSecret/action'
+  THAT ASSIGNED (azure_user|azure_user_group) as principal
+RETURN TREE
 ```
 
 **Are there any users that are granted direct access to resources (not via
@@ -83,15 +78,13 @@ _User access should always be granted via membership in groups. Direct access is
 often a proxy for elevated privileges, and should be discouraged._
 
 ```J1QL
-FIND
-  * as any_resource (THAT HAS
-  azure_resource_group)? (THAT HAS
-  azure_subscription)? (THAT HAS
-  azure_management_group)? THAT ALLOWS
-  azure_role_assignment THAT ASSIGNED
-  azure_user
-RETURN
-  TREE
+FIND * as any_resource 
+  (THAT HAS azure_resource_group)? 
+  (THAT HAS azure_subscription)? 
+  (THAT HAS azure_management_group)?
+  THAT ALLOWS azure_role_assignment 
+  THAT ASSIGNED azure_user
+RETURN TREE
 ```
 
 **Do any guest users have access to the `j1-production-keys` key vault?**
@@ -101,19 +94,12 @@ traversal to enumerate users with **direct** access as well as users who have
 access as part of a group._
 
 ```J1QL
-FIND
-  azure_keyvault_service WITH
-    name = 'j1-production-keys'
-    (THAT HAS
-  azure_resource_group)? (THAT HAS
-  azure_subscription)? (THAT HAS
-  azure_management_group)? THAT ALLOWS
-  azure_role_assignment THAT ASSIGNED
-  (azure_user|azure_group) WITH
-    userType = 'Guest'
-    (THAT HAS
-  azure_user WITH
-    userType = 'Guest')?
-RETURN
-  TREE
+FIND azure_keyvault_service WITH name = 'j1-production-keys'
+  (THAT HAS azure_resource_group)? 
+  (THAT HAS azure_subscription)? 
+  (THAT HAS azure_management_group)? 
+  THAT ALLOWS azure_role_assignment 
+  THAT ASSIGNED (azure_user|azure_group) WITH userType = 'Guest'
+  (THAT HAS azure_user WITH userType = 'Guest')?
+RETURN TREE
 ```

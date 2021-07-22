@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.31.0 - 2021-07-22
+
 ### Changed
 
 - Throw `IntegrationProviderAuthorizationError` on 403 response in `GraphClient`

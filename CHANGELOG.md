@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 5.31.1 - 2021-08-04
+
 ### Changed
 
 - Changed `validateInvocation()` to try directly invoking

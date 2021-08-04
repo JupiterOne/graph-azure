@@ -68,9 +68,7 @@ describe('validateInvocation recordings', () => {
       instanceConfig: config,
     });
 
-    const response = await validateInvocation(executionContext);
-
-    expect(response).toBe(undefined);
+    await expect(validateInvocation(executionContext)).resolves.toBeUndefined();
   });
 
   test('validates with empty subscriptionId', async () => {
@@ -89,9 +87,7 @@ describe('validateInvocation recordings', () => {
       },
     });
 
-    const response = await validateInvocation(executionContext);
-
-    expect(response).toBe(undefined);
+    await expect(validateInvocation(executionContext)).resolves.toBeUndefined();
   });
 
   test('validates with undefined subscriptionId', async () => {
@@ -110,9 +106,26 @@ describe('validateInvocation recordings', () => {
       },
     });
 
-    const response = await validateInvocation(executionContext);
+    await expect(validateInvocation(executionContext)).resolves.toBeUndefined();
+  });
 
-    expect(response).toBe(undefined);
+  test('validates with null subscriptionId', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'validateInvocationWithNullSubscriptionId',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const executionContext = createMockExecutionContext({
+      instanceConfig: {
+        ...configFromEnv,
+        subscriptionId: null,
+      },
+    });
+
+    await expect(validateInvocation(executionContext)).resolves.toBeUndefined();
   });
 
   test('throws when directory ID is invalid', async () => {
@@ -145,7 +158,7 @@ describe('validateInvocation recordings', () => {
     expect(shouldReportErrorToOperator(err)).toBe(false);
   });
 
-  test('throws when subscription ID is invalid', async () => {
+  test('throws when subscription ID is malformed or invalid', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'validateInvocationWithInvalidSubscriptionId',
@@ -170,7 +183,75 @@ describe('validateInvocation recordings', () => {
     }
     expect(err).not.toBeUndefined();
     expect(err.message).toMatch(
-      'subscriptionId not found in tenant specified by directoryId',
+      `The provided subscription identifier 'some-fake-subscription-id' is malformed or invalid.`,
+    );
+    expect(shouldReportErrorToOperator(err)).toBe(false);
+  });
+
+  test('throws when subscription ID is not found', async () => {
+    const configWithNoAccessToSubscription = {
+      ...configFromEnv,
+      subscriptionId: '00000000-0000-0000-0000-000000000000',
+    };
+
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'validateInvocationWithNotFoundSubscriptionId',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configWithNoAccessToSubscription,
+        }),
+        recordFailedRequests: true,
+      },
+    });
+
+    const executionContext = createMockExecutionContext({
+      instanceConfig: configWithNoAccessToSubscription,
+    });
+
+    let err: any;
+    try {
+      await validateInvocation(executionContext);
+    } catch (e) {
+      err = e;
+    }
+    expect(err).not.toBeUndefined();
+    expect(err.message).toMatch(
+      `The subscription '00000000-0000-0000-0000-000000000000' could not be found.`,
+    );
+    expect(shouldReportErrorToOperator(err)).toBe(false);
+  });
+
+  test('throws when client is not granted Reader access to subscription ID', async () => {
+    const configWithNoAccessToSubscription = {
+      ...configFromEnv,
+      subscriptionId: 'df44baaf-f737-48d5-ab23-020a20fa94da',
+    };
+
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'validateInvocationWithNoAccessToSubscriptionId',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configWithNoAccessToSubscription,
+        }),
+        recordFailedRequests: true,
+      },
+    });
+
+    const executionContext = createMockExecutionContext({
+      instanceConfig: configWithNoAccessToSubscription,
+    });
+
+    let err: any;
+    try {
+      await validateInvocation(executionContext);
+    } catch (e) {
+      err = e;
+    }
+    expect(err).not.toBeUndefined();
+    expect(err.message).toMatch(
+      `The client 'ae2e9f26-7e05-41df-89ab-ba958f2bf8cd' with object id 'ae2e9f26-7e05-41df-89ab-ba958f2bf8cd' does not have authorization to perform action 'Microsoft.Resources/subscriptions/read' over scope '/subscriptions/df44baaf-f737-48d5-ab23-020a20fa94da' or the scope is invalid. If access was recently granted, please refresh your credentials.`,
     );
     expect(shouldReportErrorToOperator(err)).toBe(false);
   });

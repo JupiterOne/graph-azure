@@ -3,27 +3,6 @@ import * as msRestNodeAuth from '@azure/ms-rest-nodeauth';
 
 import { IntegrationConfig } from '../../types';
 import { AzureManagementClientCredentials } from './types';
-import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
-
-/**
- * Validates the resource manager client, including that the subscription ID passed to the client
- */
-export async function validateResourceManagerInvocation(
-  config: IntegrationConfig,
-): Promise<void> {
-  const response = await loginWithServicePrincipalSecretWithAuthResponse(
-    config,
-  );
-
-  if (
-    !response.subscriptions ||
-    !response.subscriptions.find((s) => s.id === config.subscriptionId)
-  ) {
-    throw new IntegrationValidationError(
-      'subscriptionId not found in tenant specified by directoryId',
-    );
-  }
-}
 
 /**
  * Obtains API credentials for Azure Resource Manager API. This depends on the

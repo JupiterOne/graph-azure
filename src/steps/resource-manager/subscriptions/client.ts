@@ -13,6 +13,17 @@ import {
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 export class J1SubscriptionClient extends Client {
+  public async getSubscription(subscriptionId: string) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      SubscriptionClient,
+      {
+        passSubscriptionId: false,
+      },
+    );
+
+    return serviceClient.subscriptions.get(subscriptionId);
+  }
+
   public async iterateSubscriptions(
     callback: (s: Subscription) => void | Promise<void>,
   ): Promise<void> {

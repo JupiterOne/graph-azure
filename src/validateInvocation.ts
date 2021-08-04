@@ -1,18 +1,18 @@
 import {
   IntegrationExecutionContext,
   IntegrationValidationError,
-  IntegrationError,
+  IntegrationProviderAuthorizationError,
 } from '@jupiterone/integration-sdk-core';
 
-import { validateResourceManagerInvocation } from './azure/resource-manager/authenticate';
 import { DirectoryGraphClient } from './steps/active-directory/client';
+import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
 import { IntegrationConfig } from './types';
 import { hasSubscriptionId } from './utils/hasSubscriptionId';
 
 export default async function validateInvocation(
-  validationContext: IntegrationExecutionContext<IntegrationConfig>,
+  context: IntegrationExecutionContext<IntegrationConfig>,
 ): Promise<void> {
-  const config = validationContext.instance.config;
+  const config = context.instance.config;
 
   if (!config.clientId || !config.clientSecret || !config.directoryId) {
     throw new IntegrationValidationError(
@@ -20,10 +20,7 @@ export default async function validateInvocation(
     );
   }
 
-  const directoryClient = new DirectoryGraphClient(
-    validationContext.logger,
-    config,
-  );
+  const directoryClient = new DirectoryGraphClient(context.logger, config);
   await directoryClient.validate();
 
   if (config.ingestActiveDirectory) {
@@ -31,14 +28,16 @@ export default async function validateInvocation(
   }
 
   if (hasSubscriptionId(config)) {
+    const subscriptionClient = new J1SubscriptionClient(config, context.logger);
     try {
-      await validateResourceManagerInvocation(config);
-    } catch (err) {
-      if (!(err instanceof IntegrationError)) {
-        throw new IntegrationValidationError(err);
-      } else {
-        throw err;
-      }
+      await subscriptionClient.getSubscription(config.subscriptionId!);
+    } catch (e) {
+      throw new IntegrationProviderAuthorizationError({
+        cause: e,
+        status: e.statusCode,
+        statusText: `${e.statusText}. ${e.body.message}`,
+        endpoint: e.request.url,
+      });
     }
   }
 }

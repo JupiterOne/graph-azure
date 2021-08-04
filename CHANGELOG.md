@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Changed `validateInvocation()` to try directly invoking
+  `subscriptionClient.getSubscription(id)` when provided a `subscriptionId`
+  parameter. Directly pass errors through to the user, such as:
+  - `The provided subscription identifier '{{SUBSCRIPTION_ID}}' is malformed or invalid.`
+  - `The subscription '{{SUBSCRIPTION_ID}}' could not be found.`
+  - `The client '{{CLIENT_ID}}' with object id '{{CLIENT_ID}}' does not have authorization to perform action 'Microsoft.Resources/subscriptions/read' over scope '/subscriptions/{{SUBSCRIPTION_ID}}' or the scope is invalid.`
+
 ## 5.31.0 - 2021-07-22
 
 ### Changed

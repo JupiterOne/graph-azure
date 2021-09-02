@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.31.2] - 2021-09-02
+
 ### Changed
 
 - Increased `GraphClient` retries from 3 to 5

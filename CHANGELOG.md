@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Changed
 
+- Increased `GraphClient` retries from 3 to 5
+- Added 500ms delay between `GraphClient` retries
 - Used `expect().toTargetEntities()` matcher from SDK, and removed local
   implementations of `.toTargetEntities()` and
   `.toCreateValidRelationshipsToEntities()`

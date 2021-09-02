@@ -101,9 +101,9 @@ export abstract class GraphClient {
         return graphRequest.get();
       },
       {
-        maxAttempts: 3,
+        maxAttempts: 5,
         delay: 200,
-        handleError: (err, context, options) => {
+        handleError: async (err, context, options) => {
           const endpoint = (graphRequest as any).buildFullUrl?.();
           this.logger.info(
             {
@@ -113,6 +113,13 @@ export abstract class GraphClient {
             },
             'Encountered retryable error in Azure Graph API.',
           );
+
+          /**
+           * Wait a bit before retrying, to avoid hitting
+           * ```Access token has expired or is not yet valid```
+           * on token expiration/refresh
+           */
+          await sleep(500);
         },
       },
     );
@@ -210,3 +217,7 @@ function getRolesFromAccessToken(accessToken: string) {
 export const testFunctions = {
   getRolesFromAccessToken,
 };
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

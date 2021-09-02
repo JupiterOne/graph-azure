@@ -100,7 +100,7 @@ test('fetchOrganization', async () => {
   });
 });
 
-test('client.request should retry requests 3 times', async () => {
+test('client.request should retry requests 5 times', async () => {
   const client = new AnyGraphClient(createMockIntegrationLogger(), config);
 
   const graphClientError = new Error('Generic Graph client error');
@@ -117,7 +117,7 @@ test('client.request should retry requests 3 times', async () => {
     'Provider API failed at https://hostname/endpoint: 400 Server Error',
   );
 
-  expect(mockGet).toHaveBeenCalledTimes(3);
+  expect(mockGet).toHaveBeenCalledTimes(5);
 });
 
 test('client.request should expose node-fetch error codes', async () => {

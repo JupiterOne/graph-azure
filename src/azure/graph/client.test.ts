@@ -4,9 +4,12 @@ import {
 } from '@jupiterone/integration-sdk-testing';
 import { FetchError } from 'node-fetch';
 
-import config from '../../../test/integrationInstanceConfig';
+import config, { configFromEnv } from '../../../test/integrationInstanceConfig';
 import { GraphClient, testFunctions } from './client';
-import { setupAzureRecording } from '../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../test/helpers/recording';
 import { GraphRequest } from '@microsoft/microsoft-graph-client';
 
 const { getRolesFromAccessToken } = testFunctions;
@@ -84,23 +87,49 @@ test('accessToken fetched and cached', async () => {
   expect(requests).toEqual(3);
 });
 
-test('fetchOrganization', async () => {
-  recording = setupAzureRecording({
-    directory: __dirname,
-    name: 'fetchOrganization',
+describe('fetchOrganization', () => {
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'fetchOrganization',
+    });
+
+    const client = new AnyGraphClient(createMockIntegrationLogger(), config);
+    await expect(client.fetchOrganization()).resolves.toMatchObject({
+      verifiedDomains: [
+        expect.objectContaining({
+          name: expect.any(String),
+        }),
+      ],
+    });
   });
 
-  const client = new AnyGraphClient(createMockIntegrationLogger(), config);
-  await expect(client.fetchOrganization()).resolves.toMatchObject({
-    verifiedDomains: [
-      expect.objectContaining({
-        name: expect.any(String),
-      }),
-    ],
+  test('should fail for insufficient permissions ', async () => {
+    /**
+     * NOTE: Before recording this test, we revoked the `Directory.read` permission
+     * for the calling service principal. In the event of a re-record, please revoke
+     * the service principal's `Directory.read` permission.
+     */
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'fetchOrganization-invalid-token',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        recordFailedRequests: true,
+      },
+    });
+
+    const client = new AnyGraphClient(
+      createMockIntegrationLogger(),
+      configFromEnv,
+    );
+    await expect(client.fetchOrganization()).rejects.toThrow(
+      'Provider authorization failed at https://graph.microsoft.com/v1.0/organization: 403 Insufficient privileges to complete the operation.',
+    );
   });
 });
 
-test('client.request should retry requests 5 times', async () => {
+test('client.request should retry requests 3 times', async () => {
   const client = new AnyGraphClient(createMockIntegrationLogger(), config);
 
   const graphClientError = new Error('Generic Graph client error');
@@ -117,7 +146,7 @@ test('client.request should retry requests 5 times', async () => {
     'Provider API failed at https://hostname/endpoint: 400 Server Error',
   );
 
-  expect(mockGet).toHaveBeenCalledTimes(5);
+  expect(mockGet).toHaveBeenCalledTimes(3);
 });
 
 test('client.request should expose node-fetch error codes', async () => {

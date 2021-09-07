@@ -8,6 +8,18 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.31.3] - 2021-09-07
+
+### Changed
+
+- Restored `GraphClient` retry parameters:
+  - retries: 5 -> 3
+  - delay: 500 -> 200
+
+### Fixed
+
+- Added token refresh logic to `GraphClient`
+
 ## [5.31.2] - 2021-09-02
 
 ### Changed

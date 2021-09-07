@@ -168,3 +168,42 @@ test('client.request should expose node-fetch error codes', async () => {
     'Provider API failed at https://hostname/endpoint: ECONNRESET Error message for system error',
   );
 });
+
+test('should refresh access token', async () => {
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'refresh-access-token',
+    options: {
+      matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      recordFailedRequests: true,
+    },
+  });
+
+  const client = new AnyGraphClient(
+    createMockIntegrationLogger(),
+    configFromEnv,
+  );
+  const refreshTokenSpy = jest.spyOn(
+    client.authenticationProvider,
+    'refreshAccessToken',
+  );
+
+  const graphRequest = client.client.api('/organization');
+  const graphRequestGetSpy = jest.spyOn(graphRequest, 'get');
+
+  // invalidate token once
+  jest
+    .spyOn(client.authenticationProvider, 'getAccessToken')
+    .mockResolvedValueOnce('***INVALID-TOKEN***');
+
+  await expect(client.request(graphRequest)).resolves.toMatchObject({
+    value: [
+      {
+        id: expect.any(String),
+      },
+    ],
+  });
+
+  expect(graphRequestGetSpy).toHaveBeenCalledTimes(2);
+  expect(refreshTokenSpy).toHaveBeenCalledTimes(1);
+});

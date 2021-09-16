@@ -31,9 +31,23 @@ export async function fetchApps(
   const client = new AppServiceClient(instance.config, logger);
 
   await client.iterateApps(async (app) => {
+    const appConfig = await client.fetchAppConfiguration(
+      app.name,
+      app.resourceGroup,
+    );
+    const appAuthSettings = await client.fetchAppAuthSettings(
+      app.name,
+      app.resourceGroup,
+    );
     const metadata = getMetadataForApp(logger, app);
     const appEntity = await jobState.addEntity(
-      createAppEntity(webLinker, app, metadata),
+      createAppEntity({
+        webLinker,
+        data: app,
+        metadata,
+        appConfig,
+        appAuthSettings,
+      }),
     );
     await createResourceGroupResourceRelationship(executionContext, appEntity);
   });

@@ -32,6 +32,8 @@ import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sq
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice/constants';
 import {
   STEP_RM_KEYVAULT_VAULTS,
+  STEP_RM_KEYVAULT_KEYS,
+  STEP_RM_KEYVAULT_SECRETS,
   KeyVaultStepIds,
 } from './steps/resource-manager/key-vault/constants';
 import {
@@ -146,6 +148,8 @@ export function getResourceManagerSteps(): GetApiSteps {
   return {
     executeFirstSteps: [
       STEP_RM_KEYVAULT_VAULTS,
+      STEP_RM_KEYVAULT_KEYS,
+      STEP_RM_KEYVAULT_SECRETS,
       KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS,
       STEP_RM_NETWORK_VIRTUAL_NETWORKS,
       STEP_RM_NETWORK_SECURITY_GROUPS,

@@ -31,6 +31,11 @@ export default function createAzureWebLinker(
         }
       }
     },
+    assetResourceUrl: (path): string | undefined => {
+      if (defaultDomain && path) {
+        return `https://portal.azure.com/#@${defaultDomain}/asset${path}`;
+      }
+    },
   };
 }
 

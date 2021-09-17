@@ -18,4 +18,5 @@ export interface AzureWebLinker {
    * determined
    */
   portalResourceUrl: (path: string | undefined) => string | undefined;
+  assetResourceUrl: (path: string | undefined) => string | undefined;
 }

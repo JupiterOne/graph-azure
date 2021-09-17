@@ -32,6 +32,8 @@ import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sq
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice';
 import {
   STEP_RM_KEYVAULT_VAULTS,
+  STEP_RM_KEYVAULT_KEYS,
+  STEP_RM_KEYVAULT_SECRETS,
   KeyVaultStepIds,
 } from './steps/resource-manager/key-vault';
 import {
@@ -128,6 +130,8 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
+      [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
+      [STEP_RM_KEYVAULT_SECRETS]: { disabled: true },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
@@ -264,6 +268,8 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: false },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: false },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
+      [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
+      [STEP_RM_KEYVAULT_SECRETS]: { disabled: true },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
@@ -400,6 +406,8 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: false },
+      [STEP_RM_KEYVAULT_KEYS]: { disabled: false },
+      [STEP_RM_KEYVAULT_SECRETS]: { disabled: false },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: false },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: false },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: false },
@@ -538,6 +546,8 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
+      [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
+      [STEP_RM_KEYVAULT_SECRETS]: { disabled: true },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },

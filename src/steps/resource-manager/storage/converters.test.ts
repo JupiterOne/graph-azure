@@ -128,12 +128,18 @@ describe('createStorageAccountEntity', () => {
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
       name: 'j1dev',
+      'networkRuleSet.allowedIpAddresses': undefined,
+      'networkRuleSet.bypass': undefined,
+      'networkRuleSet.defaultAction': undefined,
       displayName: 'j1dev',
+      enableHttpsTrafficOnly: undefined,
       function: ['storage'],
       region: 'eastus',
       environment: 'j1dev',
       encryptedBlob: true,
       encryptedFileShare: true,
+      encryptedQueue: undefined,
+      encryptedTable: undefined,
       webLink: webLinker.portalResourceUrl(
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
       ),
@@ -166,6 +172,10 @@ describe('createStorageAccountEntity', () => {
       queueAnalyticsLoggingReadEnabled: true,
       queueAnalyticsLoggingWriteEnabled: true,
       queueAnalyticsLoggingDeleteEnabled: true,
+      tableAnalyticsLoggingReadEnabled: false,
+      tableAnalyticsLoggingWriteEnabled: false,
+      tableAnalyticsLoggingDeleteEnabled: false,
+      isAccessKeyRegenerated: false,
     };
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data, {

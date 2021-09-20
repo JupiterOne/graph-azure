@@ -81,6 +81,7 @@ describe('rm-storage-accounts', () => {
 
     const storageAccountEntities = context.jobState.collectedEntities;
 
+    expect(storageAccountEntities).toMatchSnapshot();
     expect(storageAccountEntities.length).toBeGreaterThan(0);
     expect(storageAccountEntities).toMatchGraphObjectSchema({
       _class: entities.STORAGE_ACCOUNT._class,

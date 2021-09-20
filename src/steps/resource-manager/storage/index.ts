@@ -51,6 +51,7 @@ export async function fetchStorageAccounts(
 
     const storageBlobServiceProperties = await storageAccountServiceClient.getBlobServiceProperties();
     const storageQueueServiceProperties = await storageAccountServiceClient.getQueueServiceProperties();
+    const storageTableServiceProperties = await storageAccountServiceClient.getTableServiceProperties();
 
     let lastAccessKeyRegenerationDate: Date | undefined;
     /**
@@ -91,6 +92,7 @@ export async function fetchStorageAccounts(
       blob: storageBlobServiceProperties,
       queue: storageQueueServiceProperties,
       lastAccessKeyRegenerationDate,
+      table: storageTableServiceProperties,
     };
   }
   const client = new StorageClient(instance.config, logger);

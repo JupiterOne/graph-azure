@@ -131,6 +131,9 @@ export function createStorageAccountEntity(
         tableAnalyticsLoggingDeleteEnabled: tableLogging?.Delete[0] === 'true',
         lastAccessKeyRegenerationDate:
           storageAccountServiceProperties.lastAccessKeyRegenerationDate,
+        tableAnalyticsLoggingReadEnabled: tableLogging?.Read[0] === 'true',
+        tableAnalyticsLoggingWriteEnabled: tableLogging?.Write[0] === 'true',
+        tableAnalyticsLoggingDeleteEnabled: tableLogging?.Delete[0] === 'true',
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,

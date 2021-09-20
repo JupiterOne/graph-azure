@@ -1,3 +1,6 @@
+import fetch from 'node-fetch';
+import { formatRFC7231 } from 'date-fns';
+import { parseStringPromise } from 'xml2js';
 import { StorageManagementClient } from '@azure/arm-storage';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { QueueServiceClient } from '@azure/storage-queue';
@@ -19,6 +22,30 @@ import { resourceGroupName } from '../../../azure/utils';
 import { IntegrationConfig } from '../../../types';
 import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 import { ClientSecretCredential } from '@azure/identity';
+
+export interface TableServiceProperties {
+  StorageServiceProperties: {
+    Logging: {
+      Version: string[];
+      Delete: string[];
+      Read: string[];
+      Write: string[];
+      RetentionPolicy: {
+        Enabled: string[];
+        Days: string[];
+      };
+    }[];
+    Metrics: {
+      Version: string[];
+      Enabled: string[];
+      IncludeAPIs: string[];
+      RetentionPolicy: {
+        Enabled: string[];
+        Days: string[];
+      };
+    }[];
+  };
+}
 
 export function createStorageAccountServiceClient(options: {
   config: IntegrationConfig;
@@ -80,6 +107,45 @@ export function createStorageAccountServiceClient(options: {
               e,
             },
             'Failed to get queue service properties for storage account',
+          );
+        }
+      }
+    },
+
+    getTableServiceProperties: async (): Promise<
+      TableServiceProperties | undefined
+    > => {
+      if (
+        isServiceEnabledForKindAndTier.table(
+          storageAccount.kind,
+          storageAccount.skuTier,
+        )
+      ) {
+        const token = await credential.getToken(
+          'https://storage.azure.com/.default',
+        );
+
+        try {
+          const response = await fetch(
+            `https://${storageAccount.name}.table.core.windows.net/?restype=service&comp=properties`,
+            {
+              headers: {
+                Authorization: `Bearer ${token?.token}`,
+                'x-ms-date': formatRFC7231(new Date()),
+                'x-ms-version': '2020-10-02',
+              },
+            },
+          );
+
+          const res = await response.text();
+          return parseStringPromise(res);
+        } catch (e) {
+          logger.warn(
+            {
+              storageAccount,
+              e,
+            },
+            'Failed to get table service properties for storage account',
           );
         }
       }

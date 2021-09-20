@@ -30,6 +30,7 @@ import {
 } from '../key-vault/constants';
 import { Vault } from '@azure/arm-keyvault/esm/models';
 export * from './constants';
+import { MonitorClient } from '../monitor/client';
 
 export async function fetchStorageAccounts(
   executionContext: IntegrationStepContext,
@@ -55,6 +56,7 @@ export async function fetchStorageAccounts(
     };
   }
   const client = new StorageClient(instance.config, logger);
+  const monitorClient = new MonitorClient(instance.config, logger);
 
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
@@ -62,6 +64,18 @@ export async function fetchStorageAccounts(
   const keyVaultEntityMap = await buildKeyVaultEntityMap(executionContext);
 
   await client.iterateStorageAccounts(async (storageAccount) => {
+    let isAccessKeyRegenerated = false;
+    await monitorClient.iterateActivityLogs(
+      storageAccount.id as string,
+      (log) => {
+        isAccessKeyRegenerated =
+          (log.authorization?.action ===
+            'Microsoft.Storage/storageAccounts/regenerateKey/action' &&
+            log.status?.value === 'Succeeded') ||
+          isAccessKeyRegenerated;
+      },
+    );
+
     const storageAccountServiceProperties = await getStorageAccountServiceProperties(
       {
         name: storageAccount.name!,
@@ -74,6 +88,7 @@ export async function fetchStorageAccounts(
         webLinker,
         storageAccount,
         storageAccountServiceProperties,
+        isAccessKeyRegenerated,
       ),
     );
     await createResourceGroupResourceRelationship(

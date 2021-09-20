@@ -1314,10 +1314,16 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
 
   async function getSetupEntities(config: IntegrationConfig) {
     const accountEntity = getMockAccountEntity(config);
-    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+    const resourceGroupEntity = getMockResourceGroupEntity(
+      'DefaultResourceGroup-CUS',
+    );
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
+      instanceConfig: {
+        ...configFromEnv,
+        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
+        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
+      },
       entities: [accountEntity, resourceGroupEntity],
       setData: {
         [ACCOUNT_ENTITY_TYPE]: accountEntity,
@@ -1333,13 +1339,13 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
     const privateEndpointEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === NetworkEntities.PRIVATE_ENDPOINT._type,
     );
-    const j1devPrivateEndpointEntities = privateEndpointEntities.filter(
-      (e) => e.name === 'j1dev',
+    const examplePrivateEndpointEntities = privateEndpointEntities.filter(
+      (e) => e.name === 'private-endpoint',
     );
-    expect(j1devPrivateEndpointEntities).toHaveLength(1);
+    expect(examplePrivateEndpointEntities).toHaveLength(1);
 
     return {
-      privateEndpointEntity: j1devPrivateEndpointEntities[0],
+      privateEndpointEntity: examplePrivateEndpointEntities[0],
       storageAccountEntities,
     };
   }
@@ -1349,7 +1355,15 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
       directory: __dirname,
       name: 'rm-network-private-endpoint-resource-relationships',
       options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          options: {
+            headers: false,
+            url: {
+              query: false,
+            },
+          },
+        }),
       },
     });
 
@@ -1359,7 +1373,11 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
     } = await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
+      instanceConfig: {
+        ...configFromEnv,
+        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
+        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
+      },
       entities: [...storageAccountEntities, privateEndpointEntity],
     });
 
@@ -1553,7 +1571,15 @@ describe('rm-network-flow-logs', () => {
       directory: __dirname,
       name: 'rm-network-flow-logs',
       options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          options: {
+            headers: false,
+            url: {
+              query: false,
+            },
+          },
+        }),
       },
     });
 
@@ -1562,10 +1588,18 @@ describe('rm-network-flow-logs', () => {
       networkWatcherEntities,
       securityGroupEntities,
       storageAccountEntities,
-    } = await getSetupEntities(configFromEnv);
+    } = await getSetupEntities({
+      ...configFromEnv,
+      directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
+      subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
+    });
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
+      instanceConfig: {
+        ...configFromEnv,
+        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
+        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
+      },
       entities: [
         ...networkWatcherEntities,
         ...securityGroupEntities,

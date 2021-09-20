@@ -72,6 +72,7 @@
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "@microsoft/microsoft-graph-types": "^1.10.0",
     "cross-fetch": "^3.0.4",
+    "date-fns": "^2.24.0",
     "lodash.map": "^4.6.0",
     "lodash.snakecase": "^4.1.1"
   },

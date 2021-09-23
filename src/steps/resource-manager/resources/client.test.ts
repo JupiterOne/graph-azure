@@ -6,15 +6,7 @@ import {
 } from '../../../../test/helpers/recording';
 import { ResourcesClient } from './client';
 import { RoleAssignment } from '@azure/arm-authorization/esm/models';
-import { IntegrationConfig } from '../../../types';
-
-// developer used different creds than ~/test/integrationInstanceConfig
-const config: IntegrationConfig = {
-  clientId: process.env.CLIENT_ID || 'clientId',
-  clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-  directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
-  subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-};
+import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 
 let recording: Recording;
 
@@ -30,7 +22,11 @@ describe('iterateResourceGroups', () => {
     });
 
     const client = new ResourcesClient(
-      config,
+      {
+        ...configFromEnv,
+        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
+        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
+      },
       createMockIntegrationLogger(),
       true,
     );
@@ -42,7 +38,7 @@ describe('iterateResourceGroups', () => {
 
     expect(resources).toContainEqual(
       expect.objectContaining({
-        name: 'j1dev',
+        name: 'DefaultResourceGroup-CUS',
       }),
     );
   });

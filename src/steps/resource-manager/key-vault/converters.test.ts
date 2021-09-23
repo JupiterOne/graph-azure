@@ -51,6 +51,8 @@ describe('createKeyVaultEntity', () => {
       enabledForTemplateDeployment: false,
       vaultUri: 'https://j1dev.vault.azure.net/',
       // provisioningState: "Succeeded",
+      enablePurgeProtection: true,
+      enableSoftDelete: true,
     },
   };
 
@@ -175,6 +177,9 @@ describe('createKeyVaultSecretEntity', () => {
       version: undefined,
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/j1dev/secrets/j1-secret',
+      endpoints: ['https://j1dev.vault.azure.net/'],
+      enableSoftDelete: true,
+      enablePurgeProtection: true,
     });
   });
 });

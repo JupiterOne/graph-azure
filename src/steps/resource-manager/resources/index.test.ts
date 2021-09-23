@@ -1,14 +1,18 @@
 import {
   fetchResourceGroups,
   createSubscriptionResourceGroupRelationship,
+  fetchResourceGroupLocks,
 } from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
-import globalInstanceConfig from '../../../../test/integrationInstanceConfig';
+import globalInstanceConfig, {
+  configFromEnv,
+} from '../../../../test/integrationInstanceConfig';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 let recording: Recording;
 
 afterEach(async () => {
@@ -104,16 +108,15 @@ describe('#createSubscriptionResourceGroupRelationship', () => {
 });
 
 test('step - resource groups', async () => {
-  const instanceConfig: IntegrationConfig = {
-    clientId: process.env.CLIENT_ID || 'clientId',
-    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
-    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+  const instanceConfig = {
+    ...configFromEnv,
+    directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
+    subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
   };
 
   recording = setupAzureRecording({
     directory: __dirname,
-    name: 'resource-manager-step-resource-groups',
+    name: 'resource-manager-step-groups',
   });
 
   const context = createMockAzureStepExecutionContext({
@@ -153,27 +156,60 @@ test('step - resource groups', async () => {
       },
     },
   });
-  expect(context.jobState.collectedRelationships.length).toEqual(2);
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/NetworkWatcherRG',
-      _type: 'azure_subscription_has_resource_group',
-      _class: 'HAS',
-      _fromEntityKey: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-      _toEntityKey:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/NetworkWatcherRG',
-      displayName: 'HAS',
+  expect(context.jobState.collectedRelationships.length).toBeGreaterThan(0);
+}, 10000);
+
+test('step - resource group locks', async () => {
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'resource-manager-step-resource-group-locks',
+  });
+
+  const instanceConfig: IntegrationConfig = {
+    ...configFromEnv,
+    directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
+    subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
+  };
+
+  const context = createMockAzureStepExecutionContext({
+    instanceConfig,
+    entities: [
+      {
+        _class: ['Account'],
+        _type: 'azure_subscription',
+        _key: `/subscriptions/${instanceConfig.subscriptionId}`,
+      },
+    ],
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(configFromEnv),
     },
-    {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev',
-      _type: 'azure_subscription_has_resource_group',
-      _class: 'HAS',
-      _fromEntityKey: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-      _toEntityKey:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev',
-      displayName: 'HAS',
+  });
+
+  await fetchResourceGroups(context);
+  await fetchResourceGroupLocks(context);
+
+  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
+  expect(
+    context.jobState.collectedEntities.filter(
+      (item) => item._class === 'Group',
+    ),
+  ).toMatchGraphObjectSchema({
+    _class: 'Rule',
+    schema: {
+      additionalProperties: false,
+      properties: {
+        _type: { const: 'azure_resource_group_lock' },
+        _key: { type: 'string' },
+        _class: { type: 'array', items: { const: 'Rule' } },
+        id: { type: 'string' },
+        name: { type: 'string' },
+        displayName: { type: 'string' },
+        type: { const: 'Microsoft.Resources/resourceGroups' },
+        level: { type: 'string' },
+        notes: { type: 'string' },
+        webLink: { type: 'string' },
+        _rawData: { type: 'array', items: { type: 'object' } },
+      },
     },
-  ]);
-});
+  });
+}, 100000);

@@ -35,6 +35,9 @@ export function createKeyVaultEntity(
         vaultUrl: data.properties.vaultUri,
         category: ['infrastructure'],
         function: ['key-vault'],
+        // 8.4 Ensure the key vault is recoverable
+        enableSoftDelete: data.properties.enableSoftDelete,
+        enablePurgeProtection: data.properties.enablePurgeProtection,
       },
       tagProperties: ['environment'],
     },

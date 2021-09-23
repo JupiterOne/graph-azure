@@ -216,6 +216,7 @@ The following entities are created:
 | [RM] Container Group                           | `azure_container_group`                           | `Group`                            |
 | [RM] Container Registry                        | `azure_container_registry`                        | `DataStore`                        |
 | [RM] Container Registry Webhook                | `azure_container_registry_webhook`                | `ApplicationEndpoint`              |
+| [RM] Container Services Cluster                | `azure_container_services_cluster`                | `Cluster`                          |
 | [RM] Container Volume                          | `azure_container_volume`                          | `Disk`                             |
 | [RM] Cosmos DB Account                         | `azure_cosmosdb_account`                          | `Account`, `Service`               |
 | [RM] Cosmos DB Database                        | `azure_cosmosdb_sql_database`                     | `Database`, `DataStore`            |
@@ -258,6 +259,7 @@ The following entities are created:
 | [RM] Redis Cache                               | `azure_redis_cache`                               | `Database`, `DataStore`, `Cluster` |
 | [RM] Redis Firewall Rule                       | `azure_firewall_rule`                             | `Firewall`                         |
 | [RM] Resource Group                            | `azure_resource_group`                            | `Group`                            |
+| [RM] Resource Group Lock                       | `azure_resource_group_lock`                       | `Rule`                             |
 | [RM] Role Assignment                           | `azure_role_assignment`                           | `AccessPolicy`                     |
 | [RM] Role Definition                           | `azure_role_definition`                           | `AccessRole`                       |
 | [RM] SQL Database                              | `azure_sql_database`                              | `Database`, `DataStore`            |
@@ -351,6 +353,7 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_cdn_profile`                               |
 | `azure_resource_group`             | **HAS**               | `azure_container_group`                           |
 | `azure_resource_group`             | **HAS**               | `azure_container_registry`                        |
+| `azure_resource_group`             | **HAS**               | `azure_container_services_cluster`                |
 | `azure_resource_group`             | **HAS**               | `azure_cosmosdb_account`                          |
 | `azure_resource_group`             | **HAS**               | `azure_dns_zone`                                  |
 | `azure_resource_group`             | **HAS**               | `azure_event_grid_domain`                         |
@@ -360,6 +363,7 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_image`                                     |
 | `azure_resource_group`             | **HAS**               | `azure_keyvault_service`                          |
 | `azure_resource_group`             | **HAS**               | `azure_lb`                                        |
+| `azure_resource_group`             | **HAS**               | `azure_resource_group_lock`                       |
 | `azure_resource_group`             | **HAS**               | `azure_managed_disk`                              |
 | `azure_resource_group`             | **HAS**               | `azure_mariadb_server`                            |
 | `azure_resource_group`             | **HAS**               | `azure_monitor_activity_log_alert`                |

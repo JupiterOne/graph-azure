@@ -39,9 +39,7 @@ it('auth error', async () => {
     await validateInvocation(executionContext);
   };
 
-  await expect(exec).rejects.toThrow(
-    "Error: AADSTS90002: Tenant 'invalid' not found. Check to make sure you have the correct tenant ID and are signing into the correct cloud. Check with your subscription administrator, this may happen if there are no active subscriptions for the tenant.",
-  );
+  await expect(exec).rejects.toThrow(/AADSTS90002: Tenant 'invalid' not found[a-zA-Z]*/);
 });
 
 describe('validateInvocation recordings', () => {

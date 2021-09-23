@@ -19,6 +19,7 @@ import {
   setDatabaseEncryption,
   setServerSecurityAlerting,
   setServerEncryptionProtector,
+  setServerVulnerabilityAssessment,
 } from './converters';
 import createResourceGroupResourceRelationship from '../../utils/createResourceGroupResourceRelationship';
 import {
@@ -52,6 +53,10 @@ export async function fetchSQLServers(
       serverEntity,
       await client.fetchServerSecurityAlertPolicies(server),
     );
+    setServerVulnerabilityAssessment(
+      serverEntity,
+      await client.fetchServerVulnerabilityAssessments(server)
+    )
     setServerEncryptionProtector(
       serverEntity,
       await client.fetchServerEncryptionProtector({

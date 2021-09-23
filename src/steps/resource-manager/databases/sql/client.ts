@@ -8,6 +8,7 @@ import {
   ServerAzureADAdministrator,
   ServerBlobAuditingPoliciesGetResponse,
   ServerSecurityAlertPoliciesGetResponse,
+  ServerVulnerabilityAssessmentsGetResponse,
   TransparentDataEncryptionsGetResponse,
 } from '@azure/arm-sql/esm/models';
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
@@ -215,12 +216,41 @@ export class SQLClient extends Client {
     }
   }
 
+  public async fetchServerVulnerabilityAssessments(
+    server: Server,
+  ): Promise<ServerVulnerabilityAssessmentsGetResponse | undefined> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      SqlManagementClient,
+    );
+
+    try {
+      return serviceClient.serverVulnerabilityAssessments.get(
+        resourceGroupName(server.id, true),
+        server.name as string,
+      )
+    } catch (err) {
+      this.logger.warn(
+        {
+          err: new IntegrationProviderAPIError({
+            endpoint: 'sql.serverVulnerabilityAssessments',
+            status: err.status,
+            statusText: err.statusText,
+            cause: err,
+          }),
+          server: server.id,
+        },
+        'Failed to obtain vulnerability assessments for server',
+      );
+    }
+  }
+
   public async fetchServerSecurityAlertPolicies(
     server: Server,
   ): Promise<ServerSecurityAlertPoliciesGetResponse | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
+
 
     try {
       return await serviceClient.serverSecurityAlertPolicies.get(

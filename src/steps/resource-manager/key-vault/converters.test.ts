@@ -80,6 +80,8 @@ describe('createKeyVaultEntity', () => {
       environment: 'j1dev',
       function: ['key-vault'],
       classification: 'production',
+      enablePurgeProtection: true,
+      enableSoftDelete: true,
       webLink:
         'https://portal.azure.com/#@something.onmicrosoft.com/resource/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/j1dev',
       category: ['infrastructure'],
@@ -169,6 +171,7 @@ describe('createKeyVaultSecretEntity', () => {
       enabled: true,
       expiresOn: parseTimePropertyValue(date),
       createdOn: undefined,
+      updatedOn: undefined,
       managed: undefined,
       notBefore: undefined,
       recoveryLevel: undefined,
@@ -177,9 +180,6 @@ describe('createKeyVaultSecretEntity', () => {
       version: undefined,
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/j1dev/secrets/j1-secret',
-      endpoints: ['https://j1dev.vault.azure.net/'],
-      enableSoftDelete: true,
-      enablePurgeProtection: true,
     });
   });
 });

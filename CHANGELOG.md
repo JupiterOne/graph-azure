@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Stop throwing
+  `Provider API failed at security.settings: Subscription Not Registered Please register to Microsoft.Security in order to view your security status`
+  on security center settings step
+
 ## [5.31.3] - 2021-09-07
 
 ### Changed

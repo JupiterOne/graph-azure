@@ -8,6 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.31.5] - 2021-10-01
+
+### Fixed
+
+- Stop throwing
+  `Provider API failed at storage.*: AccountIsDisabled The specified account is disabled.`
+  on storage blob/queue/table/file steps
+- Stop throwing
+  `Provider API failed at *.*: DisallowedOperation The current subscription type is not permitted to perform operations on any provider namespace. Please use a different subscription.`
+  on steps
+
 ## [5.31.4] - 2021-10-01
 
 ### Fixed

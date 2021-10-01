@@ -296,7 +296,7 @@ export async function request<T extends ResourceResponse>(
         return;
       }
 
-      if (status === 'The specified account is disabled') {
+      if (status === 'The specified account is disabled.') {
         // TODO handle this in storage blob, table, file, queue steps before hitting errors at this endpoint.
         return;
       }

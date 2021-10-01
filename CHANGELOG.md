@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.31.4] - 2021-10-01
+
 ### Fixed
 
 - Stop throwing

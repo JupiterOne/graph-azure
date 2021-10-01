@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.31.6] - 2021-10-01
+
+### Fixed
+
+- Stop throwing
+  `Provider API failed at storage.*: AccountIsDisabled The specified account is disabled.`
+  on storage blob/queue/table/file steps
+
 ## [5.31.5] - 2021-10-01
 
 ### Fixed

@@ -51,24 +51,27 @@ export class MonitorClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       MonitorManagementClient,
     );
-
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          const response = await serviceClient.diagnosticSettings.list(
-            resourceUri,
-          );
-          const diagnosticSettings = response.value!;
-          return Object.assign(diagnosticSettings, {
-            _response: response._response,
-          });
+    try {
+      return iterateAllResources({
+        logger: this.logger,
+        serviceClient,
+        resourceEndpoint: {
+          list: async () => {
+            const response = await serviceClient.diagnosticSettings.list(
+              resourceUri,
+            );
+            const diagnosticSettings = response.value!;
+            return Object.assign(diagnosticSettings, {
+              _response: response._response,
+            });
+          },
         },
-      },
-      resourceDescription: 'monitor.diagnosticSetting',
-      callback,
-    });
+        resourceDescription: 'monitor.diagnosticSetting',
+        callback,
+      });
+    } catch (err) {
+      this.logger.warn({ err }, 'Error iterating diagnostic settings.');
+    }
   }
 
   public async iterateActivityLogAlerts(

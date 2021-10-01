@@ -11,6 +11,9 @@ and this project adheres to
 ### Fixed
 
 - Stop throwing
+  `Provider API failed at monitor.diagnosticSetting: SubscriptionNotRegistered The subscription '<SUBSCRIPTION-ID>' is not registered to use microsoft.insights.`
+  on security center settings step
+- Stop throwing
   `Provider API failed at security.settings: Subscription Not Registered Please register to Microsoft.Security in order to view your security status`
   on security center settings step
 

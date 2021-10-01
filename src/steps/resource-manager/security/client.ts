@@ -67,13 +67,17 @@ export class SecurityClient extends Client {
       SecurityCenter,
     );
 
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: serviceClient.settings,
-      resourceDescription: 'security.settings',
-      callback,
-    });
+    try {
+      await iterateAllResources({
+        logger: this.logger,
+        serviceClient,
+        resourceEndpoint: serviceClient.settings,
+        resourceDescription: 'security.settings',
+        callback,
+      });
+    } catch (err) {
+      this.logger.warn({ err }, 'Error iterating security settings.');
+    }
   }
 
   public async iterateAutoProvisioningSettings(

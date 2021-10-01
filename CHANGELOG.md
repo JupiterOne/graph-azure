@@ -8,8 +8,35 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.31.4] - 2021-10-01
+
+### Fixed
+
+- Stop throwing
+  `Provider API failed at monitor.diagnosticSetting: SubscriptionNotRegistered The subscription '<SUBSCRIPTION-ID>' is not registered to use microsoft.insights.`
+  on security center settings step
+- Stop throwing
+  `Provider API failed at security.settings: Subscription Not Registered Please register to Microsoft.Security in order to view your security status`
+  on security center settings step
+
+## [5.31.3] - 2021-09-07
+
 ### Changed
 
+- Restored `GraphClient` retry parameters:
+  - retries: 5 -> 3
+  - delay: 500 -> 200
+
+### Fixed
+
+- Added token refresh logic to `GraphClient`
+
+## [5.31.2] - 2021-09-02
+
+### Changed
+
+- Increased `GraphClient` retries from 3 to 5
+- Added 500ms delay between `GraphClient` retries
 - Used `expect().toTargetEntities()` matcher from SDK, and removed local
   implementations of `.toTargetEntities()` and
   `.toCreateValidRelationshipsToEntities()`

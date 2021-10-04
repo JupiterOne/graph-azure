@@ -19,7 +19,7 @@
     "graph:types": "j1-integration visualize-types",
     "graph:spec": "j1-integration visualize-types --project-path docs/spec --output-file ./.j1-integration/types-graph/index.spec.html",
     "validate:questions:dry": "j1-integration validate-question-file --dry-run",
-    "validate:questions": "j1-integration validate-question-file -a $JUPITERONE_ACCOUNT_ID -k $JUPITERONE_API_KEY",
+    "validate:questions": "j1-integration validate-question-file -a $MANAGED_QUESTIONS_JUPITERONE_ACCOUNT_ID -k $MANAGED_QUESTIONS_JUPITERONE_API_KEY",
     "document": "j1-integration document && yarn document:diagnostic-settings",
     "lint": "eslint . --cache --fix --ext .ts,.tsx",
     "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",

@@ -274,27 +274,38 @@ export async function request<T extends ResourceResponse>(
     if (err.statusCode === 404) {
       logger.warn({ err }, 'Resources not found');
     } else {
+      let status = '';
+      let statusText = '';
       if (err instanceof AzureRestError) {
-        throw new IntegrationProviderAPIError({
-          cause: err,
-          endpoint: resourceDescription,
-          status: err.body?.code as string,
-          statusText: err.body?.message as string,
-        });
+        status = err.body?.code;
+        statusText = err.body?.message;
+      } else if (err instanceof FetchError) {
+        status = err.code!;
+        statusText = err.message;
+      } else {
+        status = err.statusCode;
+        statusText = err.statusText;
       }
-      if (err instanceof FetchError) {
-        throw new IntegrationProviderAPIError({
-          cause: err,
-          endpoint: resourceDescription,
-          status: err.code!,
-          statusText: err.message,
-        });
+      if (
+        statusText ===
+          'The current subscription type is not permitted to perform operations on any provider namespace. Please use a different subscription.' ||
+        status === 'Subscription Not Registered' ||
+        status === 'SubscriptionNotRegistered'
+      ) {
+        // TODO handle this before hitting errors at this endpoint.
+        return;
       }
+
+      if (status === 'The specified account is disabled.') {
+        // TODO handle this in storage blob, table, file, queue steps before hitting errors at this endpoint.
+        return;
+      }
+
       throw new IntegrationProviderAPIError({
         cause: err,
         endpoint: resourceDescription,
-        status: err.statusCode,
-        statusText: err.statusText,
+        status,
+        statusText,
       });
     }
   }

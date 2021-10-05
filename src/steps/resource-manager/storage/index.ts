@@ -7,6 +7,7 @@ import {
   RelationshipClass,
   getRawData,
 } from '@jupiterone/integration-sdk-core';
+import { compareAsc } from 'date-fns';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';

@@ -60,6 +60,7 @@ export function createStorageAccountEntity(
     queue?: QueueServiceProperties;
     lastAccessKeyRegenerationDate?: Date;
     table?: TableServiceProperties;
+    lastAccessKeyRegenerationDate?: Date;
   },
 ): Entity {
   const encryptedServices = data.encryption?.services;
@@ -128,6 +129,8 @@ export function createStorageAccountEntity(
         tableAnalyticsLoggingReadEnabled: tableLogging?.Read[0] === 'true',
         tableAnalyticsLoggingWriteEnabled: tableLogging?.Write[0] === 'true',
         tableAnalyticsLoggingDeleteEnabled: tableLogging?.Delete[0] === 'true',
+        lastAccessKeyRegenerationDate:
+          storageAccountServiceProperties.lastAccessKeyRegenerationDate,
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,

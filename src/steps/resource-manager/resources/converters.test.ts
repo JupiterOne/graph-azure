@@ -59,8 +59,9 @@ describe('createResourceGroupLockEntity', () => {
 
     expect(createResourceGroupLockEntitiy(webLinker, data)).toEqual({
       ...convertProperties(data),
+      createdOn: undefined,
       _key: '/subscriptions/subscription-id/resourceGroups/j1dev/locks/j1-lock',
-      _type: 'azure_resource_group_lock',
+      _type: 'azure_resource_group_resource_lock',
       _class: ['Rule'],
       _rawData: [{ name: 'default', rawData: data }],
       id: '/subscriptions/subscription-id/resourceGroups/j1dev/locks/j1-lock',

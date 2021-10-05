@@ -7,7 +7,7 @@ import {
 
 import { AzureWebLinker } from '../../../azure';
 import { RESOURCE_GROUP_ENTITY } from './constants';
-import { RESOURCE_GROUP_LOCK_ENTITY } from '.';
+import { RESOURCE_GROUP_RESOURCE_LOCK_ENTITY } from '.';
 
 export function createResourceGroupEntity(
   webLinker: AzureWebLinker,
@@ -43,8 +43,8 @@ export function createResourceGroupLockEntitiy(
       source: data,
       assign: {
         _key: data.id as string,
-        _type: RESOURCE_GROUP_LOCK_ENTITY._type,
-        _class: RESOURCE_GROUP_LOCK_ENTITY._class,
+        _type: RESOURCE_GROUP_RESOURCE_LOCK_ENTITY._type,
+        _class: RESOURCE_GROUP_RESOURCE_LOCK_ENTITY._class,
         id: data.id,
         name: data.name,
         // 8.3 Ensure that Resource Locks are set for mission critical Azure resources

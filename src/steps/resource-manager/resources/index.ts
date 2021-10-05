@@ -18,7 +18,7 @@ import {
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
   STEP_RM_RESOURCES_RESOURCE_GROUP_LOCKS,
   RESOURCE_GROUP_ENTITY,
-  RESOURCE_GROUP_LOCK_ENTITY,
+  RESOURCE_GROUP_RESOURCE_LOCK_ENTITY,
 } from './constants';
 import {
   createResourceGroupEntity,
@@ -45,16 +45,16 @@ const SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_METADATA: StepRelationshipMetadat
   targetType: RESOURCE_GROUP_ENTITY._type,
 };
 
-const RESOURCE_GROUP_LOCK_RELATIONSHIP_CLASS = RelationshipClass.HAS;
-const RESOURCE_GROUP_LOCK_RELATIONSHIP_METADATA: StepRelationshipMetadata = {
-  _class: RESOURCE_GROUP_LOCK_RELATIONSHIP_CLASS,
+const RESOURCE_GROUP_RESOURCE_LOCK_RELATIONSHIP_CLASS = RelationshipClass.HAS;
+const RESOURCE_GROUP_RESOURCE_LOCK_RELATIONSHIP_METADATA: StepRelationshipMetadata = {
+  _class: RESOURCE_GROUP_RESOURCE_LOCK_RELATIONSHIP_CLASS,
   sourceType: RESOURCE_GROUP_ENTITY._type,
   _type: generateRelationshipType(
-    RESOURCE_GROUP_LOCK_RELATIONSHIP_CLASS,
+    RESOURCE_GROUP_RESOURCE_LOCK_RELATIONSHIP_CLASS,
     RESOURCE_GROUP_ENTITY._type,
-    RESOURCE_GROUP_LOCK_ENTITY._type,
+    RESOURCE_GROUP_RESOURCE_LOCK_ENTITY._type,
   ),
-  targetType: RESOURCE_GROUP_LOCK_ENTITY._type,
+  targetType: RESOURCE_GROUP_RESOURCE_LOCK_ENTITY._type,
 };
 
 export async function createSubscriptionResourceGroupRelationship(
@@ -151,9 +151,9 @@ export const resourcesSteps: Step<
   },
   {
     id: STEP_RM_RESOURCES_RESOURCE_GROUP_LOCKS,
-    name: 'Resource Group Locks',
-    entities: [RESOURCE_GROUP_LOCK_ENTITY],
-    relationships: [RESOURCE_GROUP_LOCK_RELATIONSHIP_METADATA],
+    name: 'Resource Group Resource Locks',
+    entities: [RESOURCE_GROUP_RESOURCE_LOCK_ENTITY],
+    relationships: [RESOURCE_GROUP_RESOURCE_LOCK_RELATIONSHIP_METADATA],
     dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchResourceGroupLocks,
   },

@@ -259,7 +259,7 @@ The following entities are created:
 | [RM] Redis Cache                               | `azure_redis_cache`                               | `Database`, `DataStore`, `Cluster` |
 | [RM] Redis Firewall Rule                       | `azure_firewall_rule`                             | `Firewall`                         |
 | [RM] Resource Group                            | `azure_resource_group`                            | `Group`                            |
-| [RM] Resource Group Lock                       | `azure_resource_group_lock`                       | `Rule`                             |
+| [RM] Resource Group Resource Lock              | `azure_resource_group_resource_lock`              | `Rule`                             |
 | [RM] Role Assignment                           | `azure_role_assignment`                           | `AccessPolicy`                     |
 | [RM] Role Definition                           | `azure_role_definition`                           | `AccessRole`                       |
 | [RM] SQL Database                              | `azure_sql_database`                              | `Database`, `DataStore`            |
@@ -363,7 +363,6 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_image`                                     |
 | `azure_resource_group`             | **HAS**               | `azure_keyvault_service`                          |
 | `azure_resource_group`             | **HAS**               | `azure_lb`                                        |
-| `azure_resource_group`             | **HAS**               | `azure_resource_group_lock`                       |
 | `azure_resource_group`             | **HAS**               | `azure_managed_disk`                              |
 | `azure_resource_group`             | **HAS**               | `azure_mariadb_server`                            |
 | `azure_resource_group`             | **HAS**               | `azure_monitor_activity_log_alert`                |
@@ -376,6 +375,7 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_private_endpoint`                          |
 | `azure_resource_group`             | **HAS**               | `azure_public_ip`                                 |
 | `azure_resource_group`             | **HAS**               | `azure_redis_cache`                               |
+| `azure_resource_group`             | **HAS**               | `azure_resource_group_resource_lock`              |
 | `azure_resource_group`             | **HAS**               | `azure_security_group`                            |
 | `azure_resource_group`             | **HAS**               | `azure_service_bus_namespace`                     |
 | `azure_resource_group`             | **HAS**               | `azure_sql_server`                                |

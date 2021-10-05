@@ -57,8 +57,8 @@ export function createStorageAccountEntity(
   storageAccountServiceProperties: {
     blob?: BlobServiceProperties;
     queue?: QueueServiceProperties;
+    lastAccessKeyRegenerationDate?: Date;
   },
-  isAccessKeyRegenerated: boolean,
 ): Entity {
   const encryptedServices = data.encryption?.services;
   const storageAccountEntity = createIntegrationEntity({
@@ -118,13 +118,14 @@ export function createStorageAccountEntity(
         queueAnalyticsLoggingDeleteEnabled:
           storageAccountServiceProperties.queue?.queueAnalyticsLogging
             ?.deleteProperty,
+        lastAccessKeyRegenerationDate:
+          storageAccountServiceProperties.lastAccessKeyRegenerationDate,
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,
             keyVaultProperties: data.encryption?.keyVaultProperties,
           },
         }),
-        isAccessKeyRegenerated,
       },
       tagProperties: ['environment'],
     },

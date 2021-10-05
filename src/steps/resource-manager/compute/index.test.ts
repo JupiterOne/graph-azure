@@ -466,7 +466,6 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
           webLinker,
           storageAccount,
           { blob: {} },
-          false,
         );
 
         const context = createMockAzureStepExecutionContext({
@@ -551,7 +550,6 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
           webLinker,
           storageAccount,
           { blob: {} },
-          false,
         );
 
         const context = createMockAzureStepExecutionContext({
@@ -630,7 +628,6 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
           webLinker,
           storageAccount,
           { blob: {} },
-          false,
         );
 
         const context = createMockAzureStepExecutionContext({

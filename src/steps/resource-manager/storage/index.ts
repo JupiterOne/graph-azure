@@ -7,6 +7,7 @@ import {
   RelationshipClass,
   getRawData,
 } from '@jupiterone/integration-sdk-core';
+import { compareAsc } from 'date-fns';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
@@ -40,23 +41,49 @@ export async function fetchStorageAccounts(
     name: string;
     kind: Kind;
     skuTier: SkuTier;
+    id: string;
   }) {
     const storageAccountServiceClient = createStorageAccountServiceClient({
       config: instance.config,
       logger,
       storageAccount,
     });
+    const monitorClient = new MonitorClient(instance.config, logger);
 
     const storageBlobServiceProperties = await storageAccountServiceClient.getBlobServiceProperties();
     const storageQueueServiceProperties = await storageAccountServiceClient.getQueueServiceProperties();
 
+    let lastAccessKeyRegenerationDate: Date | undefined;
+    await monitorClient.iterateActivityLogsFromPreviousNDays(
+      storageAccount.id as string,
+      (log) => {
+        const eventTimestamp = log.eventTimestamp as Date;
+        if (
+          log.authorization?.action ===
+            'Microsoft.Storage/storageAccounts/regenerateKey/action' &&
+          log.status?.value === 'Succeeded'
+        ) {
+          if (
+            !lastAccessKeyRegenerationDate ||
+            (lastAccessKeyRegenerationDate &&
+              compareAsc(eventTimestamp, lastAccessKeyRegenerationDate) === 1)
+          ) {
+            lastAccessKeyRegenerationDate = eventTimestamp;
+          }
+        }
+      },
+      {
+        select: 'authorization, status, eventTimestamp',
+      },
+    );
+
     return {
       blob: storageBlobServiceProperties,
       queue: storageQueueServiceProperties,
+      lastAccessKeyRegenerationDate,
     };
   }
   const client = new StorageClient(instance.config, logger);
-  const monitorClient = new MonitorClient(instance.config, logger);
 
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
@@ -64,23 +91,12 @@ export async function fetchStorageAccounts(
   const keyVaultEntityMap = await buildKeyVaultEntityMap(executionContext);
 
   await client.iterateStorageAccounts(async (storageAccount) => {
-    let isAccessKeyRegenerated = false;
-    await monitorClient.iterateActivityLogs(
-      storageAccount.id as string,
-      (log) => {
-        isAccessKeyRegenerated =
-          (log.authorization?.action ===
-            'Microsoft.Storage/storageAccounts/regenerateKey/action' &&
-            log.status?.value === 'Succeeded') ||
-          isAccessKeyRegenerated;
-      },
-    );
-
     const storageAccountServiceProperties = await getStorageAccountServiceProperties(
       {
         name: storageAccount.name!,
         kind: storageAccount.kind!,
         skuTier: storageAccount.sku?.tier as SkuTier,
+        id: storageAccount.id!,
       },
     );
     const storageAccountEntity = await jobState.addEntity(
@@ -88,7 +104,6 @@ export async function fetchStorageAccounts(
         webLinker,
         storageAccount,
         storageAccountServiceProperties,
-        isAccessKeyRegenerated,
       ),
     );
     await createResourceGroupResourceRelationship(

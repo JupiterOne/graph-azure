@@ -116,7 +116,7 @@ test('step - resource groups', async () => {
 
   recording = setupAzureRecording({
     directory: __dirname,
-    name: 'resource-manager-step-groups',
+    name: 'resource-manager-step-resource-groups',
   });
 
   const context = createMockAzureStepExecutionContext({

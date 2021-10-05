@@ -55,8 +55,8 @@ export async function fetchSQLServers(
     );
     setServerVulnerabilityAssessment(
       serverEntity,
-      await client.fetchServerVulnerabilityAssessments(server)
-    )
+      await client.fetchServerVulnerabilityAssessment(server),
+    );
     setServerEncryptionProtector(
       serverEntity,
       await client.fetchServerEncryptionProtector({

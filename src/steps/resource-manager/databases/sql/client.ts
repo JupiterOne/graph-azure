@@ -216,7 +216,7 @@ export class SQLClient extends Client {
     }
   }
 
-  public async fetchServerVulnerabilityAssessments(
+  public async fetchServerVulnerabilityAssessment(
     server: Server,
   ): Promise<ServerVulnerabilityAssessmentsGetResponse | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
@@ -227,7 +227,7 @@ export class SQLClient extends Client {
       return serviceClient.serverVulnerabilityAssessments.get(
         resourceGroupName(server.id, true),
         server.name as string,
-      )
+      );
     } catch (err) {
       this.logger.warn(
         {
@@ -250,7 +250,6 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-
 
     try {
       return await serviceClient.serverSecurityAlertPolicies.get(

@@ -49,6 +49,10 @@ export class KeyVaultClient extends Client {
       // a warn message will be shown indicating that
       if (err.statusCode === 403) {
         this.logger.warn({ err }, err.message);
+        this.logger.publishEvent({
+          name: 'MISSING_POLICY',
+          description: `Missing a Key Vault access policy. A Key Vault access policy determines whether a given security principal can perform different operations on Key Vault secrets, keys and certificates. Please follow the steps outlined here https://go.microsoft.com/fwlink/?linkid=2125287 and assign a "list" key permission in order to fetch these keys for your Key Vault ${vaultUri}.`,
+        });
       } else {
         throw err;
       }
@@ -73,6 +77,10 @@ export class KeyVaultClient extends Client {
       // a warn message will be shown indicating that
       if (err.statusCode === 403) {
         this.logger.warn({ err }, err.message);
+        this.logger.publishEvent({
+          name: 'MISSING_POLICY',
+          description: `Missing a Key Vault access policy. A Key Vault access policy determines whether a given security principal can perform different operations on Key Vault secrets, keys and certificates. Please follow the steps outlined here https://go.microsoft.com/fwlink/?linkid=2125287 and assign a "list" secret permission in order to fetch these secrets for your Key Vault ${vaultUri}.`,
+        });
       } else {
         throw err;
       }

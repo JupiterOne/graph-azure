@@ -122,6 +122,13 @@ information:
 
    - Also assign the "Management Group Reader" role to the App "JupiterOne"
 
+### Key Vault Access Policy
+
+Please note that listing Key Vault keys and secrets (rm-keyvault-keys and
+rm-keyvault-secrets steps) require a given security principal to have necessary
+policies. The steps necesssary for that are outlined on this page
+[Assign a Key Vault access policy ](https://go.microsoft.com/fwlink/?linkid=2125287).
+
 ### In JupiterOne
 
 1. From the configuration **Gear Icon**, select **Integrations**.
@@ -176,7 +183,7 @@ NOTE: ALL OF THE FOLLOWING DOCUMENTATION IS GENERATED USING THE
 "j1-integration document" COMMAND. DO NOT EDIT BY HAND! PLEASE SEE THE DEVELOPER
 DOCUMENTATION FOR USAGE INFORMATION:
 
-https://github.com/JupiterOne/sdk/blob/main/docs/integrations/development.md
+https://github.com/JupiterOne/sdk/blob/master/docs/integrations/development.md
 ********************************************************************************
 -->
 
@@ -284,7 +291,7 @@ The following entities are created:
 
 ### Relationships
 
-The following relationships are created:
+The following relationships are created/mapped:
 
 | Source Entity `_type`              | Relationship `_class` | Target Entity `_type`                             |
 | ---------------------------------- | --------------------- | ------------------------------------------------- |

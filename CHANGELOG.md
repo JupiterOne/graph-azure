@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.32.0] - 2021-10-04
+
+### Added
+
+- Open-sourced Azure managed questions
+
 ## [5.31.7] - 2021-10-04
 
 ### Changed

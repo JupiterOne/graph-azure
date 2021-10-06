@@ -28,11 +28,7 @@ afterEach(async () => {
 describe('rm-storage-accounts', () => {
   async function getSetupEntities() {
     const setupContext = createMockAzureStepExecutionContext({
-      instanceConfig: {
-        ...configFromEnv,
-        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-      },
+      instanceConfig: configFromEnv,
     });
 
     await fetchAccount(setupContext);
@@ -74,11 +70,7 @@ describe('rm-storage-accounts', () => {
     const { accountEntity, keyVaultEntity } = await getSetupEntities();
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: {
-        ...configFromEnv,
-        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-      },
+      instanceConfig: configFromEnv,
       entities: [keyVaultEntity],
       setData: {
         [ACCOUNT_ENTITY_TYPE]: accountEntity,

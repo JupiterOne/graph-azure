@@ -24,6 +24,9 @@ jobs:
         run: yarn
 
       - name: Run tests
+        env:
+          MANAGED_QUESTIONS_JUPITERONE_ACCOUNT_ID: ${{ secrets.MANAGED_QUESTIONS_JUPITERONE_ACCOUNT_ID }}
+          MANAGED_QUESTIONS_JUPITERONE_API_KEY: ${{ secrets.MANAGED_QUESTIONS_JUPITERONE_API_KEY }}
         run: yarn test:ci
 
       - name: Run build
@@ -71,4 +74,4 @@ jobs:
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > .npmrc
           yarn
-          npm publish
+          npm publish ./dist

@@ -98,11 +98,7 @@ describe('rm-storage-accounts', () => {
 describe('rm-storage-containers', () => {
   async function getSetupEntities() {
     const setupContext = createMockAzureStepExecutionContext({
-      instanceConfig: {
-        ...configFromEnv,
-        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-      },
+      instanceConfig: configFromEnv,
     });
 
     await fetchAccount(setupContext);
@@ -132,7 +128,6 @@ describe('rm-storage-containers', () => {
         matchRequestsBy: getMatchRequestsBy({
           config: configFromEnv,
           options: {
-            headers: false,
             url: {
               query: false,
             },
@@ -144,11 +139,7 @@ describe('rm-storage-containers', () => {
     const { accountEntity, storageAccountEntity } = await getSetupEntities();
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: {
-        ...configFromEnv,
-        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-      },
+      instanceConfig: configFromEnv,
       entities: [storageAccountEntity],
       setData: {
         [ACCOUNT_ENTITY_TYPE]: accountEntity,
@@ -175,11 +166,7 @@ describe('rm-storage-containers', () => {
 describe('rm-storage-file-shares', () => {
   async function getSetupEntities() {
     const setupContext = createMockAzureStepExecutionContext({
-      instanceConfig: {
-        ...configFromEnv,
-        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-      },
+      instanceConfig: configFromEnv,
     });
 
     await fetchAccount(setupContext);
@@ -209,7 +196,6 @@ describe('rm-storage-file-shares', () => {
         matchRequestsBy: getMatchRequestsBy({
           config: configFromEnv,
           options: {
-            headers: false,
             url: {
               query: false,
             },
@@ -221,11 +207,7 @@ describe('rm-storage-file-shares', () => {
     const { accountEntity, storageAccountEntity } = await getSetupEntities();
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: {
-        ...configFromEnv,
-        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-      },
+      instanceConfig: configFromEnv,
       entities: [storageAccountEntity],
       setData: {
         [ACCOUNT_ENTITY_TYPE]: accountEntity,

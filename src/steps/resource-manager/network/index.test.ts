@@ -1319,11 +1319,7 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
     );
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: {
-        ...configFromEnv,
-        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-      },
+      instanceConfig: configFromEnv,
       entities: [accountEntity, resourceGroupEntity],
       setData: {
         [ACCOUNT_ENTITY_TYPE]: accountEntity,
@@ -1373,11 +1369,7 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
     } = await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: {
-        ...configFromEnv,
-        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-      },
+      instanceConfig: configFromEnv,
       entities: [...storageAccountEntities, privateEndpointEntity],
     });
 
@@ -1588,18 +1580,10 @@ describe('rm-network-flow-logs', () => {
       networkWatcherEntities,
       securityGroupEntities,
       storageAccountEntities,
-    } = await getSetupEntities({
-      ...configFromEnv,
-      directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-      subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-    });
+    } = await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: {
-        ...configFromEnv,
-        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-      },
+      instanceConfig: configFromEnv,
       entities: [
         ...networkWatcherEntities,
         ...securityGroupEntities,

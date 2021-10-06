@@ -1,6 +1,7 @@
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import {
+  getMatchRequestsBy,
   Recording,
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
@@ -19,14 +20,16 @@ describe('iterateResourceGroups', () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateResourceGroups',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          options: { url: { query: false } },
+        }),
+      },
     });
 
     const client = new ResourcesClient(
-      {
-        ...configFromEnv,
-        directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-        subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-      },
+      configFromEnv,
       createMockIntegrationLogger(),
       true,
     );
@@ -41,5 +44,5 @@ describe('iterateResourceGroups', () => {
         name: 'DefaultResourceGroup-CUS',
       }),
     );
-  });
+  }, 10000);
 });

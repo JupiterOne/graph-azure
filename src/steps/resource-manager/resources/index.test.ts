@@ -7,8 +7,10 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import globalInstanceConfig, {
   configFromEnv,
 } from '../../../../test/integrationInstanceConfig';
-import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
@@ -108,24 +110,24 @@ describe('#createSubscriptionResourceGroupRelationship', () => {
 });
 
 test('step - resource groups', async () => {
-  const instanceConfig = {
-    ...configFromEnv,
-    directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-    subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-  };
-
   recording = setupAzureRecording({
     directory: __dirname,
     name: 'resource-manager-step-resource-groups',
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: configFromEnv,
+        options: { url: { query: false } },
+      }),
+    },
   });
 
   const context = createMockAzureStepExecutionContext({
-    instanceConfig,
+    instanceConfig: configFromEnv,
     entities: [
       {
         _class: ['Account'],
         _type: 'azure_subscription',
-        _key: `/subscriptions/${instanceConfig.subscriptionId}`,
+        _key: `/subscriptions/${configFromEnv.subscriptionId}`,
       },
     ],
     setData: {
@@ -163,21 +165,21 @@ test('step - resource group locks', async () => {
   recording = setupAzureRecording({
     directory: __dirname,
     name: 'resource-manager-step-resource-group-locks',
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: configFromEnv,
+        options: { url: { query: false } },
+      }),
+    },
   });
 
-  const instanceConfig: IntegrationConfig = {
-    ...configFromEnv,
-    directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-    subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-  };
-
   const context = createMockAzureStepExecutionContext({
-    instanceConfig,
+    instanceConfig: configFromEnv,
     entities: [
       {
         _class: ['Account'],
         _type: 'azure_subscription',
-        _key: `/subscriptions/${instanceConfig.subscriptionId}`,
+        _key: `/subscriptions/${configFromEnv.subscriptionId}`,
       },
     ],
     setData: {

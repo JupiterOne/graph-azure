@@ -43,16 +43,80 @@ export class AppServiceClient extends Client {
     });
   }
 
-  public async fetchAppConfiguration(
+  public async createAppAuthConfigurationContext(): Promise<
+    (
+      name?: string,
+      resourceGroup?: string,
+    ) => Promise<WebAppsGetAuthSettingsResponse | undefined>
+  > {
+    let canGetAuthSettings: boolean | undefined = undefined;
+
+    return async (
+      name?: string,
+      resourceGroup?: string,
+    ): Promise<WebAppsGetAuthSettingsResponse | undefined> => {
+      if (typeof canGetAuthSettings === 'undefined') {
+        canGetAuthSettings = await this.canFetchAppAuthSettings(
+          name,
+          resourceGroup,
+        );
+      }
+
+      if (!canGetAuthSettings) {
+        return;
+      }
+
+      const serviceClient = await this.getAuthenticatedServiceClient(
+        WebSiteManagementClient,
+      );
+
+      if (!name || !resourceGroup) {
+        return;
+      }
+
+      return serviceClient.webApps.getAuthSettings(resourceGroup, name);
+    };
+  }
+
+  public async canFetchAppAuthSettings(
     name: string | undefined,
     resourceGroup: string | undefined,
-  ): Promise<WebAppsGetConfigurationResponse | null> {
+  ): Promise<boolean | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       WebSiteManagementClient,
     );
 
     if (!name || !resourceGroup) {
-      return null;
+      return;
+    }
+
+    try {
+      await serviceClient.webApps.getAuthSettings(resourceGroup, name);
+      return true;
+    } catch (err) {
+      this.logger.warn({ err }, 'Warning: unable to fetch app configuration.');
+      if (err.statusCode === 403 && err.code === 'AuthorizationFailed') {
+        this.logger.publishEvent({
+          name: 'MISSING_PERMISSION',
+          description:
+            'Missing permission "Microsoft.Web/sites/config/list/action", which is used to fetch WebApp Auth Settings. Please update the `JupiterOne Reader` Role in your Azure environment in order to fetch these settings for your WebApp.',
+        });
+        return false;
+      }
+      return;
+    }
+  }
+
+  public async fetchAppConfiguration(
+    name: string | undefined,
+    resourceGroup: string | undefined,
+  ): Promise<WebAppsGetConfigurationResponse | undefined> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      WebSiteManagementClient,
+    );
+
+    if (!name || !resourceGroup) {
+      return;
     }
 
     return serviceClient.webApps.getConfiguration(resourceGroup, name);
@@ -61,13 +125,13 @@ export class AppServiceClient extends Client {
   public async fetchAppAuthSettings(
     name: string | undefined,
     resourceGroup: string | undefined,
-  ): Promise<WebAppsGetAuthSettingsResponse | null> {
+  ): Promise<WebAppsGetAuthSettingsResponse | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       WebSiteManagementClient,
     );
 
     if (!name || !resourceGroup) {
-      return null;
+      return;
     }
 
     return serviceClient.webApps.getAuthSettings(resourceGroup, name);

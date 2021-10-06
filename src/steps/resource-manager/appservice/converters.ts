@@ -2,6 +2,7 @@ import {
   Entity,
   createIntegrationEntity,
   StepEntityMetadata,
+  setRawData,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
@@ -23,10 +24,10 @@ export function createAppEntity({
   webLinker: AzureWebLinker;
   data: Site;
   metadata: StepEntityMetadata;
-  appConfig: WebAppsGetConfigurationResponse | null;
-  appAuthSettings: WebAppsGetAuthSettingsResponse | null;
+  appConfig: WebAppsGetConfigurationResponse | undefined;
+  appAuthSettings: WebAppsGetAuthSettingsResponse | undefined;
 }): Entity {
-  return createIntegrationEntity({
+  const appServiceEntity = createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
@@ -64,6 +65,22 @@ export function createAppEntity({
       },
     },
   });
+
+  if (appConfig) {
+    setRawData(appServiceEntity, {
+      name: 'appConfig',
+      rawData: appConfig,
+    });
+  }
+
+  if (appAuthSettings) {
+    setRawData(appServiceEntity, {
+      name: 'appAuthSettings',
+      rawData: appAuthSettings,
+    });
+  }
+
+  return appServiceEntity;
 }
 
 export function createAppServicePlanEntity(

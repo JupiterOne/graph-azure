@@ -14,11 +14,19 @@ import {
   SERVICE_PRINCIPAL_ENTITY_TYPE,
   USER_ENTITY_TYPE,
 } from '../../active-directory';
-import { buildKeyVaultAccessPolicyRelationships, fetchKeyVaults } from '.';
+import {
+  buildKeyVaultAccessPolicyRelationships,
+  fetchKeyVaultKeys,
+  fetchKeyVaults,
+  fetchKeyVaultSecrets,
+} from '.';
 import {
   ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
   KeyVaultEntities,
+  KeyVaultRelationships,
+  KEY_VAULT_KEY_ENTITY_TYPE,
   KEY_VAULT_SERVICE_ENTITY_CLASS,
+  KEY_VAULT_SERVICE_ENTITY_TYPE,
 } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
@@ -26,29 +34,34 @@ import { RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS } from '../utils/createResou
 
 let recording: Recording;
 
-describe('step = key vaults', () => {
-  afterAll(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
+afterEach(async () => {
+  if (recording) {
+    await recording.stop();
+  }
+});
 
-  it('should collect an Azure Key Vault entity', async () => {
+describe('rm-key-vault-vaults', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    return { accountEntity };
+  }
+
+  test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: 'resource-manager-step-key-vaults',
+      name: 'rm-key-vault-vaults',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
     });
 
-    const instanceConfig = {
-      ...configFromEnv,
-      directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-      subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-    };
+    const { accountEntity } = getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: instanceConfig,
+      instanceConfig: configFromEnv,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(instanceConfig),
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
       },
     });
 
@@ -87,30 +100,31 @@ describe('step = key vaults', () => {
   });
 });
 
-/*
-describe('step = key vaults keys', () => {
-  afterAll(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
+describe('rm-key-vault-keys', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
 
-  it('should collect an Azure Key Vault Key entity and relationships', async () => {
+    return { accountEntity };
+  }
+
+  test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: 'resource-manager-step-key-vaults-keys',
+      name: 'rm-key-vault-keys',
+      options: {
+        recordFailedRequests: true,
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+        }),
+      },
     });
 
-    const instanceConfig = {
-      ...configFromEnv,
-      directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-      subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-    }
+    const { accountEntity } = getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: instanceConfig,
+      instanceConfig: configFromEnv,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(instanceConfig),
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
       },
     });
 
@@ -129,8 +143,7 @@ describe('step = key vaults keys', () => {
 
     expect(
       context.jobState.collectedRelationships.filter(
-        (e) =>
-          e._type === KeyVaultRelationships.KEY_VAULT_CONTAINS_KEY._type,
+        (e) => e._type === KeyVaultRelationships.KEY_VAULT_CONTAINS_KEY._type,
       ),
     ).toMatchDirectRelationshipSchema({
       schema: {
@@ -142,7 +155,63 @@ describe('step = key vaults keys', () => {
     });
   });
 });
-*/
+
+describe('rm-key-vault-secrets', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    return { accountEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-key-vault-secrets',
+      options: {
+        recordFailedRequests: true,
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+        }),
+      },
+    });
+
+    const { accountEntity } = getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchKeyVaults(context);
+    await fetchKeyVaultSecrets(context);
+
+    const keyVaultEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === KEY_VAULT_SERVICE_ENTITY_TYPE,
+    );
+    expect(keyVaultEntities.length).toBeGreaterThan(0);
+
+    const keyVaultSecretEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === KEY_VAULT_SERVICE_ENTITY_TYPE,
+    );
+    expect(keyVaultSecretEntities.length).toBeGreaterThan(0);
+
+    expect(
+      context.jobState.collectedRelationships.filter(
+        (e) =>
+          e._type === KeyVaultRelationships.KEY_VAULT_CONTAINS_SECRET._type,
+      ),
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _class: { const: 'CONTAINS' },
+          _type: { const: 'azure_keyvault_service_contains_secret' },
+        },
+      },
+    });
+  });
+});
 
 describe('rm-keyvault-principal-relationships', () => {
   afterEach(async () => {
@@ -225,60 +294,3 @@ describe('rm-keyvault-principal-relationships', () => {
     ]);
   }, 10_000);
 });
-
-/*
-describe('step = key vaults secrets', () => {
-  afterAll(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
-
-  it('should collect an Azure Key Vault Secret entity and relationships', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'resource-manager-step-key-vaults-secrets',
-    });
-
-    const instanceConfig = {
-      ...configFromEnv,
-      directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-      subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-    }
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: instanceConfig,
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(instanceConfig),
-      },
-    });
-
-    await fetchKeyVaults(context);
-    await fetchKeyVaultSecrets(context);
-
-    const keyVaultEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === KEY_VAULT_SERVICE_ENTITY_TYPE,
-    );
-    expect(keyVaultEntities.length).toBeGreaterThan(0);
-
-    const keyVaultSecretEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === KEY_VAULT_SECRET_ENTITY_TYPE,
-    );
-    expect(keyVaultSecretEntities.length).toBeGreaterThan(0);
-
-    expect(
-      context.jobState.collectedRelationships.filter(
-        (e) =>
-          e._type === KeyVaultRelationships.KEY_VAULT_CONTAINS_SECRET._type,
-      ),
-    ).toMatchDirectRelationshipSchema({
-      schema: {
-        properties: {
-          _class: { const: 'CONTAINS' },
-          _type: { const: 'azure_keyvault_service_contains_secret' },
-        },
-      },
-    });
-  });
-});
-*/

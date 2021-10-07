@@ -909,6 +909,111 @@ questions:
     version: v1.1.0
     requirements:
       - '4.2'
+- id: integration-question-azure-db-sql-servers-atp-enabled
+  title: Is Advanced Threat Protection (ATP) enabled for Azure SQL servers?
+  description:
+    Checks if Azure SQL servers have Advanced Threat Protection (ATP) enabled.
+  queries:
+  - name: good
+    query: find azure_sql_server with alertingEnabled = true
+  - name: bad
+    query: find azure_sql_server with alertingEnabled != true
+  tags:
+  - azure
+  - database
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '4.2.1'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '4.2.1'
+- id: integration-question-azure-db-sql-servers-va-enabled
+  title: Is Vulnerability Assessment (VA) is enabled for Azure SQL servers by setting a Storage Accounts?
+  description:
+    Checks if Azure SQL servers have Vulnerability Assessment (VA) enabled.
+  queries:
+  - name: good
+    query: find azure_sql_server with vaStoragePath != undefined
+  - name: bad
+    query: find azure_sql_server with vaStoragePath!= undefined
+  tags:
+  - azure
+  - database
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '4.2.2'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '4.2.2'
+- id: integration-question-azure-db-sql-servers-va-recurring-scans
+  title: Are Vulnerability Assessment (VA) setting Periodic Recurring Scans for Azure SQL servers?
+  description:
+    Checks if Azure SQL servers have Vulnerability Assessment (VA) Periodic Recurring Scans enabled.
+  queries:
+  - name: good
+    query: find azure_sql_server with vaRecurringScansEnabled = true
+  - name: bad
+    query: find azure_sql_server with vaRecurringScansEnabled != true
+  tags:
+  - azure
+  - database
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '4.2.3'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '4.2.3'
+- id: integration-question-azure-db-sql-servers-va-scan-reports
+  title: Is Vulnerability Assessment (VA) sending scan reports for Azure SQL servers?
+  description:
+    Checks if Azure SQL servers have Vulnerability Assessment (VA) scan reports sending enabled.
+  queries:
+  - name: good
+    query: find azure_sql_server with vaEmails != undefined and vaEmails "array is not empty"
+  - name: bad
+    query: find azure_sql_server with vaEmails = undefined or vaEmails "array is empty"
+  tags:
+  - azure
+  - database
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '4.2.4'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '4.2.4'
+- id: integration-question-azure-db-sql-servers-va-scan-reports-admins-owners
+  title: Is Vulnerability Assessment (VA) sending scan reports to admins and subscription owners for Azure SQL servers?
+  description:
+    Checks if Azure SQL servers have Vulnerability Assessment (VA) scan reports sending to admins and subscription owners enabled.
+  queries:
+  - name: good
+    query: find azure_sql_server with vaEmailSubscriptionAdmins = true
+  - name: bad
+    query: find azure_sql_server with with vaEmailSubscriptionAdmins != true
+  tags:
+  - azure
+  - database
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '4.2.5'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '4.2.5'
 - id: integration-question-azure-db-sql-servers-audit-retention
   title: How long are Azure SQL server and database audit events retained?
   description:

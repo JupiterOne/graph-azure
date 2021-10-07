@@ -30,7 +30,7 @@ export async function fetchApps(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new AppServiceClient(instance.config, logger);
 
-  const fetchAppAuthConfiguration = await client.createAppAuthConfigurationContext();
+  const fetchAppAuthConfiguration = client.createAppAuthConfigurationContext();
 
   await client.iterateApps(async (app) => {
     const appAuthSettings = await fetchAppAuthConfiguration(

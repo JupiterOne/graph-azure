@@ -43,12 +43,10 @@ export class AppServiceClient extends Client {
     });
   }
 
-  public async createAppAuthConfigurationContext(): Promise<
-    (
-      name?: string,
-      resourceGroup?: string,
-    ) => Promise<WebAppsGetAuthSettingsResponse | undefined>
-  > {
+  public createAppAuthConfigurationContext(): (
+    name?: string,
+    resourceGroup?: string,
+  ) => Promise<WebAppsGetAuthSettingsResponse | undefined> {
     let canGetAuthSettings: boolean | undefined = undefined;
 
     return async (

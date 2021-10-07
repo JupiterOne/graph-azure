@@ -2147,3 +2147,236 @@ questions:
     requirements:
       - '7.7'
 
+##########################################
+# CIS 9 - AppService
+##########################################
+- id: integration-question-azure-appservice-authentication-enabled
+  title: Is app service authentication enabled for all Azure app services?
+  description:
+    Checks the app service authentication state of all Azure app services
+  queries:
+  - name: good
+    query: |
+      Find (azure_function_app | azure_web_app) with authEnabled = true
+  - name: bad
+    query: |
+      Find (azure_function_app | azure_web_app) with authEnabled = false
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '9.1'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '9.1'
+- id: integration-question-azure-appservice-http-https-redirection
+  title: Are all Azure Web Apps redirecting HTTP traffic to HTTPS?
+  description:
+    Checks the HTTPS redirection SSL settings of all Azure Web Apps.
+  queries:
+  - name: good
+    query: |
+      Find (azure_function_app | azure_web_app) with httpsOnly = true
+  - name: bad
+    query: |
+      Find (azure_function_app | azure_web_app) with httpsOnly = false
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '9.2'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '9.2'
+- id: integration-question-azure-appservice-tls-version
+  title: Are all Azure Web Apps using latest version of TLS encryption?
+  description:
+    Checks the version of TLS in use of all Azure Web Apps.
+  queries:
+  - name: good
+    query: |
+      Find (azure_function_app | azure_web_app) with minTlsVersion = "1.2"
+  - name: bad
+    query: |
+      Find (azure_function_app | azure_web_app) with minTlsVersion != "1.2"
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '9.3'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '9.3'
+- id: integration-question-azure-appservice-client-certificates
+  title: Are all Azure Web Apps requiring the client certificates?
+  description:
+    Checks that all Azure Web Apps has option "client certificate mode" set to "require".
+  queries:
+  - name: good
+    query: |
+      Find (azure_function_app | azure_web_app) with clientCertEnabled = true
+  - name: bad
+    query: |
+      Find (azure_function_app | azure_web_app) with clientCertEnabled = false
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '9.4'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '9.4'
+- id: integration-question-azure-appservice-register-azure-active-directory
+  title: Are all Azure Web Apps using "Register with Azure Active Directory"?
+  description:
+    Checks that all Azure Web Apps have "Register with Azure Active Directory" enabled.
+  queries:
+  - name: good
+    query: |
+      Find (azure_function_app | azure_web_app) with principalId != undefined
+  - name: bad
+    query: |
+      Find (azure_function_app | azure_web_app) with principalId = undefined
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '9.5'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '9.5'
+- id: integration-question-azure-appservice-php-latest-version
+  title: Are all Azure Web Apps using PHP's latest version?
+  description:
+    Checks that all Azure Web Apps are using the latest version of PHP.
+  queries:
+  - name: good
+    query: |
+      Find (azure_function_app | azure_web_app) with phpVersion = "8.0.11"
+  - name: bad
+    query: |
+      Find (azure_function_app | azure_web_app) with phpVersion != "8.0.11"
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '9.6'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '9.6'
+- id: integration-question-azure-appservice-python-latest-version
+  title: Are all Azure Web Apps using Python's latest version?
+  description:
+    Checks that all Azure Web Apps are using the latest version of Python.
+  queries:
+  - name: good
+    query: |
+      Find (azure_function_app | azure_web_app) with pythonVersion = "3.9.7"
+  - name: bad
+    query: |
+      Find (azure_function_app | azure_web_app) with pythonVersion != "3.9.7"
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '9.7'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '9.7'
+- id: integration-question-azure-appservice-java-latest-version
+  title: Are all Azure Web Apps using Java's latest version?
+  description:
+    Checks that all Azure Web Apps are using the latest version of Java.
+  queries:
+  - name: good
+    query: |
+      Find (azure_function_app | azure_web_app) with javaVersion = "16.0.2"
+  - name: bad
+    query: |
+      Find (azure_function_app | azure_web_app) with javaVersion != "16.0.2"
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '9.8'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '9.8'
+- id: integration-question-azure-appservice-http-latest-version
+  title: Are all Azure Web Apps using HTTP's latest version?
+  description:
+    Checks that all Azure Web Apps are using the latest version of HTTP.
+  queries:
+  - name: good
+    query: |
+      Find (azure_function_app | azure_web_app) with http20Enabled = true
+  - name: bad
+    query: |
+      Find (azure_function_app | azure_web_app) with http20Enabled != true
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '9.9'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '9.9'
+- id: integration-question-azure-appservice-ftp-disabled
+  title: Are all Azure Web Apps FTP deployments disabled?
+  description:
+    Checks that all Azure Web Apps have disabled FTP deployments.
+  queries:
+  - name: good
+    query: |
+      Find (azure_function_app | azure_web_app) with ftpsState != "AllAllowed"
+  - name: bad
+    query: |
+      Find (azure_function_app | azure_web_app) with ftpsState = "AllAllowed"
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '9.10'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '9.10'

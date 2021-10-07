@@ -2148,6 +2148,56 @@ questions:
       - '7.7'
 
 ##########################################
+# CIS 8 - Other Security Considerations
+##########################################
+- id: integration-question-azure-misc-key-vaults-keys-expiration
+  title: Do all Azure Key Vault Keys have an expiration time set?
+  description:
+    Checks the expiration time state of all Azure Key Vault Keys.
+  queries:
+  - name: good
+    query: |
+      Find azure_keyvault_key with enabled = true and expiresOn != undefined
+  - name: bad
+    query: |
+      Find azure_keyvault_key with enabled = true and expiresOn = undefined
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '8.1'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '8.1'
+- id: integration-question-azure-misc-key-vaults-secrets-expiration
+  title: Do all Azure Key Vault Secrets have an expiration time set?
+  description:
+    Checks the expiration time state of all Azure Key Vault Secrets.
+  queries:
+  - name: good
+    query: |
+      Find azure_keyvault_secret with enabled = true and expiresOn != undefined
+  - name: bad
+    query: |
+      Find azure_keyvault_secret with enabled = true and expiresOn = undefined
+  tags:
+  - azure
+  - data
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '8.2'
+  - standard: CIS Azure Foundations v1.3.1
+    version: v1.3.1
+    requirements:
+      - '8.2'
+
+##########################################
 # CIS 9 - AppService
 ##########################################
 - id: integration-question-azure-appservice-authentication-enabled

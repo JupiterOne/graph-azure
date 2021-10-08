@@ -22,7 +22,7 @@ import { createAccountEntity, createSQLDatabaseEntity } from './converters';
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 
 export * from './constants';
 

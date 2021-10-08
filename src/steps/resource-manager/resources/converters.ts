@@ -7,7 +7,7 @@ import {
 
 import { AzureWebLinker } from '../../../azure';
 import { RESOURCE_GROUP_ENTITY } from './constants';
-import { RESOURCE_GROUP_RESOURCE_LOCK_ENTITY } from '.';
+import { RESOURCE_LOCK_ENTITY } from './constants';
 
 export function createResourceGroupEntity(
   webLinker: AzureWebLinker,
@@ -34,7 +34,7 @@ export function createResourceGroupEntity(
   });
 }
 
-export function createResourceGroupLockEntitiy(
+export function createResourceLockEntitiy(
   webLinker: AzureWebLinker,
   data: ManagementLockModels.ManagementLockObject,
 ): Entity {
@@ -43,13 +43,13 @@ export function createResourceGroupLockEntitiy(
       source: data,
       assign: {
         _key: data.id as string,
-        _type: RESOURCE_GROUP_RESOURCE_LOCK_ENTITY._type,
-        _class: RESOURCE_GROUP_RESOURCE_LOCK_ENTITY._class,
+        _type: RESOURCE_LOCK_ENTITY._type,
+        _class: RESOURCE_LOCK_ENTITY._class,
         id: data.id,
         name: data.name,
         // 8.3 Ensure that Resource Locks are set for mission critical Azure resources
         level: data.level,
-        notes: data.notes,
+        notes: [data.notes as string],
         type: data.type,
         webLink: webLinker.portalResourceUrl(data.id),
       },

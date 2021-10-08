@@ -4,7 +4,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationConfig, IntegrationStepContext } from '../../../types';
-import { getAccountEntity } from '../../active-directory';
+import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { ContainerServicesClient } from './client';
 import {
@@ -41,7 +41,7 @@ export const containerServicesSteps: Step<
     name: 'Fetch Container Services Clusters',
     entities: [ContainerServicesEntities.SERVICE],
     relationships: [ContainerServicesRelationships.RESOURCE_GROUP_HAS_SERVICE],
-    dependsOn: [],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchClusters,
   },
 ];

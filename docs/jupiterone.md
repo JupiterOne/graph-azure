@@ -259,7 +259,7 @@ The following entities are created:
 | [RM] Redis Cache                               | `azure_redis_cache`                               | `Database`, `DataStore`, `Cluster` |
 | [RM] Redis Firewall Rule                       | `azure_firewall_rule`                             | `Firewall`                         |
 | [RM] Resource Group                            | `azure_resource_group`                            | `Group`                            |
-| [RM] Resource Group Resource Lock              | `azure_resource_group_resource_lock`              | `Rule`                             |
+| [RM] Resource Lock                             | `azure_resource_lock`                             | `Rule`                             |
 | [RM] Role Assignment                           | `azure_role_assignment`                           | `AccessPolicy`                     |
 | [RM] Role Definition                           | `azure_role_definition`                           | `AccessRole`                       |
 | [RM] SQL Database                              | `azure_sql_database`                              | `Database`, `DataStore`            |
@@ -375,7 +375,6 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_private_endpoint`                          |
 | `azure_resource_group`             | **HAS**               | `azure_public_ip`                                 |
 | `azure_resource_group`             | **HAS**               | `azure_redis_cache`                               |
-| `azure_resource_group`             | **HAS**               | `azure_resource_group_resource_lock`              |
 | `azure_resource_group`             | **HAS**               | `azure_security_group`                            |
 | `azure_resource_group`             | **HAS**               | `azure_service_bus_namespace`                     |
 | `azure_resource_group`             | **HAS**               | `azure_sql_server`                                |
@@ -387,6 +386,7 @@ The following relationships are created:
 | `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
 | `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |
 | `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
+| `azure_resource_lock`              | **HAS**               | `ANY_SCOPE`                                       |
 | `azure_role_assignment`            | **ALLOWS**            | `ANY_SCOPE`                                       |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_application`                               |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_directory`                                 |

@@ -57,8 +57,9 @@ import { IntegrationConfig } from './types';
 import { steps as authorizationSteps } from './steps/resource-manager/authorization/constants';
 import {
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
-  STEP_RM_RESOURCES_RESOURCE_GROUP_LOCKS,
-} from './steps/resource-manager/resources';
+  STEP_RM_RESOURCES_RESOURCE_LOCKS,
+  STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
+} from './steps/resource-manager/resources/constants';
 import { steps as subscriptionSteps } from './steps/resource-manager/subscriptions/constants';
 import {
   STEP_RM_API_MANAGEMENT_SERVICES,
@@ -196,7 +197,8 @@ describe('getStepStartStates', () => {
       [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: true },
       [authorizationSteps.CLASSIC_ADMINS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
-      [STEP_RM_RESOURCES_RESOURCE_GROUP_LOCKS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_LOCKS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_HAS_LOCK]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [subscriptionSteps.LOCATIONS]: { disabled: true },
@@ -336,7 +338,8 @@ describe('getStepStartStates', () => {
       [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: true },
       [authorizationSteps.CLASSIC_ADMINS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
-      [STEP_RM_RESOURCES_RESOURCE_GROUP_LOCKS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_LOCKS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_HAS_LOCK]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [subscriptionSteps.LOCATIONS]: { disabled: true },
@@ -476,7 +479,8 @@ describe('getStepStartStates', () => {
       [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: false },
       [authorizationSteps.CLASSIC_ADMINS]: { disabled: false },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: false },
-      [STEP_RM_RESOURCES_RESOURCE_GROUP_LOCKS]: { disabled: false },
+      [STEP_RM_RESOURCES_RESOURCE_LOCKS]: { disabled: false },
+      [STEP_RM_RESOURCES_RESOURCE_HAS_LOCK]: { disabled: false },
       [subscriptionSteps.SUBSCRIPTION]: { disabled: false },
       [subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS]: { disabled: false },
       [subscriptionSteps.LOCATIONS]: { disabled: false },
@@ -618,7 +622,8 @@ describe('getStepStartStates', () => {
       [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: true },
       [authorizationSteps.CLASSIC_ADMINS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
-      [STEP_RM_RESOURCES_RESOURCE_GROUP_LOCKS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_LOCKS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_HAS_LOCK]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [subscriptionSteps.LOCATIONS]: { disabled: true },

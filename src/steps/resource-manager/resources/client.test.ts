@@ -23,7 +23,6 @@ describe('iterateResourceGroups', () => {
       options: {
         matchRequestsBy: getMatchRequestsBy({
           config: configFromEnv,
-          options: { url: { query: false } },
         }),
       },
     });

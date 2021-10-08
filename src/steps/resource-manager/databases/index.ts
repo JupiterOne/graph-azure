@@ -20,7 +20,7 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 import { IntegrationConfig } from '../../../types';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,

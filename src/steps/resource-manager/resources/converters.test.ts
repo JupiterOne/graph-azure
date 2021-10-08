@@ -3,7 +3,7 @@ import { convertProperties } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import {
   createResourceGroupEntity,
-  createResourceGroupLockEntitiy,
+  createResourceLockEntitiy,
 } from './converters';
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
 import { ManagementLockModels } from '@azure/arm-locks';
@@ -57,11 +57,11 @@ describe('createResourceGroupLockEntity', () => {
       notes: 'This is a test lock',
     };
 
-    expect(createResourceGroupLockEntitiy(webLinker, data)).toEqual({
+    expect(createResourceLockEntitiy(webLinker, data)).toEqual({
       ...convertProperties(data),
       createdOn: undefined,
       _key: '/subscriptions/subscription-id/resourceGroups/j1dev/locks/j1-lock',
-      _type: 'azure_resource_group_resource_lock',
+      _type: 'azure_resource_lock',
       _class: ['Rule'],
       _rawData: [{ name: 'default', rawData: data }],
       id: '/subscriptions/subscription-id/resourceGroups/j1dev/locks/j1-lock',
@@ -69,7 +69,7 @@ describe('createResourceGroupLockEntity', () => {
       displayName: 'j1-lock',
       type: 'Microsoft.Authorization/locks',
       level: 'ReadOnly',
-      notes: 'This is a test lock',
+      notes: ['This is a test lock'],
       webLink: webLinker.portalResourceUrl(
         '/subscriptions/subscription-id/resourceGroups/j1dev/locks/j1-lock',
       ),

@@ -6,8 +6,7 @@ import {
   createDirectRelationship,
   RelationshipClass,
   IntegrationError,
-  StepRelationshipMetadata,
-  generateRelationshipType,
+  createMappedRelationship,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -16,46 +15,23 @@ import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
 import { ResourcesClient } from './client';
 import {
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
-  STEP_RM_RESOURCES_RESOURCE_GROUP_LOCKS,
+  STEP_RM_RESOURCES_RESOURCE_LOCKS,
   RESOURCE_GROUP_ENTITY,
-  RESOURCE_GROUP_RESOURCE_LOCK_ENTITY,
+  RESOURCE_LOCK_ENTITY,
+  STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
+  SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_METADATA,
+  relationships,
 } from './constants';
 import {
   createResourceGroupEntity,
-  createResourceGroupLockEntitiy,
+  createResourceLockEntitiy,
 } from './converters';
 import { SUBSCRIPTION_MATCHER } from '../utils/matchers';
-import {
-  entities as subscriptionEntities,
-  steps as subscriptionSteps,
-} from '../subscriptions/constants';
-export * from './constants';
+import { steps as subscriptionSteps } from '../subscriptions/constants';
+import { getResourceManagerSteps } from '../../../getStepStartStates';
+import { ANY_SCOPE } from '../constants';
 
 const subscriptionRegex = new RegExp(SUBSCRIPTION_MATCHER);
-
-const SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS = RelationshipClass.HAS;
-const SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_METADATA: StepRelationshipMetadata = {
-  _class: SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS,
-  sourceType: subscriptionEntities.SUBSCRIPTION._type,
-  _type: generateRelationshipType(
-    SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS,
-    subscriptionEntities.SUBSCRIPTION._type,
-    RESOURCE_GROUP_ENTITY._type,
-  ),
-  targetType: RESOURCE_GROUP_ENTITY._type,
-};
-
-const RESOURCE_GROUP_RESOURCE_LOCK_RELATIONSHIP_CLASS = RelationshipClass.HAS;
-const RESOURCE_GROUP_RESOURCE_LOCK_RELATIONSHIP_METADATA: StepRelationshipMetadata = {
-  _class: RESOURCE_GROUP_RESOURCE_LOCK_RELATIONSHIP_CLASS,
-  sourceType: RESOURCE_GROUP_ENTITY._type,
-  _type: generateRelationshipType(
-    RESOURCE_GROUP_RESOURCE_LOCK_RELATIONSHIP_CLASS,
-    RESOURCE_GROUP_ENTITY._type,
-    RESOURCE_GROUP_RESOURCE_LOCK_ENTITY._type,
-  ),
-  targetType: RESOURCE_GROUP_RESOURCE_LOCK_ENTITY._type,
-};
 
 export async function createSubscriptionResourceGroupRelationship(
   executionContext: IntegrationStepContext,
@@ -123,16 +99,50 @@ export async function fetchResourceGroupLocks(
       await client.iterateLocks(
         resourceGroupEntity.name as string,
         async (lock) => {
-          const lockEntity = createResourceGroupLockEntitiy(webLinker, lock);
+          const lockEntity = createResourceLockEntitiy(webLinker, lock);
           await jobState.addEntity(lockEntity);
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.HAS,
-              from: resourceGroupEntity,
-              to: lockEntity,
-            }),
-          );
         },
+      );
+    },
+  );
+}
+
+export async function buildResourceHasResourceLockRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: RESOURCE_LOCK_ENTITY._type },
+    async (resourceLockEntity) => {
+      const targetEntityId = (resourceLockEntity.id as string).split(
+        '/providers/Microsoft.Authorization',
+      )[0];
+
+      const targetEntity = await jobState.findEntity(targetEntityId);
+
+      if (targetEntity) {
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: targetEntity,
+            _class: RelationshipClass.HAS,
+            to: resourceLockEntity,
+          }),
+        );
+        return;
+      }
+
+      await jobState.addRelationship(
+        createMappedRelationship({
+          _class: RelationshipClass.HAS,
+          source: resourceLockEntity,
+          targetFilterKeys: [['id']],
+          target: {
+            id: targetEntityId,
+            _type: ANY_SCOPE,
+            _key: targetEntityId,
+          },
+        }),
       );
     },
   );
@@ -150,11 +160,22 @@ export const resourcesSteps: Step<
     executionHandler: fetchResourceGroups,
   },
   {
-    id: STEP_RM_RESOURCES_RESOURCE_GROUP_LOCKS,
-    name: 'Resource Group Resource Locks',
-    entities: [RESOURCE_GROUP_RESOURCE_LOCK_ENTITY],
-    relationships: [RESOURCE_GROUP_RESOURCE_LOCK_RELATIONSHIP_METADATA],
+    id: STEP_RM_RESOURCES_RESOURCE_LOCKS,
+    name: 'Resource Locks',
+    entities: [RESOURCE_LOCK_ENTITY],
+    relationships: [],
     dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchResourceGroupLocks,
+  },
+  {
+    id: STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
+    name: 'Resource HAS Resource Lock Relationships',
+    entities: [],
+    relationships: [relationships.RESOURCE_LOCK_HAS_ANY_SCOPE],
+    dependsOn: [
+      STEP_RM_RESOURCES_RESOURCE_LOCKS,
+      ...getResourceManagerSteps().executeFirstSteps,
+    ],
+    executionHandler: buildResourceHasResourceLockRelationships,
   },
 ];

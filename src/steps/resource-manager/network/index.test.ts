@@ -38,7 +38,8 @@ import {
   getMockAccountEntity,
   getMockResourceGroupEntity,
 } from '../../../../test/helpers/getMockEntity';
-import { fetchResourceGroups, RESOURCE_GROUP_ENTITY } from '../resources';
+import { fetchResourceGroups } from '../resources';
+import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import {
   entities,

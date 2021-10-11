@@ -706,6 +706,24 @@ questions:
     version: v1.3.0
     requirements:
       - '3.1'
+      
+- id: integration-question-azure-storage-account-key-regeneration
+  title: Are there any Azure storage accounts that have not regenerated their access keys for the last 90 days?
+  description:
+    Returns a list of Azure storage accounts with lastAccessKeyRegenerationDate.
+  queries:
+  - name: good
+    query: find azure_storage_account with "currentDate in J1QL" - lastAccessKeyRegenerationDate <= 90 days
+  - name: bad
+    query: find azure_storage_account with "currentDate in J1QL" - lastAccessKeyRegenerationDate > 90 days
+  tags:
+  - azure
+  - storage
+  compliance:
+  - standard: CIS Azure Foundations v1.3.0
+    version: v1.3.0
+    requirements:
+      - '3.2'
 
 - id: integration-question-azure-storage-account-queue-analytics-logging
   title: Is Queue Analytics Logging enabled in Azure storage accounts?

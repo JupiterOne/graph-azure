@@ -1,0 +1,25 @@
+name: Questions
+on: [pull_request_target]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: setup-node
+        name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - name: Check out code repository source code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Validate questions
+        env:
+          MANAGED_QUESTIONS_JUPITERONE_ACCOUNT_ID: ${{ secrets.MANAGED_QUESTIONS_JUPITERONE_ACCOUNT_ID }}
+          MANAGED_QUESTIONS_JUPITERONE_API_KEY: ${{ secrets.MANAGED_QUESTIONS_JUPITERONE_API_KEY }}
+        run: yarn validate:questions

@@ -2,7 +2,7 @@ name: Questions
 on: [pull_request_target]
 
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
 
     steps:

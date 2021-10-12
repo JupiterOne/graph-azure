@@ -63,6 +63,7 @@
     "@azure/arm-sql": "^7.0.1",
     "@azure/arm-storage": "^15.1.0",
     "@azure/arm-subscriptions": "^2.0.0",
+    "@azure/data-tables": "^12.1.2",
     "@azure/identity": "^1.0.2",
     "@azure/keyvault-keys": "^4.0.2",
     "@azure/ms-rest-nodeauth": "^2.0.5",
@@ -71,12 +72,10 @@
     "@lifeomic/attempt": "^3.0.0",
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "@microsoft/microsoft-graph-types": "^1.10.0",
-    "@types/xml2js": "^0.4.9",
     "cross-fetch": "^3.0.4",
     "date-fns": "^2.24.0",
     "lodash.map": "^4.6.0",
-    "lodash.snakecase": "^4.1.1",
-    "xml2js": "^0.4.23"
+    "lodash.snakecase": "^4.1.1"
   },
   "resolutions": {
     "@azure/ms-rest-azure-js": "^2.0.0",

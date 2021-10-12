@@ -1,7 +1,5 @@
-import fetch from 'node-fetch';
-import { formatRFC7231 } from 'date-fns';
-import { parseStringPromise } from 'xml2js';
 import { StorageManagementClient } from '@azure/arm-storage';
+import { TableServiceClient } from '@azure/data-tables';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { QueueServiceClient } from '@azure/storage-queue';
 import {
@@ -22,30 +20,6 @@ import { resourceGroupName } from '../../../azure/utils';
 import { IntegrationConfig } from '../../../types';
 import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 import { ClientSecretCredential } from '@azure/identity';
-
-export interface TableServiceProperties {
-  StorageServiceProperties: {
-    Logging: {
-      Version: string[];
-      Delete: string[];
-      Read: string[];
-      Write: string[];
-      RetentionPolicy: {
-        Enabled: string[];
-        Days: string[];
-      };
-    }[];
-    Metrics: {
-      Version: string[];
-      Enabled: string[];
-      IncludeAPIs: string[];
-      RetentionPolicy: {
-        Enabled: string[];
-        Days: string[];
-      };
-    }[];
-  };
-}
 
 export function createStorageAccountServiceClient(options: {
   config: IntegrationConfig;
@@ -112,33 +86,20 @@ export function createStorageAccountServiceClient(options: {
       }
     },
 
-    getTableServiceProperties: async (): Promise<
-      TableServiceProperties | undefined
-    > => {
+    getTableServiceProperties: async () => {
       if (
-        isServiceEnabledForKindAndTier.table(
+        isServiceEnabledForKindAndTier.blob(
           storageAccount.kind,
           storageAccount.skuTier,
         )
       ) {
-        const token = await credential.getToken(
-          'https://storage.azure.com/.default',
+        const client = new TableServiceClient(
+          `https://${storageAccount.name}.blob.core.windows.net`,
+          credential,
         );
-
         try {
-          const response = await fetch(
-            `https://${storageAccount.name}.table.core.windows.net/?restype=service&comp=properties`,
-            {
-              headers: {
-                Authorization: `Bearer ${token?.token}`,
-                'x-ms-date': formatRFC7231(new Date()),
-                'x-ms-version': '2020-10-02',
-              },
-            },
-          );
-
-          const res = await response.text();
-          return parseStringPromise(res);
+          const response = await client.getProperties();
+          return response;
         } catch (e) {
           logger.warn(
             {

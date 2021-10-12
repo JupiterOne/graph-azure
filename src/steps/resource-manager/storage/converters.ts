@@ -18,7 +18,7 @@ import { resourceGroupName } from '../../../azure/utils';
 import flatten from '../utils/flatten';
 import { entities } from './constants';
 import { QueueServiceProperties } from '@azure/storage-queue';
-import { TableServiceProperties } from './client';
+import { GetPropertiesResponse } from '@azure/data-tables';
 
 /**
  * J1 entity properties cannot be arrays of objects; create an array of string endpoints
@@ -58,13 +58,14 @@ export function createStorageAccountEntity(
   storageAccountServiceProperties: {
     blob?: BlobServiceProperties;
     queue?: QueueServiceProperties;
-    table?: TableServiceProperties;
     lastAccessKeyRegenerationDate?: Date;
+    table?: GetPropertiesResponse;
   },
 ): Entity {
   const encryptedServices = data.encryption?.services;
-  const tableLogging =
-    storageAccountServiceProperties.table?.StorageServiceProperties?.Logging[0];
+  const tableLogging = storageAccountServiceProperties.table?.logging;
+
+  console.log(data.name, storageAccountServiceProperties.table);
 
   const storageAccountEntity = createIntegrationEntity({
     entityData: {
@@ -125,9 +126,9 @@ export function createStorageAccountEntity(
             ?.deleteProperty,
         lastAccessKeyRegenerationDate:
           storageAccountServiceProperties.lastAccessKeyRegenerationDate,
-        tableAnalyticsLoggingReadEnabled: tableLogging?.Read[0] === 'true',
-        tableAnalyticsLoggingWriteEnabled: tableLogging?.Write[0] === 'true',
-        tableAnalyticsLoggingDeleteEnabled: tableLogging?.Delete[0] === 'true',
+        tableAnalyticsLoggingReadEnabled: tableLogging?.read,
+        tableAnalyticsLoggingWriteEnabled: tableLogging?.write,
+        tableAnalyticsLoggingDeleteEnabled: tableLogging?.delete,
         ...flatten({
           encryption: {
             keySource: data.encryption?.keySource,

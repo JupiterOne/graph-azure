@@ -94,7 +94,7 @@ export function createStorageAccountServiceClient(options: {
         )
       ) {
         const client = new TableServiceClient(
-          `https://${storageAccount.name}.blob.core.windows.net`,
+          `https://${storageAccount.name}.table.core.windows.net`,
           credential,
         );
         try {

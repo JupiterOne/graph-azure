@@ -65,8 +65,6 @@ export function createStorageAccountEntity(
   const encryptedServices = data.encryption?.services;
   const tableLogging = storageAccountServiceProperties.table?.logging;
 
-  console.log(data.name, storageAccountServiceProperties.table);
-
   const storageAccountEntity = createIntegrationEntity({
     entityData: {
       source: data,
@@ -149,6 +147,12 @@ export function createStorageAccountEntity(
     setRawData(storageAccountEntity, {
       name: 'queueServiceProperties',
       rawData: storageAccountServiceProperties.queue,
+    });
+  }
+  if (storageAccountServiceProperties.table) {
+    setRawData(storageAccountEntity, {
+      name: 'tableServiceProperties',
+      rawData: storageAccountServiceProperties.table,
     });
   }
 

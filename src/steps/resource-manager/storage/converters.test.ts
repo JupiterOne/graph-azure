@@ -15,6 +15,7 @@ import {
 } from './converters';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { entities } from './constants';
+import { GetPropertiesResponse } from '@azure/data-tables';
 import { QueueServiceProperties } from '@azure/storage-queue';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
@@ -111,10 +112,26 @@ describe('createStorageAccountEntity', () => {
     };
   }
 
+  function createMockTableServiceProperties(
+    tableServiceProperties?: Partial<GetPropertiesResponse>,
+  ): GetPropertiesResponse {
+    return {
+      logging: {
+        version: '1.0',
+        read: true,
+        write: true,
+        delete: false,
+        retentionPolicy: { enabled: true, days: 7 },
+      },
+      ...tableServiceProperties,
+    };
+  }
+
   test('Storage (Classic)', () => {
     const data = createMockStorageAccount();
     const blobServiceProperties = createMockBlobServiceProperties();
     const queueServiceProperties = createMockQueueServiceProperties();
+    const tableServiceProperties = createMockTableServiceProperties();
     const entity = {
       _key:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
@@ -124,6 +141,7 @@ describe('createStorageAccountEntity', () => {
         { name: 'default', rawData: data },
         { name: 'blobServiceProperties', rawData: blobServiceProperties },
         { name: 'queueServiceProperties', rawData: queueServiceProperties },
+        { name: 'tableServiceProperties', rawData: tableServiceProperties },
       ],
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev',
@@ -172,15 +190,16 @@ describe('createStorageAccountEntity', () => {
       queueAnalyticsLoggingReadEnabled: true,
       queueAnalyticsLoggingWriteEnabled: true,
       queueAnalyticsLoggingDeleteEnabled: true,
-      tableAnalyticsLoggingReadEnabled: false,
-      tableAnalyticsLoggingWriteEnabled: false,
+      tableAnalyticsLoggingReadEnabled: true,
+      tableAnalyticsLoggingWriteEnabled: true,
       tableAnalyticsLoggingDeleteEnabled: false,
-      isAccessKeyRegenerated: false,
+      lastAccessKeyRegenerationDate: undefined,
     };
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data, {
       blob: blobServiceProperties,
       queue: queueServiceProperties,
+      table: tableServiceProperties,
     });
     expect(storageAccountEntity).toMatchGraphObjectSchema({
       _class: entities.STORAGE_ACCOUNT._class,

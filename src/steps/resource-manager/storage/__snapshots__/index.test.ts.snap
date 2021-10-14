@@ -496,7 +496,7 @@ Array [
     "sku": "Standard_RAGRS",
     "tableAnalyticsLoggingDeleteEnabled": false,
     "tableAnalyticsLoggingReadEnabled": false,
-    "tableAnalyticsLoggingWriteEnabled": true,
+    "tableAnalyticsLoggingWriteEnabled": false,
     "webLink": "https://portal.azure.com/#@j1AzureIntegrationDev.onmicrosoft.com/resource/subscriptions/193f89dc-6225-4a80-bacb-96b32fbf6dd0/resourceGroups/Stefan_Storage_Resources/providers/Microsoft.Storage/storageAccounts/stefanexamplestorage",
   },
   Object {
@@ -670,9 +670,9 @@ Array [
     "region": "centralus",
     "resourceGroup": "stefan_appservices_group",
     "sku": "Standard_LRS",
-    "tableAnalyticsLoggingDeleteEnabled": true,
-    "tableAnalyticsLoggingReadEnabled": true,
-    "tableAnalyticsLoggingWriteEnabled": true,
+    "tableAnalyticsLoggingDeleteEnabled": false,
+    "tableAnalyticsLoggingReadEnabled": false,
+    "tableAnalyticsLoggingWriteEnabled": false,
     "webLink": "https://portal.azure.com/#@j1AzureIntegrationDev.onmicrosoft.com/resource/subscriptions/193f89dc-6225-4a80-bacb-96b32fbf6dd0/resourceGroups/Stefan_AppServices_Group/providers/Microsoft.Storage/storageAccounts/storageaccountstefaafb8",
   },
 ]

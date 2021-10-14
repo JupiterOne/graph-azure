@@ -18,7 +18,10 @@ import {
   AppServiceSteps,
 } from './constants';
 import { createAppEntity, createAppServicePlanEntity } from './converters';
-import { Site } from '@azure/arm-appservice/esm/models';
+import {
+  Site,
+  WebAppsGetAuthSettingsResponse,
+} from '@azure/arm-appservice/esm/models';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
 
@@ -30,10 +33,47 @@ export async function fetchApps(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new AppServiceClient(instance.config, logger);
 
+  let canFetchAppAuthConfiguration = true;
+
   await client.iterateApps(async (app) => {
+    let appAuthSettings: WebAppsGetAuthSettingsResponse | undefined;
+
+    const appConfig = await client.fetchAppConfiguration(
+      app.name,
+      app.resourceGroup,
+    );
+
+    if (canFetchAppAuthConfiguration) {
+      try {
+        appAuthSettings = await client.fetchAppAuthSettings(
+          app.name,
+          app.resourceGroup,
+        );
+      } catch (err) {
+        logger.warn(
+          { err, name: app.name, resourceGroup: app.resourceGroup },
+          'Warning: unable to fetch app configuration.',
+        );
+        if (err.statusCode === 403 && err.code === 'AuthorizationFailed') {
+          logger.publishEvent({
+            name: 'missing_permission',
+            description:
+              'Missing permission "Microsoft.Web/sites/config/list/action", which is used to fetch WebApp Auth Settings. Please update the `JupiterOne Reader` Role in your Azure environment in order to fetch these settings for your WebApp.',
+          });
+          canFetchAppAuthConfiguration = false;
+        }
+      }
+    }
+
     const metadata = getMetadataForApp(logger, app);
     const appEntity = await jobState.addEntity(
-      createAppEntity(webLinker, app, metadata),
+      createAppEntity({
+        webLinker,
+        data: app,
+        metadata,
+        appConfig,
+        appAuthSettings,
+      }),
     );
     await createResourceGroupResourceRelationship(executionContext, appEntity);
   });

@@ -1,5 +1,10 @@
 import { WebSiteManagementClient } from '@azure/arm-appservice';
-import { AppServicePlan, Site } from '@azure/arm-appservice/esm/models';
+import {
+  AppServicePlan,
+  Site,
+  WebAppsGetAuthSettingsResponse,
+  WebAppsGetConfigurationResponse,
+} from '@azure/arm-appservice/esm/models';
 import {
   Client,
   iterateAllResources,
@@ -36,5 +41,35 @@ export class AppServiceClient extends Client {
       resourceDescription: 'appService.appServicePlans',
       callback,
     });
+  }
+
+  public async fetchAppConfiguration(
+    name: string | undefined,
+    resourceGroup: string | undefined,
+  ): Promise<WebAppsGetConfigurationResponse | undefined> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      WebSiteManagementClient,
+    );
+
+    if (!name || !resourceGroup) {
+      return;
+    }
+
+    return serviceClient.webApps.getConfiguration(resourceGroup, name);
+  }
+
+  public async fetchAppAuthSettings(
+    name: string | undefined,
+    resourceGroup: string | undefined,
+  ): Promise<WebAppsGetAuthSettingsResponse | undefined> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      WebSiteManagementClient,
+    );
+
+    if (!name || !resourceGroup) {
+      return;
+    }
+
+    return serviceClient.webApps.getAuthSettings(resourceGroup, name);
   }
 }

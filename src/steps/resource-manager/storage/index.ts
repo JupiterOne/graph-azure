@@ -52,7 +52,6 @@ export async function fetchStorageAccounts(
 
     const storageBlobServiceProperties = await storageAccountServiceClient.getBlobServiceProperties();
     const storageQueueServiceProperties = await storageAccountServiceClient.getQueueServiceProperties();
-    const storageTableServiceProperties = await storageAccountServiceClient.getTableServiceProperties();
 
     let lastAccessKeyRegenerationDate: Date | undefined;
     await monitorClient.iterateActivityLogsFromPreviousNDays(
@@ -81,7 +80,6 @@ export async function fetchStorageAccounts(
     return {
       blob: storageBlobServiceProperties,
       queue: storageQueueServiceProperties,
-      table: storageTableServiceProperties,
       lastAccessKeyRegenerationDate,
     };
   }

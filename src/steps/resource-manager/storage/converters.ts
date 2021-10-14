@@ -126,11 +126,6 @@ export function createStorageAccountEntity(
             ?.deleteProperty,
         lastAccessKeyRegenerationDate:
           storageAccountServiceProperties.lastAccessKeyRegenerationDate,
-        tableAnalyticsLoggingReadEnabled: tableLogging?.Read[0] === 'true',
-        tableAnalyticsLoggingWriteEnabled: tableLogging?.Write[0] === 'true',
-        tableAnalyticsLoggingDeleteEnabled: tableLogging?.Delete[0] === 'true',
-        lastAccessKeyRegenerationDate:
-          storageAccountServiceProperties.lastAccessKeyRegenerationDate,
         tableAnalyticsLoggingReadEnabled: tableLogging?.read,
         tableAnalyticsLoggingWriteEnabled: tableLogging?.write,
         tableAnalyticsLoggingDeleteEnabled: tableLogging?.delete,

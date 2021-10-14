@@ -867,24 +867,6 @@ questions:
     requirements:
       - '3.10'
 
-- id: integration-question-azure-storage-account-table-analytics-logging
-  title: Is Table Analytics Logging enabled in Azure storage accounts?
-  description:
-    Returns a list of Azure storage accounts with Table Analytics Logging enabled / disabled.
-  queries:
-  - name: good
-    query: find azure_storage_account with tableAnalyticsLoggingReadEnabled=true and tableAnalyticsLoggingWriteEnabled=true and tableAnalyticsLoggingDeleteEnabled=true
-  - name: bad
-    query: find azure_storage_account with tableAnalyticsLoggingReadEnabled!=true or tableAnalyticsLoggingWriteEnabled!=true or tableAnalyticsLoggingDeleteEnabled!=true
-  tags:
-  - azure
-  - storage
-  compliance:
-  - standard: CIS Azure Foundations v1.3.0
-    version: v1.3.0
-    requirements:
-      - '3.11'
-
 ##########################################
 # CIS 4 - Database Services
 ##########################################

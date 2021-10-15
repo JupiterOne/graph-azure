@@ -6,6 +6,7 @@ import {
   ServerSecurityAlertPoliciesGetResponse,
   TransparentDataEncryptionsGetResponse,
   EncryptionProtectorsGetResponse,
+  ServerVulnerabilityAssessmentsGetResponse,
 } from '@azure/arm-sql/esm/models';
 import {
   createIntegrationEntity,
@@ -73,6 +74,22 @@ export function setServerSecurityAlerting(
       alertOnAllThreats: alertingEnabled && !hasDisabledAlerts,
     });
   }
+}
+
+export function setServerVulnerabilityAssessment(
+  serverEntity: Entity,
+  vulnerabilityAssessments: ServerVulnerabilityAssessmentsGetResponse | undefined,
+): void {
+  if (!vulnerabilityAssessments) return;
+
+  setRawData(serverEntity, { name: 'vulnerabilityAssessments', rawData: vulnerabilityAssessments });
+
+  Object.assign(serverEntity, {
+    vaRecurringScansEnabled: vulnerabilityAssessments.recurringScans?.isEnabled,
+    vaStoragePath: vulnerabilityAssessments.storageContainerPath,
+    vaEmailSubscriptionAdmins: vulnerabilityAssessments.recurringScans?.emailSubscriptionAdmins,
+    vaEmails: vulnerabilityAssessments.recurringScans?.emails
+  })
 }
 
 export function setServerEncryptionProtector(

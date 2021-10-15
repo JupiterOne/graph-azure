@@ -978,9 +978,9 @@ questions:
     Checks if Azure SQL servers have Vulnerability Assessment (VA) scan reports sending enabled.
   queries:
   - name: good
-    query: find azure_sql_server with vaEmails != undefined and vaEmails "array is not empty"
+    query: find azure_sql_server with vaEmails != undefined
   - name: bad
-    query: find azure_sql_server with vaEmails = undefined or vaEmails "array is empty"
+    query: find azure_sql_server with vaEmails = undefined
   tags:
   - azure
   - database
@@ -1001,7 +1001,7 @@ questions:
   - name: good
     query: find azure_sql_server with vaEmailSubscriptionAdmins = true
   - name: bad
-    query: find azure_sql_server with with vaEmailSubscriptionAdmins != true
+    query: find azure_sql_server with vaEmailSubscriptionAdmins != true
   tags:
   - azure
   - database

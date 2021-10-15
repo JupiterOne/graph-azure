@@ -35,4 +35,4 @@ jobs:
                j1-integration validate-question-file \
                  -a $MANAGED_QUESTIONS_JUPITERONE_ACCOUNT_ID \
                  -k $MANAGED_QUESTIONS_JUPITERONE_API_KEY \
-                 -p target/jupiterone/questions/questions.yaml
+                 -p ../target/jupiterone/questions/questions.yaml

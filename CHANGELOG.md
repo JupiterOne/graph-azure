@@ -8,6 +8,19 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- New properties added to resources:
+
+  | Entity                                | Properties                                                                                                                                                                 |
+  | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `azure_web_app`, `azure_function_app` | `authEnabled`, `httpsOnly`, `minTlsVersion`, `clientCertEnabled`, `principalId`, `phpVersion`, `pythonVersion`, `javaVersion`, `nodeVersion`, `http20Enabled`, `ftpsState` |
+  | `azure_sql_server`                    | `vaRecurringScansEnabled`, `vaStoragePath`, `vaEmailSubscriptionAdmins`, `vaEmails`                                                                                        |
+
+  Note: fetching settings for `azure_web_app` and `azure_function_app` requires
+  additional permission to be added to the custom role:
+  `Microsoft.Web/sites/config/list/Action`
+
 ## [5.32.0] - 2021-10-04
 
 ### Added

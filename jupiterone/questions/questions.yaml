@@ -713,9 +713,9 @@ questions:
     Returns a list of Azure storage accounts with lastAccessKeyRegenerationDate.
   queries:
   - name: good
-    query: find azure_storage_account with "currentDate in J1QL" - lastAccessKeyRegenerationDate <= 90 days
+    query: find azure_storage_account with lastAccessKeyRegenerationDate >= date.now - 90 days
   - name: bad
-    query: find azure_storage_account with "currentDate in J1QL" - lastAccessKeyRegenerationDate > 90 days
+    query: find azure_storage_account with lastAccessKeyRegenerationDate < date.now - 90 days OR lastAccessKeyRegenerationDate = undefined
   tags:
   - azure
   - storage

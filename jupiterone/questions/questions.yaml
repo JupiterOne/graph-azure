@@ -2652,6 +2652,75 @@ questions:
         version: v1.3.1
         requirements:
           - '8.2'
+  - id: integration-question-azure-misc-resource-locks
+    title: Are all critical resources protected by resource locks?
+    description:
+      Checks if all critical resources have resources locks set. 
+    queries:
+    - name: good
+      query: |
+        FIND * with tag.SensitiveAzureResource = true THAT HAS azure_resource_lock
+    - name: bad
+      query: |
+        FIND * with tag.SensitiveAzureResource = true THAT !HAS azure_resource_lock
+    tags:
+    - azure
+    - data
+    compliance:
+    - standard: CIS Azure Foundations v1.3.0
+      version: v1.3.0
+      requirements:
+        - '8.3'
+    - standard: CIS Azure Foundations v1.3.1
+      version: v1.3.1
+      requirements:
+        - '8.3'
+  - id: integration-question-azure-misc-recoverable-key-vaults
+    title: Are all Key Vaults recoverable?
+    description:
+      Checks if all Key Vaults are recoverable.
+    queries:
+    - name: good
+      query: |
+        FIND azure_keyvault_service with enableSoftDelete = true AND enablePurgeProtection = true
+    - name: bad
+      query: |
+        FIND azure_keyvault_service with enableSoftDelete != true AND enablePurgeProtection != true
+    tags:
+    - azure
+    - data
+    compliance:
+    - standard: CIS Azure Foundations v1.3.0
+      version: v1.3.0
+      requirements:
+        - '8.4'
+    - standard: CIS Azure Foundations v1.3.1
+      version: v1.3.1
+      requirements:
+        - '8.4'
+  - id: integration-question-azure-misc-recoverable-key-vaults
+    title: Is RBAC enabled on all Azure Kubernetes Services Instances??
+    description:
+      Checks if all Azure Kubernetes Services Instances has RBAC enabled.
+    queries:
+    - name: good
+      query: |
+        FIND azure_kubernetes_cluster with enableRBAC = true
+    - name: bad
+      query: |
+        FIND azure_kubernetes_cluster with enableRBAC != true
+    tags:
+    - azure
+    - data
+    compliance:
+    - standard: CIS Azure Foundations v1.3.0
+      version: v1.3.0
+      requirements:
+        - '8.5'
+    - standard: CIS Azure Foundations v1.3.1
+      version: v1.3.1
+      requirements:
+        - '8.5'
 
   ##########################################
   # CIS 9 - AppService

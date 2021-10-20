@@ -204,6 +204,7 @@ The following entities are created:
 | [RM] API Management Service                    | `azure_api_management_service`                    | `Gateway`                          |
 | [RM] Advisor Recommendation                    | `azure_advisor_recommendation`                    | `Finding`                          |
 | [RM] App Service Plan                          | `azure_app_service_plan`                          | `Configuration`                    |
+| [RM] Azure Kubernetes Cluster                  | `azure_kubernetes_cluster`                        | `Cluster`                          |
 | [RM] Azure Managed Disk                        | `azure_managed_disk`                              | `DataStore`, `Disk`                |
 | [RM] Batch Account                             | `azure_batch_account`                             | `Service`                          |
 | [RM] Batch Application                         | `azure_batch_application`                         | `Process`                          |
@@ -216,7 +217,6 @@ The following entities are created:
 | [RM] Container Group                           | `azure_container_group`                           | `Group`                            |
 | [RM] Container Registry                        | `azure_container_registry`                        | `DataStore`                        |
 | [RM] Container Registry Webhook                | `azure_container_registry_webhook`                | `ApplicationEndpoint`              |
-| [RM] Container Services Cluster                | `azure_container_services_cluster`                | `Cluster`                          |
 | [RM] Container Volume                          | `azure_container_volume`                          | `Disk`                             |
 | [RM] Cosmos DB Account                         | `azure_cosmosdb_account`                          | `Account`, `Service`               |
 | [RM] Cosmos DB Database                        | `azure_cosmosdb_sql_database`                     | `Database`, `DataStore`            |
@@ -353,7 +353,6 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_cdn_profile`                               |
 | `azure_resource_group`             | **HAS**               | `azure_container_group`                           |
 | `azure_resource_group`             | **HAS**               | `azure_container_registry`                        |
-| `azure_resource_group`             | **HAS**               | `azure_container_services_cluster`                |
 | `azure_resource_group`             | **HAS**               | `azure_cosmosdb_account`                          |
 | `azure_resource_group`             | **HAS**               | `azure_dns_zone`                                  |
 | `azure_resource_group`             | **HAS**               | `azure_event_grid_domain`                         |
@@ -362,6 +361,7 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_gallery`                                   |
 | `azure_resource_group`             | **HAS**               | `azure_image`                                     |
 | `azure_resource_group`             | **HAS**               | `azure_keyvault_service`                          |
+| `azure_resource_group`             | **HAS**               | `azure_kubernetes_cluster`                        |
 | `azure_resource_group`             | **HAS**               | `azure_lb`                                        |
 | `azure_resource_group`             | **HAS**               | `azure_managed_disk`                              |
 | `azure_resource_group`             | **HAS**               | `azure_mariadb_server`                            |

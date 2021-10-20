@@ -39,7 +39,7 @@ export const containerServicesSteps: Step<
   {
     id: STEP_RM_CONTAINER_SERVICES_CLUSTERS,
     name: 'Fetch Container Services Clusters',
-    entities: [ContainerServicesEntities.SERVICE],
+    entities: [ContainerServicesEntities.KUBERNETES_CLUSTER],
     relationships: [ContainerServicesRelationships.RESOURCE_GROUP_HAS_SERVICE],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchClusters,

@@ -1,7 +1,10 @@
 import { Recording } from '@jupiterone/integration-sdk-testing';
 import { fetchClusters } from '.';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 
@@ -16,15 +19,14 @@ afterEach(async () => {
 test(
   'step - container services clusters',
   async () => {
-    const instanceConfig = {
-      ...configFromEnv,
-      directoryId: '19ae0f99-6fc6-444b-bd54-97504efc66ad',
-      subscriptionId: '193f89dc-6225-4a80-bacb-96b32fbf6dd0',
-    };
+    const instanceConfig = configFromEnv;
 
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'container-services-step-clusters',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
     });
 
     const context = createMockAzureStepExecutionContext({
@@ -49,7 +51,7 @@ test(
       schema: {
         additionalProperties: false,
         properties: {
-          _type: { const: 'azure_container_services_cluster' },
+          _type: { const: 'azure_kubernetes_cluster' },
           _key: { type: 'string' },
           _class: { type: 'array', items: { const: 'Rule' } },
           id: { type: 'string' },

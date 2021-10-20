@@ -15,8 +15,8 @@ export function createClusterEntitiy(
       source: data,
       assign: {
         _key: data.id as string,
-        _type: ContainerServicesEntities.SERVICE._type,
-        _class: ContainerServicesEntities.SERVICE._class,
+        _type: ContainerServicesEntities.KUBERNETES_CLUSTER._type,
+        _class: ContainerServicesEntities.KUBERNETES_CLUSTER._class,
         id: data.id,
         name: data.name,
         skuName: data.sku?.name,

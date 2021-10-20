@@ -30,7 +30,7 @@ describe('createClusterEntity', () => {
 
     expect(createClusterEntitiy(webLinker, data)).toEqual({
       _key: 'id',
-      _type: 'azure_container_services_cluster',
+      _type: 'azure_kubernetes_cluster',
       _class: ['Cluster'],
       _rawData: [{ name: 'default', rawData: data }],
       id: 'id',

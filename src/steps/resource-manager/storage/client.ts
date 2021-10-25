@@ -284,7 +284,7 @@ export class StorageClient extends Client {
       if (
         ['FeatureNotSupportedForAccount', 'AccountIsDisabled'].includes(
           e.status,
-        )
+        ) // TODO is it possible to skip these calls altogether? How can we anticipate `FeatureNotSupportedForAccount` or `AccountIsDisabled`?
       ) {
         this.logger.trace(
           {

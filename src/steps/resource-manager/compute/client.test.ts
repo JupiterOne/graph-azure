@@ -17,6 +17,7 @@ import {
   GalleryImage,
   GalleryImageVersion,
 } from '@azure/arm-compute/esm/models';
+import { IntegrationConfig } from '../../../types';
 
 let recording: Recording;
 
@@ -259,5 +260,55 @@ describe('iterateGalleryImageVersions', () => {
     );
 
     expect(resources.length).toBeGreaterThan(0);
+  });
+
+  test('should paginate', async () => {
+    const config: IntegrationConfig = {
+      directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
+      subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
+      clientId: configFromEnv.clientId,
+      clientSecret: configFromEnv.clientSecret,
+    };
+
+    /**
+     * In order to test some faulty pagination in this client, I manually
+     * added > 50 image versions for a single gallery image in order to force
+     * pagination in this recording.
+     *
+     * Re-recording this test would require manual setup from the developer,
+     * so we have no need for the `matchRequestsBy` option in this recording.
+     */
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'iterateGalleryImageVersions-pagination',
+    });
+
+    const imageGalleryDefinition = {
+      id:
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/galleries/testImageGallery/images/test-image-definition',
+      name: 'test-image-definition',
+    };
+
+    let clientDidPaginate = false;
+    recording.server.any().on('request', (req) => {
+      const versionsEndpointRegex = new RegExp(
+        `${imageGalleryDefinition.id}/versions`,
+        'i',
+      ); // endpoint may be case-insensitive
+      if (
+        versionsEndpointRegex.test(req.pathname) &&
+        !!req.query['$skiptoken']
+      ) {
+        clientDidPaginate = true;
+      }
+    });
+
+    const client = new ComputeClient(config, createMockIntegrationLogger());
+
+    await client.iterateGalleryImageVersions(
+      imageGalleryDefinition,
+      () => undefined,
+    );
+    expect(clientDidPaginate).toBe(true);
   });
 });

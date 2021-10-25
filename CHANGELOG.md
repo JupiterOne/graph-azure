@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed a bug that occurs when paginating
+  Microsoft.Compute/galleries/${galleryId}/images/${imageId}/versions
+
+## [5.33.0] - 2021-10-15
+
 ### Added
 
 - New properties added to resources:

@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Fixed
 
+- Suppressed `FeatureNotSupportedForAccount` and `AccountIsDisabled` errors when
+  attempting to list tables, queues, blobs, and file shares for storage accounts
 - Add `errorCode` and `errorName` to blob & queue service properties calls
 - Fixed a bug that occurs when paginating
   Microsoft.Compute/galleries/${galleryId}/images/${imageId}/versions

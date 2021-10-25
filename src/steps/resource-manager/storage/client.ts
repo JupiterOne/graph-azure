@@ -128,22 +128,29 @@ export class StorageClient extends Client {
     )
       return;
 
-    await iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.blobContainers.list(resourceGroup, accountName);
-        },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.blobContainers.listNext(nextLink);
-        },
-      },
-      resourceDescription: 'storage.blobContainers',
-      callback,
-    });
+    await this.withAccountSupportErrorHandling(
+      storageAccount,
+      async () =>
+        await iterateAllResources({
+          logger: this.logger,
+          serviceClient,
+          resourceEndpoint: {
+            list: async () => {
+              return serviceClient.blobContainers.list(
+                resourceGroup,
+                accountName,
+              );
+            },
+            listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
+              nextLink: string,
+            ) => {
+              return serviceClient.blobContainers.listNext(nextLink);
+            },
+          },
+          resourceDescription: 'storage.blobContainers',
+          callback,
+        }),
+    );
   }
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -165,20 +172,24 @@ export class StorageClient extends Client {
     )
       return;
 
-    await iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.queue.list(resourceGroup, accountName);
-        },
-        listNext: async (nextLink: string) => {
-          return serviceClient.queue.listNext(nextLink);
-        },
-      },
-      resourceDescription: 'storage.queues',
-      callback,
-    });
+    await this.withAccountSupportErrorHandling(
+      storageAccount,
+      async () =>
+        await iterateAllResources({
+          logger: this.logger,
+          serviceClient,
+          resourceEndpoint: {
+            list: async () => {
+              return serviceClient.queue.list(resourceGroup, accountName);
+            },
+            listNext: async (nextLink: string) => {
+              return serviceClient.queue.listNext(nextLink);
+            },
+          },
+          resourceDescription: 'storage.queues',
+          callback,
+        }),
+    );
   }
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -200,20 +211,24 @@ export class StorageClient extends Client {
     )
       return;
 
-    await iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.table.list(resourceGroup, accountName);
-        },
-        listNext: async (nextLink: string) => {
-          return serviceClient.table.listNext(nextLink);
-        },
-      },
-      resourceDescription: 'storage.tables',
-      callback,
-    });
+    await this.withAccountSupportErrorHandling(
+      storageAccount,
+      async () =>
+        await iterateAllResources({
+          logger: this.logger,
+          serviceClient,
+          resourceEndpoint: {
+            list: async () => {
+              return serviceClient.table.list(resourceGroup, accountName);
+            },
+            listNext: async (nextLink: string) => {
+              return serviceClient.table.listNext(nextLink);
+            },
+          },
+          resourceDescription: 'storage.tables',
+          callback,
+        }),
+    );
   }
 
   public async iterateFileShares(
@@ -239,22 +254,49 @@ export class StorageClient extends Client {
     )
       return;
 
-    await iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async function listFileShares() {
-          return serviceClient.fileShares.list(resourceGroup, accountName);
+    await this.withAccountSupportErrorHandling(storageAccount, async () =>
+      iterateAllResources({
+        logger: this.logger,
+        serviceClient,
+        resourceEndpoint: {
+          list: async function listFileShares() {
+            return serviceClient.fileShares.list(resourceGroup, accountName);
+          },
+          listNext: /* istanbul ignore next: testing iteration might be difficult */ async function listNextFileShares(
+            nextLink: string,
+          ) {
+            return serviceClient.fileShares.listNext(nextLink);
+          },
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async function listNextFileShares(
-          nextLink: string,
-        ) {
-          return serviceClient.fileShares.listNext(nextLink);
-        },
-      },
-      resourceDescription: 'storage.fileShares',
-      callback,
-    });
+        resourceDescription: 'storage.fileShares',
+        callback,
+      }),
+    );
+  }
+
+  private async withAccountSupportErrorHandling(
+    storageAccount: { name: string; id: string; kind: Kind; skuTier: SkuTier },
+    cb: () => Promise<void>,
+  ) {
+    try {
+      await cb();
+    } catch (e) {
+      if (
+        ['FeatureNotSupportedForAccount', 'AccountIsDisabled'].includes(
+          e.status,
+        )
+      ) {
+        this.logger.trace(
+          {
+            storageAccount,
+            status: e.status,
+          },
+          'Endpoint is not supported for storage account.',
+        );
+        return;
+      }
+      throw e;
+    }
   }
 }
 

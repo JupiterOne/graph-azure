@@ -51,7 +51,8 @@ export function createStorageAccountServiceClient(options: {
           logger.warn(
             {
               storageAccount,
-              e,
+              errorCode: e.code,
+              errorName: e.name,
             },
             'Failed to get blob service properties for storage account',
           );
@@ -77,7 +78,8 @@ export function createStorageAccountServiceClient(options: {
           logger.warn(
             {
               storageAccount,
-              e,
+              errorCode: e.code,
+              errorName: e.name,
             },
             'Failed to get queue service properties for storage account',
           );

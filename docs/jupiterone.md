@@ -122,6 +122,13 @@ information:
 
    - Also assign the "Management Group Reader" role to the App "JupiterOne"
 
+### Key Vault Access Policy
+
+Please note that listing Key Vault keys and secrets (rm-keyvault-keys and
+rm-keyvault-secrets steps) require a given security principal to have necessary
+policies. The steps necesssary for that are outlined on this page
+[Assign a Key Vault access policy ](https://go.microsoft.com/fwlink/?linkid=2125287).
+
 ### In JupiterOne
 
 1. From the configuration **Gear Icon**, select **Integrations**.
@@ -222,6 +229,8 @@ The following entities are created:
 | [RM] Gallery                                   | `azure_gallery`                                   | `Repository`                       |
 | [RM] Image                                     | `azure_image`                                     | `Image`                            |
 | [RM] Key Vault                                 | `azure_keyvault_service`                          | `Service`                          |
+| [RM] Key Vault Key                             | `azure_keyvault_key`                              | `Key`                              |
+| [RM] Key Vault Secret                          | `azure_keyvault_secret`                           | `Secret`                           |
 | [RM] Load Balancer                             | `azure_lb`                                        | `Gateway`                          |
 | [RM] Location                                  | `azure_location`                                  | `Site`                             |
 | [RM] Management Group                          | `azure_management_group`                          | `Group`                            |
@@ -314,6 +323,8 @@ The following relationships are created:
 | `azure_user_group`                 | **HAS**               | `azure_group_member`                              |
 | `azure_user_group`                 | **HAS**               | `azure_user`                                      |
 | `azure_keyvault_service`           | **ALLOWS**            | `ANY_PRINCIPAL`                                   |
+| `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_key`                              |
+| `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_secret`                           |
 | `azure_lb`                         | **CONNECTS**          | `azure_nic`                                       |
 | `azure_location`                   | **HAS**               | `azure_network_watcher`                           |
 | `azure_management_group`           | **CONTAINS**          | `azure_management_group`                          |

@@ -65,6 +65,7 @@
     "@azure/arm-subscriptions": "^2.0.0",
     "@azure/identity": "^1.0.2",
     "@azure/keyvault-keys": "^4.0.2",
+    "@azure/keyvault-secrets": "^4.3.0",
     "@azure/ms-rest-nodeauth": "^2.0.5",
     "@azure/storage-blob": "^12.5.0",
     "@azure/storage-queue": "^12.4.0",

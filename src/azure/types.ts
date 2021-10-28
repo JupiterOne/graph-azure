@@ -18,4 +18,14 @@ export interface AzureWebLinker {
    * determined
    */
   portalResourceUrl: (path: string | undefined) => string | undefined;
+  /**
+   * Builds a link to an asset in the Azure Portal, such as:
+   * `"https://portal.azure.com/#@adamjupiteronehotmailcom.onmicrosoft.com/asset/Microsoft_Azure_KeyVault/key/https://example-key-vault-1.vault.azure.net/keys/eaxmple-key-expiration"`
+   *
+   * @param path resource path, i.e.
+   * `"Microsoft_Azure_KeyVault/key/https://example-key-vault-1.vault.azure.net"`;
+   * @returns the asset url or `undefined` when it cannot be accurately
+   * determined
+   */
+  assetResourceUrl: (path: string | undefined) => string | undefined;
 }

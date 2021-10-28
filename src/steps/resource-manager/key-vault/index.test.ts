@@ -1,7 +1,4 @@
-import {
-  MockIntegrationStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import {
   getMatchRequestsBy,
@@ -17,115 +14,201 @@ import {
   SERVICE_PRINCIPAL_ENTITY_TYPE,
   USER_ENTITY_TYPE,
 } from '../../active-directory';
-import { buildKeyVaultAccessPolicyRelationships, fetchKeyVaults } from '.';
 import {
+  buildKeyVaultAccessPolicyRelationships,
+  fetchKeyVaultKeys,
+  fetchKeyVaults,
+  fetchKeyVaultSecrets,
+} from '.';
+import {
+  ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
   KeyVaultEntities,
+  KeyVaultRelationships,
+  KEY_VAULT_KEY_ENTITY_TYPE,
   KEY_VAULT_SERVICE_ENTITY_CLASS,
   KEY_VAULT_SERVICE_ENTITY_TYPE,
 } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
+import { RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS } from '../utils/createResourceGroupResourceRelationship';
 
 let recording: Recording;
-let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
-let instanceConfig: IntegrationConfig;
 
-describe('step = key vaults', () => {
-  beforeAll(async () => {
-    instanceConfig = {
-      clientId: process.env.CLIENT_ID || 'clientId',
-      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
-      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
-      developerId: 'keionned',
-    };
+afterEach(async () => {
+  if (recording) {
+    await recording.stop();
+  }
+});
 
-    context = createMockAzureStepExecutionContext({
-      instanceConfig,
-      entities: [
-        {
-          _key: `/subscriptions/${instanceConfig.subscriptionId}`,
-          _class: ['Account'],
-          _type: 'azure_subscription',
-          id: `/subscriptions/${instanceConfig.subscriptionId}`,
-        },
-        {
-          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
-          _type: 'azure_resource_group',
-          _class: ['Group'],
-          name: 'j1dev',
-          location: 'eastus',
-          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
-        },
-      ],
+describe('rm-key-vault-vaults', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    return { accountEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-key-vault-vaults',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+      },
+    });
+
+    const { accountEntity } = getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: {
-          defaultDomain: 'www.fake-domain.com',
-          _type: ACCOUNT_ENTITY_TYPE,
-          _key: 'azure_account_id',
-          id: 'azure_account_id',
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchKeyVaults(context);
+
+    expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
+    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+      _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
+    });
+
+    expect(
+      context.jobState.collectedRelationships.filter(
+        (e) => e._type === ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
+      ),
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _class: { const: 'HAS' },
+          _type: { const: 'azure_account_has_keyvault_service' },
         },
       },
     });
 
+    expect(
+      context.jobState.collectedRelationships.filter(
+        (e) => e._type === RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS,
+      ),
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _class: { const: 'HAS' },
+          _type: { const: 'azure_resource_group_has_keyvault_service' },
+        },
+      },
+    });
+  });
+});
+
+describe('rm-key-vault-keys', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+
+    return { accountEntity };
+  }
+
+  test('success', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
-      name: 'resource-manager-step-key-vaults',
+      name: 'rm-key-vault-keys',
+      options: {
+        recordFailedRequests: true,
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+        }),
+      },
+    });
+
+    const { accountEntity } = getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
     });
 
     await fetchKeyVaults(context);
-  });
+    await fetchKeyVaultKeys(context);
 
-  afterAll(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
-
-  it('should collect an Azure Key Vault entity', () => {
-    const { collectedEntities } = context.jobState;
-
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
-        _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
-        category: ['infrastructure'],
-        displayName: `${instanceConfig.developerId}1-j1dev`,
-        region: 'eastus',
-        resourceGroup: 'j1dev',
-        endpoints: [
-          `https://${instanceConfig.developerId}1-j1dev.vault.azure.net/`,
-        ],
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-      }),
+    const keyVaultEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === KEY_VAULT_SERVICE_ENTITY_TYPE,
     );
-  });
+    expect(keyVaultEntities.length).toBeGreaterThan(0);
 
-  it('should collect an Azure Account has Azure Key Vault relationship', () => {
-    const { collectedRelationships } = context.jobState;
+    const keyVaultKeyEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === KEY_VAULT_KEY_ENTITY_TYPE,
+    );
+    expect(keyVaultKeyEntities.length).toBeGreaterThan(0);
 
-    expect(collectedRelationships).toContainEqual({
-      _class: 'HAS',
-      _fromEntityKey: 'azure_account_id',
-      _key: `azure_account_id|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-      _type: 'azure_account_has_keyvault_service',
-      displayName: 'HAS',
+    expect(
+      context.jobState.collectedRelationships.filter(
+        (e) => e._type === KeyVaultRelationships.KEY_VAULT_CONTAINS_KEY._type,
+      ),
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _class: { const: 'CONTAINS' },
+          _type: { const: 'azure_keyvault_service_contains_key' },
+        },
+      },
     });
   });
+});
 
-  it('should collect an Azure Resource Group has Azure Key Vault relationship', () => {
-    const { collectedRelationships } = context.jobState;
+describe('rm-key-vault-secrets', () => {
+  function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
 
-    expect(collectedRelationships).toContainEqual({
-      _class: 'HAS',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-      _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.KeyVault/vaults/${instanceConfig.developerId}1-j1dev`,
-      _type: 'azure_resource_group_has_keyvault_service',
-      displayName: 'HAS',
+    return { accountEntity };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'rm-key-vault-secrets',
+      options: {
+        recordFailedRequests: true,
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+        }),
+      },
+    });
+
+    const { accountEntity } = getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchKeyVaults(context);
+    await fetchKeyVaultSecrets(context);
+
+    const keyVaultEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === KEY_VAULT_SERVICE_ENTITY_TYPE,
+    );
+    expect(keyVaultEntities.length).toBeGreaterThan(0);
+
+    const keyVaultSecretEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === KEY_VAULT_SERVICE_ENTITY_TYPE,
+    );
+    expect(keyVaultSecretEntities.length).toBeGreaterThan(0);
+
+    expect(
+      context.jobState.collectedRelationships.filter(
+        (e) =>
+          e._type === KeyVaultRelationships.KEY_VAULT_CONTAINS_SECRET._type,
+      ),
+    ).toMatchDirectRelationshipSchema({
+      schema: {
+        properties: {
+          _class: { const: 'CONTAINS' },
+          _type: { const: 'azure_keyvault_service_contains_secret' },
+        },
+      },
     });
   });
 });

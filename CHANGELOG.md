@@ -8,6 +8,22 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added support for ingesting the following **new** resources:
+
+  | Service          | Resource / Entity       |
+  | ---------------- | ----------------------- |
+  | Key Vault Key    | `azure_keyvault_key`    |
+  | Key Vault Secret | `azure_keyvault_secret` |
+
+- With the following properties:
+
+  | Entity                  | Properties                                                                                                                                                  |
+  | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `azure_keyvault_key`    | `name`, `recoveryLevel`, `vaultUrl`, `version`, `enabled`, `notBefore`, `createdOn`, `updatedOn`, `expiresOn`                                               |
+  | `azure_keyvault_secret` | `name`, `recoveryLevel`, `vaultUrl`, `version`, `contentType`, `certificateKeyId`, `managed`, `enabled`, `notBefore`, `createdOn`, `updatedOn`, `expiresOn` |
+
 ### Fixed
 
 - Suppressed `FeatureNotSupportedForAccount` and `AccountIsDisabled` errors when

@@ -7,7 +7,6 @@ import {
   RelationshipClass,
   getRawData,
 } from '@jupiterone/integration-sdk-core';
-import { compareAsc } from 'date-fns';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
@@ -31,7 +30,8 @@ import {
 } from '../key-vault/constants';
 import { Vault } from '@azure/arm-keyvault/esm/models';
 export * from './constants';
-import { MonitorClient } from '../monitor/client';
+// import { MonitorClient } from '../monitor/client';
+// import { compareAsc } from 'date-fns';
 
 export async function fetchStorageAccounts(
   executionContext: IntegrationStepContext,
@@ -48,34 +48,44 @@ export async function fetchStorageAccounts(
       logger,
       storageAccount,
     });
-    const monitorClient = new MonitorClient(instance.config, logger);
 
     const storageBlobServiceProperties = await storageAccountServiceClient.getBlobServiceProperties();
     const storageQueueServiceProperties = await storageAccountServiceClient.getQueueServiceProperties();
 
     let lastAccessKeyRegenerationDate: Date | undefined;
-    await monitorClient.iterateActivityLogsFromPreviousNDays(
-      storageAccount.id as string,
-      (log) => {
-        const eventTimestamp = log.eventTimestamp as Date;
-        if (
-          log.authorization?.action ===
-            'Microsoft.Storage/storageAccounts/regenerateKey/action' &&
-          log.status?.value === 'Succeeded'
-        ) {
-          if (
-            !lastAccessKeyRegenerationDate ||
-            (lastAccessKeyRegenerationDate &&
-              compareAsc(eventTimestamp, lastAccessKeyRegenerationDate) === 1)
-          ) {
-            lastAccessKeyRegenerationDate = eventTimestamp;
-          }
-        }
-      },
-      {
-        select: 'authorization, status, eventTimestamp',
-      },
-    );
+    /**
+     * We have temporarily disabled this code because it iterates the past 90
+     * days of activity logs for every storage account in a subscription.
+     *
+     * Once this is re-enabled, also re-enable the managed question:
+     *
+     *    integration-question-azure-storage-account-key-regeneration
+     *
+     * TODO re-enable lastAccessKeyRegenerationDate
+     */
+    // const monitorClient = new MonitorClient(instance.config, logger);
+    // await monitorClient.iterateActivityLogsFromPreviousNDays(
+    //   storageAccount.id as string,
+    //   (log) => {
+    //     const eventTimestamp = log.eventTimestamp as Date;
+    //     if (
+    //       log.authorization?.action ===
+    //         'Microsoft.Storage/storageAccounts/regenerateKey/action' &&
+    //       log.status?.value === 'Succeeded'
+    //     ) {
+    //       if (
+    //         !lastAccessKeyRegenerationDate ||
+    //         (lastAccessKeyRegenerationDate &&
+    //           compareAsc(eventTimestamp, lastAccessKeyRegenerationDate) === 1)
+    //       ) {
+    //         lastAccessKeyRegenerationDate = eventTimestamp;
+    //       }
+    //     }
+    //   },
+    //   {
+    //     select: 'authorization, status, eventTimestamp',
+    //   },
+    // );
 
     return {
       blob: storageBlobServiceProperties,

@@ -7,6 +7,7 @@ import {
   RelationshipClass,
   getRawData,
 } from '@jupiterone/integration-sdk-core';
+import { compareAsc } from 'date-fns';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
@@ -30,6 +31,7 @@ import {
 } from '../key-vault/constants';
 import { Vault } from '@azure/arm-keyvault/esm/models';
 export * from './constants';
+import { MonitorClient } from '../monitor/client';
 
 export async function fetchStorageAccounts(
   executionContext: IntegrationStepContext,
@@ -39,19 +41,46 @@ export async function fetchStorageAccounts(
     name: string;
     kind: Kind;
     skuTier: SkuTier;
+    id: string;
   }) {
     const storageAccountServiceClient = createStorageAccountServiceClient({
       config: instance.config,
       logger,
       storageAccount,
     });
+    const monitorClient = new MonitorClient(instance.config, logger);
 
     const storageBlobServiceProperties = await storageAccountServiceClient.getBlobServiceProperties();
     const storageQueueServiceProperties = await storageAccountServiceClient.getQueueServiceProperties();
 
+    let lastAccessKeyRegenerationDate: Date | undefined;
+    await monitorClient.iterateActivityLogsFromPreviousNDays(
+      storageAccount.id as string,
+      (log) => {
+        const eventTimestamp = log.eventTimestamp as Date;
+        if (
+          log.authorization?.action ===
+            'Microsoft.Storage/storageAccounts/regenerateKey/action' &&
+          log.status?.value === 'Succeeded'
+        ) {
+          if (
+            !lastAccessKeyRegenerationDate ||
+            (lastAccessKeyRegenerationDate &&
+              compareAsc(eventTimestamp, lastAccessKeyRegenerationDate) === 1)
+          ) {
+            lastAccessKeyRegenerationDate = eventTimestamp;
+          }
+        }
+      },
+      {
+        select: 'authorization, status, eventTimestamp',
+      },
+    );
+
     return {
       blob: storageBlobServiceProperties,
       queue: storageQueueServiceProperties,
+      lastAccessKeyRegenerationDate,
     };
   }
   const client = new StorageClient(instance.config, logger);
@@ -67,6 +96,7 @@ export async function fetchStorageAccounts(
         name: storageAccount.name!,
         kind: storageAccount.kind!,
         skuTier: storageAccount.sku?.tier as SkuTier,
+        id: storageAccount.id!,
       },
     );
     const storageAccountEntity = await jobState.addEntity(

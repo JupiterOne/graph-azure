@@ -3,10 +3,12 @@ import {
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
 import { MonitorManagementClient } from '@azure/arm-monitor';
+import { formatISO, subDays } from 'date-fns';
 import {
   ActivityLogAlertResource,
   DiagnosticSettingsResource,
   LogProfileResource,
+  EventData,
 } from '@azure/arm-monitor/esm/models';
 
 export class MonitorClient extends Client {
@@ -94,6 +96,38 @@ export class MonitorClient extends Client {
           ),
       },
       resourceDescription: 'monitor.activityLogAlerts',
+      callback,
+    });
+  }
+
+  public async iterateActivityLogsFromPreviousNDays(
+    resourceId: string,
+    callback: (e: EventData) => void | Promise<void>,
+    options?: {
+      dayRange?: number;
+      select?: string;
+    },
+  ) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      MonitorManagementClient,
+    );
+
+    const startDate = formatISO(subDays(new Date(), options?.dayRange || 90));
+    const endDate = formatISO(new Date());
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.activityLogs.list(
+            `eventTimestamp ge '${startDate}' and eventTimestamp le '${endDate}' and resourceUri eq '${resourceId}'`,
+            { select: options?.select },
+          ),
+        listNext: async (nextPageLink) =>
+          serviceClient.activityLogs.listNext(nextPageLink),
+      },
+      resourceDescription: 'monitor.activityLogs',
       callback,
     });
   }

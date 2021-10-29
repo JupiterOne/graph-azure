@@ -1,4 +1,5 @@
 import { StorageManagementClient } from '@azure/arm-storage';
+import { TableServiceClient } from '@azure/data-tables';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { QueueServiceClient } from '@azure/storage-queue';
 import {
@@ -82,6 +83,32 @@ export function createStorageAccountServiceClient(options: {
               errorName: e.name,
             },
             'Failed to get queue service properties for storage account',
+          );
+        }
+      }
+    },
+
+    getTableServiceProperties: async () => {
+      if (
+        isServiceEnabledForKindAndTier.blob(
+          storageAccount.kind,
+          storageAccount.skuTier,
+        )
+      ) {
+        const client = new TableServiceClient(
+          `https://${storageAccount.name}.blob.core.windows.net`,
+          credential,
+        );
+        try {
+          const response = await client.getProperties();
+          return response;
+        } catch (e) {
+          logger.warn(
+            {
+              storageAccount,
+              e,
+            },
+            'Failed to get table service properties for storage account',
           );
         }
       }

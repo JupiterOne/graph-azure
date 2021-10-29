@@ -81,6 +81,7 @@ describe('rm-storage-accounts', () => {
 
     const storageAccountEntities = context.jobState.collectedEntities;
 
+    expect(storageAccountEntities).toMatchSnapshot();
     expect(storageAccountEntities.length).toBeGreaterThan(0);
     expect(storageAccountEntities).toMatchGraphObjectSchema({
       _class: entities.STORAGE_ACCOUNT._class,
@@ -92,7 +93,7 @@ describe('rm-storage-accounts', () => {
     expect(storageAccountKeyVaultRelationships).toMatchDirectRelationshipSchema(
       {},
     );
-  });
+  }, 50000);
 });
 
 describe('rm-storage-containers', () => {
@@ -160,7 +161,7 @@ describe('rm-storage-containers', () => {
     expect(
       storageAccountContainerRelationships,
     ).toMatchDirectRelationshipSchema({});
-  });
+  }, 50000);
 });
 
 describe('rm-storage-file-shares', () => {
@@ -228,7 +229,7 @@ describe('rm-storage-file-shares', () => {
     expect(
       storageAccountFileShareRelationships,
     ).toMatchDirectRelationshipSchema({});
-  });
+  }, 50000);
 });
 
 test('step - storage queues', async () => {

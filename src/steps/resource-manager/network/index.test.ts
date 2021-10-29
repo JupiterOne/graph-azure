@@ -1384,7 +1384,7 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
     expect(
       privateEndpointResourceRelationships,
     ).toMatchDirectRelationshipSchema({});
-  }, 15000);
+  }, 50000);
 });
 
 describe('rm-network-private-endpoint-nic-relationships', () => {
@@ -1628,7 +1628,7 @@ describe('rm-network-flow-logs', () => {
     expect(watcherFlowLogsRelationships).toMatchDirectRelationshipSchema({});
 
     expect(restRelationships.length).toBe(0);
-  });
+  }, 50000);
 });
 
 describe('rm-network-location-watcher-relationships', () => {

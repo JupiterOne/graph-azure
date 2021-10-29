@@ -2698,7 +2698,7 @@ questions:
       version: v1.3.1
       requirements:
         - '8.4'
-  - id: integration-question-azure-misc-recoverable-key-vaults
+  - id: integration-question-azure-misc-kubernetes-rbac
     title: Is RBAC enabled on all Azure Kubernetes Services Instances??
     description:
       Checks if all Azure Kubernetes Services Instances has RBAC enabled.

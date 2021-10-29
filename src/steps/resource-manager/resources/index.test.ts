@@ -353,5 +353,5 @@ describe('step - resource has resource lock relationships', () => {
 
     expect(directResourceLockRelationships.length).toBeGreaterThan(0);
     expect(mappedResourceLockRelationships.length).toBeGreaterThan(0);
-  }, 15000);
+  }, 50000);
 });

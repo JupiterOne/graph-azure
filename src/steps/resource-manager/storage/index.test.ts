@@ -94,7 +94,7 @@ describe('rm-storage-accounts', () => {
     expect(storageAccountKeyVaultRelationships).toMatchDirectRelationshipSchema(
       {},
     );
-  });
+  }, 50000);
 });
 
 describe('rm-storage-containers', () => {
@@ -162,7 +162,7 @@ describe('rm-storage-containers', () => {
     expect(
       storageAccountContainerRelationships,
     ).toMatchDirectRelationshipSchema({});
-  });
+  }, 50000);
 });
 
 describe('rm-storage-file-shares', () => {
@@ -230,7 +230,7 @@ describe('rm-storage-file-shares', () => {
     expect(
       storageAccountFileShareRelationships,
     ).toMatchDirectRelationshipSchema({});
-  });
+  }, 50000);
 });
 
 test('step - storage queues', async () => {

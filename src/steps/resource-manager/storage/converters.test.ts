@@ -172,10 +172,10 @@ describe('createStorageAccountEntity', () => {
       queueAnalyticsLoggingReadEnabled: true,
       queueAnalyticsLoggingWriteEnabled: true,
       queueAnalyticsLoggingDeleteEnabled: true,
-      tableAnalyticsLoggingReadEnabled: false,
-      tableAnalyticsLoggingWriteEnabled: false,
-      tableAnalyticsLoggingDeleteEnabled: false,
-      isAccessKeyRegenerated: false,
+      tableAnalyticsLoggingReadEnabled: undefined,
+      tableAnalyticsLoggingWriteEnabled: undefined,
+      tableAnalyticsLoggingDeleteEnabled: undefined,
+      lastAccessKeyRegenerationDate: undefined,
     };
 
     const storageAccountEntity = createStorageAccountEntity(webLinker, data, {

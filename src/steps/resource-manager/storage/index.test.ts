@@ -1,4 +1,3 @@
-jest.setTimeout(500000);
 import {
   fetchStorageAccounts,
   fetchStorageQueues,

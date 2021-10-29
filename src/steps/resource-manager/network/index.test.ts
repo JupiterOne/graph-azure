@@ -1305,8 +1305,6 @@ describe('rm-network-private-endpoint-subnet-relationships', () => {
   }, 10000);
 });
 
-jest.setTimeout(5000000);
-
 describe('rm-network-private-endpoint-resource-relationships', () => {
   afterEach(async () => {
     if (recording) {

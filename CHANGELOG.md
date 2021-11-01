@@ -24,6 +24,12 @@ and this project adheres to
   | `azure_keyvault_key`    | `name`, `recoveryLevel`, `vaultUrl`, `version`, `enabled`, `notBefore`, `createdOn`, `updatedOn`, `expiresOn`                                               |
   | `azure_keyvault_secret` | `name`, `recoveryLevel`, `vaultUrl`, `version`, `contentType`, `certificateKeyId`, `managed`, `enabled`, `notBefore`, `createdOn`, `updatedOn`, `expiresOn` |
 
+- New properties added to resources:
+
+  | Entity                  | Properties                                                                                                    |
+  | ----------------------- | ------------------------------------------------------------------------------------------------------------- |
+  | `azure_storage_account` | `tableAnalyticsLoggingReadEnabled`, `tableAnalyticsLoggingWriteEnabled`, `tableAnalyticsLoggingDeleteEnabled` |
+
 ### Fixed
 
 - Suppressed `FeatureNotSupportedForAccount` and `AccountIsDisabled` errors when

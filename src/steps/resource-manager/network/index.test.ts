@@ -38,7 +38,8 @@ import {
   getMockAccountEntity,
   getMockResourceGroupEntity,
 } from '../../../../test/helpers/getMockEntity';
-import { fetchResourceGroups, RESOURCE_GROUP_ENTITY } from '../resources';
+import { fetchResourceGroups } from '../resources';
+import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import {
   entities,
@@ -1314,7 +1315,9 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
 
   async function getSetupEntities(config: IntegrationConfig) {
     const accountEntity = getMockAccountEntity(config);
-    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+    const resourceGroupEntity = getMockResourceGroupEntity(
+      'DefaultResourceGroup-CUS',
+    );
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -1333,13 +1336,13 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
     const privateEndpointEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === NetworkEntities.PRIVATE_ENDPOINT._type,
     );
-    const j1devPrivateEndpointEntities = privateEndpointEntities.filter(
-      (e) => e.name === 'j1dev',
+    const examplePrivateEndpointEntities = privateEndpointEntities.filter(
+      (e) => e.name === 'private-endpoint',
     );
-    expect(j1devPrivateEndpointEntities).toHaveLength(1);
+    expect(examplePrivateEndpointEntities).toHaveLength(1);
 
     return {
-      privateEndpointEntity: j1devPrivateEndpointEntities[0],
+      privateEndpointEntity: examplePrivateEndpointEntities[0],
       storageAccountEntities,
     };
   }
@@ -1349,7 +1352,15 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
       directory: __dirname,
       name: 'rm-network-private-endpoint-resource-relationships',
       options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          options: {
+            headers: false,
+            url: {
+              query: false,
+            },
+          },
+        }),
       },
     });
 
@@ -1374,7 +1385,7 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
     expect(
       privateEndpointResourceRelationships,
     ).toMatchDirectRelationshipSchema({});
-  }, 15000);
+  }, 50000);
 });
 
 describe('rm-network-private-endpoint-nic-relationships', () => {
@@ -1553,7 +1564,15 @@ describe('rm-network-flow-logs', () => {
       directory: __dirname,
       name: 'rm-network-flow-logs',
       options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          options: {
+            headers: false,
+            url: {
+              query: false,
+            },
+          },
+        }),
       },
     });
 
@@ -1610,7 +1629,7 @@ describe('rm-network-flow-logs', () => {
     expect(watcherFlowLogsRelationships).toMatchDirectRelationshipSchema({});
 
     expect(restRelationships.length).toBe(0);
-  });
+  }, 50000);
 });
 
 describe('rm-network-location-watcher-relationships', () => {

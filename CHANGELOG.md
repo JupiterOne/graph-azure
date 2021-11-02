@@ -8,6 +8,162 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.34.0] - 2021-11-01
+
+### Added
+
+- Added support for ingesting the following **new** resources:
+
+  | Service          | Resource / Entity       |
+  | ---------------- | ----------------------- |
+  | Key Vault Key    | `azure_keyvault_key`    |
+  | Key Vault Secret | `azure_keyvault_secret` |
+
+- With the following properties:
+
+  | Entity                  | Properties                                                                                                                                                  |
+  | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `azure_keyvault_key`    | `name`, `recoveryLevel`, `vaultUrl`, `version`, `enabled`, `notBefore`, `createdOn`, `updatedOn`, `expiresOn`                                               |
+  | `azure_keyvault_secret` | `name`, `recoveryLevel`, `vaultUrl`, `version`, `contentType`, `certificateKeyId`, `managed`, `enabled`, `notBefore`, `createdOn`, `updatedOn`, `expiresOn` |
+
+- New properties added to resources:
+
+  | Entity                  | Properties                                                                                                    |
+  | ----------------------- | ------------------------------------------------------------------------------------------------------------- |
+  | `azure_storage_account` | `tableAnalyticsLoggingReadEnabled`, `tableAnalyticsLoggingWriteEnabled`, `tableAnalyticsLoggingDeleteEnabled` |
+
+### Fixed
+
+- Suppressed `FeatureNotSupportedForAccount` and `AccountIsDisabled` errors when
+  attempting to list tables, queues, blobs, and file shares for storage accounts
+- Add `errorCode` and `errorName` to blob & queue service properties calls
+- Fixed a bug that occurs when paginating
+  Microsoft.Compute/galleries/${galleryId}/images/${imageId}/versions
+
+## [5.33.0] - 2021-10-15
+
+### Added
+
+- New properties added to resources:
+
+  | Entity                                | Properties                                                                                                                                                                 |
+  | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `azure_web_app`, `azure_function_app` | `authEnabled`, `httpsOnly`, `minTlsVersion`, `clientCertEnabled`, `principalId`, `phpVersion`, `pythonVersion`, `javaVersion`, `nodeVersion`, `http20Enabled`, `ftpsState` |
+  | `azure_sql_server`                    | `vaRecurringScansEnabled`, `vaStoragePath`, `vaEmailSubscriptionAdmins`, `vaEmails`                                                                                        |
+
+  Note: fetching settings for `azure_web_app` and `azure_function_app` requires
+  additional permission to be added to the custom role:
+  `Microsoft.Web/sites/config/list/Action`
+
+## [5.32.0] - 2021-10-04
+
+### Added
+
+- Open-sourced Azure managed questions
+
+## [5.31.7] - 2021-10-04
+
+### Changed
+
+- Bumped `@jupiterone/integration-sdk-*@6.22.1`. This included new functionality
+  to the `IntegrationError` classes that better segregates errors coming from
+  different steps
+
+## [5.31.6] - 2021-10-01
+
+### Fixed
+
+- Stop throwing
+  `Provider API failed at storage.*: AccountIsDisabled The specified account is disabled.`
+  on storage blob/queue/table/file steps
+
+## [5.31.5] - 2021-10-01
+
+### Fixed
+
+- Stop throwing
+  `Provider API failed at storage.*: AccountIsDisabled The specified account is disabled.`
+  on storage blob/queue/table/file steps
+
+## [5.31.5] - 2021-10-01
+
+### Fixed
+
+- Stop throwing
+  `Provider API failed at storage.*: AccountIsDisabled The specified account is disabled.`
+  on storage blob/queue/table/file steps
+- Stop throwing
+  `Provider API failed at *.*: DisallowedOperation The current subscription type is not permitted to perform operations on any provider namespace. Please use a different subscription.`
+  on steps
+
+## [5.31.4] - 2021-10-01
+
+### Fixed
+
+- Stop throwing
+  `Provider API failed at monitor.diagnosticSetting: SubscriptionNotRegistered The subscription '<SUBSCRIPTION-ID>' is not registered to use microsoft.insights.`
+  on security center settings step
+- Stop throwing
+  `Provider API failed at security.settings: Subscription Not Registered Please register to Microsoft.Security in order to view your security status`
+  on security center settings step
+
+## [5.31.3] - 2021-09-07
+
+### Changed
+
+- Restored `GraphClient` retry parameters:
+  - retries: 5 -> 3
+  - delay: 500 -> 200
+
+### Fixed
+
+- Added token refresh logic to `GraphClient`
+
+## [5.31.2] - 2021-09-02
+
+### Changed
+
+- Increased `GraphClient` retries from 3 to 5
+- Added 500ms delay between `GraphClient` retries
+- Used `expect().toTargetEntities()` matcher from SDK, and removed local
+  implementations of `.toTargetEntities()` and
+  `.toCreateValidRelationshipsToEntities()`
+
+## 5.31.1 - 2021-08-04
+
+### Changed
+
+- Changed `validateInvocation()` to try directly invoking
+  `subscriptionClient.getSubscription(id)` when provided a `subscriptionId`
+  parameter. Directly pass errors through to the user, such as:
+  - `The provided subscription identifier '{{SUBSCRIPTION_ID}}' is malformed or invalid.`
+  - `The subscription '{{SUBSCRIPTION_ID}}' could not be found.`
+  - `The client '{{CLIENT_ID}}' with object id '{{CLIENT_ID}}' does not have authorization to perform action 'Microsoft.Resources/subscriptions/read' over scope '/subscriptions/{{SUBSCRIPTION_ID}}' or the scope is invalid.`
+
+## 5.31.0 - 2021-07-22
+
+### Changed
+
+- Throw `IntegrationProviderAuthorizationError` on 403 response in `GraphClient`
+- Changed `azure_group_has_member` relationships from mapped to direct, because
+  group members always exist in the same directory as the group.
+- Bumped `@jupiterone/integration-sdk-*@6.10.0`. This included some new required
+  properties for entities of `_class` `Service` and `User`. Added the `function`
+  property to the following entites:
+  - `azure_batch_account`
+  - `azure_storage_account`
+  - `azure_cdn_profile`
+  - `azure_event_grid_domain`
+  - `azure_service_bus_namespace`
+
+### Fixed
+
+- Identify policy definition source (subscription, management group, or
+  built-in) using a case-insensitive switch statement, since Azure resource IDs
+  do not use consistent casing.
+- Fixed an issue where DNS Zones and Private DNS Zones threw an error if a
+  subscription had not registered the `Microsoft.Network` provider
+
 ## 5.30.0 - 2021-06-09
 
 ### Added

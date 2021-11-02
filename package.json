@@ -1,12 +1,14 @@
 {
   "name": "@jupiterone/graph-azure",
-  "version": "5.30.0",
+  "version": "5.34.0",
   "description": "A graph conversion tool for https://azure.microsoft.com/.",
-  "main": "dist/index.js",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "repository": "https://github.com/JupiterOne/graph-azure",
   "license": "MPL-2.0",
   "files": [
-    "dist"
+    "src",
+    "jupiterone"
   ],
   "publishConfig": {
     "access": "public"
@@ -14,17 +16,21 @@
   "scripts": {
     "start": "j1-integration collect",
     "graph": "j1-integration visualize",
+    "graph:types": "j1-integration visualize-types",
+    "graph:spec": "j1-integration visualize-types --project-path docs/spec --output-file ./.j1-integration/types-graph/index.spec.html",
+    "validate:questions:dry": "j1-integration validate-question-file --dry-run",
+    "validate:questions": "j1-integration validate-question-file -a $MANAGED_QUESTIONS_JUPITERONE_ACCOUNT_ID -k $MANAGED_QUESTIONS_JUPITERONE_API_KEY",
     "document": "j1-integration document && yarn document:diagnostic-settings",
     "lint": "eslint . --cache --fix --ext .ts,.tsx",
     "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",
     "type-check": "tsc",
-    "test": "LOAD_ENV=1 jest",
-    "test:ci": "yarn lint && yarn type-check && yarn jest",
-    "prepush": "yarn test:ci",
+    "test": "yarn validate:questions:dry && yarn jest",
+    "test:env": "LOAD_ENV=1 yarn test",
+    "test:ci": "yarn lint && yarn type-check && yarn test",
+    "prepush": "yarn lint && yarn type-check && jest --changedSince main",
     "document:diagnostic-settings": "./tools/cli/j1-azure-integration document-diagnostic-settings",
     "precommit": "yarn document:diagnostic-settings && git add docs/jupiterone.md && lint-staged",
-    "build": "tsc -p tsconfig.dist.json --declaration",
-    "prepack": "yarn build",
+    "build": "./build.sh",
     "tf": "cd terraform && env `grep -v '^#' .env` terraform $1"
   },
   "dependencies": {
@@ -37,10 +43,12 @@
     "@azure/arm-compute": "^14.0.0",
     "@azure/arm-containerinstance": "^6.0.0",
     "@azure/arm-containerregistry": "^8.0.0",
+    "@azure/arm-containerservice": "^14.1.0",
     "@azure/arm-cosmosdb": "^7.0.0",
     "@azure/arm-dns": "^4.0.0",
     "@azure/arm-eventgrid": "^9.0.0",
     "@azure/arm-keyvault": "^1.2.1",
+    "@azure/arm-locks": "^1.2.2",
     "@azure/arm-managementgroups": "^1.1.0",
     "@azure/arm-mariadb": "^1.4.0",
     "@azure/arm-monitor": "^6.0.0",
@@ -57,8 +65,10 @@
     "@azure/arm-sql": "^7.0.1",
     "@azure/arm-storage": "^15.1.0",
     "@azure/arm-subscriptions": "^2.0.0",
+    "@azure/data-tables": "^12.1.2",
     "@azure/identity": "^1.0.2",
     "@azure/keyvault-keys": "^4.0.2",
+    "@azure/keyvault-secrets": "^4.3.0",
     "@azure/ms-rest-nodeauth": "^2.0.5",
     "@azure/storage-blob": "^12.5.0",
     "@azure/storage-queue": "^12.4.0",
@@ -66,6 +76,7 @@
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "@microsoft/microsoft-graph-types": "^1.10.0",
     "cross-fetch": "^3.0.4",
+    "date-fns": "^2.24.0",
     "lodash.map": "^4.6.0",
     "lodash.snakecase": "^4.1.1"
   },
@@ -74,12 +85,12 @@
     "@azure/ms-rest-js": "^2.0.0"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^6.0.0"
+    "@jupiterone/integration-sdk-core": "^7.1.0"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^6.0.0",
-    "@jupiterone/integration-sdk-dev-tools": "^6.0.0",
-    "@jupiterone/integration-sdk-testing": "^6.0.0",
+    "@jupiterone/integration-sdk-core": "^7.1.0",
+    "@jupiterone/integration-sdk-dev-tools": "^7.1.0",
+    "@jupiterone/integration-sdk-testing": "^7.1.0",
     "@types/lodash.map": "^4.6.13",
     "@types/lodash.snakecase": "^4.1.6",
     "@types/node": "^13.11.1",

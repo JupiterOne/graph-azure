@@ -7,7 +7,7 @@ import {
   StepRelationshipMetadata,
   generateRelationshipType,
 } from '@jupiterone/integration-sdk-core';
-import { RESOURCE_GROUP_ENTITY } from '../resources';
+import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
 import { getResourceGroupId } from './matchers';
 
 export const RESOURCE_GROUP_RESOURCE_RELATIONSHIP_CLASS = RelationshipClass.HAS;

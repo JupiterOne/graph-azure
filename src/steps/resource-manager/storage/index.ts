@@ -23,13 +23,15 @@ import {
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import {
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   STEP_RM_KEYVAULT_VAULTS,
 } from '../key-vault/constants';
 import { Vault } from '@azure/arm-keyvault/esm/models';
 export * from './constants';
+// import { MonitorClient } from '../monitor/client';
+// import { compareAsc } from 'date-fns';
 
 export async function fetchStorageAccounts(
   executionContext: IntegrationStepContext,
@@ -39,6 +41,7 @@ export async function fetchStorageAccounts(
     name: string;
     kind: Kind;
     skuTier: SkuTier;
+    id: string;
   }) {
     const storageAccountServiceClient = createStorageAccountServiceClient({
       config: instance.config,
@@ -48,10 +51,48 @@ export async function fetchStorageAccounts(
 
     const storageBlobServiceProperties = await storageAccountServiceClient.getBlobServiceProperties();
     const storageQueueServiceProperties = await storageAccountServiceClient.getQueueServiceProperties();
+    const storageTableServiceProperties = await storageAccountServiceClient.getTableServiceProperties();
+
+    let lastAccessKeyRegenerationDate: Date | undefined;
+    /**
+     * We have temporarily disabled this code because it iterates the past 90
+     * days of activity logs for every storage account in a subscription.
+     *
+     * Once this is re-enabled, also re-enable the managed question:
+     *
+     *    integration-question-azure-storage-account-key-regeneration
+     *
+     * TODO re-enable lastAccessKeyRegenerationDate
+     */
+    // const monitorClient = new MonitorClient(instance.config, logger);
+    // await monitorClient.iterateActivityLogsFromPreviousNDays(
+    //   storageAccount.id as string,
+    //   (log) => {
+    //     const eventTimestamp = log.eventTimestamp as Date;
+    //     if (
+    //       log.authorization?.action ===
+    //         'Microsoft.Storage/storageAccounts/regenerateKey/action' &&
+    //       log.status?.value === 'Succeeded'
+    //     ) {
+    //       if (
+    //         !lastAccessKeyRegenerationDate ||
+    //         (lastAccessKeyRegenerationDate &&
+    //           compareAsc(eventTimestamp, lastAccessKeyRegenerationDate) === 1)
+    //       ) {
+    //         lastAccessKeyRegenerationDate = eventTimestamp;
+    //       }
+    //     }
+    //   },
+    //   {
+    //     select: 'authorization, status, eventTimestamp',
+    //   },
+    // );
 
     return {
       blob: storageBlobServiceProperties,
       queue: storageQueueServiceProperties,
+      lastAccessKeyRegenerationDate,
+      table: storageTableServiceProperties,
     };
   }
   const client = new StorageClient(instance.config, logger);
@@ -67,6 +108,7 @@ export async function fetchStorageAccounts(
         name: storageAccount.name!,
         kind: storageAccount.kind!,
         skuTier: storageAccount.sku?.tier as SkuTier,
+        id: storageAccount.id!,
       },
     );
     const storageAccountEntity = await jobState.addEntity(

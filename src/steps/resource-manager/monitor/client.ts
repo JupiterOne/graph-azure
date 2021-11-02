@@ -3,10 +3,12 @@ import {
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
 import { MonitorManagementClient } from '@azure/arm-monitor';
+import { formatISO, subDays } from 'date-fns';
 import {
   ActivityLogAlertResource,
   DiagnosticSettingsResource,
   LogProfileResource,
+  EventData,
 } from '@azure/arm-monitor/esm/models';
 
 export class MonitorClient extends Client {
@@ -51,24 +53,27 @@ export class MonitorClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       MonitorManagementClient,
     );
-
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          const response = await serviceClient.diagnosticSettings.list(
-            resourceUri,
-          );
-          const diagnosticSettings = response.value!;
-          return Object.assign(diagnosticSettings, {
-            _response: response._response,
-          });
+    try {
+      return iterateAllResources({
+        logger: this.logger,
+        serviceClient,
+        resourceEndpoint: {
+          list: async () => {
+            const response = await serviceClient.diagnosticSettings.list(
+              resourceUri,
+            );
+            const diagnosticSettings = response.value!;
+            return Object.assign(diagnosticSettings, {
+              _response: response._response,
+            });
+          },
         },
-      },
-      resourceDescription: 'monitor.diagnosticSetting',
-      callback,
-    });
+        resourceDescription: 'monitor.diagnosticSetting',
+        callback,
+      });
+    } catch (err) {
+      this.logger.warn({ err }, 'Error iterating diagnostic settings.');
+    }
   }
 
   public async iterateActivityLogAlerts(
@@ -91,6 +96,38 @@ export class MonitorClient extends Client {
           ),
       },
       resourceDescription: 'monitor.activityLogAlerts',
+      callback,
+    });
+  }
+
+  public async iterateActivityLogsFromPreviousNDays(
+    resourceId: string,
+    callback: (e: EventData) => void | Promise<void>,
+    options?: {
+      dayRange?: number;
+      select?: string;
+    },
+  ) {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      MonitorManagementClient,
+    );
+
+    const startDate = formatISO(subDays(new Date(), options?.dayRange || 90));
+    const endDate = formatISO(new Date());
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.activityLogs.list(
+            `eventTimestamp ge '${startDate}' and eventTimestamp le '${endDate}' and resourceUri eq '${resourceId}'`,
+            { select: options?.select },
+          ),
+        listNext: async (nextPageLink) =>
+          serviceClient.activityLogs.listNext(nextPageLink),
+      },
+      resourceDescription: 'monitor.activityLogs',
       callback,
     });
   }

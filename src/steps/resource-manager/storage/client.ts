@@ -1,4 +1,5 @@
 import { StorageManagementClient } from '@azure/arm-storage';
+import { TableServiceClient } from '@azure/data-tables';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { QueueServiceClient } from '@azure/storage-queue';
 import {
@@ -51,7 +52,8 @@ export function createStorageAccountServiceClient(options: {
           logger.warn(
             {
               storageAccount,
-              e,
+              errorCode: e.code,
+              errorName: e.name,
             },
             'Failed to get blob service properties for storage account',
           );
@@ -77,9 +79,36 @@ export function createStorageAccountServiceClient(options: {
           logger.warn(
             {
               storageAccount,
-              e,
+              errorCode: e.code,
+              errorName: e.name,
             },
             'Failed to get queue service properties for storage account',
+          );
+        }
+      }
+    },
+
+    getTableServiceProperties: async () => {
+      if (
+        isServiceEnabledForKindAndTier.blob(
+          storageAccount.kind,
+          storageAccount.skuTier,
+        )
+      ) {
+        const client = new TableServiceClient(
+          `https://${storageAccount.name}.blob.core.windows.net`,
+          credential,
+        );
+        try {
+          const response = await client.getProperties();
+          return response;
+        } catch (e) {
+          logger.warn(
+            {
+              storageAccount,
+              e,
+            },
+            'Failed to get table service properties for storage account',
           );
         }
       }
@@ -126,22 +155,29 @@ export class StorageClient extends Client {
     )
       return;
 
-    await iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.blobContainers.list(resourceGroup, accountName);
-        },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.blobContainers.listNext(nextLink);
-        },
-      },
-      resourceDescription: 'storage.blobContainers',
-      callback,
-    });
+    await this.withAccountSupportErrorHandling(
+      storageAccount,
+      async () =>
+        await iterateAllResources({
+          logger: this.logger,
+          serviceClient,
+          resourceEndpoint: {
+            list: async () => {
+              return serviceClient.blobContainers.list(
+                resourceGroup,
+                accountName,
+              );
+            },
+            listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
+              nextLink: string,
+            ) => {
+              return serviceClient.blobContainers.listNext(nextLink);
+            },
+          },
+          resourceDescription: 'storage.blobContainers',
+          callback,
+        }),
+    );
   }
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -163,20 +199,24 @@ export class StorageClient extends Client {
     )
       return;
 
-    await iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.queue.list(resourceGroup, accountName);
-        },
-        listNext: async (nextLink: string) => {
-          return serviceClient.queue.listNext(nextLink);
-        },
-      },
-      resourceDescription: 'storage.queues',
-      callback,
-    });
+    await this.withAccountSupportErrorHandling(
+      storageAccount,
+      async () =>
+        await iterateAllResources({
+          logger: this.logger,
+          serviceClient,
+          resourceEndpoint: {
+            list: async () => {
+              return serviceClient.queue.list(resourceGroup, accountName);
+            },
+            listNext: async (nextLink: string) => {
+              return serviceClient.queue.listNext(nextLink);
+            },
+          },
+          resourceDescription: 'storage.queues',
+          callback,
+        }),
+    );
   }
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -198,20 +238,24 @@ export class StorageClient extends Client {
     )
       return;
 
-    await iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.table.list(resourceGroup, accountName);
-        },
-        listNext: async (nextLink: string) => {
-          return serviceClient.table.listNext(nextLink);
-        },
-      },
-      resourceDescription: 'storage.tables',
-      callback,
-    });
+    await this.withAccountSupportErrorHandling(
+      storageAccount,
+      async () =>
+        await iterateAllResources({
+          logger: this.logger,
+          serviceClient,
+          resourceEndpoint: {
+            list: async () => {
+              return serviceClient.table.list(resourceGroup, accountName);
+            },
+            listNext: async (nextLink: string) => {
+              return serviceClient.table.listNext(nextLink);
+            },
+          },
+          resourceDescription: 'storage.tables',
+          callback,
+        }),
+    );
   }
 
   public async iterateFileShares(
@@ -237,22 +281,49 @@ export class StorageClient extends Client {
     )
       return;
 
-    await iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async function listFileShares() {
-          return serviceClient.fileShares.list(resourceGroup, accountName);
+    await this.withAccountSupportErrorHandling(storageAccount, async () =>
+      iterateAllResources({
+        logger: this.logger,
+        serviceClient,
+        resourceEndpoint: {
+          list: async function listFileShares() {
+            return serviceClient.fileShares.list(resourceGroup, accountName);
+          },
+          listNext: /* istanbul ignore next: testing iteration might be difficult */ async function listNextFileShares(
+            nextLink: string,
+          ) {
+            return serviceClient.fileShares.listNext(nextLink);
+          },
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async function listNextFileShares(
-          nextLink: string,
-        ) {
-          return serviceClient.fileShares.listNext(nextLink);
-        },
-      },
-      resourceDescription: 'storage.fileShares',
-      callback,
-    });
+        resourceDescription: 'storage.fileShares',
+        callback,
+      }),
+    );
+  }
+
+  private async withAccountSupportErrorHandling(
+    storageAccount: { name: string; id: string; kind: Kind; skuTier: SkuTier },
+    cb: () => Promise<void>,
+  ) {
+    try {
+      await cb();
+    } catch (e) {
+      if (
+        ['FeatureNotSupportedForAccount', 'AccountIsDisabled'].includes(
+          e.status,
+        ) // TODO is it possible to skip these calls altogether? How can we anticipate `FeatureNotSupportedForAccount` or `AccountIsDisabled`?
+      ) {
+        this.logger.trace(
+          {
+            storageAccount,
+            status: e.status,
+          },
+          'Endpoint is not supported for storage account.',
+        );
+        return;
+      }
+      throw e;
+    }
   }
 }
 

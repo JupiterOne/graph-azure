@@ -194,7 +194,10 @@ export class ComputeClient extends Client {
             galleryName,
             galleryImageName,
           ),
-        listNext: serviceClient.galleryImageVersions.listByGalleryImageNext,
+        listNext: async (nextPageLink) =>
+          serviceClient.galleryImageVersions.listByGalleryImageNext(
+            nextPageLink,
+          ),
       },
       resourceDescription: 'compute.gallery.image.versions',
       callback,

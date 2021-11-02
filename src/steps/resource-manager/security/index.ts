@@ -20,7 +20,7 @@ import {
   createSecurityCenterSettingEntity,
   createSecurityContactEntity,
 } from './converters';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import {
   entities as subscriptionEntities,
   steps as subscriptionSteps,

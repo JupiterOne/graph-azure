@@ -32,6 +32,8 @@ import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sq
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice/constants';
 import {
   STEP_RM_KEYVAULT_VAULTS,
+  STEP_RM_KEYVAULT_KEYS,
+  STEP_RM_KEYVAULT_SECRETS,
   KeyVaultStepIds,
 } from './steps/resource-manager/key-vault/constants';
 import {
@@ -51,7 +53,11 @@ import {
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
 } from './steps/resource-manager/network/constants';
 import { steps as storageSteps } from './steps/resource-manager/storage/constants';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources/constants';
+import {
+  STEP_RM_RESOURCES_RESOURCE_GROUPS,
+  STEP_RM_RESOURCES_RESOURCE_LOCKS,
+  STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
+} from './steps/resource-manager/resources/constants';
 import { steps as subscriptionSteps } from './steps/resource-manager/subscriptions/constants';
 import {
   STEP_RM_API_MANAGEMENT_APIS,
@@ -105,6 +111,7 @@ import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
 import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
+import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -146,6 +153,8 @@ export function getResourceManagerSteps(): GetApiSteps {
   return {
     executeFirstSteps: [
       STEP_RM_KEYVAULT_VAULTS,
+      STEP_RM_KEYVAULT_KEYS,
+      STEP_RM_KEYVAULT_SECRETS,
       KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS,
       STEP_RM_NETWORK_VIRTUAL_NETWORKS,
       STEP_RM_NETWORK_SECURITY_GROUPS,
@@ -194,11 +203,13 @@ export function getResourceManagerSteps(): GetApiSteps {
       authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS,
       authorizationSteps.CLASSIC_ADMINS,
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      STEP_RM_RESOURCES_RESOURCE_LOCKS,
       subscriptionSteps.SUBSCRIPTION,
       subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS,
       subscriptionSteps.LOCATIONS,
       STEP_RM_API_MANAGEMENT_SERVICES,
       STEP_RM_API_MANAGEMENT_APIS,
+      STEP_RM_CONTAINER_SERVICES_CLUSTERS,
       STEP_RM_DNS_ZONES,
       STEP_RM_DNS_RECORD_SETS,
       STEP_RM_PRIVATE_DNS_ZONES,
@@ -247,6 +258,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,
       STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
       PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS,
+      STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
     ],
   };
 }

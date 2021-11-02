@@ -31,8 +31,8 @@ type AzureGraphResponse<TResponseType = any> = TResponseType & {
  * Batching requests: https://docs.microsoft.com/en-us/graph/json-batching
  */
 export abstract class GraphClient {
-  protected client: Client;
-  private authenticationProvider: AuthenticationProvider;
+  readonly client: Client;
+  readonly authenticationProvider: GraphAuthenticationProvider;
 
   constructor(
     readonly logger: IntegrationLogger,
@@ -96,8 +96,21 @@ export abstract class GraphClient {
   async retryRequest<TResponseType = any>(
     graphRequest: GraphRequest,
   ): Promise<AzureGraphResponse<TResponseType>> {
+    let shouldRefreshAccessToken: boolean;
     return retry(
       async () => {
+        if (shouldRefreshAccessToken) {
+          /**
+           * The `@lifeomic/attempt` package does not await the `handleError` method, which
+           * prevents this project from calling `await this.authenticationProvider.refreshAccessToken()`
+           * within handleError itself.
+           *
+           * Instead, to make `handleError` synchronous, we simply set `shouldRefreshAccessToken = true` and
+           * await the token refresh within the `attemptFunc` itself.
+           */
+          await this.authenticationProvider.refreshAccessToken();
+          shouldRefreshAccessToken = false;
+        }
         return graphRequest.get();
       },
       {
@@ -113,6 +126,14 @@ export abstract class GraphClient {
             },
             'Encountered retryable error in Azure Graph API.',
           );
+
+          if (
+            err.code === 'Authentication_ExpiredToken' ||
+            err.code === 'InvalidAuthenticationToken'
+          ) {
+            this.logger.info('Refreshing access token');
+            shouldRefreshAccessToken = true;
+          }
         },
       },
     );
@@ -129,7 +150,7 @@ export abstract class GraphClient {
 
       // Fetch errors include the properties code, errno, message, name, stack, type.
       if (err instanceof FetchError) {
-        this.logger.error(
+        this.logger.warn(
           { err, resourceUrl: endpoint },
           'Encountered fetch error in Azure Graph client.',
         );
@@ -141,8 +162,20 @@ export abstract class GraphClient {
         });
       }
 
+      if (err.statusCode === 403) {
+        this.logger.warn(
+          { err, resourceUrl: endpoint },
+          'Encountered auth error in Azure Graph client.',
+        );
+        throw new IntegrationProviderAuthorizationError({
+          cause: err,
+          endpoint,
+          status: err.statusCode,
+          statusText: err.statusText || err.message,
+        });
+      }
       if (err.statusCode !== 404) {
-        this.logger.error(
+        this.logger.warn(
           { err, resourceUrl: endpoint },
           'Encountered error in Azure Graph client.',
         );
@@ -177,6 +210,10 @@ class GraphAuthenticationProvider implements AuthenticationProvider {
       this.accessToken = await authenticate(this.config);
     }
     return this.accessToken;
+  }
+
+  public async refreshAccessToken(): Promise<void> {
+    this.accessToken = await authenticate(this.config);
   }
 }
 

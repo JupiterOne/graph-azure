@@ -234,9 +234,10 @@ export class DirectoryGraphClient extends GraphClient {
           try {
             await callback(value);
           } catch (err) {
-            this.logger.error(
+            this.logger.warn(
               {
                 resourceUrl,
+                err,
               },
               'Callback error while iterating an API response in DirectoryGraphClient',
             );

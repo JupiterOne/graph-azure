@@ -29,6 +29,9 @@ Object {
   ],
   "createdOn": undefined,
   "displayName": "j1dev",
+  "function": Array [
+    "content-distribution",
+  ],
   "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev",
   "location": "EastUs",
   "name": "j1dev",

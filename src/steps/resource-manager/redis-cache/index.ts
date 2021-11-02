@@ -11,7 +11,7 @@ import { createAzureWebLinker } from '../../../azure';
 import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
-} from '../resources';
+} from '../resources/constants';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import {
   createRedisCacheEntity,

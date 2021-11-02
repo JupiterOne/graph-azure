@@ -1,15 +1,7 @@
-import {
-  Entity,
-  IntegrationInstance,
-  MappedRelationship,
-  RelationshipDirection,
-} from '@jupiterone/integration-sdk-core';
+import { IntegrationInstance } from '@jupiterone/integration-sdk-core';
 import { Organization, User, Group } from '@microsoft/microsoft-graph-types';
 
-import {
-  GroupMember,
-  IdentitySecurityDefaultsEnforcementPolicy,
-} from './client';
+import { IdentitySecurityDefaultsEnforcementPolicy } from './client';
 import {
   GROUP_ENTITY_CLASS,
   GROUP_ENTITY_TYPE,
@@ -22,7 +14,6 @@ import {
   createAccountGroupRelationship,
   createAccountUserRelationship,
   createGroupEntity,
-  createGroupMemberRelationship,
   createUserEntity,
   createServicePrincipalEntity,
 } from './converters';
@@ -308,6 +299,7 @@ describe('createServicePrincipalEntity', () => {
         },
       ],
       _type: 'azure_service_principal',
+      function: ['service-account'],
       appDisplayName: 'app-display-name',
       appId: 'app-id',
       category: ['infrastructure'],
@@ -398,139 +390,5 @@ describe('createAccountUserRelationship', () => {
       _type: 'azure_account_has_user',
       displayName: 'HAS',
     });
-  });
-});
-
-describe('createGroupMemberRelationship', () => {
-  const groupEntity: Entity = {
-    id: '89fac263-2430-48fd-9278-dacfdfc89792',
-    _key: '89fac263-2430-48fd-9278-dacfdfc89792',
-    _type: GROUP_ENTITY_TYPE,
-    _class: GROUP_ENTITY_CLASS,
-  };
-
-  test('properties transferred for users', () => {
-    const member: GroupMember = {
-      '@odata.type': '#microsoft.graph.user',
-      id: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
-      displayName: 'User Name',
-      jobTitle: 'Job Title',
-      mail: 'user@example.com',
-    };
-
-    const relationship: MappedRelationship & {
-      groupId: string;
-      memberId: string;
-      memberType: string;
-    } = {
-      _class: 'HAS',
-      _key:
-        '89fac263-2430-48fd-9278-dacfdfc89792_324e8daa-9c29-42a4-a74b-b9893e6d9750',
-      _type: 'azure_group_has_member',
-      _mapping: {
-        relationshipDirection: RelationshipDirection.FORWARD,
-        sourceEntityKey: '89fac263-2430-48fd-9278-dacfdfc89792',
-        targetFilterKeys: [['_type', '_key']],
-        targetEntity: {
-          _key: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
-          _type: 'azure_user',
-          _class: 'User',
-          displayName: 'User Name',
-          jobTitle: 'Job Title',
-          email: 'user@example.com',
-        },
-      },
-      groupId: '89fac263-2430-48fd-9278-dacfdfc89792',
-      memberId: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
-      memberType: '#microsoft.graph.user',
-      displayName: 'HAS',
-    };
-
-    expect(createGroupMemberRelationship(groupEntity, member)).toEqual(
-      relationship,
-    );
-  });
-
-  test('properties transferred for groups', () => {
-    const member: GroupMember = {
-      '@odata.type': '#microsoft.graph.group',
-      id: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
-      displayName: 'Managers',
-      jobTitle: null,
-      mail: null,
-    };
-
-    const relationship: MappedRelationship & {
-      groupId: string;
-      memberId: string;
-      memberType: string;
-    } = {
-      _class: 'HAS',
-      _key:
-        '89fac263-2430-48fd-9278-dacfdfc89792_324e8daa-9c29-42a4-a74b-b9893e6d9750',
-      _type: 'azure_group_has_member',
-      _mapping: {
-        relationshipDirection: RelationshipDirection.FORWARD,
-        sourceEntityKey: '89fac263-2430-48fd-9278-dacfdfc89792',
-        targetFilterKeys: [['_type', '_key']],
-        targetEntity: {
-          _key: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
-          _type: 'azure_user_group',
-          _class: 'UserGroup',
-          displayName: 'Managers',
-          jobTitle: null,
-          email: null,
-        },
-      },
-      groupId: '89fac263-2430-48fd-9278-dacfdfc89792',
-      memberId: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
-      memberType: '#microsoft.graph.group',
-      displayName: 'HAS',
-    };
-
-    expect(createGroupMemberRelationship(groupEntity, member)).toEqual(
-      relationship,
-    );
-  });
-
-  test('properties transferred for other', () => {
-    const member: GroupMember = {
-      '@odata.type': '#microsoft.graph.directoryObject',
-      id: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
-      displayName: "Don't really know",
-      jobTitle: null,
-    };
-
-    const relationship: MappedRelationship & {
-      groupId: string;
-      memberId: string;
-      memberType: string;
-    } = {
-      _class: 'HAS',
-      _key:
-        '89fac263-2430-48fd-9278-dacfdfc89792_324e8daa-9c29-42a4-a74b-b9893e6d9750',
-      _type: 'azure_group_has_member',
-      _mapping: {
-        relationshipDirection: RelationshipDirection.FORWARD,
-        sourceEntityKey: '89fac263-2430-48fd-9278-dacfdfc89792',
-        targetFilterKeys: [['_type', '_key']],
-        targetEntity: {
-          _key: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
-          _type: 'azure_group_member',
-          _class: 'User',
-          displayName: "Don't really know",
-          jobTitle: null,
-          email: undefined,
-        },
-      },
-      groupId: '89fac263-2430-48fd-9278-dacfdfc89792',
-      memberId: '324e8daa-9c29-42a4-a74b-b9893e6d9750',
-      memberType: '#microsoft.graph.directoryObject',
-      displayName: 'HAS',
-    };
-
-    expect(createGroupMemberRelationship(groupEntity, member)).toEqual(
-      relationship,
-    );
   });
 });

@@ -32,6 +32,8 @@ import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sq
 import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice';
 import {
   STEP_RM_KEYVAULT_VAULTS,
+  STEP_RM_KEYVAULT_KEYS,
+  STEP_RM_KEYVAULT_SECRETS,
   KeyVaultStepIds,
 } from './steps/resource-manager/key-vault';
 import {
@@ -53,7 +55,11 @@ import {
 import { steps as storageSteps } from './steps/resource-manager/storage';
 import { IntegrationConfig } from './types';
 import { steps as authorizationSteps } from './steps/resource-manager/authorization/constants';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from './steps/resource-manager/resources';
+import {
+  STEP_RM_RESOURCES_RESOURCE_GROUPS,
+  STEP_RM_RESOURCES_RESOURCE_LOCKS,
+  STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
+} from './steps/resource-manager/resources/constants';
 import { steps as subscriptionSteps } from './steps/resource-manager/subscriptions/constants';
 import {
   STEP_RM_API_MANAGEMENT_SERVICES,
@@ -108,6 +114,7 @@ import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
 import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
 import { Step } from '@jupiterone/integration-sdk-core';
+import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -128,6 +135,8 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
+      [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
+      [STEP_RM_KEYVAULT_SECRETS]: { disabled: true },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
@@ -188,12 +197,15 @@ describe('getStepStartStates', () => {
       [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: true },
       [authorizationSteps.CLASSIC_ADMINS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_LOCKS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_HAS_LOCK]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [subscriptionSteps.LOCATIONS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
       [STEP_RM_DNS_ZONES]: { disabled: true },
+      [STEP_RM_CONTAINER_SERVICES_CLUSTERS]: { disabled: true },
       [STEP_RM_DNS_RECORD_SETS]: { disabled: true },
       [STEP_RM_PRIVATE_DNS_ZONES]: { disabled: true },
       [STEP_RM_PRIVATE_DNS_RECORD_SETS]: { disabled: true },
@@ -264,6 +276,8 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: false },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: false },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
+      [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
+      [STEP_RM_KEYVAULT_SECRETS]: { disabled: true },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
@@ -324,12 +338,15 @@ describe('getStepStartStates', () => {
       [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: true },
       [authorizationSteps.CLASSIC_ADMINS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_LOCKS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_HAS_LOCK]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [subscriptionSteps.LOCATIONS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
       [STEP_RM_DNS_ZONES]: { disabled: true },
+      [STEP_RM_CONTAINER_SERVICES_CLUSTERS]: { disabled: true },
       [STEP_RM_DNS_RECORD_SETS]: { disabled: true },
       [STEP_RM_PRIVATE_DNS_ZONES]: { disabled: true },
       [STEP_RM_PRIVATE_DNS_RECORD_SETS]: { disabled: true },
@@ -400,6 +417,8 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: false },
+      [STEP_RM_KEYVAULT_KEYS]: { disabled: false },
+      [STEP_RM_KEYVAULT_SECRETS]: { disabled: false },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: false },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: false },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: false },
@@ -460,12 +479,15 @@ describe('getStepStartStates', () => {
       [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: false },
       [authorizationSteps.CLASSIC_ADMINS]: { disabled: false },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: false },
+      [STEP_RM_RESOURCES_RESOURCE_LOCKS]: { disabled: false },
+      [STEP_RM_RESOURCES_RESOURCE_HAS_LOCK]: { disabled: false },
       [subscriptionSteps.SUBSCRIPTION]: { disabled: false },
       [subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS]: { disabled: false },
       [subscriptionSteps.LOCATIONS]: { disabled: false },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: false },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: false },
       [STEP_RM_DNS_ZONES]: { disabled: false },
+      [STEP_RM_CONTAINER_SERVICES_CLUSTERS]: { disabled: false },
       [STEP_RM_DNS_RECORD_SETS]: { disabled: false },
       [STEP_RM_PRIVATE_DNS_ZONES]: { disabled: false },
       [STEP_RM_PRIVATE_DNS_RECORD_SETS]: { disabled: false },
@@ -538,6 +560,8 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
+      [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
+      [STEP_RM_KEYVAULT_SECRETS]: { disabled: true },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
@@ -598,12 +622,15 @@ describe('getStepStartStates', () => {
       [authorizationSteps.ROLE_ASSIGNMENT_DEFINITIONS]: { disabled: true },
       [authorizationSteps.CLASSIC_ADMINS]: { disabled: true },
       [STEP_RM_RESOURCES_RESOURCE_GROUPS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_LOCKS]: { disabled: true },
+      [STEP_RM_RESOURCES_RESOURCE_HAS_LOCK]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION]: { disabled: true },
       [subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [subscriptionSteps.LOCATIONS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
       [STEP_RM_DNS_ZONES]: { disabled: true },
+      [STEP_RM_CONTAINER_SERVICES_CLUSTERS]: { disabled: true },
       [STEP_RM_DNS_RECORD_SETS]: { disabled: true },
       [STEP_RM_PRIVATE_DNS_ZONES]: { disabled: true },
       [STEP_RM_PRIVATE_DNS_RECORD_SETS]: { disabled: true },

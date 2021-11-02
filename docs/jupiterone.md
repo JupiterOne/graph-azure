@@ -77,9 +77,10 @@ Grant permission to read Microsoft Graph information:
 
    **Optional**
 
-   | Permission        | Endpoint(s)                                                                                                                                                                   |
-   | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-   | `Policy.Read.All` | [/policies/identitySecurityDefaultsEnforcementPolicy](https://docs.microsoft.com/en-us/graph/api/identitysecuritydefaultsenforcementpolicy-get?view=graph-rest-1.0&tabs=http) |
+   | Permission         | Endpoint(s)                                                                                                                                                                    |
+   | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+   | `Policy.Read.All`  | [/policies/identitySecurityDefaultsEnforcementPolicy](https://docs.microsoft.com/en-us/graph/api/identitysecuritydefaultsenforcementpolicy-get?view=graph-rest-1.0&tabs=http)  |
+   | `Reports.Read.All` | [/beta/reports/credentialUserRegistrationDetails](https://docs.microsoft.com/en-us/graph/api/reportroot-list-credentialuserregistrationdetails?view=graph-rest-beta&tabs=http) |
 
 1. Grant admin consent for this directory for the permissions above
 
@@ -111,12 +112,22 @@ information:
 1. Create a custom role called "JupiterOne Reader" with the following
    permissions:
    - `Microsoft.PolicyInsights/policyStates/queryResults/action`
+1. (Optional) If you'd like integration to be able to fetch auth settings for
+   all Web Apps, add the following permissions to the same custom role:
+   - `Microsoft.Web/sites/config/list/Action`
 1. Select **Role** "JupiterOne Reader", **Assign access to** "Azure AD user,
    group, or service principal", and select the app "JupiterOne"
 1. _If configuring all subscriptions for a tenant (using the
    `Configure Subscription Instances` flag in JupiterOne):_
 
    - Also assign the "Management Group Reader" role to the App "JupiterOne"
+
+### Key Vault Access Policy
+
+Please note that listing Key Vault keys and secrets (rm-keyvault-keys and
+rm-keyvault-secrets steps) require a given security principal to have necessary
+policies. The steps necesssary for that are outlined on this page
+[Assign a Key Vault access policy ](https://go.microsoft.com/fwlink/?linkid=2125287).
 
 ### In JupiterOne
 
@@ -142,6 +153,29 @@ information:
 
 4. Click **Create Configuration** once all values are provided.
 
+### Troubleshooting
+
+#### Authentication Errors
+
+If the Azure integration does not complete, and you encounter a message like
+`[validation_failure] Error occurred while validating integration configuration`
+in your job log, check the following common configuration errors:
+
+- **Verify the Application (client) ID and Application (client) Secret:** Make
+  sure that you've verified the proper value for client ID and client secret.
+  The client secret has both a **Value** property and a **Secret ID** property.
+  The **Secret ID** is unused - make sure you haven't accidentally used the
+  **Secret ID** as the **Client ID**.
+- **Verify that you've enabled the proper API permissions:** Make sure the
+  required API permissions (described above) are enabled for the application.
+- **Verify that the API permissions have been granted as "Application" and not
+  "Delegated":** The integration requires API Permissions of type
+  **Application**. Permissions of type **Delegated** will cause issues in your
+  integration.
+- **Verify that your permissions have been "Grant(ed) admin consent for
+  Directory":** If you have added API Permissions to the application, but have
+  not granted Admin Consent, the permissions are not yet active.
+
 <!-- {J1_DOCUMENTATION_MARKER_START} -->
 <!--
 ********************************************************************************
@@ -149,7 +183,7 @@ NOTE: ALL OF THE FOLLOWING DOCUMENTATION IS GENERATED USING THE
 "j1-integration document" COMMAND. DO NOT EDIT BY HAND! PLEASE SEE THE DEVELOPER
 DOCUMENTATION FOR USAGE INFORMATION:
 
-https://github.com/JupiterOne/sdk/blob/master/docs/integrations/development.md
+https://github.com/JupiterOne/sdk/blob/main/docs/integrations/development.md
 ********************************************************************************
 -->
 
@@ -170,6 +204,7 @@ The following entities are created:
 | [RM] API Management Service                    | `azure_api_management_service`                    | `Gateway`                          |
 | [RM] Advisor Recommendation                    | `azure_advisor_recommendation`                    | `Finding`                          |
 | [RM] App Service Plan                          | `azure_app_service_plan`                          | `Configuration`                    |
+| [RM] Azure Kubernetes Cluster                  | `azure_kubernetes_cluster`                        | `Cluster`                          |
 | [RM] Azure Managed Disk                        | `azure_managed_disk`                              | `DataStore`, `Disk`                |
 | [RM] Batch Account                             | `azure_batch_account`                             | `Service`                          |
 | [RM] Batch Application                         | `azure_batch_application`                         | `Process`                          |
@@ -195,6 +230,8 @@ The following entities are created:
 | [RM] Gallery                                   | `azure_gallery`                                   | `Repository`                       |
 | [RM] Image                                     | `azure_image`                                     | `Image`                            |
 | [RM] Key Vault                                 | `azure_keyvault_service`                          | `Service`                          |
+| [RM] Key Vault Key                             | `azure_keyvault_key`                              | `Key`                              |
+| [RM] Key Vault Secret                          | `azure_keyvault_secret`                           | `Secret`                           |
 | [RM] Load Balancer                             | `azure_lb`                                        | `Gateway`                          |
 | [RM] Location                                  | `azure_location`                                  | `Site`                             |
 | [RM] Management Group                          | `azure_management_group`                          | `Group`                            |
@@ -222,6 +259,7 @@ The following entities are created:
 | [RM] Redis Cache                               | `azure_redis_cache`                               | `Database`, `DataStore`, `Cluster` |
 | [RM] Redis Firewall Rule                       | `azure_firewall_rule`                             | `Firewall`                         |
 | [RM] Resource Group                            | `azure_resource_group`                            | `Group`                            |
+| [RM] Resource Lock                             | `azure_resource_lock`                             | `Rule`                             |
 | [RM] Role Assignment                           | `azure_role_assignment`                           | `AccessPolicy`                     |
 | [RM] Role Definition                           | `azure_role_definition`                           | `AccessRole`                       |
 | [RM] SQL Database                              | `azure_sql_database`                              | `Database`, `DataStore`            |
@@ -255,7 +293,7 @@ The following entities are created:
 
 ### Relationships
 
-The following relationships are created/mapped:
+The following relationships are created:
 
 | Source Entity `_type`              | Relationship `_class` | Target Entity `_type`                             |
 | ---------------------------------- | --------------------- | ------------------------------------------------- |
@@ -287,6 +325,8 @@ The following relationships are created/mapped:
 | `azure_user_group`                 | **HAS**               | `azure_group_member`                              |
 | `azure_user_group`                 | **HAS**               | `azure_user`                                      |
 | `azure_keyvault_service`           | **ALLOWS**            | `ANY_PRINCIPAL`                                   |
+| `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_key`                              |
+| `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_secret`                           |
 | `azure_lb`                         | **CONNECTS**          | `azure_nic`                                       |
 | `azure_location`                   | **HAS**               | `azure_network_watcher`                           |
 | `azure_management_group`           | **CONTAINS**          | `azure_management_group`                          |
@@ -321,6 +361,7 @@ The following relationships are created/mapped:
 | `azure_resource_group`             | **HAS**               | `azure_gallery`                                   |
 | `azure_resource_group`             | **HAS**               | `azure_image`                                     |
 | `azure_resource_group`             | **HAS**               | `azure_keyvault_service`                          |
+| `azure_resource_group`             | **HAS**               | `azure_kubernetes_cluster`                        |
 | `azure_resource_group`             | **HAS**               | `azure_lb`                                        |
 | `azure_resource_group`             | **HAS**               | `azure_managed_disk`                              |
 | `azure_resource_group`             | **HAS**               | `azure_mariadb_server`                            |
@@ -345,6 +386,7 @@ The following relationships are created/mapped:
 | `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
 | `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |
 | `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
+| `azure_resource_lock`              | **HAS**               | `ANY_SCOPE`                                       |
 | `azure_role_assignment`            | **ALLOWS**            | `ANY_SCOPE`                                       |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_application`                               |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_directory`                                 |

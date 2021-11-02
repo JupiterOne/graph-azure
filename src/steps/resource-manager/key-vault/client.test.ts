@@ -66,7 +66,7 @@ describe('iterateKeys', () => {
     );
 
     const callback = jest.fn();
-    await client.iterateKeys(vault, callback);
+    await client.iterateKeys(vault.properties.vaultUri as string, callback);
 
     expect(callback).not.toHaveBeenCalled();
   });

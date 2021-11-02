@@ -32,6 +32,9 @@ Object {
   "createdOn": undefined,
   "displayName": "j1dev-event-grid-domain",
   "endpoint": "https://j1dev-event-grid-domain.eastus-1.eventgrid.azure.net/api/events",
+  "function": Array [
+    "event-delivery",
+  ],
   "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resoruce/providers/Microsoft.EventGrid/domains/j1dev-event-grid-domain",
   "inputSchema": "EventGridSchema",
   "location": "eastus",

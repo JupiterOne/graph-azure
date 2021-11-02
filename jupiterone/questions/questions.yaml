@@ -1,0 +1,2957 @@
+---
+sourceId: managed:azure
+integrationDefinitionId: '${integration_definition_id}'
+questions:
+  - id: integration-question-azure-networking-internet-access
+    title: What Azure resources are allow access to or from the Internet?
+    description:
+      Returns a graph showing resources behind Azure security groups with
+      inbound or outbound access to/from the Internet.
+    queries:
+      - name: bad
+        query: |
+          find Internet that allows as rule azure_security_group
+            that protects * that (has|contains|connects|uses) *
+          return tree
+    tags:
+      - azure
+      - network
+      - diagram
+  - id: integration-question-azure-networking-inbound-non-web-access-from-internet
+    title:
+      Are there Azure security group rules allowing inbound non-Web access to an
+      internal host or gateway from the Internet?
+    description:
+      Returns a list of Security Groups with rules allowing inbound non-web
+      access (not port 80 or 443) from the Internet with internal connections to
+      a Host or Gateway entity.
+    queries:
+      - name: bad
+        query: |
+          find Internet that allows as rule azure_security_group as sg
+            that protects * as i
+            that (has|contains|connects|uses) (Host|Gateway) as h
+          where
+            rule.ingress=true and
+            (rule.fromPort!=80 and rule.toPort!=80) and
+            (rule.toPort!=443 and rule.toPort!=443)
+          return
+            sg.displayName, sg.resourceGroup,
+            rule.protocol, rule.fromPort, rule.toPort,
+            i._type, i.displayName, i.CIDR, i.privateIp, i.publicIp,
+            h._type, h.displayName, h.webLink
+    tags:
+      - azure
+      - network
+
+  ##########################################
+  # CIS 1 - Identity & Access Management
+  ##########################################
+  - id: integration-question-azure-guest-users
+    title: Are there any guest users with access to Azure?
+    description:
+      Azure AD is extended to include Azure AD B2B collaboration, allowing you
+      to invite people from outside your organization to be guest users in your
+      cloud account and sign in with their own work, school, or social
+      identities. Guest users allow you to share your company's applications and
+      services with users from any other organization, while maintaining control
+      over your own corporate data.\n\nWork with external partners, large or
+      small, even if they don't have Azure AD or an IT department. A simple
+      invitation and redemption process lets partners use their own credentials
+      to access your company's resources a a guest user.
+    queries:
+      - name: good
+        query: find azure_user with userType='Guest' and trusted=true
+      - name: bad
+        query: find azure_user with userType='Guest' and trusted!=true
+    tags:
+      - azure
+      - iam
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '1.3'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '1.3'
+
+  - id: integration-question-azure-custom-owner-roles
+    title:
+      Are there any custom role definitions with assignableScope of subscription
+      or higher and action of *?
+    description:
+      Subscription ownership should not include permission to create custom
+      owner roles. The principle of least privilege should be followed and only
+      necessary privileges should be assigned instead of allowing full
+      administrative access.
+    queries:
+      - name: bad
+        query:
+          find azure_role_definition with roleType='CustomRole' and actions ~=
+          '*' and assignableScopes!~=('/resourceGroup/' and '/providers/')
+    tags:
+      - azure
+      - iam
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '1.23'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '1.21'
+
+  - id: integration-question-azure-security-defaults
+    title:
+      Is Azure Security Defaults enabled for all Microsoft directories/tenants?
+    description:
+      Security defaults in Azure Active Directory (Azure AD) make it easier to
+      be secure and help protect your organization. Security defaults contain
+      preconfigured security settings for common attacks.\nMicrosoft is making
+      security defaults available to everyone. The goal is to ensure that all
+      organizations have a basic level of security-enabled at no extra cost. You
+      turn on security defaults in the Azure portal.
+    queries:
+      - name: good
+        query: find azure_account with securityDefaultsEnabled=true
+      - name: bad
+        query: find azure_account with securityDefaultsEnabled=false
+    tags:
+      - azure
+      - iam
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '1.22'
+
+  - id: integration-question-azure-resource-lock-role-definition
+    title: Does every Azure subscription have a "resource lock" role definition?
+    description:
+      Returns a list of Azure subscriptions with / without a "Resource Lock
+      Administrator" role.
+    queries:
+      - name: good
+        query: |
+          Find
+            azure_subscription THAT CONTAINS
+            azure_role_definition WITH
+              roleName = 'Resource Lock Administrator' AND 
+              actions = 'Microsoft.Authorization/locks/read' AND
+              actions = 'Microsoft.Authorization/locks/write' AND
+              actions = 'Microsoft.Authorization/locks/delete'
+      - name: bad
+        query: |
+          Find
+            azure_subscription THAT !CONTAINS
+            azure_role_definition WITH
+              roleName = 'Resource Lock Administrator' AND 
+              actions = 'Microsoft.Authorization/locks/read' AND
+              actions = 'Microsoft.Authorization/locks/write' AND
+              actions = 'Microsoft.Authorization/locks/delete'
+    tags:
+      - azure
+      - iam
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '1.23'
+
+  ##########################################
+  # CIS 2 - Security Center
+  ##########################################
+  - id: integration-question-azure-security-center-virtual-machines
+    title: Is Azure Defender enabled for virtual machines?
+    description:
+      Returns Azure subscriptions that have Azure Defender enabled / disabled
+      for virtual machines.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_subscription_pricing with
+          name='VirtualMachines' and pricingTier = 'Standard'
+      - name: bad
+        query:
+          find azure_security_center_subscription_pricing with
+          name='VirtualMachines' and pricingTier != 'Standard'
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.1'
+
+  - id: integration-question-azure-security-center-app-service
+    title: Is Azure Defender enabled for app service?
+    description:
+      Returns Azure subscriptions that have Azure Defender enabled / disabled
+      for app service.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_subscription_pricing with
+          name='AppServices' and pricingTier = 'Standard'
+      - name: bad
+        query:
+          find azure_security_center_subscription_pricing with
+          name='AppServices' and pricingTier != 'Standard'
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.2'
+
+  - id: integration-question-azure-security-center-sql-servers
+    title: Is Azure Defender enabled for SQL servers?
+    description:
+      Returns Azure subscriptions that have Azure Defender enabled / disabled
+      for SQL servers.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_subscription_pricing with name='SqlServers'
+          and pricingTier = 'Standard'
+      - name: bad
+        query:
+          find azure_security_center_subscription_pricing with name='SqlServers'
+          and pricingTier != 'Standard'
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.3'
+
+  - id: integration-question-azure-security-center-sql-servers-on-machines
+    title: Is Azure Defender enabled for SQL servers on machines?
+    description:
+      Returns Azure subscriptions that have Azure Defender enabled / disabled
+      for SQL servers on machines.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_subscription_pricing with
+          name='SqlServerVirtualMachines' and pricingTier = 'Standard'
+      - name: bad
+        query:
+          find azure_security_center_subscription_pricing with
+          name='SqlServerVirtualMachines' and pricingTier != 'Standard'
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.4'
+
+  - id: integration-question-azure-security-center-storage-accounts
+    title: Is Azure Defender enabled for storage accounts?
+    description:
+      Returns Azure subscriptions that have Azure Defender enabled / disabled
+      for storage accounts.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_subscription_pricing with
+          name='StorageAccounts' and pricingTier = 'Standard'
+      - name: bad
+        query:
+          find azure_security_center_subscription_pricing with
+          name='StorageAccounts' and pricingTier != 'Standard'
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.5'
+
+  - id: integration-question-azure-security-center-kubernetes-service
+    title: Is Azure Defender enabled for Kubernetes service?
+    description:
+      Returns Azure subscriptions that have Azure Defender enabled / disabled
+      for Kubernetes service.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_subscription_pricing with
+          name='KubernetesService' and pricingTier = 'Standard'
+      - name: bad
+        query:
+          find azure_security_center_subscription_pricing with
+          name='KubernetesService' and pricingTier != 'Standard'
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.6'
+
+  - id: integration-question-azure-security-center-container-registry
+    title: Is Azure Defender enabled for container registries?
+    description:
+      Returns Azure subscriptions that have Azure Defender enabled / disabled
+      for container registries.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_subscription_pricing with
+          name='ContainerRegistry' and pricingTier = 'Standard'
+      - name: bad
+        query:
+          find azure_security_center_subscription_pricing with
+          name='ContainerRegistry' and pricingTier != 'Standard'
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.7'
+
+  - id: integration-question-azure-security-center-key-vault
+    title: Is Azure Defender enabled for key vaults?
+    description:
+      Returns Azure subscriptions that have Azure Defender enabled / disabled
+      for key vaults.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_subscription_pricing with name='KeyVaults'
+          and pricingTier = 'Standard'
+      - name: bad
+        query:
+          find azure_security_center_subscription_pricing with name='KeyVaults'
+          and pricingTier != 'Standard'
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.8'
+
+  - id: integration-question-azure-security-center-wdapt
+    title: Is Windows Defender ATP enabled in Azure subscriptions?
+    description:
+      Returns Azure subscriptions that have Windows Defender ATP enabled /
+      disabled.
+    queries:
+      - name: good
+        query:
+          find azure_subscription that has azure_security_center_setting with
+          name='WDATP' and enabled = true
+      - name: bad
+        query:
+          find azure_subscription that !has azure_security_center_setting with
+          name='WDATP' and enabled = true
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.9'
+
+  - id: integration-question-azure-security-center-mcas
+    title: Is Microsoft Cloud App Security enabled in Azure subscriptions?
+    description:
+      Returns Azure subscriptions that have Microsoft Cloud App Security enabled
+      / disabled.
+    queries:
+      - name: good
+        query:
+          find azure_subscription that has azure_security_center_setting with
+          name='MCAS' and enabled = true
+      - name: bad
+        query:
+          find azure_subscription that !has azure_security_center_setting with
+          name='MCAS' and enabled = true
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.10'
+
+  - id: integration-question-azure-security-center-auto-provisioning-monitor-agent
+    title:
+      Is 'Automatic provisioning of monitoring agent' enabled in Azure
+      subscriptions?
+    description:
+      Returns Azure subscriptions that have 'Automatic provisioning of
+      monitoring agent' enabled / disabled.
+    queries:
+      - name: good
+        query:
+          find azure_subscription that has
+          azure_security_center_auto_provisioning_setting with name = 'default'
+          and autoProvision = 'On'
+      - name: bad
+        query:
+          find azure_subscription that !has
+          azure_security_center_auto_provisioning_setting with name = 'default'
+          and autoProvision = 'On'
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.11'
+
+  - id: integration-question-azure-security-center-contact-email
+    title:
+      Has each Azure subscription configured an e-mail address for the default
+      security center contact?
+    description:
+      Returns Azure security center contacts that have / have not configured an
+      e-mail address.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_contact with name = 'default' and email !=
+          ''
+      - name: bad
+        query:
+          find azure_security_center_contact with name = 'default' and email =
+          ''
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.13'
+
+  - id: integration-question-azure-security-center-contact-alert
+    title:
+      Has each Azure subscription enabled alerting for the default security
+      center contact?
+    description:
+      Returns Azure security center contacts that have alerting enabled /
+      disabled.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_contact with name = 'default' and
+          alertNotifications = 'On'
+      - name: bad
+        query:
+          find azure_security_center_contact with name = 'default' and
+          alertNotifications != 'On'
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.14'
+
+  - id: integration-question-azure-policy-monitor-system-updates-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor System Updates" is not
+      "Disabled"
+    description: Enable system updates recommendations for virtual machines.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.systemUpdatesMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.systemUpdatesMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.3'
+
+  - id: integration-question-azure-policy-monitor-os-vulnerabilities-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor OS Vulnerabilities" is not
+      "Disabled"
+    description:
+      Enable monitor OS vulnerability recommendations for virtual machines.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.systemConfigurationsMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.systemConfigurationsMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.4'
+
+  - id: integration-question-azure-policy-monitor-endpoint-protection-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor Endpoint Protection" is not
+      "Disabled"
+    description:
+      Enable endpoint protection recommendations for virtual machines.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.endpointProtectionMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.endpointProtectionMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.5'
+
+  - id: integration-question-azure-policy-monitor-disk-encryption-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor Disk Encryption" is not
+      "Disabled"
+    description: Enable disk encryption recommendations for virtual machines.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.diskEncryptionMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.diskEncryptionMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.6'
+
+  - id: integration-question-azure-policy-monitor-network-security-groups-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor Network Security Groups" is not
+      "Disabled"
+    description:
+      Enable network security group recommendations for virtual machines.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.networkSecurityGroupsMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.networkSecurityGroupsMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.7'
+
+  - id: integration-question-azure-policy-monitor-web-application-firewall-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor Web Application Firewall" is
+      not "Disabled"
+    description:
+      Enable web application firewall recommendations for virtual machines.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.webApplicationFirewallMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.webApplicationFirewallMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.8'
+
+  - id: integration-question-azure-policy-enable-next-generation-firewall-monitoring-not-disabled
+    title:
+      Ensure ASC Default policy setting "Enable Next Generation Firewall(NGFW)
+      Monitoring" is not "Disabled"
+    description:
+      Enable next generation firewall recommendations for virtual machines.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.nextGenerationFirewallMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.nextGenerationFirewallMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.9'
+
+  - id: integration-question-azure-policy-monitor-vulnerability-assessment-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor Vulnerability Assessment" is
+      not "Disabled"
+    description:
+      Enable vulnerability assessment recommendations for virtual machines.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.vulnerabilityAssessmentMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.vulnerabilityAssessmentMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.10'
+
+  - id: integration-question-azure-policy-monitor-storage-blob-encryption-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor Storage Blob Encryption" is not
+      "Disabled"
+    description: Enable storage encryption recommendations.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.storageEncryptionMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.storageEncryptionMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.11'
+
+  - id: integration-question-azure-policy-monitor-jit-network-access-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor JIT Network Access" is not
+      "Disabled"
+    description: Enable JIT Network Access for virtual machines.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.jitNetworkAccessMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.jitNetworkAccessMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.12'
+
+  - id: integration-question-azure-policy-monitor-adaptive-application-whitelisting-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor Adaptive Application
+      Whitelisting" is not "Disabled"
+    description: Enable adaptive application controls.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.adaptiveApplicationControlsMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.adaptiveApplicationControlsMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.13'
+
+  - id: integration-question-azure-policy-monitor-sql-auditing-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor SQL Auditing" is not "Disabled"
+    description: Enable SQL auditing recommendations.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.sqlAuditingMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.sqlAuditingMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.14'
+
+  - id: integration-question-azure-policy-monitor-sql-encryption-not-disabled
+    title:
+      Ensure ASC Default policy setting "Monitor SQL Encryption" is not
+      "Disabled"
+    description: Enable SQL encryption recommendations.
+    queries:
+      - name: good
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.sqlEncryptionMonitoringEffect!="Disabled"
+      - name: bad
+        query:
+          find azure_policy_assignment with id $="/SecurityCenterBuiltIn" and
+          parameters.sqlEncryptionMonitoringEffect="Disabled"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.15'
+
+  - id: integration-question-azure-security-contact-emails
+    title: Ensure that 'Security contact emails' is set
+    description: Provide a security contact email address.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_contact with name="default1" and
+          email!=undefined
+      - name: bad
+        query:
+          find azure_security_center_contact with name="default1" and
+          email=undefined
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.16'
+
+  - id: integration-question-azure-security-contact-phone
+    title: Ensure that security contact 'Phone number' is set
+    description: Provide a security contact phone number.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_contact with name="default1" and
+          phone!=undefined
+      - name: bad
+        query:
+          find azure_security_center_contact with name="default1" and
+          phone=undefined
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.17'
+
+  - id: integration-question-azure-security-contact-email-notification-high-severity-alerts
+    title:
+      Ensure that 'Send email notification for high severity alerts' is set to
+      'On'
+    description: Enable emailing security alerts to the security contact.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_contact with name="default1" and
+          alertNotifications="On"
+      - name: bad
+        query:
+          find azure_security_center_contact with name="default1" and
+          alertNotifications!="On"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.18'
+
+  - id: integration-question-azure-security-contact-email-subscription-owners
+    title: Ensure that 'Send email also to subscription owners' is set to 'On'
+    description: Enable security alert emails to subscription owners.
+    queries:
+      - name: good
+        query:
+          find azure_security_center_contact with name="default1" and
+          alertsToAdmins="On"
+      - name: bad
+        query:
+          find azure_security_center_contact with name="default1" and
+          alertsToAdmins!="On"
+    tags:
+      - azure
+      - policy
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '2.19'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '2.15'
+
+  ##########################################
+  # CIS 3 - Storage Accounts
+  ##########################################
+  - id: integration-question-azure-storage-account-secure-transfer
+    title:
+      Are there any Azure storage accounts that have not enabled Secure
+      Transfer?
+    description:
+      Returns a list of Azure storage accounts with enableHttpsTrafficOnly
+      enabled / not enabled.
+    queries:
+      - name: good
+        query: find azure_storage_account with enableHttpsTrafficOnly = true
+      - name: bad
+        query: find azure_storage_account with enableHttpsTrafficOnly != true
+    tags:
+      - azure
+      - storage
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '3.1'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '3.1'
+
+  # TODO re-enable this question once lastAccessKeyRegenerationDate is set
+  # - id: integration-question-azure-storage-account-key-regeneration
+  #   title: Are there any Azure storage accounts that have not regenerated their access keys for the last 90 days?
+  #   description:
+  #     Returns a list of Azure storage accounts with lastAccessKeyRegenerationDate.
+  #   queries:
+  #   - name: good
+  #     query: find azure_storage_account with lastAccessKeyRegenerationDate >= date.now - 90 days
+  #   - name: bad
+  #     query: find azure_storage_account with lastAccessKeyRegenerationDate < date.now - 90 days OR lastAccessKeyRegenerationDate = undefined
+  #   tags:
+  #   - azure
+  #   - storage
+  #   compliance:
+  #   - standard: CIS Azure Foundations v1.3.0
+  #     version: v1.3.0
+  #     requirements:
+  #       - '3.2'
+
+  - id: integration-question-azure-storage-account-queue-analytics-logging
+    title: Is Queue Analytics Logging enabled in Azure storage accounts?
+    description:
+      Returns a list of Azure storage accounts with Queue Analytics Logging
+      enabled / disabled.
+    queries:
+      - name: good
+        query:
+          find azure_storage_account with queueAnalyticsLoggingReadEnabled=true
+          and queueAnalyticsLoggingWriteEnabled=true and
+          queueAnalyticsLoggingDeleteEnabled=true
+      - name: bad
+        query:
+          find azure_storage_account with queueAnalyticsLoggingReadEnabled!=true
+          or queueAnalyticsLoggingWriteEnabled!=true or
+          queueAnalyticsLoggingDeleteEnabled!=true
+    tags:
+      - azure
+      - storage
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '3.3'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '3.3'
+
+  - id: integration-question-azure-storage-blob-container-public-access
+    title: Is public access enabled on any Azure Blob Container?
+    description:
+      Returns a list of Azure Blob Storage Containers with public access enabled
+      / not enabled.
+    queries:
+      - name: good
+        query:
+          Find azure_storage_container with public=false or publicAccess='None'
+      - name: bad
+        query:
+          Find azure_storage_container with public=true or publicAccess!='None'
+    tags:
+      - azure
+      - storage
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '3.6'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '3.5'
+
+  - id: integration-question-azure-storage-account-default-network-rule-deny
+    title:
+      Are all Azure storage accounts configured with "Deny" as the default
+      network access rule?
+    description:
+      Returns a list of Azure storage accounts with/without "Deny" as the
+      default network access rule.
+    queries:
+      - name: good
+        query:
+          Find azure_storage_account with networkRuleSet.defaultAction = 'Deny'
+      - name: bad
+        query:
+          Find azure_storage_account with networkRuleSet.defaultAction != 'Deny'
+    tags:
+      - azure
+      - storage
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '3.7'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '3.6'
+
+  - id: integration-question-azure-storage-account-azure-services-bypass
+    title: Are "Trusted Microsoft Services" enabled for Azure storage accounts?
+    description:
+      Returns a list of Azure storage accounts with "Trusted Microsoft Services"
+      enabled / disabled.
+    queries:
+      - name: good
+        query:
+          Find azure_storage_account with networkRuleSet.bypass ~=
+          'AzureServices'
+      - name: bad
+        query:
+          Find azure_storage_account with networkRuleSet.bypass !~=
+          'AzureServices'
+    tags:
+      - azure
+      - storage
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '3.8'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '3.7'
+
+  - id: integration-question-azure-storage-account-soft-delete
+    title: Is "Soft Delete" enabled for Azure storage accounts?
+    description:
+      Returns a list of Azure storage accounts with "Soft Delete" enabled /
+      disabled.
+    queries:
+      - name: good
+        query: Find azure_storage_account with blobSoftDeleteEnabled = true
+      - name: bad
+        query: Find azure_storage_account with blobSoftDeleteEnabled != true
+    tags:
+      - azure
+      - storage
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '3.8'
+
+  - id: integration-question-azure-storage-account-cmk
+    title: Are Azure storage accounts encrypted with Customer Managed Keys?
+    description:
+      Returns a list of Azure storage accounts with Customer Managed Keys
+      enabled / disabled.
+    queries:
+      - name: good
+        query:
+          Find azure_storage_account with encryption.keySource =
+          'Microsoft.Keyvault'
+      - name: bad
+        query:
+          Find azure_storage_account with encryption.keySource !=
+          'Microsoft.Keyvault'
+    tags:
+      - azure
+      - storage
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '3.9'
+
+  - id: integration-question-azure-storage-account-blob-analytics-logging
+    title: Is Blob Analytics Logging enabled in Azure storage accounts?
+    description:
+      Returns a list of Azure storage accounts with Blob Analytics Logging
+      enabled / disabled.
+    queries:
+      - name: good
+        query:
+          find azure_storage_account with blobAnalyticsLoggingReadEnabled=true
+          and blobAnalyticsLoggingWriteEnabled=true and
+          blobAnalyticsLoggingDeleteEnabled=true
+      - name: bad
+        query:
+          find azure_storage_account with blobAnalyticsLoggingReadEnabled!=true
+          or blobAnalyticsLoggingWriteEnabled!=true or
+          blobAnalyticsLoggingDeleteEnabled!=true
+    tags:
+      - azure
+      - storage
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '3.10'
+
+  ##########################################
+  # CIS 4 - Database Services
+  ##########################################
+  - id: integration-question-azure-db-sql-servers-audit-enabled
+    title: Is auditing enabled on all Azure SQL servers and databases?
+    description:
+      Returns a list of Azure SQL servers and databases with auditing enabled /
+      not enabled.
+    queries:
+      - name: good
+        query:
+          Find (azure_sql_server|azure_sql_database) with auditingEnabled=true
+      - name: bad
+        query: |
+          Find azure_sql_server with auditingEnabled!=true
+            that has azure_sql_database with auditingEnabled!=true
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.1'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.1.1'
+  - id: integration-question-azure-db-sql-servers-data-encryption
+    title: Is data encryption enabled on all Azure SQL servers?
+    description: Returns a list of Azure SQL servers with encryption enabled.
+    queries:
+      - name: good
+        query: FIND azure_sql_database with encrypted=true
+      - name: bad
+        query: FIND azure_sql_database with encrypted!=true
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.1.2'
+  - id: integration-question-azure-db-sql-servers-audit-actions
+    title:
+      Are audit actions and groups configured for Azure SQL servers and
+      databases?
+    description:
+      Returns a list of Azure SQL servers and databases with audit actions and
+      groups defined / not defined.
+    queries:
+      - name: good
+        query:
+          Find (azure_sql_server|azure_sql_database) with
+          auditActionsAndGroups!=undefined
+      - name: bad
+        query:
+          Find (azure_sql_server|azure_sql_database) with
+          auditActionsAndGroups=undefined
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.2'
+  - id: integration-question-azure-db-sql-servers-atp-enabled
+    title: Is Advanced Threat Protection (ATP) enabled for Azure SQL servers?
+    description:
+      Checks if Azure SQL servers have Advanced Threat Protection (ATP) enabled.
+    queries:
+      - name: good
+        query: find azure_sql_server with alertingEnabled = true
+      - name: bad
+        query: find azure_sql_server with alertingEnabled != true
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.2.1'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '4.2.1'
+  - id: integration-question-azure-db-sql-servers-va-enabled
+    title:
+      Is Vulnerability Assessment (VA) is enabled for Azure SQL servers by
+      setting a Storage Accounts?
+    description:
+      Checks if Azure SQL servers have Vulnerability Assessment (VA) enabled.
+    queries:
+      - name: good
+        query: find azure_sql_server with vaStoragePath != undefined
+      - name: bad
+        query: find azure_sql_server with vaStoragePath!= undefined
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.2.2'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '4.2.2'
+  - id: integration-question-azure-db-sql-servers-va-recurring-scans
+    title:
+      Are Vulnerability Assessment (VA) setting Periodic Recurring Scans for
+      Azure SQL servers?
+    description:
+      Checks if Azure SQL servers have Vulnerability Assessment (VA) Periodic
+      Recurring Scans enabled.
+    queries:
+      - name: good
+        query: find azure_sql_server with vaRecurringScansEnabled = true
+      - name: bad
+        query: find azure_sql_server with vaRecurringScansEnabled != true
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.2.3'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '4.2.3'
+  - id: integration-question-azure-db-sql-servers-va-scan-reports
+    title:
+      Is Vulnerability Assessment (VA) sending scan reports for Azure SQL
+      servers?
+    description:
+      Checks if Azure SQL servers have Vulnerability Assessment (VA) scan
+      reports sending enabled.
+    queries:
+      - name: good
+        query: find azure_sql_server with vaEmails != undefined
+      - name: bad
+        query: find azure_sql_server with vaEmails = undefined
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.2.4'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '4.2.4'
+  - id: integration-question-azure-db-sql-servers-va-scan-reports-admins-owners
+    title:
+      Is Vulnerability Assessment (VA) sending scan reports to admins and
+      subscription owners for Azure SQL servers?
+    description:
+      Checks if Azure SQL servers have Vulnerability Assessment (VA) scan
+      reports sending to admins and subscription owners enabled.
+    queries:
+      - name: good
+        query: find azure_sql_server with vaEmailSubscriptionAdmins = true
+      - name: bad
+        query: find azure_sql_server with vaEmailSubscriptionAdmins != true
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.2.5'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '4.2.5'
+  - id: integration-question-azure-db-sql-servers-audit-retention
+    title: How long are Azure SQL server and database audit events retained?
+    description:
+      Audit events for SQL servers and databases should be retained for at least
+      90 days. This question returns a list of SQL servers and databases and
+      their retention period settings accordingly.
+    queries:
+      - name: good
+        query:
+          Find (azure_sql_server|azure_sql_database) with auditLogRetentionDays
+          >= 90
+      - name: bad
+        query: |
+          Find (azure_sql_server|azure_sql_database) with
+            auditLogRetentionDays < 90 or auditLogRetentionDays = undefined
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.3'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.1.3'
+  - id: integration-question-azure-db-sql-servers-alert-enabled
+    title:
+      Is alerting (Advanced Data Security) enabled on all Azure SQL servers?
+    description:
+      Returns a list of Azure SQL servers with Advanced Data Security alerting
+      enabled / not enabled.
+    queries:
+      - name: good
+        query: Find azure_sql_server with alertingEnabled = true
+      - name: bad
+        query: Find azure_sql_server with alertingEnabled != true
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.4'
+  - id: integration-question-azure-db-sql-servers-alert-all-threat-types
+    title:
+      Is Azure SQL Server Advanced Data Security alerting configured to detect
+      all threat types?
+    description:
+      Checks if there is any disabled alerts on Azure SQL servers with Advanced
+      Data Security alerting enabled.
+    queries:
+      - name: good
+        query: Find azure_sql_server with alertOnAllThreats = true
+      - name: bad
+        query: |
+          Find azure_sql_server with alertOnAllThreats != true as server
+          Return server.name, server.alertingEnabled, server.alertsDisabled, server.webLink
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.5'
+  - id: integration-question-azure-db-sql-servers-alert-emails
+    title:
+      Is Azure SQL Server Advanced Data Security configured to send email
+      alerts?
+    description:
+      Returns a list of Azure SQL servers with Advanced Data Security alert
+      email addresses defined / not defined.
+    queries:
+      - name: good
+        query: Find azure_sql_server with alertEmails != undefined
+      - name: bad
+        query: Find azure_sql_server with alertEmails = undefined
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.6'
+  - id: integration-question-azure-db-sql-servers-alert-admins
+    title:
+      Is Azure SQL Server Advanced Data Security configured to send email alerts
+      to administrators?
+    description:
+      Returns a list of Azure SQL servers with Advanced Data Security alert
+      admins enabled / not enabled.
+    queries:
+      - name: good
+        query: Find azure_sql_server with alertAdmins = true
+      - name: bad
+        query: Find azure_sql_server with alertAdmins != true
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.7'
+  - id: integration-question-azure-db-sql-databases-encrypted
+    title: Is encryption enabled for all Azure SQL databases?
+    description: Returns a list of SQL databases encrypted / not encrypted.
+    queries:
+      - name: good
+        query: Find azure_sql_server with encrypted=true
+      - name: bad
+        query: Find azure_sql_server with encrypted!=true
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.9'
+
+  - id: integration-question-azure-db-postgresql-servers-ssl-enforcement
+    title: Is SSL enforced on all Azure PostgreSQL database servers?
+    description:
+      Returns a list of PostgreSQL database servers with SSL enforcement enabled
+      / not enabled.
+    queries:
+      - name: good
+        query:
+          Find azure_postgresql_server with sslEnforced=true or
+          sslEnforcement='Enabled'
+      - name: bad
+        query:
+          Find azure_postgresql_server with sslEnforced!=true and
+          sslEnforcement!='Enabled'
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.13'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.3.1'
+
+  - id: integration-question-azure-db-mysql-servers-ssl-enforcement
+    title: Is SSL enforced on all Azure MySQL database servers?
+    description:
+      Returns a list of MySQL database servers with SSL enforcement enabled /
+      not enabled.
+    queries:
+      - name: good
+        query:
+          Find azure_mysql_server with sslEnforced=true or
+          sslEnforcement='Enabled'
+      - name: bad
+        query:
+          Find azure_mysql_server with sslEnforced!=true and
+          sslEnforcement!='Enabled'
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.11'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.3.2'
+
+  - id: integration-question-azure-db-postgresql-servers-log-checkpoints
+    title:
+      Is checkpoint logging enforced on all Azure PostgreSQL database servers?
+    description:
+      Returns a list of PostgreSQL database servers with checkpoint logging
+      enabled / not enabled.
+    queries:
+      - name: good
+        query:
+          FIND azure_postgresql_server WITH configurations.logCheckpoints='on'
+      - name: bad
+        query:
+          FIND azure_postgresql_server WITH configurations.logCheckpoints!='on'
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.12'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.3.3'
+
+  - id: integration-question-azure-db-postgresql-servers-log-connections
+    title:
+      Is connections logging enforced on all Azure PostgreSQL database servers?
+    description:
+      Returns a list of PostgreSQL database servers with connections logging
+      enabled / not enabled.
+    queries:
+      - name: good
+        query:
+          FIND azure_postgresql_server WITH configurations.logConnections='on'
+      - name: bad
+        query:
+          FIND azure_postgresql_server WITH configurations.logConnections!='on'
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.14'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.3.4'
+
+  - id: integration-question-azure-db-postgresql-servers-log-disconnections
+    title:
+      Is disconnection logging enforced on all Azure PostgreSQL database
+      servers?
+    description:
+      Returns a list of PostgreSQL database servers with disconnection logging
+      enabled / not enabled.
+    queries:
+      - name: PostgreSQL servers with logDisconnections
+        resultsAre: GOOD
+        query:
+          FIND azure_postgresql_server WITH
+          configurations.logDisconnections='on'
+      - name: PostgreSQL servers without logDisconnections
+        resultsAre: BAD
+        query:
+          FIND azure_postgresql_server WITH
+          configurations.logDisconnections!='on'
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.15'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.3.5'
+
+  - id: integration-question-azure-db-postgresql-servers-connection-throttling
+    title:
+      Is connection throttling enforced on all Azure PostgreSQL database
+      servers?
+    description:
+      Returns a list of PostgreSQL database servers with connection throttling
+      enabled / not enabled.
+    queries:
+      - name: PostgreSQL servers with connectionThrottling
+        resultsAre: GOOD
+        query:
+          FIND azure_postgresql_server WITH
+          configurations.connectionThrottling='on'
+      - name: PostgreSQL servers without connectionThrottling
+        resultsAre: BAD
+        query:
+          FIND azure_postgresql_server WITH
+          configurations.connectionThrottling!='on'
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.17'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.3.6'
+
+  - id: integration-question-azure-db-postgresql-servers-log-retention
+    title:
+      Do any Azure PostgreSQL database servers not have logRetention > 3 days?
+    description:
+      Returns a list of PostgreSQL database servers without logRetention > 3
+      days.
+    queries:
+      - name: PostgreSQL servers with logRetention > 3 days
+        resultsAre: GOOD
+        query:
+          FIND azure_postgresql_server WITH configurations.logRetentionDays > 3
+      - name: PostgreSQL servers without logRetention > 3 days
+        resultsAre: BAD
+        query:
+          FIND azure_postgresql_server WITH configurations.logRetentionDays <= 3
+          or configurations.logRetentionDays = undefined
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.18'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.3.7'
+
+  - id: integration-question-azure-db-postgresql-servers-firewall-rule
+    title: Do any Azure PostgreSQL servers allow traffic from startIp '0.0.0.0'?
+    description:
+      Returns a list of PostgreSQL database servers that have a firewall rule
+      with startIp of '0.0.0.0'.
+    queries:
+      - name: PostgreSQL servers with permissive firewall rule
+        resultsAre: BAD
+        query:
+          FIND azure_postgresql_server_firewall_rule WITH startIpAddress =
+          '0.0.0.0'
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.3.8'
+
+  - id: integration-question-azure-db-sql-server-directory-admins
+    title:
+      Do any Azure SQL servers not have an active directory admin configured?
+    description:
+      Returns a list of SQL servers with no active directory admin configured.
+    queries:
+      - name: SQL servers with AD Admin
+        resultsAre: GOOD
+        query: |
+          FIND 
+            azure_sql_server THAT HAS
+            azure_sql_server_active_directory_admin
+      - name: SQL servers without AD Admin
+        resultsAre: BAD
+        query: |
+          FIND 
+            azure_sql_server THAT !HAS
+            azure_sql_server_active_directory_admin
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.8'
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.19'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.4'
+
+  - id: integration-question-azure-db-sql-server-tde-cmk
+    title:
+      Are all Azure SQL servers protected with Transparent Data Encryption using
+      a Customer Managed Key?
+    description:
+      Returns a list of SQL servers with that are not protected with an
+      encryption protector using a CMK.
+    queries:
+      - name: SQL servers with CMK encryption protector
+        resultsAre: GOOD
+        query: |
+          FIND 
+            azure_sql_server WITH
+              encryptionProtector.serverKeyType = 'AzureKeyVault'
+      - name: SQL servers without CMK encryption protector
+        resultsAre: BAD
+        query: |
+          FIND 
+            azure_sql_server WITH
+              encryptionProtector.serverKeyType != 'AzureKeyVault'
+    tags:
+      - azure
+      - database
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '4.10'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '4.5'
+
+  ##########################################
+  # CIS 5 - Logging and Monitoring
+  ##########################################
+  - id: integration-question-azure-logging-diagnostic-setting-exists
+    title: Which resources do not have diagnostic settings?
+    description: |
+      Returns a list of Azure resources with no Diagnostic Settings. NOTE: Diagnostic settings are not supported on all resources in JupiterOne. Read the documentation to learn more about supported services: https://github.com/JupiterOne/graph-azure/blob/master/docs/jupiterone.md#diagnostic-settings
+    queries:
+      - name: Resources with Diagnostic Settings
+        resultsAre: GOOD
+        query: |
+          Find (
+            azure_api_management_service|
+            azure_batch_account|
+            azure_cdn_endpoint|
+            azure_cdn_profile|
+            azure_container_registry|
+            azure_event_grid_domain|
+            azure_event_grid_topic|
+            azure_keyvault_service|
+            azure_lb|
+            azure_mariadb_server|
+            azure_mysql_server|
+            azure_network_azure_firewall|
+            azure_postgresql_server|
+            azure_public_ip|
+            azure_security_group|
+            azure_sql_server|
+            azure_subscription|
+            azure_vnet
+          ) that has azure_diagnostic_setting
+      - name: Resources with no Diagnostic Settings
+        resultsAre: BAD
+        query: |
+          Find (
+            azure_api_management_service|
+            azure_batch_account|
+            azure_cdn_endpoint|
+            azure_cdn_profile|
+            azure_container_registry|
+            azure_event_grid_domain|
+            azure_event_grid_topic|
+            azure_keyvault_service|
+            azure_lb|
+            azure_mariadb_server|
+            azure_mysql_server|
+            azure_network_azure_firewall|
+            azure_postgresql_server|
+            azure_public_ip|
+            azure_security_group|
+            azure_sql_server|
+            azure_subscription|
+            azure_vnet
+          ) that !has azure_diagnostic_setting
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.1.1'
+          - '5.3'
+
+  - id: integration-question-azure-logging-subscription-diagnostic-settings
+    title:
+      Are there any Azure subscriptions that have not enabled Administrative,
+      Alert, Policy, and Security diagnostic logs?
+    description: |
+      Returns a list of subscriptions that have not enabled Adminstrative, Alert, Policy, or Security diagnostic logs.
+    queries:
+      - name: Subscriptions with suggested diagnostic logs
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_subscription THAT HAS 
+            azure_diagnostic_setting WITH 
+              log.Administrative.enabled = true AND
+              log.Alert.enabled = true AND
+              log.Policy.enabled = true AND
+              log.Security.enabled = true
+      - name: Subscriptions without suggested diagnostic logs
+        resultsAre: BAD
+        query: |
+          Find
+            azure_subscription THAT !HAS 
+            azure_diagnostic_setting WITH 
+              log.Administrative.enabled = true AND
+              log.Alert.enabled = true AND
+              log.Policy.enabled = true AND
+              log.Security.enabled = true
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.1.2'
+
+  - id: integration-question-azure-logging-insights-operatinoal-logs-public
+    title:
+      Are any "insights-operational-logs" storage containers publicly
+      accessible?
+    description: |
+      Returns a list of log profiles that write logs to "insights-operational-logs" containers that are publicly accessible.
+    queries:
+      - name: Log profile buckets are not publicly accessible
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_log_profile THAT USES
+            azure_storage_account THAT HAS
+            azure_storage_container WITH
+              name = 'insights-operational-logs' AND 
+              publicAccess = 'None'
+      - name: Log profile buckets are publicly accessible
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_monitor_log_profile as p THAT USES
+            azure_storage_account as sa THAT HAS
+            azure_storage_container WITH
+              name = 'insights-operational-logs' AND 
+              publicAccess != 'None' as sc
+          Return
+            p.name,
+            p.id,
+            sa.name,
+            sa.id,
+            sc.name,
+            sc.id,
+            sc.publicAccess
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.1.5'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.1.3'
+
+  - id: integration-question-azure-logging-log-profile-storage-byok
+    title:
+      Are there any storage accounts containg activity logs that do not use
+      BYOK?
+    description: |
+      Returns a list of log profiles that write logs to storage accounts that do not use BYOK.
+    queries:
+      - name: Log profile storage accounts use BYOK
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_log_profile THAT USES
+            azure_storage_account WITH
+              encryption.keySource = 'Microsoft.Keyvault'
+      - name: Log profile storage accounts do not use BYOK
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_monitor_log_profile as p THAT USES
+            azure_storage_account WITH
+              encryption.keySource != 'Microsoft.Keyvault' as sa
+          Return
+            p.name,
+            p.id,
+            sa.name,
+            sa.id,
+            sa.encryption.keySource
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.1.6'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.1.4'
+
+  - id: integration-question-azure-logging-key-vault-logging
+    title:
+      Are there any Azure KeyVault entitis that have not enabled logging to a
+      storage account for at least 180 days?
+    description: |
+      Returns a list of Azure KeyVault entities that have not enabled logging to a storage account for at least 180 days.
+    queries:
+      - name: Logging is enabled
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_keyvault_service THAT HAS
+            azure_diagnostic_setting WITH
+              storageAccountId != undefined AND
+              log.AuditEvent.enabled = true AND
+              log.AuditEvent.retentionPolicy.enabled = true AND
+              log.AuditEvent.retentionPolicy.days > 180
+      - name: Logging is not enabled
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_keyvault_service THAT !HAS
+            azure_diagnostic_setting WITH
+              storageAccountId != undefined AND
+              log.AuditEvent.enabled = true AND
+              log.AuditEvent.retentionPolicy.enabled = true AND
+              log.AuditEvent.retentionPolicy.days > 180
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.1.7'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.1.5'
+
+  - id: integration-question-azure-logging-create-policy-assignment
+    title:
+      Do any subscriptions not have an activity log alert for
+      policyAssignments/write?
+    description: |
+      Returns a list of Azure subscriptions that have not configured an activity log alert for policyAssignments/write.
+    queries:
+      - name: policyAssignments/write alert exists
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Authorization/policyAssignments/write' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY' THAT MONITORS
+            azure_subscription
+      - name: policyAssignments/write alert does not exist
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_subscription THAT !MONITORS
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Authorization/policyAssignments/write' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY'
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.2.1'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.2.1'
+
+  - id: integration-question-azure-logging-delete-policy-assignment
+    title:
+      Do any subscriptions not have an activity log alert for
+      policyAssignments/delete?
+    description: |
+      Returns a list of Azure subscriptions that have not configured an activity log alert for policyAssignments/delete.
+    queries:
+      - name: policyAssignments/delete alert exists
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Authorization/policyAssignments/delete' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY' THAT MONITORS
+            azure_subscription
+      - name: policyAssignments/delete alert does not exist
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_subscription THAT !MONITORS
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Authorization/policyAssignments/delete' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY'
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.2.2'
+
+  - id: integration-question-azure-logging-create-security-group
+    title:
+      Do any subscriptions not have an activity log alert for
+      networkSecurityGroups/write?
+    description: |
+      Returns a list of Azure subscriptions that have not configured an activity log alert for networkSecurityGroups/write.
+    queries:
+      - name: networkSecurityGroups/write alert exists
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Network/networkSecurityGroups/write' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY' THAT MONITORS
+            azure_subscription
+      - name: networkSecurityGroups/write alert does not exist
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_subscription THAT !MONITORS
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Network/networkSecurityGroups/write' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY'
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.2.2'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.2.3'
+
+  - id: integration-question-azure-logging-delete-security-group
+    title:
+      Do any subscriptions not have an activity log alert for
+      networkSecurityGroups/delete?
+    description: |
+      Returns a list of Azure subscriptions that have not configured an activity log alert for networkSecurityGroups/delete.
+    queries:
+      - name: networkSecurityGroups/delete alert exists
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Network/networkSecurityGroups/delete' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY' THAT MONITORS
+            azure_subscription
+      - name: networkSecurityGroups/delete alert does not exist
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_subscription THAT !MONITORS
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Network/networkSecurityGroups/delete' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY'
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.2.3'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.2.4'
+
+  - id: integration-question-azure-logging-create-security-group-rule
+    title:
+      Do any subscriptions not have an activity log alert for
+      networkSecurityGroups/securityRules/write?
+    description: |
+      Returns a list of Azure subscriptions that have not configured an activity log alert for networkSecurityGroups/securityRules/write.
+    queries:
+      - name: networkSecurityGroups/securityRules/write alert exists
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Network/networkSecurityGroups/securityRules/write' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY' THAT MONITORS
+            azure_subscription
+      - name: networkSecurityGroups/securityRules/write alert does not exist
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_subscription THAT !MONITORS
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Network/networkSecurityGroups/securityRules/write' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY'
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.2.4'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.2.5'
+
+  - id: integration-question-azure-logging-delete-security-group-rule
+    title:
+      Do any subscriptions not have an activity log alert for
+      networkSecurityGroups/securityRules/delete?
+    description: |
+      Returns a list of Azure subscriptions that have not configured an activity log alert for networkSecurityGroups/securityRules/delete.
+    queries:
+      - name: networkSecurityGroups/securityRules/delete alert exists
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Network/networkSecurityGroups/securityRules/delete' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY' THAT MONITORS
+            azure_subscription
+      - name: networkSecurityGroups/securityRules/delete alert does not exist
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_subscription THAT !MONITORS
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Network/networkSecurityGroups/securityRules/delete' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY'
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.2.5'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.2.6'
+
+  - id: integration-question-azure-logging-create-security-solution
+    title:
+      Do any subscriptions not have an activity log alert for
+      Microsoft.Security/securitySolutions/write?
+    description: |
+      Returns a list of Azure subscriptions that have not configured an activity log alert for Microsoft.Security/securitySolutions/write.
+    queries:
+      - name: Microsoft.Security/securitySolutions/write alert exists
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Security/securitySolutions/write' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY' THAT MONITORS
+            azure_subscription
+      - name: Microsoft.Security/securitySolutions/write alert does not exist
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_subscription THAT !MONITORS
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Security/securitySolutions/write' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY'
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.2.6'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.2.7'
+
+  - id: integration-question-azure-logging-delete-security-solution
+    title:
+      Do any subscriptions not have an activity log alert for
+      Microsoft.Security/securitySolutions/delete?
+    description: |
+      Returns a list of Azure subscriptions that have not configured an activity log alert for Microsoft.Security/securitySolutions/delete.
+    queries:
+      - name: Microsoft.Security/securitySolutions/delete alert exists
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Security/securitySolutions/delete' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY' THAT MONITORS
+            azure_subscription
+      - name: Microsoft.Security/securitySolutions/delete alert does not exist
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_subscription THAT !MONITORS
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Security/securitySolutions/delete' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY'
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.2.7'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.2.8'
+
+  - id: integration-question-azure-logging-create-sql-server-firewall-rule
+    title:
+      Do any subscriptions not have an activity log alert for
+      Microsoft.Sql/servers/firewallRules/write?
+    description: |
+      Returns a list of Azure subscriptions that have not configured an activity log alert for Microsoft.Sql/servers/firewallRules/write.
+    queries:
+      - name: Microsoft.Sql/servers/firewallRules/write alert exists
+        resultsAre: GOOD
+        query: |
+          Find 
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Sql/servers/firewallRules/write' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY' THAT MONITORS
+            azure_subscription
+      - name: Microsoft.Sql/servers/firewallRules/write alert does not exist
+        resultsAre: BAD
+        query: |
+          Find 
+            azure_subscription THAT !MONITORS
+            azure_monitor_activity_log_alert WITH
+              condition.operationName = 'Microsoft.Sql/servers/firewallRules/write' AND
+              condition.level = 'ANY' AND
+              condition.status = 'ANY' AND
+              condition.caller = 'ANY'
+    tags:
+      - azure
+      - logging-monitoring
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '5.2.8'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '5.2.9'
+
+  ##########################################
+  # CIS 6 - Networking
+  ##########################################
+  - id: integration-question-azure-networking-inbound-rdp-access-from-internet
+    title:
+      Are there Azure security group rules allowing inbound RDP access from the
+      Internet?
+    description:
+      Returns a list of Security Groups with rules allowing inbound RDP access
+      (port 3389) from the Internet.
+    queries:
+      - name: bad
+        query: |
+          Find azure_security_group that allows as rule Internet
+          where rule.inbound=true and rule.fromPort <= 3389 and rule.toPort >= 3389
+    tags:
+      - azure
+      - network
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '6.1'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '6.1'
+  - id: integration-question-azure-networking-inbound-ssh-access-from-internet
+    title:
+      Are there Azure security group rules allowing inbound SSH access from the
+      Internet?
+    description:
+      Returns a list of Security Groups with rules allowing inbound SSH access
+      (port 22) from the Internet.
+    queries:
+      - name: bad
+        query: |
+          Find azure_security_group that allows as rule Internet
+          where rule.inbound=true and rule.fromPort <= 22 and rule.toPort >= 22
+    tags:
+      - azure
+      - network
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '6.2'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '6.2'
+  - id: integration-question-azure-networking-sql-server-ingress-any-ip
+    title: Do any Azure SQL Servers allow ingress 0.0.0.0/0 (ANY IP)?
+    description:
+      Returns a list of Azure SQL Server Firewall Rules that start with 0.0.0.0.
+    queries:
+      - name: bad
+        query: |
+          find azure_sql_server_firewall_rule with startIpAddress = '0.0.0.0'
+    tags:
+      - azure
+      - network
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '6.3'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '6.3'
+  - id: integration-question-azure-networking-nsg-flow-log-retention
+    title: Are NSG Flow Logs configured with retention >= 90 days?
+    description:
+      Returns a list of Network Security Groups with flow logs that have
+      retention period >= 90 days.
+    queries:
+      - name: good
+        query: |
+          find azure_security_group that HAS azure_security_group_flow_logs with retentionPolicy.days >= 90
+      - name: bad
+        query: |
+          find azure_security_group as sg that !HAS azure_security_group_flow_logs with retentionPolicy.days >=90 as flowLog
+              return
+                  flowLog.webLink,
+                  flowLog.retentionPolicy.days,
+                  flowLog.retentionPolicy.enabled,
+                  sg.webLink,
+                  sg.displayName,
+                  sg.category,
+                  sg.id,
+                  sg.isWideOpen,
+                  sg.region,
+                  sg.resourceGroup
+    tags:
+      - azure
+      - network
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '6.4'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '6.4'
+  - id: integration-question-azure-networking-nsg-network-watcher-enabled
+    title: Do all locations have a network watcher enabled?
+    description:
+      Returns a list of Azure locations with network watchers that are
+      'Enabled'.
+    queries:
+      - name: good
+        query: |
+          FIND azure_location THAT HAS azure_network_watcher WITH provisioningState = 'Succeeded'
+      - name: bad
+        query: |
+          FIND azure_location as l THAT !HAS azure_network_watcher WITH provisioningState = 'Succeeded' as watcher
+              return
+                watcher.webLink,
+                watcher.displayName,
+                watcher.provisioningState,
+                l.webLink,
+                l.displayName
+    tags:
+      - azure
+      - network
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '6.5'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '6.5'
+  - id: integration-question-azure-networking-nsg-nenable-udp-restrictions
+    title: Are there UDP services exposed to the internet?
+    description:
+      Returns a list of security groups that have a UDP port exposed to the
+      internet.
+    queries:
+      - name: bad
+        query: |
+          FIND azure_security_group as sg that allows as rule * as source
+            where
+                rule.inbound=true AND
+                rule.destinationPortRange!=undefined AND
+                (
+                    rule.protocol='*' OR
+                    rule.protocol='udp' OR
+                    rule.protocol='UDP'
+                ) AND
+                (
+                    rule.sourceAddressPrefix='*' OR
+                    rule.sourceAddressPrefix='0.0.0.0' OR
+                    rule.sourceAddressPrefix~='<nw>/0' OR
+                    rule.sourceAddressPrefix='internet' OR
+                    rule.sourceAddressPrefix='any'
+                )
+            return
+                sg.displayName,
+                sg.webLink,
+                source._class,
+                source._type,
+                source.displayName,
+                rule.displayName,
+                rule.inbound,
+                rule.destinationPortRange,
+                rule.protocol,
+                rule.sourceAddressPrefix,
+                rule.destinationPortRange,
+                rule.access,
+                rule.id
+    tags:
+      - azure
+      - network
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '6.6'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '6.6'
+
+  ##########################################
+  # CIS 7 - Virtual Machines
+  ##########################################
+  - id: integration-question-azure-compute-os-disks-encrypted
+    title: Are all Azure-managed OS / Boot disks encrypted?
+    description:
+      Checks the encryption status of all Azure managed disks with an installed
+      OS and in attached state.
+    queries:
+      - name: good
+        query: |
+          Find azure_managed_disk with osType!=undefined and attached=true and encrypted=true
+      - name: bad
+        query: |
+          Find azure_managed_disk with osType!=undefined and attached=true and encrypted!=true
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '7.1'
+  - id: integration-question-azure-compute-data-disks-encrypted
+    title: Are all Azure-managed Data disks (no-OS or non-boot) encrypted?
+    description:
+      Checks the encryption status of all Azure managed disks without an
+      installed OS and in attached state.
+    queries:
+      - name: good
+        query: |
+          Find azure_managed_disk with osType=undefined and attached=true and encrypted=true
+      - name: bad
+        query: |
+          Find azure_managed_disk with osType=undefined and attached=true and encrypted!=true
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '7.2'
+  - id: integration-question-azure-compute-unattached-disks-encrypted
+    title: Are all Azure-managed unattached disks encrypted?
+    description:
+      Checks the encryption status of all Azure managed disks in unattached
+      state.
+    queries:
+      - name: good
+        query: |
+          Find azure_managed_disk with attached=false and encrypted=true
+      - name: bad
+        query: |
+          Find azure_managed_disk with attached=false and encrypted!=true
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '7.3'
+  - id: integration-question-azure-compute-trusted-vm-extensions
+    title: Have all installed VM extensions been approved?
+    description:
+      Checks that all the installed VM extensions have been manually marked as
+      "trusted" in JupiterOne.
+    queries:
+      - name: good
+        query: |
+          find azure_vm_extension with trusted=true
+      - name: bad
+        query: |
+          find azure_vm_extension with trusted!=true
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '7.4'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '7.4'
+  - id: integration-question-azure-compute-latest-os-patches
+    title: Are all VMs on the latest OS patches?
+    description:
+      Checks that all VMs do not have a reccomendation for a system update.
+    queries:
+      - name: good
+        query: |
+          FIND azure_vm THAT !HAS azure_advisor_recommendation with recommendation^=("Apply system updates" OR 'apply system updates')
+      - name: bad
+        query: |
+          FIND azure_vm THAT HAS azure_advisor_recommendation with recommendation^=("Apply system updates" OR 'apply system updates')
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '7.5'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '7.5'
+  - id: integration-question-azure-compute-endpoint-protection
+    title: Do all VMs have endpoint protection installed?
+    description:
+      Checks that there is an endpoint protection VM extension installed on
+      every VM.
+    queries:
+      - name: good
+        query: |
+          FIND azure_vm THAT USES azure_vm_extension with displayName^=('EndpointSecurity' OR 'TrendMicroDSA' OR 'Antimalware' OR 'EndpointProtection' OR 'SCWPAgent' OR 'PortalProtectExtension' OR 'FileSecurity')
+      - name: bad
+        query: |
+          FIND azure_vm THAT !USES azure_vm_extension with displayName^=('EndpointSecurity' OR 'TrendMicroDSA' OR 'Antimalware' OR 'EndpointProtection' OR 'SCWPAgent' OR 'PortalProtectExtension' OR 'FileSecurity')
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations
+        version: v1.1.0
+        requirements:
+          - '7.6'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '7.6'
+  - id: integration-question-azure-compute-encrypted-vhds
+    title: Are all VHD's attached to VMs encrypted?
+    description:
+      Checks all Virtual Hard Disks used by VMs have encryption turned on.
+    queries:
+      - name: good
+        query: |
+          FIND azure_vm THAT USES azure_storage_account with encryptedBlob=true
+      - name: bad
+        query: |
+          FIND azure_vm THAT USES azure_storage_account with encryptedBlob!=true
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '7.7'
+
+  ##########################################
+  # CIS 8 - Other Security Considerations
+  ##########################################
+  - id: integration-question-azure-misc-key-vaults-keys-expiration
+    title: Do all Azure Key Vault Keys have an expiration time set?
+    description: Checks the expiration time state of all Azure Key Vault Keys.
+    queries:
+      - name: good
+        query: |
+          Find azure_keyvault_key with enabled = true and expiresOn != undefined
+      - name: bad
+        query: |
+          Find azure_keyvault_key with enabled = true and expiresOn = undefined
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '8.1'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '8.1'
+  - id: integration-question-azure-misc-key-vaults-secrets-expiration
+    title: Do all Azure Key Vault Secrets have an expiration time set?
+    description:
+      Checks the expiration time state of all Azure Key Vault Secrets.
+    queries:
+      - name: good
+        query: |
+          Find azure_keyvault_secret with enabled = true and expiresOn != undefined
+      - name: bad
+        query: |
+          Find azure_keyvault_secret with enabled = true and expiresOn = undefined
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '8.2'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '8.2'
+  - id: integration-question-azure-misc-resource-locks
+    title: Are all critical resources protected by resource locks?
+    description:
+      Checks if all critical resources have resources locks set. 
+    queries:
+    - name: good
+      query: |
+        FIND * with tag.SensitiveAzureResource = true THAT HAS azure_resource_lock
+    - name: bad
+      query: |
+        FIND * with tag.SensitiveAzureResource = true THAT !HAS azure_resource_lock
+    tags:
+    - azure
+    - data
+    compliance:
+    - standard: CIS Azure Foundations v1.3.0
+      version: v1.3.0
+      requirements:
+        - '8.3'
+    - standard: CIS Azure Foundations v1.3.1
+      version: v1.3.1
+      requirements:
+        - '8.3'
+  - id: integration-question-azure-misc-recoverable-key-vaults
+    title: Are all Key Vaults recoverable?
+    description:
+      Checks if all Key Vaults are recoverable.
+    queries:
+    - name: good
+      query: |
+        FIND azure_keyvault_service with enableSoftDelete = true AND enablePurgeProtection = true
+    - name: bad
+      query: |
+        FIND azure_keyvault_service with enableSoftDelete != true AND enablePurgeProtection != true
+    tags:
+    - azure
+    - data
+    compliance:
+    - standard: CIS Azure Foundations v1.3.0
+      version: v1.3.0
+      requirements:
+        - '8.4'
+    - standard: CIS Azure Foundations v1.3.1
+      version: v1.3.1
+      requirements:
+        - '8.4'
+  - id: integration-question-azure-misc-kubernetes-rbac
+    title: Is RBAC enabled on all Azure Kubernetes Services Instances??
+    description:
+      Checks if all Azure Kubernetes Services Instances has RBAC enabled.
+    queries:
+    - name: good
+      query: |
+        FIND azure_kubernetes_cluster with enableRBAC = true
+    - name: bad
+      query: |
+        FIND azure_kubernetes_cluster with enableRBAC != true
+    tags:
+    - azure
+    - data
+    compliance:
+    - standard: CIS Azure Foundations v1.3.0
+      version: v1.3.0
+      requirements:
+        - '8.5'
+    - standard: CIS Azure Foundations v1.3.1
+      version: v1.3.1
+      requirements:
+        - '8.5'
+
+  ##########################################
+  # CIS 9 - AppService
+  ##########################################
+  - id: integration-question-azure-appservice-authentication-enabled
+    title: Is app service authentication enabled for all Azure app services?
+    description:
+      Checks the app service authentication state of all Azure app services
+    queries:
+      - name: good
+        query: |
+          Find (azure_function_app | azure_web_app) with authEnabled = true
+      - name: bad
+        query: |
+          Find (azure_function_app | azure_web_app) with authEnabled = false
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '9.1'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '9.1'
+  - id: integration-question-azure-appservice-http-https-redirection
+    title: Are all Azure Web Apps redirecting HTTP traffic to HTTPS?
+    description:
+      Checks the HTTPS redirection SSL settings of all Azure Web Apps.
+    queries:
+      - name: good
+        query: |
+          Find (azure_function_app | azure_web_app) with httpsOnly = true
+      - name: bad
+        query: |
+          Find (azure_function_app | azure_web_app) with httpsOnly = false
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '9.2'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '9.2'
+  - id: integration-question-azure-appservice-tls-version
+    title: Are all Azure Web Apps using latest version of TLS encryption?
+    description: Checks the version of TLS in use of all Azure Web Apps.
+    queries:
+      - name: good
+        query: |
+          Find (azure_function_app | azure_web_app) with minTlsVersion = "1.2"
+      - name: bad
+        query: |
+          Find (azure_function_app | azure_web_app) with minTlsVersion != "1.2"
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '9.3'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '9.3'
+  - id: integration-question-azure-appservice-client-certificates
+    title: Are all Azure Web Apps requiring the client certificates?
+    description:
+      Checks that all Azure Web Apps has option "client certificate mode" set to
+      "require".
+    queries:
+      - name: good
+        query: |
+          Find (azure_function_app | azure_web_app) with clientCertEnabled = true
+      - name: bad
+        query: |
+          Find (azure_function_app | azure_web_app) with clientCertEnabled = false
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '9.4'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '9.4'
+  - id: integration-question-azure-appservice-register-azure-active-directory
+    title: Are all Azure Web Apps using "Register with Azure Active Directory"?
+    description:
+      Checks that all Azure Web Apps have "Register with Azure Active Directory"
+      enabled.
+    queries:
+      - name: good
+        query: |
+          Find (azure_function_app | azure_web_app) with principalId != undefined
+      - name: bad
+        query: |
+          Find (azure_function_app | azure_web_app) with principalId = undefined
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '9.5'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '9.5'
+  - id: integration-question-azure-appservice-php-latest-version
+    title: Are all Azure Web Apps using PHP's latest version?
+    description:
+      Checks that all Azure Web Apps are using the latest version of PHP.
+    queries:
+      - name: good
+        query: |
+          Find (azure_function_app | azure_web_app) with phpVersion = "8.0.11"
+      - name: bad
+        query: |
+          Find (azure_function_app | azure_web_app) with phpVersion != "8.0.11"
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '9.6'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '9.6'
+  - id: integration-question-azure-appservice-python-latest-version
+    title: Are all Azure Web Apps using Python's latest version?
+    description:
+      Checks that all Azure Web Apps are using the latest version of Python.
+    queries:
+      - name: good
+        query: |
+          Find (azure_function_app | azure_web_app) with pythonVersion = "3.9.7"
+      - name: bad
+        query: |
+          Find (azure_function_app | azure_web_app) with pythonVersion != "3.9.7"
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '9.7'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '9.7'
+  - id: integration-question-azure-appservice-java-latest-version
+    title: Are all Azure Web Apps using Java's latest version?
+    description:
+      Checks that all Azure Web Apps are using the latest version of Java.
+    queries:
+      - name: good
+        query: |
+          Find (azure_function_app | azure_web_app) with javaVersion = "16.0.2"
+      - name: bad
+        query: |
+          Find (azure_function_app | azure_web_app) with javaVersion != "16.0.2"
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '9.8'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '9.8'
+  - id: integration-question-azure-appservice-http-latest-version
+    title: Are all Azure Web Apps using HTTP's latest version?
+    description:
+      Checks that all Azure Web Apps are using the latest version of HTTP.
+    queries:
+      - name: good
+        query: |
+          Find (azure_function_app | azure_web_app) with http20Enabled = true
+      - name: bad
+        query: |
+          Find (azure_function_app | azure_web_app) with http20Enabled != true
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '9.9'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '9.9'
+  - id: integration-question-azure-appservice-ftp-disabled
+    title: Are all Azure Web Apps FTP deployments disabled?
+    description: Checks that all Azure Web Apps have disabled FTP deployments.
+    queries:
+      - name: good
+        query: |
+          Find (azure_function_app | azure_web_app) with ftpsState != "AllAllowed"
+      - name: bad
+        query: |
+          Find (azure_function_app | azure_web_app) with ftpsState = "AllAllowed"
+    tags:
+      - azure
+      - data
+    compliance:
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '9.10'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '9.10'

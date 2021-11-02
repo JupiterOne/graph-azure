@@ -7,12 +7,14 @@ import {
 } from '@jupiterone/integration-sdk-testing';
 import { isJson } from '../../src/utils/isJson';
 import { IntegrationConfig } from '../../src/types';
+import { MatchBy } from '@pollyjs/core';
 
 export { Recording };
 
 export const azureMutations = {
   ...mutations,
   mutateAccessToken,
+  redactAllPropertiesExcept,
 };
 
 export function setupAzureRecording(input: SetupRecordingInput): Recording {
@@ -58,9 +60,44 @@ function mutateAccessToken(
   }
 }
 
+function redactAllPropertiesExcept(
+  entry: RecordingEntry,
+  requiredProperties: string[],
+) {
+  const responseText = entry.response.content.text;
+  if (!responseText) {
+    return;
+  }
+
+  if (isJson(responseText)) {
+    const responseJson = JSON.parse(responseText);
+
+    for (const key of Object.keys(responseJson)) {
+      if (!requiredProperties.includes(key)) {
+        responseJson[key] = '[REDACTED:UNUSED]';
+      }
+    }
+    entry.response.content.text = JSON.stringify(responseJson);
+  }
+}
+
 type MatchRequestsBy = Required<
   SetupRecordingInput
 >['options']['matchRequestsBy'];
+
+interface UrlOptions {
+  protocol?: boolean | MatchBy<string, string> | undefined;
+  username?: boolean | MatchBy<string, string> | undefined;
+  password?: boolean | MatchBy<string, string> | undefined;
+  hostname?: boolean | MatchBy<string, string> | undefined;
+  port?: boolean | MatchBy<number, number> | undefined;
+  pathname?: boolean | MatchBy<string, string> | undefined;
+  query?:
+    | boolean
+    | MatchBy<{ [key: string]: any }, { [key: string]: any }>
+    | undefined;
+  hash?: boolean | MatchBy<string, string> | undefined;
+}
 
 export function getMatchRequestsBy({
   config,
@@ -71,9 +108,16 @@ export function getMatchRequestsBy({
   shouldReplaceSubscriptionId?: (pathname: string) => boolean;
   options?: MatchRequestsBy;
 }): MatchRequestsBy {
+  let url: UrlOptions | undefined;
+  if (options?.url) {
+    url = options.url as UrlOptions;
+    delete options.url;
+  }
+
   return {
     headers: false,
     url: {
+      ...(url && { ...url }),
       pathname: (pathname: string): string => {
         pathname = pathname.replace(config.directoryId, 'directory-id');
         if (shouldReplaceSubscriptionId(pathname)) {

@@ -17,7 +17,7 @@ import {
 } from './constants';
 import { createDnsZoneEntity, createDnsRecordSetEntity } from './converters';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import { ResourcesClient } from '../resources/client';
 export * from './constants';
 

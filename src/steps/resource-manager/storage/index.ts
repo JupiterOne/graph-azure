@@ -23,7 +23,7 @@ import {
 import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import {
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   STEP_RM_KEYVAULT_VAULTS,

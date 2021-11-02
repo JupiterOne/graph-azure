@@ -1,8 +1,12 @@
 import { convertProperties } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { createResourceGroupEntity } from './converters';
+import {
+  createResourceGroupEntity,
+  createResourceLockEntitiy,
+} from './converters';
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
+import { ManagementLockModels } from '@azure/arm-locks';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 
@@ -38,6 +42,36 @@ describe('createResourceGroupEntity', () => {
       'tag.environment': 'j1dev',
       webLink: webLinker.portalResourceUrl(
         '/subscriptions/subscription-id/resourceGroups/j1dev',
+      ),
+    });
+  });
+});
+
+describe('createResourceGroupLockEntity', () => {
+  test('properties transferred', () => {
+    const data: ManagementLockModels.ManagementLockObject = {
+      id: '/subscriptions/subscription-id/resourceGroups/j1dev/locks/j1-lock',
+      name: 'j1-lock',
+      type: 'Microsoft.Authorization/locks',
+      level: 'ReadOnly',
+      notes: 'This is a test lock',
+    };
+
+    expect(createResourceLockEntitiy(webLinker, data)).toEqual({
+      ...convertProperties(data),
+      createdOn: undefined,
+      _key: '/subscriptions/subscription-id/resourceGroups/j1dev/locks/j1-lock',
+      _type: 'azure_resource_lock',
+      _class: ['Rule'],
+      _rawData: [{ name: 'default', rawData: data }],
+      id: '/subscriptions/subscription-id/resourceGroups/j1dev/locks/j1-lock',
+      name: 'j1-lock',
+      displayName: 'j1-lock',
+      type: 'Microsoft.Authorization/locks',
+      level: 'ReadOnly',
+      notes: ['This is a test lock'],
+      webLink: webLinker.portalResourceUrl(
+        '/subscriptions/subscription-id/resourceGroups/j1dev/locks/j1-lock',
       ),
     });
   });

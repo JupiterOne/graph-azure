@@ -1,14 +1,37 @@
 import {
   fetchResourceGroups,
   createSubscriptionResourceGroupRelationship,
+  fetchResourceGroupLocks,
+  buildResourceHasResourceLockRelationships,
 } from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
-import globalInstanceConfig from '../../../../test/integrationInstanceConfig';
-import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
-import { Entity } from '@jupiterone/integration-sdk-core';
+import globalInstanceConfig, {
+  configFromEnv,
+} from '../../../../test/integrationInstanceConfig';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../test/helpers/recording';
+import {
+  Entity,
+  ExplicitRelationship,
+  generateRelationshipType,
+  MappedRelationship,
+  Relationship,
+  RelationshipClass,
+} from '@jupiterone/integration-sdk-core';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import {
+  getMockAccountEntity,
+  getMockResourceGroupEntity,
+} from '../../../../test/helpers/getMockEntity';
+import { IntegrationConfig } from '../../../types';
+import { fetchSQLServers } from '../databases/sql';
+import { entities } from '../databases/sql/constants';
+import { RESOURCE_GROUP_ENTITY, RESOURCE_LOCK_ENTITY } from './constants';
+import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
+import { ANY_SCOPE } from '../constants';
 let recording: Recording;
 
 afterEach(async () => {
@@ -104,25 +127,23 @@ describe('#createSubscriptionResourceGroupRelationship', () => {
 });
 
 test('step - resource groups', async () => {
-  const instanceConfig: IntegrationConfig = {
-    clientId: process.env.CLIENT_ID || 'clientId',
-    clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-    directoryId: '992d7bbe-b367-459c-a10f-cf3fd16103ab',
-    subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-  };
-
   recording = setupAzureRecording({
     directory: __dirname,
     name: 'resource-manager-step-resource-groups',
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: configFromEnv,
+      }),
+    },
   });
 
   const context = createMockAzureStepExecutionContext({
-    instanceConfig,
+    instanceConfig: configFromEnv,
     entities: [
       {
         _class: ['Account'],
         _type: 'azure_subscription',
-        _key: `/subscriptions/${instanceConfig.subscriptionId}`,
+        _key: `/subscriptions/193f89dc-6225-4a80-bacb-96b32fbf6dd0`,
       },
     ],
     setData: {
@@ -153,27 +174,184 @@ test('step - resource groups', async () => {
       },
     },
   });
-  expect(context.jobState.collectedRelationships.length).toEqual(2);
-  expect(context.jobState.collectedRelationships).toEqual([
-    {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/NetworkWatcherRG',
-      _type: 'azure_subscription_has_resource_group',
-      _class: 'HAS',
-      _fromEntityKey: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-      _toEntityKey:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/NetworkWatcherRG',
-      displayName: 'HAS',
+  expect(context.jobState.collectedRelationships.length).toBeGreaterThan(0);
+}, 10000);
+
+test('step - resource group locks', async () => {
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'resource-manager-step-resource-group-locks',
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: configFromEnv,
+      }),
     },
-    {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev',
-      _type: 'azure_subscription_has_resource_group',
-      _class: 'HAS',
-      _fromEntityKey: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7',
-      _toEntityKey:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev',
-      displayName: 'HAS',
+  });
+
+  const context = createMockAzureStepExecutionContext({
+    instanceConfig: configFromEnv,
+    entities: [
+      {
+        _class: ['Account'],
+        _type: 'azure_subscription',
+        _key: `/subscriptions/193f89dc-6225-4a80-bacb-96b32fbf6dd0`,
+      },
+    ],
+    setData: {
+      [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(configFromEnv),
     },
-  ]);
+  });
+
+  await fetchResourceGroups(context);
+  await fetchResourceGroupLocks(context);
+
+  expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
+  expect(
+    context.jobState.collectedEntities.filter(
+      (item) => item._class === 'Group',
+    ),
+  ).toMatchGraphObjectSchema({
+    _class: 'Rule',
+    schema: {
+      additionalProperties: false,
+      properties: {
+        _type: { const: 'azure_resource_group_lock' },
+        _key: { type: 'string' },
+        _class: { type: 'array', items: { const: 'Rule' } },
+        id: { type: 'string' },
+        name: { type: 'string' },
+        displayName: { type: 'string' },
+        type: { const: 'Microsoft.Resources/resourceGroups' },
+        level: { type: 'string' },
+        notes: { type: 'array', items: { type: 'string' } },
+        webLink: { type: 'string' },
+        _rawData: { type: 'array', items: { type: 'object' } },
+      },
+    },
+  });
+}, 100000);
+
+describe('step - resource has resource lock relationships', () => {
+  async function getSetupEntities(config: IntegrationConfig) {
+    const accountEntity = getMockAccountEntity(config);
+    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [
+        {
+          _class: ['Account'],
+          _type: 'azure_subscription',
+          _key: `/subscriptions/193f89dc-6225-4a80-bacb-96b32fbf6dd0`,
+        },
+        resourceGroupEntity,
+      ],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+      },
+    });
+
+    await fetchSQLServers(context);
+    await fetchResourceGroups(context);
+    await fetchResourceGroupLocks(context);
+
+    const sqlServerEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === entities.SERVER._type,
+    );
+
+    const resourceGroupEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === RESOURCE_GROUP_ENTITY._type,
+    );
+    const resourceLockEntities = context.jobState.collectedEntities.filter(
+      (e) => e._type === RESOURCE_LOCK_ENTITY._type,
+    );
+
+    return {
+      sqlServerEntities,
+      resourceGroupEntities,
+      resourceLockEntities,
+    };
+  }
+
+  function separateResourceLockRelationships(
+    collectedRelationships: Relationship[],
+  ) {
+    const {
+      targets: directRelationships,
+      rest: mappedRelationships,
+    } = filterGraphObjects(collectedRelationships, (r) => !r._mapping) as {
+      targets: ExplicitRelationship[];
+      rest: MappedRelationship[];
+    };
+
+    const { rest: directResourceLockRelationships } = filterGraphObjects(
+      directRelationships,
+      (r) =>
+        r._type ===
+        generateRelationshipType(
+          RelationshipClass.HAS,
+          ANY_SCOPE,
+          RESOURCE_LOCK_ENTITY._type,
+        ),
+    );
+
+    const { targets: mappedResourceLockRelationships } = filterGraphObjects(
+      mappedRelationships,
+      (r) => (r._mapping.targetEntity._type as string) === 'ANY_SCOPE',
+    );
+
+    return {
+      directResourceLockRelationships,
+      mappedResourceLockRelationships,
+    };
+  }
+
+  test('success', async () => {
+    recording = setupAzureRecording({
+      directory: __dirname,
+      name: 'resource-manager-step-resource-has-resource-lock-relationships',
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+        }),
+      },
+    });
+
+    const {
+      sqlServerEntities,
+      resourceGroupEntities,
+      resourceLockEntities,
+    } = await getSetupEntities(configFromEnv);
+
+    const context = createMockAzureStepExecutionContext({
+      instanceConfig: configFromEnv,
+      entities: [
+        {
+          _class: ['Account'],
+          _type: 'azure_subscription',
+          _key: `/subscriptions/193f89dc-6225-4a80-bacb-96b32fbf6dd0`,
+        },
+        ...sqlServerEntities,
+        ...resourceGroupEntities,
+        ...resourceLockEntities,
+      ],
+      setData: {
+        [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(configFromEnv),
+      },
+    });
+
+    await buildResourceHasResourceLockRelationships(context);
+
+    expect(context.jobState.collectedEntities).toHaveLength(0);
+
+    const {
+      directResourceLockRelationships,
+      mappedResourceLockRelationships,
+    } = separateResourceLockRelationships(
+      context.jobState.collectedRelationships,
+    );
+
+    expect(directResourceLockRelationships.length).toBeGreaterThan(0);
+    expect(mappedResourceLockRelationships.length).toBeGreaterThan(0);
+  }, 50000);
 });

@@ -204,6 +204,7 @@ The following entities are created:
 | [RM] API Management Service                    | `azure_api_management_service`                    | `Gateway`                          |
 | [RM] Advisor Recommendation                    | `azure_advisor_recommendation`                    | `Finding`                          |
 | [RM] App Service Plan                          | `azure_app_service_plan`                          | `Configuration`                    |
+| [RM] Azure Kubernetes Cluster                  | `azure_kubernetes_cluster`                        | `Cluster`                          |
 | [RM] Azure Managed Disk                        | `azure_managed_disk`                              | `DataStore`, `Disk`                |
 | [RM] Batch Account                             | `azure_batch_account`                             | `Service`                          |
 | [RM] Batch Application                         | `azure_batch_application`                         | `Process`                          |
@@ -258,6 +259,7 @@ The following entities are created:
 | [RM] Redis Cache                               | `azure_redis_cache`                               | `Database`, `DataStore`, `Cluster` |
 | [RM] Redis Firewall Rule                       | `azure_firewall_rule`                             | `Firewall`                         |
 | [RM] Resource Group                            | `azure_resource_group`                            | `Group`                            |
+| [RM] Resource Lock                             | `azure_resource_lock`                             | `Rule`                             |
 | [RM] Role Assignment                           | `azure_role_assignment`                           | `AccessPolicy`                     |
 | [RM] Role Definition                           | `azure_role_definition`                           | `AccessRole`                       |
 | [RM] SQL Database                              | `azure_sql_database`                              | `Database`, `DataStore`            |
@@ -359,6 +361,7 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_gallery`                                   |
 | `azure_resource_group`             | **HAS**               | `azure_image`                                     |
 | `azure_resource_group`             | **HAS**               | `azure_keyvault_service`                          |
+| `azure_resource_group`             | **HAS**               | `azure_kubernetes_cluster`                        |
 | `azure_resource_group`             | **HAS**               | `azure_lb`                                        |
 | `azure_resource_group`             | **HAS**               | `azure_managed_disk`                              |
 | `azure_resource_group`             | **HAS**               | `azure_mariadb_server`                            |
@@ -383,6 +386,7 @@ The following relationships are created:
 | `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
 | `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |
 | `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
+| `azure_resource_lock`              | **HAS**               | `ANY_SCOPE`                                       |
 | `azure_role_assignment`            | **ALLOWS**            | `ANY_SCOPE`                                       |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_application`                               |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_directory`                                 |

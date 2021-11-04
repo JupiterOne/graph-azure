@@ -15,7 +15,7 @@ import {
 
 import { AzureWebLinker } from '../../../azure';
 import { entities, relationships } from './constants';
-import { USER_ENTITY_TYPE } from '../../active-directory';
+import { USER_ENTITY_TYPE } from '../../active-directory/constants';
 
 export function createClassicAdministratorEntity(): Entity {
   return createIntegrationEntity({

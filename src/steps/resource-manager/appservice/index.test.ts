@@ -10,7 +10,7 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { AppServiceEntities, AppServiceRelationships } from './constants';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import {

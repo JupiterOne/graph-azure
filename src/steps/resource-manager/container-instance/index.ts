@@ -7,7 +7,8 @@ import {
   JobState,
 } from '@jupiterone/integration-sdk-core';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { createAzureWebLinker } from '../../../azure';
 import {
   RESOURCE_GROUP_ENTITY,

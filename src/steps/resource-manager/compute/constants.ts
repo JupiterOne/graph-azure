@@ -2,7 +2,7 @@ import {
   generateRelationshipType,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { SERVICE_PRINCIPAL_ENTITY_TYPE } from '../../active-directory';
+import { SERVICE_PRINCIPAL_ENTITY_TYPE } from '../../active-directory/constants';
 
 import { entities as storageEntities } from '../storage/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';

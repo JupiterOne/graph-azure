@@ -15,7 +15,7 @@ import {
   STEP_AD_USERS,
   STEP_AD_SERVICE_PRINCIPALS,
   STEP_AD_USER_REGISTRATION_DETAILS,
-} from './steps/active-directory';
+} from './steps/active-directory/constants';
 import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,

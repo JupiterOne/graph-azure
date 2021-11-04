@@ -13,11 +13,11 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { getAccountEntity } from '../../active-directory';
 import {
-  getAccountEntity,
   SERVICE_PRINCIPAL_ENTITY_TYPE,
   STEP_AD_ACCOUNT,
-} from '../../active-directory';
+} from '../../active-directory/constants';
 import { ComputeClient } from './client';
 import {
   DISK_ENTITY_TYPE,

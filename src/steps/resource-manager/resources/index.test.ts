@@ -21,7 +21,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import {
   getMockAccountEntity,
   getMockResourceGroupEntity,

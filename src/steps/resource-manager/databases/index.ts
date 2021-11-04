@@ -1,4 +1,4 @@
-import { STEP_AD_ACCOUNT } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MYSQL_DATABASES,

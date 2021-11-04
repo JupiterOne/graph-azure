@@ -6,7 +6,7 @@ import {
 } from '../../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../../test/createMockAzureStepExecutionContext';
 import { IntegrationConfig } from '../../../../types';
-import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../../active-directory/constants';
 import {
   fetchPostgreSQLDatabases,
   fetchPostgreSQLServers,

@@ -8,7 +8,8 @@ import {
 
 import { createAzureWebLinker } from '../../../../azure';
 import { IntegrationConfig, IntegrationStepContext } from '../../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../../active-directory';
+import { getAccountEntity } from '../../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../../active-directory/constants';
 import { createDatabaseEntity, createDbServerEntity } from '../converters';
 import { SQLClient } from './client';
 import { steps, entities, relationships } from './constants';

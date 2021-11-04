@@ -6,7 +6,7 @@ import {
   STEP_AD_USERS,
   SERVICE_PRINCIPAL_ENTITY_TYPE,
   STEP_AD_SERVICE_PRINCIPALS,
-} from '../../active-directory';
+} from '../../active-directory/constants';
 import {
   generateRelationshipType,
   StepRelationshipMetadata,

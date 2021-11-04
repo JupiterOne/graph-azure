@@ -31,7 +31,7 @@ import {
 } from './';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { IntegrationConfig } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { NetworkEntities, NetworkRelationships } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import {

@@ -8,6 +8,28 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added support for ingesting the following **new** resources:
+
+  | Service                  | Resource / Entity          |
+  | ------------------------ | -------------------------- |
+  | Azure Kubernetes Cluster | `azure_kubernetes_cluster` |
+  | Resource Lock            | `azure_resource_lock`      |
+
+- Added support for ingesting the following **new** relationships:
+
+  | Source                 | \_class | Target                     |
+  | ---------------------- | ------- | -------------------------- |
+  | `azure_resource_group` | `HAS`   | `azure_kubernetes_cluster` |
+  | `azure_resource_lock`  | `HAS`   | `ANY_SCOPE`                |
+
+- New properties added to resources:
+
+  | Entity                   | Properties                                  |
+  | ------------------------ | ------------------------------------------- |
+  | `azure_keyvault_service` | `enableSoftDelete`, `enablePurgeProtection` |
+
 ## [5.34.0] - 2021-11-01
 
 ### Added

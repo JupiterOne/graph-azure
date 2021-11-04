@@ -7,7 +7,8 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { PolicyEntities, PolicyRelationships, PolicySteps } from './constants';
 import { AzurePolicyClient } from './client';
 import { createPolicyAssignmentEntity } from './converters';

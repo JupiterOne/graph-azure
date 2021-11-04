@@ -27,11 +27,11 @@ import {
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationConfig } from '../../../types';
+import { fetchServicePrincipals } from '../../active-directory';
 import {
   ACCOUNT_ENTITY_TYPE,
-  fetchServicePrincipals,
   SERVICE_PRINCIPAL_ENTITY_TYPE,
-} from '../../active-directory';
+} from '../../active-directory/constants';
 import { createStorageAccountEntity } from '../storage/converters';
 import {
   entities,

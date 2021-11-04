@@ -10,11 +10,11 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { STEP_AD_ACCOUNT } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINES,
   VIRTUAL_MACHINE_ENTITY_TYPE,
-} from '../compute';
+} from '../compute/constants';
 import {
   STEP_RM_NETWORK_INTERFACES,
   STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
@@ -34,8 +34,6 @@ import {
   createVirtualMachineNetworkInterfaceRelationship,
   createVirtualMachinePublicIPAddressRelationship,
 } from './converters';
-
-export * from './constants';
 
 export async function buildComputeNetworkRelationships(
   executionContext: IntegrationStepContext,

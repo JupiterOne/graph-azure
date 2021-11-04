@@ -10,7 +10,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { VIRTUAL_MACHINE_ENTITY_TYPE } from '../compute';
+import { VIRTUAL_MACHINE_ENTITY_TYPE } from '../compute/constants';
 import { NetworkEntities } from '../network/constants';
 import { VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE } from './constants';
 

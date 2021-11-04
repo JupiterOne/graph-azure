@@ -6,14 +6,16 @@ import {
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import {
-  ACCOUNT_ENTITY_TYPE,
   fetchGroups,
   fetchServicePrincipals,
   fetchUsers,
+} from '../../active-directory';
+import {
+  ACCOUNT_ENTITY_TYPE,
   GROUP_ENTITY_TYPE,
   SERVICE_PRINCIPAL_ENTITY_TYPE,
   USER_ENTITY_TYPE,
-} from '../../active-directory';
+} from '../../active-directory/constants';
 import {
   buildKeyVaultAccessPolicyRelationships,
   fetchKeyVaultKeys,

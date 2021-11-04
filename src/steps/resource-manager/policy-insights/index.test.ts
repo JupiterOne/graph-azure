@@ -5,7 +5,7 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import {
   buildPolicyStateAssignmentRelationships,
   buildPolicyStateDefinitionRelationships,
@@ -20,7 +20,8 @@ import {
   fetchPolicyDefinitionsForAssignments,
 } from '../policy';
 import { PolicyEntities } from '../policy/constants';
-import { fetchKeyVaults, KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
+import { fetchKeyVaults } from '../key-vault';
+import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault/constants';
 
 let recording: Recording;
 

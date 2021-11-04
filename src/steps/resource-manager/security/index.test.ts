@@ -12,7 +12,7 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { SecurityEntities, SecurityRelationships } from './constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';

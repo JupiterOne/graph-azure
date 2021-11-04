@@ -7,7 +7,8 @@ import {
   JobState,
 } from '@jupiterone/integration-sdk-core';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { createAzureWebLinker } from '../../../azure';
 import {
   RESOURCE_GROUP_ENTITY,
@@ -26,8 +27,10 @@ import {
   STEP_RM_CONTAINER_GROUPS,
 } from './constants';
 import { Volume } from '@azure/arm-containerinstance/esm/models';
-import { steps as storageSteps, entities as storageEntities } from '../storage';
-export * from './constants';
+import {
+  steps as storageSteps,
+  entities as storageEntities,
+} from '../storage/constants';
 
 interface VolumeRelationshipStrategy {
   shouldAddRelationship: (volume: Volume) => Boolean;

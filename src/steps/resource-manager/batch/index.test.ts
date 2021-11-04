@@ -11,7 +11,7 @@ import {
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { BatchEntities } from './constants';
 
 let recording: Recording;

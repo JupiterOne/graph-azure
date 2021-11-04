@@ -2659,10 +2659,10 @@ questions:
     queries:
     - name: good
       query: |
-        FIND * with tag.SensitiveAzureResource = true THAT HAS azure_resource_lock
+        FIND * WITH _integrationType = 'azure' AND tag.classification = 'critical' THAT HAS azure_resource_lock
     - name: bad
       query: |
-        FIND * with tag.SensitiveAzureResource = true THAT !HAS azure_resource_lock
+        FIND * WITH _integrationType = 'azure' AND tag.classification = 'critical' THAT !HAS azure_resource_lock
     tags:
     - azure
     - data

@@ -7,7 +7,8 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { CosmosDBClient } from './client';
 import {
   RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
@@ -23,8 +24,6 @@ import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
-
-export * from './constants';
 
 export async function fetchCosmosDBSqlDatabases(
   executionContext: IntegrationStepContext,

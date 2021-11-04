@@ -12,9 +12,11 @@ import {
   getMatchRequestsBy,
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE, fetchAccount } from '../../active-directory';
+import { fetchAccount } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
-import { fetchKeyVaults, KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault';
+import { fetchKeyVaults } from '../key-vault';
+import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault/constants';
 import { entities } from './constants';
 
 let recording: Recording;

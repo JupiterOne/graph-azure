@@ -42,8 +42,6 @@ import {
 import { getAccountEntity } from '../../active-directory';
 import { Vault } from '@azure/arm-keyvault/esm/models';
 
-export * from './constants';
-
 export async function fetchKeyVaults(
   executionContext: IntegrationStepContext,
 ): Promise<void> {

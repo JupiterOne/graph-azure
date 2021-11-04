@@ -12,8 +12,6 @@ import { MySQLEntities } from './constants';
 import createResourceGroupResourceRelationship from '../../utils/createResourceGroupResourceRelationship';
 import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
-export * from './constants';
-
 export async function fetchMySQLDatabases(
   executionContext: IntegrationStepContext,
 ): Promise<void> {

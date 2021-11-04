@@ -7,9 +7,9 @@ import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
 import {
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   KEY_VAULT_SERVICE_ENTITY_CLASS,
-} from '../key-vault';
+} from '../key-vault/constants';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
-import { entities as storageEntities } from '../storage';
+import { entities as storageEntities } from '../storage/constants';
 import { SecurityEntities } from '../security/constants';
 import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';

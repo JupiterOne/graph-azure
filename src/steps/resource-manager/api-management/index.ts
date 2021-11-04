@@ -26,7 +26,6 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
-export * from './constants';
 
 export async function fetchApiManagementServices(
   executionContext: IntegrationStepContext,

@@ -29,7 +29,6 @@ import {
   STEP_RM_KEYVAULT_VAULTS,
 } from '../key-vault/constants';
 import { Vault } from '@azure/arm-keyvault/esm/models';
-export * from './constants';
 // import { MonitorClient } from '../monitor/client';
 // import { compareAsc } from 'date-fns';
 

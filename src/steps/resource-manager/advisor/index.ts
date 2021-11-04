@@ -16,7 +16,6 @@ import {
 import { createRecommendationEntity } from './converters';
 import { SecuritySteps } from '../security/constants';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
-export * from './constants';
 
 export async function fetchRecommendations(
   executionContext: IntegrationStepContext,

@@ -60,8 +60,6 @@ import {
 } from '../storage/constants';
 import { StorageAccount } from '@azure/arm-storage/esm/models';
 
-export * from './constants';
-
 export async function fetchGalleries(
   executionContext: IntegrationStepContext,
 ): Promise<void> {

@@ -34,8 +34,6 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
-export * from './constants';
-
 export async function fetchBatchAccounts(
   executionContext: IntegrationStepContext,
 ): Promise<void> {

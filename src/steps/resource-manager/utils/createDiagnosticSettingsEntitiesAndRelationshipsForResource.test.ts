@@ -7,7 +7,7 @@ import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from './c
 import {
   KEY_VAULT_SERVICE_ENTITY_CLASS,
   KEY_VAULT_SERVICE_ENTITY_TYPE,
-} from '../key-vault';
+} from '../key-vault/constants';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 import { separateDiagnosticSettingsRelationships } from '../../../../test/helpers/filterGraphObjects';

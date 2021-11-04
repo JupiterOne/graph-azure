@@ -3,7 +3,7 @@ import {
   generateRelationshipType,
 } from '@jupiterone/integration-sdk-core';
 import { ANY_RESOURCE } from '../constants';
-import { entities as storageEntities } from '../storage';
+import { entities as storageEntities } from '../storage/constants';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 

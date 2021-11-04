@@ -26,7 +26,6 @@ import {
 } from './converters';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
-export * from './constants';
 
 export async function fetchServiceBusNamespaces(
   executionContext: IntegrationStepContext,

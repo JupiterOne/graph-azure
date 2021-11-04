@@ -21,21 +21,21 @@ import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
   STEP_RM_COMPUTE_VIRTUAL_MACHINES,
   steps as computeSteps,
-} from './steps/resource-manager/compute';
-import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb';
+} from './steps/resource-manager/compute/constants';
+import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb/constants';
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MYSQL_DATABASES,
-} from './steps/resource-manager/databases';
+} from './steps/resource-manager/databases/constants';
 import { steps as postgreSqlDatabaseSteps } from './steps/resource-manager/databases/postgresql/constants';
 import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sql/constants';
-import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice';
+import { STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS } from './steps/resource-manager/interservice/constants';
 import {
   STEP_RM_KEYVAULT_VAULTS,
   STEP_RM_KEYVAULT_KEYS,
   STEP_RM_KEYVAULT_SECRETS,
   KeyVaultStepIds,
-} from './steps/resource-manager/key-vault';
+} from './steps/resource-manager/key-vault/constants';
 import {
   STEP_RM_NETWORK_INTERFACES,
   STEP_RM_NETWORK_LOAD_BALANCERS,
@@ -51,8 +51,8 @@ import {
   STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
-} from './steps/resource-manager/network';
-import { steps as storageSteps } from './steps/resource-manager/storage';
+} from './steps/resource-manager/network/constants';
+import { steps as storageSteps } from './steps/resource-manager/storage/constants';
 import { IntegrationConfig } from './types';
 import { steps as authorizationSteps } from './steps/resource-manager/authorization/constants';
 import {
@@ -64,49 +64,49 @@ import { steps as subscriptionSteps } from './steps/resource-manager/subscriptio
 import {
   STEP_RM_API_MANAGEMENT_SERVICES,
   STEP_RM_API_MANAGEMENT_APIS,
-} from './steps/resource-manager/api-management';
+} from './steps/resource-manager/api-management/constants';
 import {
   STEP_RM_DNS_ZONES,
   STEP_RM_DNS_RECORD_SETS,
-} from './steps/resource-manager/dns';
+} from './steps/resource-manager/dns/constants';
 import {
   STEP_RM_PRIVATE_DNS_ZONES,
   STEP_RM_PRIVATE_DNS_RECORD_SETS,
-} from './steps/resource-manager/private-dns';
+} from './steps/resource-manager/private-dns/constants';
 import {
   STEP_RM_CONTAINER_REGISTRIES,
   STEP_RM_CONTAINER_REGISTRY_WEBHOOKS,
-} from './steps/resource-manager/container-registry';
+} from './steps/resource-manager/container-registry/constants';
 import {
   STEP_RM_SERVICE_BUS_NAMESPACES,
   STEP_RM_SERVICE_BUS_SUBSCRIPTIONS,
   STEP_RM_SERVICE_BUS_QUEUES,
   STEP_RM_SERVICE_BUS_TOPICS,
-} from './steps/resource-manager/service-bus';
+} from './steps/resource-manager/service-bus/constants';
 import {
   STEP_RM_CDN_PROFILE,
   STEP_RM_CDN_ENDPOINTS,
-} from './steps/resource-manager/cdn';
+} from './steps/resource-manager/cdn/constants';
 import {
   STEP_RM_BATCH_ACCOUNT,
   STEP_RM_BATCH_POOL,
   STEP_RM_BATCH_APPLICATION,
   STEP_RM_BATCH_CERTIFICATE,
-} from './steps/resource-manager/batch';
+} from './steps/resource-manager/batch/constants';
 import {
   STEP_RM_REDIS_CACHES,
   STEP_RM_REDIS_FIREWALL_RULES,
   STEP_RM_REDIS_LINKED_SERVERS,
-} from './steps/resource-manager/redis-cache';
-import { STEP_RM_CONTAINER_GROUPS } from './steps/resource-manager/container-instance';
+} from './steps/resource-manager/redis-cache/constants';
+import { STEP_RM_CONTAINER_GROUPS } from './steps/resource-manager/container-instance/constants';
 import {
   STEP_RM_EVENT_GRID_DOMAINS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
   STEP_RM_EVENT_GRID_TOPICS,
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
-} from './steps/resource-manager/event-grid';
-import { AdvisorSteps } from './steps/resource-manager/advisor';
+} from './steps/resource-manager/event-grid/constants';
+import { AdvisorSteps } from './steps/resource-manager/advisor/constants';
 import { SecuritySteps } from './steps/resource-manager/security/constants';
 import { PolicySteps } from './steps/resource-manager/policy/constants';
 import { MonitorSteps } from './steps/resource-manager/monitor/constants';

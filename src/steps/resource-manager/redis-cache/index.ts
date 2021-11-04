@@ -28,7 +28,6 @@ import {
 import { resourceGroupName } from '../../../azure/utils';
 import { RedisLinkedServerWithProperties } from '@azure/arm-rediscache/esm/models';
 const SECONDARY_SERVER_ROLE = 'Secondary';
-export * from './constants';
 
 export async function fetchRedisCaches(
   executionContext: IntegrationStepContext,

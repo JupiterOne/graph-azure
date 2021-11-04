@@ -38,8 +38,6 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
-export * from './constants';
-
 export async function fetchEventGridDomains(
   executionContext: IntegrationStepContext,
 ): Promise<void> {

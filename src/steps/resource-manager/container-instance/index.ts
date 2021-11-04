@@ -26,8 +26,10 @@ import {
   STEP_RM_CONTAINER_GROUPS,
 } from './constants';
 import { Volume } from '@azure/arm-containerinstance/esm/models';
-import { steps as storageSteps, entities as storageEntities } from '../storage';
-export * from './constants';
+import {
+  steps as storageSteps,
+  entities as storageEntities,
+} from '../storage/constants';
 
 interface VolumeRelationshipStrategy {
   shouldAddRelationship: (volume: Volume) => Boolean;

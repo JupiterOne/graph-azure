@@ -23,7 +23,6 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
-export * from './constants';
 
 export async function fetchProfiles(
   executionContext: IntegrationStepContext,

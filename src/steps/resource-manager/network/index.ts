@@ -70,7 +70,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
-import { steps as storageSteps } from '../storage';
+import { steps as storageSteps } from '../storage/constants';
 import {
   setDataKeys as subscriptionsSetDataKeys,
   SetDataTypes as SubscriptionSetDataTypes,
@@ -78,8 +78,6 @@ import {
 } from '../subscriptions/constants';
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
-
-export * from './constants';
 
 type SubnetSecurityGroupMap = {
   [subnetId: string]: NetworkSecurityGroup;

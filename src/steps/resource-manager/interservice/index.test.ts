@@ -20,7 +20,7 @@ import {
   fetchVirtualNetworks,
 } from '../network';
 import { NetworkEntities } from '../network/constants';
-import { SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE, VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE, VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE } from './constants';
+import { InterserviceRelationships } from './constants';
 
 let recording: Recording;
 
@@ -84,21 +84,21 @@ describe('rm-compute-network-relationships', () => {
       rest: restAfterVmNic,
     } = filterGraphObjects(
       relationships,
-      (r) => r._type === VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
+      (r) => r._type === InterserviceRelationships.VM_USES_NIC._type,
     );
     const {
       targets: subnetVmRelationships,
       rest: restAfterSubnetVm,
     } = filterGraphObjects(
       restAfterVmNic,
-      (r) => r._type === SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
+      (r) => r._type === InterserviceRelationships.SUBNET_HAS_VM._type,
     );
     const {
       targets: vmPublicIpRelationships,
       rest: restAfterVmPublicIp,
     } = filterGraphObjects(
       restAfterSubnetVm,
-      (r) => r._type === VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
+      (r) => r._type === InterserviceRelationships.VM_USES_PUBLIC_IP._type,
     );
 
     return {

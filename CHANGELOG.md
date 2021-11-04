@@ -30,6 +30,12 @@ and this project adheres to
   | ------------------------ | ------------------------------------------- |
   | `azure_keyvault_service` | `enableSoftDelete`, `enablePurgeProtection` |
 
+### Changed
+
+- Refactored the `rm-compute-network-relationships` step to ensure relationships
+  are created between `azure_vm`, `azure_nic`, `azure_subnet` and
+  `azure_public_ip`
+
 ## [5.34.0] - 2021-11-01
 
 ### Added

@@ -3,14 +3,12 @@ import { NetworkInterface } from '@azure/arm-network/esm/models';
 import {
   Entity,
   getRawData,
-  JobState,
-  Relationship,
   Step,
   IntegrationStepExecutionContext,
+  createDirectRelationship,
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINES,
   VIRTUAL_MACHINE_ENTITY_TYPE,
@@ -18,37 +16,21 @@ import {
 import {
   STEP_RM_NETWORK_INTERFACES,
   STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
-  NetworkEntities,
+  STEP_RM_NETWORK_VIRTUAL_NETWORKS,
 } from '../network/constants';
 import {
   STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS,
-  SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
-  VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
-  VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
-  SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
-  VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
-  VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS,
+  InterserviceRelationships,
 } from './constants';
-import {
-  createSubnetVirtualMachineRelationship,
-  createVirtualMachineNetworkInterfaceRelationship,
-  createVirtualMachinePublicIPAddressRelationship,
-} from './converters';
 
 export async function buildComputeNetworkRelationships(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { jobState } = executionContext;
-
-  const networkInterfaces: NetworkInterface[] = await loadNetworkInterfaces(
-    jobState,
-  );
+  const { logger, jobState } = executionContext;
 
   await jobState.iterateEntities(
     { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
     async (vmEntity: Entity) => {
-      const relationships: Relationship[] = [];
-
       const vmData = getRawData<VirtualMachine>(vmEntity);
       if (!vmData) {
         throw new Error(
@@ -56,76 +38,98 @@ export async function buildComputeNetworkRelationships(
         );
       }
 
-      const nicData = findVirtualMachineNetworkInterfaces(
-        vmData,
-        networkInterfaces,
-      );
+      for (const nicWithId of vmData.networkProfile?.networkInterfaces || []) {
+        const nicEntity = await jobState.findEntity(nicWithId.id as string);
+        if (!nicEntity) {
+          logger.warn(
+            {
+              vmId: vmData.id,
+              nicId: nicWithId.id,
+            },
+            'Could not find network interface in job state',
+          );
+          continue;
+        }
 
-      // A nic with multiple ipConfigurations in the same subnet should not
-      // generate more than one subnet -> vm relationship.
-      const subnetVmRelationshipKeys = new Set<string>();
-
-      for (const nic of nicData) {
-        relationships.push(
-          createVirtualMachineNetworkInterfaceRelationship(vmData, nic),
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: vmEntity,
+            _class: InterserviceRelationships.VM_USES_NIC._class,
+            to: nicEntity,
+            properties: {
+              _type: InterserviceRelationships.VM_USES_NIC._type,
+            },
+          }),
         );
-        for (const c of nic.ipConfigurations || []) {
-          if (c.subnet) {
-            const subnetVmRelationship = createSubnetVirtualMachineRelationship(
-              c.subnet,
-              vmData,
+
+        const nic = getRawData<NetworkInterface>(nicEntity);
+        if (!nic) {
+          logger.warn(
+            {
+              _key: nicEntity._key,
+              _type: nicEntity._type,
+            },
+            'Could not get raw data for entity',
+          );
+          continue;
+        }
+
+        for (const ipConfiguration of nic.ipConfigurations || []) {
+          if (ipConfiguration.publicIPAddress) {
+            const publicIpEntity = await jobState.findEntity(
+              ipConfiguration.publicIPAddress.id as string,
             );
-            if (!subnetVmRelationshipKeys.has(subnetVmRelationship._key)) {
-              relationships.push(subnetVmRelationship);
-              subnetVmRelationshipKeys.add(subnetVmRelationship._key);
+            if (publicIpEntity) {
+              await jobState.addRelationship(
+                createDirectRelationship({
+                  from: vmEntity,
+                  _class: InterserviceRelationships.VM_USES_PUBLIC_IP._class,
+                  to: publicIpEntity,
+                  properties: {
+                    _type: InterserviceRelationships.VM_USES_PUBLIC_IP._type,
+                  },
+                }),
+              );
+            } else {
+              logger.warn(
+                {
+                  vmId: vmData.id,
+                  publicIpId: ipConfiguration.publicIPAddress.id,
+                },
+                'Could not find public IP address in job state',
+              );
             }
           }
-          if (c.publicIPAddress) {
-            relationships.push(
-              createVirtualMachinePublicIPAddressRelationship(
-                vmData,
-                c.publicIPAddress,
-              ),
+
+          if (ipConfiguration.subnet) {
+            const subnetEntity = await jobState.findEntity(
+              ipConfiguration.subnet.id as string,
             );
+            if (subnetEntity) {
+              await jobState.addRelationship(
+                createDirectRelationship({
+                  from: subnetEntity,
+                  _class: InterserviceRelationships.SUBNET_HAS_VM._class,
+                  to: vmEntity,
+                  properties: {
+                    _type: InterserviceRelationships.SUBNET_HAS_VM._type,
+                  },
+                }),
+              );
+            } else {
+              logger.warn(
+                {
+                  vmId: vmData.id,
+                  subnetId: ipConfiguration.subnet.id,
+                },
+                'Could not find subnet in job state',
+              );
+            }
           }
         }
       }
-
-      await jobState.addRelationships(relationships);
     },
   );
-}
-
-async function loadNetworkInterfaces(
-  jobState: JobState,
-): Promise<NetworkInterface[]> {
-  const networkInterfaces: NetworkInterface[] = [];
-  await jobState.iterateEntities(
-    { _type: NetworkEntities.NETWORK_INTERFACE._type },
-    (nic) => {
-      const nicRawData = getRawData<NetworkInterface>(nic);
-      if (!nicRawData) {
-        throw new Error('Iterating network interfaces, raw data is missing!');
-      }
-      networkInterfaces.push(nicRawData);
-    },
-  );
-  return networkInterfaces;
-}
-
-function findVirtualMachineNetworkInterfaces(
-  vm: VirtualMachine,
-  nics: NetworkInterface[],
-): NetworkInterface[] {
-  const vmNics: NetworkInterface[] = [];
-  vm.networkProfile?.networkInterfaces?.forEach((nic) => {
-    const match = nics.find((e) => !!e.id && e.id === nic.id);
-    if (match) {
-      vmNics.push(match);
-    }
-  });
-  console.log(JSON.stringify(vmNics, null, 2));
-  return vmNics;
 }
 
 export const interserviceSteps: Step<
@@ -136,30 +140,15 @@ export const interserviceSteps: Step<
     name: 'Compute Network Relationships',
     entities: [],
     relationships: [
-      {
-        _type: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_TYPE,
-        sourceType: NetworkEntities.SUBNET._type,
-        _class: SUBNET_VIRTUAL_MACHINE_RELATIONSHIP_CLASS,
-        targetType: VIRTUAL_MACHINE_ENTITY_TYPE,
-      },
-      {
-        _type: VIRTUAL_MACHINE_NIC_RELATIONSHIP_TYPE,
-        sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
-        _class: VIRTUAL_MACHINE_NIC_RELATIONSHIP_CLASS,
-        targetType: NetworkEntities.NETWORK_INTERFACE._type,
-      },
-      {
-        _type: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_TYPE,
-        sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
-        _class: VIRTUAL_MACHINE_PUBLIC_IP_ADDRESS_RELATIONSHIP_CLASS,
-        targetType: NetworkEntities.PUBLIC_IP_ADDRESS._type,
-      },
+      InterserviceRelationships.VM_USES_NIC,
+      InterserviceRelationships.VM_USES_PUBLIC_IP,
+      InterserviceRelationships.SUBNET_HAS_VM,
     ],
     dependsOn: [
-      STEP_AD_ACCOUNT,
       STEP_RM_COMPUTE_VIRTUAL_MACHINES,
       STEP_RM_NETWORK_INTERFACES,
       STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
+      STEP_RM_NETWORK_VIRTUAL_NETWORKS,
     ],
     executionHandler: buildComputeNetworkRelationships,
   },

@@ -12,8 +12,6 @@ import { MariaDBEntities } from './constants';
 import createResourceGroupResourceRelationship from '../../utils/createResourceGroupResourceRelationship';
 import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
-export * from './constants';
-
 export async function fetchMariaDBDatabases(
   executionContext: IntegrationStepContext,
 ): Promise<void> {

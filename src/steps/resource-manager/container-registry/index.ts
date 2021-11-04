@@ -7,7 +7,8 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { J1ContainerRegistryManagementClient } from './client';
 import {
   ContainerRegistryEntities,
@@ -26,7 +27,6 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
-export * from './constants';
 
 export async function fetchContainerRegistries(
   executionContext: IntegrationStepContext,

@@ -6,7 +6,7 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 
 let recording: Recording;
 

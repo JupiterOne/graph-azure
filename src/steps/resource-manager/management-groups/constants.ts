@@ -1,5 +1,5 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 
 export const ManagementGroupSteps = {
   MANAGEMENT_GROUPS: 'rm-management-groups',

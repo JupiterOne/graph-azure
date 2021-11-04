@@ -3,7 +3,7 @@ import {
   generateRelationshipType,
 } from '@jupiterone/integration-sdk-core';
 import { NetworkEntities } from '../network/constants';
-import { VIRTUAL_MACHINE_ENTITY_TYPE } from '../compute';
+import { VIRTUAL_MACHINE_ENTITY_TYPE } from '../compute/constants';
 
 // Step IDs
 export const STEP_RM_COMPUTE_NETWORK_RELATIONSHIPS =

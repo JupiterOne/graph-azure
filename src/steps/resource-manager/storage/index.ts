@@ -10,7 +10,8 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { StorageClient, createStorageAccountServiceClient } from './client';
 import { steps, entities, relationships } from './constants';
 import {
@@ -29,7 +30,6 @@ import {
   STEP_RM_KEYVAULT_VAULTS,
 } from '../key-vault/constants';
 import { Vault } from '@azure/arm-keyvault/esm/models';
-export * from './constants';
 // import { MonitorClient } from '../monitor/client';
 // import { compareAsc } from 'date-fns';
 

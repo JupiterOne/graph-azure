@@ -31,7 +31,7 @@ import {
 } from './';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { IntegrationConfig } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { NetworkEntities, NetworkRelationships } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import {
@@ -41,11 +41,8 @@ import {
 import { fetchResourceGroups } from '../resources';
 import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
-import {
-  entities,
-  entities as storageEntities,
-  fetchStorageAccounts,
-} from '../storage';
+import { entities as storageEntities } from '../storage/constants';
+import { fetchStorageAccounts } from '../storage';
 import { fetchLocations, fetchSubscription } from '../subscriptions';
 import { setDataKeys as subscriptionSetDataKeys } from '../subscriptions/constants';
 import { createAzureWebLinker } from '../../../azure';
@@ -1329,7 +1326,7 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
 
     await fetchStorageAccounts(context);
     const storageAccountEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === entities.STORAGE_ACCOUNT._type,
+      (e) => e._type === storageEntities.STORAGE_ACCOUNT._type,
     );
 
     await fetchPrivateEndpoints(context);

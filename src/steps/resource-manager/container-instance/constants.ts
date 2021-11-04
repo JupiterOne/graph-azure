@@ -2,7 +2,7 @@ import {
   generateRelationshipType,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { entities as storageEntities } from '../storage';
+import { entities as storageEntities } from '../storage/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 export const STEP_RM_CONTAINER_GROUPS = 'rm-container-groups';

@@ -5,7 +5,8 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { RedisCacheClient } from './client';
 import { createAzureWebLinker } from '../../../azure';
 import {
@@ -28,7 +29,6 @@ import {
 import { resourceGroupName } from '../../../azure/utils';
 import { RedisLinkedServerWithProperties } from '@azure/arm-rediscache/esm/models';
 const SECONDARY_SERVER_ROLE = 'Secondary';
-export * from './constants';
 
 export async function fetchRedisCaches(
   executionContext: IntegrationStepContext,

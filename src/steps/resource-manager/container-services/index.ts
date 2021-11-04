@@ -4,7 +4,8 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationConfig, IntegrationStepContext } from '../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { ContainerServicesClient } from './client';
 import {

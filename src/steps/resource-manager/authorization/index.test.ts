@@ -14,14 +14,16 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import {
-  USER_ENTITY_TYPE,
-  ACCOUNT_ENTITY_TYPE,
-  GROUP_ENTITY_TYPE,
-  SERVICE_PRINCIPAL_ENTITY_TYPE,
   fetchUsers,
   fetchGroups,
   fetchServicePrincipals,
 } from '../../active-directory';
+import {
+  USER_ENTITY_TYPE,
+  ACCOUNT_ENTITY_TYPE,
+  GROUP_ENTITY_TYPE,
+  SERVICE_PRINCIPAL_ENTITY_TYPE,
+} from '../../active-directory/constants';
 import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault/constants';
 import { entities as SubscriptionEntities } from '../subscriptions/constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';

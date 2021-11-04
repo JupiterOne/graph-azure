@@ -40,8 +40,6 @@ import {
   createServicePrincipalEntity,
 } from './converters';
 
-export * from './constants';
-
 export async function getAccountEntity(jobState: JobState): Promise<Entity> {
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
 

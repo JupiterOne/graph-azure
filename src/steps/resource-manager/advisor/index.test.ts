@@ -3,13 +3,13 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { AdvisorEntities, AdvisorRelationships } from './constants';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory';
+import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import {
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   KEY_VAULT_SERVICE_ENTITY_CLASS,
-} from '../key-vault';
+} from '../key-vault/constants';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
-import { entities as storageEntities } from '../storage';
+import { entities as storageEntities } from '../storage/constants';
 import { SecurityEntities } from '../security/constants';
 import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';

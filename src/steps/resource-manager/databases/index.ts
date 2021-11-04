@@ -1,18 +1,12 @@
-import { STEP_AD_ACCOUNT } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MYSQL_DATABASES,
 } from './constants';
-import {
-  fetchMariaDBDatabases,
-  MariaDBEntities,
-  MariaDBRelationships,
-} from './mariadb';
-import {
-  fetchMySQLDatabases,
-  MySQLEntities,
-  MySQLRelationships,
-} from './mysql';
+import { fetchMariaDBDatabases } from './mariadb';
+import { MariaDBEntities, MariaDBRelationships } from './mariadb/constants';
+import { fetchMySQLDatabases } from './mysql';
+import { MySQLEntities, MySQLRelationships } from './mysql/constants';
 import { postgreSqlSteps } from './postgresql';
 import { sqlSteps } from './sql';
 import {
@@ -25,8 +19,6 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
-
-export * from './constants';
 
 export const databaseSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>

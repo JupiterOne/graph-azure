@@ -6,7 +6,8 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
-import { getAccountEntity, STEP_AD_ACCOUNT } from '../../active-directory';
+import { getAccountEntity } from '../../active-directory';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { AdvisorClient } from './client';
 import {
   AdvisorEntities,
@@ -16,7 +17,6 @@ import {
 import { createRecommendationEntity } from './converters';
 import { SecuritySteps } from '../security/constants';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
-export * from './constants';
 
 export async function fetchRecommendations(
   executionContext: IntegrationStepContext,

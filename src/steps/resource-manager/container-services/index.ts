@@ -24,6 +24,18 @@ export async function fetchClusters(
   const client = new ContainerServicesClient(instance.config, logger);
 
   await client.iterateClusters(async (cluster) => {
+    if (!cluster.id) {
+      logger.warn(
+        {
+          id: cluster.id,
+          location: cluster.location,
+          name: cluster.name,
+          type: cluster.type,
+        },
+        'Azure managed cluster has no "id" property',
+      );
+      return;
+    }
     const clusterEntity = createClusterEntitiy(webLinker, cluster);
     await jobState.addEntity(clusterEntity);
 

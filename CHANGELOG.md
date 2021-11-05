@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Stopped creating `azure_kubernetes_cluster` entities that have no `id`
+  property
+
 ## [5.35.0] - 2021-11-04
 
 ### Added

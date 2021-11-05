@@ -139,7 +139,7 @@ questions:
           Find
             azure_subscription THAT CONTAINS
             azure_role_definition WITH
-              roleName = 'Resource Lock Administrator' AND 
+              roleName = 'Resource Lock Administrator' AND
               actions = 'Microsoft.Authorization/locks/read' AND
               actions = 'Microsoft.Authorization/locks/write' AND
               actions = 'Microsoft.Authorization/locks/delete'
@@ -148,7 +148,7 @@ questions:
           Find
             azure_subscription THAT !CONTAINS
             azure_role_definition WITH
-              roleName = 'Resource Lock Administrator' AND 
+              roleName = 'Resource Lock Administrator' AND
               actions = 'Microsoft.Authorization/locks/read' AND
               actions = 'Microsoft.Authorization/locks/write' AND
               actions = 'Microsoft.Authorization/locks/delete'
@@ -1178,8 +1178,7 @@ questions:
           - '4.2.1'
   - id: integration-question-azure-db-sql-servers-va-enabled
     title:
-      Is Vulnerability Assessment (VA) is enabled for Azure SQL servers by
-      setting a Storage Accounts?
+      Is Vulnerability Assessment (VA) enabled for Azure SQL servers?
     description:
       Checks if Azure SQL servers have Vulnerability Assessment (VA) enabled.
     queries:
@@ -1201,8 +1200,8 @@ questions:
           - '4.2.2'
   - id: integration-question-azure-db-sql-servers-va-recurring-scans
     title:
-      Are Vulnerability Assessment (VA) setting Periodic Recurring Scans for
-      Azure SQL servers?
+      Is the "Periodic Recurring Scans" setting enabled for Azure SQL server
+      Vulnerability Assessments (VA)?
     description:
       Checks if Azure SQL servers have Vulnerability Assessment (VA) Periodic
       Recurring Scans enabled.
@@ -1622,13 +1621,13 @@ questions:
       - name: SQL servers with AD Admin
         resultsAre: GOOD
         query: |
-          FIND 
+          FIND
             azure_sql_server THAT HAS
             azure_sql_server_active_directory_admin
       - name: SQL servers without AD Admin
         resultsAre: BAD
         query: |
-          FIND 
+          FIND
             azure_sql_server THAT !HAS
             azure_sql_server_active_directory_admin
     tags:
@@ -1659,13 +1658,13 @@ questions:
       - name: SQL servers with CMK encryption protector
         resultsAre: GOOD
         query: |
-          FIND 
+          FIND
             azure_sql_server WITH
               encryptionProtector.serverKeyType = 'AzureKeyVault'
       - name: SQL servers without CMK encryption protector
         resultsAre: BAD
         query: |
-          FIND 
+          FIND
             azure_sql_server WITH
               encryptionProtector.serverKeyType != 'AzureKeyVault'
     tags:
@@ -1755,9 +1754,9 @@ questions:
       - name: Subscriptions with suggested diagnostic logs
         resultsAre: GOOD
         query: |
-          Find 
-            azure_subscription THAT HAS 
-            azure_diagnostic_setting WITH 
+          Find
+            azure_subscription THAT HAS
+            azure_diagnostic_setting WITH
               log.Administrative.enabled = true AND
               log.Alert.enabled = true AND
               log.Policy.enabled = true AND
@@ -1766,8 +1765,8 @@ questions:
         resultsAre: BAD
         query: |
           Find
-            azure_subscription THAT !HAS 
-            azure_diagnostic_setting WITH 
+            azure_subscription THAT !HAS
+            azure_diagnostic_setting WITH
               log.Administrative.enabled = true AND
               log.Alert.enabled = true AND
               log.Policy.enabled = true AND
@@ -1791,20 +1790,20 @@ questions:
       - name: Log profile buckets are not publicly accessible
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_log_profile THAT USES
             azure_storage_account THAT HAS
             azure_storage_container WITH
-              name = 'insights-operational-logs' AND 
+              name = 'insights-operational-logs' AND
               publicAccess = 'None'
       - name: Log profile buckets are publicly accessible
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_monitor_log_profile as p THAT USES
             azure_storage_account as sa THAT HAS
             azure_storage_container WITH
-              name = 'insights-operational-logs' AND 
+              name = 'insights-operational-logs' AND
               publicAccess != 'None' as sc
           Return
             p.name,
@@ -1837,14 +1836,14 @@ questions:
       - name: Log profile storage accounts use BYOK
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_log_profile THAT USES
             azure_storage_account WITH
               encryption.keySource = 'Microsoft.Keyvault'
       - name: Log profile storage accounts do not use BYOK
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_monitor_log_profile as p THAT USES
             azure_storage_account WITH
               encryption.keySource != 'Microsoft.Keyvault' as sa
@@ -1877,7 +1876,7 @@ questions:
       - name: Logging is enabled
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_keyvault_service THAT HAS
             azure_diagnostic_setting WITH
               storageAccountId != undefined AND
@@ -1887,7 +1886,7 @@ questions:
       - name: Logging is not enabled
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_keyvault_service THAT !HAS
             azure_diagnostic_setting WITH
               storageAccountId != undefined AND
@@ -1917,7 +1916,7 @@ questions:
       - name: policyAssignments/write alert exists
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Authorization/policyAssignments/write' AND
               condition.level = 'ANY' AND
@@ -1927,7 +1926,7 @@ questions:
       - name: policyAssignments/write alert does not exist
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_subscription THAT !MONITORS
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Authorization/policyAssignments/write' AND
@@ -1957,7 +1956,7 @@ questions:
       - name: policyAssignments/delete alert exists
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Authorization/policyAssignments/delete' AND
               condition.level = 'ANY' AND
@@ -1967,7 +1966,7 @@ questions:
       - name: policyAssignments/delete alert does not exist
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_subscription THAT !MONITORS
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Authorization/policyAssignments/delete' AND
@@ -1993,7 +1992,7 @@ questions:
       - name: networkSecurityGroups/write alert exists
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Network/networkSecurityGroups/write' AND
               condition.level = 'ANY' AND
@@ -2003,7 +2002,7 @@ questions:
       - name: networkSecurityGroups/write alert does not exist
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_subscription THAT !MONITORS
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Network/networkSecurityGroups/write' AND
@@ -2033,7 +2032,7 @@ questions:
       - name: networkSecurityGroups/delete alert exists
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Network/networkSecurityGroups/delete' AND
               condition.level = 'ANY' AND
@@ -2043,7 +2042,7 @@ questions:
       - name: networkSecurityGroups/delete alert does not exist
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_subscription THAT !MONITORS
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Network/networkSecurityGroups/delete' AND
@@ -2073,7 +2072,7 @@ questions:
       - name: networkSecurityGroups/securityRules/write alert exists
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Network/networkSecurityGroups/securityRules/write' AND
               condition.level = 'ANY' AND
@@ -2083,7 +2082,7 @@ questions:
       - name: networkSecurityGroups/securityRules/write alert does not exist
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_subscription THAT !MONITORS
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Network/networkSecurityGroups/securityRules/write' AND
@@ -2113,7 +2112,7 @@ questions:
       - name: networkSecurityGroups/securityRules/delete alert exists
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Network/networkSecurityGroups/securityRules/delete' AND
               condition.level = 'ANY' AND
@@ -2123,7 +2122,7 @@ questions:
       - name: networkSecurityGroups/securityRules/delete alert does not exist
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_subscription THAT !MONITORS
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Network/networkSecurityGroups/securityRules/delete' AND
@@ -2153,7 +2152,7 @@ questions:
       - name: Microsoft.Security/securitySolutions/write alert exists
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Security/securitySolutions/write' AND
               condition.level = 'ANY' AND
@@ -2163,7 +2162,7 @@ questions:
       - name: Microsoft.Security/securitySolutions/write alert does not exist
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_subscription THAT !MONITORS
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Security/securitySolutions/write' AND
@@ -2193,7 +2192,7 @@ questions:
       - name: Microsoft.Security/securitySolutions/delete alert exists
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Security/securitySolutions/delete' AND
               condition.level = 'ANY' AND
@@ -2203,7 +2202,7 @@ questions:
       - name: Microsoft.Security/securitySolutions/delete alert does not exist
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_subscription THAT !MONITORS
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Security/securitySolutions/delete' AND
@@ -2233,7 +2232,7 @@ questions:
       - name: Microsoft.Sql/servers/firewallRules/write alert exists
         resultsAre: GOOD
         query: |
-          Find 
+          Find
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Sql/servers/firewallRules/write' AND
               condition.level = 'ANY' AND
@@ -2243,7 +2242,7 @@ questions:
       - name: Microsoft.Sql/servers/firewallRules/write alert does not exist
         resultsAre: BAD
         query: |
-          Find 
+          Find
             azure_subscription THAT !MONITORS
             azure_monitor_activity_log_alert WITH
               condition.operationName = 'Microsoft.Sql/servers/firewallRules/write' AND
@@ -2655,7 +2654,7 @@ questions:
   - id: integration-question-azure-misc-resource-locks
     title: Are all critical resources protected by resource locks?
     description:
-      Checks if all critical resources have resources locks set. 
+      Checks if all critical resources have resources locks set.
     queries:
     - name: good
       query: |
@@ -2699,7 +2698,7 @@ questions:
       requirements:
         - '8.4'
   - id: integration-question-azure-misc-kubernetes-rbac
-    title: Is RBAC enabled on all Azure Kubernetes Services Instances??
+    title: Is RBAC enabled on all Azure Kubernetes Services Instances?
     description:
       Checks if all Azure Kubernetes Services Instances has RBAC enabled.
     queries:

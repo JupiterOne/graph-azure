@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Stopped using the `callback` version of the
+  `ContainerServiceClient.managedClusters.list(callback)` API
+
 ## [5.35.1] - 2021-11-08
 
 ### Fixed

@@ -16,10 +16,7 @@ export class ContainerServicesClient extends Client {
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
-      resourceEndpoint: {
-        list: () => serviceClient.managedClusters.list(callback),
-        listNext: serviceClient.managedClusters.listNext,
-      },
+      resourceEndpoint: serviceClient.managedClusters,
       resourceDescription: 'containerServices.clusters',
       callback,
     });

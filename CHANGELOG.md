@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.35.2] - 2021-11-08
+
 ### Fixed
 
 - Stopped using the `callback` version of the

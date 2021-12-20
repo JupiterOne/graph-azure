@@ -53,12 +53,14 @@ import {
   GalleryImage,
   GalleryImageVersion,
   VirtualMachine,
+  VirtualMachinesInstanceViewResponse,
 } from '@azure/arm-compute/esm/models';
 import {
   entities as storageEntities,
   steps as storageSteps,
 } from '../storage/constants';
 import { StorageAccount } from '@azure/arm-storage/esm/models';
+import { getResourceGroupName } from '../utils/matchers';
 
 export async function fetchGalleries(
   executionContext: IntegrationStepContext,
@@ -215,7 +217,17 @@ export async function fetchVirtualMachines(
   const client = new ComputeClient(instance.config, logger);
 
   await client.iterateVirtualMachines(async (vm) => {
-    const virtualMachineEntity = createVirtualMachineEntity(webLinker, vm);
+    let instanceView: VirtualMachinesInstanceViewResponse | undefined = undefined;
+    try {
+      instanceView = await client.fetchInstanceView(vm.name, getResourceGroupName(vm.id || ""));
+    } catch (err) {
+      logger.warn(
+        { err, name: vm.name, resourceGroup: getResourceGroupName(vm.id || "") },
+        'Warning: unable to fetch virtual machine instance view.',
+      );
+    }
+
+    const virtualMachineEntity = createVirtualMachineEntity(webLinker, vm, instanceView);
     await jobState.addEntity(virtualMachineEntity);
 
     await createResourceGroupResourceRelationship(

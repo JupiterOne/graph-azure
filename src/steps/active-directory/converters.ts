@@ -117,6 +117,7 @@ export function createUserEntity(
         _class: USER_ENTITY_CLASS,
         _type: USER_ENTITY_TYPE,
         name: data.displayName,
+        active: data.accountEnabled,
         email: data.mail ?? undefined,
         firstName: data.givenName || data.displayName?.split(' ')[0],
         lastName: data.surname || data.displayName?.split(' ').slice(-1)[0],

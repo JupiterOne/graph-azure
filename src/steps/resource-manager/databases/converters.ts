@@ -42,6 +42,7 @@ export function createDatabaseEntity(
         ...convertProperties(data),
         _type,
         _class: RM_DATABASE_ENTITY_CLASS,
+        _key: data.id,
         displayName: data.name || data.id || 'unnamed',
         webLink: webLinker.portalResourceUrl(data.id),
         resourceGroup: resourceGroupName(data.id),
@@ -69,6 +70,7 @@ export function createDbServerEntity(
         ...convertProperties(anyServer.storageProfile),
         _type,
         _class: RM_DATABASE_SERVER_ENTITY_CLASS,
+        _key: data.id,
         displayName:
           data.name || data.fullyQualifiedDomainName || data.id || 'unnamed',
         webLink: webLinker.portalResourceUrl(data.id),

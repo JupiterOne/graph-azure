@@ -26,7 +26,7 @@ export function createKeyVaultEntity(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: KEY_VAULT_SERVICE_ENTITY_TYPE,
         _class: KEY_VAULT_SERVICE_ENTITY_CLASS,
         webLink: webLinker.portalResourceUrl(data.id),
@@ -91,7 +91,7 @@ export function createKeyVaultSecretEntity({
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: KEY_VAULT_SECRET_ENTITY_TYPE,
         _class: KEY_VAULT_SECRET_ENTITY_CLASS,
         vaultUrl: data.vaultUrl,

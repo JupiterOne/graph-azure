@@ -55,7 +55,7 @@ export function createPolicyDefinitionEntity(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: PolicyEntities.POLICY_DEFINITION._type,
         _class: PolicyEntities.POLICY_DEFINITION._class,
         id: data.id,
@@ -102,7 +102,7 @@ export function createPolicySetDefinitionEntity(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: PolicyEntities.POLICY_SET_DEFINITION._type,
         _class: PolicyEntities.POLICY_SET_DEFINITION._class,
         id: data.id,

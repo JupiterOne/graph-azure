@@ -9,7 +9,7 @@ export function createPosgreSqlServerFirewallRuleEntity(
     entityData: {
       source: firewallRule,
       assign: {
-        _key: firewallRule.id,
+        _key: firewallRule.id!,
         _type: PostgreSQLEntities.FIREWALL_RULE._type,
         _class: PostgreSQLEntities.FIREWALL_RULE._class,
         name: firewallRule.name,

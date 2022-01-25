@@ -133,6 +133,7 @@ export function createSubnetEntity(
     entityData: {
       source: data,
       assign: {
+        _key: data.id!,
         _type: NetworkEntities.SUBNET._type,
         _class: NetworkEntities.SUBNET._class,
         displayName: `${data.name} (${CIDR})`,
@@ -164,6 +165,7 @@ export function createNetworkSecurityGroupEntity(
     entityData: {
       source: data,
       assign: {
+        _key: data.id!,
         _type: NetworkEntities.SECURITY_GROUP._type,
         _class: NetworkEntities.SECURITY_GROUP._class,
         webLink: webLinker.portalResourceUrl(data.id),
@@ -233,6 +235,7 @@ export function createVirtualNetworkEntity(
     entityData: {
       source: data,
       assign: {
+        _key: data.id!,
         _type: NetworkEntities.VIRTUAL_NETWORK._type,
         _class: NetworkEntities.VIRTUAL_NETWORK._class,
         displayName: `${data.name} (${CIDR})`,
@@ -258,7 +261,7 @@ export function createNetworkWatcherEntity(
       assign: {
         _type: NetworkEntities.NETWORK_WATCHER._type,
         _class: NetworkEntities.NETWORK_WATCHER._class,
-        _key: data.id,
+        _key: data.id!,
         id: data.id,
         name: data.name,
         type: data.type,
@@ -280,7 +283,7 @@ export function createPrivateEndpointEntity(
       assign: {
         _type: NetworkEntities.PRIVATE_ENDPOINT._type,
         _class: NetworkEntities.PRIVATE_ENDPOINT._class,
-        _key: data.id,
+        _key: data.id!,
         id: data.id,
         name: data.name,
         type: data.type,
@@ -303,7 +306,7 @@ export function createNsgFlowLogEntity(
       assign: {
         _type: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._type,
         _class: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._class,
-        _key: data.id,
+        _key: data.id!,
         id: data.id,
         name: data.name,
         type: data.type,

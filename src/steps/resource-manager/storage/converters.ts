@@ -171,6 +171,7 @@ export function createStorageContainerEntity(
     entityData: {
       source: data,
       assign: {
+        _key: data.id!,
         _type: entities.STORAGE_CONTAINER._type,
         _class: entities.STORAGE_CONTAINER._class,
         webLink: webLinker.portalResourceUrl(data.id),
@@ -202,6 +203,7 @@ export function createStorageFileShareEntity(
     entityData: {
       source: data,
       assign: {
+        _key: data.id!,
         _type: entities.STORAGE_FILE_SHARE._type,
         _class: entities.STORAGE_FILE_SHARE._class,
         webLink: webLinker.portalResourceUrl(data.id),
@@ -222,6 +224,7 @@ export function createStorageQueueEntity(
     entityData: {
       source: data,
       assign: {
+        _key: data.id!,
         _type: entities.STORAGE_QUEUE._type,
         _class: entities.STORAGE_QUEUE._class,
         webLink: webLinker.portalResourceUrl(data.id),
@@ -244,6 +247,7 @@ export function createStorageTableEntity(
     entityData: {
       source: data,
       assign: {
+        _key: data.id!,
         _type: entities.STORAGE_TABLE._type,
         _class: entities.STORAGE_TABLE._class,
         webLink: webLinker.portalResourceUrl(data.id),

@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.35.3] - 2022-01-26
+
+## Changed
+
 - Update sdk-\* packages to 8.2.1. This is a major version change requiring to
   conform to `_key` being required on entities. In addition, the user entity now
   has the `active` property as required by the v8 update.

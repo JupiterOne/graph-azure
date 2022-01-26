@@ -38,7 +38,7 @@ export function createLocationEntity(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: entities.LOCATION._type,
         _class: entities.LOCATION._class,
         id: data.id,

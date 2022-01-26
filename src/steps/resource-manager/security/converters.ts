@@ -95,7 +95,7 @@ export function createPricingConfigEntity(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: SecurityEntities.SUBSCRIPTION_PRICING._type,
         _class: SecurityEntities.SUBSCRIPTION_PRICING._class,
         id: data.id,
@@ -116,7 +116,7 @@ export function createSecurityCenterSettingEntity(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: SecurityEntities.SETTING._type,
         _class: SecurityEntities.SETTING._class,
         id: data.id,
@@ -138,7 +138,7 @@ export function createSecurityCenterAutoProvisioningSettingEntity(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: SecurityEntities.AUTO_PROVISIONING_SETTING._type,
         _class: SecurityEntities.AUTO_PROVISIONING_SETTING._class,
         id: data.id,

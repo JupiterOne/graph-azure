@@ -24,7 +24,7 @@ export function createAccountEntity(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
         _class: RM_COSMOSDB_ACCOUNT_ENTITY_CLASS,
         webLink: webLinker.portalResourceUrl(data.id),
@@ -53,7 +53,7 @@ export function createSQLDatabaseEntity(
     entityData: {
       source: { ...data, tags: dbAccount.tags },
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
         _class: RM_COSMOSDB_SQL_DATABASE_ENTITY_CLASS,
         dbAccountId: dbAccount.id, // Maintained for synchronization subset

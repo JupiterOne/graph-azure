@@ -176,7 +176,7 @@ export function createGalleryEntity(webLinker: AzureWebLinker, data: Gallery) {
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: entities.GALLERY._type,
         _class: entities.GALLERY._class,
         displayName: data.name,
@@ -202,7 +202,7 @@ export function createSharedImage(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: entities.SHARED_IMAGE._type,
         _class: entities.SHARED_IMAGE._class,
         displayName: data.name,
@@ -229,7 +229,7 @@ export function createSharedImageVersion(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: entities.SHARED_IMAGE_VERSION._type,
         _class: entities.SHARED_IMAGE_VERSION._class,
         id: data.id,

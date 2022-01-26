@@ -21,7 +21,7 @@ export function createMonitorLogProfileEntity(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: MonitorEntities.MONITOR_LOG_PROFILE._type,
         _class: MonitorEntities.MONITOR_LOG_PROFILE._class,
         id: data.id,
@@ -47,7 +47,7 @@ export function createActivityLogAlertEntity(
     entityData: {
       source: data,
       assign: {
-        _key: data.id,
+        _key: data.id!,
         _type: MonitorEntities.ACTIVITY_LOG_ALERT._type,
         _class: MonitorEntities.ACTIVITY_LOG_ALERT._class,
         id: data.id,

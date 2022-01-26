@@ -78,18 +78,24 @@ export function setServerSecurityAlerting(
 
 export function setServerVulnerabilityAssessment(
   serverEntity: Entity,
-  vulnerabilityAssessments: ServerVulnerabilityAssessmentsGetResponse | undefined,
+  vulnerabilityAssessments:
+    | ServerVulnerabilityAssessmentsGetResponse
+    | undefined,
 ): void {
   if (!vulnerabilityAssessments) return;
 
-  setRawData(serverEntity, { name: 'vulnerabilityAssessments', rawData: vulnerabilityAssessments });
+  setRawData(serverEntity, {
+    name: 'vulnerabilityAssessments',
+    rawData: vulnerabilityAssessments,
+  });
 
   Object.assign(serverEntity, {
     vaRecurringScansEnabled: vulnerabilityAssessments.recurringScans?.isEnabled,
     vaStoragePath: vulnerabilityAssessments.storageContainerPath,
-    vaEmailSubscriptionAdmins: vulnerabilityAssessments.recurringScans?.emailSubscriptionAdmins,
-    vaEmails: vulnerabilityAssessments.recurringScans?.emails
-  })
+    vaEmailSubscriptionAdmins:
+      vulnerabilityAssessments.recurringScans?.emailSubscriptionAdmins,
+    vaEmails: vulnerabilityAssessments.recurringScans?.emails,
+  });
 }
 
 export function setServerEncryptionProtector(
@@ -135,7 +141,7 @@ export function createSqlServerFirewallRuleEntity(firewallRule: FirewallRule) {
     entityData: {
       source: firewallRule,
       assign: {
-        _key: firewallRule.id,
+        _key: firewallRule.id!,
         _type: entities.FIREWALL_RULE._type,
         _class: entities.FIREWALL_RULE._class,
         name: firewallRule.name,
@@ -157,7 +163,7 @@ export function createSqlServerActiveDirectoryAdmin(
     entityData: {
       source: admin,
       assign: {
-        _key: admin.id,
+        _key: admin.id!,
         _type: entities.ACTIVE_DIRECTORY_ADMIN._type,
         _class: entities.ACTIVE_DIRECTORY_ADMIN._class,
         name: admin.name,

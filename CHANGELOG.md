@@ -8,6 +8,20 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added a new field called `state` that reflects the virtual machine's state
+  (running or stopped).
+
+### Changed
+
+- Previously called `state` field is now called `provisioningState` as it
+  reflects the virtual machine's provision state.
+
+- The boolean field `active` now also reflects the virtual machine's state. It's
+  values can be: `true` (when `state` is `running`), `false` (when `state` is
+  `stopped`) and `undefined` if the state isn't known.
+
 ## [5.35.3] - 2022-01-26
 
 ## Changed

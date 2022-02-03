@@ -33,10 +33,10 @@ import {
 } from './constants';
 
 function mapVirtualMachineStatus(status?: InstanceViewStatus) {
-  if (status?.displayStatus === "VM running") {
-    return "running"
-  } else if (status?.displayStatus === "VM deallocated") {
-    return "stopped"
+  if (status?.displayStatus === 'VM running') {
+    return 'running';
+  } else if (status?.displayStatus === 'VM deallocated') {
+    return 'stopped';
   } else {
     return;
   }
@@ -69,8 +69,11 @@ export function createVirtualMachineEntity(
 
   let status: string | undefined = undefined;
   if (instanceView) {
-    const vmStatus = instanceView.statuses?.find(status => status.code?.includes("PowerState") && status.level === "Info")
-    status = mapVirtualMachineStatus(vmStatus)
+    const vmStatus = instanceView.statuses?.find(
+      (status) =>
+        status.code?.includes('PowerState') && status.level === 'Info',
+    );
+    status = mapVirtualMachineStatus(vmStatus);
   }
 
   const entity = {
@@ -90,9 +93,9 @@ export function createVirtualMachineEntity(
     type: data.type,
     region: data.location,
     resourceGroup: resourceGroupName(data.id),
-    state: data.provisioningState,
-    status,
-    active: status ? status === "running" : undefined,
+    provisioningState: data.provisioningState,
+    state: status,
+    active: status ? status === 'running' : undefined,
     vmSize: data.hardwareProfile && data.hardwareProfile.vmSize,
     usesManagedDisks: usesManagedDisks(
       data.storageProfile?.osDisk,

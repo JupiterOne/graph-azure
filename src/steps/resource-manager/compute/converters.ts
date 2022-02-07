@@ -5,9 +5,11 @@ import {
   GalleryImage,
   GalleryImageVersion,
   Image,
+  InstanceViewStatus,
   OSDisk,
   VirtualMachine,
   VirtualMachineExtension,
+  VirtualMachinesInstanceViewResponse,
 } from '@azure/arm-compute/esm/models';
 import {
   assignTags,
@@ -30,9 +32,20 @@ import {
   VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
 } from './constants';
 
+function mapVirtualMachineStatus(status?: InstanceViewStatus) {
+  if (status?.displayStatus === 'VM running') {
+    return 'running';
+  } else if (status?.displayStatus === 'VM deallocated') {
+    return 'stopped';
+  } else {
+    return;
+  }
+}
+
 export function createVirtualMachineEntity(
   webLinker: AzureWebLinker,
   data: VirtualMachine,
+  instanceView?: VirtualMachinesInstanceViewResponse,
 ): Entity {
   const osProperties = {};
   if (data.storageProfile) {
@@ -42,6 +55,7 @@ export function createVirtualMachineEntity(
       osVersion: data.storageProfile.imageReference?.exactVersion,
     });
   }
+
   if (data.osProfile) {
     Object.assign(osProperties, {
       adminUser: data.osProfile.adminUsername,
@@ -52,6 +66,16 @@ export function createVirtualMachineEntity(
       timeZone: data.osProfile.windowsConfiguration?.timeZone,
     });
   }
+
+  let status: string | undefined = undefined;
+  if (instanceView) {
+    const vmStatus = instanceView.statuses?.find(
+      (status) =>
+        status.code?.includes('PowerState') && status.level === 'Info',
+    );
+    status = mapVirtualMachineStatus(vmStatus);
+  }
+
   const entity = {
     ...convertProperties(data),
     ...osProperties,
@@ -69,7 +93,9 @@ export function createVirtualMachineEntity(
     type: data.type,
     region: data.location,
     resourceGroup: resourceGroupName(data.id),
-    state: data.provisioningState,
+    provisioningState: data.provisioningState,
+    state: status,
+    active: status ? status === 'running' : undefined,
     vmSize: data.hardwareProfile && data.hardwareProfile.vmSize,
     usesManagedDisks: usesManagedDisks(
       data.storageProfile?.osDisk,

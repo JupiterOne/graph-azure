@@ -5,6 +5,7 @@ import {
   GalleryImage,
   OSDisk,
   VirtualMachine,
+  VirtualMachinesInstanceViewResponse,
 } from '@azure/arm-compute/esm/models';
 import { convertProperties } from '@jupiterone/integration-sdk-core';
 
@@ -175,7 +176,158 @@ describe('createVirtualMachineEntity', () => {
       platform: 'linux',
       resourceGroup: 'j1dev',
       region: 'eastus',
-      state: 'Succeeded',
+      provisioningState: 'Succeeded',
+      usesManagedDisks: true,
+      vmSize: 'Standard_DS1_v2',
+      webLink: webLinker.portalResourceUrl(
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+      ),
+      'tag.environment': 'j1dev',
+    });
+  });
+
+  test('instance view state and active fields', () => {
+    const vmData: VirtualMachine = {
+      id:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+      name: 'j1dev',
+      type: 'Microsoft.Compute/virtualMachines',
+      location: 'eastus',
+      tags: {
+        environment: 'j1dev',
+      },
+      hardwareProfile: {
+        vmSize: 'Standard_DS1_v2',
+      },
+      storageProfile: {
+        imageReference: {
+          publisher: 'Canonical',
+          offer: 'UbuntuServer',
+          sku: '16.04.0-LTS',
+          version: 'latest',
+        },
+        osDisk: {
+          osType: 'Linux',
+          name: 'j1devOsDisk',
+          caching: 'ReadWrite',
+          writeAcceleratorEnabled: false,
+          createOption: 'FromImage',
+          diskSizeGB: 30,
+          managedDisk: {
+            id:
+              '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1devOsDisk',
+            storageAccountType: 'Premium_LRS',
+          },
+        },
+        dataDisks: [],
+      },
+      osProfile: {
+        computerName: 'myvm',
+        adminUsername: 'azureuser',
+        linuxConfiguration: {
+          disablePasswordAuthentication: true,
+          provisionVMAgent: true,
+        },
+        secrets: [],
+        allowExtensionOperations: true,
+      },
+      networkProfile: {
+        networkInterfaces: [
+          {
+            id:
+              '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+            primary: false,
+          },
+        ],
+      },
+      diagnosticsProfile: {
+        bootDiagnostics: {
+          enabled: true,
+          storageUri: 'https://diag8526a0bd6bb85418.blob.core.windows.net/',
+        },
+      },
+      provisioningState: 'Succeeded',
+      vmId: '2ed98ec3-b9a4-4126-926e-081889e3bc3a',
+    };
+
+    const runningInstanceView: Partial<VirtualMachinesInstanceViewResponse> = {
+      statuses: [
+        {
+          code: 'PowerState',
+          level: 'Info',
+          displayStatus: 'VM running',
+        },
+      ],
+    };
+
+    const stoppedInstanceView: Partial<VirtualMachinesInstanceViewResponse> = {
+      statuses: [
+        {
+          code: 'PowerState',
+          level: 'Info',
+          displayStatus: 'VM deallocated',
+        },
+      ],
+    };
+
+    expect(
+      createVirtualMachineEntity(
+        webLinker,
+        vmData,
+        runningInstanceView as VirtualMachinesInstanceViewResponse,
+      ),
+    ).toEqual({
+      ...convertProperties(vmData),
+      _key:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourcegroups/j1dev/providers/microsoft.compute/virtualmachines/j1dev',
+      _type: 'azure_vm',
+      _class: ['Host'],
+      _rawData: [{ name: 'default', rawData: vmData }],
+      displayName: 'j1dev',
+      active: true,
+      state: 'running',
+      vmId: '2ed98ec3-b9a4-4126-926e-081889e3bc3a',
+      type: 'Microsoft.Compute/virtualMachines',
+      adminUser: 'azureuser',
+      disablePasswordAuthentication: true,
+      osName: 'UbuntuServer',
+      platform: 'linux',
+      resourceGroup: 'j1dev',
+      region: 'eastus',
+      provisioningState: 'Succeeded',
+      usesManagedDisks: true,
+      vmSize: 'Standard_DS1_v2',
+      webLink: webLinker.portalResourceUrl(
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+      ),
+      'tag.environment': 'j1dev',
+    });
+
+    expect(
+      createVirtualMachineEntity(
+        webLinker,
+        vmData,
+        stoppedInstanceView as VirtualMachinesInstanceViewResponse,
+      ),
+    ).toEqual({
+      ...convertProperties(vmData),
+      _key:
+        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourcegroups/j1dev/providers/microsoft.compute/virtualmachines/j1dev',
+      _type: 'azure_vm',
+      _class: ['Host'],
+      _rawData: [{ name: 'default', rawData: vmData }],
+      displayName: 'j1dev',
+      active: false,
+      state: 'stopped',
+      vmId: '2ed98ec3-b9a4-4126-926e-081889e3bc3a',
+      type: 'Microsoft.Compute/virtualMachines',
+      adminUser: 'azureuser',
+      disablePasswordAuthentication: true,
+      osName: 'UbuntuServer',
+      platform: 'linux',
+      resourceGroup: 'j1dev',
+      region: 'eastus',
+      provisioningState: 'Succeeded',
       usesManagedDisks: true,
       vmSize: 'Standard_DS1_v2',
       webLink: webLinker.portalResourceUrl(

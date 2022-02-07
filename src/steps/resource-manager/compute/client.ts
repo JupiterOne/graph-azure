@@ -7,6 +7,7 @@ import {
   VirtualMachine,
   VirtualMachineExtension,
   VirtualMachineImage,
+  VirtualMachinesInstanceViewResponse,
 } from '@azure/arm-compute/esm/models';
 import {
   IntegrationError,
@@ -26,6 +27,7 @@ export class ComputeClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       ComputeManagementClient,
     );
+
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
@@ -33,6 +35,21 @@ export class ComputeClient extends Client {
       resourceDescription: 'compute.virtualMachines',
       callback,
     });
+  }
+
+  public async fetchInstanceView(
+    name: string | undefined,
+    resourceGroup: string | undefined,
+  ): Promise<VirtualMachinesInstanceViewResponse | undefined> {
+    if (!name || !resourceGroup) {
+      return;
+    }
+
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ComputeManagementClient,
+    );
+
+    return serviceClient.virtualMachines.instanceView(resourceGroup, name);
   }
 
   public async iterateVirtualMachineExtensions(

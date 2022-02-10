@@ -309,9 +309,12 @@ export class StorageClient extends Client {
       await cb();
     } catch (e) {
       if (
+        // TODO is it possible to skip these calls altogether? How can we anticipate `FeatureNotSupportedForAccount` or `AccountIsDisabled`?
         ['FeatureNotSupportedForAccount', 'AccountIsDisabled'].includes(
           e.status,
-        ) // TODO is it possible to skip these calls altogether? How can we anticipate `FeatureNotSupportedForAccount` or `AccountIsDisabled`?
+        ) ||
+        (e.status.includes('ContainerOperationFailure') &&
+          e.status.includes('account is disabled'))
       ) {
         this.logger.trace(
           {

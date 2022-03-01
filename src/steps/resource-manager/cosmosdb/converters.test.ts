@@ -93,6 +93,7 @@ describe('createAccountEntity', () => {
         },
       ],
       _type: 'azure_cosmosdb_account',
+      function: ['database'],
       id:
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.DocumentDB/databaseAccounts/j1dev',
       createdOn: undefined,

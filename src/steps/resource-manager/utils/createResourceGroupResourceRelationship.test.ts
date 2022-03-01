@@ -92,7 +92,7 @@ describe('#createResourceGroupResourceRelationship', () => {
       entities: [],
     });
 
-    const loggerErrorSpy = spyOn(context.logger, 'error');
+    const loggerErrorSpy = jest.spyOn(context.logger, 'error');
 
     const resourceEntity: Entity = {
       _class: ['Service'],

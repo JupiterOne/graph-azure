@@ -27,6 +27,7 @@ export function createAccountEntity(
         _key: data.id!,
         _type: RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
         _class: RM_COSMOSDB_ACCOUNT_ENTITY_CLASS,
+        function: ['database'],
         webLink: webLinker.portalResourceUrl(data.id),
         region: normalizeLocation(data.location),
         resourceGroup: resourceGroupName(data.id),

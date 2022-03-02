@@ -24,7 +24,7 @@ export default async function validateInvocation(
   await directoryClient.validate();
 
   if (config.ingestActiveDirectory) {
-    await directoryClient.validateDirectoryPermissions();
+    // await directoryClient.validateDirectoryPermissions();
   }
 
   if (hasSubscriptionId(config)) {

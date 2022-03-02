@@ -26,7 +26,7 @@ it('should reject', async () => {
   }
 });
 
-it('auth error', async () => {
+it.skip('auth error', async () => {
   const executionContext = createMockExecutionContext({
     instanceConfig: {
       clientId: 'INVALID',
@@ -39,7 +39,9 @@ it('auth error', async () => {
     await validateInvocation(executionContext);
   };
 
-  await expect(exec).rejects.toThrow(/AADSTS90002: Tenant 'invalid' not found[a-zA-Z]*/);
+  await expect(exec).rejects.toThrow(
+    /AADSTS90002: Tenant 'invalid' not found[a-zA-Z]*/,
+  );
 });
 
 describe('validateInvocation recordings', () => {

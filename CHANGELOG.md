@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Removed
+
+- Removed check to verify whether the access token has a property called `roles`
+  in its access token and the `Directory.Read.All` role in its array
+
 ## [5.36.0] - 2022-02-07
 
 ### Added

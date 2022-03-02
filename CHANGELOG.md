@@ -8,6 +8,8 @@ and this project adheres to
 
 ## Unreleased
 
+## [5.36.1] - 2022-03-02
+
 ### Removed
 
 - Removed check to verify whether the access token has a property called `roles`

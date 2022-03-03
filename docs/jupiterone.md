@@ -124,10 +124,20 @@ information:
 
 ### Key Vault Access Policy
 
-Please note that listing Key Vault keys and secrets (rm-keyvault-keys and
-rm-keyvault-secrets steps) require a given security principal to have necessary
-policies. The steps necesssary for that are outlined on this page
-[Assign a Key Vault access policy ](https://go.microsoft.com/fwlink/?linkid=2125287).
+Please note that listing Key Vault keys and secrets (`rm-keyvault-keys` and
+`rm-keyvault-secrets` steps) require JupiterOne users to grant the following
+permissions to the JupiterOne security principal _for each Key Vault in their
+account_:
+
+- Key Permissions
+  - Key Management Operations
+    - List
+- Secret Permisisons
+  - Secret Management Operations
+    - List
+
+The steps necesssary for that are outlined on this page:
+[Assign a Key Vault access policy](https://go.microsoft.com/fwlink/?linkid=2125287).
 
 ### In JupiterOne
 

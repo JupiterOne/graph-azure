@@ -8,6 +8,12 @@ and this project adheres to
 
 ## Unreleased
 
+### Fixed
+
+- Fixed a problem related to subnet and virtual machine relationships that was
+  causing the same subnet to be used more than once resulting in duplicate key
+  error.
+
 ## [5.36.1] - 2022-03-02
 
 ### Removed

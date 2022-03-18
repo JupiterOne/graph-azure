@@ -1,4 +1,8 @@
-import { Entity, RelationshipClass } from '@jupiterone/integration-sdk-core';
+import {
+  RelationshipClass,
+  RelationshipDirection,
+  StepMappedRelationshipMetadata,
+} from '@jupiterone/integration-sdk-core';
 
 export const steps = {
   SUBSCRIPTION: 'rm-subscription',
@@ -11,7 +15,16 @@ export const setDataKeys = {
 };
 
 export type SetDataTypes = {
-  locationNameMap: { [name: string]: Entity };
+  locationNameMap: {
+    [name: string]: {
+      _key: string;
+      _type: string;
+      _class: string[];
+      id: string | undefined;
+      name: string | undefined;
+      displayName: string | undefined;
+    };
+  };
 };
 
 export const entities = {
@@ -34,5 +47,18 @@ export const relationships = {
     sourceType: entities.SUBSCRIPTION._type,
     _class: RelationshipClass.USES,
     targetType: entities.LOCATION._type,
+  },
+};
+
+export const mappedRelationships: Record<
+  'SUBSCRIPTION_USES_LOCATION',
+  StepMappedRelationshipMetadata
+> = {
+  SUBSCRIPTION_USES_LOCATION: {
+    _type: 'azure_subscription_uses_location',
+    sourceType: entities.SUBSCRIPTION._type,
+    _class: RelationshipClass.USES,
+    targetType: entities.LOCATION._type,
+    direction: RelationshipDirection.FORWARD,
   },
 };

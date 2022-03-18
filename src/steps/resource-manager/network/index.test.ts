@@ -46,7 +46,7 @@ import { fetchStorageAccounts } from '../storage';
 import { fetchLocations, fetchSubscription } from '../subscriptions';
 import { setDataKeys as subscriptionSetDataKeys } from '../subscriptions/constants';
 import { createAzureWebLinker } from '../../../azure';
-import { createLocationEntity } from '../subscriptions/converters';
+import { getLocationEntityProps } from '../subscriptions/converters';
 import { createNetworkWatcherEntity } from './converters';
 
 const GUID_REGEX = new RegExp(
@@ -1714,23 +1714,26 @@ describe('rm-network-location-watcher-relationships', () => {
 
       await buildLocationNetworkWatcherRelationships(context);
 
-      const locationNetworkWatcherRelationships =
-        context.jobState.collectedRelationships;
-
-      expect(locationNetworkWatcherRelationships.length).toBe(
-        networkWatcherEntities.length,
+      // This currently exists in the newer SDK version, however, it's not yet used here
+      // Should be refactored after the version is bumped up (along with other places where it's used)
+      const {
+        targets: mappedRelationships,
+        rest: directRelationships,
+      } = filterGraphObjects(
+        context.jobState.collectedRelationships,
+        (r) => !!r._mapping,
       );
+
+      expect(directRelationships).toHaveLength(0);
+      expect(mappedRelationships.length).toBe(networkWatcherEntities.length);
+
       expect(
-        locationNetworkWatcherRelationships,
-      ).toMatchDirectRelationshipSchema({
-        schema: {
-          properties: {
-            _type: {
-              const: NetworkRelationships.LOCATION_HAS_NETWORK_WATCHER._type,
-            },
-          },
-        },
-      });
+        mappedRelationships.every(
+          (mappedRelationship) =>
+            mappedRelationship._key ===
+            '/subscriptions/779e9204-e1a5-49df-ad3f-9af3fdee6527/resourceGroups/test2/providers/Microsoft.Network/networkWatchers/NetworkWatcher_eastus|has|azure_location_eastus',
+        ),
+      ).toBe(true);
     }, 10000);
   });
 
@@ -1759,7 +1762,7 @@ describe('rm-network-location-watcher-relationships', () => {
       ],
       setData: {
         [subscriptionSetDataKeys.locationNameMap]: {
-          'real-location': createLocationEntity(webLinker, {
+          'real-location': getLocationEntityProps({
             name: 'real-location',
             id: 'location-id',
           }),

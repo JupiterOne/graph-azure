@@ -10,12 +10,7 @@ import {
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
-import {
-  entities,
-  relationships,
-  setDataKeys,
-  SetDataTypes,
-} from './constants';
+import { entities, setDataKeys, SetDataTypes } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 import { IntegrationError } from '@jupiterone/integration-sdk-core';
@@ -101,6 +96,7 @@ describe('rm-subscription-locations', () => {
       await recording.stop();
     }
   });
+
   function getSetupEntities(config: IntegrationConfig) {
     const accountEntity = getMockAccountEntity(config);
 
@@ -136,32 +132,22 @@ describe('rm-subscription-locations', () => {
 
     await fetchLocations(context);
 
-    const locationEntities = context.jobState.collectedEntities;
-
-    expect(locationEntities.length).toBeGreaterThan(0);
-    expect(locationEntities).toMatchGraphObjectSchema({
-      _class: entities.LOCATION._class,
-    });
-
-    const subscriptionLocationRelationships =
+    const subscriptionLocationMappedRelationships =
       context.jobState.collectedRelationships;
 
-    expect(subscriptionLocationRelationships.length).toBe(
-      locationEntities.length,
-    );
-    expect(subscriptionLocationRelationships).toMatchDirectRelationshipSchema({
-      schema: {
-        properties: {
-          _type: { const: relationships.SUBSCRIPTION_USES_LOCATION._type },
-        },
-      },
-    });
+    expect(subscriptionLocationMappedRelationships.length).toBeGreaterThan(0);
+    expect(
+      subscriptionLocationMappedRelationships.every(
+        (mappedRelationship) =>
+          mappedRelationship._type === 'azure_subscription_uses_location' &&
+          mappedRelationship._class === 'USES',
+      ),
+    ).toBe(true);
 
     const locationNameMap = await context.jobState.getData<
       SetDataTypes['locationNameMap']
     >(setDataKeys.locationNameMap);
 
     expect(locationNameMap).not.toBeUndefined();
-    expect(Object.values(locationNameMap!)).toEqual(locationEntities);
   });
 });

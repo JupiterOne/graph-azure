@@ -1,6 +1,8 @@
 import {
   RelationshipClass,
   generateRelationshipType,
+  StepMappedRelationshipMetadata,
+  RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 import { ANY_RESOURCE } from '../constants';
 import { entities as storageEntities } from '../storage/constants';
@@ -175,12 +177,6 @@ export const NetworkRelationships = {
     _class: RelationshipClass.DENIES,
     targetType: NetworkEntities.SECURITY_GROUP._type,
   },
-  LOCATION_HAS_NETWORK_WATCHER: {
-    _type: 'azure_location_has_network_watcher',
-    sourceType: subscriptionEntities.LOCATION._type,
-    _class: RelationshipClass.HAS,
-    targetType: NetworkEntities.NETWORK_WATCHER._type,
-  },
   NETWORK_WATCHER_HAS_FLOW_LOGS: {
     _type: 'azure_network_watcher_has_security_group_flow_logs',
     sourceType: NetworkEntities.NETWORK_WATCHER._type,
@@ -216,5 +212,18 @@ export const NetworkRelationships = {
     sourceType: NetworkEntities.PRIVATE_ENDPOINT._type,
     _class: RelationshipClass.CONNECTS,
     targetType: ANY_RESOURCE,
+  },
+};
+
+export const NetworkMappedRelationships: Record<
+  'LOCATION_HAS_NETWORK_WATCHER',
+  StepMappedRelationshipMetadata
+> = {
+  LOCATION_HAS_NETWORK_WATCHER: {
+    _type: 'azure_location_has_network_watcher',
+    sourceType: NetworkEntities.NETWORK_WATCHER._type,
+    _class: RelationshipClass.HAS,
+    targetType: subscriptionEntities.LOCATION._type,
+    direction: RelationshipDirection.REVERSE,
   },
 };

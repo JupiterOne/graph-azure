@@ -15,6 +15,8 @@ import {
   createDirectRelationship,
   RelationshipClass,
   IntegrationError,
+  createMappedRelationship,
+  RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -39,6 +41,7 @@ import {
   STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
+  NetworkMappedRelationships,
 } from './constants';
 import {
   createAzureFirewallEntity,
@@ -623,6 +626,7 @@ export async function buildLocationNetworkWatcherRelationships(
   const locationNameMap = await jobState.getData<
     SubscriptionSetDataTypes['locationNameMap']
   >(subscriptionsSetDataKeys.locationNameMap);
+
   if (!locationNameMap) {
     throw new IntegrationError({
       message:
@@ -635,15 +639,20 @@ export async function buildLocationNetworkWatcherRelationships(
   await jobState.iterateEntities(
     { _type: NetworkEntities.NETWORK_WATCHER._type },
     async (networkWatcherEntity) => {
-      const locationEntity =
+      const locationProps =
         locationNameMap[networkWatcherEntity.location as string];
 
-      if (locationEntity) {
+      if (locationProps) {
         await jobState.addRelationship(
-          createDirectRelationship({
+          createMappedRelationship({
             _class: RelationshipClass.HAS,
-            from: locationEntity,
-            to: networkWatcherEntity,
+            _type:
+              NetworkMappedRelationships.LOCATION_HAS_NETWORK_WATCHER._type,
+            source: networkWatcherEntity,
+            target: locationProps,
+            targetFilterKeys: [['_key']],
+            relationshipDirection: RelationshipDirection.REVERSE,
+            skipTargetCreation: false,
           }),
         );
       } else {
@@ -913,7 +922,10 @@ export const networkSteps: Step<
     id: STEP_RM_NETWORK_LOCATION_WATCHERS,
     name: 'Location-Network Watcher Relationships',
     entities: [],
-    relationships: [NetworkRelationships.LOCATION_HAS_NETWORK_WATCHER],
+    relationships: [],
+    mappedRelationships: [
+      NetworkMappedRelationships.LOCATION_HAS_NETWORK_WATCHER,
+    ],
     dependsOn: [STEP_RM_NETWORK_WATCHERS, subscriptionSteps.LOCATIONS],
     executionHandler: buildLocationNetworkWatcherRelationships,
   },

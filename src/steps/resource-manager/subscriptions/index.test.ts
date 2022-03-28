@@ -10,15 +10,13 @@ import {
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
-import {
-  entities,
-  relationships,
-  setDataKeys,
-  SetDataTypes,
-} from './constants';
+import { entities, setDataKeys, SetDataTypes } from './constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
-import { IntegrationError } from '@jupiterone/integration-sdk-core';
+import {
+  createIntegrationEntity,
+  IntegrationError,
+} from '@jupiterone/integration-sdk-core';
 
 let recording: Recording;
 
@@ -101,6 +99,7 @@ describe('rm-subscription-locations', () => {
       await recording.stop();
     }
   });
+
   function getSetupEntities(config: IntegrationConfig) {
     const accountEntity = getMockAccountEntity(config);
 
@@ -136,32 +135,79 @@ describe('rm-subscription-locations', () => {
 
     await fetchLocations(context);
 
-    const locationEntities = context.jobState.collectedEntities;
-
-    expect(locationEntities.length).toBeGreaterThan(0);
-    expect(locationEntities).toMatchGraphObjectSchema({
-      _class: entities.LOCATION._class,
-    });
-
-    const subscriptionLocationRelationships =
+    const subscriptionLocationMappedRelationships =
       context.jobState.collectedRelationships;
 
-    expect(subscriptionLocationRelationships.length).toBe(
-      locationEntities.length,
+    expect(subscriptionLocationMappedRelationships.length).toBeGreaterThan(0);
+
+    const subscriptionId = 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7';
+    const locations = [
+      { name: 'eastasia', displayName: 'East Asia' },
+      { name: 'southeastasia', displayName: 'Southeast Asia' },
+      { name: 'centralus', displayName: 'Central US' },
+      { name: 'eastus', displayName: 'East US' },
+      { name: 'eastus2', displayName: 'East US 2' },
+      { name: 'westus', displayName: 'West US' },
+      { name: 'northcentralus', displayName: 'North Central US' },
+      { name: 'southcentralus', displayName: 'South Central US' },
+      { name: 'northeurope', displayName: 'North Europe' },
+      { name: 'westeurope', displayName: 'West Europe' },
+      { name: 'japanwest', displayName: 'Japan West' },
+      { name: 'japaneast', displayName: 'Japan East' },
+      { name: 'brazilsouth', displayName: 'Brazil South' },
+      { name: 'australiaeast', displayName: 'Australia East' },
+      { name: 'australiasoutheast', displayName: 'Australia Southeast' },
+      { name: 'southindia', displayName: 'South India' },
+      { name: 'centralindia', displayName: 'Central India' },
+      { name: 'westindia', displayName: 'West India' },
+      { name: 'canadacentral', displayName: 'Canada Central' },
+      { name: 'canadaeast', displayName: 'Canada East' },
+      { name: 'uksouth', displayName: 'UK South' },
+      { name: 'ukwest', displayName: 'UK West' },
+      { name: 'westcentralus', displayName: 'West Central US' },
+      { name: 'westus2', displayName: 'West US 2' },
+      { name: 'koreacentral', displayName: 'Korea Central' },
+      { name: 'koreasouth', displayName: 'Korea South' },
+      { name: 'francecentral', displayName: 'France Central' },
+      { name: 'francesouth', displayName: 'France South' },
+      { name: 'australiacentral', displayName: 'Australia Central' },
+      { name: 'australiacentral2', displayName: 'Australia Central 2' },
+      { name: 'uaecentral', displayName: 'UAE Central' },
+      { name: 'uaenorth', displayName: 'UAE North' },
+      { name: 'southafricanorth', displayName: 'South Africa North' },
+      { name: 'southafricawest', displayName: 'South Africa West' },
+      { name: 'switzerlandnorth', displayName: 'Switzerland North' },
+      { name: 'switzerlandwest', displayName: 'Switzerland West' },
+      { name: 'germanynorth', displayName: 'Germany North' },
+      { name: 'germanywestcentral', displayName: 'Germany West Central' },
+      { name: 'norwaywest', displayName: 'Norway West' },
+      { name: 'norwayeast', displayName: 'Norway East' },
+      { name: 'brazilsoutheast', displayName: 'Brazil Southeast' },
+      { name: 'westus3', displayName: 'West US 3' },
+    ];
+
+    expect(subscriptionLocationMappedRelationships).toTargetEntities(
+      locations.map((location) =>
+        createIntegrationEntity({
+          entityData: {
+            source: {},
+            assign: {
+              _class: ['Site'],
+              _type: 'azure_location',
+              _key: `azure_location_${location.name}`,
+              id: `/subscription/${subscriptionId}/locations/${location.name}`,
+              name: location.name,
+              displayName: location.displayName,
+            },
+          },
+        }),
+      ),
     );
-    expect(subscriptionLocationRelationships).toMatchDirectRelationshipSchema({
-      schema: {
-        properties: {
-          _type: { const: relationships.SUBSCRIPTION_USES_LOCATION._type },
-        },
-      },
-    });
 
     const locationNameMap = await context.jobState.getData<
       SetDataTypes['locationNameMap']
     >(setDataKeys.locationNameMap);
 
     expect(locationNameMap).not.toBeUndefined();
-    expect(Object.values(locationNameMap!)).toEqual(locationEntities);
   });
 });

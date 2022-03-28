@@ -1,10 +1,11 @@
 import {
   Step,
   IntegrationStepExecutionContext,
-  createDirectRelationship,
   RelationshipClass,
   IntegrationConfigLoadError,
   IntegrationError,
+  createMappedRelationship,
+  RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -21,10 +22,10 @@ import {
   setDataKeys,
   SetDataTypes,
   entities,
-  relationships,
   steps,
+  mappedRelationships,
 } from './constants';
-import { createLocationEntity, createSubscriptionEntity } from './converters';
+import { createSubscriptionEntity, getLocationEntityProps } from './converters';
 
 export async function fetchSubscription(
   executionContext: IntegrationStepContext,
@@ -78,8 +79,6 @@ export async function fetchLocations(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await getAccountEntity(jobState);
-  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new J1SubscriptionClient(instance.config, logger);
 
   const locationNameMap: SetDataTypes['locationNameMap'] = {};
@@ -90,16 +89,20 @@ export async function fetchLocations(
       await client.iterateLocations(
         subscriptionEntity.subscriptionId as string,
         async (location) => {
-          const locationEntity = await jobState.addEntity(
-            createLocationEntity(webLinker, location),
-          );
+          const locationProps = getLocationEntityProps(location);
+
           await jobState.addRelationship(
-            createDirectRelationship({
+            createMappedRelationship({
               _class: RelationshipClass.USES,
-              from: subscriptionEntity,
-              to: locationEntity,
+              _type: mappedRelationships.SUBSCRIPTION_USES_LOCATION._type,
+              source: subscriptionEntity,
+              target: locationProps,
+              targetFilterKeys: [['_key']],
+              relationshipDirection: RelationshipDirection.FORWARD,
+              skipTargetCreation: false,
             }),
           );
+
           if (location.name) {
             if (locationNameMap[location.name!] !== undefined) {
               // In order to future-proof this function (considering a world where more than
@@ -107,13 +110,13 @@ export async function fetchLocations(
               // than one location name exists.
               logger.warn(
                 {
-                  newLocationId: location.id,
+                  newLocationName: location.id,
                   currentLocationId: locationNameMap[location.name!]?.id,
                 },
                 'ERROR: Multiple azure_location entities were encountered with the same `name`. There may be multiple subscriptions ingested, which this function is not equipped to handle.',
               );
             } else {
-              locationNameMap[location.name!] = locationEntity;
+              locationNameMap[location.name!] = locationProps;
             }
           } else {
             logger.warn(
@@ -156,7 +159,8 @@ export const subscriptionSteps: Step<
     id: steps.LOCATIONS,
     name: 'Subscription Locations',
     entities: [entities.LOCATION],
-    relationships: [relationships.SUBSCRIPTION_USES_LOCATION],
+    relationships: [],
+    mappedRelationships: [mappedRelationships.SUBSCRIPTION_USES_LOCATION],
     dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTION],
     executionHandler: fetchLocations,
   },

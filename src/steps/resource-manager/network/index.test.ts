@@ -1,4 +1,5 @@
 import {
+  createIntegrationEntity,
   Entity,
   Relationship,
   RelationshipDirection,
@@ -46,7 +47,7 @@ import { fetchStorageAccounts } from '../storage';
 import { fetchLocations, fetchSubscription } from '../subscriptions';
 import { setDataKeys as subscriptionSetDataKeys } from '../subscriptions/constants';
 import { createAzureWebLinker } from '../../../azure';
-import { createLocationEntity } from '../subscriptions/converters';
+import { getLocationEntityProps } from '../subscriptions/converters';
 import { createNetworkWatcherEntity } from './converters';
 
 const GUID_REGEX = new RegExp(
@@ -1714,23 +1715,35 @@ describe('rm-network-location-watcher-relationships', () => {
 
       await buildLocationNetworkWatcherRelationships(context);
 
-      const locationNetworkWatcherRelationships =
-        context.jobState.collectedRelationships;
-
-      expect(locationNetworkWatcherRelationships.length).toBe(
-        networkWatcherEntities.length,
+      // This currently exists in the newer SDK version, however, it's not yet used here
+      // Should be refactored after the version is bumped up (along with other places where it's used)
+      const {
+        targets: mappedRelationships,
+        rest: directRelationships,
+      } = filterGraphObjects(
+        context.jobState.collectedRelationships,
+        (r) => !!r._mapping,
       );
-      expect(
-        locationNetworkWatcherRelationships,
-      ).toMatchDirectRelationshipSchema({
-        schema: {
-          properties: {
-            _type: {
-              const: NetworkRelationships.LOCATION_HAS_NETWORK_WATCHER._type,
-            },
+
+      expect(directRelationships).toHaveLength(0);
+      expect(mappedRelationships.length).toBe(networkWatcherEntities.length);
+
+      const locationTargetEntity = createIntegrationEntity({
+        entityData: {
+          source: {},
+          assign: {
+            _key: 'azure_location_eastus',
+            _type: 'azure_location',
+            _class: ['Site'],
+            id:
+              '/subscriptions/779e9204-e1a5-49df-ad3f-9af3fdee6527/locations/eastus',
+            name: 'eastus',
+            displayName: 'East US',
           },
         },
       });
+
+      expect(mappedRelationships).toTargetEntities([locationTargetEntity]);
     }, 10000);
   });
 
@@ -1759,7 +1772,7 @@ describe('rm-network-location-watcher-relationships', () => {
       ],
       setData: {
         [subscriptionSetDataKeys.locationNameMap]: {
-          'real-location': createLocationEntity(webLinker, {
+          'real-location': getLocationEntityProps({
             name: 'real-location',
             id: 'location-id',
           }),

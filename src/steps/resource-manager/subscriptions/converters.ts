@@ -30,22 +30,20 @@ export function createSubscriptionEntity(
   });
 }
 
-export function createLocationEntity(
-  webLinker: AzureWebLinker,
-  data: Location,
-): Entity {
-  return createIntegrationEntity({
-    entityData: {
-      source: data,
-      assign: {
-        _key: data.id!,
-        _type: entities.LOCATION._type,
-        _class: entities.LOCATION._class,
-        id: data.id,
-        name: data.name,
-        displayName: data.displayName,
-        webLink: webLinker.portalResourceUrl(data.id),
-      },
-    },
-  });
+export function getLocationName(locationId: string) {
+  const parts = locationId.split('/');
+  return parts[parts.length - 1];
+}
+
+export function getLocationEntityProps(data: Location) {
+  return {
+    _key: `azure_location_${getLocationName(data.id!)}`,
+    _type: entities.LOCATION._type,
+    _class: entities.LOCATION._class,
+    // The only reason for keeping the id property is
+    // warn/map part of `fetchLocations` step
+    id: data.id,
+    name: data.name,
+    displayName: data.displayName,
+  };
 }

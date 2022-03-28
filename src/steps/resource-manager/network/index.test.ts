@@ -1,4 +1,5 @@
 import {
+  createIntegrationEntity,
   Entity,
   Relationship,
   RelationshipDirection,
@@ -1727,13 +1728,22 @@ describe('rm-network-location-watcher-relationships', () => {
       expect(directRelationships).toHaveLength(0);
       expect(mappedRelationships.length).toBe(networkWatcherEntities.length);
 
-      expect(
-        mappedRelationships.every(
-          (mappedRelationship) =>
-            mappedRelationship._key ===
-            '/subscriptions/779e9204-e1a5-49df-ad3f-9af3fdee6527/resourceGroups/test2/providers/Microsoft.Network/networkWatchers/NetworkWatcher_eastus|has|azure_location_eastus',
-        ),
-      ).toBe(true);
+      const locationTargetEntity = createIntegrationEntity({
+        entityData: {
+          source: {},
+          assign: {
+            _key: 'azure_location_eastus',
+            _type: 'azure_location',
+            _class: ['Site'],
+            id:
+              '/subscriptions/779e9204-e1a5-49df-ad3f-9af3fdee6527/locations/eastus',
+            name: 'eastus',
+            displayName: 'East US',
+          },
+        },
+      });
+
+      expect(mappedRelationships).toTargetEntities([locationTargetEntity]);
     }, 10000);
   });
 

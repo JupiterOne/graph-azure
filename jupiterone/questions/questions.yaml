@@ -3003,18 +3003,20 @@ questions:
     queries:
       - name: Bad
         query: |
-          FIND azure_vm THAT HAS azure_policy_state with complianceState != 'Compliant' 
-           THAT defines azure_policy_definition WITH displayName = (
-             "Audit Windows machines that do not have a maximum password age of 70 days" OR
-             "Audit Windows machines that do not have a minimum password age of 1 day" OR
-             "Audit Windows machines that do not have the password complexity setting enabled" OR
-             "Audit Windows machines that do not store passwords using reversible encryption" OR
-             "Audit Windows machines that allow re-use of the previous 24 passwords" OR
-             "Audit Windows machines that do not restrict the minimum password length to 14 characters" OR
-             "Audit Linux machines that allow remote connections from accounts without passwords" OR
-             "Audit Linux machines that do not have the passwd file permissions set to 0644" OR
-             "Audit Linux machines that have accounts without passwords"
-             )
+          FIND 
+            azure_vm THAT HAS azure_policy_state WITH complianceState != 'Compliant' THAT defines
+            azure_policy_definition WITH
+              displayName = (
+                "Audit Windows machines that do not have a maximum password age of 70 days" OR
+                "Audit Windows machines that do not have a minimum password age of 1 day" OR
+                "Audit Windows machines that do not have the password complexity setting enabled" OR
+                "Audit Windows machines that do not store passwords using reversible encryption" OR
+                "Audit Windows machines that allow re-use of the previous 24 passwords" OR
+                "Audit Windows machines that do not restrict the minimum password length to 14 characters" OR
+                "Audit Linux machines that allow remote connections from accounts without passwords" OR
+                "Audit Linux machines that do not have the passwd file permissions set to 0644" OR
+                "Audit Linux machines that have accounts without passwords"
+              )
     tags:
       - azure
       - hsbc

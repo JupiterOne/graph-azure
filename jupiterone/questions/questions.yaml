@@ -2984,21 +2984,18 @@ questions:
       Check whether a storage account is deployed with a private endpoint to a VNet, 
       and that internet access is blocked with a firewall
     queries:
-      - name: Informative
+      - name: bad
         query: |
           FIND azure_storage_account 
             THAT !connects azure_private_endpoint
-      - name: Informative
+      - name: bad
         query: |
-          FIND 
-            azure_storage_account WITH 
-              networkRuleSet.defaultAction != 'Deny' OR
-              networkRuleSet.allowedIpAddresses != ''
+          FIND azure_storage_account WITH networkRuleSet.defaultAction != 'Deny' OR networkRuleSet.allowedIpAddresses != ''
     tags:
       - azure
       - storage
       - public  
-  - id: integration-question-azure-Azure-virtual-machines-with-insecure-password-settings
+  - id: integration-question-azure-virtual-machines-with-insecure-password-settings
     title: What Azure virtual machines have insecure password security settings?
     description: Flags a Windows or Linux machine with insecure password settings
     queries:

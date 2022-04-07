@@ -2978,7 +2978,7 @@ questions:
     tags:
       - azure
       - access
-    - id: integration-question-azure-storage-accounts-that-allow-access-to-internet
+  - id: integration-question-azure-storage-accounts-that-allow-access-to-internet
     title: What Azure storage accounts allow access to the internet?
     description: >-
       Check whether a storage account is deployed with a private endpoint to a VNet, 

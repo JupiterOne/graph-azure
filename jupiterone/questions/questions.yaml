@@ -2984,13 +2984,12 @@ questions:
       Check whether a storage account is deployed with a private endpoint to a VNet, 
       and that internet access is blocked with a firewall
     queries:
-      - name: bad
-        query: |
-          FIND azure_storage_account 
-            THAT !connects azure_private_endpoint
-      - name: bad
-        query: |
-          FIND azure_storage_account WITH networkRuleSet.defaultAction != 'Deny' OR networkRuleSet.allowedIpAddresses != ''
+      - name: Storage account without private endpoints
+        resultsAre: BAD
+        query: FIND azure_storage_account THAT !connects azure_private_endpoint
+      - name: Storage accounts that allow access to internet
+        resultsAre: BAD
+        query: FIND azure_storage_account WITH networkRuleSet.defaultAction != 'Deny' OR networkRuleSet.allowedIpAddresses != ''
     tags:
       - azure
       - storage

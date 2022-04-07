@@ -2988,6 +2988,7 @@ questions:
         query: |
           FIND azure_storage_account 
             THAT !connects azure_private_endpoint
+      - name: Informative
         query: |
           FIND 
             azure_storage_account WITH 

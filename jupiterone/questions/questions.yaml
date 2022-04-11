@@ -2954,3 +2954,66 @@ questions:
         version: v1.3.1
         requirements:
           - '9.10'
+  - id: integration-question-azure-are-keyvault-secrets-older-than-60-days
+    title: Which of my Key Vault Secets are older than 60 days?
+    description: Identify which Key Vault Secrets are older than 60 days?
+    queries:
+      - name: Informative
+        query: |
+          FIND azure_keyvault_secret WITH updatedOn < Date.now - 60 days AS ks
+          RETURN ks.displayName, ks.enabled, ks.updatedOn, ks.createdOn, ks.expiresOn
+    tags:
+      - azure
+      - data
+  - id: integration-question-azure-who-has-access-to-key-vault-secret
+    title: Who has access to a Key Vault Secret?
+    description: Identify who has access to Key Vault Secrets
+    queries:
+      - name: Informative
+        query: |
+          FIND azure_keyvault_secret WITH enabled=true AS secret
+            THAT CONTAINS azure_keyvault_service AS service
+            THAT ALLOWS * AS x
+          RETURN secret.displayName, service.displayName, x.displayName
+    tags:
+      - azure
+      - access
+  - id: integration-question-azure-storage-accounts-that-allow-access-to-internet
+    title: What Azure storage accounts allow access to the internet?
+    description: >-
+      Check whether a storage account is deployed with a private endpoint to a VNet, 
+      and that internet access is blocked with a firewall
+    queries:
+      - name: Storage account without private endpoints
+        resultsAre: BAD
+        query: FIND azure_storage_account THAT !connects azure_private_endpoint
+      - name: Storage accounts that allow access to internet
+        resultsAre: BAD
+        query: FIND azure_storage_account WITH networkRuleSet.defaultAction != 'Deny' OR networkRuleSet.allowedIpAddresses != ''
+    tags:
+      - azure
+      - storage
+      - public  
+  - id: integration-question-azure-virtual-machines-with-insecure-password-settings
+    title: What Azure virtual machines have insecure password security settings?
+    description: Flags a Windows or Linux machine with insecure password settings
+    queries:
+      - name: Bad
+        query: |
+          FIND 
+            azure_vm THAT HAS azure_policy_state WITH complianceState != 'Compliant' THAT defines
+            azure_policy_definition WITH
+              displayName = (
+                "Audit Windows machines that do not have a maximum password age of 70 days" OR
+                "Audit Windows machines that do not have a minimum password age of 1 day" OR
+                "Audit Windows machines that do not have the password complexity setting enabled" OR
+                "Audit Windows machines that do not store passwords using reversible encryption" OR
+                "Audit Windows machines that allow re-use of the previous 24 passwords" OR
+                "Audit Windows machines that do not restrict the minimum password length to 14 characters" OR
+                "Audit Linux machines that allow remote connections from accounts without passwords" OR
+                "Audit Linux machines that do not have the passwd file permissions set to 0644" OR
+                "Audit Linux machines that have accounts without passwords"
+              )
+    tags:
+      - azure
+      - hsbc

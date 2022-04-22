@@ -2,6 +2,25 @@
 sourceId: managed:azure
 integrationDefinitionId: '${integration_definition_id}'
 questions:
+  - id: integration-question-azure-tenant-member-subscriptions
+    title: Which azure subscriptions are members of the same tenant?
+    description:
+      Returns a graph showing the relationships between azure_account (tenant), azure_management_group, and azure_subscription. Captures all subscriptions that are nested under three or fewer levels of management groups.
+    queries:
+      - name: Subscriptions that are part of the same tenant
+        resultsAre: Informative
+        query: |
+          FIND
+            azure_subscription 
+            (THAT HAS azure_management_group)?
+            (THAT HAS azure_management_group)?
+            THAT HAS azure_management_group
+            THAT HAS azure_account WITH 
+              id = '{{tenantId}}'
+          RETURN 
+            TREE
+    tags:
+      - azure
   - id: integration-question-azure-networking-internet-access
     title: What Azure resources are allow access to or from the Internet?
     description:

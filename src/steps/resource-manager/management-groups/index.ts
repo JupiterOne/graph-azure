@@ -16,6 +16,7 @@ import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { ManagementGroupClient } from './client';
 import {
   ManagementGroupEntities,
+  ManagementGroupMappedRelationships,
   ManagementGroupRelationships,
   ManagementGroupSteps,
 } from './constants';
@@ -145,7 +146,10 @@ export const managementGroupSteps: Step<
     relationships: [
       ManagementGroupRelationships.ACCOUNT_HAS_ROOT_MANAGEMENT_GROUP,
       ManagementGroupRelationships.MANAGEMENT_GROUP_CONTAINS_MANAGEMENT_GROUP,
-    ], // TODO add support for mapped relationship documentation
+    ],
+    mappedRelationships: [
+      ManagementGroupMappedRelationships.MANAGEMENT_GROUP_HAS_SUBSCRIPTION,
+    ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchManagementGroups,
   },

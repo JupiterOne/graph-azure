@@ -3018,7 +3018,7 @@ questions:
       - azure
       - hsbc
       
-        - id: managed-question-azure-policy
+  - id: managed-question-azure-policy
     title: >-
       What Azure Policies are being enforced?
     description: >-

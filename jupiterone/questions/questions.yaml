@@ -27,7 +27,7 @@ questions:
       a Host or Gateway entity.
     queries:
       - name: bad
-        query: |
+      - query: |
           find Internet that allows as rule azure_security_group as sg
             that protects * as i
             that (has|contains|connects|uses) (Host|Gateway) as h

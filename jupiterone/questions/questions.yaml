@@ -3017,7 +3017,6 @@ questions:
     tags:
       - azure
       - hsbc
-      
   - id: managed-question-azure-policy
     title: >-
       What Azure Policies are being enforced?
@@ -3036,3 +3035,41 @@ questions:
       - compliance
       - azure
       
+
+  - id: integration-question-azure-users-read-the-value-secret-in-any-key-vault
+    title: Can any users or groups read the value of a secret in any key vault?
+    description: Users should never have access to secrets in production accounts.
+    queries:
+      - name: Bad
+        query: |
+          FIND azure_keyvault_service 
+            (THAT HAS azure_resource_group)? 
+            (THAT HAS azure_subscription)? 
+            (THAT HAS azure_management_group)? 
+            THAT ALLOWS azure_role_assignment 
+            WITH dataActions = 'Microsoft.KeyVault/vaults/secrets/getSecret/action'
+            THAT ASSIGNED (azure_user|azure_user_group) AS principal
+          RETURN TREE
+    tags:
+      - azure
+      - secret
+      - keyvault
+  - id: integration-question-azure-users-granted-direct-access-to-resources
+    title: Are there any users that are granted direct access to resources?
+    description: 
+      User access should always be granted via membership in groups. 
+      Direct access is often a proxy for elevated privileges, and should be discouraged.
+    queries:
+      - name: Bad
+        query: |
+          FIND * AS any_resource 
+            (THAT HAS azure_resource_group)? 
+            (THAT HAS azure_subscription)? 
+            (THAT HAS azure_management_group)?
+            THAT ALLOWS azure_role_assignment 
+            THAT ASSIGNED azure_user
+          RETURN TREE
+    tags:
+      - azure
+      - access
+

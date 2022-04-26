@@ -3017,6 +3017,25 @@ questions:
     tags:
       - azure
       - hsbc
+  - id: managed-question-azure-policy
+    title: >-
+      What Azure Policies are being enforced?
+    description: >-
+      Find all configured Azure Policies.
+    queries:
+      - name: Azure Policies
+        resultsAre: GOOD
+        query: |
+          Find azure_policy_assignment as a
+            return a.name as PolicyName, 
+            a.description as Description, 
+            a.enforcementMode as EnforcementMode, 
+            a.scope as Scope, a.policyDefinitionId as PolicyDefinitionID
+    tags:
+      - compliance
+      - azure
+      
+
   - id: integration-question-azure-users-read-the-value-secret-in-any-key-vault
     title: Can any users or groups read the value of a secret in any key vault?
     description: Users should never have access to secrets in production accounts.
@@ -3053,3 +3072,4 @@ questions:
     tags:
       - azure
       - access
+

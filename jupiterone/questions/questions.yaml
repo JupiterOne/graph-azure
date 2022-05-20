@@ -44,6 +44,22 @@ questions:
       - azure
       - network
 
+  - id: integration-question-Azure-virtual-machine-disablePasswordAuthentication
+    title: Which Azure virtual machines that has allow all access with disablePasswordAuthentication?
+    description:
+      Returns a list of virtual machines that allows all access with disabledPasswordAuthentication.
+    queries:
+      - name: bad
+        query: |
+          FIND azure_vm WITH disablePasswordAuthentication = true AS v
+            THAT ASSIGNED azure_service_principal
+            THAT ALLOWS *
+          RETURN 
+            v.displayName,v.active,v.usesManagedDisks
+    tags:
+      - azure
+      - vm     
+
   ##########################################
   # CIS 1 - Identity & Access Management
   ##########################################

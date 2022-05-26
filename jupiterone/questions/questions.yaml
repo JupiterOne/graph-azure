@@ -45,7 +45,7 @@ questions:
       - network
 
   - id: integration-question-Azure-virtual-machine-disablePasswordAuthentication
-    title: Which Azure virtual machines that has allow all access with disablePasswordAuthentication?
+    title: Which Azure virtual machines have allow-all access with disablePasswordAuthentication?
     description:
       Returns a list of virtual machines that allows all access with disabledPasswordAuthentication.
     queries:

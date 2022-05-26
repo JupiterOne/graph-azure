@@ -53,9 +53,11 @@ questions:
         query: |
           FIND azure_vm WITH disablePasswordAuthentication = true AS v
             THAT ASSIGNED azure_service_principal
-            THAT ALLOWS *
+            THAT ASSIGNED azure_role_assignment WITH actions = '*'
+            THAT ALLOWS azure_subscription as s
           RETURN 
-            v.displayName,v.active,v.usesManagedDisks
+            v.displayName,v.active,v.usesManagedDisks,
+            s.displayName
     tags:
       - azure
       - vm     

@@ -175,7 +175,7 @@ describe.skip('ad-user-registration-details', () => {
       },
     });
 
-    await expect(fetchUserRegistrationDetails(context)).rejects.toThrow(
+    await expect(fetchUserRegistrationDetails(context)).resolves.not.toThrow(
       IntegrationProviderAuthorizationError,
     );
   });

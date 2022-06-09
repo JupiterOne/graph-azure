@@ -103,6 +103,7 @@ information:
    1. Assign each of the three roles to the "JupiterOne" member
       1. JupiterOne Reader
       1. Reader
+      1. Key Vault Reader
       1. Management Group Reader (If using `Configure Subscription Instances`
          flag in JupiterOne)
 

@@ -38,6 +38,7 @@ export async function buildComputeNetworkRelationships(
         );
       }
 
+      const subnetIdSet = new Set<string>();
       for (const nicWithId of vmData.networkProfile?.networkInterfaces || []) {
         const nicEntity = await jobState.findEntity(nicWithId.id as string);
         if (!nicEntity) {
@@ -74,7 +75,6 @@ export async function buildComputeNetworkRelationships(
           continue;
         }
 
-        let subnetId: string | undefined;
         for (const ipConfiguration of nic.ipConfigurations || []) {
           if (ipConfiguration.publicIPAddress) {
             const publicIpEntity = await jobState.findEntity(
@@ -102,33 +102,33 @@ export async function buildComputeNetworkRelationships(
             }
           }
 
-          if (ipConfiguration.subnet && !subnetId) {
-            subnetId = ipConfiguration.subnet.id;
+          if (ipConfiguration.subnet?.id) {
+            subnetIdSet.add(ipConfiguration.subnet.id);
           }
         }
+      }
 
-        if (subnetId) {
-          const subnetEntity = await jobState.findEntity(subnetId);
-          if (subnetEntity) {
-            await jobState.addRelationship(
-              createDirectRelationship({
-                from: subnetEntity,
-                _class: InterserviceRelationships.SUBNET_HAS_VM._class,
-                to: vmEntity,
-                properties: {
-                  _type: InterserviceRelationships.SUBNET_HAS_VM._type,
-                },
-              }),
-            );
-          } else {
-            logger.warn(
-              {
-                vmId: vmData.id,
-                subnetId: subnetId,
+      for (const subnetId of subnetIdSet) {
+        const subnetEntity = await jobState.findEntity(subnetId);
+        if (subnetEntity) {
+          await jobState.addRelationship(
+            createDirectRelationship({
+              from: subnetEntity,
+              _class: InterserviceRelationships.SUBNET_HAS_VM._class,
+              to: vmEntity,
+              properties: {
+                _type: InterserviceRelationships.SUBNET_HAS_VM._type,
               },
-              'Could not find subnet in job state',
-            );
-          }
+            }),
+          );
+        } else {
+          logger.warn(
+            {
+              vmId: vmData.id,
+              subnetId: subnetId,
+            },
+            'Could not find subnet in job state',
+          );
         }
       }
     },

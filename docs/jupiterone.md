@@ -117,11 +117,11 @@ account_:
 - Key Permissions
   - Key Management Operations
     - List
-- Secret Permisisons
+- Secret Permissions
   - Secret Management Operations
     - List
 
-The steps necesssary for that are outlined on this page:
+The steps necessary for that are outlined on this page:
 [Assign a Key Vault access policy](https://go.microsoft.com/fwlink/?linkid=2125287).
 
 ### In JupiterOne

@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Fixed
 
+- Fixed `DUPLICATE_KEY_DETECTED` in `rm-compute-network-relationships` step
 - Fixed `DUPLICATE_KEY_DETECTED` in `rm-keyvault-principal-relationships` step
 
 ## [5.37.0] - 2022-03-28

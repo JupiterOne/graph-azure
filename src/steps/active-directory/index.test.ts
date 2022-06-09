@@ -155,7 +155,7 @@ describe.skip('ad-user-registration-details', () => {
     });
   });
 
-  test.only('403', async () => {
+  test('403', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'ad-user-registration-details-403',
@@ -175,7 +175,7 @@ describe.skip('ad-user-registration-details', () => {
       },
     });
 
-    await expect(fetchUserRegistrationDetails(context)).rejects.toThrow(
+    await expect(fetchUserRegistrationDetails(context)).resolves.not.toThrow(
       IntegrationProviderAuthorizationError,
     );
   });

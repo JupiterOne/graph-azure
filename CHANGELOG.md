@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.37.0] - 2022-06-10
+
 ### Fixed
 
 - Fixed `DUPLICATE_KEY_DETECTED` in `rm-compute-network-relationships` step

@@ -129,7 +129,7 @@ export class DirectoryGraphClient extends GraphClient {
       const resourceUrl = '/reports/credentialUserRegistrationDetails';
       this.logger.info('Iterating credential user registration details.');
 
-      return this.iterateResources({
+      return await this.iterateResources({
         resourceUrl,
         options: { useBeta: true },
         callback,

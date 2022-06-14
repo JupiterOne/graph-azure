@@ -262,6 +262,7 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [FrontDoorStepIds.FETCH_FRONTDOORS]: { disabled: true },
+      [FrontDoorStepIds.FETCH_RULES_ENGINES]: { disabled: true },
     });
   });
 
@@ -404,6 +405,7 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [FrontDoorStepIds.FETCH_FRONTDOORS]: { disabled: true },
+      [FrontDoorStepIds.FETCH_RULES_ENGINES]: { disabled: true },
     });
   });
 
@@ -546,6 +548,7 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [FrontDoorStepIds.FETCH_FRONTDOORS]: { disabled: false },
+      [FrontDoorStepIds.FETCH_RULES_ENGINES]: { disabled: false },
     });
   });
 
@@ -690,6 +693,7 @@ describe('getStepStartStates', () => {
         disabled: false,
       },
       [FrontDoorStepIds.FETCH_FRONTDOORS]: { disabled: true },
+      [FrontDoorStepIds.FETCH_RULES_ENGINES]: { disabled: true },
     });
   });
 });

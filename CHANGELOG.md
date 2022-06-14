@@ -8,11 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.38.0] - 2022-06-14
+
 ### Added
 
 - Added `azure_frontdoor` entities
 
-## [5.37.0] - 2022-06-10
+## [5.37.1] - 2022-06-10
 
 ### Fixed
 

@@ -1,5 +1,6 @@
 import { executeStepWithDependencies } from '@jupiterone/integration-sdk-testing';
 import {
+  getMatchRequestsBy,
   Recording,
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
@@ -15,16 +16,20 @@ afterEach(async () => {
 });
 
 test('rm-fetch-frontdoors', async () => {
-  recording = setupAzureRecording({
-    name: 'rm-fetch-frontdoors',
-    directory: __dirname,
-  });
-
   const stepTestConfig = getStepTestConfigForStep(
     FrontDoorStepIds.FETCH_FRONTDOORS,
   );
 
+  recording = setupAzureRecording({
+    name: 'rm-fetch-frontdoors',
+    directory: __dirname,
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: stepTestConfig.instanceConfig,
+      }),
+    },
+  });
+
   const stepResults = await executeStepWithDependencies(stepTestConfig);
-  console.log(stepResults.collectedEntities);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
 }, 10_000);

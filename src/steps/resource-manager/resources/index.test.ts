@@ -155,7 +155,7 @@ test('step - resource groups', async () => {
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'Group',
+    _class: ['Group'],
     schema: {
       additionalProperties: false,
       properties: {

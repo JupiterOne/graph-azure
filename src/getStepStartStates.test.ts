@@ -115,6 +115,7 @@ import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/con
 import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
 import { Step } from '@jupiterone/integration-sdk-core';
 import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
+import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 
 describe('getStepStartStates', () => {
   test('all steps represented', () => {
@@ -260,6 +261,7 @@ describe('getStepStartStates', () => {
       [ManagementGroupSteps.MANAGEMENT_GROUPS]: {
         disabled: true,
       },
+      [FrontDoorStepIds.FETCH_FRONTDOORS]: { disabled: true },
     });
   });
 
@@ -401,6 +403,7 @@ describe('getStepStartStates', () => {
       [ManagementGroupSteps.MANAGEMENT_GROUPS]: {
         disabled: true,
       },
+      [FrontDoorStepIds.FETCH_FRONTDOORS]: { disabled: true },
     });
   });
 
@@ -542,6 +545,7 @@ describe('getStepStartStates', () => {
       [ManagementGroupSteps.MANAGEMENT_GROUPS]: {
         disabled: true,
       },
+      [FrontDoorStepIds.FETCH_FRONTDOORS]: { disabled: false },
     });
   });
 
@@ -685,6 +689,7 @@ describe('getStepStartStates', () => {
       [ManagementGroupSteps.MANAGEMENT_GROUPS]: {
         disabled: false,
       },
+      [FrontDoorStepIds.FETCH_FRONTDOORS]: { disabled: true },
     });
   });
 });

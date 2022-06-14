@@ -299,7 +299,7 @@ test('step - storage queues', async () => {
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'Queue',
+    _class: ['Queue'],
     schema: {
       additionalProperties: false,
       properties: {

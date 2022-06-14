@@ -34,6 +34,7 @@ import { appServiceSteps } from './steps/resource-manager/appservice';
 import { policyInsightSteps } from './steps/resource-manager/policy-insights';
 import { managementGroupSteps } from './steps/resource-manager/management-groups';
 import { containerServicesSteps } from './steps/resource-manager/container-services';
+import { frontdoorSteps } from './steps/resource-manager/frontdoor';
 
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
   instanceConfigFields: {
@@ -89,6 +90,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
     ...containerInstanceSteps,
     // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last. See SDK #326: https://github.com/JupiterOne/sdk/issues/326
     // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
+    ...frontdoorSteps,
     ...eventGridSteps,
     ...advisorSteps,
     ...securitySteps,

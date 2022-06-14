@@ -52,16 +52,16 @@ Graph API][1]. Azure Resource Manager is authenticated and accessed through
 To create the App Registration:
 
 1. Go to your Azure portal
-1. Navigate to **App registrations**
-1. Create a new App registration, using the **Name** "JupiterOne", selecting
+2. Navigate to **App registrations**
+3. Create a new App registration, using the **Name** "JupiterOne", selecting
    **Accounts in this organizational directory only**, with **no** "Redirect
    URI"
-1. Navigate to the **Overview** page of the new app
-1. Copy the **Application (client) ID**
-1. Copy the **Directory (tenant) ID**
-1. Navigate to the **Certificates & secrets** section
-1. Create a new client secret
-1. Copy the generated secret **Value** (you only get one chance!)
+4. Navigate to the **Overview** page of the new app
+5. Copy the **Application (client) ID**
+6. Copy the **Directory (tenant) ID**
+7. Navigate to the **Certificates & secrets** section
+8. Create a new client secret
+9. Copy the generated secret **Value** (you only get one chance!)
 
 #### API Permissions (Azure Active Directory)
 
@@ -69,13 +69,13 @@ Grant permission to read Microsoft Graph information:
 
 1. Navigate to **API permissions**, choose **Microsoft Graph**, then
    **Application Permissions**
-1. Grant the following permissions to the application:
+2. Grant the following permissions to the application:
 
    - `Directory.Read.All`
    - `Policy.Read.All`
    - `Reports.Read.All`
 
-1. Grant admin consent for this directory for the permissions above
+3. Grant admin consent for this directory for the permissions above
 
 #### IAM Roles (Azure Management Groups / Subscriptions)
 
@@ -92,19 +92,19 @@ information:
    **Management Groups**, then to the
    [Tenant Root Group](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#root-management-group-for-each-directory).
 
-1. Create custom role "JupiterOne Reader"
+2. Create custom role "JupiterOne Reader"
    1. Navigate to **Access control (IAM)** -> **Add** -> **Add custom role**
-   1. Create a custom role called "JupiterOne Reader" with the following
+   2. Create a custom role called "JupiterOne Reader" with the following
       permissions:
       - `Microsoft.PolicyInsights/policyStates/queryResults/action`
       - `Microsoft.Web/sites/config/list/Action`
-1. Assign Roles to "JupiterOne" App
+3. Assign Roles to "JupiterOne" App
    1. Navigate to **Access control (IAM)** -> **Add** -> **Add role assignment**
-   1. Assign each of the three roles to the "JupiterOne" member
+   2. Assign each of the three roles to the "JupiterOne" member
       1. JupiterOne Reader
-      1. Reader
-      1. Key Vault Reader
-      1. Management Group Reader (If using `Configure Subscription Instances`
+      2. Reader
+      3. Key Vault Reader
+      4. Management Group Reader (If using `Configure Subscription Instances`
          flag in JupiterOne)
 
 ### Key Vault Access Policy
@@ -148,16 +148,16 @@ The steps necessary for that are outlined on this page:
 
 4. Click **Create Configuration** once all values are provided.
 
-### Troubleshooting
+### [Troubleshooting](#azure-troubleshooting)
 
-#### Authentication Errors
+#### Authentication 
 
 If the Azure integration does not complete, and you encounter a message like
 `[validation_failure] Error occurred while validating integration configuration`
 in your job log, check the following common configuration errors:
 
 - **Verify the Application (client) ID and Application (client) Secret:** Make
-  sure that you've verified the proper value for client ID and client secret.
+  sure that you've verified the proper value for client ID and #client secret.
   The client secret has both a **Value** property and a **Secret ID** property.
   The **Secret ID** is unused - make sure you haven't accidentally used the
   **Secret ID** as the **Client ID**.
@@ -188,252 +188,252 @@ https://github.com/JupiterOne/sdk/blob/main/docs/integrations/development.md
 
 The following entities are created:
 
-| Resources                                      | Entity `_type`                                    | Entity `_class`                    |
-| ---------------------------------------------- | ------------------------------------------------- | ---------------------------------- |
-| FrontDoor                                      | `azure_frontdoor`                                 | `Service`                          |
-| [AD] Account                                   | `azure_account`                                   | `Account`                          |
-| [AD] Group                                     | `azure_user_group`                                | `UserGroup`                        |
-| [AD] Group Member                              | `azure_group_member`                              | `User`                             |
-| [AD] Service Principal                         | `azure_service_principal`                         | `Service`                          |
-| [AD] User                                      | `azure_user`                                      | `User`                             |
-| [RM] API Management API                        | `azure_api_management_api`                        | `ApplicationEndpoint`              |
-| [RM] API Management Service                    | `azure_api_management_service`                    | `Gateway`                          |
-| [RM] Advisor Recommendation                    | `azure_advisor_recommendation`                    | `Finding`                          |
-| [RM] App Service Plan                          | `azure_app_service_plan`                          | `Configuration`                    |
-| [RM] Azure Kubernetes Cluster                  | `azure_kubernetes_cluster`                        | `Cluster`                          |
-| [RM] Azure Managed Disk                        | `azure_managed_disk`                              | `DataStore`, `Disk`                |
-| [RM] Batch Account                             | `azure_batch_account`                             | `Service`                          |
-| [RM] Batch Application                         | `azure_batch_application`                         | `Process`                          |
-| [RM] Batch Certificate                         | `azure_batch_certificate`                         | `Certificate`                      |
-| [RM] Batch Pool                                | `azure_batch_pool`                                | `Cluster`                          |
-| [RM] CDN Endpoint                              | `azure_cdn_endpoint`                              | `Gateway`                          |
-| [RM] CDN Profile                               | `azure_cdn_profile`                               | `Service`                          |
-| [RM] Classic Admin                             | `azure_classic_admin_group`                       | `UserGroup`                        |
-| [RM] Container                                 | `azure_container`                                 | `Container`                        |
-| [RM] Container Group                           | `azure_container_group`                           | `Group`                            |
-| [RM] Container Registry                        | `azure_container_registry`                        | `DataStore`                        |
-| [RM] Container Registry Webhook                | `azure_container_registry_webhook`                | `ApplicationEndpoint`              |
-| [RM] Container Volume                          | `azure_container_volume`                          | `Disk`                             |
-| [RM] Cosmos DB Account                         | `azure_cosmosdb_account`                          | `Account`, `Service`               |
-| [RM] Cosmos DB Database                        | `azure_cosmosdb_sql_database`                     | `Database`, `DataStore`            |
-| [RM] DNS Record Set                            | `azure_dns_record_set`                            | `DomainRecord`                     |
-| [RM] DNS Zone                                  | `azure_dns_zone`                                  | `DomainZone`                       |
-| [RM] Event Grid Domain                         | `azure_event_grid_domain`                         | `Service`                          |
-| [RM] Event Grid Domain Topic                   | `azure_event_grid_domain_topic`                   | `Queue`                            |
-| [RM] Event Grid Topic                          | `azure_event_grid_topic`                          | `Queue`                            |
-| [RM] Event Grid Topic Subscription             | `azure_event_grid_topic_subscription`             | `Subscription`                     |
-| [RM] Function App                              | `azure_function_app`                              | `Function`                         |
-| [RM] Gallery                                   | `azure_gallery`                                   | `Repository`                       |
-| [RM] Image                                     | `azure_image`                                     | `Image`                            |
-| [RM] Key Vault                                 | `azure_keyvault_service`                          | `Service`                          |
-| [RM] Key Vault Key                             | `azure_keyvault_key`                              | `Key`                              |
-| [RM] Key Vault Secret                          | `azure_keyvault_secret`                           | `Secret`                           |
-| [RM] Load Balancer                             | `azure_lb`                                        | `Gateway`                          |
-| [RM] Location                                  | `azure_location`                                  | `Site`                             |
-| [RM] Management Group                          | `azure_management_group`                          | `Group`                            |
-| [RM] MariaDB Database                          | `azure_mariadb_database`                          | `Database`, `DataStore`            |
-| [RM] MariaDB Server                            | `azure_mariadb_server`                            | `Database`, `DataStore`, `Host`    |
-| [RM] Monitor Activity Log Alert                | `azure_monitor_activity_log_alert`                | `Rule`                             |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Log Profile                       | `azure_monitor_log_profile`                       | `Configuration`                    |
-| [RM] MySQL Database                            | `azure_mysql_database`                            | `Database`, `DataStore`            |
-| [RM] MySQL Server                              | `azure_mysql_server`                              | `Database`, `DataStore`, `Host`    |
-| [RM] Network Firewall                          | `azure_network_firewall`                          | `Firewall`                         |
-| [RM] Network Interface                         | `azure_nic`                                       | `NetworkInterface`                 |
-| [RM] Network Watcher                           | `azure_network_watcher`                           | `Resource`                         |
-| [RM] Policy Assignment                         | `azure_policy_assignment`                         | `ControlPolicy`                    |
-| [RM] Policy Definition                         | `azure_policy_definition`                         | `Rule`                             |
-| [RM] Policy Set Definition                     | `azure_policy_set_definition`                     | `Ruleset`                          |
-| [RM] Policy State                              | `azure_policy_state`                              | `Review`                           |
-| [RM] PostgreSQL Database                       | `azure_postgresql_database`                       | `Database`, `DataStore`            |
-| [RM] PostgreSQL Server                         | `azure_postgresql_server`                         | `Database`, `DataStore`, `Host`    |
-| [RM] PostgreSQL Server Firewall Rule           | `azure_postgresql_server_firewall_rule`           | `Firewall`                         |
-| [RM] Private DNS Record Set                    | `azure_private_dns_record_set`                    | `DomainRecord`                     |
-| [RM] Private DNS Zone                          | `azure_private_dns_zone`                          | `DomainZone`                       |
-| [RM] Private Endpoint                          | `azure_private_endpoint`                          | `NetworkEndpoint`                  |
-| [RM] Public IP Address                         | `azure_public_ip`                                 | `IpAddress`                        |
-| [RM] Redis Cache                               | `azure_redis_cache`                               | `Database`, `DataStore`, `Cluster` |
-| [RM] Redis Firewall Rule                       | `azure_firewall_rule`                             | `Firewall`                         |
-| [RM] Resource Group                            | `azure_resource_group`                            | `Group`                            |
-| [RM] Resource Lock                             | `azure_resource_lock`                             | `Rule`                             |
-| [RM] Role Assignment                           | `azure_role_assignment`                           | `AccessPolicy`                     |
-| [RM] Role Definition                           | `azure_role_definition`                           | `AccessRole`                       |
-| [RM] SQL Database                              | `azure_sql_database`                              | `Database`, `DataStore`            |
-| [RM] SQL Server                                | `azure_sql_server`                                | `Database`, `DataStore`, `Host`    |
-| [RM] SQL Server Active Directory Admin         | `azure_sql_server_active_directory_admin`         | `AccessRole`                       |
-| [RM] SQL Server Firewall Rule                  | `azure_sql_server_firewall_rule`                  | `Firewall`                         |
-| [RM] Security Assessment                       | `azure_security_assessment`                       | `Assessment`                       |
+| Resources                                | Entity `_type`                           | Entity `_class`                    |
+| ---------------------------------------- | ---------------------------------------- | ---------------------------------- |
+| FrontDoor                                | `azure_frontdoor`                        | `Service`                          |
+| [AD] Account                             | `azure_account`                          | `Account`                          |
+| [AD] Group                               | `azure_user_group`                       | `UserGroup`                        |
+| [AD] Group Member                        | `azure_group_member`                     | `User`                             |
+| [AD] Service Principal                   | `azure_service_principal`                | `Service`                          |
+| [AD] User                                | `azure_user`                             | `User`                             |
+| [RM] API Management API                  | `azure_api_management_api`               | `ApplicationEndpoint`              |
+| [RM] API Management Service              | `azure_api_management_service`           | `Gateway`                          |
+| [RM] Advisor Recommendation              | `azure_advisor_recommendation`           | `Finding`                          |
+| [RM] App Service Plan                    | `azure_app_service_plan`                 | `Configuration`                    |
+| [RM] Azure Kubernetes Cluster            | `azure_kubernetes_cluster`               | `Cluster`                          |
+| [RM] Azure Managed Disk                  | `azure_managed_disk`                     | `DataStore`, `Disk`                |
+| [RM] Batch Account                       | `azure_batch_account`                    | `Service`                          |
+| [RM] Batch Application                   | `azure_batch_application`                | `Process`                          |
+| [RM] Batch Certificate                   | `azure_batch_certificate`                | `Certificate`                      |
+| [RM] Batch Pool                          | `azure_batch_pool`                       | `Cluster`                          |
+| [RM] CDN Endpoint                        | `azure_cdn_endpoint`                     | `Gateway`                          |
+| [RM] CDN Profile                         | `azure_cdn_profile`                      | `Service`                          |
+| [RM] Classic Admin                       | `azure_classic_admin_group`              | `UserGroup`                        |
+| [RM] Container                           | `azure_container`                        | `Container`                        |
+| [RM] Container Group                     | `azure_container_group`                  | `Group`                            |
+| [RM] Container Registry                  | `azure_container_registry`               | `DataStore`                        |
+| [RM] Container Registry Webhook          | `azure_container_registry_webhook`       | `ApplicationEndpoint`              |
+| [RM] Container Volume                    | `azure_container_volume`                 | `Disk`                             |
+| [RM] Cosmos DB Account                   | `azure_cosmosdb_account`                 | `Account`, `Service`               |
+| [RM] Cosmos DB Database                  | `azure_cosmosdb_sql_database`            | `Database`, `DataStore`            |
+| [RM] DNS Record Set                      | `azure_dns_record_set`                   | `DomainRecord`                     |
+| [RM] DNS Zone                            | `azure_dns_zone`                         | `DomainZone`                       |
+| [RM] Event Grid Domain                   | `azure_event_grid_domain`                | `Service`                          |
+| [RM] Event Grid Domain Topic             | `azure_event_grid_domain_topic`          | `Queue`                            |
+| [RM] Event Grid Topic                    | `azure_event_grid_topic`                 | `Queue`                            |
+| [RM] Event Grid Topic Subscription       | `azure_event_grid_topic_subscription`    | `Subscription`                     |
+| [RM] Function App                        | `azure_function_app`                     | `Function`                         |
+| [RM] Gallery                             | `azure_gallery`                          | `Repository`                       |
+| [RM] Image                               | `azure_image`                            | `Image`                            |
+| [RM] Key Vault                           | `azure_keyvault_service`                 | `Service`                          |
+| [RM] Key Vault Key                       | `azure_keyvault_key`                     | `Key`                              |
+| [RM] Key Vault Secret                    | `azure_keyvault_secret`                  | `Secret`                           |
+| [RM] Load Balancer                       | `azure_lb`                               | `Gateway`                          |
+| [RM] Location                            | `azure_location`                         | `Site`                             |
+| [RM] Management Group                    | `azure_management_group`                 | `Group`                            |
+| [RM] MariaDB Database                    | `azure_mariadb_database`                 | `Database`, `DataStore`            |
+| [RM] MariaDB Server                      | `azure_mariadb_server`                   | `Database`, `DataStore`, `Host`    |
+| [RM] Monitor Activity Log Alert          | `azure_monitor_activity_log_alert`       | `Rule`                             |
+| [RM] Monitor Diagnostic Settings Resource | `azure_diagnostic_setting`               | `Configuration`                    |
+| [RM] Monitor Log Profile                 | `azure_monitor_log_profile`              | `Configuration`                    |
+| [RM] MySQL Database                      | `azure_mysql_database`                   | `Database`, `DataStore`            |
+| [RM] MySQL Server                        | `azure_mysql_server`                     | `Database`, `DataStore`, `Host`    |
+| [RM] Network Firewall                    | `azure_network_firewall`                 | `Firewall`                         |
+| [RM] Network Interface                   | `azure_nic`                              | `NetworkInterface`                 |
+| [RM] Network Watcher                     | `azure_network_watcher`                  | `Resource`                         |
+| [RM] Policy Assignment                   | `azure_policy_assignment`                | `ControlPolicy`                    |
+| [RM] Policy Definition                   | `azure_policy_definition`                | `Rule`                             |
+| [RM] Policy Set Definition               | `azure_policy_set_definition`            | `Ruleset`                          |
+| [RM] Policy State                        | `azure_policy_state`                     | `Review`                           |
+| [RM] PostgreSQL Database                 | `azure_postgresql_database`              | `Database`, `DataStore`            |
+| [RM] PostgreSQL Server                   | `azure_postgresql_server`                | `Database`, `DataStore`, `Host`    |
+| [RM] PostgreSQL Server Firewall Rule     | `azure_postgresql_server_firewall_rule`  | `Firewall`                         |
+| [RM] Private DNS Record Set              | `azure_private_dns_record_set`           | `DomainRecord`                     |
+| [RM] Private DNS Zone                    | `azure_private_dns_zone`                 | `DomainZone`                       |
+| [RM] Private Endpoint                    | `azure_private_endpoint`                 | `NetworkEndpoint`                  |
+| [RM] Public IP Address                   | `azure_public_ip`                        | `IpAddress`                        |
+| [RM] Redis Cache                         | `azure_redis_cache`                      | `Database`, `DataStore`, `Cluster` |
+| [RM] Redis Firewall Rule                 | `azure_firewall_rule`                    | `Firewall`                         |
+| [RM] Resource Group                      | `azure_resource_group`                   | `Group`                            |
+| [RM] Resource Lock                       | `azure_resource_lock`                    | `Rule`                             |
+| [RM] Role Assignment                     | `azure_role_assignment`                  | `AccessPolicy`                     |
+| [RM] Role Definition                     | `azure_role_definition`                  | `AccessRole`                       |
+| [RM] SQL Database                        | `azure_sql_database`                     | `Database`, `DataStore`            |
+| [RM] SQL Server                          | `azure_sql_server`                       | `Database`, `DataStore`, `Host`    |
+| [RM] SQL Server Active Directory Admin   | `azure_sql_server_active_directory_admin` | `AccessRole`                       |
+| [RM] SQL Server Firewall Rule            | `azure_sql_server_firewall_rule`         | `Firewall`                         |
+| [RM] Security Assessment                 | `azure_security_assessment`              | `Assessment`                       |
 | [RM] Security Center Auto Provisioning Setting | `azure_security_center_auto_provisioning_setting` | `Configuration`                    |
-| [RM] Security Center Setting                   | `azure_security_center_setting`                   | `Configuration`                    |
-| [RM] Security Center Subscription Pricing      | `azure_security_center_subscription_pricing`      | `Configuration`                    |
-| [RM] Security Contact                          | `azure_security_center_contact`                   | `Resource`                         |
-| [RM] Security Group                            | `azure_security_group`                            | `Firewall`                         |
-| [RM] Security Group Flow Logs                  | `azure_security_group_flow_logs`                  | `Logs`                             |
-| [RM] Service Bus Namespace                     | `azure_service_bus_namespace`                     | `Service`                          |
-| [RM] Service Bus Queue                         | `azure_service_bus_queue`                         | `Queue`                            |
-| [RM] Service Bus Subscription                  | `azure_service_bus_subscription`                  | `Subscription`                     |
-| [RM] Service Bus Topic                         | `azure_service_bus_topic`                         | `Queue`                            |
-| [RM] Shared Image                              | `azure_shared_image`                              | `Image`                            |
-| [RM] Shared Image Version                      | `azure_shared_image_version`                      | `Image`                            |
-| [RM] Storage Account                           | `azure_storage_account`                           | `Service`                          |
-| [RM] Storage Container                         | `azure_storage_container`                         | `DataStore`                        |
-| [RM] Storage File Share                        | `azure_storage_file_share`                        | `DataStore`                        |
-| [RM] Storage Queue                             | `azure_storage_queue`                             | `Queue`                            |
-| [RM] Storage Table                             | `azure_storage_table`                             | `DataStore`, `Database`            |
-| [RM] Subnet                                    | `azure_subnet`                                    | `Network`                          |
-| [RM] Subscription                              | `azure_subscription`                              | `Account`                          |
-| [RM] Virtual Machine                           | `azure_vm`                                        | `Host`                             |
-| [RM] Virtual Machine Extension                 | `azure_vm_extension`                              | `Application`                      |
-| [RM] Virtual Network                           | `azure_vnet`                                      | `Network`                          |
-| [RM] Web App                                   | `azure_web_app`                                   | `Application`                      |
+| [RM] Security Center Setting             | `azure_security_center_setting`          | `Configuration`                    |
+| [RM] Security Center Subscription Pricing | `azure_security_center_subscription_pricing` | `Configuration`                    |
+| [RM] Security Contact                    | `azure_security_center_contact`          | `Resource`                         |
+| [RM] Security Group                      | `azure_security_group`                   | `Firewall`                         |
+| [RM] Security Group Flow Logs            | `azure_security_group_flow_logs`         | `Logs`                             |
+| [RM] Service Bus Namespace               | `azure_service_bus_namespace`            | `Service`                          |
+| [RM] Service Bus Queue                   | `azure_service_bus_queue`                | `Queue`                            |
+| [RM] Service Bus Subscription            | `azure_service_bus_subscription`         | `Subscription`                     |
+| [RM] Service Bus Topic                   | `azure_service_bus_topic`                | `Queue`                            |
+| [RM] Shared Image                        | `azure_shared_image`                     | `Image`                            |
+| [RM] Shared Image Version                | `azure_shared_image_version`             | `Image`                            |
+| [RM] Storage Account                     | `azure_storage_account`                  | `Service`                          |
+| [RM] Storage Container                   | `azure_storage_container`                | `DataStore`                        |
+| [RM] Storage File Share                  | `azure_storage_file_share`               | `DataStore`                        |
+| [RM] Storage Queue                       | `azure_storage_queue`                    | `Queue`                            |
+| [RM] Storage Table                       | `azure_storage_table`                    | `DataStore`, `Database`            |
+| [RM] Subnet                              | `azure_subnet`                           | `Network`                          |
+| [RM] Subscription                        | `azure_subscription`                     | `Account`                          |
+| [RM] Virtual Machine                     | `azure_vm`                               | `Host`                             |
+| [RM] Virtual Machine Extension           | `azure_vm_extension`                     | `Application`                      |
+| [RM] Virtual Network                     | `azure_vnet`                             | `Network`                          |
+| [RM] Web App                             | `azure_web_app`                          | `Application`                      |
 
 ### Relationships
 
 The following relationships are created:
 
-| Source Entity `_type`              | Relationship `_class` | Target Entity `_type`                             |
-| ---------------------------------- | --------------------- | ------------------------------------------------- |
-| `azure_account`                    | **HAS**               | `azure_user_group`                                |
-| `azure_account`                    | **HAS**               | `azure_keyvault_service`                          |
-| `azure_account`                    | **HAS**               | `azure_management_group`                          |
-| `azure_account`                    | **HAS**               | `azure_user`                                      |
-| `azure_api_management_service`     | **HAS**               | `azure_api_management_api`                        |
-| `azure_security_assessment`        | **IDENTIFIED**        | `azure_advisor_recommendation`                    |
-| `azure_batch_account`              | **HAS**               | `azure_batch_application`                         |
-| `azure_batch_account`              | **HAS**               | `azure_batch_certificate`                         |
-| `azure_batch_account`              | **HAS**               | `azure_batch_pool`                                |
-| `azure_cdn_profile`                | **HAS**               | `azure_cdn_endpoint`                              |
-| `azure_classic_admin_group`        | **HAS**               | `azure_user`                                      |
-| `azure_container_group`            | **HAS**               | `azure_container`                                 |
-| `azure_container_group`            | **HAS**               | `azure_container_volume`                          |
-| `azure_container_registry`         | **HAS**               | `azure_container_registry_webhook`                |
-| `azure_container`                  | **USES**              | `azure_container_volume`                          |
-| `azure_container_volume`           | **USES**              | `azure_storage_file_share`                        |
-| `azure_cosmosdb_account`           | **HAS**               | `azure_cosmosdb_sql_database`                     |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_dns_zone`                   | **HAS**               | `azure_dns_record_set`                            |
-| `azure_event_grid_domain`          | **HAS**               | `azure_event_grid_domain_topic`                   |
-| `azure_event_grid_domain_topic`    | **HAS**               | `azure_event_grid_topic_subscription`             |
-| `azure_event_grid_topic`           | **HAS**               | `azure_event_grid_topic_subscription`             |
-| `azure_function_app`               | **USES**              | `azure_app_service_plan`                          |
-| `azure_gallery`                    | **CONTAINS**          | `azure_shared_image`                              |
-| `azure_user_group`                 | **HAS**               | `azure_user_group`                                |
-| `azure_user_group`                 | **HAS**               | `azure_group_member`                              |
-| `azure_user_group`                 | **HAS**               | `azure_user`                                      |
-| `azure_keyvault_service`           | **ALLOWS**            | `ANY_PRINCIPAL`                                   |
-| `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_key`                              |
-| `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_secret`                           |
-| `azure_lb`                         | **CONNECTS**          | `azure_nic`                                       |
-| `azure_management_group`           | **CONTAINS**          | `azure_management_group`                          |
-| `azure_mariadb_server`             | **HAS**               | `azure_mariadb_database`                          |
-| `azure_monitor_activity_log_alert` | **MONITORS**          | `ANY_SCOPE`                                       |
-| `azure_monitor_log_profile`        | **USES**              | `azure_storage_account`                           |
-| `azure_mysql_server`               | **HAS**               | `azure_mysql_database`                            |
-| `azure_network_watcher`            | **HAS**               | `azure_security_group_flow_logs`                  |
-| `azure_policy_assignment`          | **HAS**               | `azure_policy_state`                              |
-| `azure_policy_assignment`          | **USES**              | `azure_policy_definition`                         |
-| `azure_policy_assignment`          | **USES**              | `azure_policy_set_definition`                     |
-| `azure_policy_definition`          | **DEFINES**           | `azure_policy_state`                              |
-| `azure_policy_set_definition`      | **CONTAINS**          | `azure_policy_definition`                         |
-| `azure_postgresql_server`          | **HAS**               | `azure_postgresql_database`                       |
-| `azure_postgresql_server`          | **HAS**               | `azure_postgresql_server_firewall_rule`           |
-| `azure_private_dns_zone`           | **HAS**               | `azure_private_dns_record_set`                    |
-| `azure_private_endpoint`           | **CONNECTS**          | `ANY_RESOURCE`                                    |
-| `azure_private_endpoint`           | **USES**              | `azure_nic`                                       |
-| `azure_redis_cache`                | **CONNECTS**          | `azure_redis_cache`                               |
-| `azure_redis_cache`                | **HAS**               | `azure_firewall_rule`                             |
-| `azure_resource_group`             | **HAS**               | `azure_api_management_service`                    |
-| `azure_resource_group`             | **HAS**               | `azure_app_service_plan`                          |
-| `azure_resource_group`             | **HAS**               | `azure_batch_account`                             |
-| `azure_resource_group`             | **HAS**               | `azure_cdn_profile`                               |
-| `azure_resource_group`             | **HAS**               | `azure_container_group`                           |
-| `azure_resource_group`             | **HAS**               | `azure_container_registry`                        |
-| `azure_resource_group`             | **HAS**               | `azure_cosmosdb_account`                          |
-| `azure_resource_group`             | **HAS**               | `azure_dns_zone`                                  |
-| `azure_resource_group`             | **HAS**               | `azure_event_grid_domain`                         |
-| `azure_resource_group`             | **HAS**               | `azure_event_grid_topic`                          |
-| `azure_resource_group`             | **HAS**               | `azure_frontdoor`                                 |
-| `azure_resource_group`             | **HAS**               | `azure_function_app`                              |
-| `azure_resource_group`             | **HAS**               | `azure_gallery`                                   |
-| `azure_resource_group`             | **HAS**               | `azure_image`                                     |
-| `azure_resource_group`             | **HAS**               | `azure_keyvault_service`                          |
-| `azure_resource_group`             | **HAS**               | `azure_kubernetes_cluster`                        |
-| `azure_resource_group`             | **HAS**               | `azure_lb`                                        |
-| `azure_resource_group`             | **HAS**               | `azure_managed_disk`                              |
-| `azure_resource_group`             | **HAS**               | `azure_mariadb_server`                            |
-| `azure_resource_group`             | **HAS**               | `azure_monitor_activity_log_alert`                |
-| `azure_resource_group`             | **HAS**               | `azure_mysql_server`                              |
-| `azure_resource_group`             | **HAS**               | `azure_network_firewall`                          |
-| `azure_resource_group`             | **HAS**               | `azure_network_watcher`                           |
-| `azure_resource_group`             | **HAS**               | `azure_nic`                                       |
-| `azure_resource_group`             | **HAS**               | `azure_postgresql_server`                         |
-| `azure_resource_group`             | **HAS**               | `azure_private_dns_zone`                          |
-| `azure_resource_group`             | **HAS**               | `azure_private_endpoint`                          |
-| `azure_resource_group`             | **HAS**               | `azure_public_ip`                                 |
-| `azure_resource_group`             | **HAS**               | `azure_redis_cache`                               |
-| `azure_resource_group`             | **HAS**               | `azure_security_group`                            |
-| `azure_resource_group`             | **HAS**               | `azure_service_bus_namespace`                     |
-| `azure_resource_group`             | **HAS**               | `azure_sql_server`                                |
-| `azure_resource_group`             | **HAS**               | `azure_storage_account`                           |
-| `azure_resource_group`             | **HAS**               | `azure_vm`                                        |
-| `azure_resource_group`             | **HAS**               | `azure_vnet`                                      |
-| `azure_resource_group`             | **HAS**               | `azure_web_app`                                   |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
-| `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |
-| `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
-| `azure_resource_lock`              | **HAS**               | `ANY_SCOPE`                                       |
-| `azure_role_assignment`            | **ALLOWS**            | `ANY_SCOPE`                                       |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_application`                               |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_directory`                                 |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_directory_role_template`                   |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_everyone`                                  |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_foreign_group`                             |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_msi`                                       |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_service_principal`                         |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_unknown`                                   |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_unknown_principal_type`                    |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_user`                                      |
-| `azure_role_assignment`            | **ASSIGNED**          | `azure_user_group`                                |
-| `azure_role_assignment`            | **USES**              | `azure_role_definition`                           |
-| `azure_security_group_flow_logs`   | **USES**              | `azure_storage_account`                           |
-| `azure_security_group`             | **HAS**               | `azure_security_group_flow_logs`                  |
-| `azure_security_group`             | **PROTECTS**          | `azure_nic`                                       |
-| `azure_security_group`             | **PROTECTS**          | `azure_subnet`                                    |
-| `azure_security_group`             | **ALLOWS**            | `azure_subnet`                                    |
-| `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_queue`                         |
-| `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_topic`                         |
-| `azure_service_bus_topic`          | **HAS**               | `azure_service_bus_subscription`                  |
-| `azure_shared_image`               | **HAS**               | `azure_shared_image_version`                      |
-| `azure_sql_server`                 | **HAS**               | `azure_sql_server_active_directory_admin`         |
-| `azure_sql_server`                 | **HAS**               | `azure_sql_database`                              |
-| `azure_sql_server`                 | **HAS**               | `azure_sql_server_firewall_rule`                  |
-| `azure_storage_account`            | **HAS**               | `azure_storage_container`                         |
-| `azure_storage_account`            | **HAS**               | `azure_storage_file_share`                        |
-| `azure_storage_account`            | **HAS**               | `azure_storage_queue`                             |
-| `azure_storage_account`            | **HAS**               | `azure_storage_table`                             |
-| `azure_storage_account`            | **USES**              | `azure_keyvault_service`                          |
-| `azure_subnet`                     | **HAS**               | `azure_private_endpoint`                          |
-| `azure_subnet`                     | **HAS**               | `azure_vm`                                        |
-| `azure_subscription`               | **CONTAINS**          | `azure_role_definition`                           |
-| `azure_subscription`               | **HAS**               | `azure_monitor_log_profile`                       |
-| `azure_subscription`               | **HAS**               | `azure_resource_group`                            |
+| Source Entity `_type`              | Relationship `_class` | Target Entity `_type`                    |
+| ---------------------------------- | --------------------- | ---------------------------------------- |
+| `azure_account`                    | **HAS**               | `azure_user_group`                       |
+| `azure_account`                    | **HAS**               | `azure_keyvault_service`                 |
+| `azure_account`                    | **HAS**               | `azure_management_group`                 |
+| `azure_account`                    | **HAS**               | `azure_user`                             |
+| `azure_api_management_service`     | **HAS**               | `azure_api_management_api`               |
+| `azure_security_assessment`        | **IDENTIFIED**        | `azure_advisor_recommendation`           |
+| `azure_batch_account`              | **HAS**               | `azure_batch_application`                |
+| `azure_batch_account`              | **HAS**               | `azure_batch_certificate`                |
+| `azure_batch_account`              | **HAS**               | `azure_batch_pool`                       |
+| `azure_cdn_profile`                | **HAS**               | `azure_cdn_endpoint`                     |
+| `azure_classic_admin_group`        | **HAS**               | `azure_user`                             |
+| `azure_container_group`            | **HAS**               | `azure_container`                        |
+| `azure_container_group`            | **HAS**               | `azure_container_volume`                 |
+| `azure_container_registry`         | **HAS**               | `azure_container_registry_webhook`       |
+| `azure_container`                  | **USES**              | `azure_container_volume`                 |
+| `azure_container_volume`           | **USES**              | `azure_storage_file_share`               |
+| `azure_cosmosdb_account`           | **HAS**               | `azure_cosmosdb_sql_database`            |
+| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                  |
+| `azure_dns_zone`                   | **HAS**               | `azure_dns_record_set`                   |
+| `azure_event_grid_domain`          | **HAS**               | `azure_event_grid_domain_topic`          |
+| `azure_event_grid_domain_topic`    | **HAS**               | `azure_event_grid_topic_subscription`    |
+| `azure_event_grid_topic`           | **HAS**               | `azure_event_grid_topic_subscription`    |
+| `azure_function_app`               | **USES**              | `azure_app_service_plan`                 |
+| `azure_gallery`                    | **CONTAINS**          | `azure_shared_image`                     |
+| `azure_user_group`                 | **HAS**               | `azure_user_group`                       |
+| `azure_user_group`                 | **HAS**               | `azure_group_member`                     |
+| `azure_user_group`                 | **HAS**               | `azure_user`                             |
+| `azure_keyvault_service`           | **ALLOWS**            | `ANY_PRINCIPAL`                          |
+| `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_key`                     |
+| `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_secret`                  |
+| `azure_lb`                         | **CONNECTS**          | `azure_nic`                              |
+| `azure_management_group`           | **CONTAINS**          | `azure_management_group`                 |
+| `azure_mariadb_server`             | **HAS**               | `azure_mariadb_database`                 |
+| `azure_monitor_activity_log_alert` | **MONITORS**          | `ANY_SCOPE`                              |
+| `azure_monitor_log_profile`        | **USES**              | `azure_storage_account`                  |
+| `azure_mysql_server`               | **HAS**               | `azure_mysql_database`                   |
+| `azure_network_watcher`            | **HAS**               | `azure_security_group_flow_logs`         |
+| `azure_policy_assignment`          | **HAS**               | `azure_policy_state`                     |
+| `azure_policy_assignment`          | **USES**              | `azure_policy_definition`                |
+| `azure_policy_assignment`          | **USES**              | `azure_policy_set_definition`            |
+| `azure_policy_definition`          | **DEFINES**           | `azure_policy_state`                     |
+| `azure_policy_set_definition`      | **CONTAINS**          | `azure_policy_definition`                |
+| `azure_postgresql_server`          | **HAS**               | `azure_postgresql_database`              |
+| `azure_postgresql_server`          | **HAS**               | `azure_postgresql_server_firewall_rule`  |
+| `azure_private_dns_zone`           | **HAS**               | `azure_private_dns_record_set`           |
+| `azure_private_endpoint`           | **CONNECTS**          | `ANY_RESOURCE`                           |
+| `azure_private_endpoint`           | **USES**              | `azure_nic`                              |
+| `azure_redis_cache`                | **CONNECTS**          | `azure_redis_cache`                      |
+| `azure_redis_cache`                | **HAS**               | `azure_firewall_rule`                    |
+| `azure_resource_group`             | **HAS**               | `azure_api_management_service`           |
+| `azure_resource_group`             | **HAS**               | `azure_app_service_plan`                 |
+| `azure_resource_group`             | **HAS**               | `azure_batch_account`                    |
+| `azure_resource_group`             | **HAS**               | `azure_cdn_profile`                      |
+| `azure_resource_group`             | **HAS**               | `azure_container_group`                  |
+| `azure_resource_group`             | **HAS**               | `azure_container_registry`               |
+| `azure_resource_group`             | **HAS**               | `azure_cosmosdb_account`                 |
+| `azure_resource_group`             | **HAS**               | `azure_dns_zone`                         |
+| `azure_resource_group`             | **HAS**               | `azure_event_grid_domain`                |
+| `azure_resource_group`             | **HAS**               | `azure_event_grid_topic`                 |
+| `azure_resource_group`             | **HAS**               | `azure_frontdoor`                        |
+| `azure_resource_group`             | **HAS**               | `azure_function_app`                     |
+| `azure_resource_group`             | **HAS**               | `azure_gallery`                          |
+| `azure_resource_group`             | **HAS**               | `azure_image`                            |
+| `azure_resource_group`             | **HAS**               | `azure_keyvault_service`                 |
+| `azure_resource_group`             | **HAS**               | `azure_kubernetes_cluster`               |
+| `azure_resource_group`             | **HAS**               | `azure_lb`                               |
+| `azure_resource_group`             | **HAS**               | `azure_managed_disk`                     |
+| `azure_resource_group`             | **HAS**               | `azure_mariadb_server`                   |
+| `azure_resource_group`             | **HAS**               | `azure_monitor_activity_log_alert`       |
+| `azure_resource_group`             | **HAS**               | `azure_mysql_server`                     |
+| `azure_resource_group`             | **HAS**               | `azure_network_firewall`                 |
+| `azure_resource_group`             | **HAS**               | `azure_network_watcher`                  |
+| `azure_resource_group`             | **HAS**               | `azure_nic`                              |
+| `azure_resource_group`             | **HAS**               | `azure_postgresql_server`                |
+| `azure_resource_group`             | **HAS**               | `azure_private_dns_zone`                 |
+| `azure_resource_group`             | **HAS**               | `azure_private_endpoint`                 |
+| `azure_resource_group`             | **HAS**               | `azure_public_ip`                        |
+| `azure_resource_group`             | **HAS**               | `azure_redis_cache`                      |
+| `azure_resource_group`             | **HAS**               | `azure_security_group`                   |
+| `azure_resource_group`             | **HAS**               | `azure_service_bus_namespace`            |
+| `azure_resource_group`             | **HAS**               | `azure_sql_server`                       |
+| `azure_resource_group`             | **HAS**               | `azure_storage_account`                  |
+| `azure_resource_group`             | **HAS**               | `azure_vm`                               |
+| `azure_resource_group`             | **HAS**               | `azure_vnet`                             |
+| `azure_resource_group`             | **HAS**               | `azure_web_app`                          |
+| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`               |
+| `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`           |
+| `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                |
+| `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                     |
+| `azure_resource_lock`              | **HAS**               | `ANY_SCOPE`                              |
+| `azure_role_assignment`            | **ALLOWS**            | `ANY_SCOPE`                              |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_application`                      |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_directory`                        |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_directory_role_template`          |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_everyone`                         |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_foreign_group`                    |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_msi`                              |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_service_principal`                |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_unknown`                          |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_unknown_principal_type`           |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_user`                             |
+| `azure_role_assignment`            | **ASSIGNED**          | `azure_user_group`                       |
+| `azure_role_assignment`            | **USES**              | `azure_role_definition`                  |
+| `azure_security_group_flow_logs`   | **USES**              | `azure_storage_account`                  |
+| `azure_security_group`             | **HAS**               | `azure_security_group_flow_logs`         |
+| `azure_security_group`             | **PROTECTS**          | `azure_nic`                              |
+| `azure_security_group`             | **PROTECTS**          | `azure_subnet`                           |
+| `azure_security_group`             | **ALLOWS**            | `azure_subnet`                           |
+| `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_queue`                |
+| `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_topic`                |
+| `azure_service_bus_topic`          | **HAS**               | `azure_service_bus_subscription`         |
+| `azure_shared_image`               | **HAS**               | `azure_shared_image_version`             |
+| `azure_sql_server`                 | **HAS**               | `azure_sql_server_active_directory_admin` |
+| `azure_sql_server`                 | **HAS**               | `azure_sql_database`                     |
+| `azure_sql_server`                 | **HAS**               | `azure_sql_server_firewall_rule`         |
+| `azure_storage_account`            | **HAS**               | `azure_storage_container`                |
+| `azure_storage_account`            | **HAS**               | `azure_storage_file_share`               |
+| `azure_storage_account`            | **HAS**               | `azure_storage_queue`                    |
+| `azure_storage_account`            | **HAS**               | `azure_storage_table`                    |
+| `azure_storage_account`            | **USES**              | `azure_keyvault_service`                 |
+| `azure_subnet`                     | **HAS**               | `azure_private_endpoint`                 |
+| `azure_subnet`                     | **HAS**               | `azure_vm`                               |
+| `azure_subscription`               | **CONTAINS**          | `azure_role_definition`                  |
+| `azure_subscription`               | **HAS**               | `azure_monitor_log_profile`              |
+| `azure_subscription`               | **HAS**               | `azure_resource_group`                   |
 | `azure_subscription`               | **HAS**               | `azure_security_center_auto_provisioning_setting` |
-| `azure_subscription`               | **HAS**               | `azure_security_center_contact`                   |
-| `azure_subscription`               | **HAS**               | `azure_security_center_setting`                   |
-| `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing`      |
-| `azure_subscription`               | **PERFORMED**         | `azure_security_assessment`                       |
-| `azure_vm`                         | **GENERATED**         | `azure_shared_image_version`                      |
-| `azure_vm`                         | **USES**              | `azure_image`                                     |
-| `azure_vm`                         | **USES**              | `azure_managed_disk`                              |
-| `azure_vm`                         | **USES**              | `azure_service_principal`                         |
-| `azure_vm`                         | **USES**              | `azure_nic`                                       |
-| `azure_vm`                         | **USES**              | `azure_public_ip`                                 |
-| `azure_vm`                         | **USES**              | `azure_shared_image`                              |
-| `azure_vm`                         | **USES**              | `azure_shared_image_version`                      |
-| `azure_vm`                         | **USES**              | `azure_storage_account`                           |
-| `azure_vnet`                       | **CONTAINS**          | `azure_subnet`                                    |
-| `azure_web_app`                    | **USES**              | `azure_app_service_plan`                          |
+| `azure_subscription`               | **HAS**               | `azure_security_center_contact`          |
+| `azure_subscription`               | **HAS**               | `azure_security_center_setting`          |
+| `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing` |
+| `azure_subscription`               | **PERFORMED**         | `azure_security_assessment`              |
+| `azure_vm`                         | **GENERATED**         | `azure_shared_image_version`             |
+| `azure_vm`                         | **USES**              | `azure_image`                            |
+| `azure_vm`                         | **USES**              | `azure_managed_disk`                     |
+| `azure_vm`                         | **USES**              | `azure_service_principal`                |
+| `azure_vm`                         | **USES**              | `azure_nic`                              |
+| `azure_vm`                         | **USES**              | `azure_public_ip`                        |
+| `azure_vm`                         | **USES**              | `azure_shared_image`                     |
+| `azure_vm`                         | **USES**              | `azure_shared_image_version`             |
+| `azure_vm`                         | **USES**              | `azure_storage_account`                  |
+| `azure_vnet`                       | **CONTAINS**          | `azure_subnet`                           |
+| `azure_web_app`                    | **USES**              | `azure_app_service_plan`                 |
 
 ### Mapped Relationships
 

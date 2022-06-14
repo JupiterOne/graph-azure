@@ -190,6 +190,7 @@ The following entities are created:
 
 | Resources                                      | Entity `_type`                                    | Entity `_class`                    |
 | ---------------------------------------------- | ------------------------------------------------- | ---------------------------------- |
+| FrontDoor                                      | `azure_frontdoor`                                 | `Service`                          |
 | [AD] Account                                   | `azure_account`                                   | `Account`                          |
 | [AD] Group                                     | `azure_user_group`                                | `UserGroup`                        |
 | [AD] Group Member                              | `azure_group_member`                              | `User`                             |
@@ -351,6 +352,7 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_dns_zone`                                  |
 | `azure_resource_group`             | **HAS**               | `azure_event_grid_domain`                         |
 | `azure_resource_group`             | **HAS**               | `azure_event_grid_topic`                          |
+| `azure_resource_group`             | **HAS**               | `azure_frontdoor`                                 |
 | `azure_resource_group`             | **HAS**               | `azure_function_app`                              |
 | `azure_resource_group`             | **HAS**               | `azure_gallery`                                   |
 | `azure_resource_group`             | **HAS**               | `azure_image`                                     |

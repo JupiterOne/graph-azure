@@ -18,7 +18,11 @@ import {
   FrontDoorRelationships,
   FrontDoorStepIds,
 } from './constants';
-import { createFrontDoorEntity, createRulesEngineEntity } from './converters';
+import {
+  createFrontDoorEntity,
+  createRoutingRuleEntity,
+  createRulesEngineEntity,
+} from './converters';
 
 async function fetchFrontDoors(
   executionContext: IntegrationStepContext,
@@ -68,6 +72,35 @@ async function fetchRulesEngines(
   );
 }
 
+async function fetchRoutingRules(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  await jobState.iterateEntities(
+    { _type: FrontDoorEntities.FRONTDOOR._type },
+    async (frontdoorEntity) => {
+      const frontdoor = getRawData<FrontDoor>(frontdoorEntity);
+      if (!frontdoor) return;
+
+      for (const routingRule of frontdoor.routingRules || []) {
+        const routingRuleEntity = await jobState.addEntity(
+          createRoutingRuleEntity(webLinker, routingRule),
+        );
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: frontdoorEntity,
+            _class: RelationshipClass.HAS,
+            to: routingRuleEntity,
+          }),
+        );
+      }
+    },
+  );
+}
+
 export const frontdoorSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -81,10 +114,18 @@ export const frontdoorSteps: Step<
   },
   {
     id: FrontDoorStepIds.FETCH_RULES_ENGINES,
-    name: 'Fetch Rules Engines',
+    name: 'Fetch Frontdoor Rules Engines',
     entities: [FrontDoorEntities.RULES_ENGINE],
     relationships: [FrontDoorRelationships.FRONTDOOR_HAS_RULES_ENGINE],
     executionHandler: fetchRulesEngines,
+    dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
+  },
+  {
+    id: FrontDoorStepIds.FETCH_ROUTING_RULES,
+    name: 'Fetch Frontdoor Routing Rules',
+    entities: [FrontDoorEntities.ROUTING_RULE],
+    relationships: [FrontDoorRelationships.FRONTDOOR_HAS_ROUTING_RULE],
+    executionHandler: fetchRoutingRules,
     dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
   },
 ];

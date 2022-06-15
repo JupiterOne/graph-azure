@@ -52,3 +52,22 @@ test('rm-fetch-frontdoor-rules-engines', async () => {
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
 }, 10_000);
+
+test('rm-fetch-frontdoor-routing-rules', async () => {
+  const stepTestConfig = getStepTestConfigForStep(
+    FrontDoorStepIds.FETCH_RULES_ENGINES,
+  );
+
+  recording = setupAzureRecording({
+    name: 'rm-fetch-frontdoor-routing-rules',
+    directory: __dirname,
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: stepTestConfig.instanceConfig,
+      }),
+    },
+  });
+
+  const stepResults = await executeStepWithDependencies(stepTestConfig);
+  expect(stepResults).toMatchStepMetadata(stepTestConfig);
+}, 10_000);

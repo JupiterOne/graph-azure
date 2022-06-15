@@ -191,6 +191,7 @@ The following entities are created:
 | Resources                                      | Entity `_type`                                    | Entity `_class`                    |
 | ---------------------------------------------- | ------------------------------------------------- | ---------------------------------- |
 | FrontDoor                                      | `azure_frontdoor`                                 | `Service`                          |
+| FrontDoor Routing Rule                         | `azure_frontdoor_routing_rule`                    | `Route`                            |
 | FrontDoor Rules Engine                         | `azure_frontdoor_rules_engine`                    | `Ruleset`                          |
 | [AD] Account                                   | `azure_account`                                   | `Account`                          |
 | [AD] Group                                     | `azure_user_group`                                | `UserGroup`                        |
@@ -316,6 +317,7 @@ The following relationships are created:
 | `azure_event_grid_domain`          | **HAS**               | `azure_event_grid_domain_topic`                   |
 | `azure_event_grid_domain_topic`    | **HAS**               | `azure_event_grid_topic_subscription`             |
 | `azure_event_grid_topic`           | **HAS**               | `azure_event_grid_topic_subscription`             |
+| `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_routing_rule`                    |
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_rules_engine`                    |
 | `azure_function_app`               | **USES**              | `azure_app_service_plan`                          |
 | `azure_gallery`                    | **CONTAINS**          | `azure_shared_image`                              |

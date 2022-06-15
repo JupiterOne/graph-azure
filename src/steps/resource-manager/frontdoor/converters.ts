@@ -1,4 +1,5 @@
 import {
+  BackendPool,
   ForwardingConfiguration,
   FrontDoor,
   RedirectConfiguration,
@@ -129,6 +130,28 @@ export function createRoutingRuleEntity(
           | RedirectConfiguration
           | undefined)?.redirectType,
         rulesEngineId: routingRule.rulesEngine?.id,
+      },
+    },
+  });
+}
+
+export function createBackendPoolEntity(
+  webLinker: AzureWebLinker,
+  backendPool: BackendPool,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: backendPool,
+      assign: {
+        _key: backendPool.id!,
+        _type: FrontDoorEntities.BACKEND_POOL._type,
+        _class: FrontDoorEntities.BACKEND_POOL._class,
+        id: backendPool.id,
+        name: backendPool.name,
+        type: backendPool.type,
+        resourceState: backendPool.resourceState,
+        loadBalancingSettingsId: backendPool.loadBalancingSettings?.id,
+        healthProbeSettingsId: backendPool.healthProbeSettings?.id,
       },
     },
   });

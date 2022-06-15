@@ -32,7 +32,7 @@ export const FrontDoorEntities = {
   },
   FRONTEND_ENDPOINT: {
     resourceName: 'FrontDoor Frontend Endpoint',
-    _class: ['Configuration'],
+    _class: ['Gateway'],
     _type: 'azure_frontdoor_frontend_endpoint',
   },
 };

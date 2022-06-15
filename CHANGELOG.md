@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.39.0] - 2022-06-15
+
 ### Added
 
 - Added `azure_frontdoor_backend_pool` entities

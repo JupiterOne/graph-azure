@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.39.0] - 2022-06-15
+
+### Added
+
+- Added `azure_frontdoor_backend_pool` entities
+- Added `azure_frontdoor_frontend_endpoint` entities
+- Added `azure_frontdoor_routing_rule` entities
+- Added `azure_frontdoor_rules_engine` entities
+
 ## [5.38.0] - 2022-06-14
 
 ### Added

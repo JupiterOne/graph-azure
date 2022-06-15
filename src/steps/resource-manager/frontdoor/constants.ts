@@ -6,6 +6,7 @@ export const FrontDoorStepIds = {
   FETCH_RULES_ENGINES: 'rm-fetch-frontdoor-rules-engines',
   FETCH_ROUTING_RULES: 'rm-fetch-frontdoor-routing-rules',
   FETCH_BACKEND_POOLS: 'rm-fetch-frontdoor-backend-pools',
+  FETCH_FRONTEND_ENDPOINTS: 'rm-fetch-frontdoor-frontend-endpoints',
 };
 
 export const FrontDoorEntities = {
@@ -28,6 +29,11 @@ export const FrontDoorEntities = {
     resourceName: 'FrontDoor Backend Pool',
     _class: ['Configuration'],
     _type: 'azure_frontdoor_backend_pool',
+  },
+  FRONTEND_ENDPOINT: {
+    resourceName: 'FrontDoor Frontend Endpoint',
+    _class: ['Configuration'],
+    _type: 'azure_frontdoor_frontend_endpoint',
   },
 };
 
@@ -52,5 +58,11 @@ export const FrontDoorRelationships = {
     sourceType: FrontDoorEntities.FRONTDOOR._type,
     _class: RelationshipClass.HAS,
     targetType: FrontDoorEntities.BACKEND_POOL._type,
+  },
+  FRONTDOOR_HAS_FRONTEND_ENDPOINT: {
+    _type: 'azure_frontdoor_has_frontend_endpoint',
+    sourceType: FrontDoorEntities.FRONTDOOR._type,
+    _class: RelationshipClass.HAS,
+    targetType: FrontDoorEntities.FRONTEND_ENDPOINT._type,
   },
 };

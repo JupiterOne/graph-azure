@@ -2,6 +2,7 @@ import {
   BackendPool,
   ForwardingConfiguration,
   FrontDoor,
+  FrontendEndpoint,
   RedirectConfiguration,
   RoutingRule,
   RulesEngine,
@@ -152,6 +153,48 @@ export function createBackendPoolEntity(
         resourceState: backendPool.resourceState,
         loadBalancingSettingsId: backendPool.loadBalancingSettings?.id,
         healthProbeSettingsId: backendPool.healthProbeSettings?.id,
+      },
+    },
+  });
+}
+
+export function createFrontendEndpointEntity(
+  webLinker: AzureWebLinker,
+  frontendEndpoint: FrontendEndpoint,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: frontendEndpoint,
+      assign: {
+        _key: frontendEndpoint.id!,
+        _type: FrontDoorEntities.FRONTEND_ENDPOINT._type,
+        _class: FrontDoorEntities.FRONTEND_ENDPOINT._class,
+        id: frontendEndpoint.id,
+        name: frontendEndpoint.name,
+        type: frontendEndpoint.type,
+        resourceState: frontendEndpoint.resourceState,
+        hostName: frontendEndpoint.hostName,
+        customHttpsProvisioningState:
+          frontendEndpoint.customHttpsProvisioningState,
+        customHttpsProvisioningSubstate:
+          frontendEndpoint.customHttpsProvisioningSubstate,
+        sessionAffinityEnabledState:
+          frontendEndpoint.sessionAffinityEnabledState,
+        sessionAffinityTtlSeconds: frontendEndpoint.sessionAffinityTtlSeconds,
+        'customHttpsConfiguration.certificateSource':
+          frontendEndpoint.customHttpsConfiguration?.certificateSource,
+        'customHttpsConfiguration.certificateType':
+          frontendEndpoint.customHttpsConfiguration?.certificateType,
+        'customHttpsConfiguration.minimumTlsVersion':
+          frontendEndpoint.customHttpsConfiguration?.minimumTlsVersion,
+        'customHttpsConfiguration.secretName':
+          frontendEndpoint.customHttpsConfiguration?.secretName,
+        'customHttpsConfiguration.secretVersion':
+          frontendEndpoint.customHttpsConfiguration?.secretVersion,
+        'customHttpsConfiguration.vaultId':
+          frontendEndpoint.customHttpsConfiguration?.vault?.id,
+        webApplicationFirewallPolicyLinkId:
+          frontendEndpoint.webApplicationFirewallPolicyLink?.id,
       },
     },
   });

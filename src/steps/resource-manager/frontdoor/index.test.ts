@@ -90,3 +90,22 @@ test('rm-fetch-frontdoor-backend-pools', async () => {
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
 }, 10_000);
+
+test('rm-fetch-frontdoor-frontend-endpoints', async () => {
+  const stepTestConfig = getStepTestConfigForStep(
+    FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS,
+  );
+
+  recording = setupAzureRecording({
+    name: 'rm-fetch-frontdoor-frontend-endpoints',
+    directory: __dirname,
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: stepTestConfig.instanceConfig,
+      }),
+    },
+  });
+
+  const stepResults = await executeStepWithDependencies(stepTestConfig);
+  expect(stepResults).toMatchStepMetadata(stepTestConfig);
+}, 10_000);

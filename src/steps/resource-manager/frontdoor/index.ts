@@ -21,6 +21,7 @@ import {
 import {
   createBackendPoolEntity,
   createFrontDoorEntity,
+  createFrontendEndpointEntity,
   createRoutingRuleEntity,
   createRulesEngineEntity,
 } from './converters';
@@ -131,6 +132,35 @@ async function fetchBackendPools(
   );
 }
 
+async function fetchFrontendEndpoints(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  await jobState.iterateEntities(
+    { _type: FrontDoorEntities.FRONTDOOR._type },
+    async (frontdoorEntity) => {
+      const frontdoor = getRawData<FrontDoor>(frontdoorEntity);
+      if (!frontdoor) return;
+
+      for (const frontendEndpoint of frontdoor.frontendEndpoints || []) {
+        const frontendEndpointEntity = await jobState.addEntity(
+          createFrontendEndpointEntity(webLinker, frontendEndpoint),
+        );
+        await jobState.addRelationship(
+          createDirectRelationship({
+            from: frontdoorEntity,
+            _class: RelationshipClass.HAS,
+            to: frontendEndpointEntity,
+          }),
+        );
+      }
+    },
+  );
+}
+
 export const frontdoorSteps: Step<
   IntegrationStepExecutionContext<IntegrationConfig>
 >[] = [
@@ -164,6 +194,14 @@ export const frontdoorSteps: Step<
     entities: [FrontDoorEntities.BACKEND_POOL],
     relationships: [FrontDoorRelationships.FRONTDOOR_HAS_BACKEND_POOL],
     executionHandler: fetchBackendPools,
+    dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
+  },
+  {
+    id: FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS,
+    name: 'Fetch Frontdoor Frontend Endpoints',
+    entities: [FrontDoorEntities.FRONTEND_ENDPOINT],
+    relationships: [FrontDoorRelationships.FRONTDOOR_HAS_FRONTEND_ENDPOINT],
+    executionHandler: fetchFrontendEndpoints,
     dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
   },
 ];

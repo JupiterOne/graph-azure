@@ -265,6 +265,7 @@ describe('getStepStartStates', () => {
       [FrontDoorStepIds.FETCH_RULES_ENGINES]: { disabled: true },
       [FrontDoorStepIds.FETCH_ROUTING_RULES]: { disabled: true },
       [FrontDoorStepIds.FETCH_BACKEND_POOLS]: { disabled: true },
+      [FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS]: { disabled: true },
     });
   });
 
@@ -410,6 +411,7 @@ describe('getStepStartStates', () => {
       [FrontDoorStepIds.FETCH_RULES_ENGINES]: { disabled: true },
       [FrontDoorStepIds.FETCH_ROUTING_RULES]: { disabled: true },
       [FrontDoorStepIds.FETCH_BACKEND_POOLS]: { disabled: true },
+      [FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS]: { disabled: true },
     });
   });
 
@@ -555,6 +557,7 @@ describe('getStepStartStates', () => {
       [FrontDoorStepIds.FETCH_RULES_ENGINES]: { disabled: false },
       [FrontDoorStepIds.FETCH_ROUTING_RULES]: { disabled: false },
       [FrontDoorStepIds.FETCH_BACKEND_POOLS]: { disabled: false },
+      [FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS]: { disabled: false },
     });
   });
 
@@ -702,6 +705,7 @@ describe('getStepStartStates', () => {
       [FrontDoorStepIds.FETCH_RULES_ENGINES]: { disabled: true },
       [FrontDoorStepIds.FETCH_ROUTING_RULES]: { disabled: true },
       [FrontDoorStepIds.FETCH_BACKEND_POOLS]: { disabled: true },
+      [FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS]: { disabled: true },
     });
   });
 });

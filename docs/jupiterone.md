@@ -192,6 +192,7 @@ The following entities are created:
 | ---------------------------------------------- | ------------------------------------------------- | ---------------------------------- |
 | FrontDoor                                      | `azure_frontdoor`                                 | `Service`                          |
 | FrontDoor Backend Pool                         | `azure_frontdoor_backend_pool`                    | `Configuration`                    |
+| FrontDoor Frontend Endpoint                    | `azure_frontdoor_frontend_endpoint`               | `Configuration`                    |
 | FrontDoor Routing Rule                         | `azure_frontdoor_routing_rule`                    | `Route`                            |
 | FrontDoor Rules Engine                         | `azure_frontdoor_rules_engine`                    | `Ruleset`                          |
 | [AD] Account                                   | `azure_account`                                   | `Account`                          |
@@ -319,6 +320,7 @@ The following relationships are created:
 | `azure_event_grid_domain_topic`    | **HAS**               | `azure_event_grid_topic_subscription`             |
 | `azure_event_grid_topic`           | **HAS**               | `azure_event_grid_topic_subscription`             |
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_backend_pool`                    |
+| `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_frontend_endpoint`               |
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_routing_rule`                    |
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_rules_engine`                    |
 | `azure_function_app`               | **USES**              | `azure_app_service_plan`                          |

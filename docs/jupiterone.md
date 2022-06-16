@@ -174,7 +174,7 @@ If the Azure integration does not complete, and you encounter a message like
 in your job log, check the following common configuration errors:
 
 - **Verify the Application (client) ID and Application (client) Secret:** Make
-  sure that you've verified the proper value for client ID and #client secret.
+  sure that you've verified the proper value for client ID and client secret.
   The client secret has both a **Value** property and a **Secret ID** property.
   The **Secret ID** is unused - make sure you haven't accidentally used the
   **Secret ID** as the **Client ID**.

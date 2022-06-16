@@ -84,13 +84,13 @@ information:
 
 1. Navigate to the correct scope for your integration.
 
-   _If configuring a single Azure Subscription:_ navigate to **Subscriptions**,
-   choose the subscription from which you want to ingest resources.
+   - _(RECOMMENDED) If configuring all subscriptions for a tenant:_ navigate to
+     **Management Groups**, then to the
+     [Tenant Root Group](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#root-management-group-for-each-directory).
 
-   _If configuring all subscriptions for a tenant (using the
-   `Configure Subscription Instances` flag in JupiterOne):_ navigate to
-   **Management Groups**, then to the
-   [Tenant Root Group](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#root-management-group-for-each-directory).
+   - _If configuring a single Azure Subscription:_ navigate to
+     **Subscriptions**, choose the subscription from which you want to ingest
+     resources.
 
 2. Create custom role "JupiterOne Reader"
    1. Navigate to **Access control (IAM)** -> **Add** -> **Add custom role**
@@ -124,27 +124,46 @@ account_. See Azure documentation for more information on
 
 ### In JupiterOne
 
-1. From the configuration **Gear Icon**, select **Integrations**.
-2. Scroll to the **Azure** integration tile and click it.
-3. Click the **Add Configuration** button and configure the following settings:
+1.  From the configuration **Gear Icon**, select **Integrations**.
+2.  Scroll to the **Azure** integration tile and click it.
+3.  Click the **Add Configuration** button and configure the following settings:
 
-- Enter the **Account Name** by which you'd like to identify this Azure account
-  in JupiterOne. Ingested entities will have this value stored in
-  `tag.AccountName` when **Tag with Account Name** is checked.
-- Enter a **Description** that will further assist your team when identifying
-  the integration instance.
-- Select a **Polling Interval** that you feel is sufficient for your monitoring
-  needs. You may leave this as `DISABLED` and manually execute the integration.
-- Enter the **Directory (tenant) ID** of the Active Directory to target in Azure
-  API requests.
-- Enter the **Application (client) ID** created for JupiterOne, used to
-  authenticate with Azure.
-- Enter the **Application (client) Secret** associated with the application ID,
-  used to authenticate with Azure.
-- Select the option **Ingest Active Directory** to ingest Directory information.
-  This should only be enabled in one integration instance per Directory.
+    1.  Enter the **Account Name** by which you'd like to identify this Azure
+        account in JupiterOne. Ingested entities will have this value stored in
+        `tag.AccountName` when **Tag with Account Name** is checked.
+    1.  Enter a **Description** that will further assist your team when
+        identifying the integration instance.
+    1.  Select a **Polling Interval** that you feel is sufficient for your
+        monitoring needs. You may leave this as `DISABLED` and manually execute
+        the integration.
+    1.  Enter the **Directory (tenant) ID** of the Active Directory to target in
+        Azure API requests.
+    1.  Enter the **Application (client) ID** created for JupiterOne, used to
+        authenticate with Azure.
+    1.  Enter the **Application (client) Secret** associated with the
+        application ID, used to authenticate with Azure.
+    1.  Select the option **Ingest Active Directory** to ingest Directory
+        information. This should only be enabled in one integration instance per
+        Directory.
 
-4. Click **Create Configuration** once all values are provided.
+        _NOTE:_ The **Ingest Active Directory** flag enables the ingestion of
+        `azure_user`, `azure_user_group`, and `azure_service_principal`
+        entities.
+
+    1.  Configure the correct scope for your integration:
+
+        - _(RECOMMENDED) If configuring all subscriptions for a tenant:_ Select
+          the option **Configure Subscription Instances** to automatically
+          provision new JupiterOne integration instances for each Azure
+          Subscription in this tenant
+
+          _NOTE:_ The **Configure Subscription Instances** flag also enables the
+          ingestion of `azure_management_group` entities.
+
+        - _If configuring a single Azure Subscription:_ Enter the **Subscription
+          ID** for the subscription you wish to ingest data from.
+
+4.  Click **Create Configuration** once all values are provided.
 
 ### [Troubleshooting](#azure-troubleshooting)
 

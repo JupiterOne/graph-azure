@@ -33,3 +33,79 @@ test('rm-fetch-frontdoors', async () => {
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
 }, 10_000);
+
+test('rm-fetch-frontdoor-rules-engines', async () => {
+  const stepTestConfig = getStepTestConfigForStep(
+    FrontDoorStepIds.FETCH_RULES_ENGINES,
+  );
+
+  recording = setupAzureRecording({
+    name: 'rm-fetch-frontdoor-rules-engines',
+    directory: __dirname,
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: stepTestConfig.instanceConfig,
+      }),
+    },
+  });
+
+  const stepResults = await executeStepWithDependencies(stepTestConfig);
+  expect(stepResults).toMatchStepMetadata(stepTestConfig);
+}, 10_000);
+
+test('rm-fetch-frontdoor-routing-rules', async () => {
+  const stepTestConfig = getStepTestConfigForStep(
+    FrontDoorStepIds.FETCH_RULES_ENGINES,
+  );
+
+  recording = setupAzureRecording({
+    name: 'rm-fetch-frontdoor-routing-rules',
+    directory: __dirname,
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: stepTestConfig.instanceConfig,
+      }),
+    },
+  });
+
+  const stepResults = await executeStepWithDependencies(stepTestConfig);
+  expect(stepResults).toMatchStepMetadata(stepTestConfig);
+}, 10_000);
+
+test('rm-fetch-frontdoor-backend-pools', async () => {
+  const stepTestConfig = getStepTestConfigForStep(
+    FrontDoorStepIds.FETCH_BACKEND_POOLS,
+  );
+
+  recording = setupAzureRecording({
+    name: 'rm-fetch-frontdoor-backend-pools',
+    directory: __dirname,
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: stepTestConfig.instanceConfig,
+      }),
+    },
+  });
+
+  const stepResults = await executeStepWithDependencies(stepTestConfig);
+  expect(stepResults).toMatchStepMetadata(stepTestConfig);
+}, 10_000);
+
+test('rm-fetch-frontdoor-frontend-endpoints', async () => {
+  const stepTestConfig = getStepTestConfigForStep(
+    FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS,
+  );
+
+  recording = setupAzureRecording({
+    name: 'rm-fetch-frontdoor-frontend-endpoints',
+    directory: __dirname,
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: stepTestConfig.instanceConfig,
+      }),
+    },
+  });
+
+  const stepResults = await executeStepWithDependencies(stepTestConfig);
+  expect(stepResults).toMatchStepMetadata(stepTestConfig);
+}, 10_000);

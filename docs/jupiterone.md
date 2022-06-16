@@ -52,16 +52,16 @@ Graph API][1]. Azure Resource Manager is authenticated and accessed through
 To create the App Registration:
 
 1. Go to your Azure portal
-1. Navigate to **App registrations**
-1. Create a new App registration, using the **Name** "JupiterOne", selecting
+2. Navigate to **App registrations**
+3. Create a new App registration, using the **Name** "JupiterOne", selecting
    **Accounts in this organizational directory only**, with **no** "Redirect
    URI"
-1. Navigate to the **Overview** page of the new app
-1. Copy the **Application (client) ID**
-1. Copy the **Directory (tenant) ID**
-1. Navigate to the **Certificates & secrets** section
-1. Create a new client secret
-1. Copy the generated secret **Value** (you only get one chance!)
+4. Navigate to the **Overview** page of the new app
+5. Copy the **Application (client) ID**
+6. Copy the **Directory (tenant) ID**
+7. Navigate to the **Certificates & secrets** section
+8. Create a new client secret
+9. Copy the generated secret **Value** (you only get one chance!)
 
 #### API Permissions (Azure Active Directory)
 
@@ -69,13 +69,13 @@ Grant permission to read Microsoft Graph information:
 
 1. Navigate to **API permissions**, choose **Microsoft Graph**, then
    **Application Permissions**
-1. Grant the following permissions to the application:
+2. Grant the following permissions to the application:
 
    - `Directory.Read.All`
    - `Policy.Read.All`
    - `Reports.Read.All`
 
-1. Grant admin consent for this directory for the permissions above
+3. Grant admin consent for this directory for the permissions above
 
 #### IAM Roles (Azure Management Groups / Subscriptions)
 
@@ -92,19 +92,19 @@ information:
      **Subscriptions**, choose the subscription from which you want to ingest
      resources.
 
-1. Create custom role "JupiterOne Reader"
+2. Create custom role "JupiterOne Reader"
    1. Navigate to **Access control (IAM)** -> **Add** -> **Add custom role**
-   1. Create a custom role called "JupiterOne Reader" with the following
+   2. Create a custom role called "JupiterOne Reader" with the following
       permissions:
       - `Microsoft.PolicyInsights/policyStates/queryResults/action`
       - `Microsoft.Web/sites/config/list/Action`
-1. Assign Roles to "JupiterOne" App
+3. Assign Roles to "JupiterOne" App
    1. Navigate to **Access control (IAM)** -> **Add** -> **Add role assignment**
-   1. Assign each of the three roles to the "JupiterOne" member
+   2. Assign each of the three roles to the "JupiterOne" member
       1. JupiterOne Reader
-      1. Reader
-      1. Key Vault Reader
-      1. Management Group Reader (If using `Configure Subscription Instances`
+      2. Reader
+      3. Key Vault Reader
+      4. Management Group Reader (If using `Configure Subscription Instances`
          flag in JupiterOne)
 
 ### Key Vault Access Policy
@@ -112,7 +112,8 @@ information:
 Please note that listing Key Vault keys and secrets (`rm-keyvault-keys` and
 `rm-keyvault-secrets` steps) require JupiterOne users to grant the following
 permissions to the JupiterOne security principal _for each Key Vault in their
-account_:
+account_. See Azure documentation for more information on
+[Assign a Key Vault access policy](https://go.microsoft.com/fwlink/?linkid=2125287).
 
 - Key Permissions
   - Key Management Operations
@@ -120,9 +121,6 @@ account_:
 - Secret Permissions
   - Secret Management Operations
     - List
-
-The steps necessary for that are outlined on this page:
-[Assign a Key Vault access policy](https://go.microsoft.com/fwlink/?linkid=2125287).
 
 ### In JupiterOne
 
@@ -133,18 +131,18 @@ The steps necessary for that are outlined on this page:
     1.  Enter the **Account Name** by which you'd like to identify this Azure
         account in JupiterOne. Ingested entities will have this value stored in
         `tag.AccountName` when **Tag with Account Name** is checked.
-    1.  Enter a **Description** that will further assist your team when
+    2.  Enter a **Description** that will further assist your team when
         identifying the integration instance.
-    1.  Select a **Polling Interval** that you feel is sufficient for your
+    3.  Select a **Polling Interval** that you feel is sufficient for your
         monitoring needs. You may leave this as `DISABLED` and manually execute
         the integration.
-    1.  Enter the **Directory (tenant) ID** of the Active Directory to target in
+    4.  Enter the **Directory (tenant) ID** of the Active Directory to target in
         Azure API requests.
-    1.  Enter the **Application (client) ID** created for JupiterOne, used to
+    5.  Enter the **Application (client) ID** created for JupiterOne, used to
         authenticate with Azure.
-    1.  Enter the **Application (client) Secret** associated with the
+    6.  Enter the **Application (client) Secret** associated with the
         application ID, used to authenticate with Azure.
-    1.  Select the option **Ingest Active Directory** to ingest Directory
+    7.  Select the option **Ingest Active Directory** to ingest Directory
         information. This should only be enabled in one integration instance per
         Directory.
 
@@ -152,7 +150,7 @@ The steps necessary for that are outlined on this page:
         `azure_user`, `azure_user_group`, and `azure_service_principal`
         entities.
 
-    1.  Configure the correct scope for your integration:
+    8.  Configure the correct scope for your integration:
 
         - _(RECOMMENDED) If configuring all subscriptions for a tenant:_ Select
           the option **Configure Subscription Instances** to automatically
@@ -167,9 +165,9 @@ The steps necessary for that are outlined on this page:
 
 4.  Click **Create Configuration** once all values are provided.
 
-### Troubleshooting
+### [Troubleshooting](#azure-troubleshooting)
 
-#### Authentication Errors
+#### Authentication
 
 If the Azure integration does not complete, and you encounter a message like
 `[validation_failure] Error occurred while validating integration configuration`

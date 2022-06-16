@@ -131,18 +131,18 @@ account_. See Azure documentation for more information on
     1.  Enter the **Account Name** by which you'd like to identify this Azure
         account in JupiterOne. Ingested entities will have this value stored in
         `tag.AccountName` when **Tag with Account Name** is checked.
-    1.  Enter a **Description** that will further assist your team when
+    2.  Enter a **Description** that will further assist your team when
         identifying the integration instance.
-    1.  Select a **Polling Interval** that you feel is sufficient for your
+    3.  Select a **Polling Interval** that you feel is sufficient for your
         monitoring needs. You may leave this as `DISABLED` and manually execute
         the integration.
-    1.  Enter the **Directory (tenant) ID** of the Active Directory to target in
+    4.  Enter the **Directory (tenant) ID** of the Active Directory to target in
         Azure API requests.
-    1.  Enter the **Application (client) ID** created for JupiterOne, used to
+    5.  Enter the **Application (client) ID** created for JupiterOne, used to
         authenticate with Azure.
-    1.  Enter the **Application (client) Secret** associated with the
+    6.  Enter the **Application (client) Secret** associated with the
         application ID, used to authenticate with Azure.
-    1.  Select the option **Ingest Active Directory** to ingest Directory
+    7.  Select the option **Ingest Active Directory** to ingest Directory
         information. This should only be enabled in one integration instance per
         Directory.
 
@@ -150,7 +150,7 @@ account_. See Azure documentation for more information on
         `azure_user`, `azure_user_group`, and `azure_service_principal`
         entities.
 
-    1.  Configure the correct scope for your integration:
+    8.  Configure the correct scope for your integration:
 
         - _(RECOMMENDED) If configuring all subscriptions for a tenant:_ Select
           the option **Configure Subscription Instances** to automatically

@@ -363,7 +363,7 @@ describe('iterateTables', () => {
     developerId: 'ndowmon1',
   };
 
-  test('all', async () => {
+  test.skip('all', async () => {
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'iterateTables',

@@ -134,7 +134,7 @@ test('step - dns record sets', async () => {
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'DomainRecord',
+    _class: ['DomainRecord'],
   });
 
   expect(context.jobState.collectedRelationships).toEqual([

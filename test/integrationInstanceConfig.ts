@@ -1,6 +1,8 @@
 import { IntegrationConfig } from '../src/types';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { StepTestConfig } from '@jupiterone/integration-sdk-testing';
+import { invocationConfig } from '../src';
 
 if (process.env.LOAD_ENV) {
   dotenv.config({
@@ -31,3 +33,15 @@ export const configFromEnv: IntegrationConfig = {
   directoryId: process.env.DIRECTORY_ID || 'directoryId',
   subscriptionId: process.env.SUBSCRIPTION_ID || 'subscriptionId',
 };
+
+export function getStepTestConfigForStep(
+  stepId: string,
+): StepTestConfig<any, IntegrationConfig> {
+  return {
+    stepId,
+    instanceConfig: configFromEnv,
+    invocationConfig: {
+      ...invocationConfig,
+    } as any,
+  };
+}

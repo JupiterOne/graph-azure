@@ -76,7 +76,7 @@ test('step - role assignments', async () => {
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'AccessPolicy',
+    _class: ['AccessPolicy'],
     schema: {
       additionalProperties: false,
       properties: {
@@ -506,7 +506,7 @@ test('step - classic administrators', async () => {
   await fetchClassicAdministrators(context);
 
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-    _class: 'UserGroup',
+    _class: ['UserGroup'],
     schema: {
       additionalProperties: false,
       properties: {

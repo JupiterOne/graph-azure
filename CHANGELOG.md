@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Set API response log level from info -> debug
+
 ## [5.39.0] - 2022-06-15
 
 ### Added

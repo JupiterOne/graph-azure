@@ -123,9 +123,11 @@ export async function buildKeyVaultAccessPolicyRelationships(
 
       for (const accessPolicy of keyVault.properties.accessPolicies || []) {
         const permissions = accessPolicy.permissions;
+        const _key = `${keyVaultEntity._key}|allows|${accessPolicy.objectId}|application?|${accessPolicy.applicationId}}`;
         await jobState.addRelationship(
           createMappedRelationship({
             source: keyVaultEntity,
+            _key,
             _class: RelationshipClass.ALLOWS,
             target: {
               _type: 'azure_principal',

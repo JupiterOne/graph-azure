@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [5.39.0] - 2022-06-15
+
+### Added
+
+- Added `azure_frontdoor_backend_pool` entities
+- Added `azure_frontdoor_frontend_endpoint` entities
+- Added `azure_frontdoor_routing_rule` entities
+- Added `azure_frontdoor_rules_engine` entities
+
+## [5.38.0] - 2022-06-14
+
+### Added
+
+- Added `azure_frontdoor` entities
+
+## [5.37.1] - 2022-06-10
+
+### Fixed
+
+- Fixed `DUPLICATE_KEY_DETECTED` in `rm-compute-network-relationships` step
+- Fixed `DUPLICATE_KEY_DETECTED` in `rm-keyvault-principal-relationships` step
+
 ## [5.37.0] - 2022-03-28
 
 ### Changed

@@ -166,7 +166,7 @@ account_. See Azure documentation for more information on
 
 4.  Click **Create Configuration** once all values are provided.
 
-### [Troubleshooting](#azure-troubleshooting)
+### Troubleshooting
 
 #### Authentication
 

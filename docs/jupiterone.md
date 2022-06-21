@@ -32,7 +32,8 @@
 ## Support
 
 If you need help with this integration, please contact
-[JupiterOne Support](https://support.jupiterone.io).
+[JupiterOne Support](https://support.jupiterone.io). Also, see the
+[Troubleshooting section](#troubleshooting) in this article.
 
 ## Integration Walkthrough
 
@@ -165,7 +166,7 @@ account_. See Azure documentation for more information on
 
 4.  Click **Create Configuration** once all values are provided.
 
-### [Troubleshooting](#azure-troubleshooting)
+## Troubleshooting
 
 #### Authentication
 

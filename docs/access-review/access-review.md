@@ -39,13 +39,13 @@ management groups, subscriptions, or resource groups.
 access to the `j1-production-keys` key vault?**
 
 ```J1QL
-FIND azure_keyvault_service 
+FIND azure_keyvault_service
   WITH name = 'j1-production-keys'
-    (THAT HAS azure_resource_group)? 
-    (THAT HAS azure_subscription)? 
-    (THAT HAS azure_management_group)? 
-    THAT ALLOWS azure_role_assignment 
-    THAT ASSIGNED 
+    (THAT HAS azure_resource_group)?
+    (THAT HAS azure_subscription)?
+    (THAT HAS azure_management_group)?
+    THAT ALLOWS azure_role_assignment
+    THAT ASSIGNED
       (azure_user|azure_user_group|azure_service_principal) as principal
 RETURN TREE
 ```
@@ -61,11 +61,11 @@ queries to help you get started.
 _Users should never have access to secrets in production accounts._
 
 ```J1QL
-FIND azure_keyvault_service 
-  (THAT HAS azure_resource_group)? 
-  (THAT HAS azure_subscription)? 
-  (THAT HAS azure_management_group)? 
-  THAT ALLOWS azure_role_assignment 
+FIND azure_keyvault_service
+  (THAT HAS azure_resource_group)?
+  (THAT HAS azure_subscription)?
+  (THAT HAS azure_management_group)?
+  THAT ALLOWS azure_role_assignment
     WITH dataActions = 'Microsoft.KeyVault/vaults/secrets/getSecret/action'
   THAT ASSIGNED (azure_user|azure_user_group) as principal
 RETURN TREE
@@ -78,11 +78,11 @@ _User access should always be granted via membership in groups. Direct access is
 often a proxy for elevated privileges, and should be discouraged._
 
 ```J1QL
-FIND * as any_resource 
-  (THAT HAS azure_resource_group)? 
-  (THAT HAS azure_subscription)? 
+FIND * as any_resource
+  (THAT HAS azure_resource_group)?
+  (THAT HAS azure_subscription)?
   (THAT HAS azure_management_group)?
-  THAT ALLOWS azure_role_assignment 
+  THAT ALLOWS azure_role_assignment
   THAT ASSIGNED azure_user
 RETURN TREE
 ```
@@ -95,10 +95,10 @@ access as part of a group._
 
 ```J1QL
 FIND azure_keyvault_service WITH name = 'j1-production-keys'
-  (THAT HAS azure_resource_group)? 
-  (THAT HAS azure_subscription)? 
-  (THAT HAS azure_management_group)? 
-  THAT ALLOWS azure_role_assignment 
+  (THAT HAS azure_resource_group)?
+  (THAT HAS azure_subscription)?
+  (THAT HAS azure_management_group)?
+  THAT ALLOWS azure_role_assignment
   THAT ASSIGNED (azure_user|azure_group) WITH userType = 'Guest'
   (THAT HAS azure_user WITH userType = 'Guest')?
 RETURN TREE

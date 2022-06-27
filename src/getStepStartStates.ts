@@ -112,6 +112,7 @@ import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
 import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
 import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
+import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -250,6 +251,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
       PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS,
       PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS,
+      ...Object.values(FrontDoorStepIds),
     ],
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,

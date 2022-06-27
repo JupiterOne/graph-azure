@@ -36,7 +36,7 @@ export const entities = {
   CLASSIC_ADMIN: {
     _key: 'azure_classic_admin_group',
     _type: 'azure_classic_admin_group',
-    _class: 'UserGroup',
+    _class: ['UserGroup'],
     resourceName: '[RM] Classic Admin',
   },
   ROLE_ASSIGNMENT: {

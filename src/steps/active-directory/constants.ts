@@ -8,16 +8,16 @@ export const STEP_AD_SERVICE_PRINCIPALS = 'ad-service-principals';
 
 // Graph objects
 export const ACCOUNT_ENTITY_TYPE = 'azure_account';
-export const ACCOUNT_ENTITY_CLASS = 'Account';
+export const ACCOUNT_ENTITY_CLASS = ['Account'];
 
 export const GROUP_ENTITY_TYPE = 'azure_user_group';
-export const GROUP_ENTITY_CLASS = 'UserGroup';
+export const GROUP_ENTITY_CLASS = ['UserGroup'];
 
 export const USER_ENTITY_TYPE = 'azure_user';
-export const USER_ENTITY_CLASS = 'User';
+export const USER_ENTITY_CLASS = ['User'];
 
 export const SERVICE_PRINCIPAL_ENTITY_TYPE = 'azure_service_principal';
-export const SERVICE_PRINCIPAL_ENTITY_CLASS = 'Service';
+export const SERVICE_PRINCIPAL_ENTITY_CLASS = ['Service'];
 
 /**
  * The entity type used for members of groups which are not one of the ingested

@@ -47,7 +47,7 @@ test(
 
     expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
     expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-      _class: 'Cluster',
+      _class: ['Cluster'],
       schema: {
         additionalProperties: false,
         properties: {

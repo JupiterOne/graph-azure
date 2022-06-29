@@ -101,6 +101,7 @@ export function createVirtualMachineEntity(
       data.storageProfile?.osDisk,
       data.storageProfile?.dataDisks,
     ),
+    hostname: null,
     webLink: webLinker.portalResourceUrl(data.id),
   };
 

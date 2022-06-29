@@ -8,7 +8,7 @@ questions:
       Returns a graph showing the relationships between azure_account (tenant), azure_management_group, and azure_subscription. Captures all subscriptions that are nested under three or fewer levels of management groups.
     queries:
       - name: Subscriptions that are part of the same tenant
-        resultsAre: Informative
+        resultsAre: INFORMATIVE
         query: |
           FIND
             azure_subscription 

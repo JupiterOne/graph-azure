@@ -12,6 +12,12 @@ and this project adheres to
 
 - Set API response log level from info -> debug
 
+## [5.39.1] - 2022-06-28
+
+- Fix managed question issue
+- Update integration SDK packages
+- Update `@lifeomic/attempt`
+
 ## [5.39.0] - 2022-06-15
 
 ### Added

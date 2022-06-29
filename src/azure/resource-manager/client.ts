@@ -353,7 +353,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
     );
 
     if (response) {
-      logger.info(
+      logger.debug(
         {
           resourceCount: response.length,
           resource: response._response.request.url,

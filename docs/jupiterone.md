@@ -465,10 +465,11 @@ The following relationships are created:
 
 The following mapped relationships are created:
 
-| Source Entity `_type`   | Relationship `_class` | Target Entity `_type` | Direction |
-| ----------------------- | --------------------- | --------------------- | --------- |
-| `azure_network_watcher` | **HAS**               | `*azure_location*`    | REVERSE   |
-| `azure_subscription`    | **USES**              | `*azure_location*`    | FORWARD   |
+| Source Entity `_type`    | Relationship `_class` | Target Entity `_type`  | Direction |
+| ------------------------ | --------------------- | ---------------------- | --------- |
+| `azure_network_watcher`  | **HAS**               | `*azure_location*`     | REVERSE   |
+| `azure_management_group` | **HAS**               | `*azure_subscription*` | FORWARD   |
+| `azure_subscription`     | **USES**              | `*azure_location*`     | FORWARD   |
 
 <!--
 ********************************************************************************

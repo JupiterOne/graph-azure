@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- New properties added to resources:
+
+  | Entity       | Properties |
+  | ------------ | ---------- |
+  | `azure_user` | `external` |
+
 ### Changed
 
 - Set API response log level from info -> debug

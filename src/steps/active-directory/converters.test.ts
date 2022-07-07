@@ -254,6 +254,48 @@ describe('createUserEntity', () => {
       userPrincipalName:
         'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
       isMfaRegistered: true,
+      external: true,
+    });
+  });
+
+  test('properties transferred for internal user', () => {
+    const mockUser = getMockUser({ userPrincipalName: 'test@test.com' });
+    const mockCredDetails = getMockCredentialDetails();
+    const userEntity = createUserEntity(mockUser, mockCredDetails);
+
+    expect(userEntity).toMatchGraphObjectSchema({ _class: USER_ENTITY_CLASS });
+    expect(userEntity).toEqual({
+      _class: ['User'],
+      _key: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
+      _type: 'azure_user',
+      _rawData: [
+        { name: 'default', rawData: mockUser },
+        {
+          name: 'registrationDetails',
+          rawData: mockCredDetails,
+        },
+      ],
+      accountEnabled: true,
+      active: true,
+      createdOn: undefined,
+      email: 'admin_test@dualboot.com',
+      mail: 'admin_test@dualboot.com',
+      username: 'test@test.com',
+      name: 'Andrew Kulakov',
+      displayName: 'Andrew Kulakov',
+      givenName: 'Andrew',
+      firstName: 'Andrew',
+      id: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
+      jobTitle: 'test title',
+      businessPhones: ['+1 2223334444'],
+      mobilePhone: '+1 2223334444',
+      officeLocation: 'DBP',
+      surname: 'Kulakov',
+      lastName: 'Kulakov',
+      userType: 'Member',
+      userPrincipalName: 'test@test.com',
+      isMfaRegistered: true,
+      external: false,
     });
   });
 

@@ -104,6 +104,10 @@ export function createGroupEntity(data: Group): Entity {
   });
 }
 
+function isExternalUser(username?: string) {
+  return !!(username && username.includes('#EXT#'));
+}
+
 export function createUserEntity(
   data: User,
   registrationDetails?: CredentialUserRegistrationDetails,
@@ -124,6 +128,7 @@ export function createUserEntity(
         username: data.userPrincipalName,
         isMfaRegistered: registrationDetails?.isMfaRegistered,
         accountEnabled: data.accountEnabled,
+        external: isExternalUser(data.userPrincipalName),
       },
     },
   });

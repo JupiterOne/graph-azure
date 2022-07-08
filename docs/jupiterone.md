@@ -1,4 +1,4 @@
-# Integration with JupiterOne
+# Azure
 
 ## Azure + JupiterOne Integration Benefits
 

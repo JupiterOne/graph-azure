@@ -11,6 +11,7 @@ and this project adheres to
 ### Changed
 
 - Set API response log level from info -> debug
+- Stopped printing `UNREGISTERED_PROVIDER` messages in DNS Zone steps
 
 ## [5.39.1] - 2022-06-28
 

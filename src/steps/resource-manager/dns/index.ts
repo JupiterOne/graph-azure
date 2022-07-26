@@ -30,10 +30,13 @@ export async function fetchZones(
     'Microsoft.Network',
   );
   if (registrationState !== 'Registered') {
-    logger.publishEvent({
-      name: 'UNREGISTERED_PROVIDER',
-      description: `The subscription ${instance.config.subscriptionId} must have the "Microsoft.Network" Resource Provider registered in order to ingest DNS zones. The "Microsoft.Network" resource provider has a registration state of "${registrationState}".`,
-    });
+    logger.info(
+      {
+        registrationState,
+        subscriptionId: instance.config.subscriptionId,
+      },
+      'Registration state !== "Registered"',
+    );
     return;
   }
 

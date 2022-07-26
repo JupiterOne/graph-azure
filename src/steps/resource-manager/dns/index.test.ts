@@ -86,13 +86,7 @@ describe('rm-dns-zones', () => {
       },
     });
 
-    const publishEventSpy = jest.spyOn(context.logger, 'publishEvent');
-
     await expect(fetchZones(context)).resolves.not.toThrow();
-    expect(publishEventSpy).toHaveBeenCalledWith({
-      name: 'UNREGISTERED_PROVIDER',
-      description: `The subscription ${configFromEnv.subscriptionId} must have the "Microsoft.Network" Resource Provider registered in order to ingest DNS zones. The "Microsoft.Network" resource provider has a registration state of "NotRegistered".`,
-    });
   }, 10_000);
 });
 

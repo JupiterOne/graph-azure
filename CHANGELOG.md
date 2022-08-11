@@ -8,8 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.40.0] - 2022-08-11
+
 ### Changed
 
+- Add tags to `azure_storage_container` entities
 - Set API response log level from info -> debug
 - Stopped printing `UNREGISTERED_PROVIDER` messages in DNS Zone steps
 

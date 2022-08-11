@@ -286,11 +286,37 @@ describe('createStorageBlobContainerEntity', () => {
       webLinker,
       storageAccountEntity,
       data,
+      undefined,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
       _class: entities.STORAGE_CONTAINER._class,
     });
     expect(storageContainerEntity).toEqual(entity);
+  });
+
+  test('tags (metadata) transferred', () => {
+    const storageAccountEntity = createStorageAccountEntity(
+      webLinker,
+      storageAccount,
+      { blob: {}, queue: {} },
+    );
+    const storageContainerEntity = createStorageContainerEntity(
+      webLinker,
+      storageAccountEntity,
+      data,
+      { tag1: 'tag-1-value' },
+    );
+    expect(storageContainerEntity).toMatchGraphObjectSchema({
+      _class: entities.STORAGE_CONTAINER._class,
+    });
+    expect(storageContainerEntity).toEqual({
+      ...entity,
+      _rawData: [
+        ...entity._rawData,
+        { name: 'metadata', rawData: { tag1: 'tag-1-value' } },
+      ],
+      'tag.tag1': 'tag-1-value',
+    });
   });
 
   test('public container', () => {
@@ -306,6 +332,7 @@ describe('createStorageBlobContainerEntity', () => {
         ...data,
         publicAccess: 'Container',
       },
+      undefined,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
       _class: entities.STORAGE_CONTAINER._class,
@@ -333,6 +360,7 @@ describe('createStorageBlobContainerEntity', () => {
         ...data,
         publicAccess: 'Blob',
       },
+      undefined,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
       _class: entities.STORAGE_CONTAINER._class,
@@ -367,6 +395,7 @@ describe('createStorageBlobContainerEntity', () => {
       webLinker,
       storageAccountEntity,
       data,
+      undefined,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
       _class: entities.STORAGE_CONTAINER._class,
@@ -398,6 +427,7 @@ describe('createStorageBlobContainerEntity', () => {
       webLinker,
       storageAccountEntity,
       data,
+      undefined,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
       _class: entities.STORAGE_CONTAINER._class,
@@ -422,6 +452,7 @@ describe('createStorageBlobContainerEntity', () => {
       webLinker,
       storageAccountEntity,
       data,
+      undefined,
     );
     expect(storageContainerEntity).toMatchGraphObjectSchema({
       _class: entities.STORAGE_CONTAINER._class,

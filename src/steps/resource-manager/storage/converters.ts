@@ -6,8 +6,9 @@ import {
   Table,
   Endpoints,
 } from '@azure/arm-storage/esm/models';
-import { BlobServiceProperties } from '@azure/storage-blob';
+import { BlobServiceProperties, ContainerItem } from '@azure/storage-blob';
 import {
+  assignTags,
   createIntegrationEntity,
   Entity,
   setRawData,
@@ -166,8 +167,9 @@ export function createStorageContainerEntity(
   webLinker: AzureWebLinker,
   storageAccountEntity: Entity,
   data: BlobContainer,
+  metadata: ContainerItem['metadata'],
 ): Entity {
-  return createIntegrationEntity({
+  const containerEntity = createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
@@ -185,6 +187,13 @@ export function createStorageContainerEntity(
       },
     },
   });
+
+  if (metadata) {
+    setRawData(containerEntity, { name: 'metadata', rawData: metadata });
+    assignTags(containerEntity, metadata);
+  }
+
+  return containerEntity;
 }
 
 /**

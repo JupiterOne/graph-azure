@@ -2,10 +2,12 @@ import {
   fetchStorageAccounts,
   fetchStorageQueues,
   fetchStorageTables,
-  fetchStorageContainers,
   fetchStorageFileShares,
 } from '.';
-import { Recording } from '@jupiterone/integration-sdk-testing';
+import {
+  executeStepWithDependencies,
+  Recording,
+} from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import {
   setupAzureRecording,
@@ -14,10 +16,13 @@ import {
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { fetchAccount } from '../../active-directory';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
-import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import {
+  configFromEnv,
+  getStepTestConfigForStep,
+} from '../../../../test/integrationInstanceConfig';
 import { fetchKeyVaults } from '../key-vault';
 import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault/constants';
-import { entities } from './constants';
+import { entities, steps } from './constants';
 
 let recording: Recording;
 
@@ -98,73 +103,23 @@ describe('rm-storage-accounts', () => {
   }, 50000);
 });
 
-describe('rm-storage-containers', () => {
-  async function getSetupEntities() {
-    const setupContext = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-    });
+test('rm-storage-containers', async () => {
+  const stepTestConfig = getStepTestConfigForStep(steps.STORAGE_CONTAINERS);
 
-    await fetchAccount(setupContext);
-    const accountEntities = setupContext.jobState.collectedEntities.filter(
-      (e) => e._type === ACCOUNT_ENTITY_TYPE,
-    );
-    expect(accountEntities.length).toBe(1);
-    const accountEntity = accountEntities[0];
+  recording = setupAzureRecording({
+    name: 'rm-storage-containers',
+    directory: __dirname,
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: stepTestConfig.instanceConfig,
+      }),
+    },
+  });
 
-    await fetchStorageAccounts(setupContext);
-    const j1devStorageAccountEntities = setupContext.jobState.collectedEntities.filter(
-      (e) =>
-        e._type === entities.STORAGE_ACCOUNT._type &&
-        e.displayName?.includes('examplestorage'),
-    );
-    expect(j1devStorageAccountEntities.length).toBe(1);
-    const storageAccountEntity = j1devStorageAccountEntities[0];
-
-    return { accountEntity, storageAccountEntity };
-  }
-
-  test('step', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'resource-manager-step-storage-containers',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({
-          config: configFromEnv,
-          options: {
-            url: {
-              query: false,
-            },
-          },
-        }),
-      },
-    });
-
-    const { accountEntity, storageAccountEntity } = await getSetupEntities();
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [storageAccountEntity],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
-      },
-    });
-
-    await fetchStorageContainers(context);
-
-    const storageContainerEntities = context.jobState.collectedEntities;
-
-    expect(storageContainerEntities).toMatchGraphObjectSchema({
-      _class: entities.STORAGE_CONTAINER._class,
-    });
-
-    const storageAccountContainerRelationships =
-      context.jobState.collectedRelationships;
-
-    expect(
-      storageAccountContainerRelationships,
-    ).toMatchDirectRelationshipSchema({});
-  }, 50000);
-});
+  const stepResults = await executeStepWithDependencies(stepTestConfig);
+  console.log(JSON.stringify(stepResults, null, 2));
+  expect(stepResults).toMatchStepMetadata(stepTestConfig);
+}, 10_000);
 
 describe('rm-storage-file-shares', () => {
   async function getSetupEntities() {

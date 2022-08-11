@@ -117,7 +117,6 @@ test('rm-storage-containers', async () => {
   });
 
   const stepResults = await executeStepWithDependencies(stepTestConfig);
-  console.log(JSON.stringify(stepResults, null, 2));
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
 }, 10_000);
 

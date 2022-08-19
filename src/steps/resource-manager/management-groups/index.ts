@@ -16,6 +16,7 @@ import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { ManagementGroupClient } from './client';
 import {
   ManagementGroupEntities,
+  ManagementGroupMappedRelationships,
   ManagementGroupRelationships,
   ManagementGroupSteps,
 } from './constants';
@@ -63,7 +64,7 @@ export async function validateManagementGroupStepInvocation(
   } catch (err) {
     context.logger.publishEvent({
       name: 'mgmt_group_auth_error',
-      description: `Error validating call to fetch the Tenant Root Management Group (https://management.azure.com/providers/Microsoft.Management/managementGroups/${tenantId}). Please grant the "Managemnt Group Reader" role on the Tenant Root Group in order to fetch management group entities/relationships.`,
+      description: `Error validating call to fetch the Tenant Root Management Group (https://management.azure.com/providers/Microsoft.Management/managementGroups/${tenantId}). Please grant the "Management Group Reader" role on the Tenant Root Group in order to fetch management group entities/relationships.`,
     });
     throw new IntegrationProviderAuthorizationError({
       cause: err,
@@ -145,7 +146,10 @@ export const managementGroupSteps: Step<
     relationships: [
       ManagementGroupRelationships.ACCOUNT_HAS_ROOT_MANAGEMENT_GROUP,
       ManagementGroupRelationships.MANAGEMENT_GROUP_CONTAINS_MANAGEMENT_GROUP,
-    ], // TODO add support for mapped relationship documentation
+    ],
+    mappedRelationships: [
+      ManagementGroupMappedRelationships.MANAGEMENT_GROUP_HAS_SUBSCRIPTION,
+    ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchManagementGroups,
   },

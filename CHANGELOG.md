@@ -8,6 +8,20 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [5.40.0] - 2022-08-11
+
+### Changed
+
+- Add tags to `azure_storage_container` entities
+- Set API response log level from info -> debug
+- Stopped printing `UNREGISTERED_PROVIDER` messages in DNS Zone steps
+
+## [5.39.1] - 2022-06-28
+
+- Fix managed question issue
+- Update integration SDK packages
+- Update `@lifeomic/attempt`
+
 ## [5.39.0] - 2022-06-15
 
 ### Added

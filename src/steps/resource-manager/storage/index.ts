@@ -30,6 +30,7 @@ import {
   STEP_RM_KEYVAULT_VAULTS,
 } from '../key-vault/constants';
 import { Vault } from '@azure/arm-keyvault/esm/models';
+import { ContainerItem } from '@azure/storage-blob';
 // import { MonitorClient } from '../monitor/client';
 // import { compareAsc } from 'date-fns';
 
@@ -264,6 +265,35 @@ export async function fetchStorageContainers(
       const storageAccount = getRawData<StorageAccount>(storageAccountEntity);
       if (!storageAccount) return;
 
+      const storageAccountServiceClient = createStorageAccountServiceClient({
+        config: instance.config,
+        logger,
+        storageAccount: {
+          name: storageAccount.name!,
+          kind: storageAccount.kind!,
+          skuTier: storageAccount.sku?.tier as SkuTier,
+        },
+      });
+
+      const metadataByContainerNameMap = new Map<
+        string,
+        ContainerItem['metadata']
+      >();
+      try {
+        await storageAccountServiceClient.iterateContainers((c) => {
+          metadataByContainerNameMap.set(c.name, c.metadata);
+        });
+      } catch (err) {
+        logger.warn(
+          {
+            err,
+            storageAccountName: storageAccount.name,
+            storageAccountId: storageAccount.id,
+          },
+          'Unable to get metadata for containers',
+        );
+      }
+
       await client.iterateStorageBlobContainers(
         {
           name: storageAccount.name!,
@@ -276,6 +306,7 @@ export async function fetchStorageContainers(
             webLinker,
             storageAccountEntity,
             container,
+            metadataByContainerNameMap.get(container.name!),
           );
 
           await jobState.addEntity(containerEntity);

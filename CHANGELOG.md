@@ -1,3 +1,17 @@
+# v5.40.1 (Wed Sep 07 2022)
+
+#### 🐛 Bug Fix
+
+- Add auto versioning [#538](https://github.com/JupiterOne/graph-azure/pull/538) ([@Nick-NCSU](https://github.com/Nick-NCSU))
+- Changelog for 5.40.0 [#536](https://github.com/JupiterOne/graph-azure/pull/536) ([@ndowmon](https://github.com/ndowmon))
+
+#### Authors: 2
+
+- Nick Dowmon ([@ndowmon](https://github.com/ndowmon))
+- Nick Thompson ([@Nick-NCSU](https://github.com/Nick-NCSU))
+
+---
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

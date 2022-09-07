@@ -29,6 +29,7 @@
     "test:env": "LOAD_ENV=1 yarn test",
     "test:ci": "yarn lint && yarn type-check && yarn test",
     "prepush": "yarn lint && yarn type-check && jest --changedSince main",
+    "postversion": "cp package.json ./dist/package.json",
     "document:diagnostic-settings": "./tools/cli/j1-azure-integration document-diagnostic-settings",
     "precommit": "yarn document:diagnostic-settings && git add docs/jupiterone.md && lint-staged",
     "build": "./build.sh",

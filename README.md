@@ -99,15 +99,23 @@ Managed integrations are deployed into the JupiterOne infrastructure by staff
 engineers using internal projects that declare a dependency on the open source
 integration NPM package. The package will be published by the JupiterOne team.
 
-#### Publishing to NPM
+### Versioning this project
 
-Create a PR with changes and request review. Once approved, the branch will be
-merged into `main`. An administrator of the GitHub project should:
+This project is versioned using [auto](https://intuit.github.io/auto/).
 
-1. Pull the latest from `main`
-1. Determine the new semantic version number
-1. Create the version and tag with `yarn version [--major] [--minor] [--patch]`
-1. Push the commit and tag with `git push --follow-tags`
+Versioning and publishing to NPM are now handled via adding GitHub labels to
+pull requests. The following labels should be used for this process:
 
-That's it! Travis will deploy the necessary bits to NPM. Manual deployment is
-possible of course, just be certain to follow the `yarn build` road.
+- patch
+- minor
+- major
+- release
+
+For each pull request, the degree of change should be registered by applying the
+appropriate label of patch, minor, or major. This allows the repository to keep
+track of the highest degree of change since the last release. When ready to
+publish to NPM, the PR should have both its appropriate patch, minor, or major
+label applied as well as a release label. The release label will denote to the
+system that we need to publish to NPM and will correctly version based on the
+highest degree of change since the last release, package the project, and
+publish it to NPM.

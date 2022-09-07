@@ -29,6 +29,7 @@
     "test:env": "LOAD_ENV=1 yarn test",
     "test:ci": "yarn lint && yarn type-check && yarn test",
     "prepush": "yarn lint && yarn type-check && jest --changedSince main",
+    "postversion": "cp package.json ./dist/package.json",
     "document:diagnostic-settings": "./tools/cli/j1-azure-integration document-diagnostic-settings",
     "precommit": "yarn document:diagnostic-settings && git add docs/jupiterone.md && lint-staged",
     "build": "./build.sh",
@@ -97,8 +98,25 @@
     "@types/lodash.snakecase": "^4.1.6",
     "@types/node": "^13.11.1",
     "@types/uuid": "^8.3.0",
+    "auto": "^10.37.4",
     "dotenv": "^8.2.0",
     "ts-node": "^9.1.1",
     "uuid": "^8.3.2"
+  },
+  "auto": {
+    "plugins": [
+      [
+        "npm",
+        {
+          "setRcToken": false,
+          "publishFolder": "./dist"
+        }
+      ],
+      "released"
+    ],
+    "onlyPublishWithReleaseLabel": true,
+    "shipit": {
+      "prerelease": false
+    }
   }
 }

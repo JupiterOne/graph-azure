@@ -195,6 +195,30 @@ describe('step - batch applications', () => {
       _type: 'azure_batch_account',
       _class: ['Service'],
       name: 'j1devbatchaccount',
+      _rawData: [
+        {
+          name: 'default',
+          rawData: {
+            id:
+              '/subscriptions/87f62f44-9dad-4284-a08f-f2fb3d8b528a/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount',
+            name: 'j1devbatchaccount',
+            type: 'Microsoft.Batch/batchAccounts',
+            location: 'eastus',
+            accountEndpoint: 'j1devbatchaccount.eastus.batch.azure.com',
+            provisioningState: 'Succeeded',
+            poolAllocationMode: 'BatchService',
+            autoStorage: {
+              storageAccountId:
+                '/subscriptions/87f62f44-9dad-4284-a08f-f2fb3d8b528a/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev',
+              lastKeySync: '2021-02-12T18:44:33.359Z',
+            },
+            dedicatedCoreQuota: 20,
+            lowPriorityCoreQuota: 10,
+            poolQuota: 20,
+            activeJobAndJobScheduleQuota: 100,
+          },
+        },
+      ],
     };
 
     context = createMockAzureStepExecutionContext({

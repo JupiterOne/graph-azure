@@ -92,7 +92,7 @@
   },
   "devDependencies": {
     "@jupiterone/integration-sdk-core": "^8.16.0",
-    "@jupiterone/integration-sdk-dev-tools": "^8.16.0",
+    "@jupiterone/integration-sdk-dev-tools": "^8.24.1",
     "@jupiterone/integration-sdk-testing": "^8.16.0",
     "@types/lodash.map": "^4.6.13",
     "@types/lodash.snakecase": "^4.1.6",

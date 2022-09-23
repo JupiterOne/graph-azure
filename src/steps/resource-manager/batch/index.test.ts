@@ -1,6 +1,5 @@
 import {
   fetchBatchAccounts,
-  //fetchBatchApplications,
   fetchBatchCertificates,
   fetchBatchPools,
 } from '.';

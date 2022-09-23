@@ -122,9 +122,9 @@ export async function fetchBatchApplications(
     async (batchAccountEntity) => {
       const { id, name } = batchAccountEntity;
       const resourceGroup = resourceGroupName(id, true)!;
-      const rawData = getRawData<BatchAccount>(batchAccountEntity);
+      const batchAccount = getRawData<BatchAccount>(batchAccountEntity);
 
-      if (rawData?.autoStorage) {
+      if (batchAccount?.autoStorage) {
         await client.iterateBatchApplications(
           {
             resourceGroupName: resourceGroup,

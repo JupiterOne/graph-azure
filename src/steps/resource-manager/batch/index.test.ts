@@ -1,18 +1,23 @@
 import {
   fetchBatchAccounts,
-  fetchBatchApplications,
+  //fetchBatchApplications,
   fetchBatchCertificates,
   fetchBatchPools,
 } from '.';
 import {
+  executeStepWithDependencies,
   MockIntegrationStepExecutionContext,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
-import { setupAzureRecording } from '../../../../test/helpers/recording';
+import {
+  setupAzureRecording,
+  getMatchRequestsBy,
+} from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
-import { BatchEntities } from './constants';
+import { BatchEntities, STEP_RM_BATCH_APPLICATION } from './constants';
+import { getStepTestConfigForStep } from '../../../../test/integrationInstanceConfig';
 
 let recording: Recording;
 let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
@@ -175,95 +180,28 @@ describe('step - batch pools', () => {
 });
 
 describe('step - batch applications', () => {
-  beforeAll(async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'resource-manager-step-batch-applications',
-    });
-
-    instanceConfig = {
-      clientId: process.env.CLIENT_ID || 'clientId',
-      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
-      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
-    };
-
-    const batchAccount = {
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
-      id:
-        '/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount',
-      _type: 'azure_batch_account',
-      _class: ['Service'],
-      name: 'j1devbatchaccount',
-      _rawData: [
-        {
-          name: 'default',
-          rawData: {
-            id:
-              '/subscriptions/87f62f44-9dad-4284-a08f-f2fb3d8b528a/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount',
-            name: 'j1devbatchaccount',
-            type: 'Microsoft.Batch/batchAccounts',
-            location: 'eastus',
-            accountEndpoint: 'j1devbatchaccount.eastus.batch.azure.com',
-            provisioningState: 'Succeeded',
-            poolAllocationMode: 'BatchService',
-            autoStorage: {
-              storageAccountId:
-                '/subscriptions/87f62f44-9dad-4284-a08f-f2fb3d8b528a/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev',
-              lastKeySync: '2021-02-12T18:44:33.359Z',
-            },
-            dedicatedCoreQuota: 20,
-            lowPriorityCoreQuota: 10,
-            poolQuota: 20,
-            activeJobAndJobScheduleQuota: 100,
-          },
-        },
-      ],
-    };
-
-    context = createMockAzureStepExecutionContext({
-      instanceConfig,
-      entities: [batchAccount],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
-      },
-    });
-
-    await fetchBatchApplications(context);
-  });
-
   afterAll(async () => {
     if (recording) {
       await recording.stop();
     }
   });
 
-  it('should collect an Azure Batch Application entity', () => {
-    const { collectedEntities } = context.jobState;
+  test('rm-batch-applications', async () => {
+    const stepTestConfig = getStepTestConfigForStep(STEP_RM_BATCH_APPLICATION);
 
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        _type: BatchEntities.BATCH_APPLICATION._type,
-        _class: BatchEntities.BATCH_APPLICATION._class,
-        id: 'j1devbatchapplication',
-        _key: 'j1devbatchapplication',
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/j1devbatchapplication`,
-      }),
-    );
-  });
-
-  it('should collect an Azure Batch Account has Azure Batch Application relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual({
-      _class: 'HAS',
-      _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount`,
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount|has|j1devbatchapplication`,
-      _toEntityKey: `j1devbatchapplication`,
-      _type: 'azure_batch_account_has_application',
-      displayName: 'HAS',
+    recording = setupAzureRecording({
+      name: 'rm-batch-applications',
+      directory: __dirname,
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
     });
-  });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  }, 10_000);
 });
 
 describe('step - batch certificates', () => {

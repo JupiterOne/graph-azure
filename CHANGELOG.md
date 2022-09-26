@@ -1,3 +1,17 @@
+# v5.40.2 (Mon Sep 26 2022)
+
+#### 🐛 Bug Fix
+
+- Prevent 409 errors in fetch-batch-applications [#540](https://github.com/JupiterOne/graph-azure/pull/540) ([@edreyer1](https://github.com/edreyer1) [@ndowmon](https://github.com/ndowmon))
+- Update dev tools 8.24.1 [#541](https://github.com/JupiterOne/graph-azure/pull/541) ([@edreyer1](https://github.com/edreyer1))
+
+#### Authors: 2
+
+- Emily Dreyer ([@edreyer1](https://github.com/edreyer1))
+- Nick Dowmon ([@ndowmon](https://github.com/ndowmon))
+
+---
+
 # v5.40.1 (Wed Sep 07 2022)
 
 #### 🐛 Bug Fix

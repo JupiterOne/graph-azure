@@ -3,6 +3,7 @@ import {
   IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
+  getRawData,
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
@@ -34,6 +35,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import { BatchAccount } from '@azure/arm-batch/esm/models';
 
 export async function fetchBatchAccounts(
   executionContext: IntegrationStepContext,
@@ -120,28 +122,31 @@ export async function fetchBatchApplications(
     async (batchAccountEntity) => {
       const { id, name } = batchAccountEntity;
       const resourceGroup = resourceGroupName(id, true)!;
+      const batchAccount = getRawData<BatchAccount>(batchAccountEntity);
 
-      await client.iterateBatchApplications(
-        {
-          resourceGroupName: resourceGroup,
-          batchAccountName: name as string,
-        },
-        async (batchApplication) => {
-          const batchApplicationEntity = createBatchApplicationEntity(
-            webLinker,
-            batchApplication,
-          );
-          await jobState.addEntity(batchApplicationEntity);
+      if (batchAccount?.autoStorage) {
+        await client.iterateBatchApplications(
+          {
+            resourceGroupName: resourceGroup,
+            batchAccountName: name as string,
+          },
+          async (batchApplication) => {
+            const batchApplicationEntity = createBatchApplicationEntity(
+              webLinker,
+              batchApplication,
+            );
+            await jobState.addEntity(batchApplicationEntity);
 
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.HAS,
-              from: batchAccountEntity,
-              to: batchApplicationEntity,
-            }),
-          );
-        },
-      );
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.HAS,
+                from: batchAccountEntity,
+                to: batchApplicationEntity,
+              }),
+            );
+          },
+        );
+      }
     },
   );
 }

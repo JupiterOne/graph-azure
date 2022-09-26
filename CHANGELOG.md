@@ -1,3 +1,10 @@
+## [5.40.2] - 2022-09-26
+
+### Changed
+
+- Update to check if batch account is linked to an auto-storage account before fetching
+batch applications
+
 # v5.40.1 (Wed Sep 07 2022)
 
 #### 🐛 Bug Fix

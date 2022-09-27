@@ -1,3 +1,15 @@
+# v5.40.3 (Tue Sep 27 2022)
+
+#### 🐛 Bug Fix
+
+- Fix azure_kubernetes_service -> azure_resource_group relationship [#543](https://github.com/JupiterOne/graph-azure/pull/543) ([@ndowmon](https://github.com/ndowmon))
+
+#### Authors: 1
+
+- Nick Dowmon ([@ndowmon](https://github.com/ndowmon))
+
+---
+
 # v5.40.2 (Mon Sep 26 2022)
 
 #### 🐛 Bug Fix

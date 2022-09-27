@@ -6,6 +6,7 @@ import { createAzureWebLinker } from '../../../azure';
 import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { ContainerServicesClient } from './client';
 import {
@@ -42,7 +43,7 @@ export const containerServicesSteps: Step<
     name: 'Fetch Container Services Clusters',
     entities: [ContainerServicesEntities.KUBERNETES_CLUSTER],
     relationships: [ContainerServicesRelationships.RESOURCE_GROUP_HAS_SERVICE],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchClusters,
   },
 ];

@@ -211,7 +211,7 @@ The following entities are created:
 | FrontDoor                                      | `azure_frontdoor`                                 | `Service`                          |
 | FrontDoor Backend Pool                         | `azure_frontdoor_backend_pool`                    | `Configuration`                    |
 | FrontDoor Frontend Endpoint                    | `azure_frontdoor_frontend_endpoint`               | `Gateway`                          |
-| FrontDoor Routing Rule                         | `azure_frontdoor_routing_rule`                    | `Route`                            |
+| FrontDoor Routing Rule                         | `azure_frontdoor_routing_rule`                    | `Rule`                             |
 | FrontDoor Rules Engine                         | `azure_frontdoor_rules_engine`                    | `Ruleset`                          |
 | [AD] Account                                   | `azure_account`                                   | `Account`                          |
 | [AD] Group                                     | `azure_user_group`                                | `UserGroup`                        |

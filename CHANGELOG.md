@@ -1,3 +1,21 @@
+# v5.40.4 (Wed Dec 14 2022)
+
+#### 🐛 Bug Fix
+
+- fix(int-6429): update routing rule to rule class [#547](https://github.com/JupiterOne/graph-azure/pull/547) ([@zemberdotnet](https://github.com/zemberdotnet))
+- Merging CodeQL [#546](https://github.com/JupiterOne/graph-azure/pull/546) ([@electricgull](https://github.com/electricgull))
+- Merging CodeQL [#545](https://github.com/JupiterOne/graph-azure/pull/545) ([@VDubber](https://github.com/VDubber))
+- Update fetch-depth for Auto [#544](https://github.com/JupiterOne/graph-azure/pull/544) ([@Nick-NCSU](https://github.com/Nick-NCSU))
+
+#### Authors: 4
+
+- Cameron Griffin ([@electricgull](https://github.com/electricgull))
+- Matthew Zember ([@zemberdotnet](https://github.com/zemberdotnet))
+- Nick Thompson ([@Nick-NCSU](https://github.com/Nick-NCSU))
+- Samuel Poulton ([@VDubber](https://github.com/VDubber))
+
+---
+
 # v5.40.3 (Tue Sep 27 2022)
 
 #### 🐛 Bug Fix

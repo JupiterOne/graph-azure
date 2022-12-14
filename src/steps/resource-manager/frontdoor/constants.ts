@@ -22,7 +22,7 @@ export const FrontDoorEntities = {
   },
   ROUTING_RULE: {
     resourceName: 'FrontDoor Routing Rule',
-    _class: ['Route'],
+    _class: ['Rule'],
     _type: 'azure_frontdoor_routing_rule',
   },
   BACKEND_POOL: {

@@ -5,12 +5,12 @@
 - Visualize Azure cloud resources in the JupiterOne graph.
 - Map Azure users to employees in your JupiterOne account.
 - Monitor visibility and governance of your Azure cloud environment by
-  leveraging hundreds of out of the box queries.
+  leveraging hundreds of out-of-the box queries.
 - Monitor compliance against the Azure CIS Benchmarks framework and other
-  security benchmarks using the JupiterOne compliance app.
+  security benchmarks using J1 Compliance.
 - Monitor Azure vulnerabilities and findings from multiple services within the
-  alerts app.
-- Monitor changes to your Azure cloud resources using multiple JupiterOne alert
+  J1 Alerts.
+- Monitor changes to your Azure cloud resources using multiple J1 Alerts
   rule packs specific to Azure.
 
 ## How it Works
@@ -25,8 +25,8 @@
 ## Requirements
 
 - JupiterOne requires the API credentials for the Azure endpoint, specifically
-  the Directory (tenant) id, the Application (client) id, and the Application
-  (client) secret with the correct permissions assigned.
+  the Directory (tenant) ID, the Application (client) ID, and the Application
+  (client) secret key with the correct permissions assigned.
 - You must have permission in JupiterOne to install new integrations.
 
 ## Support
@@ -52,31 +52,54 @@ Graph API][1]. Azure Resource Manager is authenticated and accessed through
 
 To create the App Registration:
 
-1. Go to your Azure portal
-2. Navigate to **App registrations**
-3. Create a new App registration, using the **Name** "JupiterOne", selecting
+1. In the Azure portal, click **Azure Active Directory**.
+2. Select **App registrations**.
+   
+
+   ![](./azure-app-registration.png)
+   
+3. Click **New registration**.
+4. Create a new App registration, using the **Name** "JupiterOne", selecting
    **Accounts in this organizational directory only**, with **no** "Redirect
-   URI"
-4. Navigate to the **Overview** page of the new app
-5. Copy the **Application (client) ID**
-6. Copy the **Directory (tenant) ID**
-7. Navigate to the **Certificates & secrets** section
-8. Create a new client secret
-9. Copy the generated secret **Value** (you only get one chance!)
+   URI".
+
+   ![](./azure-new-registration.png) 
+
+   
+5. Click **Register**.
+
+#### Application (Client) ID
+
+After registering a new application, you can find the application (client) ID and directory (tenant) ID from the Overview menu option. Note the values for later use.
+
+1. Navigate to the Overview page of the new app.
+   
+
+   ![](./azure-app-ID.png) 
+   
+2. Copy the Application (client) ID.
+3. Copy the Directory (tenant) ID.
+4. Navigate to the Certificates & secrets section.
+5. Create a new client secret.
+6. Copy the generated secret Value (you only get one chance to do this).
 
 #### API Permissions (Azure Active Directory)
 
-Grant permission to read Microsoft Graph information:
+The following steps are required for the DICOM service, but optional for the FHIR service. In addition, user access permissions or role assignments for the Azure Health Data Services are managed through RBAC. For more details, go to [Configure Azure RBAC for Azure Health Data Services](https://learn.microsoft.com/en-us/azure/healthcare-apis/configure-azure-rbac).
 
-1. Navigate to **API permissions**, choose **Microsoft Graph**, then
-   **Application Permissions**
-2. Grant the following permissions to the application:
+1. Go to the **API permissions** menu option for the new app.
+   
+
+   ![](./azure-add-permission.png) 
+   
+2. Click **Add a permission**.
+3. Click **Add permissions** and grant the following permissions to the app:
 
    - `Directory.Read.All`
    - `Policy.Read.All`
    - `Reports.Read.All`
 
-3. Grant admin consent for this directory for the permissions above
+4. Grant admin consent for this directory for the permissions above
 
 #### IAM Roles (Azure Management Groups / Subscriptions)
 

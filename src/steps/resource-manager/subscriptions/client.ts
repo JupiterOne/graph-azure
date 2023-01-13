@@ -72,7 +72,7 @@ export class J1SubscriptionClient extends Client {
         passSubscriptionId: false,
       },
     );
-    let allSubscriptions: any[] = [];
+    let allSubscriptions: Subscription[] = [];
     let nextLink;
     do {
       const subscriptions = await request(

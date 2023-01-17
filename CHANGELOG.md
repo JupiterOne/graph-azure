@@ -1,3 +1,15 @@
+# v5.40.5 (Tue Jan 17 2023)
+
+#### 🐛 Bug Fix
+
+- Azure FetchSubscriptions Pagination [#549](https://github.com/JupiterOne/graph-azure/pull/549) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.40.4 (Wed Dec 14 2022)
 
 #### 🐛 Bug Fix

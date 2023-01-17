@@ -90,10 +90,9 @@ export class J1SubscriptionClient extends Client {
         'subscription',
         FIVE_MINUTES,
       );
-      allSubscriptions = [
-        ...allSubscriptions,
-        ...subscriptions?._response?.parsedBody,
-      ];
+      allSubscriptions = allSubscriptions.concat(
+        subscriptions?._response?.parsedBody,
+      );
       nextLink = subscriptions?._response?.parsedBody.nextLink;
     } while (nextLink);
     return allSubscriptions;

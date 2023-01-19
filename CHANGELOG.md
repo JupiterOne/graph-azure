@@ -1,3 +1,15 @@
+# v5.40.6 (Thu Jan 19 2023)
+
+#### 🐛 Bug Fix
+
+- Correction of next link subscription spec [#550](https://github.com/JupiterOne/graph-azure/pull/550) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.40.5 (Tue Jan 17 2023)
 
 #### 🐛 Bug Fix

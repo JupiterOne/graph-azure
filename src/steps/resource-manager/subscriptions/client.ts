@@ -80,10 +80,15 @@ export class J1SubscriptionClient extends Client {
         // serviceClient.subscriptions.list() does not work because the api version is too old
         // sendOperationRequest was the only way I found to change the API version with this sdk
         async () =>
-          await serviceClient.sendOperationRequest(
-            nextLink ? { nextLink } : {},
-            nextLink ? listNextOperationSpec : listSubscripsionsOperationSpec,
-          ),
+          nextLink
+            ? await serviceClient.sendOperationRequest(
+                { nextLink },
+                listNextOperationSpec,
+              )
+            : await serviceClient.sendOperationRequest(
+                {},
+                listSubscripsionsOperationSpec,
+              ),
         this.logger,
         'subscription',
         FIVE_MINUTES,

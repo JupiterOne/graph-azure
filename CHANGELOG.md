@@ -1,3 +1,15 @@
+# v5.40.7 (Thu Jan 19 2023)
+
+#### 🐛 Bug Fix
+
+- Changed the name of the nextlinkVariable [#551](https://github.com/JupiterOne/graph-azure/pull/551) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.40.6 (Thu Jan 19 2023)
 
 #### 🐛 Bug Fix

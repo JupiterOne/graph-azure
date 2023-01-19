@@ -73,16 +73,16 @@ export class J1SubscriptionClient extends Client {
       },
     );
     let allSubscriptions: Subscription[] = [];
-    let nextLink;
+    let nextPageLink: string | undefined;
     do {
       const subscriptions = await request(
         // Need API version to 2020-01-01 in order to return subscription tags
         // serviceClient.subscriptions.list() does not work because the api version is too old
         // sendOperationRequest was the only way I found to change the API version with this sdk
         async () =>
-          nextLink
+          nextPageLink
             ? await serviceClient.sendOperationRequest(
-                { nextLink },
+                { nextPageLink },
                 listNextOperationSpec,
               )
             : await serviceClient.sendOperationRequest(
@@ -96,8 +96,8 @@ export class J1SubscriptionClient extends Client {
       allSubscriptions = allSubscriptions.concat(
         subscriptions?._response?.parsedBody,
       );
-      nextLink = subscriptions?._response?.parsedBody.nextLink;
-    } while (nextLink);
+      nextPageLink = subscriptions?._response?.parsedBody.nextLink;
+    } while (nextPageLink);
     return allSubscriptions;
   }
 

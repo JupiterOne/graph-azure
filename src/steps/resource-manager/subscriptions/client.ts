@@ -81,10 +81,8 @@ export class J1SubscriptionClient extends Client {
         // sendOperationRequest was the only way I found to change the API version with this sdk
         async () =>
           await serviceClient.sendOperationRequest(
-            {},
-            nextLink
-              ? getNextOperationSpec(nextLink)
-              : listSubscripsionsOperationSpec,
+            nextLink ? { nextLink } : {},
+            nextLink ? listNextOperationSpec : listSubscripsionsOperationSpec,
           ),
         this.logger,
         'subscription',
@@ -115,10 +113,6 @@ export class J1SubscriptionClient extends Client {
     );
     return subscription?._response?.parsedBody;
   }
-}
-function getNextOperationSpec(nextLink: string): msRest.OperationSpec {
-  nextPageLink.parameterPath = nextLink;
-  return listNextOperationSpec;
 }
 
 /**

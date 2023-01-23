@@ -1,12 +1,10 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { CdnClient } from './client';
@@ -87,9 +85,7 @@ export async function fetchEndpoints(
   );
 }
 
-export const cdnSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const cdnSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_CDN_PROFILE,
     name: 'CDN Profiles',
@@ -100,6 +96,7 @@ export const cdnSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchProfiles,
+    permissions: ['Microsoft.Cdn/profiles/read'],
   },
   {
     id: STEP_RM_CDN_ENDPOINTS,
@@ -111,5 +108,6 @@ export const cdnSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CDN_PROFILE],
     executionHandler: fetchEndpoints,
+    permissions: ['Microsoft.Cdn/profiles/endpoints/read'],
   },
 ];

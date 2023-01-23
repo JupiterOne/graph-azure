@@ -1,6 +1,4 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   RelationshipClass,
   IntegrationConfigLoadError,
   IntegrationError,
@@ -9,7 +7,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import {
@@ -134,9 +132,7 @@ export async function fetchLocations(
   await jobState.setData(setDataKeys.locationNameMap, locationNameMap);
 }
 
-export const subscriptionSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const subscriptionSteps: AzureIntegrationStep[] = [
   {
     id: steps.SUBSCRIPTION,
     name: 'Subscriptions',
@@ -144,6 +140,7 @@ export const subscriptionSteps: Step<
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscription,
+    permissions: ['Microsoft.Resources/subscriptions/read'],
   },
   {
     id: steps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS,
@@ -154,6 +151,9 @@ export const subscriptionSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscriptionDiagnosticSettings,
+    permissions: [
+      'Microsoft.OperationalInsights/workspaces/providers/Microsoft.Insights/diagnosticSettings/Read',
+    ],
   },
   {
     id: steps.LOCATIONS,
@@ -163,5 +163,6 @@ export const subscriptionSteps: Step<
     mappedRelationships: [mappedRelationships.SUBSCRIPTION_USES_LOCATION],
     dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTION],
     executionHandler: fetchLocations,
+    permissions: ['Microsoft.Resources/subscriptions/locations/read'],
   },
 ];

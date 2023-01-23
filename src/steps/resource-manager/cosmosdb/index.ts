@@ -1,12 +1,10 @@
 import {
   createDirectRelationship,
   RelationshipClass,
-  Step,
-  IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { CosmosDBClient } from './client';
@@ -60,9 +58,7 @@ export async function fetchCosmosDBSqlDatabases(
   });
 }
 
-export const cosmosdbSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const cosmosdbSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_COSMOSDB_SQL_DATABASES,
     name: 'CosmosDB SQL Databases',
@@ -91,5 +87,6 @@ export const cosmosdbSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchCosmosDBSqlDatabases,
+    permissions: ['Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read'],
   },
 ];

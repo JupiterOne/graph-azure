@@ -1,9 +1,5 @@
-import {
-  IntegrationStepExecutionContext,
-  Step,
-} from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationConfig, IntegrationStepContext } from '../../../types';
+import { AzureIntegrationStep, IntegrationStepContext } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
@@ -35,9 +31,7 @@ export async function fetchClusters(
   });
 }
 
-export const containerServicesSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const containerServicesSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_CONTAINER_SERVICES_CLUSTERS,
     name: 'Fetch Container Services Clusters',
@@ -45,5 +39,6 @@ export const containerServicesSteps: Step<
     relationships: [ContainerServicesRelationships.RESOURCE_GROUP_HAS_SERVICE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchClusters,
+    permissions: ['Microsoft.ContainerService/managedClusters/read'],
   },
 ];

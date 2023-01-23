@@ -1,6 +1,5 @@
 import {
   Entity,
-  Step,
   IntegrationStepExecutionContext,
   Relationship,
   createDirectRelationship,
@@ -12,7 +11,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import {
   SERVICE_PRINCIPAL_ENTITY_TYPE,
@@ -217,17 +216,30 @@ export async function fetchVirtualMachines(
   const client = new ComputeClient(instance.config, logger);
 
   await client.iterateVirtualMachines(async (vm) => {
-    let instanceView: VirtualMachinesInstanceViewResponse | undefined = undefined;
+    let instanceView:
+      | VirtualMachinesInstanceViewResponse
+      | undefined = undefined;
     try {
-      instanceView = await client.fetchInstanceView(vm.name, getResourceGroupName(vm.id || ""));
+      instanceView = await client.fetchInstanceView(
+        vm.name,
+        getResourceGroupName(vm.id || ''),
+      );
     } catch (err) {
       logger.warn(
-        { err, name: vm.name, resourceGroup: getResourceGroupName(vm.id || "") },
+        {
+          err,
+          name: vm.name,
+          resourceGroup: getResourceGroupName(vm.id || ''),
+        },
         'Warning: unable to fetch virtual machine instance view.',
       );
     }
 
-    const virtualMachineEntity = createVirtualMachineEntity(webLinker, vm, instanceView);
+    const virtualMachineEntity = createVirtualMachineEntity(
+      webLinker,
+      vm,
+      instanceView,
+    );
     await jobState.addEntity(virtualMachineEntity);
 
     await createResourceGroupResourceRelationship(
@@ -681,9 +693,7 @@ export async function buildVirtualMachineManagedIdentityRelationships(
   );
 }
 
-export const computeSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const computeSteps: AzureIntegrationStep[] = [
   {
     id: steps.GALLERIES,
     name: 'Galleries',
@@ -691,6 +701,7 @@ export const computeSteps: Step<
     relationships: [relationships.RESOURCE_GROUP_HAS_GALLERY],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchGalleries,
+    permissions: ['Microsoft.Compute/galleries/read'],
   },
   {
     id: steps.SHARED_IMAGES,
@@ -699,6 +710,7 @@ export const computeSteps: Step<
     relationships: [relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE],
     dependsOn: [STEP_AD_ACCOUNT, steps.GALLERIES],
     executionHandler: fetchGalleryImages,
+    permissions: ['Microsoft.Compute/galleries/images/read'],
   },
   {
     id: steps.SHARED_IMAGE_VERSIONS,
@@ -707,6 +719,7 @@ export const computeSteps: Step<
     relationships: [relationships.SHARED_IMAGE_HAS_VERSION],
     dependsOn: [STEP_AD_ACCOUNT, steps.SHARED_IMAGES],
     executionHandler: fetchGalleryImageVersions,
+    permissions: ['Microsoft.Compute/galleries/images/versions/read'],
   },
   {
     id: steps.SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS,
@@ -735,6 +748,7 @@ export const computeSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineImages,
+    permissions: ['Microsoft.Compute/images/read'],
   },
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
@@ -751,6 +765,7 @@ export const computeSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineDisks,
+    permissions: ['Microsoft.Compute/disks/read'],
   },
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINES,
@@ -769,6 +784,7 @@ export const computeSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachines,
+    permissions: ['Microsoft.Compute/virtualMachines/read'],
   },
   {
     id: steps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS,
@@ -792,6 +808,7 @@ export const computeSteps: Step<
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_COMPUTE_VIRTUAL_MACHINES],
     executionHandler: fetchVirtualMachineExtensions,
+    permissions: ['Microsoft.Compute/virtualMachines/extensions/read'],
   },
   {
     id: steps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS,

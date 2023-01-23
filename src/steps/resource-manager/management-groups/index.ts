@@ -1,6 +1,4 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
   createMappedRelationship,
@@ -10,7 +8,11 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import {
+  IntegrationStepContext,
+  IntegrationConfig,
+  AzureIntegrationStep,
+} from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { ManagementGroupClient } from './client';
@@ -136,9 +138,7 @@ export async function getGraphObjectsForManagementGroup(options: {
   return { managementGroup, managementGroupEntity };
 }
 
-export const managementGroupSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const managementGroupSteps: AzureIntegrationStep[] = [
   {
     id: ManagementGroupSteps.MANAGEMENT_GROUPS,
     name: 'Management Groups',
@@ -152,5 +152,6 @@ export const managementGroupSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchManagementGroups,
+    permissions: ['Microsoft.Management/managementGroups/read'],
   },
 ];

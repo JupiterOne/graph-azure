@@ -1,5 +1,6 @@
 import {
   IntegrationInstanceConfig,
+  IntegrationStep,
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
@@ -60,4 +61,9 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
   ingestActiveDirectory?: boolean;
 
   configureSubscriptionInstances?: boolean;
+}
+
+export interface AzureIntegrationStep
+  extends IntegrationStep<IntegrationConfig> {
+  permissions?: Array<string>;
 }

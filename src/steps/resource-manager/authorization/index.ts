@@ -2,14 +2,12 @@ import {
   Entity,
   createDirectRelationship,
   createMappedRelationship,
-  Step,
-  IntegrationStepExecutionContext,
   RelationshipClass,
   getRawData,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import {
@@ -256,9 +254,7 @@ export async function fetchClassicAdministrators(
   });
 }
 
-export const authorizationSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const authorizationSteps: AzureIntegrationStep[] = [
   {
     id: steps.ROLE_ASSIGNMENTS,
     name: 'Role Assignments',
@@ -266,6 +262,7 @@ export const authorizationSteps: Step<
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT, steps.ROLE_DEFINITIONS],
     executionHandler: fetchRoleAssignments,
+    permissions: ['Microsoft.Authorization/roleAssignments/read'],
   },
   {
     id: steps.ROLE_ASSIGNMENT_PRINCIPALS,
@@ -293,6 +290,7 @@ export const authorizationSteps: Step<
     relationships: [relationships.SUBSCRIPTION_CONTAINS_ROLE_DEFINITION],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchRoleDefinitions,
+    permissions: ['Microsoft.Authorization/roleDefinitions/read'],
   },
   {
     id: steps.ROLE_ASSIGNMENT_DEFINITIONS,
@@ -309,5 +307,6 @@ export const authorizationSteps: Step<
     relationships: [relationships.CLASSIC_ADMIN_GROUP_HAS_USER],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchClassicAdministrators,
+    permissions: ['Microsoft.Authorization/classicAdministrators/read'],
   },
 ];

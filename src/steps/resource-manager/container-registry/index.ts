@@ -1,12 +1,10 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { J1ContainerRegistryManagementClient } from './client';
@@ -91,9 +89,7 @@ export async function fetchContainerRegistryWebhooks(
   );
 }
 
-export const containerRegistrySteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const containerRegistrySteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_CONTAINER_REGISTRIES,
     name: 'Container Registries',
@@ -109,6 +105,7 @@ export const containerRegistrySteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchContainerRegistries,
+    permissions: ['Microsoft.ContainerRegistry/registries/read'],
   },
   {
     id: STEP_RM_CONTAINER_REGISTRY_WEBHOOKS,
@@ -117,5 +114,6 @@ export const containerRegistrySteps: Step<
     relationships: [ContainerRegistryRelationships.REGISTRY_HAS_WEBHOOK],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CONTAINER_REGISTRIES],
     executionHandler: fetchContainerRegistryWebhooks,
+    permissions: ['Microsoft.ContainerRegistry/registries/webhooks/read'],
   },
 ];

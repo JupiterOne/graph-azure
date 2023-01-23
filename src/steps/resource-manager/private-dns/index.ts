@@ -1,12 +1,10 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { J1PrivateDnsManagementClient } from './client';
@@ -90,9 +88,7 @@ export async function fetchPrivateRecordSets(
   );
 }
 
-export const privateDnsSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const privateDnsSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_PRIVATE_DNS_ZONES,
     name: 'Private DNS Zones',
@@ -100,6 +96,7 @@ export const privateDnsSteps: Step<
     relationships: [PrivateDnsRelationships.RESOURCE_GROUP_HAS_ZONE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPrivateZones,
+    permissions: ['Microsoft.Network/privateDnsZones/read'],
   },
   {
     id: STEP_RM_PRIVATE_DNS_RECORD_SETS,
@@ -108,5 +105,6 @@ export const privateDnsSteps: Step<
     relationships: [PrivateDnsRelationships.ZONE_HAS_RECORD_SET],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_PRIVATE_DNS_ZONES],
     executionHandler: fetchPrivateRecordSets,
+    permissions: ['Microsoft.Network/privateDnsZones/recordsets/read'],
   },
 ];

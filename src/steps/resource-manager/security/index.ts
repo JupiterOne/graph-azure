@@ -1,11 +1,7 @@
-import {
-  Step,
-  IntegrationStepExecutionContext,
-  createDirectRelationship,
-} from '@jupiterone/integration-sdk-core';
+import { createDirectRelationship } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { SecurityClient } from './client';
@@ -189,9 +185,7 @@ export async function fetchSecurityCenterAutoProvisioningSettings(
   });
 }
 
-export const securitySteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const securitySteps: AzureIntegrationStep[] = [
   {
     id: SecuritySteps.ASSESSMENTS,
     name: 'Security Assessments',
@@ -199,6 +193,7 @@ export const securitySteps: Step<
     relationships: [SecurityRelationships.SUBSCRIPTION_PERFORMED_ASSESSMENT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAssessments,
+    permissions: ['Microsoft.Security/assessments/read'],
   },
   {
     id: SecuritySteps.SECURITY_CENTER_CONTACTS,
@@ -209,6 +204,7 @@ export const securitySteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterContacts,
+    permissions: ['Microsoft.Security/securityContacts/read'],
   },
   {
     id: SecuritySteps.PRICING_CONFIGURATIONS,
@@ -217,6 +213,7 @@ export const securitySteps: Step<
     relationships: [SecurityRelationships.SUBSCRIPTION_HAS_PRICING_CONFIG],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterPricingConfigurations,
+    permissions: ['Microsoft.Security/pricings/read'],
   },
   {
     id: SecuritySteps.SETTINGS,
@@ -225,6 +222,7 @@ export const securitySteps: Step<
     relationships: [SecurityRelationships.SUBSCRIPTION_HAS_SETTING],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterSettings,
+    permissions: ['Microsoft.Security/pricings/read'],
   },
   {
     id: SecuritySteps.AUTO_PROVISIONING_SETTINGS,
@@ -235,5 +233,6 @@ export const securitySteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterAutoProvisioningSettings,
+    permissions: ['Microsoft.Security/autoProvisioningSettings/read'],
   },
 ];

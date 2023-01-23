@@ -2,12 +2,10 @@ import { FrontDoor } from '@azure/arm-frontdoor/esm/models';
 import {
   createDirectRelationship,
   getRawData,
-  IntegrationStepExecutionContext,
   RelationshipClass,
-  Step,
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationConfig, IntegrationStepContext } from '../../../types';
+import { AzureIntegrationStep, IntegrationStepContext } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
@@ -161,9 +159,7 @@ async function fetchFrontendEndpoints(
   );
 }
 
-export const frontdoorSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const frontdoorSteps: AzureIntegrationStep[] = [
   {
     id: FrontDoorStepIds.FETCH_FRONTDOORS,
     name: 'Fetch FrontDoors',
@@ -171,6 +167,7 @@ export const frontdoorSteps: Step<
     relationships: [FrontDoorRelationships.RESOURCE_GROUP_HAS_FRONTDOOR],
     executionHandler: fetchFrontDoors,
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    permissions: ['Microsoft.Network/frontDoors/read'],
   },
   {
     id: FrontDoorStepIds.FETCH_RULES_ENGINES,
@@ -179,6 +176,7 @@ export const frontdoorSteps: Step<
     relationships: [FrontDoorRelationships.FRONTDOOR_HAS_RULES_ENGINE],
     executionHandler: fetchRulesEngines,
     dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
+    permissions: ['Microsoft.Network/frontDoors/rulesEngines/read'],
   },
   {
     id: FrontDoorStepIds.FETCH_ROUTING_RULES,
@@ -187,6 +185,7 @@ export const frontdoorSteps: Step<
     relationships: [FrontDoorRelationships.FRONTDOOR_HAS_ROUTING_RULE],
     executionHandler: fetchRoutingRules,
     dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
+    permissions: ['Microsoft.Network/frontDoors/routingRules/read'],
   },
   {
     id: FrontDoorStepIds.FETCH_BACKEND_POOLS,
@@ -195,6 +194,7 @@ export const frontdoorSteps: Step<
     relationships: [FrontDoorRelationships.FRONTDOOR_HAS_BACKEND_POOL],
     executionHandler: fetchBackendPools,
     dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
+    permissions: ['Microsoft.Network/frontDoors/backendPools/read'],
   },
   {
     id: FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS,
@@ -203,5 +203,6 @@ export const frontdoorSteps: Step<
     relationships: [FrontDoorRelationships.FRONTDOOR_HAS_FRONTEND_ENDPOINT],
     executionHandler: fetchFrontendEndpoints,
     dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
+    permissions: ['Microsoft.Network/frontDoors/frontendEndpoints/read'],
   },
 ];

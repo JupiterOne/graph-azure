@@ -1,14 +1,12 @@
 import {
   createDirectRelationship,
   RelationshipClass,
-  Step,
-  IntegrationStepExecutionContext,
   getRawData,
   createMappedRelationship,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import {
   ACCOUNT_ENTITY_TYPE,
   STEP_AD_ACCOUNT,
@@ -183,9 +181,7 @@ export async function fetchKeyVaultSecrets(
   );
 }
 
-export const keyvaultSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const keyvaultSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_KEYVAULT_VAULTS,
     name: 'Key Vaults',
@@ -209,6 +205,7 @@ export const keyvaultSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,
+    permissions: ['Microsoft.KeyVault/vaults/read'],
   },
   {
     id: KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS,
@@ -225,6 +222,7 @@ export const keyvaultSteps: Step<
     relationships: [KeyVaultRelationships.KEY_VAULT_CONTAINS_KEY],
     dependsOn: [STEP_RM_KEYVAULT_VAULTS],
     executionHandler: fetchKeyVaultKeys,
+    permissions: ['Microsoft.KeyVault/vaults/keys/read'],
   },
   {
     id: STEP_RM_KEYVAULT_SECRETS,
@@ -233,5 +231,6 @@ export const keyvaultSteps: Step<
     relationships: [KeyVaultRelationships.KEY_VAULT_CONTAINS_SECRET],
     dependsOn: [STEP_RM_KEYVAULT_VAULTS],
     executionHandler: fetchKeyVaultSecrets,
+    permissions: ['Microsoft.KeyVault/vaults/secrets/read'],
   },
 ];

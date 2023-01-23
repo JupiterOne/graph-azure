@@ -1,12 +1,10 @@
 import {
   Entity,
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
   JobState,
 } from '@jupiterone/integration-sdk-core';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { createAzureWebLinker } from '../../../azure';
@@ -218,9 +216,7 @@ export async function fetchContainerGroups(
   );
 }
 
-export const containerInstanceSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const containerInstanceSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_CONTAINER_GROUPS,
     name: 'Container Groups',
@@ -242,5 +238,6 @@ export const containerInstanceSteps: Step<
       storageSteps.STORAGE_ACCOUNTS,
     ],
     executionHandler: fetchContainerGroups,
+    permissions: ['Microsoft.ContainerInstance/containerGroups/read'],
   },
 ];

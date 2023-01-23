@@ -1,12 +1,10 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   getRawData,
   createDirectRelationship,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import {
@@ -156,9 +154,7 @@ export async function buildPolicyStateResourceRelationships(
   );
 }
 
-export const policyInsightSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const policyInsightSteps: AzureIntegrationStep[] = [
   {
     id: PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
     name: 'Policy States',
@@ -166,6 +162,7 @@ export const policyInsightSteps: Step<
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchLatestPolicyStatesForSubscription,
+    permissions: ['Microsoft.PolicyInsights/policyStates/summarize/read'],
   },
   {
     id: PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS,

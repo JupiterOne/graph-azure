@@ -162,7 +162,7 @@ export const redisCacheSteps: AzureIntegrationStep[] = [
     relationships: [RedisCacheRelationships.RESOURCE_GROUP_HAS_REDIS_CACHE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchRedisCaches,
-    permissions: ['Microsoft.Cache/redis/read'],
+    rolePermissions: ['Microsoft.Cache/redis/read'],
   },
   {
     id: STEP_RM_REDIS_FIREWALL_RULES,
@@ -171,7 +171,7 @@ export const redisCacheSteps: AzureIntegrationStep[] = [
     relationships: [RedisCacheRelationships.REDIS_CACHE_HAS_FIREWALL_RULE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_REDIS_CACHES],
     executionHandler: fetchRedisFirewallRules,
-    permissions: ['Microsoft.Cache/redis/firewallRules/read'],
+    rolePermissions: ['Microsoft.Cache/redis/firewallRules/read'],
   },
   {
     id: STEP_RM_REDIS_LINKED_SERVERS,
@@ -182,6 +182,6 @@ export const redisCacheSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_REDIS_CACHES],
     executionHandler: fetchRedisLinkedServers,
-    permissions: ['Microsoft.Cache/redis/linkedServers/read'],
+    rolePermissions: ['Microsoft.Cache/redis/linkedServers/read'],
   },
 ];

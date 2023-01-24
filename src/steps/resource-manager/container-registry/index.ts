@@ -105,7 +105,7 @@ export const containerRegistrySteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchContainerRegistries,
-    permissions: ['Microsoft.ContainerRegistry/registries/read'],
+    rolePermissions: ['Microsoft.ContainerRegistry/registries/read'],
   },
   {
     id: STEP_RM_CONTAINER_REGISTRY_WEBHOOKS,
@@ -114,6 +114,6 @@ export const containerRegistrySteps: AzureIntegrationStep[] = [
     relationships: [ContainerRegistryRelationships.REGISTRY_HAS_WEBHOOK],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CONTAINER_REGISTRIES],
     executionHandler: fetchContainerRegistryWebhooks,
-    permissions: ['Microsoft.ContainerRegistry/registries/webhooks/read'],
+    rolePermissions: ['Microsoft.ContainerRegistry/registries/webhooks/read'],
   },
 ];

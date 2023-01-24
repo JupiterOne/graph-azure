@@ -99,7 +99,7 @@ export const apiManagementSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApiManagementServices,
-    permissions: ['Microsoft.ApiManagement/service/read'],
+    rolePermissions: ['Microsoft.ApiManagement/service/read'],
   },
   {
     id: STEP_RM_API_MANAGEMENT_APIS,
@@ -108,6 +108,6 @@ export const apiManagementSteps: AzureIntegrationStep[] = [
     relationships: [ApiManagementRelationships.SERVICE_HAS_API],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_API_MANAGEMENT_SERVICES],
     executionHandler: fetchApiManagementApis,
-    permissions: ['Microsoft.ApiManagement/service/apis/read'],
+    rolePermissions: ['Microsoft.ApiManagement/service/apis/read'],
   },
 ];

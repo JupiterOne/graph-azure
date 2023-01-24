@@ -65,5 +65,6 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
 
 export interface AzureIntegrationStep
   extends IntegrationStep<IntegrationConfig> {
-  permissions?: Array<string>;
+  rolePermissions?: Array<string>;
+  apiPermissions?: Array<string>;
 }

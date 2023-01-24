@@ -39,6 +39,6 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     relationships: [ContainerServicesRelationships.RESOURCE_GROUP_HAS_SERVICE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchClusters,
-    permissions: ['Microsoft.ContainerService/managedClusters/read'],
+    rolePermissions: ['Microsoft.ContainerService/managedClusters/read'],
   },
 ];

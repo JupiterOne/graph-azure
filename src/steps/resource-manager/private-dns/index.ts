@@ -96,7 +96,7 @@ export const privateDnsSteps: AzureIntegrationStep[] = [
     relationships: [PrivateDnsRelationships.RESOURCE_GROUP_HAS_ZONE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPrivateZones,
-    permissions: ['Microsoft.Network/privateDnsZones/read'],
+    rolePermissions: ['Microsoft.Network/privateDnsZones/read'],
   },
   {
     id: STEP_RM_PRIVATE_DNS_RECORD_SETS,
@@ -105,6 +105,6 @@ export const privateDnsSteps: AzureIntegrationStep[] = [
     relationships: [PrivateDnsRelationships.ZONE_HAS_RECORD_SET],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_PRIVATE_DNS_ZONES],
     executionHandler: fetchPrivateRecordSets,
-    permissions: ['Microsoft.Network/privateDnsZones/recordsets/read'],
+    rolePermissions: ['Microsoft.Network/privateDnsZones/recordsets/read'],
   },
 ];

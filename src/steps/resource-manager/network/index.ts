@@ -758,7 +758,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPublicIPAddresses,
-    permissions: ['Microsoft.Network/publicIPAddresses/read'],
+    rolePermissions: ['Microsoft.Network/publicIPAddresses/read'],
   },
   {
     id: STEP_RM_NETWORK_INTERFACES,
@@ -773,7 +773,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
     ],
     executionHandler: fetchNetworkInterfaces,
-    permissions: ['Microsoft.Network/networkInterfaces/read'],
+    rolePermissions: ['Microsoft.Network/networkInterfaces/read'],
   },
   {
     id: STEP_RM_NETWORK_VIRTUAL_NETWORKS,
@@ -797,7 +797,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
     ],
     executionHandler: fetchVirtualNetworks,
-    permissions: ['Microsoft.Network/virtualNetworks/read'],
+    rolePermissions: ['Microsoft.Network/virtualNetworks/read'],
   },
   {
     id: STEP_RM_NETWORK_SECURITY_GROUPS,
@@ -820,7 +820,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
     ],
     executionHandler: fetchNetworkSecurityGroups,
-    permissions: ['Microsoft.Network/networkSecurityGroups/read'],
+    rolePermissions: ['Microsoft.Network/networkSecurityGroups/read'],
   },
   {
     id: STEP_RM_NETWORK_LOAD_BALANCERS,
@@ -838,7 +838,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchLoadBalancers,
-    permissions: ['Microsoft.Network/loadBalancers/read'],
+    rolePermissions: ['Microsoft.Network/loadBalancers/read'],
   },
   {
     id: STEP_RM_NETWORK_FIREWALLS,
@@ -855,7 +855,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAzureFirewalls,
-    permissions: ['Microsoft.Network/azurefirewalls/read'],
+    rolePermissions: ['Microsoft.Network/azurefirewalls/read'],
   },
   {
     id: STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
@@ -881,7 +881,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_WATCHER],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchNetworkWatchers,
-    permissions: ['Microsoft.Network/networkWatchers/read'],
+    rolePermissions: ['Microsoft.Network/networkWatchers/read'],
   },
   {
     id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
@@ -890,7 +890,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_PRIVATE_ENDPOINT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPrivateEndpoints,
-    permissions: ['Microsoft.Network/privateEndpoints/read'],
+    rolePermissions: ['Microsoft.Network/privateEndpoints/read'],
   },
   {
     id: STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
@@ -948,6 +948,6 @@ export const networkSteps: AzureIntegrationStep[] = [
       storageSteps.STORAGE_ACCOUNTS,
     ],
     executionHandler: fetchNetworkSecurityGroupFlowLogs,
-    permissions: ['Microsoft.Network/networkWatchers/flowLogs/read'],
+    rolePermissions: ['Microsoft.Network/networkWatchers/flowLogs/read'],
   },
 ];

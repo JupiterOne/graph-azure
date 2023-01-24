@@ -208,7 +208,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     ],
     relationships: [],
     executionHandler: fetchAccount,
-    permissions: ['Directory.Read.All', 'Policy.Read.All'],
+    apiPermissions: ['Directory.Read.All', 'Policy.Read.All'],
   },
   {
     id: STEP_AD_USER_REGISTRATION_DETAILS,
@@ -217,7 +217,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [],
     executionHandler: fetchUserRegistrationDetails,
-    permissions: ['Reports.Read.All'],
+    apiPermissions: ['Reports.Read.All'],
   },
   {
     id: STEP_AD_USERS,
@@ -239,7 +239,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_AD_USER_REGISTRATION_DETAILS],
     executionHandler: fetchUsers,
-    permissions: ['User.Read'],
+    apiPermissions: ['User.Read'],
   },
   {
     id: STEP_AD_GROUPS,
@@ -261,7 +261,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchGroups,
-    permissions: ['Directory.Read.All'],
+    apiPermissions: ['Directory.Read.All'],
   },
   {
     id: STEP_AD_GROUP_MEMBERS,
@@ -295,7 +295,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_GROUPS, STEP_AD_USERS],
     executionHandler: fetchGroupMembers,
-    permissions: ['Directory.Read.All'],
+    apiPermissions: ['Directory.Read.All'],
   },
   {
     id: STEP_AD_SERVICE_PRINCIPALS,
@@ -310,6 +310,6 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchServicePrincipals,
-    permissions: ['Directory.Read.All'],
+    apiPermissions: ['Directory.Read.All'],
   },
 ];

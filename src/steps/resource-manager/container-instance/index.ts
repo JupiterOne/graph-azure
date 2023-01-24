@@ -238,6 +238,6 @@ export const containerInstanceSteps: AzureIntegrationStep[] = [
       storageSteps.STORAGE_ACCOUNTS,
     ],
     executionHandler: fetchContainerGroups,
-    permissions: ['Microsoft.ContainerInstance/containerGroups/read'],
+    rolePermissions: ['Microsoft.ContainerInstance/containerGroups/read'],
   },
 ];

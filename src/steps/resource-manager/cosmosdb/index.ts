@@ -87,6 +87,8 @@ export const cosmosdbSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchCosmosDBSqlDatabases,
-    permissions: ['Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read'],
+    rolePermissions: [
+      'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read',
+    ],
   },
 ];

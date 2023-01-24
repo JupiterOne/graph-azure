@@ -262,7 +262,7 @@ export const authorizationSteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT, steps.ROLE_DEFINITIONS],
     executionHandler: fetchRoleAssignments,
-    permissions: ['Microsoft.Authorization/roleAssignments/read'],
+    rolePermissions: ['Microsoft.Authorization/roleAssignments/read'],
   },
   {
     id: steps.ROLE_ASSIGNMENT_PRINCIPALS,
@@ -290,7 +290,7 @@ export const authorizationSteps: AzureIntegrationStep[] = [
     relationships: [relationships.SUBSCRIPTION_CONTAINS_ROLE_DEFINITION],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchRoleDefinitions,
-    permissions: ['Microsoft.Authorization/roleDefinitions/read'],
+    rolePermissions: ['Microsoft.Authorization/roleDefinitions/read'],
   },
   {
     id: steps.ROLE_ASSIGNMENT_DEFINITIONS,
@@ -307,6 +307,6 @@ export const authorizationSteps: AzureIntegrationStep[] = [
     relationships: [relationships.CLASSIC_ADMIN_GROUP_HAS_USER],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchClassicAdministrators,
-    permissions: ['Microsoft.Authorization/classicAdministrators/read'],
+    rolePermissions: ['Microsoft.Authorization/classicAdministrators/read'],
   },
 ];

@@ -193,7 +193,7 @@ export const securitySteps: AzureIntegrationStep[] = [
     relationships: [SecurityRelationships.SUBSCRIPTION_PERFORMED_ASSESSMENT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAssessments,
-    permissions: ['Microsoft.Security/assessments/read'],
+    rolePermissions: ['Microsoft.Security/assessments/read'],
   },
   {
     id: SecuritySteps.SECURITY_CENTER_CONTACTS,
@@ -204,7 +204,7 @@ export const securitySteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterContacts,
-    permissions: ['Microsoft.Security/securityContacts/read'],
+    rolePermissions: ['Microsoft.Security/securityContacts/read'],
   },
   {
     id: SecuritySteps.PRICING_CONFIGURATIONS,
@@ -213,7 +213,7 @@ export const securitySteps: AzureIntegrationStep[] = [
     relationships: [SecurityRelationships.SUBSCRIPTION_HAS_PRICING_CONFIG],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterPricingConfigurations,
-    permissions: ['Microsoft.Security/pricings/read'],
+    rolePermissions: ['Microsoft.Security/pricings/read'],
   },
   {
     id: SecuritySteps.SETTINGS,
@@ -222,7 +222,7 @@ export const securitySteps: AzureIntegrationStep[] = [
     relationships: [SecurityRelationships.SUBSCRIPTION_HAS_SETTING],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterSettings,
-    permissions: ['Microsoft.Security/pricings/read'],
+    rolePermissions: ['Microsoft.Security/pricings/read'],
   },
   {
     id: SecuritySteps.AUTO_PROVISIONING_SETTINGS,
@@ -233,6 +233,6 @@ export const securitySteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterAutoProvisioningSettings,
-    permissions: ['Microsoft.Security/autoProvisioningSettings/read'],
+    rolePermissions: ['Microsoft.Security/autoProvisioningSettings/read'],
   },
 ];

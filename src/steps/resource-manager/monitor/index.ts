@@ -163,7 +163,7 @@ export const monitorSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [subscriptionSteps.SUBSCRIPTION, storageSteps.STORAGE_ACCOUNTS],
     executionHandler: fetchLogProfiles,
-    permissions: ['Microsoft.Insights/LogProfiles/Read'],
+    rolePermissions: ['Microsoft.Insights/LogProfiles/Read'],
   },
   {
     id: MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS,
@@ -172,7 +172,7 @@ export const monitorSteps: AzureIntegrationStep[] = [
     relationships: [MonitorRelationships.RESOURCE_GROUP_HAS_ACTIVITY_LOG_ALERT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchActivityLogAlerts,
-    permissions: ['Microsoft.Insights/ActivityLogAlerts/Read'],
+    rolePermissions: ['Microsoft.Insights/ActivityLogAlerts/Read'],
   },
   {
     id: MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,

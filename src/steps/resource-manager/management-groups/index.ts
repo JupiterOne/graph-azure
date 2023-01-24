@@ -152,6 +152,6 @@ export const managementGroupSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchManagementGroups,
-    permissions: ['Microsoft.Management/managementGroups/read'],
+    rolePermissions: ['Microsoft.Management/managementGroups/read'],
   },
 ];

@@ -94,7 +94,7 @@ export const dnsSteps: AzureIntegrationStep[] = [
     relationships: [DnsRelationships.RESOURCE_GROUP_HAS_ZONE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchZones,
-    permissions: ['Microsoft.Network/dnszones/read'],
+    rolePermissions: ['Microsoft.Network/dnszones/read'],
   },
   {
     id: STEP_RM_DNS_RECORD_SETS,
@@ -103,6 +103,6 @@ export const dnsSteps: AzureIntegrationStep[] = [
     relationships: [DnsRelationships.ZONE_HAS_RECORD_SET],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_DNS_ZONES],
     executionHandler: fetchRecordSets,
-    permissions: ['Microsoft.Network/dnszones/recordsets/read'],
+    rolePermissions: ['Microsoft.Network/dnszones/recordsets/read'],
   },
 ];

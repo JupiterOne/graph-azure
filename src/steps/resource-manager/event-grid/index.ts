@@ -241,7 +241,7 @@ export const eventGridSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridDomains,
-    permissions: ['Microsoft.EventGrid/domains/read'],
+    rolePermissions: ['Microsoft.EventGrid/domains/read'],
   },
   {
     id: STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
@@ -254,7 +254,7 @@ export const eventGridSteps: AzureIntegrationStep[] = [
       STEP_RM_EVENT_GRID_DOMAINS,
     ],
     executionHandler: fetchEventGridDomainTopics,
-    permissions: ['Microsoft.EventGrid/domains/topics/read'],
+    rolePermissions: ['Microsoft.EventGrid/domains/topics/read'],
   },
   {
     id: STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
@@ -268,7 +268,9 @@ export const eventGridSteps: AzureIntegrationStep[] = [
       STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
     ],
     executionHandler: fetchEventGridDomainTopicSubscriptions,
-    permissions: ['Microsoft.EventGrid/domains/topics/eventSubscriptions/read'],
+    rolePermissions: [
+      'Microsoft.EventGrid/domains/topics/eventSubscriptions/read',
+    ],
   },
   {
     id: STEP_RM_EVENT_GRID_TOPICS,
@@ -283,7 +285,7 @@ export const eventGridSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridTopics,
-    permissions: ['Microsoft.EventGrid/topics/read'],
+    rolePermissions: ['Microsoft.EventGrid/topics/read'],
   },
   {
     id: STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
@@ -296,6 +298,6 @@ export const eventGridSteps: AzureIntegrationStep[] = [
       STEP_RM_EVENT_GRID_TOPICS,
     ],
     executionHandler: fetchEventGridTopicSubscriptions,
-    permissions: ['Microsoft.EventGrid/topics/eventSubscriptions/read'],
+    rolePermissions: ['Microsoft.EventGrid/topics/eventSubscriptions/read'],
   },
 ];

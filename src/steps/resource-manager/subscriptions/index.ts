@@ -140,7 +140,7 @@ export const subscriptionSteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscription,
-    permissions: ['Microsoft.Resources/subscriptions/read'],
+    rolePermissions: ['Microsoft.Resources/subscriptions/read'],
   },
   {
     id: steps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS,
@@ -151,7 +151,7 @@ export const subscriptionSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscriptionDiagnosticSettings,
-    permissions: [
+    rolePermissions: [
       'Microsoft.OperationalInsights/workspaces/providers/Microsoft.Insights/diagnosticSettings/Read',
     ],
   },
@@ -163,6 +163,6 @@ export const subscriptionSteps: AzureIntegrationStep[] = [
     mappedRelationships: [mappedRelationships.SUBSCRIPTION_USES_LOCATION],
     dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTION],
     executionHandler: fetchLocations,
-    permissions: ['Microsoft.Resources/subscriptions/locations/read'],
+    rolePermissions: ['Microsoft.Resources/subscriptions/locations/read'],
   },
 ];

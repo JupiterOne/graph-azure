@@ -155,7 +155,7 @@ export const resourcesSteps: AzureIntegrationStep[] = [
     relationships: [SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_METADATA],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchResourceGroups,
-    permissions: ['Microsoft.Resources/subscriptions/resourceGroups/read'],
+    rolePermissions: ['Microsoft.Resources/subscriptions/resourceGroups/read'],
   },
   {
     id: STEP_RM_RESOURCES_RESOURCE_LOCKS,
@@ -164,7 +164,7 @@ export const resourcesSteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchResourceGroupLocks,
-    permissions: ['Microsoft.Authorization/locks/read'],
+    rolePermissions: ['Microsoft.Authorization/locks/read'],
   },
   {
     id: STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,

@@ -701,7 +701,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     relationships: [relationships.RESOURCE_GROUP_HAS_GALLERY],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchGalleries,
-    permissions: ['Microsoft.Compute/galleries/read'],
+    rolePermissions: ['Microsoft.Compute/galleries/read'],
   },
   {
     id: steps.SHARED_IMAGES,
@@ -710,7 +710,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     relationships: [relationships.IMAGE_GALLERY_CONTAINS_SHARED_IMAGE],
     dependsOn: [STEP_AD_ACCOUNT, steps.GALLERIES],
     executionHandler: fetchGalleryImages,
-    permissions: ['Microsoft.Compute/galleries/images/read'],
+    rolePermissions: ['Microsoft.Compute/galleries/images/read'],
   },
   {
     id: steps.SHARED_IMAGE_VERSIONS,
@@ -719,7 +719,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     relationships: [relationships.SHARED_IMAGE_HAS_VERSION],
     dependsOn: [STEP_AD_ACCOUNT, steps.SHARED_IMAGES],
     executionHandler: fetchGalleryImageVersions,
-    permissions: ['Microsoft.Compute/galleries/images/versions/read'],
+    rolePermissions: ['Microsoft.Compute/galleries/images/versions/read'],
   },
   {
     id: steps.SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS,
@@ -748,7 +748,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineImages,
-    permissions: ['Microsoft.Compute/images/read'],
+    rolePermissions: ['Microsoft.Compute/images/read'],
   },
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
@@ -765,7 +765,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineDisks,
-    permissions: ['Microsoft.Compute/disks/read'],
+    rolePermissions: ['Microsoft.Compute/disks/read'],
   },
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINES,
@@ -784,7 +784,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachines,
-    permissions: ['Microsoft.Compute/virtualMachines/read'],
+    rolePermissions: ['Microsoft.Compute/virtualMachines/read'],
   },
   {
     id: steps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS,
@@ -808,7 +808,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_COMPUTE_VIRTUAL_MACHINES],
     executionHandler: fetchVirtualMachineExtensions,
-    permissions: ['Microsoft.Compute/virtualMachines/extensions/read'],
+    rolePermissions: ['Microsoft.Compute/virtualMachines/extensions/read'],
   },
   {
     id: steps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS,

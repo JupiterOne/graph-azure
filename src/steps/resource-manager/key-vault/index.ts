@@ -205,7 +205,7 @@ export const keyvaultSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,
-    permissions: ['Microsoft.KeyVault/vaults/read'],
+    rolePermissions: ['Microsoft.KeyVault/vaults/read'],
   },
   {
     id: KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS,
@@ -222,7 +222,7 @@ export const keyvaultSteps: AzureIntegrationStep[] = [
     relationships: [KeyVaultRelationships.KEY_VAULT_CONTAINS_KEY],
     dependsOn: [STEP_RM_KEYVAULT_VAULTS],
     executionHandler: fetchKeyVaultKeys,
-    permissions: ['Microsoft.KeyVault/vaults/keys/read'],
+    rolePermissions: ['Microsoft.KeyVault/vaults/keys/read'],
   },
   {
     id: STEP_RM_KEYVAULT_SECRETS,
@@ -231,6 +231,6 @@ export const keyvaultSteps: AzureIntegrationStep[] = [
     relationships: [KeyVaultRelationships.KEY_VAULT_CONTAINS_SECRET],
     dependsOn: [STEP_RM_KEYVAULT_VAULTS],
     executionHandler: fetchKeyVaultSecrets,
-    permissions: ['Microsoft.KeyVault/vaults/secrets/read'],
+    rolePermissions: ['Microsoft.KeyVault/vaults/secrets/read'],
   },
 ];

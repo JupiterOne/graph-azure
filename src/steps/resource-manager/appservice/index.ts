@@ -185,7 +185,7 @@ export const appServiceSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApps,
-    permissions: [
+    rolePermissions: [
       'Microsoft.Web/sites/Read',
       'Microsoft.Web/sites/config/Read',
       'Microsoft.Web/sites/config/list/action',
@@ -200,7 +200,7 @@ export const appServiceSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAppServicePlans,
-    permissions: ['Microsoft.Web/serverfarms/Read'],
+    rolePermissions: ['Microsoft.Web/serverfarms/Read'],
   },
   {
     id: AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS,

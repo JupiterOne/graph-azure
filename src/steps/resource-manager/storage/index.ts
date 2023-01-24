@@ -427,7 +427,7 @@ export const storageSteps: AzureIntegrationStep[] = [
       STEP_RM_KEYVAULT_VAULTS,
     ],
     executionHandler: fetchStorageAccounts,
-    permissions: ['Microsoft.Storage/storageAccounts/read'],
+    rolePermissions: ['Microsoft.Storage/storageAccounts/read'],
   },
   {
     id: steps.STORAGE_FILE_SHARES,
@@ -436,7 +436,7 @@ export const storageSteps: AzureIntegrationStep[] = [
     relationships: [relationships.STORAGE_ACCOUNT_HAS_FILE_SHARE],
     dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_ACCOUNTS],
     executionHandler: fetchStorageFileShares,
-    permissions: [
+    rolePermissions: [
       'Microsoft.Storage/storageAccounts/fileServices/shares/read',
       'Microsoft.Storage/storageAccounts/fileServices/shares/read',
     ],
@@ -448,7 +448,7 @@ export const storageSteps: AzureIntegrationStep[] = [
     relationships: [relationships.STORAGE_ACCOUNT_HAS_CONTAINER],
     dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_ACCOUNTS],
     executionHandler: fetchStorageContainers,
-    permissions: [
+    rolePermissions: [
       'Microsoft.Storage/storageAccounts/blobServices/containers/read',
     ],
   },
@@ -459,7 +459,7 @@ export const storageSteps: AzureIntegrationStep[] = [
     relationships: [relationships.STORAGE_ACCOUNT_HAS_QUEUE],
     dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_ACCOUNTS],
     executionHandler: fetchStorageQueues,
-    permissions: ['Microsoft.Storage/storageAccounts/queueServices/read'],
+    rolePermissions: ['Microsoft.Storage/storageAccounts/queueServices/read'],
   },
   {
     id: steps.STORAGE_TABLES,
@@ -468,6 +468,6 @@ export const storageSteps: AzureIntegrationStep[] = [
     relationships: [relationships.STORAGE_ACCOUNT_HAS_TABLE],
     dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_ACCOUNTS],
     executionHandler: fetchStorageTables,
-    permissions: ['Microsoft.Storage/storageAccounts/queueServices/read'],
+    rolePermissions: ['Microsoft.Storage/storageAccounts/queueServices/read'],
   },
 ];

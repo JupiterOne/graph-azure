@@ -170,7 +170,7 @@ export const serviceBusSteps: AzureIntegrationStep[] = [
     relationships: [ServiceBusRelationships.RESOURCE_GROUP_HAS_NAMESPACE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchServiceBusNamespaces,
-    permissions: ['Microsoft.ServiceBus/namespaces/read'],
+    rolePermissions: ['Microsoft.ServiceBus/namespaces/read'],
   },
   {
     id: STEP_RM_SERVICE_BUS_QUEUES,
@@ -179,7 +179,7 @@ export const serviceBusSteps: AzureIntegrationStep[] = [
     relationships: [ServiceBusRelationships.NAMESPACE_HAS_QUEUE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SERVICE_BUS_NAMESPACES],
     executionHandler: fetchServiceBusQueues,
-    permissions: ['Microsoft.ServiceBus/namespaces/queues/read'],
+    rolePermissions: ['Microsoft.ServiceBus/namespaces/queues/read'],
   },
   {
     id: STEP_RM_SERVICE_BUS_TOPICS,
@@ -188,7 +188,7 @@ export const serviceBusSteps: AzureIntegrationStep[] = [
     relationships: [ServiceBusRelationships.NAMESPACE_HAS_TOPIC],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SERVICE_BUS_NAMESPACES],
     executionHandler: fetchServiceBusTopics,
-    permissions: ['Microsoft.ServiceBus/namespaces/topics/read'],
+    rolePermissions: ['Microsoft.ServiceBus/namespaces/topics/read'],
   },
   {
     id: STEP_RM_SERVICE_BUS_SUBSCRIPTIONS,
@@ -197,6 +197,8 @@ export const serviceBusSteps: AzureIntegrationStep[] = [
     relationships: [ServiceBusRelationships.TOPIC_HAS_SUBSCRIPTION],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SERVICE_BUS_TOPICS],
     executionHandler: fetchServiceBusSubscriptions,
-    permissions: ['Microsoft.ServiceBus/namespaces/topics/subscriptions/read'],
+    rolePermissions: [
+      'Microsoft.ServiceBus/namespaces/topics/subscriptions/read',
+    ],
   },
 ];

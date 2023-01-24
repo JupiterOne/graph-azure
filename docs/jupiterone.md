@@ -532,3 +532,104 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 [2]:
   https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-api-authentication
 [3]: https://docs.microsoft.com/en-us/graph/api/organization-get
+
+<!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
+<!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
+
+| Role Permissions List                                                                           |
+| ----------------------------------------------------------------------------------------------- |
+| `Microsoft.Advisor/recommendations/read`                                                        |
+| `Microsoft.Advisor/recommendations/suppressions/read`                                           |
+| `Microsoft.ApiManagement/service/apis/read`                                                     |
+| `Microsoft.ApiManagement/service/read`                                                          |
+| `Microsoft.Authorization/classicAdministrators/read`                                            |
+| `Microsoft.Authorization/locks/read`                                                            |
+| `Microsoft.Authorization/policyAssignments/read`                                                |
+| `Microsoft.Authorization/policyDefinitions/read`                                                |
+| `Microsoft.Authorization/roleAssignments/read`                                                  |
+| `Microsoft.Authorization/roleDefinitions/read`                                                  |
+| `Microsoft.Batch/batchAccounts/applications/read`                                               |
+| `Microsoft.Batch/batchAccounts/certificates/read`                                               |
+| `Microsoft.Batch/batchAccounts/pools/read`                                                      |
+| `Microsoft.Batch/batchAccounts/read`                                                            |
+| `Microsoft.Cache/redis/firewallRules/read`                                                      |
+| `Microsoft.Cache/redis/linkedServers/read`                                                      |
+| `Microsoft.Cache/redis/read`                                                                    |
+| `Microsoft.Cdn/profiles/endpoints/read`                                                         |
+| `Microsoft.Cdn/profiles/read`                                                                   |
+| `Microsoft.Compute/disks/read`                                                                  |
+| `Microsoft.Compute/galleries/images/read`                                                       |
+| `Microsoft.Compute/galleries/images/versions/read`                                              |
+| `Microsoft.Compute/galleries/read`                                                              |
+| `Microsoft.Compute/images/read`                                                                 |
+| `Microsoft.Compute/virtualMachines/extensions/read`                                             |
+| `Microsoft.Compute/virtualMachines/read`                                                        |
+| `Microsoft.ContainerInstance/containerGroups/read`                                              |
+| `Microsoft.ContainerRegistry/registries/read`                                                   |
+| `Microsoft.ContainerRegistry/registries/webhooks/read`                                          |
+| `Microsoft.ContainerService/managedClusters/read`                                               |
+| `Microsoft.DBforMariaDB/servers/databases/read`                                                 |
+| `Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read`                                       |
+| `Microsoft.EventGrid/domains/read`                                                              |
+| `Microsoft.EventGrid/domains/topics/eventSubscriptions/read`                                    |
+| `Microsoft.EventGrid/domains/topics/read`                                                       |
+| `Microsoft.EventGrid/topics/eventSubscriptions/read`                                            |
+| `Microsoft.EventGrid/topics/read`                                                               |
+| `Microsoft.Insights/ActivityLogAlerts/Read`                                                     |
+| `Microsoft.Insights/LogProfiles/Read`                                                           |
+| `Microsoft.KeyVault/vaults/keys/read`                                                           |
+| `Microsoft.KeyVault/vaults/read`                                                                |
+| `Microsoft.KeyVault/vaults/secrets/read`                                                        |
+| `Microsoft.Management/managementGroups/read`                                                    |
+| `Microsoft.Network/azurefirewalls/read`                                                         |
+| `Microsoft.Network/dnszones/read`                                                               |
+| `Microsoft.Network/dnszones/recordsets/read`                                                    |
+| `Microsoft.Network/frontDoors/backendPools/read`                                                |
+| `Microsoft.Network/frontDoors/frontendEndpoints/read`                                           |
+| `Microsoft.Network/frontDoors/read`                                                             |
+| `Microsoft.Network/frontDoors/routingRules/read`                                                |
+| `Microsoft.Network/frontDoors/rulesEngines/read`                                                |
+| `Microsoft.Network/loadBalancers/read`                                                          |
+| `Microsoft.Network/networkInterfaces/read`                                                      |
+| `Microsoft.Network/networkSecurityGroups/read`                                                  |
+| `Microsoft.Network/networkWatchers/flowLogs/read`                                               |
+| `Microsoft.Network/networkWatchers/read`                                                        |
+| `Microsoft.Network/privateDnsZones/read`                                                        |
+| `Microsoft.Network/privateDnsZones/recordsets/read`                                             |
+| `Microsoft.Network/privateEndpoints/read`                                                       |
+| `Microsoft.Network/publicIPAddresses/read`                                                      |
+| `Microsoft.Network/virtualNetworks/read`                                                        |
+| `Microsoft.OperationalInsights/workspaces/providers/Microsoft.Insights/diagnosticSettings/Read` |
+| `Microsoft.PolicyInsights/policyStates/summarize/read`                                          |
+| `Microsoft.Resources/subscriptions/locations/read`                                              |
+| `Microsoft.Resources/subscriptions/read`                                                        |
+| `Microsoft.Resources/subscriptions/resourceGroups/read`                                         |
+| `Microsoft.Security/assessments/read`                                                           |
+| `Microsoft.Security/autoProvisioningSettings/read`                                              |
+| `Microsoft.Security/pricings/read`                                                              |
+| `Microsoft.Security/securityContacts/read`                                                      |
+| `Microsoft.ServiceBus/namespaces/queues/read`                                                   |
+| `Microsoft.ServiceBus/namespaces/read`                                                          |
+| `Microsoft.ServiceBus/namespaces/topics/read`                                                   |
+| `Microsoft.ServiceBus/namespaces/topics/subscriptions/read`                                     |
+| `Microsoft.Storage/storageAccounts/blobServices/containers/read`                                |
+| `Microsoft.Storage/storageAccounts/fileServices/shares/read`                                    |
+| `Microsoft.Storage/storageAccounts/queueServices/read`                                          |
+| `Microsoft.Storage/storageAccounts/read`                                                        |
+| `Microsoft.Web/serverfarms/Read`                                                                |
+| `Microsoft.Web/sites/config/list/action`                                                        |
+| `Microsoft.Web/sites/config/Read`                                                               |
+| `Microsoft.Web/sites/Read`                                                                      |
+
+<!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END} -->
+<!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START} -->
+
+| API Permissions List |
+| -------------------- |
+| `Directory.Read.All` |
+| `Policy.Read.All`    |
+| `Reports.Read.All`   |
+| `User.Read`          |
+
+<!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END} -->
+<!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_END} -->

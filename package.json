@@ -33,7 +33,9 @@
     "document:diagnostic-settings": "./tools/cli/j1-azure-integration document-diagnostic-settings",
     "precommit": "yarn document:diagnostic-settings && git add docs/jupiterone.md && lint-staged",
     "build": "./build.sh",
-    "tf": "cd terraform && env `grep -v '^#' .env` terraform $1"
+    "tf": "cd terraform && env `grep -v '^#' .env` terraform $1",
+    "create-env-file": "yarn ts-node ./scripts/createEnvFile $1",
+    "document:permissions": " yarn ts-node commands/documentPermissions.ts documentPermissions"
   },
   "dependencies": {
     "@azure/arm-advisor": "^2.0.0",

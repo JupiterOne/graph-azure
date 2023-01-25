@@ -149,7 +149,7 @@ export const subscriptionSteps: AzureIntegrationStep[] = [
     relationships: [
       ...getDiagnosticSettingsRelationshipsForResource(entities.SUBSCRIPTION),
     ],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [steps.SUBSCRIPTION],
     executionHandler: fetchSubscriptionDiagnosticSettings,
     rolePermissions: [
       'Microsoft.OperationalInsights/workspaces/providers/Microsoft.Insights/diagnosticSettings/Read',

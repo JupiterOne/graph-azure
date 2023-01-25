@@ -239,7 +239,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_AD_USER_REGISTRATION_DETAILS],
     executionHandler: fetchUsers,
-    apiPermissions: ['User.Read'],
+    apiPermissions: ['Directory.Read.All'],
   },
   {
     id: STEP_AD_GROUPS,

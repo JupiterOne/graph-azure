@@ -536,7 +536,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (3)                                        |
+| Role Permissions List (93)                                       |
 | ---------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                         |
 | `Microsoft.ApiManagement/service/apis/read`                      |

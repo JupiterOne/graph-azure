@@ -85,7 +85,7 @@ function getNewDocumentationVersion(): string | undefined {
   );
   const roleTableMarkdown = getTableMarkdown(
     rolePermissionList,
-    `Role Permissions List (${apiPermissionList.length})`,
+    `Role Permissions List (${rolePermissionList.length})`,
   );
 
   return `${J1_PERMISSIONS_DOCUMENTATION_MARKER_START}\n${J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START}\n${roleTableMarkdown}\n${J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END}\n${J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START}\n${apiTableMarkdown}\n${J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END}\n${J1_PERMISSIONS_DOCUMENTATION_MARKER_END}`;

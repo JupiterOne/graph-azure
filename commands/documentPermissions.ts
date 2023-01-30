@@ -81,11 +81,11 @@ function getNewDocumentationVersion(): string | undefined {
   apiPermissionList.sort((a: string, b: string) => a.localeCompare(b));
   const apiTableMarkdown = getTableMarkdown(
     apiPermissionList,
-    'API Permissions List',
+    `API Permissions List (${apiPermissionList.length})`,
   );
   const roleTableMarkdown = getTableMarkdown(
     rolePermissionList,
-    'Role Permissions List',
+    `Role Permissions List (${apiPermissionList.length})`,
   );
 
   return `${J1_PERMISSIONS_DOCUMENTATION_MARKER_START}\n${J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START}\n${roleTableMarkdown}\n${J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END}\n${J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START}\n${apiTableMarkdown}\n${J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END}\n${J1_PERMISSIONS_DOCUMENTATION_MARKER_END}`;

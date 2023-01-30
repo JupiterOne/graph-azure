@@ -758,7 +758,10 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPublicIPAddresses,
-    rolePermissions: ['Microsoft.Network/publicIPAddresses/read'],
+    rolePermissions: [
+      'Microsoft.Network/publicIPAddresses/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_NETWORK_INTERFACES,
@@ -797,7 +800,10 @@ export const networkSteps: AzureIntegrationStep[] = [
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
     ],
     executionHandler: fetchVirtualNetworks,
-    rolePermissions: ['Microsoft.Network/virtualNetworks/read'],
+    rolePermissions: [
+      'Microsoft.Network/virtualNetworks/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_NETWORK_SECURITY_GROUPS,
@@ -820,7 +826,10 @@ export const networkSteps: AzureIntegrationStep[] = [
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
     ],
     executionHandler: fetchNetworkSecurityGroups,
-    rolePermissions: ['Microsoft.Network/networkSecurityGroups/read'],
+    rolePermissions: [
+      'Microsoft.Network/networkSecurityGroups/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_NETWORK_LOAD_BALANCERS,
@@ -838,7 +847,10 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchLoadBalancers,
-    rolePermissions: ['Microsoft.Network/loadBalancers/read'],
+    rolePermissions: [
+      'Microsoft.Network/loadBalancers/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_NETWORK_FIREWALLS,
@@ -855,7 +867,10 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAzureFirewalls,
-    rolePermissions: ['Microsoft.Network/azurefirewalls/read'],
+    rolePermissions: [
+      'Microsoft.Network/azurefirewalls/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,

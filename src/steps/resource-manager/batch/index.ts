@@ -204,7 +204,10 @@ export const batchSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchBatchAccounts,
-    rolePermissions: ['Microsoft.Batch/batchAccounts/read'],
+    rolePermissions: [
+      'Microsoft.Batch/batchAccounts/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_BATCH_POOL,

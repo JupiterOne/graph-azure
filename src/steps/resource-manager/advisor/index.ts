@@ -80,9 +80,6 @@ export const advisorSteps: AzureIntegrationStep[] = [
       ...getResourceManagerSteps().executeFirstSteps,
     ],
     executionHandler: fetchRecommendations,
-    rolePermissions: [
-      'Microsoft.Advisor/recommendations/read',
-      'Microsoft.Advisor/recommendations/suppressions/read',
-    ],
+    rolePermissions: ['Microsoft.Advisor/recommendations/read'],
   },
 ];

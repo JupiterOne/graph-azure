@@ -151,9 +151,7 @@ export const subscriptionSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [steps.SUBSCRIPTION],
     executionHandler: fetchSubscriptionDiagnosticSettings,
-    rolePermissions: [
-      'Microsoft.OperationalInsights/workspaces/providers/Microsoft.Insights/diagnosticSettings/Read',
-    ],
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
   },
   {
     id: steps.LOCATIONS,

@@ -241,7 +241,10 @@ export const eventGridSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridDomains,
-    rolePermissions: ['Microsoft.EventGrid/domains/read'],
+    rolePermissions: [
+      'Microsoft.EventGrid/domains/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
@@ -285,7 +288,10 @@ export const eventGridSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridTopics,
-    rolePermissions: ['Microsoft.EventGrid/topics/read'],
+    rolePermissions: [
+      'Microsoft.EventGrid/topics/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,

@@ -162,7 +162,9 @@ export const policyInsightSteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchLatestPolicyStatesForSubscription,
-    rolePermissions: ['Microsoft.PolicyInsights/policyStates/summarize/read'],
+    rolePermissions: [
+      'Microsoft.PolicyInsights/policyStates/queryResults/read',
+    ],
   },
   {
     id: PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS,

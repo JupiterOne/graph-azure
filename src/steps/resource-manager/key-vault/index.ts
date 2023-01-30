@@ -205,7 +205,10 @@ export const keyvaultSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchKeyVaults,
-    rolePermissions: ['Microsoft.KeyVault/vaults/read'],
+    rolePermissions: [
+      'Microsoft.KeyVault/vaults/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS,

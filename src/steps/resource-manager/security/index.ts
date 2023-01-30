@@ -222,7 +222,7 @@ export const securitySteps: AzureIntegrationStep[] = [
     relationships: [SecurityRelationships.SUBSCRIPTION_HAS_SETTING],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterSettings,
-    rolePermissions: ['Microsoft.Security/pricings/read'],
+    rolePermissions: ['Microsoft.Security/settings/read'],
   },
   {
     id: SecuritySteps.AUTO_PROVISIONING_SETTINGS,

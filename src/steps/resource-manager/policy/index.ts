@@ -142,6 +142,9 @@ export const policySteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, PolicySteps.POLICY_ASSIGNMENTS],
     executionHandler: fetchPolicyDefinitionsForAssignments,
-    rolePermissions: ['Microsoft.Authorization/policyDefinitions/read'],
+    rolePermissions: [
+      'Microsoft.Authorization/policyDefinitions/read',
+      'Microsoft.Authorization/policySetDefinitions/read',
+    ],
   },
 ];

@@ -65,6 +65,21 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
 
 export interface AzureIntegrationStep
   extends IntegrationStep<IntegrationConfig> {
+  /**
+   * Azure RBAC permissions that are required to ingest data from this step.
+   * These permissions are assigned to an IAM Role and bound to a principal
+   * through an IAM Role Binding. They are attached to Azure Subscription or
+   * Azure Management Groups.
+   *
+   * See https://learn.microsoft.com/en-us/azure/role-based-access-control/
+   */
   rolePermissions?: Array<string>;
+  /**
+   * Azure API Permissions assigned directly to a service principal within
+   * Azure Active Directory. Specifically, these permissions allow access to
+   * the Azure Graph API.
+   *
+   * See https://learn.microsoft.com/en-us/graph/use-the-api
+   */
   apiPermissions?: Array<string>;
 }

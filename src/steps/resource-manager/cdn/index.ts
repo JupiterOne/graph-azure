@@ -96,7 +96,10 @@ export const cdnSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchProfiles,
-    rolePermissions: ['Microsoft.Cdn/profiles/read'],
+    rolePermissions: [
+      'Microsoft.Cdn/profiles/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_CDN_ENDPOINTS,
@@ -108,6 +111,9 @@ export const cdnSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CDN_PROFILE],
     executionHandler: fetchEndpoints,
-    rolePermissions: ['Microsoft.Cdn/profiles/endpoints/read'],
+    rolePermissions: [
+      'Microsoft.Cdn/profiles/endpoints/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
 ];

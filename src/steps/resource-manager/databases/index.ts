@@ -32,7 +32,11 @@ export const databaseSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMariaDBDatabases,
-    rolePermissions: ['Microsoft.DBforMariaDB/servers/databases/read'],
+    rolePermissions: [
+      'Microsoft.DBforMariaDB/servers/databases/read',
+      'Microsoft.DBforMariaDB/servers/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_DATABASE_MYSQL_DATABASES,
@@ -49,7 +53,11 @@ export const databaseSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMySQLDatabases,
-    rolePermissions: ['Microsoft.DBforMariaDB/servers/databases/read'],
+    rolePermissions: [
+      'Microsoft.DBforMySQL/servers/read',
+      'Microsoft.DBforMySQL/servers/databases/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   ...postgreSqlSteps,
   ...sqlSteps,

@@ -10,8 +10,6 @@ import {
   Entity,
   getRawData,
   Relationship,
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
   IntegrationError,
@@ -20,7 +18,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { NetworkClient } from './client';
@@ -744,9 +742,7 @@ export async function fetchNetworkSecurityGroupFlowLogs(
   );
 }
 
-export const networkSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const networkSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
     name: 'Public IP Addresses',
@@ -762,6 +758,10 @@ export const networkSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPublicIPAddresses,
+    rolePermissions: [
+      'Microsoft.Network/publicIPAddresses/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_NETWORK_INTERFACES,
@@ -776,6 +776,7 @@ export const networkSteps: Step<
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
     ],
     executionHandler: fetchNetworkInterfaces,
+    rolePermissions: ['Microsoft.Network/networkInterfaces/read'],
   },
   {
     id: STEP_RM_NETWORK_VIRTUAL_NETWORKS,
@@ -799,6 +800,10 @@ export const networkSteps: Step<
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
     ],
     executionHandler: fetchVirtualNetworks,
+    rolePermissions: [
+      'Microsoft.Network/virtualNetworks/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_NETWORK_SECURITY_GROUPS,
@@ -821,6 +826,10 @@ export const networkSteps: Step<
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
     ],
     executionHandler: fetchNetworkSecurityGroups,
+    rolePermissions: [
+      'Microsoft.Network/networkSecurityGroups/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_NETWORK_LOAD_BALANCERS,
@@ -838,6 +847,10 @@ export const networkSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchLoadBalancers,
+    rolePermissions: [
+      'Microsoft.Network/loadBalancers/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_NETWORK_FIREWALLS,
@@ -854,6 +867,10 @@ export const networkSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAzureFirewalls,
+    rolePermissions: [
+      'Microsoft.Network/azurefirewalls/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
@@ -879,6 +896,7 @@ export const networkSteps: Step<
     relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_WATCHER],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchNetworkWatchers,
+    rolePermissions: ['Microsoft.Network/networkWatchers/read'],
   },
   {
     id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
@@ -887,6 +905,7 @@ export const networkSteps: Step<
     relationships: [NetworkRelationships.RESOURCE_GROUP_HAS_PRIVATE_ENDPOINT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPrivateEndpoints,
+    rolePermissions: ['Microsoft.Network/privateEndpoints/read'],
   },
   {
     id: STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
@@ -944,5 +963,6 @@ export const networkSteps: Step<
       storageSteps.STORAGE_ACCOUNTS,
     ],
     executionHandler: fetchNetworkSecurityGroupFlowLogs,
+    rolePermissions: ['Microsoft.Network/networkWatchers/flowLogs/read'],
   },
 ];

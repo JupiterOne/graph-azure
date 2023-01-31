@@ -1,12 +1,10 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { J1ApiManagementClient } from './client';
@@ -85,9 +83,7 @@ export async function fetchApiManagementApis(
   );
 }
 
-export const apiManagementSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const apiManagementSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_API_MANAGEMENT_SERVICES,
     name: 'API Management Services',
@@ -103,6 +99,10 @@ export const apiManagementSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApiManagementServices,
+    rolePermissions: [
+      'Microsoft.ApiManagement/service/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_API_MANAGEMENT_APIS,
@@ -111,5 +111,6 @@ export const apiManagementSteps: Step<
     relationships: [ApiManagementRelationships.SERVICE_HAS_API],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_API_MANAGEMENT_SERVICES],
     executionHandler: fetchApiManagementApis,
+    rolePermissions: ['Microsoft.ApiManagement/service/apis/read'],
   },
 ];

@@ -1,12 +1,10 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
   getRawData,
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { PolicyEntities, PolicyRelationships, PolicySteps } from './constants';
@@ -109,9 +107,7 @@ export async function fetchPolicyDefinitionsForAssignments(
   );
 }
 
-export const policySteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const policySteps: AzureIntegrationStep[] = [
   {
     id: PolicySteps.POLICY_ASSIGNMENTS,
     name: 'Policy Assignments',
@@ -119,6 +115,7 @@ export const policySteps: Step<
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchPolicyAssignments,
+    rolePermissions: ['Microsoft.Authorization/policyAssignments/read'],
   },
   {
     id: PolicySteps.POLICY_ASSIGNMENT_SCOPE_RELATIONSHIPS,
@@ -145,5 +142,9 @@ export const policySteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, PolicySteps.POLICY_ASSIGNMENTS],
     executionHandler: fetchPolicyDefinitionsForAssignments,
+    rolePermissions: [
+      'Microsoft.Authorization/policyDefinitions/read',
+      'Microsoft.Authorization/policySetDefinitions/read',
+    ],
   },
 ];

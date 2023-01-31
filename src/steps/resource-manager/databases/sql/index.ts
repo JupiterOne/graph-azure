@@ -1,13 +1,14 @@
 import {
   createDirectRelationship,
   getRawData,
-  IntegrationStepExecutionContext,
   RelationshipClass,
-  Step,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../../azure';
-import { IntegrationConfig, IntegrationStepContext } from '../../../../types';
+import {
+  AzureIntegrationStep,
+  IntegrationStepContext,
+} from '../../../../types';
 import { getAccountEntity } from '../../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../../active-directory/constants';
 import { createDatabaseEntity, createDbServerEntity } from '../converters';
@@ -206,9 +207,7 @@ export async function fetchSQLServerActiveDirectoryAdmins(
   );
 }
 
-export const sqlSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const sqlSteps: AzureIntegrationStep[] = [
   {
     id: steps.SERVERS,
     name: 'SQL Servers',
@@ -216,6 +215,7 @@ export const sqlSteps: Step<
     relationships: [relationships.RESOURCE_GROUP_HAS_SQL_SERVER],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchSQLServers,
+    rolePermissions: ['Microsoft.Sql/servers/read'],
   },
   {
     id: steps.SERVER_DIAGNOSTIC_SETTINGS,
@@ -226,6 +226,7 @@ export const sqlSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
     executionHandler: fetchSQLServerDiagnosticSettings,
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
   },
   {
     id: steps.DATABASES,
@@ -234,6 +235,7 @@ export const sqlSteps: Step<
     relationships: [relationships.SQL_SERVER_HAS_SQL_DATABASE],
     dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
     executionHandler: fetchSQLDatabases,
+    rolePermissions: ['Microsoft.Sql/servers/databases/read'],
   },
   {
     id: steps.SERVER_FIREWALL_RULES,
@@ -242,6 +244,7 @@ export const sqlSteps: Step<
     relationships: [relationships.SQL_SERVER_HAS_FIREWALL_RULE],
     dependsOn: [steps.SERVERS],
     executionHandler: fetchSQLServerFirewallRules,
+    rolePermissions: ['Microsoft.Sql/servers/firewallRules/read'],
   },
   {
     id: steps.SERVER_AD_ADMINS,
@@ -250,5 +253,6 @@ export const sqlSteps: Step<
     relationships: [relationships.SQL_SERVER_HAS_AD_ADMIN],
     dependsOn: [steps.SERVERS],
     executionHandler: fetchSQLServerActiveDirectoryAdmins,
+    rolePermissions: ['Microsoft.Sql/servers/administrators/read'],
   },
 ];

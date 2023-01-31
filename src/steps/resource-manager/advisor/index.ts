@@ -1,11 +1,7 @@
-import {
-  Step,
-  IntegrationStepExecutionContext,
-  createDirectRelationship,
-} from '@jupiterone/integration-sdk-core';
+import { createDirectRelationship } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { AdvisorClient } from './client';
@@ -69,9 +65,7 @@ export async function fetchRecommendations(
   });
 }
 
-export const advisorSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const advisorSteps: AzureIntegrationStep[] = [
   {
     id: AdvisorSteps.RECOMMENDATIONS,
     name: 'Recommendations',
@@ -86,5 +80,6 @@ export const advisorSteps: Step<
       ...getResourceManagerSteps().executeFirstSteps,
     ],
     executionHandler: fetchRecommendations,
+    rolePermissions: ['Microsoft.Advisor/recommendations/read'],
   },
 ];

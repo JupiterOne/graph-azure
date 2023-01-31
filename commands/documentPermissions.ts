@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { Command } from 'commander';
 import { invocationConfig } from '../src';
 import { AzureIntegrationStep } from '../src/types';
+import chalk from 'chalk';
 
 const table = require('markdown-table');
 
@@ -38,12 +40,24 @@ documentPermissionsCommand.parse();
 
 async function executeDocumentPermissionsAction(options: DocumentCommandArgs) {
   const { outputFile } = options;
+  console.log(
+    chalk.gray(
+      'DOCUMENT PERMISSIONS (START): Collecting permissions from steps...',
+    ),
+  );
+
   const documentationFilePath = path.join(process.cwd(), outputFile);
   const oldDocumentationFile = await getDocumentationFile(
     documentationFilePath,
   );
 
+  if (!oldDocumentationFile) {
+    return;
+  }
+
   const newGeneratedDocumentationSection = getNewDocumentationVersion();
+
+  console.log(chalk.gray(newGeneratedDocumentationSection));
 
   if (!newGeneratedDocumentationSection) return;
 
@@ -52,15 +66,38 @@ async function executeDocumentPermissionsAction(options: DocumentCommandArgs) {
     newGeneratedDocumentationSection,
   );
 
-  await fs.writeFile(documentationFilePath, newDocumentationFile, {
-    encoding: 'utf-8',
-  });
+  try {
+    await fs.writeFile(documentationFilePath, newDocumentationFile, {
+      encoding: 'utf-8',
+    });
+  } catch (error) {
+    console.log(
+      chalk.gray(
+        `Unable to write documentation file from path ${documentationFilePath}.`,
+      ),
+    );
+  }
+
+  console.log(
+    chalk.gray(
+      `DOCUMENT PERMISSIONS (END): Finished document permissions process.`,
+    ),
+  );
 }
 
-function getDocumentationFile(documentationFilePath: string): Promise<string> {
-  return fs.readFile(documentationFilePath, {
-    encoding: 'utf-8',
-  });
+function getDocumentationFile(documentationFilePath: string) {
+  try {
+    chalk.gray(`Reading documentation file from ${documentationFilePath}`);
+    return fs.readFile(documentationFilePath, {
+      encoding: 'utf-8',
+    });
+  } catch (error) {
+    console.log(
+      chalk.gray(
+        `Unable to read documentation file from path ${documentationFilePath}. Aborting`,
+      ),
+    );
+  }
 }
 
 function getNewDocumentationVersion(): string | undefined {

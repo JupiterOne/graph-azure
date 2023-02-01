@@ -277,8 +277,8 @@ export async function request<T extends ResourceResponse>(
       let status = '';
       let statusText = '';
       if (err instanceof AzureRestError) {
-        status = err.body?.code;
-        statusText = err.body?.message;
+        status = err.body?.code ?? err.body?.error?.code;
+        statusText = err.body?.message ?? err.body?.error?.message;
       } else if (err instanceof FetchError) {
         status = err.code!;
         statusText = err.message;

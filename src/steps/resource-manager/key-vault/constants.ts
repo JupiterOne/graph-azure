@@ -86,4 +86,10 @@ export const KeyVaultRelationships = {
     _class: RelationshipClass.CONTAINS,
     targetType: KeyVaultEntities.KEY_VAULT_SECRET._type,
   },
+  ACCOUNT_HAS_KEY_VAULT: {
+    _type: ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
+    sourceType: KeyVaultEntities.KEY_VAULT._type,
+    _class: RelationshipClass.HAS,
+    targetType: KEY_VAULT_SERVICE_ENTITY_TYPE,
+  },
 };

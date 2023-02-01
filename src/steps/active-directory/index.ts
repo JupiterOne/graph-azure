@@ -13,20 +13,15 @@ import {
 } from './client';
 import {
   ACCOUNT_ENTITY_TYPE,
-  ACCOUNT_GROUP_RELATIONSHIP_TYPE,
-  ACCOUNT_USER_RELATIONSHIP_TYPE,
   STEP_AD_ACCOUNT,
   STEP_AD_GROUP_MEMBERS,
   STEP_AD_GROUPS,
   STEP_AD_USERS,
   GROUP_ENTITY_TYPE,
-  GROUP_MEMBER_ENTITY_TYPE,
-  GROUP_MEMBER_RELATIONSHIP_TYPE,
-  USER_ENTITY_TYPE,
   STEP_AD_SERVICE_PRINCIPALS,
-  SERVICE_PRINCIPAL_ENTITY_TYPE,
-  SERVICE_PRINCIPAL_ENTITY_CLASS,
   STEP_AD_USER_REGISTRATION_DETAILS,
+  ADEntities,
+  ADRelationships,
 } from './constants';
 import {
   createAccountEntity,
@@ -199,13 +194,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   {
     id: STEP_AD_ACCOUNT,
     name: 'Active Directory Info',
-    entities: [
-      {
-        resourceName: '[AD] Account',
-        _type: ACCOUNT_ENTITY_TYPE,
-        _class: 'Account',
-      },
-    ],
+    entities: [ADEntities.ACCOUNT],
     relationships: [],
     executionHandler: fetchAccount,
     apiPermissions: ['Directory.Read.All', 'Policy.Read.All'],
@@ -222,21 +211,8 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   {
     id: STEP_AD_USERS,
     name: 'Active Directory Users',
-    entities: [
-      {
-        resourceName: '[AD] User',
-        _type: USER_ENTITY_TYPE,
-        _class: 'User',
-      },
-    ],
-    relationships: [
-      {
-        _type: ACCOUNT_USER_RELATIONSHIP_TYPE,
-        sourceType: ACCOUNT_ENTITY_TYPE,
-        _class: RelationshipClass.HAS,
-        targetType: USER_ENTITY_TYPE,
-      },
-    ],
+    entities: [ADEntities.USER],
+    relationships: [ADRelationships.ACCOUNT_HAS_USER],
     dependsOn: [STEP_AD_ACCOUNT, STEP_AD_USER_REGISTRATION_DETAILS],
     executionHandler: fetchUsers,
     apiPermissions: ['Directory.Read.All'],
@@ -244,21 +220,8 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   {
     id: STEP_AD_GROUPS,
     name: 'Active Directory Groups',
-    entities: [
-      {
-        resourceName: '[AD] Group',
-        _type: GROUP_ENTITY_TYPE,
-        _class: 'UserGroup',
-      },
-    ],
-    relationships: [
-      {
-        _type: ACCOUNT_GROUP_RELATIONSHIP_TYPE,
-        sourceType: ACCOUNT_ENTITY_TYPE,
-        _class: RelationshipClass.HAS,
-        targetType: GROUP_ENTITY_TYPE,
-      },
-    ],
+    entities: [ADEntities.USER_GROUP],
+    relationships: [ADRelationships.ACCOUNT_HAS_GROUP],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchGroups,
     apiPermissions: ['Directory.Read.All'],
@@ -266,32 +229,11 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   {
     id: STEP_AD_GROUP_MEMBERS,
     name: 'Active Directory Group Members',
-    entities: [
-      {
-        resourceName: '[AD] Group Member',
-        _type: GROUP_MEMBER_ENTITY_TYPE,
-        _class: 'User',
-      },
-    ],
+    entities: [ADEntities.GROUP_MEMBER],
     relationships: [
-      {
-        _type: 'azure_group_has_user',
-        sourceType: GROUP_ENTITY_TYPE,
-        _class: RelationshipClass.HAS,
-        targetType: USER_ENTITY_TYPE,
-      },
-      {
-        _type: 'azure_group_has_group',
-        sourceType: GROUP_ENTITY_TYPE,
-        _class: RelationshipClass.HAS,
-        targetType: GROUP_ENTITY_TYPE,
-      },
-      {
-        _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
-        sourceType: GROUP_ENTITY_TYPE,
-        _class: RelationshipClass.HAS,
-        targetType: GROUP_MEMBER_ENTITY_TYPE,
-      },
+      ADRelationships.GROUP_HAS_USER,
+      ADRelationships.GROUP_HAS_GROUP,
+      ADRelationships.GROUP_HAS_MEMBER,
     ],
     dependsOn: [STEP_AD_GROUPS, STEP_AD_USERS],
     executionHandler: fetchGroupMembers,
@@ -300,13 +242,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   {
     id: STEP_AD_SERVICE_PRINCIPALS,
     name: 'Active Directory Service Principals',
-    entities: [
-      {
-        resourceName: '[AD] Service Principal',
-        _type: SERVICE_PRINCIPAL_ENTITY_TYPE,
-        _class: SERVICE_PRINCIPAL_ENTITY_CLASS,
-      },
-    ],
+    entities: [ADEntities.SERVICE_PRINCIPAL],
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchServicePrincipals,

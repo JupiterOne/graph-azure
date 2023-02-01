@@ -1,3 +1,5 @@
+import { RelationshipClass } from '@jupiterone/integration-sdk-core';
+
 // Step IDs
 export const STEP_AD_ACCOUNT = 'ad-account';
 export const STEP_AD_GROUPS = 'ad-groups';
@@ -34,3 +36,64 @@ export const GROUP_MEMBER_ENTITY_CLASS = 'User';
 export const ACCOUNT_GROUP_RELATIONSHIP_TYPE = 'azure_account_has_group';
 export const ACCOUNT_USER_RELATIONSHIP_TYPE = 'azure_account_has_user';
 export const GROUP_MEMBER_RELATIONSHIP_TYPE = 'azure_group_has_member';
+
+export const ADEntities = {
+  ACCOUNT: {
+    resourceName: '[AD] Account',
+    _type: ACCOUNT_ENTITY_TYPE,
+    _class: 'Account',
+  },
+  USER: {
+    resourceName: '[AD] User',
+    _type: USER_ENTITY_TYPE,
+    _class: 'User',
+  },
+  USER_GROUP: {
+    resourceName: '[AD] Group',
+    _type: GROUP_ENTITY_TYPE,
+    _class: 'UserGroup',
+  },
+  GROUP_MEMBER: {
+    resourceName: '[AD] Group Member',
+    _type: GROUP_MEMBER_ENTITY_TYPE,
+    _class: 'User',
+  },
+  SERVICE_PRINCIPAL: {
+    resourceName: '[AD] Service Principal',
+    _type: SERVICE_PRINCIPAL_ENTITY_TYPE,
+    _class: SERVICE_PRINCIPAL_ENTITY_CLASS,
+  },
+};
+
+export const ADRelationships = {
+  ACCOUNT_HAS_USER: {
+    _type: ACCOUNT_USER_RELATIONSHIP_TYPE,
+    sourceType: ACCOUNT_ENTITY_TYPE,
+    _class: RelationshipClass.HAS,
+    targetType: USER_ENTITY_TYPE,
+  },
+  ACCOUNT_HAS_GROUP: {
+    _type: ACCOUNT_GROUP_RELATIONSHIP_TYPE,
+    sourceType: ACCOUNT_ENTITY_TYPE,
+    _class: RelationshipClass.HAS,
+    targetType: GROUP_ENTITY_TYPE,
+  },
+  GROUP_HAS_USER: {
+    _type: 'azure_group_has_user',
+    sourceType: GROUP_ENTITY_TYPE,
+    _class: RelationshipClass.HAS,
+    targetType: USER_ENTITY_TYPE,
+  },
+  GROUP_HAS_GROUP: {
+    _type: 'azure_group_has_group',
+    sourceType: GROUP_ENTITY_TYPE,
+    _class: RelationshipClass.HAS,
+    targetType: GROUP_ENTITY_TYPE,
+  },
+  GROUP_HAS_MEMBER: {
+    _type: GROUP_MEMBER_RELATIONSHIP_TYPE,
+    sourceType: GROUP_ENTITY_TYPE,
+    _class: RelationshipClass.HAS,
+    targetType: GROUP_MEMBER_ENTITY_TYPE,
+  },
+};

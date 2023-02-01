@@ -316,7 +316,7 @@ The following relationships are created:
 | Source Entity `_type`              | Relationship `_class` | Target Entity `_type`                             |
 | ---------------------------------- | --------------------- | ------------------------------------------------- |
 | `azure_account`                    | **HAS**               | `azure_user_group`                                |
-| `azure_account`                    | **HAS**               | `azure_keyvault_service`                          |
+| `azure_keyvault_service`           | **HAS**               | `azure_keyvault_service`                          |
 | `azure_account`                    | **HAS**               | `azure_management_group`                          |
 | `azure_account`                    | **HAS**               | `azure_user`                                      |
 | `azure_api_management_service`     | **HAS**               | `azure_api_management_api`                        |

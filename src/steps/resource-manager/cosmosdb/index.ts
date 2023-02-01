@@ -10,12 +10,9 @@ import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { CosmosDBClient } from './client';
 import {
   RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
-  RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_TYPE,
-  RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
   STEP_RM_COSMOSDB_SQL_DATABASES,
-  RM_COSMOSDB_ACCOUNT_ENTITY_CLASS,
-  RM_COSMOSDB_SQL_DATABASE_ENTITY_CLASS,
-  RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_CLASS,
+  cosmosDBEntities,
+  cosmosDBRelationships,
 } from './constants';
 import { createAccountEntity, createSQLDatabaseEntity } from './converters';
 import createResourceGroupResourceRelationship, {
@@ -63,24 +60,11 @@ export const cosmosdbSteps: AzureIntegrationStep[] = [
     id: STEP_RM_COSMOSDB_SQL_DATABASES,
     name: 'CosmosDB SQL Databases',
     entities: [
-      {
-        resourceName: '[RM] Cosmos DB Account',
-        _type: RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
-        _class: RM_COSMOSDB_ACCOUNT_ENTITY_CLASS,
-      },
-      {
-        resourceName: '[RM] Cosmos DB Database',
-        _type: RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
-        _class: RM_COSMOSDB_SQL_DATABASE_ENTITY_CLASS,
-      },
+      cosmosDBEntities.COSMOSDB_ACCOUNT,
+      cosmosDBEntities.COSMOSDB_SQL_DATABASE,
     ],
     relationships: [
-      {
-        _type: RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_TYPE,
-        sourceType: RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
-        _class: RM_COSMOSDB_ACCOUNT_SQL_DATABASE_RELATIONSHIP_CLASS,
-        targetType: RM_COSMOSDB_SQL_DATABASE_ENTITY_TYPE,
-      },
+      cosmosDBRelationships.COSMOSDB_HAS_SQL_DATABASE,
       createResourceGroupResourceRelationshipMetadata(
         RM_COSMOSDB_ACCOUNT_ENTITY_TYPE,
       ),

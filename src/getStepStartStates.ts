@@ -255,6 +255,8 @@ export function getResourceManagerSteps(): GetApiSteps {
     ],
     executeLastSteps: [
       AdvisorSteps.RECOMMENDATIONS,
+      AdvisorSteps.ASSESSMENT_RECOMMENDATION_RELATIONSHIP,
+      AdvisorSteps.RESOURCE_RECOMMENDATION_RELATIONSHIP,
       authorizationSteps.ROLE_ASSIGNMENT_SCOPES,
       PolicySteps.POLICY_ASSIGNMENT_SCOPE_RELATIONSHIPS,
       MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,

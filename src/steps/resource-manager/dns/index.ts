@@ -1,12 +1,10 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { J1DnsManagementClient } from './client';
@@ -88,9 +86,7 @@ export async function fetchRecordSets(
   );
 }
 
-export const dnsSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const dnsSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_DNS_ZONES,
     name: 'DNS Zones',
@@ -98,6 +94,7 @@ export const dnsSteps: Step<
     relationships: [DnsRelationships.RESOURCE_GROUP_HAS_ZONE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchZones,
+    rolePermissions: ['Microsoft.Network/dnszones/read'],
   },
   {
     id: STEP_RM_DNS_RECORD_SETS,
@@ -106,5 +103,6 @@ export const dnsSteps: Step<
     relationships: [DnsRelationships.ZONE_HAS_RECORD_SET],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_DNS_ZONES],
     executionHandler: fetchRecordSets,
+    rolePermissions: ['Microsoft.Network/dnszones/recordsets/read'],
   },
 ];

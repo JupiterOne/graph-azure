@@ -1,12 +1,10 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
   getRawData,
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { steps as storageSteps } from '../storage/constants';
@@ -154,9 +152,7 @@ export async function buildActivityLogScopeRelationships(
   );
 }
 
-export const monitorSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const monitorSteps: AzureIntegrationStep[] = [
   {
     id: MonitorSteps.MONITOR_LOG_PROFILES,
     name: 'Monitor Log Profiles',
@@ -167,6 +163,7 @@ export const monitorSteps: Step<
     ],
     dependsOn: [subscriptionSteps.SUBSCRIPTION, storageSteps.STORAGE_ACCOUNTS],
     executionHandler: fetchLogProfiles,
+    rolePermissions: ['Microsoft.Insights/LogProfiles/Read'],
   },
   {
     id: MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS,
@@ -175,6 +172,7 @@ export const monitorSteps: Step<
     relationships: [MonitorRelationships.RESOURCE_GROUP_HAS_ACTIVITY_LOG_ALERT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchActivityLogAlerts,
+    rolePermissions: ['Microsoft.Insights/ActivityLogAlerts/Read'],
   },
   {
     id: MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,

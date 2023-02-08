@@ -1,12 +1,10 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
   getRawData,
 } from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import {
@@ -190,9 +188,7 @@ export async function fetchBatchCertificates(
   );
 }
 
-export const batchSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const batchSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_BATCH_ACCOUNT,
     name: 'Batch Accounts',
@@ -208,6 +204,10 @@ export const batchSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchBatchAccounts,
+    rolePermissions: [
+      'Microsoft.Batch/batchAccounts/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_BATCH_POOL,
@@ -220,6 +220,7 @@ export const batchSteps: Step<
       STEP_RM_BATCH_ACCOUNT,
     ],
     executionHandler: fetchBatchPools,
+    rolePermissions: ['Microsoft.Batch/batchAccounts/pools/read'],
   },
   {
     id: STEP_RM_BATCH_APPLICATION,
@@ -234,6 +235,7 @@ export const batchSteps: Step<
       STEP_RM_BATCH_ACCOUNT,
     ],
     executionHandler: fetchBatchApplications,
+    rolePermissions: ['Microsoft.Batch/batchAccounts/applications/read'],
   },
   {
     id: STEP_RM_BATCH_CERTIFICATE,
@@ -248,5 +250,6 @@ export const batchSteps: Step<
       STEP_RM_BATCH_ACCOUNT,
     ],
     executionHandler: fetchBatchCertificates,
+    rolePermissions: ['Microsoft.Batch/batchAccounts/certificates/read'],
   },
 ];

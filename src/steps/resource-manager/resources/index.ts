@@ -1,7 +1,5 @@
 import {
   Entity,
-  Step,
-  IntegrationStepExecutionContext,
   ExplicitRelationship,
   createDirectRelationship,
   RelationshipClass,
@@ -10,7 +8,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { ResourcesClient } from './client';
@@ -149,9 +147,7 @@ export async function buildResourceHasResourceLockRelationships(
   );
 }
 
-export const resourcesSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const resourcesSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_RESOURCES_RESOURCE_GROUPS,
     name: 'Resource Groups',
@@ -159,6 +155,7 @@ export const resourcesSteps: Step<
     relationships: [SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_METADATA],
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchResourceGroups,
+    rolePermissions: ['Microsoft.Resources/subscriptions/resourceGroups/read'],
   },
   {
     id: STEP_RM_RESOURCES_RESOURCE_LOCKS,
@@ -167,6 +164,7 @@ export const resourcesSteps: Step<
     relationships: [],
     dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchResourceGroupLocks,
+    rolePermissions: ['Microsoft.Authorization/locks/read'],
   },
   {
     id: STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,

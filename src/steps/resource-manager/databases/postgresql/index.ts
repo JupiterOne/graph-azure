@@ -1,13 +1,14 @@
 import {
   createDirectRelationship,
   getRawData,
-  IntegrationStepExecutionContext,
   RelationshipClass,
-  Step,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../../azure';
-import { IntegrationConfig, IntegrationStepContext } from '../../../../types';
+import {
+  AzureIntegrationStep,
+  IntegrationStepContext,
+} from '../../../../types';
 import { getAccountEntity } from '../../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../../active-directory/constants';
 import { createDatabaseEntity, createDbServerEntity } from '../converters';
@@ -130,9 +131,7 @@ export async function fetchPostgreSqlServerFirewallRules(
   );
 }
 
-export const postgreSqlSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const postgreSqlSteps: AzureIntegrationStep[] = [
   {
     id: steps.SERVERS,
     name: 'PostgreSQL Servers',
@@ -148,6 +147,10 @@ export const postgreSqlSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPostgreSQLServers,
+    rolePermissions: [
+      'Microsoft.Insights/DiagnosticSettings/Read',
+      'Microsoft.DBforPostgreSQL/servers/read',
+    ],
   },
   {
     id: steps.DATABASES,
@@ -158,6 +161,7 @@ export const postgreSqlSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
     executionHandler: fetchPostgreSQLDatabases,
+    rolePermissions: ['Microsoft.DBforPostgreSQL/servers/databases/read'],
   },
   {
     id: steps.SERVER_FIREWALL_RULES,
@@ -168,5 +172,6 @@ export const postgreSqlSteps: Step<
     ],
     dependsOn: [steps.SERVERS],
     executionHandler: fetchPostgreSqlServerFirewallRules,
+    rolePermissions: ['Microsoft.DBforPostgreSQL/servers/firewallRules/read'],
   },
 ];

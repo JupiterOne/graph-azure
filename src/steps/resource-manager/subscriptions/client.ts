@@ -72,20 +72,33 @@ export class J1SubscriptionClient extends Client {
         passSubscriptionId: false,
       },
     );
-    const subscriptions = await request(
-      // Need API version to 2020-01-01 in order to return subscription tags
-      // serviceClient.subscriptions.list() does not work because the api version is too old
-      // sendOperationRequest was the only way I found to change the API version with this sdk
-      async () =>
-        await serviceClient.sendOperationRequest(
-          {},
-          listSubscripsionsOperationSpec,
-        ),
-      this.logger,
-      'subscription',
-      FIVE_MINUTES,
-    );
-    return subscriptions?._response?.parsedBody;
+    let allSubscriptions: Subscription[] = [];
+    let nextPageLink: string | undefined;
+    do {
+      const subscriptions = await request(
+        // Need API version to 2020-01-01 in order to return subscription tags
+        // serviceClient.subscriptions.list() does not work because the api version is too old
+        // sendOperationRequest was the only way I found to change the API version with this sdk
+        async () =>
+          nextPageLink
+            ? await serviceClient.sendOperationRequest(
+                { nextPageLink },
+                listNextOperationSpec,
+              )
+            : await serviceClient.sendOperationRequest(
+                {},
+                listSubscripsionsOperationSpec,
+              ),
+        this.logger,
+        'subscription',
+        FIVE_MINUTES,
+      );
+      allSubscriptions = allSubscriptions.concat(
+        subscriptions?._response?.parsedBody,
+      );
+      nextPageLink = subscriptions?._response?.parsedBody.nextLink;
+    } while (nextPageLink);
+    return allSubscriptions;
   }
 
   public async fetchSubscription(
@@ -136,6 +149,33 @@ const listSubscripsionsOperationSpec: msRest.OperationSpec = {
   httpMethod: 'GET',
   path: 'subscriptions',
   queryParameters: [apiVersion2020],
+  headerParameters: [acceptLanguage],
+  responses: {
+    200: {
+      bodyMapper: SubscriptionMappers.LocationListResult,
+    },
+    default: {
+      bodyMapper: SubscriptionMappers.CloudError,
+    },
+  },
+  serializer: new msRest.Serializer(SubscriptionMappers),
+};
+const nextPageLink: msRest.OperationURLParameter = {
+  parameterPath: 'nextPageLink',
+  mapper: {
+    required: true,
+    serializedName: 'nextLink',
+    type: {
+      name: 'String',
+    },
+  },
+  skipEncoding: true,
+};
+const listNextOperationSpec: msRest.OperationSpec = {
+  httpMethod: 'GET',
+  baseUrl: 'https://management.azure.com',
+  path: '{nextLink}',
+  urlParameters: [nextPageLink],
   headerParameters: [acceptLanguage],
   responses: {
     200: {

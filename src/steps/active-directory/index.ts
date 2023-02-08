@@ -1,14 +1,12 @@
 import {
   Entity,
-  Step,
-  IntegrationStepExecutionContext,
   RelationshipClass,
   JobState,
   IntegrationError,
   createDirectRelationship,
 } from '@jupiterone/integration-sdk-core';
 
-import { IntegrationStepContext, IntegrationConfig } from '../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../types';
 import {
   CredentialUserRegistrationDetails,
   DirectoryGraphClient,
@@ -197,9 +195,7 @@ export async function fetchServicePrincipals(
   });
 }
 
-export const activeDirectorySteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const activeDirectorySteps: AzureIntegrationStep[] = [
   {
     id: STEP_AD_ACCOUNT,
     name: 'Active Directory Info',
@@ -212,6 +208,7 @@ export const activeDirectorySteps: Step<
     ],
     relationships: [],
     executionHandler: fetchAccount,
+    apiPermissions: ['Directory.Read.All', 'Policy.Read.All'],
   },
   {
     id: STEP_AD_USER_REGISTRATION_DETAILS,
@@ -220,6 +217,7 @@ export const activeDirectorySteps: Step<
     relationships: [],
     dependsOn: [],
     executionHandler: fetchUserRegistrationDetails,
+    apiPermissions: ['Reports.Read.All'],
   },
   {
     id: STEP_AD_USERS,
@@ -241,6 +239,7 @@ export const activeDirectorySteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_AD_USER_REGISTRATION_DETAILS],
     executionHandler: fetchUsers,
+    apiPermissions: ['Directory.Read.All'],
   },
   {
     id: STEP_AD_GROUPS,
@@ -262,6 +261,7 @@ export const activeDirectorySteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchGroups,
+    apiPermissions: ['Directory.Read.All'],
   },
   {
     id: STEP_AD_GROUP_MEMBERS,
@@ -295,6 +295,7 @@ export const activeDirectorySteps: Step<
     ],
     dependsOn: [STEP_AD_GROUPS, STEP_AD_USERS],
     executionHandler: fetchGroupMembers,
+    apiPermissions: ['Directory.Read.All'],
   },
   {
     id: STEP_AD_SERVICE_PRINCIPALS,
@@ -309,5 +310,6 @@ export const activeDirectorySteps: Step<
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchServicePrincipals,
+    apiPermissions: ['Directory.Read.All'],
   },
 ];

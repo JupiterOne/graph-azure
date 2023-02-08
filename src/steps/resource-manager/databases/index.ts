@@ -9,20 +9,14 @@ import { fetchMySQLDatabases } from './mysql';
 import { MySQLEntities, MySQLRelationships } from './mysql/constants';
 import { postgreSqlSteps } from './postgresql';
 import { sqlSteps } from './sql';
-import {
-  Step,
-  IntegrationStepExecutionContext,
-} from '@jupiterone/integration-sdk-core';
-import { IntegrationConfig } from '../../../types';
+import { AzureIntegrationStep } from '../../../types';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
-export const databaseSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const databaseSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_DATABASE_MARIADB_DATABASES,
     name: 'MariaDB Databases',
@@ -38,6 +32,11 @@ export const databaseSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMariaDBDatabases,
+    rolePermissions: [
+      'Microsoft.DBforMariaDB/servers/databases/read',
+      'Microsoft.DBforMariaDB/servers/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   {
     id: STEP_RM_DATABASE_MYSQL_DATABASES,
@@ -54,6 +53,11 @@ export const databaseSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchMySQLDatabases,
+    rolePermissions: [
+      'Microsoft.DBforMySQL/servers/read',
+      'Microsoft.DBforMySQL/servers/databases/read',
+      'Microsoft.Insights/DiagnosticSettings/Read',
+    ],
   },
   ...postgreSqlSteps,
   ...sqlSteps,

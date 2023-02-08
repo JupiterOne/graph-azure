@@ -2,14 +2,12 @@ import { StorageAccount, Kind, SkuTier } from '@azure/arm-storage/esm/models';
 import {
   createDirectRelationship,
   Entity,
-  Step,
-  IntegrationStepExecutionContext,
   RelationshipClass,
   getRawData,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { StorageClient, createStorageAccountServiceClient } from './client';
@@ -412,9 +410,7 @@ export async function fetchStorageTables(
   );
 }
 
-export const storageSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const storageSteps: AzureIntegrationStep[] = [
   {
     id: steps.STORAGE_ACCOUNTS,
     name: 'Storage Accounts',
@@ -431,6 +427,12 @@ export const storageSteps: Step<
       STEP_RM_KEYVAULT_VAULTS,
     ],
     executionHandler: fetchStorageAccounts,
+    rolePermissions: [
+      'Microsoft.Storage/storageAccounts/read',
+      'Microsoft.Storage/storageAccounts/blobServices/read',
+      'Microsoft.Storage/storageAccounts/queueServices/read',
+      'Microsoft.Storage/storageAccounts/tableServices/read',
+    ],
   },
   {
     id: steps.STORAGE_FILE_SHARES,
@@ -439,6 +441,9 @@ export const storageSteps: Step<
     relationships: [relationships.STORAGE_ACCOUNT_HAS_FILE_SHARE],
     dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_ACCOUNTS],
     executionHandler: fetchStorageFileShares,
+    rolePermissions: [
+      'Microsoft.Storage/storageAccounts/fileServices/shares/read',
+    ],
   },
   {
     id: steps.STORAGE_CONTAINERS,
@@ -447,6 +452,9 @@ export const storageSteps: Step<
     relationships: [relationships.STORAGE_ACCOUNT_HAS_CONTAINER],
     dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_ACCOUNTS],
     executionHandler: fetchStorageContainers,
+    rolePermissions: [
+      'Microsoft.Storage/storageAccounts/blobServices/containers/read',
+    ],
   },
   {
     id: steps.STORAGE_QUEUES,
@@ -455,6 +463,7 @@ export const storageSteps: Step<
     relationships: [relationships.STORAGE_ACCOUNT_HAS_QUEUE],
     dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_ACCOUNTS],
     executionHandler: fetchStorageQueues,
+    rolePermissions: ['Microsoft.Storage/storageAccounts/queueServices/read'],
   },
   {
     id: steps.STORAGE_TABLES,
@@ -463,5 +472,8 @@ export const storageSteps: Step<
     relationships: [relationships.STORAGE_ACCOUNT_HAS_TABLE],
     dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_ACCOUNTS],
     executionHandler: fetchStorageTables,
+    rolePermissions: [
+      'Microsoft.Storage/storageAccounts/tableServices/tables/read',
+    ],
   },
 ];

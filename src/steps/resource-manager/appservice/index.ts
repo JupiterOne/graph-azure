@@ -1,6 +1,4 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   StepEntityMetadata,
   IntegrationLogger,
   getRawData,
@@ -9,7 +7,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { AppServiceClient } from './client';
@@ -176,9 +174,7 @@ export async function buildAppToPlanRelationships(
   }
 }
 
-export const appServiceSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const appServiceSteps: AzureIntegrationStep[] = [
   {
     id: AppServiceSteps.APPS,
     name: 'App Service Apps',
@@ -189,6 +185,11 @@ export const appServiceSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApps,
+    rolePermissions: [
+      'Microsoft.Web/sites/Read',
+      'Microsoft.Web/sites/config/Read',
+      'Microsoft.Web/sites/config/list/action',
+    ],
   },
   {
     id: AppServiceSteps.APP_SERVICE_PLANS,
@@ -199,6 +200,7 @@ export const appServiceSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAppServicePlans,
+    rolePermissions: ['Microsoft.Web/serverfarms/Read'],
   },
   {
     id: AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS,

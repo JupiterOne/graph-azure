@@ -1,10 +1,8 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { RedisCacheClient } from './client';
@@ -156,9 +154,7 @@ export async function fetchRedisLinkedServers(
   );
 }
 
-export const redisCacheSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const redisCacheSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_REDIS_CACHES,
     name: 'Redis Caches',
@@ -166,6 +162,7 @@ export const redisCacheSteps: Step<
     relationships: [RedisCacheRelationships.RESOURCE_GROUP_HAS_REDIS_CACHE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchRedisCaches,
+    rolePermissions: ['Microsoft.Cache/redis/read'],
   },
   {
     id: STEP_RM_REDIS_FIREWALL_RULES,
@@ -174,6 +171,7 @@ export const redisCacheSteps: Step<
     relationships: [RedisCacheRelationships.REDIS_CACHE_HAS_FIREWALL_RULE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_REDIS_CACHES],
     executionHandler: fetchRedisFirewallRules,
+    rolePermissions: ['Microsoft.Cache/redis/firewallRules/read'],
   },
   {
     id: STEP_RM_REDIS_LINKED_SERVERS,
@@ -184,5 +182,6 @@ export const redisCacheSteps: Step<
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_REDIS_CACHES],
     executionHandler: fetchRedisLinkedServers,
+    rolePermissions: ['Microsoft.Cache/redis/linkedServers/read'],
   },
 ];

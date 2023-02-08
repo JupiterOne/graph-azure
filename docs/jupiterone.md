@@ -5,12 +5,12 @@
 - Visualize Azure cloud resources in the JupiterOne graph.
 - Map Azure users to employees in your JupiterOne account.
 - Monitor visibility and governance of your Azure cloud environment by
-  leveraging hundreds of out-of-the box queries.
+  leveraging hundreds of out of the box queries.
 - Monitor compliance against the Azure CIS Benchmarks framework and other
-  security benchmarks using J1 Compliance.
+  security benchmarks using the JupiterOne compliance app.
 - Monitor Azure vulnerabilities and findings from multiple services within the
-  J1 Alerts.
-- Monitor changes to your Azure cloud resources using multiple J1 Alerts
+  alerts app.
+- Monitor changes to your Azure cloud resources using multiple JupiterOne alert
   rule packs specific to Azure.
 
 ## How it Works
@@ -25,15 +25,15 @@
 ## Requirements
 
 - JupiterOne requires the API credentials for the Azure endpoint, specifically
-  the Directory (tenant) ID, the Application (client) ID, and the Application
-  (client) secret key with the correct permissions assigned.
+  the Directory (tenant) id, the Application (client) id, and the Application
+  (client) secret with the correct permissions assigned.
 - You must have permission in JupiterOne to install new integrations.
 
 ## Support
 
 If you need help with this integration, please contact
-[JupiterOne Support](https://support.jupiterone.io). Also, see the [Troubleshooting section](#troubleshooting) 
-in this article.
+[JupiterOne Support](https://support.jupiterone.io). Also, see the
+[Troubleshooting section](#troubleshooting) in this article.
 
 ## Integration Walkthrough
 
@@ -52,103 +52,69 @@ Graph API][1]. Azure Resource Manager is authenticated and accessed through
 
 To create the App Registration:
 
-1. In the Azure portal, click **Azure Active Directory**.
-2. Select **App registrations**.
-  
-
-   ![](./azure-app-registration.png)
-   
-3. Click **New registration**.
-4. Create a new App registration, using the **Name** "JupiterOne", selecting
+1. Go to your Azure portal
+2. Navigate to **App registrations**
+3. Create a new App registration, using the **Name** "JupiterOne", selecting
    **Accounts in this organizational directory only**, with **no** "Redirect
-   URI".
-
-   ![](./azure-new-registration.png) 
-
-5. Click **Register**.
-
-#### Application (Client) ID
-
-After registering a new application, you can find the application (client) ID and directory (tenant) ID from the Overview menu option. Note the values for later use.
-
-1. Navigate to the Overview page of the new app.
-  
-
-   ![](./azure-app-ID.png) 
-   
-2. Copy the Application (client) ID.
-3. Copy the Directory (tenant) ID.
-4. Navigate to the Certificates & secrets section.
-5. Create a new client secret.
-6. Copy the generated secret Value (you only get one chance to do this).
+   URI"
+4. Navigate to the **Overview** page of the new app
+5. Copy the **Application (client) ID**
+6. Copy the **Directory (tenant) ID**
+7. Navigate to the **Certificates & secrets** section
+8. Create a new client secret
+9. Copy the generated secret **Value** (you only get one chance!)
 
 #### API Permissions (Azure Active Directory)
 
-The following steps are required for the DICOM service, but optional for the FHIR service. In addition, user access permissions or role assignments for the Azure Health Data Services are managed through RBAC. For more details, go to [Configure Azure RBAC for Azure Health Data Services](https://learn.microsoft.com/en-us/azure/healthcare-apis/configure-azure-rbac).
+Grant permission to read Microsoft Graph information:
 
-1. Go to the **API permissions** menu option for the new app.
-  
-
-   ![](./azure-add-permission.png) 
-   
-2. Click **Add a permission**.
-3. Click **Add permissions** and grant the following permissions to the app:
+1. Navigate to **API permissions**, choose **Microsoft Graph**, then
+   **Application Permissions**
+2. Grant the following permissions to the application:
 
    - `Directory.Read.All`
    - `Policy.Read.All`
    - `Reports.Read.All`
 
-4. Grant admin consent for this directory for the permissions above.
+3. Grant admin consent for this directory for the permissions above
 
-#### IAM Roles (Azure Management Groups /Subscriptions)
+#### IAM Roles (Azure Management Groups / Subscriptions)
 
 Grant the `Reader` RBAC subscription role to read Azure Resource Manager
 information:
 
-1. Go to **All services** > **Management + governance**.
+1. Navigate to the correct scope for your integration.
 
-   - If configuring all subscriptions for a tenant: navigate to 
-     **Management Groups > [Tenant Root Group](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#root-management-group-for-each-directory)**.
-     
-   - If configuring a single Azure Subscription: navigate to
-     **Subscriptions** and choose the subscription from which you want to ingest resources.
+   - _(RECOMMENDED) If configuring all subscriptions for a tenant:_ navigate to
+     **Management Groups**, then to the
+     [Tenant Root Group](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#root-management-group-for-each-directory).
 
-2. Click **Management Groups**.
-3. Click **+ Add management group**.
+   - _If configuring a single Azure Subscription:_ navigate to
+     **Subscriptions**, choose the subscription from which you want to ingest
+     resources.
 
-   ![](./azure-add management-group.png) 
-
-4. Create the custom role "JupiterOne Reader".
-
-   - Navigate to **Access control (IAM)** -> **Add** -> **Add custom role**
-   - Create a custom role called "JupiterOne Reader" with the following
+2. Create custom role "JupiterOne Reader"
+   1. Navigate to **Access control (IAM)** -> **Add** -> **Add custom role**
+   2. Create a custom role called "JupiterOne Reader" with the following
       permissions:
       - `Microsoft.PolicyInsights/policyStates/queryResults/action`
       - `Microsoft.Web/sites/config/list/Action`
-5. Assign roles to the "JupiterOne" App.
-
-   - Navigate to **Access control (IAM)** -> **Add** -> **Add role assignment**
-   - Assign each of the three roles to the "JupiterOne" member:
-      - JupiterOne Reader
-      - Reader
-      - Key Vault Reader
-      - Management Group Reader (If using `Configure Subscription Instances`
+3. Assign Roles to "JupiterOne" App
+   1. Navigate to **Access control (IAM)** -> **Add** -> **Add role assignment**
+   2. Assign each of the three roles to the "JupiterOne" member
+      1. JupiterOne Reader
+      2. Reader
+      3. Key Vault Reader
+      4. Management Group Reader (If using `Configure Subscription Instances`
          flag in JupiterOne)
 
 ### Key Vault Access Policy
 
-Listing key vault keys and secrets (`rm-keyvault-keys` and `rm-keyvault-secrets` steps) require you to grant the following permissions to the J1 security principal  for each key vault in your account. See the Azure documentation for more information on [assigning a key vault access policy](https://go.microsoft.com/fwlink/?linkid=2125287).
-
-1. Click Access policies, and then click **+Create**.  
-   
-
-   ![](./azure-access-policies.png) 
-
-2. Under Key permissions, Secret permissions, and Certificate permissions, select the permissions you want. 
-
-   ![](./azure-create-policy.png) 
-
-   
+Please note that listing Key Vault keys and secrets (`rm-keyvault-keys` and
+`rm-keyvault-secrets` steps) require JupiterOne users to grant the following
+permissions to the JupiterOne security principal _for each Key Vault in their
+account_. See Azure documentation for more information on
+[Assign a Key Vault access policy](https://go.microsoft.com/fwlink/?linkid=2125287).
 
 - Key Permissions
   - Key Management Operations
@@ -159,54 +125,46 @@ Listing key vault keys and secrets (`rm-keyvault-keys` and `rm-keyvault-secrets`
 
 ### In JupiterOne
 
-1. From the top navigation of the J1 Search homepage, select **Integrations**.
+1.  From the configuration **Gear Icon**, select **Integrations**.
+2.  Scroll to the **Azure** integration tile and click it.
+3.  Click the **Add Configuration** button and configure the following settings:
 
-2. Scroll to the **Azure** integration tile and click it.
+    1.  Enter the **Account Name** by which you'd like to identify this Azure
+        account in JupiterOne. Ingested entities will have this value stored in
+        `tag.AccountName` when **Tag with Account Name** is checked.
+    2.  Enter a **Description** that will further assist your team when
+        identifying the integration instance.
+    3.  Select a **Polling Interval** that you feel is sufficient for your
+        monitoring needs. You may leave this as `DISABLED` and manually execute
+        the integration.
+    4.  Enter the **Directory (tenant) ID** of the Active Directory to target in
+        Azure API requests.
+    5.  Enter the **Application (client) ID** created for JupiterOne, used to
+        authenticate with Azure.
+    6.  Enter the **Application (client) Secret** associated with the
+        application ID, used to authenticate with Azure.
+    7.  Select the option **Ingest Active Directory** to ingest Directory
+        information. This should only be enabled in one integration instance per
+        Directory.
 
-3. Click **Add Configuration**.
+        _NOTE:_ The **Ingest Active Directory** flag enables the ingestion of
+        `azure_user`, `azure_user_group`, and `azure_service_principal`
+        entities.
 
-4. Enter the **Account Name** by which you want to identify this Azure
-    account in J1. Ingested entities have this value stored in
-    `tag.AccountName` when **Tag with Account Name** is selected.
+    8.  Configure the correct scope for your integration:
 
-5. Enter a **Description** that assists your team when
-    identifying the integration instance. 
+        - _(RECOMMENDED) If configuring all subscriptions for a tenant:_ Select
+          the option **Configure Subscription Instances** to automatically
+          provision new JupiterOne integration instances for each Azure
+          Subscription in this tenant
 
-6. Select a **Polling Interval** that is sufficient for your
-    monitoring needs. You may leave this as `DISABLED` and manually execute
-    the integration.
+          _NOTE:_ The **Configure Subscription Instances** flag also enables the
+          ingestion of `azure_management_group` entities.
 
-7. Enter the **Directory (tenant) ID** of the Active Directory to target in
-    Azure API requests.
+        - _If configuring a single Azure Subscription:_ Enter the **Subscription
+          ID** for the subscription you wish to ingest data from.
 
-8. Enter the **Application (client) ID** created for JupiterOne, used to
-    authenticate with Azure.
-
-9. Enter the **Application (client) Secret** associated with the
-    application ID, used to authenticate with Azure.
-
-10. Select the option **Ingest Active Directory** to ingest Directory
-    information. This should only be enabled in one integration instance per
-    Directory.
-
-11. Configure the correct scope for your integration:
-
-     - If configuring all subscriptions for a tenant: Select the 
-       Configure Subscription Instances option to automatically
-       provision new J1 integration instances for each Azure
-       subscription in this tenant. This configuration step is recommended.
-
-       **Note**: The Configure Subscription Instances flag also enables the
-       ingestion of `azure_management_group` entities.
-
-     - If configuring a single Azure Subscription: Enter the subscription
-       ID for the subscription from which you want to ingest data.
-
-     **Note**: The Ingest Active Directory flag enables the ingestion of
-     `azure_user`, `azure_user_group`, and `azure_service_principal`
-     entities.
-
-12. Click **Create Configuration** after you have provided all the values.
+4.  Click **Create Configuration** once all values are provided.
 
 ## Troubleshooting
 
@@ -574,3 +532,114 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 [2]:
   https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-api-authentication
 [3]: https://docs.microsoft.com/en-us/graph/api/organization-get
+
+<!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
+<!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
+
+| Role Permissions List (93)                                       |
+| ---------------------------------------------------------------- |
+| `Microsoft.Advisor/recommendations/read`                         |
+| `Microsoft.ApiManagement/service/apis/read`                      |
+| `Microsoft.ApiManagement/service/read`                           |
+| `Microsoft.Authorization/classicAdministrators/read`             |
+| `Microsoft.Authorization/locks/read`                             |
+| `Microsoft.Authorization/policyAssignments/read`                 |
+| `Microsoft.Authorization/policyDefinitions/read`                 |
+| `Microsoft.Authorization/policySetDefinitions/read`              |
+| `Microsoft.Authorization/roleAssignments/read`                   |
+| `Microsoft.Authorization/roleDefinitions/read`                   |
+| `Microsoft.Batch/batchAccounts/applications/read`                |
+| `Microsoft.Batch/batchAccounts/certificates/read`                |
+| `Microsoft.Batch/batchAccounts/pools/read`                       |
+| `Microsoft.Batch/batchAccounts/read`                             |
+| `Microsoft.Cache/redis/firewallRules/read`                       |
+| `Microsoft.Cache/redis/linkedServers/read`                       |
+| `Microsoft.Cache/redis/read`                                     |
+| `Microsoft.Cdn/profiles/endpoints/read`                          |
+| `Microsoft.Cdn/profiles/read`                                    |
+| `Microsoft.Compute/disks/read`                                   |
+| `Microsoft.Compute/galleries/images/read`                        |
+| `Microsoft.Compute/galleries/images/versions/read`               |
+| `Microsoft.Compute/galleries/read`                               |
+| `Microsoft.Compute/images/read`                                  |
+| `Microsoft.Compute/virtualMachines/extensions/read`              |
+| `Microsoft.Compute/virtualMachines/read`                         |
+| `Microsoft.ContainerInstance/containerGroups/read`               |
+| `Microsoft.ContainerRegistry/registries/read`                    |
+| `Microsoft.ContainerRegistry/registries/webhooks/read`           |
+| `Microsoft.ContainerService/managedClusters/read`                |
+| `Microsoft.DBforMariaDB/servers/databases/read`                  |
+| `Microsoft.DBforMariaDB/servers/read`                            |
+| `Microsoft.DBforMySQL/servers/databases/read`                    |
+| `Microsoft.DBforMySQL/servers/read`                              |
+| `Microsoft.DBforPostgreSQL/servers/databases/read`               |
+| `Microsoft.DBforPostgreSQL/servers/firewallRules/read`           |
+| `Microsoft.DBforPostgreSQL/servers/read`                         |
+| `Microsoft.DocumentDB/databaseAccounts/read`                     |
+| `Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read`        |
+| `Microsoft.EventGrid/domains/read`                               |
+| `Microsoft.EventGrid/domains/topics/eventSubscriptions/read`     |
+| `Microsoft.EventGrid/domains/topics/read`                        |
+| `Microsoft.EventGrid/topics/eventSubscriptions/read`             |
+| `Microsoft.EventGrid/topics/read`                                |
+| `Microsoft.Insights/ActivityLogAlerts/Read`                      |
+| `Microsoft.Insights/DiagnosticSettings/Read`                     |
+| `Microsoft.Insights/LogProfiles/Read`                            |
+| `Microsoft.KeyVault/vaults/keys/read`                            |
+| `Microsoft.KeyVault/vaults/read`                                 |
+| `Microsoft.KeyVault/vaults/secrets/read`                         |
+| `Microsoft.Management/managementGroups/read`                     |
+| `Microsoft.Network/azurefirewalls/read`                          |
+| `Microsoft.Network/dnszones/read`                                |
+| `Microsoft.Network/dnszones/recordsets/read`                     |
+| `Microsoft.Network/frontDoors/read`                              |
+| `Microsoft.Network/loadBalancers/read`                           |
+| `Microsoft.Network/networkInterfaces/read`                       |
+| `Microsoft.Network/networkSecurityGroups/read`                   |
+| `Microsoft.Network/networkWatchers/flowLogs/read`                |
+| `Microsoft.Network/networkWatchers/read`                         |
+| `Microsoft.Network/privateDnsZones/read`                         |
+| `Microsoft.Network/privateDnsZones/recordsets/read`              |
+| `Microsoft.Network/privateEndpoints/read`                        |
+| `Microsoft.Network/publicIPAddresses/read`                       |
+| `Microsoft.Network/virtualNetworks/read`                         |
+| `Microsoft.PolicyInsights/policyStates/queryResults/read`        |
+| `Microsoft.Resources/subscriptions/locations/read`               |
+| `Microsoft.Resources/subscriptions/read`                         |
+| `Microsoft.Resources/subscriptions/resourceGroups/read`          |
+| `Microsoft.Security/assessments/read`                            |
+| `Microsoft.Security/autoProvisioningSettings/read`               |
+| `Microsoft.Security/pricings/read`                               |
+| `Microsoft.Security/securityContacts/read`                       |
+| `Microsoft.Security/settings/read`                               |
+| `Microsoft.ServiceBus/namespaces/queues/read`                    |
+| `Microsoft.ServiceBus/namespaces/read`                           |
+| `Microsoft.ServiceBus/namespaces/topics/read`                    |
+| `Microsoft.ServiceBus/namespaces/topics/subscriptions/read`      |
+| `Microsoft.Sql/servers/administrators/read`                      |
+| `Microsoft.Sql/servers/databases/read`                           |
+| `Microsoft.Sql/servers/firewallRules/read`                       |
+| `Microsoft.Sql/servers/read`                                     |
+| `Microsoft.Storage/storageAccounts/blobServices/containers/read` |
+| `Microsoft.Storage/storageAccounts/blobServices/read`            |
+| `Microsoft.Storage/storageAccounts/fileServices/shares/read`     |
+| `Microsoft.Storage/storageAccounts/queueServices/read`           |
+| `Microsoft.Storage/storageAccounts/read`                         |
+| `Microsoft.Storage/storageAccounts/tableServices/read`           |
+| `Microsoft.Storage/storageAccounts/tableServices/tables/read`    |
+| `Microsoft.Web/serverfarms/Read`                                 |
+| `Microsoft.Web/sites/config/list/action`                         |
+| `Microsoft.Web/sites/config/Read`                                |
+| `Microsoft.Web/sites/Read`                                       |
+
+<!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END} -->
+<!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START} -->
+
+| API Permissions List (3) |
+| ------------------------ |
+| `Directory.Read.All`     |
+| `Policy.Read.All`        |
+| `Reports.Read.All`       |
+
+<!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END} -->
+<!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_END} -->

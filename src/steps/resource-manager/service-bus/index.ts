@@ -1,12 +1,10 @@
 import {
-  Step,
-  IntegrationStepExecutionContext,
   createDirectRelationship,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
-import { IntegrationStepContext, IntegrationConfig } from '../../../types';
+import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { ServiceBusClient } from './client';
@@ -164,9 +162,7 @@ export async function fetchServiceBusSubscriptions(
   );
 }
 
-export const serviceBusSteps: Step<
-  IntegrationStepExecutionContext<IntegrationConfig>
->[] = [
+export const serviceBusSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_SERVICE_BUS_NAMESPACES,
     name: 'Service Bus Namespaces',
@@ -174,6 +170,7 @@ export const serviceBusSteps: Step<
     relationships: [ServiceBusRelationships.RESOURCE_GROUP_HAS_NAMESPACE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchServiceBusNamespaces,
+    rolePermissions: ['Microsoft.ServiceBus/namespaces/read'],
   },
   {
     id: STEP_RM_SERVICE_BUS_QUEUES,
@@ -182,6 +179,7 @@ export const serviceBusSteps: Step<
     relationships: [ServiceBusRelationships.NAMESPACE_HAS_QUEUE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SERVICE_BUS_NAMESPACES],
     executionHandler: fetchServiceBusQueues,
+    rolePermissions: ['Microsoft.ServiceBus/namespaces/queues/read'],
   },
   {
     id: STEP_RM_SERVICE_BUS_TOPICS,
@@ -190,6 +188,7 @@ export const serviceBusSteps: Step<
     relationships: [ServiceBusRelationships.NAMESPACE_HAS_TOPIC],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SERVICE_BUS_NAMESPACES],
     executionHandler: fetchServiceBusTopics,
+    rolePermissions: ['Microsoft.ServiceBus/namespaces/topics/read'],
   },
   {
     id: STEP_RM_SERVICE_BUS_SUBSCRIPTIONS,
@@ -198,5 +197,8 @@ export const serviceBusSteps: Step<
     relationships: [ServiceBusRelationships.TOPIC_HAS_SUBSCRIPTION],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SERVICE_BUS_TOPICS],
     executionHandler: fetchServiceBusSubscriptions,
+    rolePermissions: [
+      'Microsoft.ServiceBus/namespaces/topics/subscriptions/read',
+    ],
   },
 ];

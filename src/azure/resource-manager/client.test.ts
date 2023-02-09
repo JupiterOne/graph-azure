@@ -127,3 +127,58 @@ test('request should expose node-fetch error codes', async () => {
     'Provider API failed at fake-resource: ECONNRESET Error message for system error',
   );
 });
+
+test('request should expose Azure RestError status and text', async () => {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const noop: any = () => {};
+  const azureRequest = {
+    url: 'some-url',
+    method: 'GET' as any,
+    headers: {
+      set: noop,
+      get: noop,
+      contains: noop,
+      remove: noop,
+      rawHeaders: noop,
+      headerNames: noop,
+      headerValues: noop,
+      headersArray: noop,
+      clone: noop,
+      toJson: noop,
+    },
+    withCredentials: false,
+    timeout: 1000,
+    validateRequestProperties: noop,
+    clone: noop,
+    prepare: noop,
+  };
+
+  await expect(
+    request(
+      () => {
+        throw new AzureRestError(
+          'Error message for azure rest error',
+          'Error Code',
+          400,
+          azureRequest,
+          {
+            request: azureRequest,
+            status: 400,
+            headers: azureRequest.headers,
+          },
+          {
+            error: {
+              code: 'FeatureNotSupportedForAccount',
+              message: 'Table is not supported for the account',
+            },
+          },
+        );
+      },
+      createMockIntegrationLogger(),
+      'fake-resource',
+      1000,
+    ),
+  ).rejects.toThrow(
+    'Provider API failed at fake-resource: 400 Table is not supported for the account',
+  );
+});

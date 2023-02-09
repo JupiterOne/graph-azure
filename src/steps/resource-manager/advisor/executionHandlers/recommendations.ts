@@ -106,11 +106,7 @@ export const recommendationSteps: AzureIntegrationStep[] = [
     name: 'Recommendations',
     entities: [AdvisorEntities.RECOMMENDATION],
     relationships: [],
-    dependsOn: [
-      STEP_AD_ACCOUNT,
-      SecuritySteps.ASSESSMENTS,
-      ...getResourceManagerSteps().executeFirstSteps,
-    ],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchRecommendations,
     rolePermissions: ['Microsoft.Advisor/recommendations/read'],
   },
@@ -119,7 +115,7 @@ export const recommendationSteps: AzureIntegrationStep[] = [
     name: 'Assessment to recommendation relationship',
     entities: [],
     relationships: [AdvisorRelationships.ASSESSMENT_IDENTIFIED_FINDING],
-    dependsOn: [AdvisorSteps.RECOMMENDATIONS],
+    dependsOn: [AdvisorSteps.RECOMMENDATIONS, SecuritySteps.ASSESSMENTS],
     executionHandler: buildAssesmentToRecommendationRelationship,
   },
   {
@@ -127,7 +123,10 @@ export const recommendationSteps: AzureIntegrationStep[] = [
     name: 'Resource to recommendation relationship',
     entities: [],
     relationships: [AdvisorRelationships.ANY_RESOURCE_HAS_FINDING],
-    dependsOn: [AdvisorSteps.RECOMMENDATIONS],
+    dependsOn: [
+      AdvisorSteps.RECOMMENDATIONS,
+      ...getResourceManagerSteps().executeFirstSteps,
+    ],
     executionHandler: buildResourceToRecommendationRelationship,
     //dependencyGraphId: 'last'
   },

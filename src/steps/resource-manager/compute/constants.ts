@@ -60,6 +60,21 @@ export const entities = {
     _class: ['Application'],
     resourceName: '[RM] Virtual Machine Extension',
   },
+  VIRTUAL_MACHINE_IMAGE: {
+    resourceName: '[RM] Image',
+    _type: VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
+    _class: VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
+  },
+  DISK: {
+    resourceName: '[RM] Azure Managed Disk',
+    _type: DISK_ENTITY_TYPE,
+    _class: DISK_ENTITY_CLASS,
+  },
+  VIRTUAL_MACHINE: {
+    resourceName: '[RM] Virtual Machine',
+    _type: VIRTUAL_MACHINE_ENTITY_TYPE,
+    _class: VIRTUAL_MACHINE_ENTITY_CLASS,
+  },
 };
 
 export const VIRTUAL_MACHINE_DISK_RELATIONSHIP_CLASS = RelationshipClass.USES;

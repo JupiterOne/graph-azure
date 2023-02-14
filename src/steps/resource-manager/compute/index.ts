@@ -25,9 +25,6 @@ import {
   STEP_RM_COMPUTE_VIRTUAL_MACHINES,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-  VIRTUAL_MACHINE_ENTITY_CLASS,
-  DISK_ENTITY_CLASS,
-  VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
   steps,
   entities,
   relationships,
@@ -734,13 +731,7 @@ export const computeSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
     name: 'Virtual Machine Disk Images',
-    entities: [
-      {
-        resourceName: '[RM] Image',
-        _type: VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-        _class: VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
-      },
-    ],
+    entities: [entities.VIRTUAL_MACHINE_IMAGE],
     relationships: [
       createResourceGroupResourceRelationshipMetadata(
         VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
@@ -753,13 +744,7 @@ export const computeSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
     name: 'Virtual Machine Disks',
-    entities: [
-      {
-        resourceName: '[RM] Azure Managed Disk',
-        _type: DISK_ENTITY_TYPE,
-        _class: DISK_ENTITY_CLASS,
-      },
-    ],
+    entities: [entities.DISK],
     relationships: [
       createResourceGroupResourceRelationshipMetadata(DISK_ENTITY_TYPE),
     ],
@@ -770,13 +755,7 @@ export const computeSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_COMPUTE_VIRTUAL_MACHINES,
     name: 'Virtual Machines',
-    entities: [
-      {
-        resourceName: '[RM] Virtual Machine',
-        _type: VIRTUAL_MACHINE_ENTITY_TYPE,
-        _class: VIRTUAL_MACHINE_ENTITY_CLASS,
-      },
-    ],
+    entities: [entities.VIRTUAL_MACHINE],
     relationships: [
       createResourceGroupResourceRelationshipMetadata(
         VIRTUAL_MACHINE_ENTITY_TYPE,

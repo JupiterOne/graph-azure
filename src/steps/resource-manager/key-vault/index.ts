@@ -7,16 +7,11 @@ import {
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
-import {
-  ACCOUNT_ENTITY_TYPE,
-  STEP_AD_ACCOUNT,
-} from '../../active-directory/constants';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { KeyVaultClient } from './client';
 import {
-  ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   STEP_RM_KEYVAULT_VAULTS,
-  ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
   KeyVaultEntities,
   KeyVaultRelationships,
   KeyVaultStepIds,
@@ -190,12 +185,7 @@ export const keyvaultSteps: AzureIntegrationStep[] = [
       ...diagnosticSettingsEntitiesForResource,
     ],
     relationships: [
-      {
-        _type: ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
-        sourceType: ACCOUNT_ENTITY_TYPE,
-        _class: ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
-        targetType: KEY_VAULT_SERVICE_ENTITY_TYPE,
-      },
+      KeyVaultRelationships.ACCOUNT_HAS_KEY_VAULT,
       createResourceGroupResourceRelationshipMetadata(
         KEY_VAULT_SERVICE_ENTITY_TYPE,
       ),

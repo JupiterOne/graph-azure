@@ -4,6 +4,10 @@ import { ANY_SCOPE } from '../constants';
 
 export const AdvisorSteps = {
   RECOMMENDATIONS: 'rm-advisor-recommendations',
+  ASSESSMENT_RECOMMENDATION_RELATIONSHIP:
+    'rm-advisor-assessment-recommendation-relationships',
+  RESOURCE_RECOMMENDATION_RELATIONSHIP:
+    'rm-advisor-resource-recommendation-relationships',
 };
 
 export const AdvisorEntities = {

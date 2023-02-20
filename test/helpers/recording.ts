@@ -19,7 +19,9 @@ export const azureMutations = {
 
 export function setupAzureRecording(input: SetupRecordingInput): Recording {
   return setupRecording({
-    mutateEntry: mutateRecordingEntry,
+    mutateEntry: (entry) => {
+      mutateRecordingEntry(entry);
+    },
     ...input,
   });
 }
@@ -58,6 +60,21 @@ function mutateAccessToken(
       }
     }
   }
+}
+
+export function mutateSubscriptionAndDirectory(entry: RecordingEntry, config) {
+  mutateRecordingEntry(entry);
+  if (!entry.response.content.text || !entry.request.url) {
+    return;
+  }
+
+  entry.request.url = entry.request.url
+    .replace(new RegExp(`${config.directoryId}`, 'g'), 'directory-id')
+    .replace(new RegExp(`${config.subscriptionId}`, 'g'), 'subscription-id');
+
+  entry.response.content.text = entry.response.content.text
+    .replace(new RegExp(`${config.directoryId}`, 'g'), 'directory-id')
+    .replace(new RegExp(`${config.subscriptionId}`, 'g'), 'subscription-id');
 }
 
 function redactAllPropertiesExcept(
@@ -119,7 +136,10 @@ export function getMatchRequestsBy({
     url: {
       ...(url && { ...url }),
       pathname: (pathname: string): string => {
-        pathname = pathname.replace(config.directoryId, 'directory-id');
+        pathname = pathname.replace(
+          config.directoryId || 'directory-id',
+          'directory-id',
+        );
         if (shouldReplaceSubscriptionId(pathname)) {
           pathname = pathname.replace(
             config.subscriptionId || 'subscription-id',
@@ -134,28 +154,28 @@ export function getMatchRequestsBy({
 }
 
 export function defaultShouldReplaceSubscriptionId(pathname: string): boolean {
-  if (pathname.startsWith('//subscriptions')) {
-    // Paths that start with `//subscriptions` are an indication that an _exact_ resource ID was used to
-    // create the request, meaning the REST endpoint originated from an earlier API response.
-    //
-    // ``` typescript
-    // const resourceId = '/subscriptions/<s-id>/resourceGroups/<rg-id>/providers/Microsoft.KeyVault/vaults/<kv-id>
-    // const path = `https://management.azure.com/${resourceId}/providers/microsoft.insights/diagnosticSettings`;
-    // const response = await fetch(path);
-    // ```
-    //
-    // Paths that do _not_ start with `//subscriptions`, but contain a subscription ID, may be
-    // fetching all resources for a subscription, meaning the REST endpoint originated from the
-    // instance config (and should be replaced in the recording).
-    //
-    // ``` typescript
-    // const resourceGroupName = 'j1dev';
-    // const keyVaultName = 'ndowmon11-j1dev';
-    // const path = `https://management.azure.com/subscriptions/${config.subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.KeyVault/vaults/${keyVaultName}`;
-    // const response = await fetch(path);
-    // ```
-    return false;
-  }
+  // if (pathname.startsWith('//subscriptions')) {
+  //   // Paths that start with `//subscriptions` are an indication that an _exact_ resource ID was used to
+  //   // create the request, meaning the REST endpoint originated from an earlier API response.
+  //   //
+  //   // ``` typescript
+  //   // const resourceId = '/subscriptions/<s-id>/resourceGroups/<rg-id>/providers/Microsoft.KeyVault/vaults/<kv-id>
+  //   // const path = `https://management.azure.com/${resourceId}/providers/microsoft.insights/diagnosticSettings`;
+  //   // const response = await fetch(path);
+  //   // ```
+  //   //
+  //   // Paths that do _not_ start with `//subscriptions`, but contain a subscription ID, may be
+  //   // fetching all resources for a subscription, meaning the REST endpoint originated from the
+  //   // instance config (and should be replaced in the recording).
+  //   //
+  //   // ``` typescript
+  //   // const resourceGroupName = 'j1dev';
+  //   // const keyVaultName = 'ndowmon11-j1dev';
+  //   // const path = `https://management.azure.com/subscriptions/${config.subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.KeyVault/vaults/${keyVaultName}`;
+  //   // const response = await fetch(path);
+  //   // ```
+  //   return false;
+  // }
 
   // By default, we expect that a subscriptionId that exists inside an API path used config.subscriptionId,
   // and should be replaced.

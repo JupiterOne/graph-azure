@@ -3,9 +3,9 @@ import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing
 import {
   Recording,
   setupAzureRecording,
-} from '../../../../../test/helpers/recording';
-import { AdvisorClient } from '../client';
-import { IntegrationConfig } from '../../../../types';
+} from '../../../../test/helpers/recording';
+import { AdvisorClient } from './client';
+import { IntegrationConfig } from '../../../types';
 import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
 
 // developer used different creds than ~/test/integrationInstanceConfig

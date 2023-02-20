@@ -251,7 +251,6 @@ The following entities are created:
 | [RM] Key Vault Key                             | `azure_keyvault_key`                              | `Key`                              |
 | [RM] Key Vault Secret                          | `azure_keyvault_secret`                           | `Secret`                           |
 | [RM] Load Balancer                             | `azure_lb`                                        | `Gateway`                          |
-| [RM] Location                                  | `azure_location`                                  | `Site`                             |
 | [RM] Management Group                          | `azure_management_group`                          | `Group`                            |
 | [RM] MariaDB Database                          | `azure_mariadb_database`                          | `Database`, `DataStore`            |
 | [RM] MariaDB Server                            | `azure_mariadb_server`                            | `Database`, `DataStore`, `Host`    |

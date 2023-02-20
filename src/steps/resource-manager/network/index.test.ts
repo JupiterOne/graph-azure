@@ -44,11 +44,12 @@ import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import { entities as storageEntities } from '../storage/constants';
 import { fetchStorageAccounts } from '../storage';
-import { fetchLocations, fetchSubscription } from '../subscriptions';
 import { setDataKeys as subscriptionSetDataKeys } from '../subscriptions/constants';
 import { createAzureWebLinker } from '../../../azure';
 import { getLocationEntityProps } from '../subscriptions/converters';
 import { createNetworkWatcherEntity } from './converters';
+import { fetchSubscription } from '../subscriptions/executionHandlers/subscriptions';
+import { fetchLocations } from '../subscriptions/executionHandlers/locations';
 
 const GUID_REGEX = new RegExp(
   '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',

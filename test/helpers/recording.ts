@@ -19,9 +19,7 @@ export const azureMutations = {
 
 export function setupAzureRecording(input: SetupRecordingInput): Recording {
   return setupRecording({
-    mutateEntry: (entry) => {
-      mutateRecordingEntry(entry);
-    },
+    mutateEntry: mutateRecordingEntry,
     ...input,
   });
 }
@@ -136,10 +134,7 @@ export function getMatchRequestsBy({
     url: {
       ...(url && { ...url }),
       pathname: (pathname: string): string => {
-        pathname = pathname.replace(
-          config.directoryId || 'directory-id',
-          'directory-id',
-        );
+        pathname = pathname.replace(config.directoryId, 'directory-id');
         if (shouldReplaceSubscriptionId(pathname)) {
           pathname = pathname.replace(
             config.subscriptionId || 'subscription-id',

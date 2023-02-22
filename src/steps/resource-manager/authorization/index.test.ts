@@ -438,7 +438,6 @@ describe('rm-authorization-role-definitions', () => {
       options: {
         matchRequestsBy: getMatchRequestsBy({
           config: configFromEnv,
-          shouldReplaceSubscriptionId: () => true,
         }),
       },
     });

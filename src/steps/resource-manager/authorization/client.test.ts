@@ -103,7 +103,6 @@ describe('iterateRoleDefinitions', () => {
       options: {
         matchRequestsBy: getMatchRequestsBy({
           config: configFromEnv,
-          shouldReplaceSubscriptionId: () => true,
         }),
       },
     });

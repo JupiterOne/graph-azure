@@ -2,11 +2,7 @@ import {
   executeStepWithDependencies,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
-import {
-  setupAzureRecording,
-  getMatchRequestsBy,
-  mutateSubscriptionAndDirectory,
-} from '../../../../../test/helpers/recording';
+import { setupAzureRecording } from '../../../../../test/helpers/recording';
 import { getStepTestConfigForStep } from '../../../../../test/integrationInstanceConfig';
 import { steps } from '../constants';
 
@@ -20,17 +16,30 @@ afterEach(async () => {
 test('rm-subscription', async () => {
   const stepTestConfig = getStepTestConfigForStep(steps.SUBSCRIPTION);
 
-  recording = setupAzureRecording({
-    name: steps.SUBSCRIPTION,
-    directory: __dirname,
-    mutateEntry: (entry) =>
-      mutateSubscriptionAndDirectory(entry, stepTestConfig.instanceConfig),
-    options: {
-      matchRequestsBy: getMatchRequestsBy({
-        config: stepTestConfig.instanceConfig,
-      }),
+  recording = setupAzureRecording(
+    {
+      name: steps.SUBSCRIPTION,
+      directory: __dirname,
     },
-  });
+    stepTestConfig.instanceConfig,
+  );
+
+  const stepResults = await executeStepWithDependencies(stepTestConfig);
+  expect(stepResults).toMatchStepMetadata(stepTestConfig);
+}, 100_000);
+
+test('rm-subscription-diagnostic-settings', async () => {
+  const stepTestConfig = getStepTestConfigForStep(
+    steps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS,
+  );
+
+  recording = setupAzureRecording(
+    {
+      name: steps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS,
+      directory: __dirname,
+    },
+    stepTestConfig.instanceConfig,
+  );
 
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);

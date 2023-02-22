@@ -13,6 +13,12 @@ import { STEP_AD_ACCOUNT } from '../../../active-directory/constants';
 import { J1SubscriptionClient } from '../client';
 import { entities, steps } from '../constants';
 import { createSubscriptionEntity } from '../converters';
+import { steps as storageSteps } from '../../storage/constants';
+import {
+  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+  diagnosticSettingsEntitiesForResource,
+  getDiagnosticSettingsRelationshipsForResource,
+} from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 
 export async function fetchSubscription(
   executionContext: IntegrationStepContext,
@@ -46,6 +52,22 @@ export async function fetchSubscription(
   }
 }
 
+export async function fetchSubscriptionDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: entities.SUBSCRIPTION._type },
+    async (subscriptionEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        subscriptionEntity,
+      );
+    },
+  );
+}
+
 export const fetchSubscriptionSteps: AzureIntegrationStep[] = [
   {
     id: steps.SUBSCRIPTION,
@@ -55,5 +77,16 @@ export const fetchSubscriptionSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscription,
     rolePermissions: ['Microsoft.Resources/subscriptions/read'],
+  },
+  {
+    id: steps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS,
+    name: 'Subscription Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
+    relationships: [
+      ...getDiagnosticSettingsRelationshipsForResource(entities.SUBSCRIPTION),
+    ],
+    dependsOn: [steps.SUBSCRIPTION, storageSteps.STORAGE_ACCOUNTS],
+    executionHandler: fetchSubscriptionDiagnosticSettings,
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
   },
 ];

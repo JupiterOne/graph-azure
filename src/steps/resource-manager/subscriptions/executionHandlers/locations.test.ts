@@ -2,11 +2,7 @@ import {
   executeStepWithDependencies,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
-import {
-  setupAzureRecording,
-  getMatchRequestsBy,
-  mutateSubscriptionAndDirectory,
-} from '../../../../../test/helpers/recording';
+import { setupAzureRecording } from '../../../../../test/helpers/recording';
 import { getStepTestConfigForStep } from '../../../../../test/integrationInstanceConfig';
 import { steps } from '../constants';
 
@@ -20,17 +16,13 @@ afterEach(async () => {
 test('rm-subscription-locations', async () => {
   const stepTestConfig = getStepTestConfigForStep(steps.LOCATIONS);
 
-  recording = setupAzureRecording({
-    name: steps.LOCATIONS,
-    directory: __dirname,
-    mutateEntry: (entry) =>
-      mutateSubscriptionAndDirectory(entry, stepTestConfig.instanceConfig),
-    options: {
-      matchRequestsBy: getMatchRequestsBy({
-        config: stepTestConfig.instanceConfig,
-      }),
+  recording = setupAzureRecording(
+    {
+      name: steps.LOCATIONS,
+      directory: __dirname,
     },
-  });
+    stepTestConfig.instanceConfig,
+  );
 
   const { collectedRelationships } = await executeStepWithDependencies(
     stepTestConfig,

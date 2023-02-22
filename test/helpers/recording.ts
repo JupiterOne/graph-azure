@@ -17,9 +17,19 @@ export const azureMutations = {
   redactAllPropertiesExcept,
 };
 
-export function setupAzureRecording(input: SetupRecordingInput): Recording {
+export function setupAzureRecording(
+  input: SetupRecordingInput,
+  config?: IntegrationConfig,
+): Recording {
   return setupRecording({
-    mutateEntry: mutateRecordingEntry,
+    mutateEntry: (entry) => mutateSubscriptionAndDirectory(entry, config),
+    options: config
+      ? {
+          matchRequestsBy: getMatchRequestsBy({
+            config: config,
+          }),
+        }
+      : undefined,
     ...input,
   });
 }
@@ -60,19 +70,24 @@ function mutateAccessToken(
   }
 }
 
-export function mutateSubscriptionAndDirectory(entry: RecordingEntry, config) {
+export function mutateSubscriptionAndDirectory(
+  entry: RecordingEntry,
+  config?: IntegrationConfig,
+) {
   mutateRecordingEntry(entry);
-  if (!entry.response.content.text || !entry.request.url) {
+  if (!config) {
     return;
   }
-
-  entry.request.url = entry.request.url
-    .replace(new RegExp(`${config.directoryId}`, 'g'), 'directory-id')
-    .replace(new RegExp(`${config.subscriptionId}`, 'g'), 'subscription-id');
-
-  entry.response.content.text = entry.response.content.text
-    .replace(new RegExp(`${config.directoryId}`, 'g'), 'directory-id')
-    .replace(new RegExp(`${config.subscriptionId}`, 'g'), 'subscription-id');
+  if (entry.response.content.text) {
+    entry.response.content.text = entry.response.content.text
+      .replace(new RegExp(config.directoryId, 'g'), 'directory-id')
+      .replace(new RegExp(config.subscriptionId!, 'g'), 'subscription-id');
+  }
+  if (entry.request.url) {
+    entry.request.url = entry.request.url
+      .replace(new RegExp(config.directoryId, 'g'), 'directory-id')
+      .replace(new RegExp(config.subscriptionId!, 'g'), 'subscription-id');
+  }
 }
 
 function redactAllPropertiesExcept(
@@ -116,11 +131,9 @@ interface UrlOptions {
 
 export function getMatchRequestsBy({
   config,
-  shouldReplaceSubscriptionId = defaultShouldReplaceSubscriptionId,
   options,
 }: {
   config: IntegrationConfig;
-  shouldReplaceSubscriptionId?: (pathname: string) => boolean;
   options?: MatchRequestsBy;
 }): MatchRequestsBy {
   let url: UrlOptions | undefined;
@@ -135,21 +148,13 @@ export function getMatchRequestsBy({
       ...(url && { ...url }),
       pathname: (pathname: string): string => {
         pathname = pathname.replace(config.directoryId, 'directory-id');
-        if (shouldReplaceSubscriptionId(pathname)) {
-          pathname = pathname.replace(
-            config.subscriptionId || 'subscription-id',
-            'subscription-id',
-          );
-        }
+        pathname = pathname.replace(
+          config.subscriptionId || 'subscription-id',
+          'subscription-id',
+        );
         return pathname;
       },
     },
     ...options,
   };
-}
-
-export function defaultShouldReplaceSubscriptionId(pathname: string): boolean {
-  // By default, we expect that a subscriptionId that exists inside an API path used config.subscriptionId,
-  // and should be replaced.
-  return true;
 }

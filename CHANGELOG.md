@@ -1,3 +1,22 @@
+# v5.40.8 (Mon Feb 27 2023)
+
+#### 🐛 Bug Fix
+
+- INT-7311 Duplicated key on relationship. [#559](https://github.com/JupiterOne/graph-azure/pull/559) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Advisor refactor [#557](https://github.com/JupiterOne/graph-azure/pull/557) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- INT-6990: Changed some constants in the steps definition [#556](https://github.com/JupiterOne/graph-azure/pull/556) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Fix(INT-6993): Some provider API Errors where being displayed incorrectly [#555](https://github.com/JupiterOne/graph-azure/pull/555) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Janette DOC-215 [#548](https://github.com/JupiterOne/graph-azure/pull/548) ([@janettelynch](https://github.com/janettelynch))
+- Azure permission documentation part 2: Added script to compile the permissions into documentation [#553](https://github.com/JupiterOne/graph-azure/pull/553) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Merge [#552](https://github.com/JupiterOne/graph-azure/pull/552) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 2
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+- Janette Lynch ([@janettelynch](https://github.com/janettelynch))
+
+---
+
 # v5.40.7 (Thu Jan 19 2023)
 
 #### 🐛 Bug Fix

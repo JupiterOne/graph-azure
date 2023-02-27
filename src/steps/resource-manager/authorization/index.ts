@@ -244,13 +244,18 @@ export async function fetchClassicAdministrators(
   await jobState.addEntity(classicAdministratorGroupEntity);
 
   await client.iterateClassicAdministrators(async (ca) => {
-    await jobState.addRelationship(
-      createClassicAdministratorHasUserMappedRelationship({
+    const classicAdministratorHasUserRelationship = createClassicAdministratorHasUserMappedRelationship(
+      {
         webLinker,
         classicAdministratorGroupEntity,
         data: ca,
-      }),
+      },
     );
+    if (
+      !(await jobState.hasKey(classicAdministratorHasUserRelationship._key))
+    ) {
+      await jobState.addRelationship(classicAdministratorHasUserRelationship);
+    }
   });
 }
 

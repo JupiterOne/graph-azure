@@ -10,6 +10,7 @@ import {
 import { AdvisorSteps } from '../constants';
 import { getStepTestConfigForStep } from '../../../../../test/integrationInstanceConfig';
 import { getConfigForTest } from '../../security/__tests__/utils';
+import { STEP_RM_BATCH_ACCOUNT } from '../../batch/constants';
 
 let recording: Recording;
 
@@ -50,7 +51,7 @@ test('rm-advisor-assessment-recommendation-relationships', async () => {
 
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
-}, 1000_000);
+}, 10_000);
 
 test('rm-advisor-resource-recommendation-relationships', async () => {
   const stepTestConfig = getStepTestConfigForStep(
@@ -86,6 +87,9 @@ test('rm-advisor-resource-recommendation-relationships', async () => {
     stepTestConfig.instanceConfig,
   );
 
-  const stepResults = await executeStepWithDependencies(stepTestConfig);
+  const stepResults = await executeStepWithDependencies({
+    ...stepTestConfig,
+    dependencyStepIds: [AdvisorSteps.RECOMMENDATIONS, STEP_RM_BATCH_ACCOUNT],
+  });
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
 }, 1000_000);

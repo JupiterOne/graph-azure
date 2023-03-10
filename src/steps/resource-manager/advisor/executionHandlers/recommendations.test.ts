@@ -92,4 +92,4 @@ test('rm-advisor-resource-recommendation-relationships', async () => {
     dependencyStepIds: [AdvisorSteps.RECOMMENDATIONS, STEP_RM_BATCH_ACCOUNT],
   });
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
-}, 1000_000);
+}, 10_000);

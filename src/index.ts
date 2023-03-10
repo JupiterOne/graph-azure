@@ -103,6 +103,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = 
   ],
 
   normalizeGraphObjectKey: (_key) => _key.toLowerCase(),
+  dependencyGraphOrder: ['last'],
 };
 
 export const clients = {

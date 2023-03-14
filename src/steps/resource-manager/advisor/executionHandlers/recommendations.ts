@@ -18,7 +18,6 @@ import {
 } from '../constants';
 import { createRecommendationEntity } from '../converters';
 import { SecuritySteps } from '../../security/constants';
-import { getResourceManagerSteps } from '../../../../getStepStartStates';
 import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
 
 export async function fetchRecommendations(
@@ -123,11 +122,8 @@ export const recommendationSteps: AzureIntegrationStep[] = [
     name: 'Resource to recommendation relationship',
     entities: [],
     relationships: [AdvisorRelationships.ANY_RESOURCE_HAS_FINDING],
-    dependsOn: [
-      AdvisorSteps.RECOMMENDATIONS,
-      ...getResourceManagerSteps().executeFirstSteps,
-    ],
+    dependsOn: [],
     executionHandler: buildResourceToRecommendationRelationship,
-    //dependencyGraphId: 'last'
+    dependencyGraphId: 'last',
   },
 ];

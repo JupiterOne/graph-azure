@@ -31,7 +31,7 @@ export const configFromEnv: IntegrationConfig = {
   clientId: process.env.CLIENT_ID || 'clientId',
   clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
   directoryId: process.env.DIRECTORY_ID || 'directoryId',
-  subscriptionId: process.env.SUBSCRIPTION_ID || 'subscriptionId',
+  subscriptionId: process.env.SUBSCRIPTION_ID || 'subscription-id',
 };
 
 export function getStepTestConfigForStep(

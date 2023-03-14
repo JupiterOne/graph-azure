@@ -11,7 +11,6 @@ import {
 import {
   getMatchRequestsBy,
   setupAzureRecording,
-  defaultShouldReplaceSubscriptionId,
 } from '../../../../test/helpers/recording';
 import { fetchAccount } from '../../active-directory';
 import {
@@ -44,11 +43,12 @@ import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import { entities as storageEntities } from '../storage/constants';
 import { fetchStorageAccounts } from '../storage';
-import { fetchLocations, fetchSubscription } from '../subscriptions';
 import { setDataKeys as subscriptionSetDataKeys } from '../subscriptions/constants';
 import { createAzureWebLinker } from '../../../azure';
 import { getLocationEntityProps } from '../subscriptions/converters';
 import { createNetworkWatcherEntity } from './converters';
+import { fetchSubscription } from '../subscriptions/executionHandlers/subscriptions';
+import { fetchLocations } from '../subscriptions/executionHandlers/locations';
 
 const GUID_REGEX = new RegExp(
   '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
@@ -1668,21 +1668,6 @@ describe('rm-network-location-watcher-relationships', () => {
       };
     }
 
-    function isListLocationsEndpoint(path: string) {
-      /**
-       * The Locations step uses jobState.iterateEntities({ _type: 'azure_subscription' }), so the
-       * API calls from this endpoint are dependent on results from the previous "azure_subscription" step.
-       *
-       * When a subscription ID from this endpoint is encountered, the `matchRequestsBy` function
-       * should _not_ replace it with a default, to ensure future recording calls will match.
-       */
-      return listLocationsEndpointRegex.test(path);
-    }
-
-    const listLocationsEndpointRegex = new RegExp(
-      '^/subscriptions/([^/]+)/locations$',
-    );
-
     test('success', async () => {
       recording = setupAzureRecording({
         directory: __dirname,
@@ -1690,12 +1675,6 @@ describe('rm-network-location-watcher-relationships', () => {
         options: {
           matchRequestsBy: getMatchRequestsBy({
             config: configFromEnv,
-            shouldReplaceSubscriptionId: (pathname) => {
-              return (
-                defaultShouldReplaceSubscriptionId(pathname) &&
-                !isListLocationsEndpoint(pathname)
-              );
-            },
           }),
         },
       });

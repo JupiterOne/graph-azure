@@ -17,9 +17,19 @@ export const azureMutations = {
   redactAllPropertiesExcept,
 };
 
-export function setupAzureRecording(input: SetupRecordingInput): Recording {
+export function setupAzureRecording(
+  input: SetupRecordingInput,
+  config?: IntegrationConfig,
+): Recording {
   return setupRecording({
-    mutateEntry: mutateRecordingEntry,
+    mutateEntry: (entry) => mutateSubscriptionAndDirectory(entry, config),
+    options: config
+      ? {
+          matchRequestsBy: getMatchRequestsBy({
+            config: config,
+          }),
+        }
+      : undefined,
     ...input,
   });
 }
@@ -57,6 +67,26 @@ function mutateAccessToken(
         );
       }
     }
+  }
+}
+
+export function mutateSubscriptionAndDirectory(
+  entry: RecordingEntry,
+  config?: IntegrationConfig,
+) {
+  mutateRecordingEntry(entry);
+  if (!config) {
+    return;
+  }
+  if (entry.response.content.text) {
+    entry.response.content.text = entry.response.content.text
+      .replace(new RegExp(config.directoryId, 'g'), 'directory-id')
+      .replace(new RegExp(config.subscriptionId!, 'g'), 'subscription-id');
+  }
+  if (entry.request.url) {
+    entry.request.url = entry.request.url
+      .replace(new RegExp(config.directoryId, 'g'), 'directory-id')
+      .replace(new RegExp(config.subscriptionId!, 'g'), 'subscription-id');
   }
 }
 
@@ -101,11 +131,9 @@ interface UrlOptions {
 
 export function getMatchRequestsBy({
   config,
-  shouldReplaceSubscriptionId = defaultShouldReplaceSubscriptionId,
   options,
 }: {
   config: IntegrationConfig;
-  shouldReplaceSubscriptionId?: (pathname: string) => boolean;
   options?: MatchRequestsBy;
 }): MatchRequestsBy {
   let url: UrlOptions | undefined;
@@ -120,44 +148,13 @@ export function getMatchRequestsBy({
       ...(url && { ...url }),
       pathname: (pathname: string): string => {
         pathname = pathname.replace(config.directoryId, 'directory-id');
-        if (shouldReplaceSubscriptionId(pathname)) {
-          pathname = pathname.replace(
-            config.subscriptionId || 'subscription-id',
-            'subscription-id',
-          );
-        }
+        pathname = pathname.replace(
+          config.subscriptionId || 'subscription-id',
+          'subscription-id',
+        );
         return pathname;
       },
     },
     ...options,
   };
-}
-
-export function defaultShouldReplaceSubscriptionId(pathname: string): boolean {
-  if (pathname.startsWith('//subscriptions')) {
-    // Paths that start with `//subscriptions` are an indication that an _exact_ resource ID was used to
-    // create the request, meaning the REST endpoint originated from an earlier API response.
-    //
-    // ``` typescript
-    // const resourceId = '/subscriptions/<s-id>/resourceGroups/<rg-id>/providers/Microsoft.KeyVault/vaults/<kv-id>
-    // const path = `https://management.azure.com/${resourceId}/providers/microsoft.insights/diagnosticSettings`;
-    // const response = await fetch(path);
-    // ```
-    //
-    // Paths that do _not_ start with `//subscriptions`, but contain a subscription ID, may be
-    // fetching all resources for a subscription, meaning the REST endpoint originated from the
-    // instance config (and should be replaced in the recording).
-    //
-    // ``` typescript
-    // const resourceGroupName = 'j1dev';
-    // const keyVaultName = 'ndowmon11-j1dev';
-    // const path = `https://management.azure.com/subscriptions/${config.subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.KeyVault/vaults/${keyVaultName}`;
-    // const response = await fetch(path);
-    // ```
-    return false;
-  }
-
-  // By default, we expect that a subscriptionId that exists inside an API path used config.subscriptionId,
-  // and should be replaced.
-  return true;
 }

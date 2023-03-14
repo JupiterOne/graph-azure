@@ -1,7 +1,7 @@
-import { createAzureWebLinker } from '../../../../azure';
-import { createRecommendationEntity } from '../converters';
+import { createAzureWebLinker } from '../../../azure';
+import { createRecommendationEntity } from './converters';
 import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
-import { AdvisorEntities } from '../constants';
+import { AdvisorEntities } from './constants';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 

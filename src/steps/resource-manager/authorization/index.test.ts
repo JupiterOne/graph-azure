@@ -39,10 +39,10 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
-import { fetchSubscription } from '../subscriptions';
 import { fetchKeyVaults } from '../key-vault';
 import { fetchManagementGroups } from '../management-groups';
 import { ManagementGroupEntities } from '../management-groups/constants';
+import { fetchSubscription } from '../subscriptions/executionHandlers/subscriptions';
 
 let recording: Recording;
 
@@ -438,7 +438,6 @@ describe('rm-authorization-role-definitions', () => {
       options: {
         matchRequestsBy: getMatchRequestsBy({
           config: configFromEnv,
-          shouldReplaceSubscriptionId: () => true,
         }),
       },
     });

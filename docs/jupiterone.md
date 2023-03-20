@@ -99,10 +99,11 @@ Manager information:
      [Tenant Root Group](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#root-management-group-for-each-directory).
      (NOTE: If it is not possible to select the **Tenant Root Group** first
      navigate to Azure Active Directory -> Properties -> Select **Yes** on
-     **Access management for Azure resources**.)
+     **Access management for Azure resources**. Check
+     [elevating access](https://learn.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin)
+     for more information)
 
-     If configuring manamgement group ingestion, please also enable the
-     following flags in your integration instance:
+     Please also enable the following flags in your integration instance:
 
      - Ingest Active Directory.
      - Configure Subscription Instances.

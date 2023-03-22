@@ -1,3 +1,17 @@
+# v5.40.9 (Wed Mar 22 2023)
+
+#### 🐛 Bug Fix
+
+- Added some new error parsing and other checks on entity creation [#562](https://github.com/JupiterOne/graph-azure/pull/562) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Activated the missing tests for advisor [#560](https://github.com/JupiterOne/graph-azure/pull/560) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Subscription Refactor [#558](https://github.com/JupiterOne/graph-azure/pull/558) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.40.8 (Mon Feb 27 2023)
 
 #### 🐛 Bug Fix

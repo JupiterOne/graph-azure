@@ -109,10 +109,12 @@ async function findOrCreatePolicyDefinitionEntity(
         policyDefinitionId,
         name,
       );
-
-      return jobState.addEntity(
-        createPolicyDefinitionEntity(webLinker, policyDefinition),
-      );
+      if (policyDefinition) {
+        return jobState.addEntity(
+          createPolicyDefinitionEntity(webLinker, policyDefinition),
+        );
+      }
+      break;
     }
     case PolicyDefinitionType.POLICY_SET_DEFINITION: {
       const policySetDefinition = await getPolicySetDefinition(
@@ -120,17 +122,19 @@ async function findOrCreatePolicyDefinitionEntity(
         policyDefinitionId,
         name,
       );
-
-      const policySetDefinitionEntity = await jobState.addEntity(
-        createPolicySetDefinitionEntity(webLinker, policySetDefinition),
-      );
-      await findOrCreatePolicyDefinitionGraphObjectsFromPolicySetDefinition(
-        executionContext,
-        policyDefinitionContext,
-        policySetDefinition,
-        policySetDefinitionEntity,
-      );
-      return policySetDefinitionEntity;
+      if (policySetDefinition) {
+        const policySetDefinitionEntity = await jobState.addEntity(
+          createPolicySetDefinitionEntity(webLinker, policySetDefinition),
+        );
+        await findOrCreatePolicyDefinitionGraphObjectsFromPolicySetDefinition(
+          executionContext,
+          policyDefinitionContext,
+          policySetDefinition,
+          policySetDefinitionEntity,
+        );
+        return policySetDefinitionEntity;
+      }
+      break;
     }
   }
 }
@@ -139,7 +143,7 @@ async function getPolicyDefinition(
   client: AzurePolicyClient,
   policyDefinitionId: string,
   name: string,
-): Promise<PolicyDefinition> {
+): Promise<PolicyDefinition | undefined> {
   switch (getDefinitionSource(policyDefinitionId)) {
     case PolicyDefinitionSource.BUILT_IN:
       return client.getBuiltInPolicyDefinition(name);
@@ -157,7 +161,7 @@ async function getPolicySetDefinition(
   client: AzurePolicyClient,
   policyDefinitionId: string,
   name: string,
-): Promise<PolicySetDefinition> {
+): Promise<PolicySetDefinition | undefined> {
   switch (getDefinitionSource(policyDefinitionId)) {
     case PolicyDefinitionSource.BUILT_IN:
       return client.getBuiltInPolicySetDefinition(name);

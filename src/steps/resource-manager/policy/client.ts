@@ -1,6 +1,7 @@
 import {
   Client,
   iterateAllResources,
+  request,
 } from '../../../azure/resource-manager/client';
 import { PolicyClient } from '@azure/arm-policy';
 import {
@@ -34,67 +35,102 @@ export class AzurePolicyClient extends Client {
 
   public async getPolicySetDefinition(
     name: string,
-  ): Promise<PolicySetDefinition> {
+  ): Promise<PolicySetDefinition | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
-
-    return serviceClient.policySetDefinitions.get(name);
+    const response = await request(
+      async () => await serviceClient.policySetDefinitions.get(name),
+      this.logger,
+      'policySetDefinition',
+      60 * 1000,
+    );
+    return response?._response?.parsedBody;
   }
 
   public async getBuiltInPolicySetDefinition(
     name: string,
-  ): Promise<PolicySetDefinition> {
+  ): Promise<PolicySetDefinition | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
 
-    return serviceClient.policySetDefinitions.getBuiltIn(name);
+    const response = await request(
+      async () => await serviceClient.policySetDefinitions.getBuiltIn(name),
+      this.logger,
+      'policySetDefinition.getBuiltIn',
+      60 * 1000,
+    );
+    return response?._response?.parsedBody;
   }
 
   public async getManagementGroupPolicySetDefinition(
     name: string,
     managementGroupId: string,
-  ): Promise<PolicySetDefinition> {
+  ): Promise<PolicySetDefinition | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
-
-    return serviceClient.policySetDefinitions.getAtManagementGroup(
-      name,
-      managementGroupId,
+    const response = await request(
+      async () =>
+        await serviceClient.policySetDefinitions.getAtManagementGroup(
+          name,
+          managementGroupId,
+        ),
+      this.logger,
+      'policySetDefinition.getAtManagementGroup',
+      60 * 1000,
     );
+    return response?._response?.parsedBody;
   }
 
-  public async getPolicyDefinition(name: string): Promise<PolicyDefinition> {
+  public async getPolicyDefinition(
+    name: string,
+  ): Promise<PolicyDefinition | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
-
-    return serviceClient.policyDefinitions.get(name);
+    const response = await request(
+      async () => await serviceClient.policyDefinitions.get(name),
+      this.logger,
+      'policyDefinition',
+      60 * 1000,
+    );
+    return response?._response?.parsedBody;
   }
 
   public async getBuiltInPolicyDefinition(
     name: string,
-  ): Promise<PolicyDefinition> {
+  ): Promise<PolicyDefinition | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
-
-    return serviceClient.policyDefinitions.getBuiltIn(name);
+    const response = await request(
+      async () => await serviceClient.policyDefinitions.getBuiltIn(name),
+      this.logger,
+      'policyDefinition.getBuiltIn',
+      60 * 1000,
+    );
+    return response?._response?.parsedBody;
   }
 
   public async getManagementGroupPolicyDefinition(
     name: string,
     managementGroupId: string,
-  ): Promise<PolicyDefinition> {
+  ): Promise<PolicyDefinition | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PolicyClient,
     );
-
-    return serviceClient.policyDefinitions.getAtManagementGroup(
-      name,
-      managementGroupId,
+    const response = await request(
+      async () =>
+        await serviceClient.policyDefinitions.getAtManagementGroup(
+          name,
+          managementGroupId,
+        ),
+      this.logger,
+      'policyDefinition.getAtManagementGroup',
+      60 * 1000,
     );
+    return response?._response?.parsedBody;
   }
 }

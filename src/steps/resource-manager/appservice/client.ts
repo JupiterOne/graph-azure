@@ -8,6 +8,7 @@ import {
 import {
   Client,
   iterateAllResources,
+  request,
 } from '../../../azure/resource-manager/client';
 
 export class AppServiceClient extends Client {
@@ -54,8 +55,14 @@ export class AppServiceClient extends Client {
     if (!name || !resourceGroup) {
       return;
     }
-
-    return serviceClient.webApps.getConfiguration(resourceGroup, name);
+    const response = await request(
+      async () =>
+        await serviceClient.webApps.getConfiguration(resourceGroup, name),
+      this.logger,
+      'webApps.getConfiguration',
+      60 * 1000,
+    );
+    return response;
   }
 
   public async fetchAppAuthSettings(
@@ -69,7 +76,13 @@ export class AppServiceClient extends Client {
     if (!name || !resourceGroup) {
       return;
     }
-
-    return serviceClient.webApps.getAuthSettings(resourceGroup, name);
+    const response = await request(
+      async () =>
+        await serviceClient.webApps.getAuthSettings(resourceGroup, name),
+      this.logger,
+      'webApps.getAuthSettings',
+      60 * 1000,
+    );
+    return response;
   }
 }

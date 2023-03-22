@@ -11,11 +11,10 @@ import {
   ServerVulnerabilityAssessmentsGetResponse,
   TransparentDataEncryptionsGetResponse,
 } from '@azure/arm-sql/esm/models';
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
-
 import {
   Client,
   iterateAllResources,
+  request,
 } from '../../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../../azure/utils';
 
@@ -104,27 +103,14 @@ export class SQLClient extends Client {
 
     const resourceGroup = resourceGroupName(server.id, true);
     const serverName = server.name;
-
-    try {
-      const response = await serviceClient.encryptionProtectors.get(
-        resourceGroup,
-        serverName,
-      );
-      return response;
-    } catch (err) {
-      this.logger.warn(
-        {
-          err: new IntegrationProviderAPIError({
-            endpoint: 'sql.encryptionProtectors',
-            status: err.status,
-            statusText: err.statusText,
-            cause: err,
-          }),
-          server: server.id,
-        },
-        'Failed to obtain encryption protectors for server',
-      );
-    }
+    const response = await request(
+      async () =>
+        await serviceClient.encryptionProtectors.get(resourceGroup, serverName),
+      this.logger,
+      'encryptionProtectors',
+      60 * 1000,
+    );
+    return response;
   }
 
   public async fetchDatabaseEncryption(
@@ -134,27 +120,19 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-    try {
-      return await serviceClient.transparentDataEncryptions.get(
-        resourceGroupName(server.id, true),
-        server.name as string,
-        database.name as string,
-      );
-    } catch (err) {
-      this.logger.warn(
-        {
-          err: new IntegrationProviderAPIError({
-            endpoint: 'sql.transparentDataEncryptions',
-            status: err.status,
-            statusText: err.statusText,
-            cause: err,
-          }),
-          server: server.id,
-          database: database.id,
-        },
-        'Failed to obtain encryptions for database',
-      );
-    }
+
+    const response = await request(
+      async () =>
+        await serviceClient.transparentDataEncryptions.get(
+          resourceGroupName(server.id, true),
+          server.name as string,
+          database.name as string,
+        ),
+      this.logger,
+      'transparentDataEncryptions',
+      60 * 1000,
+    );
+    return response;
   }
 
   public async fetchServerAuditingStatus(
@@ -163,26 +141,17 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-
-    try {
-      return await serviceClient.serverBlobAuditingPolicies.get(
-        resourceGroupName(server.id, true),
-        server.name as string,
-      );
-    } catch (err) {
-      this.logger.warn(
-        {
-          err: new IntegrationProviderAPIError({
-            endpoint: 'sql.serverBlobAuditingPolicies',
-            status: err.status,
-            statusText: err.statusText,
-            cause: err,
-          }),
-          server: server.id,
-        },
-        'Failed to obtain auditing for server',
-      );
-    }
+    const response = await request(
+      async () =>
+        await serviceClient.serverBlobAuditingPolicies.get(
+          resourceGroupName(server.id, true),
+          server.name as string,
+        ),
+      this.logger,
+      'serverBlobAuditingPolicies',
+      60 * 1000,
+    );
+    return response;
   }
 
   public async fetchDatabaseAuditingStatus(
@@ -192,28 +161,18 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-
-    try {
-      return await serviceClient.databaseBlobAuditingPolicies.get(
-        resourceGroupName(server.id, true),
-        server.name as string,
-        database.name as string,
-      );
-    } catch (err) {
-      this.logger.warn(
-        {
-          err: new IntegrationProviderAPIError({
-            endpoint: 'sql.databaseBlobAuditingPolicies',
-            status: err.status,
-            statusText: err.statusText,
-            cause: err,
-          }),
-          server: server.id,
-          database: database.id,
-        },
-        'Failed to obtain auditing policies for database',
-      );
-    }
+    const response = await request(
+      async () =>
+        await serviceClient.databaseBlobAuditingPolicies.get(
+          resourceGroupName(server.id, true),
+          server.name as string,
+          database.name as string,
+        ),
+      this.logger,
+      'databaseBlobAuditingPolicies',
+      60 * 1000,
+    );
+    return response;
   }
 
   public async fetchServerVulnerabilityAssessment(
@@ -222,26 +181,17 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-
-    try {
-      return serviceClient.serverVulnerabilityAssessments.get(
-        resourceGroupName(server.id, true),
-        server.name as string,
-      );
-    } catch (err) {
-      this.logger.warn(
-        {
-          err: new IntegrationProviderAPIError({
-            endpoint: 'sql.serverVulnerabilityAssessments',
-            status: err.status,
-            statusText: err.statusText,
-            cause: err,
-          }),
-          server: server.id,
-        },
-        'Failed to obtain vulnerability assessments for server',
-      );
-    }
+    const response = await request(
+      async () =>
+        await serviceClient.serverVulnerabilityAssessments.get(
+          resourceGroupName(server.id, true),
+          server.name as string,
+        ),
+      this.logger,
+      'serverVulnerabilityAssessments',
+      60 * 1000,
+    );
+    return response;
   }
 
   public async fetchServerSecurityAlertPolicies(
@@ -250,26 +200,17 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-
-    try {
-      return await serviceClient.serverSecurityAlertPolicies.get(
-        resourceGroupName(server.id, true),
-        server.name as string,
-      );
-    } catch (err) {
-      this.logger.warn(
-        {
-          err: new IntegrationProviderAPIError({
-            endpoint: 'sql.serverSecurityAlertPolicies',
-            status: err.status,
-            statusText: err.statusText,
-            cause: err,
-          }),
-          server: server.id,
-        },
-        'Failed to obtain security alert policies for server',
-      );
-    }
+    const response = await request(
+      async () =>
+        await serviceClient.serverSecurityAlertPolicies.get(
+          resourceGroupName(server.id, true),
+          server.name as string,
+        ),
+      this.logger,
+      'serverSecurityAlertPolicies',
+      60 * 1000,
+    );
+    return response;
   }
 
   public async iterateServerFirewallRules(

@@ -279,6 +279,13 @@ export async function request<T extends ResourceResponse>(
       if (err instanceof AzureRestError) {
         status = err.body?.code ?? err.response?.status;
         statusText = err.body?.message ?? err.body?.error?.message;
+        if (!statusText) {
+          try {
+            statusText = JSON.parse(JSON.parse(err.message)).error.message;
+          } catch (error) {
+            statusText = err.message;
+          }
+        }
       } else if (err instanceof FetchError) {
         status = err.code!;
         statusText = err.message;

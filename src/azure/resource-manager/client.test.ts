@@ -182,3 +182,60 @@ test('request should expose Azure RestError status and text', async () => {
     'Provider API failed at fake-resource: 400 Table is not supported for the account',
   );
 });
+
+test('request should expose Azure RestError status and text when message is StringfiedJSON', async () => {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const noop: any = () => {};
+  const azureRequest = {
+    url: 'some-url',
+    method: 'GET' as any,
+    headers: {
+      set: noop,
+      get: noop,
+      contains: noop,
+      remove: noop,
+      rawHeaders: noop,
+      headerNames: noop,
+      headerValues: noop,
+      headersArray: noop,
+      clone: noop,
+      toJson: noop,
+    },
+    withCredentials: false,
+    timeout: 1000,
+    validateRequestProperties: noop,
+    clone: noop,
+    prepare: noop,
+  };
+
+  await expect(
+    request(
+      () => {
+        throw new AzureRestError(
+          JSON.stringify(
+            JSON.stringify({
+              error: {
+                code: 'Subscription Not Registered',
+                message:
+                  'Please register to Microsoft.Security in order to view your security status',
+              },
+            }),
+          ),
+          'Subscription Not Registered',
+          401,
+          azureRequest,
+          {
+            request: azureRequest,
+            status: 401,
+            headers: azureRequest.headers,
+          },
+        );
+      },
+      createMockIntegrationLogger(),
+      'fake-resource',
+      1000,
+    ),
+  ).rejects.toThrow(
+    'Provider API failed at fake-resource: 401 Please register to Microsoft.Security in order to view your security status',
+  );
+});

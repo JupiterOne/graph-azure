@@ -34,6 +34,7 @@ export function createAssessmentEntity(
   webLinker: AzureWebLinker,
   data: SecurityAssessment,
 ): Entity {
+  const webLink = webLinker.portalResourceUrl(data.id);
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -59,7 +60,7 @@ export function createAssessmentEntity(
         statusCause: data.status.cause,
         statusDescription: data.status.description,
         scannedResourceId: findSecurityAssessmentScannedResourceId(data),
-        webLink: webLinker.portalResourceUrl(data.id),
+        webLink: webLink ? encodeURI(webLink) : webLink,
       },
     },
   });

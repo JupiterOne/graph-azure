@@ -2,6 +2,7 @@ import {
   IntegrationExecutionContext,
   IntegrationValidationError,
   IntegrationProviderAuthorizationError,
+  IntegrationProviderAPIError,
 } from '@jupiterone/integration-sdk-core';
 
 import { DirectoryGraphClient } from './steps/active-directory/client';
@@ -32,12 +33,21 @@ export default async function validateInvocation(
     try {
       await subscriptionClient.getSubscription(config.subscriptionId!);
     } catch (e) {
-      throw new IntegrationProviderAuthorizationError({
-        cause: e,
-        status: e.statusCode,
-        statusText: `${e.statusText}. ${e.body.message}`,
-        endpoint: e.request.url,
-      });
+      if (e instanceof IntegrationProviderAPIError) {
+        throw new IntegrationProviderAuthorizationError({
+          cause: e,
+          status: e.status,
+          statusText: `${e.statusText}. ${e.message}`,
+          endpoint: e.endpoint,
+        });
+      } else {
+        throw new IntegrationProviderAuthorizationError({
+          cause: e,
+          status: e.statusCode,
+          statusText: `${e.statusText}. ${e.body.message}`,
+          endpoint: e.request.url,
+        });
+      }
     }
   }
 }

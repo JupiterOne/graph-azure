@@ -271,7 +271,7 @@ export async function request<T extends ResourceResponse>(
     return response;
   } catch (err) {
     /* istanbul ignore else */
-    if (err.statusCode === 404) {
+    if (err.statusCode === 404 && resourceDescription != 'subscriptions') {
       logger.warn({ err }, 'Resources not found');
     } else {
       let status = '';

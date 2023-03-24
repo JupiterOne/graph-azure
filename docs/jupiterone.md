@@ -244,7 +244,6 @@ The following entities are created:
 | [RM] Event Grid Domain Topic                   | `azure_event_grid_domain_topic`                   | `Queue`                            |
 | [RM] Event Grid Topic                          | `azure_event_grid_topic`                          | `Queue`                            |
 | [RM] Event Grid Topic Subscription             | `azure_event_grid_topic_subscription`             | `Subscription`                     |
-| [RM] Event Grid Topic Subscription             | `azure_event_grid_topic_subscription`             | `Subscription`                     |
 | [RM] Function App                              | `azure_function_app`                              | `Function`                         |
 | [RM] Gallery                                   | `azure_gallery`                                   | `Repository`                       |
 | [RM] Image                                     | `azure_image`                                     | `Image`                            |
@@ -256,23 +255,6 @@ The following entities are created:
 | [RM] MariaDB Database                          | `azure_mariadb_database`                          | `Database`, `DataStore`            |
 | [RM] MariaDB Server                            | `azure_mariadb_server`                            | `Database`, `DataStore`, `Host`    |
 | [RM] Monitor Activity Log Alert                | `azure_monitor_activity_log_alert`                | `Rule`                             |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
-| [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
 | [RM] Monitor Diagnostic Settings Resource      | `azure_diagnostic_setting`                        | `Configuration`                    |
 | [RM] Monitor Log Profile                       | `azure_monitor_log_profile`                       | `Configuration`                    |
 | [RM] MySQL Database                            | `azure_mysql_database`                            | `Database`, `DataStore`            |
@@ -350,23 +332,6 @@ The following relationships are created:
 | `azure_container_volume`           | **USES**              | `azure_storage_file_share`                        |
 | `azure_cosmosdb_account`           | **HAS**               | `azure_cosmosdb_sql_database`                     |
 | `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
-| `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
 | `azure_dns_zone`                   | **HAS**               | `azure_dns_record_set`                            |
 | `azure_event_grid_domain`          | **HAS**               | `azure_event_grid_domain_topic`                   |
 | `azure_event_grid_domain_topic`    | **HAS**               | `azure_event_grid_topic_subscription`             |
@@ -438,23 +403,6 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_vm`                                        |
 | `azure_resource_group`             | **HAS**               | `azure_vnet`                                      |
 | `azure_resource_group`             | **HAS**               | `azure_web_app`                                   |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
 | `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
 | `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
 | `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |

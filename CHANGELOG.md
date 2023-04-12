@@ -1,3 +1,19 @@
+# v5.41.0 (Wed Apr 12 2023)
+
+#### 🚀 Enhancement
+
+- NO-TICKET - Introduce `allowSharedKeyAccess` on `azure_storage_account` [#565](https://github.com/JupiterOne/graph-azure/pull/565) ([@austinkelleher](https://github.com/austinkelleher))
+
+#### 🐛 Bug Fix
+
+- INT-7550 - Update SDK packages to fix duplication in docs [#564](https://github.com/JupiterOne/graph-azure/pull/564) ([@austinkelleher](https://github.com/austinkelleher))
+
+#### Authors: 1
+
+- Austin Kelleher ([@austinkelleher](https://github.com/austinkelleher))
+
+---
+
 # v5.40.9 (Wed Mar 22 2023)
 
 #### 🐛 Bug Fix

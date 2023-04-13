@@ -1,3 +1,15 @@
+# v5.42.0 (Thu Apr 13 2023)
+
+#### 🚀 Enhancement
+
+- Bump @azure/arm-storage@^15.3.0 to get allowSharedKeyAccess property [#566](https://github.com/JupiterOne/graph-azure/pull/566) ([@ndowmon](https://github.com/ndowmon))
+
+#### Authors: 1
+
+- Nick Dowmon ([@ndowmon](https://github.com/ndowmon))
+
+---
+
 # v5.41.0 (Wed Apr 12 2023)
 
 #### 🚀 Enhancement

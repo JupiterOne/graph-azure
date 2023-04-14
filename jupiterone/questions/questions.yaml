@@ -3090,4 +3090,78 @@ questions:
     tags:
       - azure
       - access
-
+  - id: azure-storage-accounts-with-allowsharedkeyaccess-enabled
+    title: Azure Storage Accounts with AllowSharedKeyAccess Enabled
+    description: >-
+      Shared Key access is allowed for a storage account unless explicitly disabled.
+    queries:
+      - name: Storage Accounts without AllowSharedKeyAccess disabled
+        resultsAre: BAD
+        query: FIND azure_storage_account WITH allowSharedKeyAccess != false
+      - name: Storage Accounts with AllowSharedKeyAccess enabled explicitly
+        resultsAre: INFORMATIVE
+        query: FIND azure_storage_account WITH allowSharedKeyAccess = true
+      - name: Storage Accounts with AllowSharedKeyAccess enabled by default
+        resultsAre: BAD
+        query: FIND azure_storage_account WITH allowSharedKeyAccess = undefined
+    tags:
+      - azure
+      - storage
+      - access
+      - key
+      - shared
+  - id: azure-users-with-listKeys-permissions
+    title: Azure users with listKeys permissions
+    description: >-
+      The listKeys/action is a common permission on default roles in Azure.
+      It is required to access blob data via access key, but when combined with
+      Shared Key authorization on Storage Accounts can be over privileged.
+    queries:
+      - name: Which active Azure users can list storage account keys?
+        resultsAre: INFORMATIVE
+        query: |
+          FIND azure_user WITH active = true
+            THAT ASSIGNED azure_role_assignment
+            THAT USES azure_role_definition 
+              WITH actions $= "/storageAccounts/listKeys/action" 
+              /* Look for wildcard actions, "Owner" role for example */
+              OR actions = "*"
+          RETURN
+            azure_user.displayName,
+            azure_user.email,
+            azure_user.userType,
+            azure_role_definition.id,
+            azure_role_definition.name,
+            azure_role_definition.roleName,
+            azure_role_definition.description,
+            azure_role_definition.actions,
+            azure_role_definition.webLink
+      - name: Which active Azure users have privileged access, and can list storage account keys?
+        resultsAre: INFORMATIVE
+        query: |
+          FIND azure_user WITH active = true
+            THAT ASSIGNED azure_role_assignment
+              /* Management group scope is the highest level */
+              WITH scope ~= "/managementGroups/" 
+              /* Check for the subscription scope or the resource group scope. Do not consider the resource scope */
+              OR (scope ^= "/subscriptions/" AND scope !~= "/providers/")
+            THAT USES azure_role_definition 
+              WITH actions $= "/storageAccounts/listKeys/action" 
+              /* Look for wildcard actions, e.g. "Owner" role */
+              OR actions = "*"
+            RETURN
+              azure_user.displayName,
+              azure_user.email,
+              azure_user.userType,
+              azure_role_definition.id,
+              azure_role_definition.name,
+              azure_role_definition.roleName,
+              azure_role_definition.description,
+              azure_role_definition.actions,
+              azure_role_definition.webLink
+    tags:
+      - azure
+      - storage
+      - access
+      - list
+      - keys

@@ -3093,7 +3093,9 @@ questions:
   - id: azure-storage-accounts-with-allowsharedkeyaccess-enabled
     title: Azure Storage Accounts with AllowSharedKeyAccess Enabled
     description: >-
-      Shared Key access is allowed for a storage account unless explicitly disabled.
+      Microsoft recommends disabling Shared Key authorization to reduce access risk.
+      AllowSharedKeyAccess is enabled for storage accounts by default unless disabled
+      explicitly.
     queries:
       - name: Storage Accounts without AllowSharedKeyAccess disabled
         resultsAre: BAD

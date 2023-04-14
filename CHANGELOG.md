@@ -1,3 +1,15 @@
+# v5.42.1 (Fri Apr 14 2023)
+
+#### 🐛 Bug Fix
+
+- Add allowSharedKeyAccess and listKeys permission questions [#567](https://github.com/JupiterOne/graph-azure/pull/567) ([@a-u-h-g](https://github.com/a-u-h-g))
+
+#### Authors: 1
+
+- Akash Ganapathi ([@a-u-h-g](https://github.com/a-u-h-g))
+
+---
+
 # v5.42.0 (Thu Apr 13 2023)
 
 #### 🚀 Enhancement

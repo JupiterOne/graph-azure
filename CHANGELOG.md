@@ -1,3 +1,15 @@
+# v5.43.0 (Mon Apr 17 2023)
+
+#### 🚀 Enhancement
+
+- Consolidating Job Event Names to SDK supported values [#568](https://github.com/JupiterOne/graph-azure/pull/568) ([@VDubber](https://github.com/VDubber))
+
+#### Authors: 1
+
+- Samuel Poulton ([@VDubber](https://github.com/VDubber))
+
+---
+
 # v5.42.1 (Fri Apr 14 2023)
 
 #### 🐛 Bug Fix

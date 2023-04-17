@@ -7,6 +7,7 @@ import {
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName, resourceName } from '../../../azure/utils';
+import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
 
 export class KeyVaultClient extends Client {
   public async iterateKeyVaults(
@@ -50,7 +51,7 @@ export class KeyVaultClient extends Client {
       if (err.statusCode === 403) {
         this.logger.warn({ err }, err.message);
         this.logger.publishEvent({
-          name: 'MISSING_POLICY',
+          name: IntegrationWarnEventName.MissingPermission,
           description: `Missing a Key Vault access policy. A Key Vault access policy determines whether a given security principal can perform different operations on Key Vault secrets, keys and certificates. Please follow the steps outlined here https://go.microsoft.com/fwlink/?linkid=2125287 and assign a "list" key permission in order to fetch these keys for your Key Vault ${vaultUri}.`,
         });
       } else {
@@ -78,7 +79,7 @@ export class KeyVaultClient extends Client {
       if (err.statusCode === 403) {
         this.logger.warn({ err }, err.message);
         this.logger.publishEvent({
-          name: 'MISSING_POLICY',
+          name: IntegrationWarnEventName.MissingPermission,
           description: `Missing a Key Vault access policy. A Key Vault access policy determines whether a given security principal can perform different operations on Key Vault secrets, keys and certificates. Please follow the steps outlined here https://go.microsoft.com/fwlink/?linkid=2125287 and assign a "list" secret permission in order to fetch these secrets for your Key Vault ${vaultUri}.`,
         });
       } else {

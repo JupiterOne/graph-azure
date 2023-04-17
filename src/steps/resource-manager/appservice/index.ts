@@ -4,6 +4,7 @@ import {
   getRawData,
   createDirectRelationship,
   RelationshipClass,
+  IntegrationWarnEventName,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
@@ -55,7 +56,7 @@ export async function fetchApps(
         );
         if (err.statusCode === 403 && err.code === 'AuthorizationFailed') {
           logger.publishEvent({
-            name: 'missing_permission',
+            name: IntegrationWarnEventName.MissingPermission,
             description:
               'Missing permission "Microsoft.Web/sites/config/list/action", which is used to fetch WebApp Auth Settings. Please update the `JupiterOne Reader` Role in your Azure environment in order to fetch these settings for your WebApp.',
           });

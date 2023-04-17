@@ -2,9 +2,7 @@ import {
   executeStepWithDependencies,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
-import {
-  setupAzureRecording,
-} from '../../../../test/helpers/recording';
+import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { getStepTestConfigForStep } from '../../../../test/integrationInstanceConfig';
 import { steps } from './constants';
 

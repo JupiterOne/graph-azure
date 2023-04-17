@@ -113,6 +113,13 @@ async function findOrCreatePolicyDefinitionEntity(
         return jobState.addEntity(
           createPolicyDefinitionEntity(webLinker, policyDefinition),
         );
+      } else {
+        logger.warn(
+          {
+            policyDefinitionId,
+          },
+          'Warning: Could not create policy definition entity.',
+        );
       }
       break;
     }
@@ -138,7 +145,7 @@ async function findOrCreatePolicyDefinitionEntity(
           {
             policyDefinitionId,
           },
-          'Warning: Could not create policy definition entity.',
+          'Warning: Could not create policy set definition entity.',
         );
       }
       break;

@@ -133,6 +133,13 @@ async function findOrCreatePolicyDefinitionEntity(
           policySetDefinitionEntity,
         );
         return policySetDefinitionEntity;
+      } else {
+        logger.warn(
+          {
+            policyDefinitionId,
+          },
+          'Warning: Could not create policy definition entity.',
+        );
       }
       break;
     }

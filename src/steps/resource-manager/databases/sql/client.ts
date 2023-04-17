@@ -103,14 +103,27 @@ export class SQLClient extends Client {
 
     const resourceGroup = resourceGroupName(server.id, true);
     const serverName = server.name;
-    const response = await request(
-      async () =>
-        await serviceClient.encryptionProtectors.get(resourceGroup, serverName),
-      this.logger,
-      'encryptionProtectors',
-      60 * 1000,
-    );
-    return response;
+    try {
+      const response = await request(
+        async () =>
+          await serviceClient.encryptionProtectors.get(
+            resourceGroup,
+            serverName,
+          ),
+        this.logger,
+        'encryptionProtectors',
+        60 * 1000,
+      );
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err: err,
+          server: server.id,
+        },
+        'Failed to obtain encryption protectors for server',
+      );
+    }
   }
 
   public async fetchDatabaseEncryption(
@@ -120,19 +133,29 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-
-    const response = await request(
-      async () =>
-        await serviceClient.transparentDataEncryptions.get(
-          resourceGroupName(server.id, true),
-          server.name as string,
-          database.name as string,
-        ),
-      this.logger,
-      'transparentDataEncryptions',
-      60 * 1000,
-    );
-    return response;
+    try {
+      const response = await request(
+        async () =>
+          await serviceClient.transparentDataEncryptions.get(
+            resourceGroupName(server.id, true),
+            server.name as string,
+            database.name as string,
+          ),
+        this.logger,
+        'transparentDataEncryptions',
+        60 * 1000,
+      );
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err: err,
+          server: server.id,
+          database: database.id,
+        },
+        'Failed to obtain encryptions for database',
+      );
+    }
   }
 
   public async fetchServerAuditingStatus(
@@ -141,17 +164,27 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-    const response = await request(
-      async () =>
-        await serviceClient.serverBlobAuditingPolicies.get(
-          resourceGroupName(server.id, true),
-          server.name as string,
-        ),
-      this.logger,
-      'serverBlobAuditingPolicies',
-      60 * 1000,
-    );
-    return response;
+    try {
+      const response = await request(
+        async () =>
+          await serviceClient.serverBlobAuditingPolicies.get(
+            resourceGroupName(server.id, true),
+            server.name as string,
+          ),
+        this.logger,
+        'serverBlobAuditingPolicies',
+        60 * 1000,
+      );
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err: err,
+          server: server.id,
+        },
+        'Failed to obtain auditing for server',
+      );
+    }
   }
 
   public async fetchDatabaseAuditingStatus(
@@ -161,18 +194,29 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-    const response = await request(
-      async () =>
-        await serviceClient.databaseBlobAuditingPolicies.get(
-          resourceGroupName(server.id, true),
-          server.name as string,
-          database.name as string,
-        ),
-      this.logger,
-      'databaseBlobAuditingPolicies',
-      60 * 1000,
-    );
-    return response;
+    try {
+      const response = await request(
+        async () =>
+          await serviceClient.databaseBlobAuditingPolicies.get(
+            resourceGroupName(server.id, true),
+            server.name as string,
+            database.name as string,
+          ),
+        this.logger,
+        'databaseBlobAuditingPolicies',
+        60 * 1000,
+      );
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err: err,
+          server: server.id,
+          database: database.id,
+        },
+        'Failed to obtain auditing policies for database',
+      );
+    }
   }
 
   public async fetchServerVulnerabilityAssessment(
@@ -181,17 +225,27 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-    const response = await request(
-      async () =>
-        await serviceClient.serverVulnerabilityAssessments.get(
-          resourceGroupName(server.id, true),
-          server.name as string,
-        ),
-      this.logger,
-      'serverVulnerabilityAssessments',
-      60 * 1000,
-    );
-    return response;
+    try {
+      const response = await request(
+        async () =>
+          await serviceClient.serverVulnerabilityAssessments.get(
+            resourceGroupName(server.id, true),
+            server.name as string,
+          ),
+        this.logger,
+        'serverVulnerabilityAssessments',
+        60 * 1000,
+      );
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err: err,
+          server: server.id,
+        },
+        'Failed to obtain vulnerability assessments for server',
+      );
+    }
   }
 
   public async fetchServerSecurityAlertPolicies(
@@ -200,17 +254,27 @@ export class SQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SqlManagementClient,
     );
-    const response = await request(
-      async () =>
-        await serviceClient.serverSecurityAlertPolicies.get(
-          resourceGroupName(server.id, true),
-          server.name as string,
-        ),
-      this.logger,
-      'serverSecurityAlertPolicies',
-      60 * 1000,
-    );
-    return response;
+    try {
+      const response = await request(
+        async () =>
+          await serviceClient.serverSecurityAlertPolicies.get(
+            resourceGroupName(server.id, true),
+            server.name as string,
+          ),
+        this.logger,
+        'serverSecurityAlertPolicies',
+        60 * 1000,
+      );
+      return response;
+    } catch (err) {
+      this.logger.warn(
+        {
+          err: err,
+          server: server.id,
+        },
+        'Failed to obtain security alert policies for server',
+      );
+    }
   }
 
   public async iterateServerFirewallRules(

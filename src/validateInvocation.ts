@@ -33,21 +33,22 @@ export default async function validateInvocation(
     try {
       await subscriptionClient.getSubscription(config.subscriptionId!);
     } catch (e) {
-      if (e instanceof IntegrationProviderAPIError) {
-        throw new IntegrationProviderAuthorizationError({
-          cause: e,
-          status: e.status,
-          statusText: `${e.statusText}. ${e.message}`,
-          endpoint: e.endpoint,
-        });
-      } else {
-        throw new IntegrationProviderAuthorizationError({
-          cause: e,
-          status: e.statusCode,
-          statusText: `${e.statusText}. ${e.body.message}`,
-          endpoint: e.request.url,
-        });
-      }
+      const isInstanceOfProviderAPIError =
+        e instanceof IntegrationProviderAPIError;
+      const status = isInstanceOfProviderAPIError ? e.status : e.statusCode;
+      const statusText = `${e.statusText}. ${
+        isInstanceOfProviderAPIError ? e.message : e.body.message
+      }`;
+      const endpoint = isInstanceOfProviderAPIError
+        ? e.endpoint
+        : e.request.url;
+
+      throw new IntegrationProviderAuthorizationError({
+        cause: e,
+        status: status,
+        statusText,
+        endpoint,
+      });
     }
   }
 }

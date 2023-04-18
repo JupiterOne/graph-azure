@@ -7,6 +7,7 @@ import {
 } from '@azure/arm-appservice/esm/models';
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
   request,
 } from '../../../azure/resource-manager/client';
@@ -60,7 +61,7 @@ export class AppServiceClient extends Client {
         await serviceClient.webApps.getConfiguration(resourceGroup, name),
       this.logger,
       'webApps.getConfiguration',
-      60 * 1000,
+      FIVE_MINUTES,
     );
     return response;
   }
@@ -81,7 +82,7 @@ export class AppServiceClient extends Client {
         await serviceClient.webApps.getAuthSettings(resourceGroup, name),
       this.logger,
       'webApps.getAuthSettings',
-      60 * 1000,
+      FIVE_MINUTES,
     );
     return response;
   }

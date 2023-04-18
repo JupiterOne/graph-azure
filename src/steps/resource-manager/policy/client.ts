@@ -1,5 +1,6 @@
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
   request,
 } from '../../../azure/resource-manager/client';
@@ -43,7 +44,7 @@ export class AzurePolicyClient extends Client {
       async () => await serviceClient.policySetDefinitions.get(name),
       this.logger,
       'policySetDefinition',
-      60 * 1000,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }
@@ -59,7 +60,7 @@ export class AzurePolicyClient extends Client {
       async () => await serviceClient.policySetDefinitions.getBuiltIn(name),
       this.logger,
       'policySetDefinition.getBuiltIn',
-      60 * 1000,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }
@@ -79,7 +80,7 @@ export class AzurePolicyClient extends Client {
         ),
       this.logger,
       'policySetDefinition.getAtManagementGroup',
-      60 * 1000,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }
@@ -94,7 +95,7 @@ export class AzurePolicyClient extends Client {
       async () => await serviceClient.policyDefinitions.get(name),
       this.logger,
       'policyDefinition',
-      60 * 1000,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }
@@ -109,7 +110,7 @@ export class AzurePolicyClient extends Client {
       async () => await serviceClient.policyDefinitions.getBuiltIn(name),
       this.logger,
       'policyDefinition.getBuiltIn',
-      60 * 1000,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }
@@ -129,7 +130,7 @@ export class AzurePolicyClient extends Client {
         ),
       this.logger,
       'policyDefinition.getAtManagementGroup',
-      60 * 1000,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }

@@ -13,6 +13,7 @@ import {
 } from '@azure/arm-sql/esm/models';
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
   request,
 } from '../../../../azure/resource-manager/client';
@@ -111,8 +112,8 @@ export class SQLClient extends Client {
             serverName,
           ),
         this.logger,
-        'encryptionProtectors',
-        60 * 1000,
+        'sql.encryptionProtectors',
+        FIVE_MINUTES,
       );
       return response;
     } catch (err) {
@@ -142,8 +143,8 @@ export class SQLClient extends Client {
             database.name as string,
           ),
         this.logger,
-        'transparentDataEncryptions',
-        60 * 1000,
+        'sql.transparentDataEncryptions',
+        FIVE_MINUTES,
       );
       return response;
     } catch (err) {
@@ -172,8 +173,8 @@ export class SQLClient extends Client {
             server.name as string,
           ),
         this.logger,
-        'serverBlobAuditingPolicies',
-        60 * 1000,
+        'sql.serverBlobAuditingPolicies',
+        FIVE_MINUTES,
       );
       return response;
     } catch (err) {
@@ -203,8 +204,8 @@ export class SQLClient extends Client {
             database.name as string,
           ),
         this.logger,
-        'databaseBlobAuditingPolicies',
-        60 * 1000,
+        'sql.databaseBlobAuditingPolicies',
+        FIVE_MINUTES,
       );
       return response;
     } catch (err) {
@@ -233,8 +234,8 @@ export class SQLClient extends Client {
             server.name as string,
           ),
         this.logger,
-        'serverVulnerabilityAssessments',
-        60 * 1000,
+        'sql.serverVulnerabilityAssessments',
+        FIVE_MINUTES,
       );
       return response;
     } catch (err) {
@@ -262,8 +263,8 @@ export class SQLClient extends Client {
             server.name as string,
           ),
         this.logger,
-        'serverSecurityAlertPolicies',
-        60 * 1000,
+        'sql.serverSecurityAlertPolicies',
+        FIVE_MINUTES,
       );
       return response;
     } catch (err) {

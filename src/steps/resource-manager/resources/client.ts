@@ -2,6 +2,7 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
   request,
 } from '../../../azure/resource-manager/client';
@@ -16,7 +17,7 @@ export class ResourcesClient extends Client {
       async () => await serviceClient.providers.get(resourceProviderNamespace),
       this.logger,
       'policySetDefinition',
-      60 * 1000,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }

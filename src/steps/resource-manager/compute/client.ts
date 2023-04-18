@@ -16,6 +16,7 @@ import {
 
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
   request,
 } from '../../../azure/resource-manager/client';
@@ -54,7 +55,7 @@ export class ComputeClient extends Client {
         await serviceClient.virtualMachines.instanceView(resourceGroup, name),
       this.logger,
       'virtualMachines.instanceView',
-      60 * 1000,
+      FIVE_MINUTES,
     );
     return response;
   }

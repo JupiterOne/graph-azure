@@ -18,7 +18,7 @@ import { IntegrationConfig } from '../../types';
 import authenticate from './authenticate';
 import { bunyanLogPolicy } from './BunyanLogPolicy';
 import { AzureManagementClientCredentials } from './types';
-
+export const FIVE_MINUTES = 5 * 60 * 1000;
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
  */
@@ -271,7 +271,7 @@ export async function request<T extends ResourceResponse>(
     return response;
   } catch (err) {
     /* istanbul ignore else */
-    if (err.statusCode === 404) {
+    if (err.statusCode === 404 && resourceDescription != 'subscriptions') {
       logger.warn({ err }, 'Resources not found');
     } else {
       let status = '';

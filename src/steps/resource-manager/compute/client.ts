@@ -7,6 +7,7 @@ import {
   VirtualMachine,
   VirtualMachineExtension,
   VirtualMachineImage,
+  VirtualMachineScaleSet,
   VirtualMachinesInstanceViewResponse,
 } from '@azure/arm-compute/esm/models';
 import {
@@ -225,6 +226,22 @@ export class ComputeClient extends Client {
           ),
       },
       resourceDescription: 'compute.gallery.image.versions',
+      callback,
+    });
+  }
+
+  public async iterateVirtualMachinesScaleSets(
+    callback: (vm: VirtualMachineScaleSet) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ComputeManagementClient,
+    );
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: serviceClient.virtualMachineScaleSets,
+      resourceDescription: 'compute.virtualMachineScaleSets',
       callback,
     });
   }

@@ -392,37 +392,6 @@ export function createVMScaleSetsEntity(
     },
   });
 }
-// const entity = {
-//   _key: data.AutoScalingGroupARN as string,
-//   _type: 'aws_autoscaling_group',
-//   _class: ['Deployment', 'Group'],
-//   _rawData: [{ name: 'default', rawData: data }],
-//   arn: data.AutoScalingGroupARN,
-//   region: region,
-//   name: data.AutoScalingGroupName,
-//   displayName: data.AutoScalingGroupName,
-//   launchConfigurationName: data.LaunchConfigurationName,
-//   launchTemplateId: data.LaunchTemplate?.LaunchTemplateId,
-//   launchTemplateName: data.LaunchTemplate?.LaunchTemplateName,
-//   minSize: data.MinSize,
-//   maxSize: data.MaxSize,
-//   desiredCapacity: data.DesiredCapacity,
-//   defaultCooldown: data.DefaultCooldown,
-//   availabilityZones: data.AvailabilityZones,
-//   LoadBalancerNames: data.LoadBalancerNames || [],
-//   targetGroupARNs: data.TargetGroupARNs || [],
-//   healthCheckType: data.HealthCheckType,
-//   healthCheckGracePeriod: data.HealthCheckGracePeriod,
-//   instanceIds,
-//   placementGroup: data.PlacementGroup,
-//   suspendedProcesses,
-//   subnetIds: data.VPCZoneIdentifier ? data.VPCZoneIdentifier.split(',') : [],
-//   terminationPolicies: data.TerminationPolicies || [],
-//   newInstancesProtectedFromScaleIn: data.NewInstancesProtectedFromScaleIn,
-//   serviceLinkedRoleARN: data.ServiceLinkedRoleARN,
-//   webLink: `${AWS_CONSOLE_BASE_URL_AUTOSCALING}?region=${region}#details/${data.AutoScalingGroupName}?view=details`,
-// };
-
 export const testFunctions = {
   usesManagedDisks,
 };

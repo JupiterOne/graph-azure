@@ -1,3 +1,15 @@
+# v5.43.1 (Wed Apr 19 2023)
+
+#### 🐛 Bug Fix
+
+- Added the request wrapper for most of the single calls [#563](https://github.com/JupiterOne/graph-azure/pull/563) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.43.0 (Mon Apr 17 2023)
 
 #### 🚀 Enhancement

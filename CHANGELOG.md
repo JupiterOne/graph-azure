@@ -1,3 +1,15 @@
+# v5.43.2 (Wed Apr 19 2023)
+
+#### 🐛 Bug Fix
+
+- Ingest scale sets [#569](https://github.com/JupiterOne/graph-azure/pull/569) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.43.1 (Wed Apr 19 2023)
 
 #### 🐛 Bug Fix

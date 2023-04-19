@@ -16,7 +16,7 @@ export class ResourcesClient extends Client {
     const response = await request(
       async () => await serviceClient.providers.get(resourceProviderNamespace),
       this.logger,
-      'policySetDefinition',
+      'resourceProvider',
       FIVE_MINUTES,
     );
     return response?._response?.parsedBody;

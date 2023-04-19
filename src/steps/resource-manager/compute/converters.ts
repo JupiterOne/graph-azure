@@ -9,6 +9,7 @@ import {
   OSDisk,
   VirtualMachine,
   VirtualMachineExtension,
+  VirtualMachineScaleSet,
   VirtualMachinesInstanceViewResponse,
 } from '@azure/arm-compute/esm/models';
 import {
@@ -276,6 +277,151 @@ export function createSharedImageVersion(
     },
   });
 }
+export function createVMScaleSetsEntity(
+  webLinker: AzureWebLinker,
+  data: VirtualMachineScaleSet,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id!,
+        _type: entities.VIRTUAL_MACHINE_SCALE_SET._type,
+        _class: ['Deployment', 'Group'],
+        id: data.id,
+        location: data.location,
+        name: data.name,
+        type: data.type,
+        provisioningState: data.provisioningState,
+        doNotRunExtensionsOnOverprovisionedVMs:
+          data.doNotRunExtensionsOnOverprovisionedVMs,
+        automaticRepairsPolicy: data.automaticRepairsPolicy?.enabled,
+        ultraSSDEnabled: data.additionalCapabilities?.ultraSSDEnabled,
+        overprovision: data.overprovision,
+        platformFaultDomainCount: data.platformFaultDomainCount,
+        sku: data.sku?.name,
+        automaticOSUpgrade:
+          data.upgradePolicy?.automaticOSUpgradePolicy
+            ?.enableAutomaticOSUpgrade,
+        automaticOSRollback:
+          data.upgradePolicy?.automaticOSUpgradePolicy
+            ?.disableAutomaticRollback,
+        upgradeMode: data.upgradePolicy?.mode,
+        maxBatchInstancePercent:
+          data.upgradePolicy?.rollingUpgradePolicy?.maxBatchInstancePercent,
+        maxUnhealthyInstancePercent:
+          data.upgradePolicy?.rollingUpgradePolicy?.maxUnhealthyInstancePercent,
+        maxUnhealthyUpgradedInstancePercent:
+          data.upgradePolicy?.rollingUpgradePolicy
+            ?.maxUnhealthyUpgradedInstancePercent,
+        pauseTimeBetweenBatches:
+          data.upgradePolicy?.rollingUpgradePolicy?.pauseTimeBetweenBatches,
+        proximityPlacementGroupId: data.proximityPlacementGroup?.id,
+        scaleInRules: data.scaleInPolicy?.rules?.map((rule) => rule.toString()),
+        singlePlacementGroup: data.singlePlacementGroup,
+        zoneBalance: data.zoneBalance,
+        zones: data.zones,
+        ...data.tags,
+        //virtualMachineProfile
+
+        'virtualMachineProfile.billingProfile.maxPrice':
+          data.virtualMachineProfile?.billingProfile?.maxPrice,
+        'virtualMachineProfile.diagnosticsProfile.bootDiagnostics.enabled':
+          data.virtualMachineProfile?.diagnosticsProfile?.bootDiagnostics
+            ?.enabled,
+        'virtualMachineProfile.diagnosticsProfile.bootDiagnostics.storageUri':
+          data.virtualMachineProfile?.diagnosticsProfile?.bootDiagnostics
+            ?.storageUri,
+        'virtualMachineProfile.evictionPolicy':
+          data.virtualMachineProfile?.evictionPolicy,
+        'virtualMachineProfile.extensionProfile.extensions': data.virtualMachineProfile?.extensionProfile?.extensions
+          ?.map((extension) => extension.name)
+          .filter((e) => !!e) as string[],
+        'virtualMachineProfile.licenseType':
+          data.virtualMachineProfile?.licenseType,
+        'virtualMachineProfile.networkProfile.healthProbe.id':
+          data.virtualMachineProfile?.networkProfile?.healthProbe?.id,
+        'virtualMachineProfile.networkProfile.networkInterfaceConfigurations': data.virtualMachineProfile?.networkProfile?.networkInterfaceConfigurations?.map(
+          (config) => config.name,
+        ),
+        'virtualMachineProfile.osProfile.linuxConfiguration.disablePasswordAuthentication':
+          data.virtualMachineProfile?.osProfile?.linuxConfiguration
+            ?.disablePasswordAuthentication,
+        'virtualMachineProfile.osProfile.linuxConfiguration.provisionVMAgent':
+          data.virtualMachineProfile?.osProfile?.linuxConfiguration
+            ?.provisionVMAgent,
+        'virtualMachineProfile.osProfile.linuxConfiguration.ssh.publicKeys': data.virtualMachineProfile?.osProfile?.linuxConfiguration?.ssh?.publicKeys
+          ?.map((key) => key.path)
+          .filter((e) => !!e) as string[],
+        'virtualMachineProfile.osProfile.adminUsername':
+          data.virtualMachineProfile?.osProfile?.adminUsername,
+        'virtualMachineProfile.osProfile.computerNamePrefix':
+          data.virtualMachineProfile?.osProfile?.computerNamePrefix,
+        'virtualMachineProfile.osProfile.windowsConfiguration.enableAutomaticUpdates':
+          data.virtualMachineProfile?.osProfile?.windowsConfiguration
+            ?.enableAutomaticUpdates,
+        'virtualMachineProfile.osProfile.windowsConfiguration.provisionVMAgent':
+          data.virtualMachineProfile?.osProfile?.windowsConfiguration
+            ?.provisionVMAgent,
+        'virtualMachineProfile.priority': data.virtualMachineProfile?.priority?.toString(),
+        'virtualMachineProfile.scheduledEventsProfile.terminateNotificationProfile.enable':
+          data.virtualMachineProfile?.scheduledEventsProfile
+            ?.terminateNotificationProfile?.enable,
+        'virtualMachineProfile.scheduledEventsProfile.terminateNotificationProfile.notBeforeTimeout':
+          data.virtualMachineProfile?.scheduledEventsProfile
+            ?.terminateNotificationProfile?.notBeforeTimeout,
+        'virtualMachineProfile.storageProfile.dataDisks': data.virtualMachineProfile?.storageProfile?.dataDisks
+          ?.map((disk) => disk.name)
+          .filter((e) => !!e) as string[],
+        'virtualMachineProfile.storageProfile.imageReference.id':
+          data.virtualMachineProfile?.storageProfile?.imageReference?.id,
+        'virtualMachineProfile.storageProfile.imageReference.offer':
+          data.virtualMachineProfile?.storageProfile?.imageReference?.offer,
+        'virtualMachineProfile.storageProfile.imageReference.publisher':
+          data.virtualMachineProfile?.storageProfile?.imageReference?.publisher,
+        'virtualMachineProfile.storageProfile.imageReference.exactVersion':
+          data.virtualMachineProfile?.storageProfile?.imageReference
+            ?.exactVersion,
+        'virtualMachineProfile.storageProfile.imageReference.sku':
+          data.virtualMachineProfile?.storageProfile?.imageReference?.sku,
+        'virtualMachineProfile.storageProfile.imageReference.version':
+          data.virtualMachineProfile?.storageProfile?.imageReference?.version,
+
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+// const entity = {
+//   _key: data.AutoScalingGroupARN as string,
+//   _type: 'aws_autoscaling_group',
+//   _class: ['Deployment', 'Group'],
+//   _rawData: [{ name: 'default', rawData: data }],
+//   arn: data.AutoScalingGroupARN,
+//   region: region,
+//   name: data.AutoScalingGroupName,
+//   displayName: data.AutoScalingGroupName,
+//   launchConfigurationName: data.LaunchConfigurationName,
+//   launchTemplateId: data.LaunchTemplate?.LaunchTemplateId,
+//   launchTemplateName: data.LaunchTemplate?.LaunchTemplateName,
+//   minSize: data.MinSize,
+//   maxSize: data.MaxSize,
+//   desiredCapacity: data.DesiredCapacity,
+//   defaultCooldown: data.DefaultCooldown,
+//   availabilityZones: data.AvailabilityZones,
+//   LoadBalancerNames: data.LoadBalancerNames || [],
+//   targetGroupARNs: data.TargetGroupARNs || [],
+//   healthCheckType: data.HealthCheckType,
+//   healthCheckGracePeriod: data.HealthCheckGracePeriod,
+//   instanceIds,
+//   placementGroup: data.PlacementGroup,
+//   suspendedProcesses,
+//   subnetIds: data.VPCZoneIdentifier ? data.VPCZoneIdentifier.split(',') : [],
+//   terminationPolicies: data.TerminationPolicies || [],
+//   newInstancesProtectedFromScaleIn: data.NewInstancesProtectedFromScaleIn,
+//   serviceLinkedRoleARN: data.ServiceLinkedRoleARN,
+//   webLink: `${AWS_CONSOLE_BASE_URL_AUTOSCALING}?region=${region}#details/${data.AutoScalingGroupName}?view=details`,
+// };
 
 export const testFunctions = {
   usesManagedDisks,

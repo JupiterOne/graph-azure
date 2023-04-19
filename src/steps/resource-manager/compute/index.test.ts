@@ -24,7 +24,10 @@ import {
   Recording,
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
-import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import {
+  configFromEnv,
+  getStepTestConfigForStep,
+} from '../../../../test/integrationInstanceConfig';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationConfig } from '../../../types';
 import { fetchServicePrincipals } from '../../active-directory';
@@ -39,8 +42,10 @@ import {
   VIRTUAL_MACHINE_ENTITY_CLASS,
   VIRTUAL_MACHINE_ENTITY_TYPE,
   VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
+  steps,
 } from './constants';
 import { createDiskEntity, createVirtualMachineEntity } from './converters';
+import { executeStepWithDependencies } from '@jupiterone/integration-sdk-testing';
 
 let recording: Recording;
 
@@ -1077,4 +1082,22 @@ describe('rm-compute-virtual-machine-managed-identity-relationships', () => {
       servicePrincipalEntities,
     );
   });
+  test('rm-compute-virtual-machines-scale-sets', async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      steps.VIRTUAL_MACHINE_SCALE_SETS,
+    );
+
+    recording = setupAzureRecording({
+      name: steps.VIRTUAL_MACHINE_SCALE_SETS,
+      directory: __dirname,
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
+    });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  }, 1000_000);
 });

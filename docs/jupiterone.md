@@ -305,6 +305,7 @@ The following entities are created:
 | [RM] Subscription                              | `azure_subscription`                              | `Account`                          |
 | [RM] Virtual Machine                           | `azure_vm`                                        | `Host`                             |
 | [RM] Virtual Machine Extension                 | `azure_vm_extension`                              | `Application`                      |
+| [RM] Virtual Machine Scale Set                 | `azure_vm_scale_set`                              | `Deployment`, `Group`              |
 | [RM] Virtual Network                           | `azure_vnet`                                      | `Network`                          |
 | [RM] Web App                                   | `azure_web_app`                                   | `Application`                      |
 
@@ -401,6 +402,7 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_sql_server`                                |
 | `azure_resource_group`             | **HAS**               | `azure_storage_account`                           |
 | `azure_resource_group`             | **HAS**               | `azure_vm`                                        |
+| `azure_resource_group`             | **HAS**               | `azure_vm_scale_set`                              |
 | `azure_resource_group`             | **HAS**               | `azure_vnet`                                      |
 | `azure_resource_group`             | **HAS**               | `azure_web_app`                                   |
 | `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
@@ -538,7 +540,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (93)                                       |
+| Role Permissions List (94)                                       |
 | ---------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                         |
 | `Microsoft.ApiManagement/service/apis/read`                      |
@@ -566,6 +568,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Compute/images/read`                                  |
 | `Microsoft.Compute/virtualMachines/extensions/read`              |
 | `Microsoft.Compute/virtualMachines/read`                         |
+| `Microsoft.Compute/virtualMachineScaleSets/read`                 |
 | `Microsoft.ContainerInstance/containerGroups/read`               |
 | `Microsoft.ContainerRegistry/registries/read`                    |
 | `Microsoft.ContainerRegistry/registries/webhooks/read`           |

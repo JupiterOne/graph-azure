@@ -48,21 +48,29 @@ Azure Active Directory is authenticated and accessed through the [Microsoft
 Graph API][1]. Azure Resource Manager is authenticated and accessed through
 [Resource Manager APIs][2].
 
-### In Azure
+### Azure Application Configuration
 
 To create the App Registration:
 
-1. Go to your Azure portal
-2. Navigate to **App registrations**
-3. Create a new App registration, using the **Name** "JupiterOne", selecting
-   **Accounts in this organizational directory only**, with **no** "Redirect
-   URI"
+1. Navigate to your [Azure portal](https://portal.azure.com).
+
+2. Navigate to **Azure Active Directory**, then **App registrations**
+
+3. Create a new App registration, using the **Name** "{{productName}}",
+   selecting **Accounts in this organizational directory only**, with **no**
+   "Redirect URI"
+
 4. Navigate to the **Overview** page of the new app
+
 5. Copy the **Application (client) ID**
+
 6. Copy the **Directory (tenant) ID**
+
 7. Navigate to the **Certificates & secrets** section
+
 8. Create a new client secret
-9. Copy the generated secret **Value** (you only get one chance!)
+
+9. Save and copy the generated secret **Value** (NOT the **Secret ID**)
 
 #### API Permissions (Azure Active Directory)
 
@@ -70,6 +78,7 @@ Grant permission to read Microsoft Graph information:
 
 1. Navigate to **API permissions**, choose **Microsoft Graph**, then
    **Application Permissions**
+
 2. Grant the following permissions to the application:
 
    - `Directory.Read.All`
@@ -80,41 +89,167 @@ Grant permission to read Microsoft Graph information:
 
 #### IAM Roles (Azure Management Groups / Subscriptions)
 
-Grant the `Reader` RBAC subscription role to read Azure Resource Manager
-information:
+Grant the `JupiterOne Reader` RBAC subscription role to read Azure Resource
+Manager information:
 
 1. Navigate to the correct scope for your integration.
 
    - _(RECOMMENDED) If configuring all subscriptions for a tenant:_ navigate to
      **Management Groups**, then to the
      [Tenant Root Group](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#root-management-group-for-each-directory).
+     (NOTE: If it is not possible to select the **Tenant Root Group** first
+     navigate to Azure Active Directory -> Properties -> Select **Yes** on
+     **Access management for Azure resources**. Check
+     [elevating access](https://learn.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin)
+     for more information)
+
+     Please also enable the following flags in your integration instance:
+
+     - Ingest Active Directory.
+     - Configure Subscription Instances.
+       - Auto-Delete Removed Subscriptions.
 
    - _If configuring a single Azure Subscription:_ navigate to
      **Subscriptions**, choose the subscription from which you want to ingest
      resources.
 
+     If configuring a single subscription please fill the **Subscription ID**
+     field in your integration instance. To get the Subscription ID: Navigate to
+     **Subscriptions** and Copy the ID of the one to ingest.
+
 2. Create custom role "JupiterOne Reader"
+
    1. Navigate to **Access control (IAM)** -> **Add** -> **Add custom role**
-   2. Create a custom role called "JupiterOne Reader" with the following
-      permissions:
-      - `Microsoft.PolicyInsights/policyStates/queryResults/action`
-      - `Microsoft.Web/sites/config/list/Action`
+   2. Complete the name with "JupiterOne Reader"
+   3. Navigate to the JSON tab. Then select **Edit** and add the following
+      _actions_:
+
+   ```
+   "Microsoft.Advisor/recommendations/read",
+   "Microsoft.ApiManagement/service/apis/read",
+   "Microsoft.ApiManagement/service/read",
+   "Microsoft.Authorization/classicAdministrators/read",
+   "Microsoft.Authorization/locks/read",
+   "Microsoft.Authorization/policyAssignments/read",
+   "Microsoft.Authorization/policyDefinitions/read",
+   "Microsoft.Authorization/policySetDefinitions/read",
+   "Microsoft.Authorization/roleAssignments/read",
+   "Microsoft.Authorization/roleDefinitions/read",
+   "Microsoft.Batch/batchAccounts/applications/read",
+   "Microsoft.Batch/batchAccounts/certificates/read",
+   "Microsoft.Batch/batchAccounts/pools/read",
+   "Microsoft.Batch/batchAccounts/read",
+   "Microsoft.Cache/redis/firewallRules/read",
+   "Microsoft.Cache/redis/linkedServers/read",
+   "Microsoft.Cache/redis/read",
+   "Microsoft.Cdn/profiles/endpoints/read",
+   "Microsoft.Cdn/profiles/read",
+   "Microsoft.Compute/disks/read",
+   "Microsoft.Compute/galleries/images/read",
+   "Microsoft.Compute/galleries/images/versions/read",
+   "Microsoft.Compute/galleries/read",
+   "Microsoft.Compute/images/read",
+   "Microsoft.Compute/virtualMachines/extensions/read",
+   "Microsoft.Compute/virtualMachines/read",
+   "Microsoft.ContainerInstance/containerGroups/read",
+   "Microsoft.ContainerRegistry/registries/read",
+   "Microsoft.ContainerRegistry/registries/webhooks/read",
+   "Microsoft.ContainerService/managedClusters/read",
+   "Microsoft.DBforMariaDB/servers/databases/read",
+   "Microsoft.DBforMariaDB/servers/read",
+   "Microsoft.DBforMySQL/servers/databases/read",
+   "Microsoft.DBforMySQL/servers/read",
+   "Microsoft.DBforPostgreSQL/servers/databases/read",
+   "Microsoft.DBforPostgreSQL/servers/firewallRules/read",
+   "Microsoft.DBforPostgreSQL/servers/read",
+   "Microsoft.DocumentDB/databaseAccounts/read",
+   "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read",
+   "Microsoft.EventGrid/domains/read",
+   "Microsoft.EventGrid/domains/topics/eventSubscriptions/read",
+   "Microsoft.EventGrid/domains/topics/read",
+   "Microsoft.EventGrid/topics/eventSubscriptions/read",
+   "Microsoft.EventGrid/topics/read",
+   "Microsoft.Insights/ActivityLogAlerts/Read",
+   "Microsoft.Insights/DiagnosticSettings/Read",
+   "Microsoft.Insights/LogProfiles/Read",
+   "Microsoft.KeyVault/vaults/keys/read",
+   "Microsoft.KeyVault/vaults/read",
+   "Microsoft.KeyVault/vaults/secrets/read",
+   "Microsoft.Management/managementGroups/read",
+   "Microsoft.Network/azurefirewalls/read",
+   "Microsoft.Network/dnszones/read",
+   "Microsoft.Network/dnszones/recordsets/read",
+   "Microsoft.Network/frontDoors/read",
+   "Microsoft.Network/loadBalancers/read",
+   "Microsoft.Network/networkInterfaces/read",
+   "Microsoft.Network/networkSecurityGroups/read",
+   "Microsoft.Network/networkWatchers/flowLogs/read",
+   "Microsoft.Network/networkWatchers/read",
+   "Microsoft.Network/privateDnsZones/read",
+   "Microsoft.Network/privateDnsZones/recordsets/read",
+   "Microsoft.Network/privateEndpoints/read",
+   "Microsoft.Network/publicIPAddresses/read",
+   "Microsoft.Network/virtualNetworks/read",
+   "Microsoft.PolicyInsights/policyStates/queryResults/read",
+   "Microsoft.Resources/subscriptions/locations/read",
+   "Microsoft.Resources/subscriptions/read",
+   "Microsoft.Resources/subscriptions/resourceGroups/read",
+   "Microsoft.Security/assessments/read",
+   "Microsoft.Security/autoProvisioningSettings/read",
+   "Microsoft.Security/pricings/read",
+   "Microsoft.Security/securityContacts/read",
+   "Microsoft.Security/settings/read",
+   "Microsoft.ServiceBus/namespaces/queues/read",
+   "Microsoft.ServiceBus/namespaces/read",
+   "Microsoft.ServiceBus/namespaces/topics/read",
+   "Microsoft.ServiceBus/namespaces/topics/subscriptions/read",
+   "Microsoft.Sql/servers/administrators/read",
+   "Microsoft.Sql/servers/databases/read",
+   "Microsoft.Sql/servers/firewallRules/read",
+   "Microsoft.Sql/servers/read",
+   "Microsoft.Storage/storageAccounts/blobServices/containers/read",
+   "Microsoft.Storage/storageAccounts/blobServices/read",
+   "Microsoft.Storage/storageAccounts/fileServices/shares/read",
+   "Microsoft.Storage/storageAccounts/queueServices/read",
+   "Microsoft.Storage/storageAccounts/read",
+   "Microsoft.Storage/storageAccounts/tableServices/read",
+   "Microsoft.Storage/storageAccounts/tableServices/tables/read",
+   "Microsoft.Web/serverfarms/Read",
+   "Microsoft.Web/sites/config/list/action",
+   "Microsoft.Web/sites/config/Read",
+   "Microsoft.Web/sites/Read",
+   "Microsoft.KeyVault/vaults/providers/Microsoft.Insights/diagnosticSettings/Read",
+   "Microsoft.Management/managementGroups/subscriptions/read"
+   ```
+
+   4. Click on **Save** -> **Review + Create** -> **Create**.
+
 3. Assign Roles to "JupiterOne" App
    1. Navigate to **Access control (IAM)** -> **Add** -> **Add role assignment**
-   2. Assign each of the three roles to the "JupiterOne" member
-      1. JupiterOne Reader
-      2. Reader
-      3. Key Vault Reader
-      4. Management Group Reader (If using `Configure Subscription Instances`
-         flag in JupiterOne)
+   2. Assign the _JupiterOne Reader_ role to the "JupiterOne" member.
+      - On the **Role** tab select the "JupiterOne Reader" we just created.
+      - Navigate to the **Member** tab. Select the **+ Select Members** and
+        search for the "JupiterOne" App, make sure to click it. Press the
+        **Select** button.
+      - Navigate to the **Review + assing** tab. Click on **Review + assing**.
 
 ### Key Vault Access Policy
 
-Please note that listing Key Vault keys and secrets (`rm-keyvault-keys` and
-`rm-keyvault-secrets` steps) require JupiterOne users to grant the following
-permissions to the JupiterOne security principal _for each Key Vault in their
-account_. See Azure documentation for more information on
-[Assign a Key Vault access policy](https://go.microsoft.com/fwlink/?linkid=2125287).
+Listing key vault keys and secrets (`rm-keyvault-keys` and `rm-keyvault-secrets`
+steps) require you to grant the following permissions to the J1 security
+principal for each key vault in your account. See the Azure documentation for
+more information on
+[assigning a key vault access policy](https://go.microsoft.com/fwlink/?linkid=2125287).
+
+1. Navigate to _Key Vaults_ and select the one you want to ingest.
+2. Click Access policies, and then click **+Create**.
+
+   ![](../../assets/azure-access-policies.png)
+
+3. On the permissions tab, under Key permissions, and Secret permissions, select
+   the permissions.
+
+   ![](../../assets/azure-create-policy.png)
 
 - Key Permissions
   - Key Management Operations
@@ -123,48 +258,8 @@ account_. See Azure documentation for more information on
   - Secret Management Operations
     - List
 
-### In JupiterOne
-
-1.  From the configuration **Gear Icon**, select **Integrations**.
-2.  Scroll to the **Azure** integration tile and click it.
-3.  Click the **Add Configuration** button and configure the following settings:
-
-    1.  Enter the **Account Name** by which you'd like to identify this Azure
-        account in JupiterOne. Ingested entities will have this value stored in
-        `tag.AccountName` when **Tag with Account Name** is checked.
-    2.  Enter a **Description** that will further assist your team when
-        identifying the integration instance.
-    3.  Select a **Polling Interval** that you feel is sufficient for your
-        monitoring needs. You may leave this as `DISABLED` and manually execute
-        the integration.
-    4.  Enter the **Directory (tenant) ID** of the Active Directory to target in
-        Azure API requests.
-    5.  Enter the **Application (client) ID** created for JupiterOne, used to
-        authenticate with Azure.
-    6.  Enter the **Application (client) Secret** associated with the
-        application ID, used to authenticate with Azure.
-    7.  Select the option **Ingest Active Directory** to ingest Directory
-        information. This should only be enabled in one integration instance per
-        Directory.
-
-        _NOTE:_ The **Ingest Active Directory** flag enables the ingestion of
-        `azure_user`, `azure_user_group`, and `azure_service_principal`
-        entities.
-
-    8.  Configure the correct scope for your integration:
-
-        - _(RECOMMENDED) If configuring all subscriptions for a tenant:_ Select
-          the option **Configure Subscription Instances** to automatically
-          provision new JupiterOne integration instances for each Azure
-          Subscription in this tenant
-
-          _NOTE:_ The **Configure Subscription Instances** flag also enables the
-          ingestion of `azure_management_group` entities.
-
-        - _If configuring a single Azure Subscription:_ Enter the **Subscription
-          ID** for the subscription you wish to ingest data from.
-
-4.  Click **Create Configuration** once all values are provided.
+4. On the Principal tab, assign them to the "JupiterOne" app.
+5. Navigate to the on **Review + Create** tab -> Click **Create**
 
 ## Troubleshooting
 

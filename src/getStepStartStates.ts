@@ -3,7 +3,6 @@ import {
   StepStartStates,
   StepStartState,
   IntegrationInfoEventName,
-  IntegrationWarnEventName,
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './types';
@@ -288,22 +287,26 @@ export default async function getStepStartStates(
       const subscription = await subscriptionClient.getSubscription(
         config.subscriptionId!,
       );
-      if (
-        subscription &&
-        subscription.displayName == 'Access to Azure Active Directory'
+      if (!subscription?.displayName) {
+        logger.warn(
+          { subscriptionId: config.subscriptionId },
+          'Could not get subscription for subscriptionId',
+        );
+      } else if (
+        subscription.displayName === 'Access to Azure Active Directory'
       ) {
         disableAllSteps = true;
         logger.publishInfoEvent({
           name: IntegrationInfoEventName.Results,
           description:
-            'The subscription is is not permitted to perform operations on any provider namespace. These are legacy subscriptions that can no longer be managed by customer portal. No steps will be executed.',
+            'This is an "Access to Azure Active Directory" subscription, which is a legacy subscription type that is no longer used. They were used prior to the current Azure Portal (https://portal.azure.com/). JupiterOne cannot ingest any resources from this subscription.',
         });
       }
     } catch (e) {
-      logger.publishWarnEvent({
-        name: IntegrationWarnEventName.MissingPermission,
-        description: "Couldn't recover subscription displayname.",
-      });
+      logger.warn(
+        { e },
+        'Could not get subscription displayName in getStepStartStates',
+      );
     }
   }
   const activeDirectory = {

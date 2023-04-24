@@ -1,3 +1,15 @@
+# v5.43.3 (Mon Apr 24 2023)
+
+#### 🐛 Bug Fix
+
+- Int 7422 disable steps legacy subscriptions [#570](https://github.com/JupiterOne/graph-azure/pull/570) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.43.2 (Wed Apr 19 2023)
 
 #### 🐛 Bug Fix

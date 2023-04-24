@@ -116,18 +116,23 @@ import { ManagementGroupSteps } from './steps/resource-manager/management-groups
 import { Step } from '@jupiterone/integration-sdk-core';
 import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
+import {
+  setupAzureRecording,
+  getMatchRequestsBy,
+} from '../test/helpers/recording';
+import { configFromEnv } from '../test/integrationInstanceConfig';
 
 describe('getStepStartStates', () => {
-  test('all steps represented', () => {
+  test('all steps represented', async () => {
     const context = createMockExecutionContext<IntegrationConfig>();
-    const states = getStepStartStates(context);
+    const states = await getStepStartStates(context);
     const stepIds = invocationConfig.integrationSteps.map((s) => s.id);
     expect(Object.keys(states).sort()).toEqual(stepIds.sort());
   });
 
-  test('empty config', () => {
+  test('empty config', async () => {
     const context = createMockExecutionContext<IntegrationConfig>();
-    const states = getStepStartStates(context);
+    const states = await getStepStartStates(context);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
       [STEP_AD_GROUPS]: { disabled: true },
@@ -274,11 +279,11 @@ describe('getStepStartStates', () => {
     });
   });
 
-  test('ingestActiveDirectory: true', () => {
+  test('ingestActiveDirectory: true', async () => {
     const context = createMockExecutionContext<IntegrationConfig>({
       instanceConfig: { ingestActiveDirectory: true } as IntegrationConfig,
     });
-    const states = getStepStartStates(context);
+    const states = await getStepStartStates(context);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
       [STEP_AD_GROUPS]: { disabled: false },
@@ -425,11 +430,11 @@ describe('getStepStartStates', () => {
     });
   });
 
-  test("subscriptionId: 'value'", () => {
+  test("subscriptionId: 'value'", async () => {
     const context = createMockExecutionContext({
       instanceConfig: { subscriptionId: '1234' } as IntegrationConfig,
     });
-    const states = getStepStartStates(context);
+    const states = await getStepStartStates(context);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
       [STEP_AD_GROUPS]: { disabled: true },
@@ -578,13 +583,13 @@ describe('getStepStartStates', () => {
     });
   });
 
-  test('configureSubscriptionInstances: true', () => {
+  test('configureSubscriptionInstances: true', async () => {
     const context = createMockExecutionContext({
       instanceConfig: {
         configureSubscriptionInstances: true,
       } as IntegrationConfig,
     });
-    const states = getStepStartStates(context);
+    const states = await getStepStartStates(context);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
       [STEP_AD_GROUPS]: { disabled: true },
@@ -730,6 +735,27 @@ describe('getStepStartStates', () => {
       [FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS]: { disabled: true },
     });
   });
+
+  test('disable all steps on legacy subscription', async () => {
+    const context = createMockExecutionContext({
+      instanceConfig: configFromEnv,
+    });
+    const recording = setupAzureRecording({
+      name: 'getStepStartStates',
+      directory: __dirname,
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: context.instance.config,
+        }),
+      },
+    });
+
+    const states = await getStepStartStates(context);
+    for (const key in states) {
+      expect(states[key].disabled).toBe(key != STEP_AD_ACCOUNT);
+    }
+    await recording.stop();
+  }, 10_000);
 });
 
 describe('dependencies', () => {

@@ -28,6 +28,7 @@ import {
   steps,
   entities,
   relationships,
+  VIRTUAL_MACHINE_SCALE_SET_ENTITY_TYPE,
 } from './constants';
 import {
   createDiskEntity,
@@ -37,6 +38,7 @@ import {
   createSharedImageVersion,
   createVirtualMachineEntity,
   createVirtualMachineExtensionEntity,
+  createVMScaleSetsEntity,
   getVirtualMachineExtensionKey,
   VirtualMachineExtensionSharedProperties,
 } from './converters';
@@ -690,6 +692,23 @@ export async function buildVirtualMachineManagedIdentityRelationships(
   );
 }
 
+export async function fetchVirtualMachineScaleSets(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new ComputeClient(instance.config, logger);
+
+  await client.iterateVirtualMachinesScaleSets(async (vmScaleSets) => {
+    const vmScaleSetsEntity = createVMScaleSetsEntity(webLinker, vmScaleSets);
+    await jobState.addEntity(vmScaleSetsEntity);
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      vmScaleSetsEntity,
+    );
+  });
+}
 export const computeSteps: AzureIntegrationStep[] = [
   {
     id: steps.GALLERIES,
@@ -813,5 +832,18 @@ export const computeSteps: AzureIntegrationStep[] = [
     relationships: [relationships.VIRTUAL_MACHINE_USES_MANAGED_IDENTITY],
     dependsOn: [STEP_RM_COMPUTE_VIRTUAL_MACHINES],
     executionHandler: buildVirtualMachineManagedIdentityRelationships,
+  },
+  {
+    id: steps.VIRTUAL_MACHINE_SCALE_SETS,
+    name: 'Virtual Machine Scale Sets',
+    entities: [entities.VIRTUAL_MACHINE_SCALE_SET],
+    relationships: [
+      createResourceGroupResourceRelationshipMetadata(
+        VIRTUAL_MACHINE_SCALE_SET_ENTITY_TYPE,
+      ),
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchVirtualMachineScaleSets,
+    rolePermissions: ['Microsoft.Compute/virtualMachineScaleSets/read'],
   },
 ];

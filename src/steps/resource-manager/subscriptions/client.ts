@@ -7,21 +7,14 @@ import * as msRest from '@azure/ms-rest-js';
 import { Subscription, Location } from '@azure/arm-subscriptions/esm/models';
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
   request,
 } from '../../../azure/resource-manager/client';
 
-const FIVE_MINUTES = 5 * 60 * 1000;
 export class J1SubscriptionClient extends Client {
   public async getSubscription(subscriptionId: string) {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      SubscriptionClient,
-      {
-        passSubscriptionId: false,
-      },
-    );
-
-    return serviceClient.subscriptions.get(subscriptionId);
+    return await this.fetchSubscription(subscriptionId);
   }
 
   public async iterateSubscriptions(

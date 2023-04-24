@@ -27,6 +27,7 @@ export const steps = {
     'rm-compute-virtual-machine-image-relationships',
   VIRTUAL_MACHINE_MANAGED_IDENTITY_RELATIONSHIPS:
     'rm-compute-virtual-machine-managed-identity-relationships',
+  VIRTUAL_MACHINE_SCALE_SETS: 'rm-compute-virtual-machines-scale-sets',
 };
 
 // Graph object
@@ -38,6 +39,9 @@ export const VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS = ['Image'];
 
 export const DISK_ENTITY_TYPE = 'azure_managed_disk';
 export const DISK_ENTITY_CLASS = ['DataStore', 'Disk'];
+
+export const VIRTUAL_MACHINE_SCALE_SET_ENTITY_TYPE = 'azure_vm_scale_set';
+export const VIRTUAL_MACHINE_SCALE_SET_ENTITY_CLASS = ['Deployment', 'Group'];
 
 export const entities = {
   GALLERY: {
@@ -74,6 +78,11 @@ export const entities = {
     resourceName: '[RM] Virtual Machine',
     _type: VIRTUAL_MACHINE_ENTITY_TYPE,
     _class: VIRTUAL_MACHINE_ENTITY_CLASS,
+  },
+  VIRTUAL_MACHINE_SCALE_SET: {
+    resourceName: '[RM] Virtual Machine Scale Set',
+    _type: VIRTUAL_MACHINE_SCALE_SET_ENTITY_TYPE,
+    _class: VIRTUAL_MACHINE_SCALE_SET_ENTITY_CLASS,
   },
 };
 

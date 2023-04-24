@@ -7,7 +7,9 @@ import {
 } from '@azure/arm-appservice/esm/models';
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
+  request,
 } from '../../../azure/resource-manager/client';
 
 export class AppServiceClient extends Client {
@@ -54,8 +56,14 @@ export class AppServiceClient extends Client {
     if (!name || !resourceGroup) {
       return;
     }
-
-    return serviceClient.webApps.getConfiguration(resourceGroup, name);
+    const response = await request(
+      async () =>
+        await serviceClient.webApps.getConfiguration(resourceGroup, name),
+      this.logger,
+      'webApps.getConfiguration',
+      FIVE_MINUTES,
+    );
+    return response;
   }
 
   public async fetchAppAuthSettings(
@@ -69,7 +77,13 @@ export class AppServiceClient extends Client {
     if (!name || !resourceGroup) {
       return;
     }
-
-    return serviceClient.webApps.getAuthSettings(resourceGroup, name);
+    const response = await request(
+      async () =>
+        await serviceClient.webApps.getAuthSettings(resourceGroup, name),
+      this.logger,
+      'webApps.getAuthSettings',
+      FIVE_MINUTES,
+    );
+    return response;
   }
 }

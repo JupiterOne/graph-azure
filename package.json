@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-azure",
-  "version": "5.40.8",
+  "version": "5.43.2",
   "description": "A graph conversion tool for https://azure.microsoft.com/.",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -68,7 +68,7 @@
     "@azure/arm-security": "^2.0.0",
     "@azure/arm-servicebus": "^4.0.0",
     "@azure/arm-sql": "^7.0.1",
-    "@azure/arm-storage": "^15.1.0",
+    "@azure/arm-storage": "^15.3.0",
     "@azure/arm-subscriptions": "^2.0.0",
     "@azure/data-tables": "^12.1.2",
     "@azure/identity": "^1.0.2",
@@ -90,12 +90,12 @@
     "@azure/ms-rest-js": "^2.0.0"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^8.24.1"
+    "@jupiterone/integration-sdk-core": "^8.31.1"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^8.30.5",
-    "@jupiterone/integration-sdk-dev-tools": "^8.30.5",
-    "@jupiterone/integration-sdk-testing": "^8.30.5",
+    "@jupiterone/integration-sdk-core": "^8.31.1",
+    "@jupiterone/integration-sdk-dev-tools": "^8.31.1",
+    "@jupiterone/integration-sdk-testing": "^8.31.1",
     "@types/lodash.map": "^4.6.13",
     "@types/lodash.snakecase": "^4.1.6",
     "@types/node": "^13.11.1",

@@ -23,7 +23,7 @@ export function createPolicyAssignmentEntity(
   const updatedOn = parseTimePropertyValue(metadata?.updatedOn);
   const createdBy = metadata?.createdBy;
   const updatedBy = metadata?.updatedBy;
-
+  const webLink = webLinker.portalResourceUrl(pa.id);
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -34,7 +34,7 @@ export function createPolicyAssignmentEntity(
         _class: PolicyEntities.POLICY_ASSIGNMENT._class,
         id: pa.id,
         name: pa.displayName,
-        webLink: webLinker.portalResourceUrl(pa.id),
+        webLink: webLink ? encodeURI(webLink) : webLink,
         scope: pa.scope,
         policyDefinitionId: pa.policyDefinitionId,
         ...(assignedBy && { assignedBy }),

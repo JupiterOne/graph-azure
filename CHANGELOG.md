@@ -1,3 +1,93 @@
+# v5.43.2 (Wed Apr 19 2023)
+
+#### 🐛 Bug Fix
+
+- Ingest scale sets [#569](https://github.com/JupiterOne/graph-azure/pull/569) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v5.43.1 (Wed Apr 19 2023)
+
+#### 🐛 Bug Fix
+
+- Added the request wrapper for most of the single calls [#563](https://github.com/JupiterOne/graph-azure/pull/563) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v5.43.0 (Mon Apr 17 2023)
+
+#### 🚀 Enhancement
+
+- Consolidating Job Event Names to SDK supported values [#568](https://github.com/JupiterOne/graph-azure/pull/568) ([@VDubber](https://github.com/VDubber))
+
+#### Authors: 1
+
+- Samuel Poulton ([@VDubber](https://github.com/VDubber))
+
+---
+
+# v5.42.1 (Fri Apr 14 2023)
+
+#### 🐛 Bug Fix
+
+- Add allowSharedKeyAccess and listKeys permission questions [#567](https://github.com/JupiterOne/graph-azure/pull/567) ([@a-u-h-g](https://github.com/a-u-h-g))
+
+#### Authors: 1
+
+- Akash Ganapathi ([@a-u-h-g](https://github.com/a-u-h-g))
+
+---
+
+# v5.42.0 (Thu Apr 13 2023)
+
+#### 🚀 Enhancement
+
+- Bump @azure/arm-storage@^15.3.0 to get allowSharedKeyAccess property [#566](https://github.com/JupiterOne/graph-azure/pull/566) ([@ndowmon](https://github.com/ndowmon))
+
+#### Authors: 1
+
+- Nick Dowmon ([@ndowmon](https://github.com/ndowmon))
+
+---
+
+# v5.41.0 (Wed Apr 12 2023)
+
+#### 🚀 Enhancement
+
+- NO-TICKET - Introduce `allowSharedKeyAccess` on `azure_storage_account` [#565](https://github.com/JupiterOne/graph-azure/pull/565) ([@austinkelleher](https://github.com/austinkelleher))
+
+#### 🐛 Bug Fix
+
+- INT-7550 - Update SDK packages to fix duplication in docs [#564](https://github.com/JupiterOne/graph-azure/pull/564) ([@austinkelleher](https://github.com/austinkelleher))
+
+#### Authors: 1
+
+- Austin Kelleher ([@austinkelleher](https://github.com/austinkelleher))
+
+---
+
+# v5.40.9 (Wed Mar 22 2023)
+
+#### 🐛 Bug Fix
+
+- Added some new error parsing and other checks on entity creation [#562](https://github.com/JupiterOne/graph-azure/pull/562) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Activated the missing tests for advisor [#560](https://github.com/JupiterOne/graph-azure/pull/560) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Subscription Refactor [#558](https://github.com/JupiterOne/graph-azure/pull/558) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.40.8 (Mon Feb 27 2023)
 
 #### 🐛 Bug Fix

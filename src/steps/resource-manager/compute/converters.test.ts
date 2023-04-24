@@ -183,7 +183,7 @@ describe('createVirtualMachineEntity', () => {
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
       ),
       'tag.environment': 'j1dev',
-      hostname: null
+      hostname: null,
     });
   });
 
@@ -302,7 +302,7 @@ describe('createVirtualMachineEntity', () => {
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
       ),
       'tag.environment': 'j1dev',
-      hostname: null
+      hostname: null,
     });
 
     expect(
@@ -336,7 +336,7 @@ describe('createVirtualMachineEntity', () => {
         '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
       ),
       'tag.environment': 'j1dev',
-      hostname: null
+      hostname: null,
     });
   });
 });

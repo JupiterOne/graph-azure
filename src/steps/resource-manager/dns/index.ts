@@ -24,9 +24,9 @@ export async function fetchZones(
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
   const resourceClient = new ResourcesClient(instance.config, logger);
-  const { registrationState } = await resourceClient.getResourceProvider(
+  const { registrationState } = (await resourceClient.getResourceProvider(
     'Microsoft.Network',
-  );
+  ))!;
   if (registrationState !== 'Registered') {
     logger.info(
       {

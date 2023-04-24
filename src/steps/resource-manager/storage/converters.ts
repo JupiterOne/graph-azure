@@ -100,6 +100,7 @@ export function createStorageAccountEntity(
             ? encryptedServices.queue?.enabled
             : undefined,
         allowBlobPublicAccess: data.allowBlobPublicAccess,
+        allowSharedKeyAccess: data.allowSharedKeyAccess,
         'networkRuleSet.defaultAction': data.networkRuleSet?.defaultAction,
         'networkRuleSet.bypass': data.networkRuleSet?.bypass,
         'networkRuleSet.allowedIpAddresses': data.networkRuleSet?.ipRules

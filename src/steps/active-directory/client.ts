@@ -1,4 +1,7 @@
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
+import {
+  IntegrationProviderAPIError,
+  IntegrationWarnEventName,
+} from '@jupiterone/integration-sdk-core';
 import {
   DirectoryObject,
   DirectoryRole,
@@ -55,7 +58,7 @@ export class DirectoryGraphClient extends GraphClient {
       await this.enforceApiPermission(path, permissions.graph.POLICY_READ_ALL);
     } catch (e) {
       this.logger.publishEvent({
-        name: 'auth',
+        name: IntegrationWarnEventName.MissingPermission,
         description: `Unable to fetch data from ${path}. See https://github.com/JupiterOne/graph-azure/blob/master/docs/jupiterone.md#permissions for more information about optional permissions for this integration.`,
       });
       return;

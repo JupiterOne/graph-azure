@@ -7,6 +7,7 @@ import {
   VirtualMachine,
   VirtualMachineExtension,
   VirtualMachineImage,
+  VirtualMachineScaleSet,
   VirtualMachinesInstanceViewResponse,
 } from '@azure/arm-compute/esm/models';
 import {
@@ -16,7 +17,9 @@ import {
 
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
+  request,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
 
@@ -48,8 +51,14 @@ export class ComputeClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       ComputeManagementClient,
     );
-
-    return serviceClient.virtualMachines.instanceView(resourceGroup, name);
+    const response = await request(
+      async () =>
+        await serviceClient.virtualMachines.instanceView(resourceGroup, name),
+      this.logger,
+      'virtualMachines.instanceView',
+      FIVE_MINUTES,
+    );
+    return response;
   }
 
   public async iterateVirtualMachineExtensions(
@@ -217,6 +226,22 @@ export class ComputeClient extends Client {
           ),
       },
       resourceDescription: 'compute.gallery.image.versions',
+      callback,
+    });
+  }
+
+  public async iterateVirtualMachinesScaleSets(
+    callback: (vm: VirtualMachineScaleSet) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ComputeManagementClient,
+    );
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: serviceClient.virtualMachineScaleSets,
+      resourceDescription: 'compute.virtualMachineScaleSets',
       callback,
     });
   }

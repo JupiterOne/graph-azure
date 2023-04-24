@@ -2,7 +2,9 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
+  request,
 } from '../../../azure/resource-manager/client';
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 import { ManagementLockClient, ManagementLockModels } from '@azure/arm-locks';
@@ -11,8 +13,13 @@ export class ResourcesClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       ResourceManagementClient,
     );
-
-    return serviceClient.providers.get(resourceProviderNamespace);
+    const response = await request(
+      async () => await serviceClient.providers.get(resourceProviderNamespace),
+      this.logger,
+      'resourceProvider',
+      FIVE_MINUTES,
+    );
+    return response?._response?.parsedBody;
   }
 
   public async iterateResourceGroups(

@@ -1,8 +1,4 @@
-import {
-  fetchBatchAccounts,
-  fetchBatchCertificates,
-  fetchBatchPools,
-} from '.';
+import { fetchBatchAccounts, fetchBatchCertificates, fetchBatchPools } from '.';
 import {
   executeStepWithDependencies,
   MockIntegrationStepExecutionContext,

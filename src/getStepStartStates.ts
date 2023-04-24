@@ -2,6 +2,8 @@ import {
   IntegrationExecutionContext,
   StepStartStates,
   StepStartState,
+  IntegrationInfoEventName,
+  IntegrationWarnEventName,
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './types';
@@ -113,6 +115,7 @@ import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/con
 import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
 import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
+import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -268,14 +271,50 @@ export function getResourceManagerSteps(): GetApiSteps {
   };
 }
 
-export default function getStepStartStates(
+export default async function getStepStartStates(
   executionContext: IntegrationExecutionContext<IntegrationConfig>,
-): StepStartStates {
+): Promise<StepStartStates> {
   const config = executionContext.instance.config || {};
-
-  const activeDirectory = { disabled: !config.ingestActiveDirectory };
-  const resourceManager = { disabled: !hasSubscriptionId(config) };
-  const managementGroups = { disabled: !config.configureSubscriptionInstances };
+  //Disable all the steps for subscriptions named 'Access to Azure Active Directory'
+  //These subscriptions do NOT host Azure AD. These are legacy subscriptions that can no longer be managed by customer portal. We decided not to execute any step, but just show an event.
+  //If any step executes we get: 'The current subscription type is not permitted to perform operations on any provider namespace. Please use a different subscription.'
+  //More info:
+  //https://www.jasonfritts.me/2020/04/07/what-is-the-access-to-azure-active-directory-subscription-for/#:%7E:text=The%20%E2%80%9CAccess%20to%20Azure%20Active%20Directory%E2%80%9D%20subscriptions%20are%20a%20legacy,portal.azure.com
+  const logger = executionContext.logger;
+  let disableAllSteps = false;
+  if (hasSubscriptionId(config)) {
+    const subscriptionClient = new J1SubscriptionClient(config, logger);
+    try {
+      const subscription = await subscriptionClient.getSubscription(
+        config.subscriptionId!,
+      );
+      if (
+        subscription &&
+        subscription.displayName == 'Access to Azure Active Directory'
+      ) {
+        disableAllSteps = true;
+        logger.publishInfoEvent({
+          name: IntegrationInfoEventName.Results,
+          description:
+            'The subscription is is not permitted to perform operations on any provider namespace. These are legacy subscriptions that can no longer be managed by customer portal. No steps will be executed.',
+        });
+      }
+    } catch (e) {
+      logger.publishWarnEvent({
+        name: IntegrationWarnEventName.MissingPermission,
+        description: "Couldn't recover subscription displayname.",
+      });
+    }
+  }
+  const activeDirectory = {
+    disabled: !config.ingestActiveDirectory || disableAllSteps,
+  };
+  const resourceManager = {
+    disabled: !hasSubscriptionId(config) || disableAllSteps,
+  };
+  const managementGroups = {
+    disabled: !config.configureSubscriptionInstances || disableAllSteps,
+  };
 
   const {
     executeFirstSteps: adFirstSteps,

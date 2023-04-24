@@ -52,7 +52,7 @@ Graph API][1]. Azure Resource Manager is authenticated and accessed through
 
 To create the App Registration:
 
-1. Navigate to your Azure portal at https://portal.azure.com
+1. Navigate to your [Azure portal](https://portal.azure.com).
 
 2. Navigate to **Azure Active Directory**, then **App registrations**
 

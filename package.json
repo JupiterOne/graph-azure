@@ -69,7 +69,7 @@
     "@azure/arm-servicebus": "^4.0.0",
     "@azure/arm-sql": "^7.0.1",
     "@azure/arm-storage": "^15.3.0",
-    "@azure/arm-subscriptions": "^2.0.0",
+    "@azure/arm-subscriptions": "^5.1.0",
     "@azure/data-tables": "^12.1.2",
     "@azure/identity": "^1.0.2",
     "@azure/keyvault-keys": "^4.0.2",

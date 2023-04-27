@@ -6,11 +6,11 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { J1SubscriptionClient } from './client';
-import { Location, Subscription } from '@azure/arm-subscriptions/esm/models';
 import {
   config,
   configFromEnv,
 } from '../../../../test/integrationInstanceConfig';
+import { Subscription, Location } from '@azure/arm-subscriptions';
 
 let recording: Recording;
 

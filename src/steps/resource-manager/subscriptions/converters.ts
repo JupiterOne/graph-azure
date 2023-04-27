@@ -5,7 +5,7 @@ import {
 
 import { AzureWebLinker } from '../../../azure';
 import { entities } from './constants';
-import { Subscription, Location } from '@azure/arm-subscriptions/esm/models';
+import { Subscription, Location } from '@azure/arm-subscriptions';
 
 export function createSubscriptionEntity(
   webLinker: AzureWebLinker,

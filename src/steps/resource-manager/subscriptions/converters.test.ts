@@ -2,7 +2,7 @@ import { convertProperties } from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
 import { createSubscriptionEntity } from './converters';
-import { Subscription } from '@azure/arm-subscriptions/esm/models';
+import { Subscription } from '@azure/arm-subscriptions';
 
 const webLinker = createAzureWebLinker('something.onmicrosoft.com');
 

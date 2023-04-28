@@ -1,3 +1,20 @@
+# v5.44.0 (Fri Apr 28 2023)
+
+#### 🚀 Enhancement
+
+- Bump SDK Version [#573](https://github.com/JupiterOne/graph-azure/pull/573) ([@Nick-NCSU](https://github.com/Nick-NCSU))
+
+#### 🐛 Bug Fix
+
+- Added documentation [#561](https://github.com/JupiterOne/graph-azure/pull/561) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 2
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+- Nick Thompson ([@Nick-NCSU](https://github.com/Nick-NCSU))
+
+---
+
 # v5.43.3 (Mon Apr 24 2023)
 
 #### 🐛 Bug Fix

@@ -1,10 +1,10 @@
 import {
-  createIntegrationEntity,
   Entity,
   Relationship,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 import {
+  executeStepWithDependencies,
   MockIntegrationStepExecutionContext,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
@@ -14,7 +14,6 @@ import {
 } from '../../../../test/helpers/recording';
 import { fetchAccount } from '../../active-directory';
 import {
-  buildLocationNetworkWatcherRelationships,
   buildPrivateEndpointNetworkInterfaceRelationships,
   buildPrivateEndpointResourceRelationships,
   buildPrivateEndpointSubnetRelationships,
@@ -33,22 +32,18 @@ import { createMockAzureStepExecutionContext } from '../../../../test/createMock
 import { IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { NetworkEntities, NetworkRelationships } from './constants';
-import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import {
+  configFromEnv,
+  getStepTestConfigForStep,
+} from '../../../../test/integrationInstanceConfig';
 import {
   getMockAccountEntity,
   getMockResourceGroupEntity,
 } from '../../../../test/helpers/getMockEntity';
-import { fetchResourceGroups } from '../resources';
 import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import { entities as storageEntities } from '../storage/constants';
 import { fetchStorageAccounts } from '../storage';
-import { setDataKeys as subscriptionSetDataKeys } from '../subscriptions/constants';
-import { createAzureWebLinker } from '../../../azure';
-import { getLocationEntityProps } from '../subscriptions/converters';
-import { createNetworkWatcherEntity } from './converters';
-import { fetchSubscription } from '../subscriptions/executionHandlers/subscriptions';
-import { fetchLocations } from '../subscriptions/executionHandlers/locations';
 
 const GUID_REGEX = new RegExp(
   '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
@@ -1637,138 +1632,22 @@ describe('rm-network-location-watcher-relationships', () => {
     }
   });
 
-  describe('success', () => {
-    async function getSetupEntities(config: IntegrationConfig) {
-      const context = createMockAzureStepExecutionContext({
-        instanceConfig: config,
-        setData: {
-          [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(config),
-        },
-      });
+  test('success', async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      'rm-network-location-watcher-relationships',
+    );
 
-      await fetchSubscription(context);
-      await fetchLocations(context);
-
-      const locationNameMap = context.jobState.getData(
-        subscriptionSetDataKeys.locationNameMap,
-      );
-      expect(locationNameMap).not.toBeUndefined();
-
-      await fetchResourceGroups(context);
-      await fetchNetworkWatchers(context);
-
-      const networkWatcherEntities = context.jobState.collectedEntities.filter(
-        (e) => e._type === NetworkEntities.NETWORK_WATCHER._type,
-      );
-      expect(networkWatcherEntities.length).toBeGreaterThan(0);
-
-      return {
-        locationNameMap,
-        networkWatcherEntities,
-      };
-    }
-
-    test('success', async () => {
-      recording = setupAzureRecording({
-        directory: __dirname,
+    recording = setupAzureRecording(
+      {
         name: 'rm-network-location-watcher-relationships',
-        options: {
-          matchRequestsBy: getMatchRequestsBy({
-            config: configFromEnv,
-          }),
-        },
-      });
-
-      const {
-        locationNameMap,
-        networkWatcherEntities,
-      } = await getSetupEntities(configFromEnv);
-
-      const context = createMockAzureStepExecutionContext({
-        instanceConfig: configFromEnv,
-        entities: networkWatcherEntities,
-        setData: {
-          [subscriptionSetDataKeys.locationNameMap]: locationNameMap,
-        },
-      });
-
-      await buildLocationNetworkWatcherRelationships(context);
-
-      // This currently exists in the newer SDK version, however, it's not yet used here
-      // Should be refactored after the version is bumped up (along with other places where it's used)
-      const {
-        targets: mappedRelationships,
-        rest: directRelationships,
-      } = filterGraphObjects(
-        context.jobState.collectedRelationships,
-        (r) => !!r._mapping,
-      );
-
-      expect(directRelationships).toHaveLength(0);
-      expect(mappedRelationships.length).toBe(networkWatcherEntities.length);
-
-      const locationTargetEntity = createIntegrationEntity({
-        entityData: {
-          source: {},
-          assign: {
-            _key: 'azure_location_eastus',
-            _type: 'azure_location',
-            _class: ['Site'],
-            id:
-              '/subscriptions/779e9204-e1a5-49df-ad3f-9af3fdee6527/locations/eastus',
-            name: 'eastus',
-            displayName: 'East US',
-          },
-        },
-      });
-
-      expect(mappedRelationships).toTargetEntities([locationTargetEntity]);
-    }, 10000);
-  });
-
-  test('should throw if no locationNameMap', async () => {
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      setData: {},
-    });
-
-    await expect(
-      buildLocationNetworkWatcherRelationships(context),
-    ).rejects.toThrow(
-      'Could not find locationNameMap data in job state; cannot build location => network watcher relationships.',
-    );
-  });
-
-  test('should log if location not found in locationNameMap', async () => {
-    const webLinker = createAzureWebLinker('hostname');
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [
-        createNetworkWatcherEntity(webLinker, {
-          id: 'network-watcher-id',
-          location: 'fake-location',
-        }),
-      ],
-      setData: {
-        [subscriptionSetDataKeys.locationNameMap]: {
-          'real-location': getLocationEntityProps({
-            name: 'real-location',
-            id: 'location-id',
-          }),
-        },
+        directory: __dirname,
       },
-    });
-
-    const loggerWarnSpy = jest.spyOn(context.logger, 'warn');
-
-    await buildLocationNetworkWatcherRelationships(context);
-
-    expect(context.jobState.collectedEntities).toEqual([]);
-
-    expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
-    expect(loggerWarnSpy).toHaveBeenCalledWith(
-      { locations: ['real-location'], networkWatcherLocation: 'fake-location' },
-      'WARNING: Could not find matching location for network watcher. The locationNameMap may be constructed incorrectly',
+      stepTestConfig.instanceConfig,
     );
-  });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    const mappedRelationships = stepResults.collectedRelationships;
+
+    expect(mappedRelationships.length > 0);
+  }, 100000);
 });

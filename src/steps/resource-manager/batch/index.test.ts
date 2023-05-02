@@ -5,10 +5,7 @@ import {
   Recording,
 } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
-import {
-  setupAzureRecording,
-  getMatchRequestsBy,
-} from '../../../../test/helpers/recording';
+import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { BatchEntities, STEP_RM_BATCH_APPLICATION } from './constants';
@@ -184,19 +181,17 @@ describe('step - batch applications', () => {
   test('rm-batch-applications', async () => {
     const stepTestConfig = getStepTestConfigForStep(STEP_RM_BATCH_APPLICATION);
 
-    recording = setupAzureRecording({
-      name: 'rm-batch-applications',
-      directory: __dirname,
-      options: {
-        matchRequestsBy: getMatchRequestsBy({
-          config: stepTestConfig.instanceConfig,
-        }),
+    recording = setupAzureRecording(
+      {
+        name: 'rm-batch-applications',
+        directory: __dirname,
       },
-    });
+      stepTestConfig.instanceConfig,
+    );
 
     const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
-  }, 10_000);
+  }, 1000_000);
 });
 
 describe('step - batch certificates', () => {

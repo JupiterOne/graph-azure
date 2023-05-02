@@ -1099,5 +1099,5 @@ describe('rm-compute-virtual-machine-managed-identity-relationships', () => {
 
     const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
-  }, 1000_000);
+  }, 10_000);
 });

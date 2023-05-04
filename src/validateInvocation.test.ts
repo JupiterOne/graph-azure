@@ -54,7 +54,6 @@ describe('validateInvocation recordings', () => {
   test('validates with subscriptionId', async () => {
     const config = {
       ...configFromEnv,
-      subscriptionId: 'd3803fd6-2ba4-4286-80aa-f3d613ad59a7',
     };
     recording = setupAzureRecording({
       directory: __dirname,
@@ -141,7 +140,7 @@ describe('validateInvocation recordings', () => {
     const executionContext = createMockExecutionContext({
       instanceConfig: {
         ...configFromEnv,
-        directoryId: 'some-fake-directory-id',
+        directoryId: '00000000-0000-0000-0000-000000000001',
       },
     });
 
@@ -153,7 +152,7 @@ describe('validateInvocation recordings', () => {
     }
     expect(err).not.toBeUndefined();
     expect(err.message).toMatch(
-      "AADSTS90002: Tenant 'some-fake-directory-id' not found. This may happen if there are no active subscriptions for the tenant. Check to make sure you have the correct tenant ID. Check with your subscription administrator.",
+      "AADSTS90002: Tenant '00000000-0000-0000-0000-000000000001' not found. Check to make sure you have the correct tenant ID and are signing into the correct cloud. Check with your subscription administrator, this may happen if there are no active subscriptions for the tenant.",
     );
     expect(shouldReportErrorToOperator(err)).toBe(false);
   });
@@ -225,7 +224,6 @@ describe('validateInvocation recordings', () => {
   test('throws when client is not granted Reader access to subscription ID', async () => {
     const configWithNoAccessToSubscription = {
       ...configFromEnv,
-      subscriptionId: 'df44baaf-f737-48d5-ab23-020a20fa94da',
     };
 
     recording = setupAzureRecording({
@@ -251,7 +249,7 @@ describe('validateInvocation recordings', () => {
     }
     expect(err).not.toBeUndefined();
     expect(err.message).toMatch(
-      `The client 'ae2e9f26-7e05-41df-89ab-ba958f2bf8cd' with object id 'ae2e9f26-7e05-41df-89ab-ba958f2bf8cd' does not have authorization to perform action 'Microsoft.Resources/subscriptions/read' over scope '/subscriptions/df44baaf-f737-48d5-ab23-020a20fa94da' or the scope is invalid. If access was recently granted, please refresh your credentials.`,
+      `Provider authorization failed at subscriptions: AuthorizationFailed The client 'f42ef584-c092-4e08-866a-4a3826bb5f9b' with object id 'f42ef584-c092-4e08-866a-4a3826bb5f9b' does not have authorization to perform action 'Microsoft.Resources/subscriptions/read' over scope '/subscriptions/193f89dc-6225-4a80-bacb-96b32fbf6dd0' or the scope is invalid. If access was recently granted, please refresh your credentials.. Provider API failed at subscriptions: AuthorizationFailed The client 'f42ef584-c092-4e08-866a-4a3826bb5f9b' with object id 'f42ef584-c092-4e08-866a-4a3826bb5f9b' does not have authorization to perform action 'Microsoft.Resources/subscriptions/read' over scope '/subscriptions/193f89dc-6225-4a80-bacb-96b32fbf6dd0' or the scope is invalid. If access was recently granted, please refresh your credentials.`,
     );
     expect(shouldReportErrorToOperator(err)).toBe(false);
   });

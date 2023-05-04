@@ -376,13 +376,13 @@ describe('rm-authorization-role-assignment-scope-relationships', () => {
    *      at the Tenant level.
    */
   test('success', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'rm-authorization-role-assignment-scope-relationships',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+    recording = setupAzureRecording(
+      {
+        directory: __dirname,
+        name: 'rm-authorization-role-assignment-scope-relationships',
       },
-    });
+      configFromEnv,
+    );
 
     const {
       roleAssignmentEntities,

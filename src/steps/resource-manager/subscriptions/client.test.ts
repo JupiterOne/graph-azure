@@ -11,6 +11,7 @@ import {
   config,
   configFromEnv,
 } from '../../../../test/integrationInstanceConfig';
+import { getConfigForTest } from '../security/__tests__/utils';
 
 let recording: Recording;
 
@@ -79,22 +80,21 @@ describe('iterateLocations', () => {
 
 describe('fetchSubscription', () => {
   test('fetchSubscription', async () => {
+    const config = getConfigForTest(configFromEnv);
     recording = setupAzureRecording({
       directory: __dirname,
       name: 'fetchSubscription',
       options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        matchRequestsBy: getMatchRequestsBy({ config: config }),
       },
     });
 
     const client = new J1SubscriptionClient(
-      configFromEnv,
+      config,
       createMockIntegrationLogger(),
     );
 
-    const subscription = await client.fetchSubscription(
-      configFromEnv.subscriptionId!,
-    );
+    const subscription = await client.fetchSubscription(config.subscriptionId!);
 
     expect(subscription).toMatchObject({
       authorizationSource: expect.any(String),

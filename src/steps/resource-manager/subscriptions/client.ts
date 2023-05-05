@@ -65,6 +65,7 @@ export class J1SubscriptionClient extends Client {
         passSubscriptionId: false,
       },
     );
+
     let allSubscriptions: Subscription[] = [];
     let nextPageLink: string | undefined;
     do {
@@ -104,7 +105,14 @@ export class J1SubscriptionClient extends Client {
       },
     );
     const subscription = await request(
-      async () => await serviceClient.subscriptions.get(subscriptionId),
+      // Need API version to 2020-01-01 in order to return subscription tags
+      // serviceClient.subscriptions.get() does not work because the api version is too old
+      // sendOperationRequest was the only way I found to change the API version with this sdk
+      async () =>
+        await serviceClient.sendOperationRequest(
+          { subscriptionId },
+          getSubscriptionOperationSpec,
+        ),
       this.logger,
       'subscriptions',
       FIVE_MINUTES,
@@ -173,6 +181,32 @@ const listNextOperationSpec: msRest.OperationSpec = {
   responses: {
     200: {
       bodyMapper: SubscriptionMappers.LocationListResult,
+    },
+    default: {
+      bodyMapper: SubscriptionMappers.CloudError,
+    },
+  },
+  serializer: new msRest.Serializer(SubscriptionMappers),
+};
+export const subscriptionIdParameter: msRest.OperationURLParameter = {
+  parameterPath: 'subscriptionId',
+  mapper: {
+    required: true,
+    serializedName: 'subscriptionId',
+    type: {
+      name: 'String',
+    },
+  },
+};
+const getSubscriptionOperationSpec: msRest.OperationSpec = {
+  httpMethod: 'GET',
+  path: 'subscriptions/{subscriptionId}',
+  urlParameters: [subscriptionIdParameter],
+  queryParameters: [apiVersion2020],
+  headerParameters: [acceptLanguage],
+  responses: {
+    200: {
+      bodyMapper: SubscriptionMappers.Subscription,
     },
     default: {
       bodyMapper: SubscriptionMappers.CloudError,

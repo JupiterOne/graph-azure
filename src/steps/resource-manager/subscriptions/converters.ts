@@ -11,6 +11,13 @@ export function createSubscriptionEntity(
   webLinker: AzureWebLinker,
   data: Subscription,
 ): Entity {
+  const tags = {};
+  if ((data as any).tags != undefined) {
+    const rawTags = (data as any).tags;
+    Object.keys(rawTags).forEach((e) => {
+      tags[`tag.${e}`] = rawTags[e].toString();
+    });
+  }
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -24,6 +31,7 @@ export function createSubscriptionEntity(
         authorizationSource: data.authorizationSource,
         name: data.displayName,
         displayName: data.displayName,
+        ...tags,
         webLink: webLinker.portalResourceUrl(data.id),
       },
     },

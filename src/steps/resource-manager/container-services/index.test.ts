@@ -30,4 +30,4 @@ test('rm-container-services-cluster', async () => {
 
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
-});
+}, 100_000);

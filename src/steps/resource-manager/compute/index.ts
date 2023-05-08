@@ -18,18 +18,7 @@ import {
   STEP_AD_ACCOUNT,
 } from '../../active-directory/constants';
 import { ComputeClient } from './client';
-import {
-  DISK_ENTITY_TYPE,
-  STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
-  STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
-  STEP_RM_COMPUTE_VIRTUAL_MACHINES,
-  VIRTUAL_MACHINE_ENTITY_TYPE,
-  VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-  steps,
-  entities,
-  relationships,
-  VIRTUAL_MACHINE_SCALE_SET_ENTITY_TYPE,
-} from './constants';
+import { steps, entities, relationships } from './constants';
 import {
   createDiskEntity,
   createGalleryEntity,
@@ -51,6 +40,7 @@ import {
   GalleryImage,
   GalleryImageVersion,
   VirtualMachine,
+  VirtualMachineScaleSet,
   VirtualMachinesInstanceViewResponse,
 } from '@azure/arm-compute/esm/models';
 import {
@@ -278,7 +268,7 @@ export async function buildVirtualMachineDiskRelationships(
   );
 
   await jobState.iterateEntities(
-    { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
+    { _type: entities.VIRTUAL_MACHINE._type },
     async (vmEntity) => {
       const vm = getRawData<VirtualMachine>(vmEntity);
 
@@ -490,7 +480,7 @@ export async function fetchVirtualMachineExtensions(
   const client = new ComputeClient(instance.config, logger);
 
   await jobState.iterateEntities(
-    { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
+    { _type: entities.VIRTUAL_MACHINE._type },
     async (vmEntity) => {
       await client.iterateVirtualMachineExtensions(
         {
@@ -551,7 +541,7 @@ export async function buildVirtualMachineImageRelationships(
   const relationships: Relationship[] = [];
 
   await jobState.iterateEntities(
-    { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
+    { _type: entities.VIRTUAL_MACHINE._type },
     async (vmEntity) => {
       const vm = getRawData<VirtualMachine>(vmEntity);
       const imageReference = vm?.storageProfile?.imageReference;
@@ -609,7 +599,7 @@ export async function buildVirtualMachineManagedIdentityRelationships(
   const { jobState, logger } = executionContext;
 
   await jobState.iterateEntities(
-    { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
+    { _type: entities.VIRTUAL_MACHINE._type },
     async (vmEntity) => {
       const vm = getRawData<VirtualMachine>(vmEntity);
 
@@ -709,6 +699,98 @@ export async function fetchVirtualMachineScaleSets(
     );
   });
 }
+export async function buildVMScaleSetsRelationship(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  const relationships: Relationship[] = [];
+
+  await jobState.iterateEntities(
+    { _type: entities.VIRTUAL_MACHINE._type },
+    async (vmEntity) => {
+      const vm = getRawData<VirtualMachine>(vmEntity);
+      const scaleSetId = vm?.virtualMachineScaleSet?.id;
+      if (!scaleSetId) {
+        return;
+      }
+      const scaleSetEntity = await jobState.findEntity(scaleSetId);
+      if (scaleSetEntity) {
+        relationships.push(
+          createDirectRelationship({
+            _class: RelationshipClass.USES,
+            from: vmEntity,
+            to: scaleSetEntity,
+          }),
+        );
+      }
+    },
+  );
+  await jobState.addRelationships(relationships);
+}
+export async function buildVMScaleSetsImageRelationship(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  const relationships: Relationship[] = [];
+
+  await jobState.iterateEntities(
+    { _type: entities.VIRTUAL_MACHINE_SCALE_SET._type },
+    async (vmssEntity) => {
+      const vmss = getRawData<VirtualMachineScaleSet>(vmssEntity);
+      const imageRefId =
+        vmss?.virtualMachineProfile?.storageProfile?.imageReference?.id;
+      if (!imageRefId) {
+        return;
+      }
+      const imageEntity = await jobState.findEntity(imageRefId);
+      if (imageEntity) {
+        relationships.push(
+          createDirectRelationship({
+            _class: RelationshipClass.USES,
+            from: vmssEntity,
+            to: imageEntity,
+          }),
+        );
+      }
+    },
+  );
+  await jobState.addRelationships(relationships);
+}
+export async function buildVMScaleSetsImageVersionRelationship(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  const relationships: Relationship[] = [];
+
+  await jobState.iterateEntities(
+    { _type: entities.VIRTUAL_MACHINE_SCALE_SET._type },
+    async (vmssEntity) => {
+      const vmss = getRawData<VirtualMachineScaleSet>(vmssEntity);
+      const imageReference =
+        vmss?.virtualMachineProfile?.storageProfile?.imageReference;
+      const imageRefId = imageReference?.id;
+      if (!imageRefId) {
+        return;
+      }
+
+      const galleryImageVersionEntity = await jobState.findEntity(imageRefId);
+      if (
+        galleryImageVersionEntity &&
+        galleryImageVersionEntity?._type == entities.SHARED_IMAGE_VERSION._type
+      ) {
+        relationships.push(
+          createDirectRelationship({
+            _class: RelationshipClass.USES,
+            from: vmssEntity,
+            to: galleryImageVersionEntity,
+          }),
+        );
+      }
+    },
+  );
+  await jobState.addRelationships(relationships);
+}
+
 export const computeSteps: AzureIntegrationStep[] = [
   {
     id: steps.GALLERIES,
@@ -744,16 +826,16 @@ export const computeSteps: AzureIntegrationStep[] = [
     relationships: [
       relationships.VIRTUAL_MACHINE_GENERATED_SHARED_IMAGE_VERSION,
     ],
-    dependsOn: [steps.SHARED_IMAGE_VERSIONS, STEP_RM_COMPUTE_VIRTUAL_MACHINES],
+    dependsOn: [steps.SHARED_IMAGE_VERSIONS, steps.COMPUTE_VIRTUAL_MACHINES],
     executionHandler: buildGalleryImageVersionSourceRelationships,
   },
   {
-    id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
+    id: steps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
     name: 'Virtual Machine Disk Images',
     entities: [entities.VIRTUAL_MACHINE_IMAGE],
     relationships: [
       createResourceGroupResourceRelationshipMetadata(
-        VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
+        entities.VIRTUAL_MACHINE_IMAGE._type,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
@@ -761,23 +843,23 @@ export const computeSteps: AzureIntegrationStep[] = [
     rolePermissions: ['Microsoft.Compute/images/read'],
   },
   {
-    id: STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
+    id: steps.COMPUTE_VIRTUAL_MACHINE_DISKS,
     name: 'Virtual Machine Disks',
     entities: [entities.DISK],
     relationships: [
-      createResourceGroupResourceRelationshipMetadata(DISK_ENTITY_TYPE),
+      createResourceGroupResourceRelationshipMetadata(entities.DISK._type),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineDisks,
     rolePermissions: ['Microsoft.Compute/disks/read'],
   },
   {
-    id: STEP_RM_COMPUTE_VIRTUAL_MACHINES,
+    id: steps.COMPUTE_VIRTUAL_MACHINES,
     name: 'Virtual Machines',
     entities: [entities.VIRTUAL_MACHINE],
     relationships: [
       createResourceGroupResourceRelationshipMetadata(
-        VIRTUAL_MACHINE_ENTITY_TYPE,
+        entities.VIRTUAL_MACHINE._type,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
@@ -793,8 +875,8 @@ export const computeSteps: AzureIntegrationStep[] = [
       relationships.VIRTUAL_MACHINE_USES_MANAGED_DISK,
     ],
     dependsOn: [
-      STEP_RM_COMPUTE_VIRTUAL_MACHINES,
-      STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
+      steps.COMPUTE_VIRTUAL_MACHINES,
+      steps.COMPUTE_VIRTUAL_MACHINE_DISKS,
       storageSteps.STORAGE_ACCOUNTS,
     ],
     executionHandler: buildVirtualMachineDiskRelationships,
@@ -804,7 +886,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     name: 'Virtual Machine Extensions',
     entities: [entities.VIRTUAL_MACHINE_EXTENSION],
     relationships: [],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_COMPUTE_VIRTUAL_MACHINES],
+    dependsOn: [STEP_AD_ACCOUNT, steps.COMPUTE_VIRTUAL_MACHINES],
     executionHandler: fetchVirtualMachineExtensions,
     rolePermissions: ['Microsoft.Compute/virtualMachines/extensions/read'],
   },
@@ -818,8 +900,8 @@ export const computeSteps: AzureIntegrationStep[] = [
       relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE_VERSION,
     ],
     dependsOn: [
-      STEP_RM_COMPUTE_VIRTUAL_MACHINES,
-      STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
+      steps.COMPUTE_VIRTUAL_MACHINES,
+      steps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
       steps.SHARED_IMAGES,
       steps.SHARED_IMAGE_VERSIONS,
     ],
@@ -830,7 +912,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     name: 'Virtual Machine Managed Identity Relationships',
     entities: [],
     relationships: [relationships.VIRTUAL_MACHINE_USES_MANAGED_IDENTITY],
-    dependsOn: [STEP_RM_COMPUTE_VIRTUAL_MACHINES],
+    dependsOn: [steps.COMPUTE_VIRTUAL_MACHINES],
     executionHandler: buildVirtualMachineManagedIdentityRelationships,
   },
   {
@@ -839,11 +921,46 @@ export const computeSteps: AzureIntegrationStep[] = [
     entities: [entities.VIRTUAL_MACHINE_SCALE_SET],
     relationships: [
       createResourceGroupResourceRelationshipMetadata(
-        VIRTUAL_MACHINE_SCALE_SET_ENTITY_TYPE,
+        entities.VIRTUAL_MACHINE_SCALE_SET._type,
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineScaleSets,
     rolePermissions: ['Microsoft.Compute/virtualMachineScaleSets/read'],
+  },
+  {
+    id: steps.VIRTUAL_MACHINE_SCALE_SETS_RELATIONSHIPS,
+    name: 'Virtual Machine Scale Sets Reationships',
+    entities: [],
+    relationships: [relationships.VIRTUAL_MACHINE_USES_SCALE_SETS],
+    dependsOn: [
+      steps.VIRTUAL_MACHINE_SCALE_SETS,
+      steps.COMPUTE_VIRTUAL_MACHINES,
+    ],
+    executionHandler: buildVMScaleSetsRelationship,
+  },
+  {
+    id: steps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS,
+    name: 'Virtual Scale Sets Image Reationships',
+    entities: [],
+    relationships: [relationships.VM_SCALE_SETS_USES_SHARED_IMAGE],
+    dependsOn: [
+      steps.VIRTUAL_MACHINE_SCALE_SETS,
+      steps.SHARED_IMAGES,
+      steps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
+    ],
+    executionHandler: buildVMScaleSetsImageRelationship,
+  },
+  {
+    id: steps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS,
+    name: 'Virtual Scale Sets Image Version Reationships',
+    entities: [],
+    relationships: [relationships.VM_SCALE_SETS_USES_SHARED_IMAGE_VERSION],
+    dependsOn: [
+      steps.VIRTUAL_MACHINE_SCALE_SETS,
+      steps.SHARED_IMAGE_VERSIONS,
+      steps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
+    ],
+    executionHandler: buildVMScaleSetsImageVersionRelationship,
   },
 ];

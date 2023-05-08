@@ -16,12 +16,7 @@ import {
   STEP_AD_SERVICE_PRINCIPALS,
   STEP_AD_USER_REGISTRATION_DETAILS,
 } from './steps/active-directory/constants';
-import {
-  STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
-  STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
-  STEP_RM_COMPUTE_VIRTUAL_MACHINES,
-  steps as computeSteps,
-} from './steps/resource-manager/compute/constants';
+import { steps as computeSteps } from './steps/resource-manager/compute/constants';
 import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb/constants';
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
@@ -164,9 +159,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS]: {
         disabled: true,
       },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
       [computeSteps.GALLERIES]: { disabled: true },
       [computeSteps.SHARED_IMAGES]: { disabled: true },
       [computeSteps.SHARED_IMAGE_VERSIONS]: { disabled: true },
@@ -180,6 +175,15 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [computeSteps.VIRTUAL_MACHINE_SCALE_SETS]: {
+        disabled: true,
+      },
+      [computeSteps.VIRTUAL_MACHINE_SCALE_SETS_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [computeSteps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [computeSteps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS]: {
         disabled: true,
       },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
@@ -315,9 +319,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS]: {
         disabled: true,
       },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
       [computeSteps.GALLERIES]: { disabled: true },
       [computeSteps.SHARED_IMAGES]: { disabled: true },
       [computeSteps.SHARED_IMAGE_VERSIONS]: { disabled: true },
@@ -331,6 +335,15 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [computeSteps.VIRTUAL_MACHINE_SCALE_SETS]: {
+        disabled: true,
+      },
+      [computeSteps.VIRTUAL_MACHINE_SCALE_SETS_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [computeSteps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [computeSteps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS]: {
         disabled: true,
       },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
@@ -466,9 +479,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS]: {
         disabled: false,
       },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: false },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: false },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: false },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: false },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: false },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINES]: { disabled: false },
       [computeSteps.GALLERIES]: { disabled: false },
       [computeSteps.SHARED_IMAGES]: { disabled: false },
       [computeSteps.SHARED_IMAGE_VERSIONS]: { disabled: false },
@@ -482,6 +495,15 @@ describe('getStepStartStates', () => {
         disabled: false,
       },
       [computeSteps.VIRTUAL_MACHINE_SCALE_SETS]: {
+        disabled: false,
+      },
+      [computeSteps.VIRTUAL_MACHINE_SCALE_SETS_RELATIONSHIPS]: {
+        disabled: false,
+      },
+      [computeSteps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS]: {
+        disabled: false,
+      },
+      [computeSteps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS]: {
         disabled: false,
       },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: false },
@@ -621,9 +643,9 @@ describe('getStepStartStates', () => {
       [STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS]: {
         disabled: true,
       },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
-      [STEP_RM_COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINE_IMAGES]: { disabled: true },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINE_DISKS]: { disabled: true },
+      [computeSteps.COMPUTE_VIRTUAL_MACHINES]: { disabled: true },
       [computeSteps.GALLERIES]: { disabled: true },
       [computeSteps.SHARED_IMAGES]: { disabled: true },
       [computeSteps.SHARED_IMAGE_VERSIONS]: { disabled: true },
@@ -637,6 +659,15 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [computeSteps.VIRTUAL_MACHINE_SCALE_SETS]: {
+        disabled: true,
+      },
+      [computeSteps.VIRTUAL_MACHINE_SCALE_SETS_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [computeSteps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS]: {
+        disabled: true,
+      },
+      [computeSteps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS]: {
         disabled: true,
       },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },

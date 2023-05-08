@@ -36,14 +36,7 @@ import {
   SERVICE_PRINCIPAL_ENTITY_TYPE,
 } from '../../active-directory/constants';
 import { createStorageAccountEntity } from '../storage/converters';
-import {
-  entities,
-  relationships,
-  VIRTUAL_MACHINE_ENTITY_CLASS,
-  VIRTUAL_MACHINE_ENTITY_TYPE,
-  VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-  steps,
-} from './constants';
+import { entities, relationships, steps } from './constants';
 import { createDiskEntity, createVirtualMachineEntity } from './converters';
 import { executeStepWithDependencies } from '@jupiterone/integration-sdk-testing';
 
@@ -260,7 +253,7 @@ describe('rm-compute-virtual-machines', () => {
 
     expect(virtualMachineEntities.length).toBeGreaterThan(0);
     expect(virtualMachineEntities).toMatchGraphObjectSchema({
-      _class: VIRTUAL_MACHINE_ENTITY_CLASS,
+      _class: entities.VIRTUAL_MACHINE._class,
     });
 
     expect(context.jobState.collectedRelationships.length).toBe(0);
@@ -678,7 +671,7 @@ describe('rm-compute-virtual-machine-extensions', () => {
     await fetchVirtualMachines(context);
 
     const vmEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
+      (e) => e._type === entities.VIRTUAL_MACHINE._type,
     );
 
     return { accountEntity, vmEntities };
@@ -751,11 +744,11 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
     await fetchGalleryImageVersions(context);
 
     const vmEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
+      (e) => e._type === entities.VIRTUAL_MACHINE._type,
     );
 
     const vmImageEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
+      (e) => e._type === entities.VIRTUAL_MACHINE_IMAGE._type,
     );
 
     const sharedImageEntities = context.jobState.collectedEntities.filter(
@@ -905,7 +898,7 @@ describe('rm-compute-shared-image-version-source-relationships', () => {
 
     await fetchVirtualMachines(context);
     const virtualMachineEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
+      (e) => e._type === entities.VIRTUAL_MACHINE._type,
     );
     expect(virtualMachineEntities.length).toBeGreaterThan(0);
 
@@ -1010,7 +1003,7 @@ describe('rm-compute-virtual-machine-managed-identity-relationships', () => {
     await fetchVirtualMachines(context);
 
     const vmEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
+      (e) => e._type === entities.VIRTUAL_MACHINE._type,
     );
     expect(vmEntities.length).toBeGreaterThan(0);
     const vms = vmEntities.map(
@@ -1082,6 +1075,8 @@ describe('rm-compute-virtual-machine-managed-identity-relationships', () => {
       servicePrincipalEntities,
     );
   });
+});
+describe('rm-compute-virtual-machines-scale-sets', () => {
   test('rm-compute-virtual-machines-scale-sets', async () => {
     const stepTestConfig = getStepTestConfigForStep(
       steps.VIRTUAL_MACHINE_SCALE_SETS,
@@ -1089,6 +1084,60 @@ describe('rm-compute-virtual-machine-managed-identity-relationships', () => {
 
     recording = setupAzureRecording({
       name: steps.VIRTUAL_MACHINE_SCALE_SETS,
+      directory: __dirname,
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
+    });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  }, 10_000);
+
+  test('rm-virtual-machines-scale-sets-relationships', async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      steps.VIRTUAL_MACHINE_SCALE_SETS_RELATIONSHIPS,
+    );
+
+    recording = setupAzureRecording({
+      name: steps.VIRTUAL_MACHINE_SCALE_SETS_RELATIONSHIPS,
+      directory: __dirname,
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
+    });
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  }, 10_000);
+  test('rm-virtual-machines-scale-sets-image-relationships', async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      steps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS,
+    );
+
+    recording = setupAzureRecording({
+      name: steps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS,
+      directory: __dirname,
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
+    });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  }, 10_000);
+  test('rm-virtual-machines-scale-sets-image-version-relationships', async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      steps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS,
+    );
+
+    recording = setupAzureRecording({
+      name: steps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS,
       directory: __dirname,
       options: {
         matchRequestsBy: getMatchRequestsBy({

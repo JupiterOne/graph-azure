@@ -23,15 +23,7 @@ import {
 
 import { AzureWebLinker } from '../../../azure';
 import { resourceGroupName } from '../../../azure/utils';
-import {
-  DISK_ENTITY_CLASS,
-  DISK_ENTITY_TYPE,
-  entities,
-  VIRTUAL_MACHINE_ENTITY_CLASS,
-  VIRTUAL_MACHINE_ENTITY_TYPE,
-  VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
-  VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-} from './constants';
+import { entities } from './constants';
 
 function mapVirtualMachineStatus(status?: InstanceViewStatus) {
   if (status?.displayStatus === 'VM running') {
@@ -86,8 +78,8 @@ export function createVirtualMachineEntity(
      * See the SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS step for more details.
      */
     _key: data.id!.toLowerCase(),
-    _type: VIRTUAL_MACHINE_ENTITY_TYPE,
-    _class: VIRTUAL_MACHINE_ENTITY_CLASS,
+    _type: entities.VIRTUAL_MACHINE._type,
+    _class: entities.VIRTUAL_MACHINE._class,
     _rawData: [{ name: 'default', rawData: data }],
     displayName: data.name,
     vmId: data.vmId,
@@ -129,8 +121,8 @@ export function createDiskEntity(
   const entity = {
     ...convertProperties(data),
     _key: data.id as string,
-    _type: DISK_ENTITY_TYPE,
-    _class: DISK_ENTITY_CLASS,
+    _type: entities.DISK._type,
+    _class: entities.DISK._class,
     _rawData: [{ name: 'default', rawData: data }],
     displayName: data.name,
     region: data.location,
@@ -155,8 +147,8 @@ export function createImageEntity(
   const entity = {
     ...convertProperties(data),
     _key: data.id as string,
-    _type: VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-    _class: VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
+    _type: entities.VIRTUAL_MACHINE_IMAGE._type,
+    _class: entities.VIRTUAL_MACHINE_IMAGE._class,
     _rawData: [{ name: 'default', rawData: data }],
     displayName: data.name,
     region: data.location,
@@ -287,7 +279,7 @@ export function createVMScaleSetsEntity(
       assign: {
         _key: data.id!,
         _type: entities.VIRTUAL_MACHINE_SCALE_SET._type,
-        _class: ['Deployment', 'Group'],
+        _class: entities.VIRTUAL_MACHINE_SCALE_SET._class,
         id: data.id,
         location: data.location,
         name: data.name,

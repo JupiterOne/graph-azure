@@ -549,11 +549,14 @@ The following relationships are created:
 | `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing`      |
 | `azure_subscription`               | **PERFORMED**         | `azure_security_assessment`                       |
 | `azure_vm`                         | **GENERATED**         | `azure_shared_image_version`                      |
+| `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
+| `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
 | `azure_vm`                         | **USES**              | `azure_image`                                     |
 | `azure_vm`                         | **USES**              | `azure_managed_disk`                              |
 | `azure_vm`                         | **USES**              | `azure_service_principal`                         |
 | `azure_vm`                         | **USES**              | `azure_nic`                                       |
 | `azure_vm`                         | **USES**              | `azure_public_ip`                                 |
+| `azure_vm`                         | **USES**              | `azure_vm_scale_set`                              |
 | `azure_vm`                         | **USES**              | `azure_shared_image`                              |
 | `azure_vm`                         | **USES**              | `azure_shared_image_version`                      |
 | `azure_vm`                         | **USES**              | `azure_storage_account`                           |

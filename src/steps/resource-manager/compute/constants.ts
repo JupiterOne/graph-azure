@@ -8,12 +8,6 @@ import { entities as storageEntities } from '../storage/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 // Step IDs
-export const STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES =
-  'rm-compute-virtual-machine-images';
-export const STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS =
-  'rm-compute-virutal-machine-disks';
-export const STEP_RM_COMPUTE_VIRTUAL_MACHINES = 'rm-compute-virtual-machines';
-
 export const steps = {
   GALLERIES: 'rm-compute-galleries',
   SHARED_IMAGES: 'rm-compute-shared-images',
@@ -28,20 +22,18 @@ export const steps = {
   VIRTUAL_MACHINE_MANAGED_IDENTITY_RELATIONSHIPS:
     'rm-compute-virtual-machine-managed-identity-relationships',
   VIRTUAL_MACHINE_SCALE_SETS: 'rm-compute-virtual-machines-scale-sets',
+  COMPUTE_VIRTUAL_MACHINE_IMAGES: 'rm-compute-virtual-machine-images',
+  COMPUTE_VIRTUAL_MACHINE_DISKS: 'rm-compute-virutal-machine-disks',
+  COMPUTE_VIRTUAL_MACHINES: 'rm-compute-virtual-machines',
+  VIRTUAL_MACHINE_SCALE_SETS_RELATIONSHIPS:
+    'rm-virtual-machines-scale-sets-relationships',
+  VM_SCALE_SETS_IMAGE_RELATIONSHIPS:
+    'rm-virtual-machines-scale-sets-image-relationships',
+  VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS:
+    'rm-virtual-machines-scale-sets-image-version-relationships',
 };
 
 // Graph object
-export const VIRTUAL_MACHINE_ENTITY_TYPE = 'azure_vm';
-export const VIRTUAL_MACHINE_ENTITY_CLASS = ['Host'];
-
-export const VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE = 'azure_image';
-export const VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS = ['Image'];
-
-export const DISK_ENTITY_TYPE = 'azure_managed_disk';
-export const DISK_ENTITY_CLASS = ['DataStore', 'Disk'];
-
-export const VIRTUAL_MACHINE_SCALE_SET_ENTITY_TYPE = 'azure_vm_scale_set';
-export const VIRTUAL_MACHINE_SCALE_SET_ENTITY_CLASS = ['Deployment', 'Group'];
 
 export const entities = {
   GALLERY: {
@@ -66,31 +58,31 @@ export const entities = {
   },
   VIRTUAL_MACHINE_IMAGE: {
     resourceName: '[RM] Image',
-    _type: VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
-    _class: VIRTUAL_MACHINE_IMAGE_ENTITY_CLASS,
+    _type: 'azure_image',
+    _class: ['Image'],
   },
   DISK: {
     resourceName: '[RM] Azure Managed Disk',
-    _type: DISK_ENTITY_TYPE,
-    _class: DISK_ENTITY_CLASS,
+    _type: 'azure_managed_disk',
+    _class: ['DataStore', 'Disk'],
   },
   VIRTUAL_MACHINE: {
     resourceName: '[RM] Virtual Machine',
-    _type: VIRTUAL_MACHINE_ENTITY_TYPE,
-    _class: VIRTUAL_MACHINE_ENTITY_CLASS,
+    _type: 'azure_vm',
+    _class: ['Host'],
   },
   VIRTUAL_MACHINE_SCALE_SET: {
     resourceName: '[RM] Virtual Machine Scale Set',
-    _type: VIRTUAL_MACHINE_SCALE_SET_ENTITY_TYPE,
-    _class: VIRTUAL_MACHINE_SCALE_SET_ENTITY_CLASS,
+    _type: 'azure_vm_scale_set',
+    _class: ['Deployment', 'Group'],
   },
 };
 
 export const VIRTUAL_MACHINE_DISK_RELATIONSHIP_CLASS = RelationshipClass.USES;
 export const VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE = generateRelationshipType(
   VIRTUAL_MACHINE_DISK_RELATIONSHIP_CLASS,
-  VIRTUAL_MACHINE_ENTITY_TYPE,
-  DISK_ENTITY_TYPE,
+  entities.VIRTUAL_MACHINE._type,
+  entities.DISK._type,
 );
 
 export const relationships = {
@@ -111,50 +103,68 @@ export const relationships = {
   },
   VIRTUAL_MACHINE_USES_EXTENSION: {
     _type: 'azure_vm_uses_extension',
-    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    sourceType: entities.VIRTUAL_MACHINE._type,
     _class: RelationshipClass.USES,
     targetType: entities.VIRTUAL_MACHINE_EXTENSION._type,
   },
   VIRTUAL_MACHINE_USES_IMAGE: {
     _type: 'azure_vm_uses_image',
-    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    sourceType: entities.VIRTUAL_MACHINE._type,
     _class: RelationshipClass.USES,
-    targetType: VIRTUAL_MACHINE_IMAGE_ENTITY_TYPE,
+    targetType: entities.VIRTUAL_MACHINE_IMAGE._type,
   },
   VIRTUAL_MACHINE_USES_SHARED_IMAGE: {
     _type: 'azure_vm_uses_shared_image',
-    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    sourceType: entities.VIRTUAL_MACHINE._type,
     _class: RelationshipClass.USES,
     targetType: entities.SHARED_IMAGE._type,
   },
   VIRTUAL_MACHINE_USES_SHARED_IMAGE_VERSION: {
     _type: 'azure_vm_uses_shared_image_version',
-    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    sourceType: entities.VIRTUAL_MACHINE._type,
     _class: RelationshipClass.USES,
     targetType: entities.SHARED_IMAGE_VERSION._type,
   },
   VIRTUAL_MACHINE_GENERATED_SHARED_IMAGE_VERSION: {
     _type: 'azure_vm_generated_shared_image_version',
-    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    sourceType: entities.VIRTUAL_MACHINE._type,
     _class: RelationshipClass.GENERATED,
     targetType: entities.SHARED_IMAGE_VERSION._type,
   },
   VIRTUAL_MACHINE_USES_UNMANAGED_DISK: {
     _type: 'azure_vm_uses_storage_account',
-    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    sourceType: entities.VIRTUAL_MACHINE._type,
     _class: RelationshipClass.USES,
     targetType: storageEntities.STORAGE_ACCOUNT._type,
   },
   VIRTUAL_MACHINE_USES_MANAGED_DISK: {
     _type: VIRTUAL_MACHINE_DISK_RELATIONSHIP_TYPE,
-    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    sourceType: entities.VIRTUAL_MACHINE._type,
     _class: VIRTUAL_MACHINE_DISK_RELATIONSHIP_CLASS,
-    targetType: DISK_ENTITY_TYPE,
+    targetType: entities.DISK._type,
   },
   VIRTUAL_MACHINE_USES_MANAGED_IDENTITY: {
     _type: 'azure_vm_uses_managed_identity',
-    sourceType: VIRTUAL_MACHINE_ENTITY_TYPE,
+    sourceType: entities.VIRTUAL_MACHINE._type,
     _class: RelationshipClass.USES,
     targetType: SERVICE_PRINCIPAL_ENTITY_TYPE,
+  },
+  VIRTUAL_MACHINE_USES_SCALE_SETS: {
+    _type: 'azure_vm_uses_scale_set',
+    sourceType: entities.VIRTUAL_MACHINE._type,
+    _class: RelationshipClass.USES,
+    targetType: entities.VIRTUAL_MACHINE_SCALE_SET._type,
+  },
+  VM_SCALE_SETS_USES_SHARED_IMAGE_VERSION: {
+    _type: 'azure_vm_scale_set_uses_shared_image_version',
+    sourceType: entities.VIRTUAL_MACHINE_SCALE_SET._type,
+    _class: RelationshipClass.USES,
+    targetType: entities.SHARED_IMAGE._type,
+  },
+  VM_SCALE_SETS_USES_SHARED_IMAGE: {
+    _type: 'azure_vm_scale_set_uses_shared_image',
+    sourceType: entities.VIRTUAL_MACHINE_SCALE_SET._type,
+    _class: RelationshipClass.USES,
+    targetType: entities.SHARED_IMAGE._type,
   },
 };

@@ -12,7 +12,7 @@ import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { fetchVirtualMachines } from '../compute';
-import { VIRTUAL_MACHINE_ENTITY_TYPE } from '../compute/constants';
+import { entities as computeEntities } from '../compute/constants';
 import {
   fetchNetworkInterfaces,
   fetchNetworkSecurityGroups,
@@ -51,7 +51,7 @@ describe('rm-compute-network-relationships', () => {
     const collectedEntities = context.jobState.collectedEntities;
 
     const virtualMachineEntities = collectedEntities.filter(
-      (e) => e._type === VIRTUAL_MACHINE_ENTITY_TYPE,
+      (e) => e._type === computeEntities.VIRTUAL_MACHINE._type,
     );
     expect(virtualMachineEntities.length).toBeGreaterThan(0);
 

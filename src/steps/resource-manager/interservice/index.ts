@@ -10,8 +10,8 @@ import {
 
 import { IntegrationStepContext, IntegrationConfig } from '../../../types';
 import {
-  STEP_RM_COMPUTE_VIRTUAL_MACHINES,
-  VIRTUAL_MACHINE_ENTITY_TYPE,
+  steps as computeSteps,
+  entities as computeEntities,
 } from '../compute/constants';
 import {
   STEP_RM_NETWORK_INTERFACES,
@@ -29,7 +29,7 @@ export async function buildComputeNetworkRelationships(
   const { logger, jobState } = executionContext;
 
   await jobState.iterateEntities(
-    { _type: VIRTUAL_MACHINE_ENTITY_TYPE },
+    { _type: computeEntities.VIRTUAL_MACHINE._type },
     async (vmEntity: Entity) => {
       const vmData = getRawData<VirtualMachine>(vmEntity);
       if (!vmData) {
@@ -148,7 +148,7 @@ export const interserviceSteps: Step<
       InterserviceRelationships.SUBNET_HAS_VM,
     ],
     dependsOn: [
-      STEP_RM_COMPUTE_VIRTUAL_MACHINES,
+      computeSteps.COMPUTE_VIRTUAL_MACHINES,
       STEP_RM_NETWORK_INTERFACES,
       STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
       STEP_RM_NETWORK_VIRTUAL_NETWORKS,

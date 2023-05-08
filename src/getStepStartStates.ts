@@ -17,12 +17,7 @@ import {
   STEP_AD_USER_REGISTRATION_DETAILS,
 } from './steps/active-directory/constants';
 import { steps as authorizationSteps } from './steps/resource-manager/authorization/constants';
-import {
-  STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
-  STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
-  STEP_RM_COMPUTE_VIRTUAL_MACHINES,
-  steps as computeSteps,
-} from './steps/resource-manager/compute/constants';
+import { steps as computeSteps } from './steps/resource-manager/compute/constants';
 import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb/constants';
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
@@ -169,9 +164,9 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_NETWORK_WATCHERS,
       STEP_RM_NETWORK_LOCATION_WATCHERS,
       STEP_RM_NETWORK_FLOW_LOGS,
-      STEP_RM_COMPUTE_VIRTUAL_MACHINE_IMAGES,
-      STEP_RM_COMPUTE_VIRTUAL_MACHINE_DISKS,
-      STEP_RM_COMPUTE_VIRTUAL_MACHINES,
+      computeSteps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
+      computeSteps.COMPUTE_VIRTUAL_MACHINE_DISKS,
+      computeSteps.COMPUTE_VIRTUAL_MACHINES,
       STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
       STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
       STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
@@ -184,6 +179,9 @@ export function getResourceManagerSteps(): GetApiSteps {
       computeSteps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS,
       computeSteps.VIRTUAL_MACHINE_MANAGED_IDENTITY_RELATIONSHIPS,
       computeSteps.VIRTUAL_MACHINE_SCALE_SETS,
+      computeSteps.VIRTUAL_MACHINE_SCALE_SETS_RELATIONSHIPS,
+      computeSteps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS,
+      computeSteps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS,
       STEP_RM_COSMOSDB_SQL_DATABASES,
       STEP_RM_DATABASE_MARIADB_DATABASES,
       STEP_RM_DATABASE_MYSQL_DATABASES,

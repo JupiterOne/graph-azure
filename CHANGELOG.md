@@ -1,3 +1,20 @@
+# v5.45.0 (Mon May 08 2023)
+
+#### 🚀 Enhancement
+
+- Added vmss relationships [#575](https://github.com/JupiterOne/graph-azure/pull/575) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### 🐛 Bug Fix
+
+- Draft-pr: approach1 to subscription tags [#571](https://github.com/JupiterOne/graph-azure/pull/571) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Changed recordings [#574](https://github.com/JupiterOne/graph-azure/pull/574) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.44.0 (Fri Apr 28 2023)
 
 #### 🚀 Enhancement

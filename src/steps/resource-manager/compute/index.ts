@@ -712,13 +712,15 @@ export async function buildVMScaleSetsRelationship(
       if (!vm) {
         return;
       }
-      const scaleSetId =
-        vm.virtualMachineScaleSet?.id ??
-        `${vm.id}/virtualMachines/${(vm as any).instanceId}`;
-      //some VMs can be related to the VMss by the id
-      //https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.management.compute.models.virtualmachinescalesetvm?view=azure-dotnet
+      let scaleSetId = vm.virtualMachineScaleSet?.id;
       if (!scaleSetId) {
-        return;
+        if (!(vm as any).instanceId) {
+          return;
+        } else {
+          scaleSetId = `${vm.id}/virtualMachines/${(vm as any).instanceId}`;
+          //some VMs can be related to the VMss by the id
+          //https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.management.compute.models.virtualmachinescalesetvm?view=azure-dotnet
+        }
       }
       const scaleSetEntity = await jobState.findEntity(scaleSetId);
       if (scaleSetEntity) {

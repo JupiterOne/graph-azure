@@ -709,7 +709,14 @@ export async function buildVMScaleSetsRelationship(
     { _type: entities.VIRTUAL_MACHINE._type },
     async (vmEntity) => {
       const vm = getRawData<VirtualMachine>(vmEntity);
-      const scaleSetId = vm?.virtualMachineScaleSet?.id;
+      if (!vm) {
+        return;
+      }
+      const scaleSetId =
+        vm.virtualMachineScaleSet?.id ??
+        `${vm.id}/virtualMachines/${(vm as any).instanceId}`;
+      //some VMs can be related to the VMss by the id
+      //https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.management.compute.models.virtualmachinescalesetvm?view=azure-dotnet
       if (!scaleSetId) {
         return;
       }

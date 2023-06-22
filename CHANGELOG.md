@@ -1,3 +1,15 @@
+# v5.45.1 (Thu Jun 22 2023)
+
+#### 🐛 Bug Fix
+
+- Int 8580 azure vmss relationship update [#576](https://github.com/JupiterOne/graph-azure/pull/576) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.45.0 (Mon May 08 2023)
 
 #### 🚀 Enhancement

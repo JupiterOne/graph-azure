@@ -1,3 +1,15 @@
+# v5.46.0 (Thu Jul 13 2023)
+
+#### 🚀 Enhancement
+
+- Added azure ad roles and assignments [#578](https://github.com/JupiterOne/graph-azure/pull/578) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.45.1 (Thu Jun 22 2023)
 
 #### 🐛 Bug Fix

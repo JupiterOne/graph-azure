@@ -311,6 +311,7 @@ The following entities are created:
 | [AD] Account                                   | `azure_account`                                   | `Account`                          |
 | [AD] Group                                     | `azure_user_group`                                | `UserGroup`                        |
 | [AD] Group Member                              | `azure_group_member`                              | `User`                             |
+| [AD] Role Definition                           | `azure_ad_role_definition`                        | `AccessRole`                       |
 | [AD] Service Principal                         | `azure_service_principal`                         | `Service`                          |
 | [AD] User                                      | `azure_user`                                      | `User`                             |
 | [RM] API Management API                        | `azure_api_management_api`                        | `ApplicationEndpoint`              |
@@ -529,6 +530,7 @@ The following relationships are created:
 | `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_queue`                         |
 | `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_topic`                         |
 | `azure_service_bus_topic`          | **HAS**               | `azure_service_bus_subscription`                  |
+| `azure_service_principal`          | **HAS**               | `ad-role-definitions`                             |
 | `azure_shared_image`               | **HAS**               | `azure_shared_image_version`                      |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_server_active_directory_admin`         |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_database`                              |
@@ -548,6 +550,7 @@ The following relationships are created:
 | `azure_subscription`               | **HAS**               | `azure_security_center_setting`                   |
 | `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing`      |
 | `azure_subscription`               | **PERFORMED**         | `azure_security_assessment`                       |
+| `azure_user`                       | **HAS**               | `ad-role-definitions`                             |
 | `azure_vm`                         | **GENERATED**         | `azure_shared_image_version`                      |
 | `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
 | `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |

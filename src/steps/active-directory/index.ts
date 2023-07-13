@@ -22,6 +22,8 @@ import {
   STEP_AD_USER_REGISTRATION_DETAILS,
   ADEntities,
   ADRelationships,
+  STEP_AD_ROLE_DEFINITIONS,
+  STEP_AD_ROLE_ASSIGNMENTS,
 } from './constants';
 import {
   createAccountEntity,
@@ -31,6 +33,7 @@ import {
   createGroupEntity,
   createUserEntity,
   createServicePrincipalEntity,
+  createRoleDefinitions,
 } from './converters';
 
 export async function getAccountEntity(jobState: JobState): Promise<Entity> {
@@ -190,6 +193,43 @@ export async function fetchServicePrincipals(
   });
 }
 
+export async function fetchADRoleDefinitions(
+  executionContext: IntegrationStepContext,
+) {
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
+
+  await graphClient.iterateRoleDefinitions(async (roleDefinition) => {
+    await jobState.addEntity(createRoleDefinitions(roleDefinition));
+  });
+}
+
+export async function fetchADRoleAssignments(
+  executionContext: IntegrationStepContext,
+) {
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
+
+  await graphClient.iterateRoleAssignments(async (roleAssignments: any) => {
+    const principal = await jobState.findEntity(roleAssignments.principalId);
+    if (!principal) {
+      logger.warn({ roleAssignments }, "Principal doesn't exist on assignment");
+      return;
+    }
+    const role = await jobState.findEntity(roleAssignments.roleDefinitionId);
+    if (!role) {
+      logger.warn({ roleAssignments }, "Role doesn't exist on assignment");
+      return;
+    }
+    await jobState.addRelationship(
+      createDirectRelationship({
+        from: principal,
+        _class: RelationshipClass.HAS,
+        to: role,
+      }),
+    );
+  });
+}
 export const activeDirectorySteps: AzureIntegrationStep[] = [
   {
     id: STEP_AD_ACCOUNT,
@@ -246,6 +286,31 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchServicePrincipals,
+    apiPermissions: ['Directory.Read.All'],
+  },
+  {
+    id: STEP_AD_ROLE_DEFINITIONS,
+    name: 'Active Directory Role Definitions',
+    entities: [ADEntities.AD_ROLE_DEFINITION],
+    relationships: [],
+    dependsOn: [STEP_AD_ACCOUNT],
+    executionHandler: fetchADRoleDefinitions,
+    apiPermissions: ['Directory.Read.All'],
+  },
+  {
+    id: STEP_AD_ROLE_ASSIGNMENTS,
+    name: 'Active Directory Role Assignments',
+    entities: [],
+    relationships: [
+      ADRelationships.USER_HAS_ROLE,
+      ADRelationships.SERVICE_PRINCIPAL_HAS_ROLE,
+    ],
+    dependsOn: [
+      STEP_AD_ROLE_DEFINITIONS,
+      STEP_AD_USERS,
+      STEP_AD_SERVICE_PRINCIPALS,
+    ],
+    executionHandler: fetchADRoleAssignments,
     apiPermissions: ['Directory.Read.All'],
   },
 ];

@@ -1,10 +1,16 @@
-import { Recording } from '@jupiterone/integration-sdk-testing';
+import {
+  Recording,
+  executeStepWithDependencies,
+} from '@jupiterone/integration-sdk-testing';
 
 import {
   setupAzureRecording,
   getMatchRequestsBy,
 } from '../../../test/helpers/recording';
-import { configFromEnv } from '../../../test/integrationInstanceConfig';
+import {
+  configFromEnv,
+  getStepTestConfigForStep,
+} from '../../../test/integrationInstanceConfig';
 import { IntegrationConfig } from '../../types';
 import {
   fetchAccount,
@@ -26,6 +32,8 @@ import {
   SERVICE_PRINCIPAL_ENTITY_TYPE,
   SERVICE_PRINCIPAL_ENTITY_CLASS,
   USER_ENTITY_TYPE,
+  STEP_AD_ROLE_DEFINITIONS,
+  STEP_AD_ROLE_ASSIGNMENTS,
 } from './constants';
 import { getMockAccountEntity } from '../../../test/helpers/getMockEntity';
 import { IntegrationProviderAuthorizationError } from '@jupiterone/integration-sdk-core';
@@ -361,4 +369,39 @@ describe('ad-service-principals', () => {
     //   }
     // })
   });
+
+  test('ad-role-definitions', async () => {
+    const stepTestConfig = getStepTestConfigForStep(STEP_AD_ROLE_DEFINITIONS);
+
+    recording = setupAzureRecording({
+      name: STEP_AD_ROLE_DEFINITIONS,
+      directory: __dirname,
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
+    });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  }, 100_000);
+
+  test('ad-role-assignments', async () => {
+    const stepTestConfig = getStepTestConfigForStep(STEP_AD_ROLE_ASSIGNMENTS);
+
+    recording = setupAzureRecording({
+      name: STEP_AD_ROLE_ASSIGNMENTS,
+      directory: __dirname,
+      options: {
+        recordFailedRequests: true,
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
+    });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  }, 100_000);
 });

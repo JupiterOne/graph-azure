@@ -113,7 +113,7 @@ export async function getGraphObjectsForManagementGroup(options: {
           _mapping: {
             sourceEntityKey: managementGroupEntity._key,
             relationshipDirection: RelationshipDirection.FORWARD,
-            targetFilterKeys: [['_type', 'id']],
+            targetFilterKeys: [['id']],
             targetEntity: {
               _type: SubscriptionEntities.SUBSCRIPTION._type,
               id: child.id,

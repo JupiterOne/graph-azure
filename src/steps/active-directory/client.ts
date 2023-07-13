@@ -209,6 +209,24 @@ export class DirectoryGraphClient extends GraphClient {
       callback,
     });
   }
+  public async iterateRoleDefinitions(
+    callback: (a: any) => void | Promise<void>,
+  ): Promise<void> {
+    const resourceUrl = '/roleManagement/directory/roleDefinitions';
+    return this.iterateResources({
+      resourceUrl,
+      callback,
+    });
+  }
+  public async iterateRoleAssignments(
+    callback: (a: any) => void | Promise<void>,
+  ): Promise<void> {
+    const resourceUrl = '/roleManagement/directory/roleAssignments';
+    return this.iterateResources({
+      resourceUrl,
+      callback,
+    });
+  }
 
   // Not using PageIterator because it doesn't allow async callback
   private async iterateResources<T>({

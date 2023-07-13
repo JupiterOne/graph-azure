@@ -15,6 +15,8 @@ import {
   STEP_AD_USERS,
   STEP_AD_SERVICE_PRINCIPALS,
   STEP_AD_USER_REGISTRATION_DETAILS,
+  STEP_AD_ROLE_ASSIGNMENTS,
+  STEP_AD_ROLE_DEFINITIONS,
 } from './steps/active-directory/constants';
 import { steps as authorizationSteps } from './steps/resource-manager/authorization/constants';
 import { steps as computeSteps } from './steps/resource-manager/compute/constants';
@@ -135,6 +137,8 @@ export function getActiveDirectorySteps(): GetApiSteps {
       STEP_AD_USER_REGISTRATION_DETAILS,
       STEP_AD_USERS,
       STEP_AD_SERVICE_PRINCIPALS,
+      STEP_AD_ROLE_ASSIGNMENTS,
+      STEP_AD_ROLE_DEFINITIONS,
     ],
     executeLastSteps: [],
   };

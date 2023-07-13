@@ -28,6 +28,7 @@ import {
   USER_ENTITY_TYPE,
   SERVICE_PRINCIPAL_ENTITY_CLASS,
   SERVICE_PRINCIPAL_ENTITY_TYPE,
+  ADEntities,
 } from './constants';
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
@@ -160,6 +161,33 @@ export function createServicePrincipalEntity(data: any): Entity {
   });
 
   assignTags(entity, data.tags);
+  return entity;
+}
+//https://learn.microsoft.com/en-us/graph/api/rbacapplication-list-roledefinitions
+export function createRoleDefinitions(data: any): Entity {
+  const allowedActions: string[] = [];
+  if (data.rolePermissions) {
+    data.rolePermissions.forEach((actions) => {
+      if (actions.allowedResourceActions) {
+        allowedActions.push(...actions.allowedResourceActions);
+      }
+    });
+  }
+  const entity = createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: generateEntityKey(data.id),
+        _class: ADEntities.AD_ROLE_DEFINITION._class,
+        _type: ADEntities.AD_ROLE_DEFINITION._type,
+        name: data.displayName,
+        displayName: data.displayName,
+        isBuiltIn: data.isBuiltIn,
+        isEnabled: data.isEnabled,
+        allowedActions: allowedActions,
+      },
+    },
+  });
   return entity;
 }
 

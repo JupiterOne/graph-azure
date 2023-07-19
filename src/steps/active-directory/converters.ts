@@ -16,7 +16,7 @@ import { Group, Organization, User } from '@microsoft/microsoft-graph-types';
 import { generateEntityKey } from '../../utils/generateKeys';
 import {
   IdentitySecurityDefaultsEnforcementPolicy,
-  CredentialUserRegistrationDetails,
+  UserRegistrationDetails,
 } from './client';
 import {
   ACCOUNT_ENTITY_CLASS,
@@ -107,7 +107,7 @@ export function createGroupEntity(data: Group): Entity {
 
 export function createUserEntity(
   data: User,
-  registrationDetails?: CredentialUserRegistrationDetails,
+  registrationDetails?: UserRegistrationDetails,
 ): Entity {
   const userEntity = createIntegrationEntity({
     entityData: {
@@ -123,7 +123,10 @@ export function createUserEntity(
         firstName: data.givenName || data.displayName?.split(' ')[0],
         lastName: data.surname || data.displayName?.split(' ').slice(-1)[0],
         username: data.userPrincipalName,
-        isMfaRegistered: registrationDetails?.isMfaRegistered,
+        mfaEnabled: registrationDetails?.isMfaRegistered,
+        mfaType:
+          registrationDetails?.userPreferredMethodForSecondaryAuthentication,
+        mfaMethods: registrationDetails?.methodsRegistered,
         accountEnabled: data.accountEnabled,
       },
     },

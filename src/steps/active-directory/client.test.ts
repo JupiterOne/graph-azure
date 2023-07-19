@@ -8,7 +8,7 @@ import {
 
 import config, { configFromEnv } from '../../../test/integrationInstanceConfig';
 import {
-  CredentialUserRegistrationDetails,
+  UserRegistrationDetails,
   DirectoryGraphClient,
   GroupMember,
 } from './client';
@@ -119,7 +119,7 @@ test('iterateGroups', async () => {
   });
 });
 
-test('iterateCredentialUserRegistrationDetails', async () => {
+test('iterateUserRegistrationDetails', async () => {
   recording = setupAzureRecording({
     directory: __dirname,
     name: 'iterateCredentialUserRegistrationDetails',
@@ -130,8 +130,8 @@ test('iterateCredentialUserRegistrationDetails', async () => {
 
   const client = new DirectoryGraphClient(logger, configFromEnv);
 
-  const resources: CredentialUserRegistrationDetails[] = [];
-  await client.iterateCredentialUserRegistrationDetails((e) => {
+  const resources: UserRegistrationDetails[] = [];
+  await client.iterateUserRegistrationDetails((e) => {
     resources.push(e);
   });
 
@@ -241,7 +241,7 @@ describe('iterateUsers', () => {
       name: 'iterateUsers404',
     });
 
-    const client = new DirectoryGraphClient(logger, config);
+    const client = new DirectoryGraphClient(logger, configFromEnv);
 
     recording.server
       .get('https://graph.microsoft.com/v1.0/users')

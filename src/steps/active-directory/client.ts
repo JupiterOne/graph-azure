@@ -38,14 +38,12 @@ export interface IdentitySecurityDefaultsEnforcementPolicy
   isEnabled: boolean;
 }
 
-export interface CredentialUserRegistrationDetails extends Entity {
+export interface UserRegistrationDetails extends Entity {
   userPrincipalName: string;
   userDisplayName: string;
-  authMethods: string[];
-  isRegistered: boolean;
-  isEnabled: boolean;
-  isCapable: boolean;
   isMfaRegistered: boolean;
+  methodsRegistered: string[];
+  userPreferredMethodForSecondaryAuthentication: string;
 }
 
 export class DirectoryGraphClient extends GraphClient {
@@ -122,19 +120,17 @@ export class DirectoryGraphClient extends GraphClient {
     });
   }
 
-  // https://docs.microsoft.com/en-us/graph/api/group-list?view=graph-rest-1.0&tabs=http
-  public async iterateCredentialUserRegistrationDetails(
-    callback: (
-      userDetails: CredentialUserRegistrationDetails,
-    ) => void | Promise<void>,
+  // https://learn.microsoft.com/en-us/graph/api/authenticationmethodsroot-list-userregistrationdetails?view=graph-rest-1.0&tabs=http
+  public async iterateUserRegistrationDetails(
+    callback: (userDetails: UserRegistrationDetails) => void | Promise<void>,
   ): Promise<void> {
     try {
-      const resourceUrl = '/reports/credentialUserRegistrationDetails';
-      this.logger.info('Iterating credential user registration details.');
+      const resourceUrl =
+        '/reports/authenticationMethods/userRegistrationDetails';
+      this.logger.info('Iterating user registration details.');
 
       return await this.iterateResources({
         resourceUrl,
-        options: { useBeta: true },
         callback,
       });
     } catch (err) {
@@ -142,13 +138,13 @@ export class DirectoryGraphClient extends GraphClient {
       this.logger.warn(
         {
           err: new IntegrationProviderAPIError({
-            endpoint: 'reports.credentialUserRegistrationDetails',
+            endpoint: 'reports.authenticationMethods.userRegistrationDetails',
             status: err.status,
             statusText: err.statusText,
             cause: err,
           }),
         },
-        'Failed to obtain credential user registration details',
+        'Failed to obtain user registration details',
       );
     }
   }

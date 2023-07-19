@@ -83,7 +83,7 @@ Grant permission to read Microsoft Graph information:
 
    - `Directory.Read.All`
    - `Policy.Read.All`
-   - `Reports.Read.All`
+   - `AuditLog.Read.All`
 
 3. Grant admin consent for this directory for the permissions above
 
@@ -743,9 +743,9 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 
 | API Permissions List (3) |
 | ------------------------ |
+| `AuditLog.Read.All`      |
 | `Directory.Read.All`     |
 | `Policy.Read.All`        |
-| `Reports.Read.All`       |
 
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_END} -->

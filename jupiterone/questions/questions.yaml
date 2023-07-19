@@ -5,7 +5,9 @@ questions:
   - id: integration-question-azure-tenant-member-subscriptions
     title: Which azure subscriptions are members of the same tenant?
     description:
-      Returns a graph showing the relationships between azure_account (tenant), azure_management_group, and azure_subscription. Captures all subscriptions that are nested under three or fewer levels of management groups.
+      Returns a graph showing the relationships between azure_account (tenant),
+      azure_management_group, and azure_subscription. Captures all subscriptions
+      that are nested under three or fewer levels of management groups.
     queries:
       - name: Subscriptions that are part of the same tenant
         resultsAre: INFORMATIVE
@@ -1196,8 +1198,7 @@ questions:
         requirements:
           - '4.2.1'
   - id: integration-question-azure-db-sql-servers-va-enabled
-    title:
-      Is Vulnerability Assessment (VA) enabled for Azure SQL servers?
+    title: Is Vulnerability Assessment (VA) enabled for Azure SQL servers?
     description:
       Checks if Azure SQL servers have Vulnerability Assessment (VA) enabled.
     queries:
@@ -2672,73 +2673,71 @@ questions:
           - '8.2'
   - id: integration-question-azure-misc-resource-locks
     title: Are all critical resources protected by resource locks?
-    description:
-      Checks if all critical resources have resources locks set.
+    description: Checks if all critical resources have resources locks set.
     queries:
-    - name: good
-      query: |
-        FIND * WITH _integrationType = 'azure' AND tag.classification = 'critical' THAT HAS azure_resource_lock
-    - name: bad
-      query: |
-        FIND * WITH _integrationType = 'azure' AND tag.classification = 'critical' THAT !HAS azure_resource_lock
+      - name: good
+        query: |
+          FIND * WITH _integrationType = 'azure' AND tag.classification = 'critical' THAT HAS azure_resource_lock
+      - name: bad
+        query: |
+          FIND * WITH _integrationType = 'azure' AND tag.classification = 'critical' THAT !HAS azure_resource_lock
     tags:
-    - azure
-    - data
+      - azure
+      - data
     compliance:
-    - standard: CIS Azure Foundations v1.3.0
-      version: v1.3.0
-      requirements:
-        - '8.3'
-    - standard: CIS Azure Foundations v1.3.1
-      version: v1.3.1
-      requirements:
-        - '8.3'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '8.3'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '8.3'
   - id: integration-question-azure-misc-recoverable-key-vaults
     title: Are all Key Vaults recoverable?
-    description:
-      Checks if all Key Vaults are recoverable.
+    description: Checks if all Key Vaults are recoverable.
     queries:
-    - name: good
-      query: |
-        FIND azure_keyvault_service with enableSoftDelete = true AND enablePurgeProtection = true
-    - name: bad
-      query: |
-        FIND azure_keyvault_service with enableSoftDelete != true AND enablePurgeProtection != true
+      - name: good
+        query: |
+          FIND azure_keyvault_service with enableSoftDelete = true AND enablePurgeProtection = true
+      - name: bad
+        query: |
+          FIND azure_keyvault_service with enableSoftDelete != true AND enablePurgeProtection != true
     tags:
-    - azure
-    - data
+      - azure
+      - data
     compliance:
-    - standard: CIS Azure Foundations v1.3.0
-      version: v1.3.0
-      requirements:
-        - '8.4'
-    - standard: CIS Azure Foundations v1.3.1
-      version: v1.3.1
-      requirements:
-        - '8.4'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '8.4'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '8.4'
   - id: integration-question-azure-misc-kubernetes-rbac
     title: Is RBAC enabled on all Azure Kubernetes Services Instances?
     description:
       Checks if all Azure Kubernetes Services Instances has RBAC enabled.
     queries:
-    - name: good
-      query: |
-        FIND azure_kubernetes_cluster with enableRBAC = true
-    - name: bad
-      query: |
-        FIND azure_kubernetes_cluster with enableRBAC != true
+      - name: good
+        query: |
+          FIND azure_kubernetes_cluster with enableRBAC = true
+      - name: bad
+        query: |
+          FIND azure_kubernetes_cluster with enableRBAC != true
     tags:
-    - azure
-    - data
+      - azure
+      - data
     compliance:
-    - standard: CIS Azure Foundations v1.3.0
-      version: v1.3.0
-      requirements:
-        - '8.5'
-    - standard: CIS Azure Foundations v1.3.1
-      version: v1.3.1
-      requirements:
-        - '8.5'
+      - standard: CIS Azure Foundations v1.3.0
+        version: v1.3.0
+        requirements:
+          - '8.5'
+      - standard: CIS Azure Foundations v1.3.1
+        version: v1.3.1
+        requirements:
+          - '8.5'
 
   ##########################################
   # CIS 9 - AppService
@@ -3000,22 +2999,25 @@ questions:
   - id: integration-question-azure-storage-accounts-that-allow-access-to-internet
     title: What Azure storage accounts allow access to the internet?
     description: >-
-      Check whether a storage account is deployed with a private endpoint to a VNet, 
-      and that internet access is blocked with a firewall
+      Check whether a storage account is deployed with a private endpoint to a
+      VNet,  and that internet access is blocked with a firewall
     queries:
       - name: Storage account without private endpoints
         resultsAre: BAD
         query: FIND azure_storage_account THAT !connects azure_private_endpoint
       - name: Storage accounts that allow access to internet
         resultsAre: BAD
-        query: FIND azure_storage_account WITH networkRuleSet.defaultAction != 'Deny' OR networkRuleSet.allowedIpAddresses != ''
+        query:
+          FIND azure_storage_account WITH networkRuleSet.defaultAction != 'Deny'
+          OR networkRuleSet.allowedIpAddresses != ''
     tags:
       - azure
       - storage
-      - public  
+      - public
   - id: integration-question-azure-virtual-machines-with-insecure-password-settings
     title: What Azure virtual machines have insecure password security settings?
-    description: Flags a Windows or Linux machine with insecure password settings
+    description:
+      Flags a Windows or Linux machine with insecure password settings
     queries:
       - name: Bad
         query: |
@@ -3052,11 +3054,11 @@ questions:
     tags:
       - compliance
       - azure
-      
 
   - id: integration-question-azure-users-read-the-value-secret-in-any-key-vault
     title: Can any users or groups read the value of a secret in any key vault?
-    description: Users should never have access to secrets in production accounts.
+    description:
+      Users should never have access to secrets in production accounts.
     queries:
       - name: Bad
         query: |
@@ -3074,9 +3076,10 @@ questions:
       - keyvault
   - id: integration-question-azure-users-granted-direct-access-to-resources
     title: Are there any users that are granted direct access to resources?
-    description: 
-      User access should always be granted via membership in groups. 
-      Direct access is often a proxy for elevated privileges, and should be discouraged.
+    description:
+      User access should always be granted via membership in groups. Direct
+      access is often a proxy for elevated privileges, and should be
+      discouraged.
     queries:
       - name: Bad
         query: |
@@ -3093,9 +3096,9 @@ questions:
   - id: azure-storage-accounts-with-allowsharedkeyaccess-enabled
     title: Azure Storage Accounts with AllowSharedKeyAccess Enabled
     description: >-
-      Microsoft recommends disabling Shared Key authorization to reduce access risk.
-      AllowSharedKeyAccess is enabled for storage accounts by default unless disabled
-      explicitly.
+      Microsoft recommends disabling Shared Key authorization to reduce access
+      risk. AllowSharedKeyAccess is enabled for storage accounts by default
+      unless disabled explicitly.
     queries:
       - name: Storage Accounts without AllowSharedKeyAccess disabled
         resultsAre: BAD
@@ -3115,8 +3118,8 @@ questions:
   - id: azure-users-with-listKeys-permissions
     title: Azure users with listKeys permissions
     description: >-
-      The listKeys/action is a common permission on default roles in Azure.
-      It is required to access blob data via access key, but when combined with
+      The listKeys/action is a common permission on default roles in Azure. It
+      is required to access blob data via access key, but when combined with
       Shared Key authorization on Storage Accounts can be over privileged.
     queries:
       - name: Which active Azure users can list storage account keys?
@@ -3138,7 +3141,9 @@ questions:
             azure_role_definition.description,
             azure_role_definition.actions,
             azure_role_definition.webLink
-      - name: Which active Azure users have privileged access, and can list storage account keys?
+      - name:
+          Which active Azure users have privileged access, and can list storage
+          account keys?
         resultsAre: INFORMATIVE
         query: |
           FIND azure_user WITH active = true
@@ -3167,3 +3172,15 @@ questions:
       - access
       - list
       - keys
+  - id: integration-question-azure-users-mfa
+    title: Lists all Azure users without MFA configured
+    description:
+      List users without MFA enabled. Work with users to enable MFA as part of
+      their user onboarding.
+    queries:
+      - query: FIND azure_user WITH mfaEnabled!=true
+    tags:
+      - azure
+      - access
+      - iam
+      - MFA

@@ -119,10 +119,11 @@ test('iterateGroups', async () => {
   });
 });
 
-test('iterateUserRegistrationDetails', async () => {
+/* TODO record this test for user registration details using valid Tenant. */
+test.skip('iterateUserRegistrationDetails', async () => {
   recording = setupAzureRecording({
     directory: __dirname,
-    name: 'iterateCredentialUserRegistrationDetails',
+    name: 'iterateUserRegistrationDetails',
     options: {
       matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
     },
@@ -138,14 +139,12 @@ test('iterateUserRegistrationDetails', async () => {
   expect(resources.length).toBeGreaterThan(0);
   resources.forEach((r) => {
     expect(r).toMatchObject({
-      authMethods: expect.any(Array),
       id: expect.any(String),
-      isCapable: expect.any(Boolean),
-      isEnabled: expect.any(Boolean),
-      isMfaRegistered: expect.any(Boolean),
-      isRegistered: expect.any(Boolean),
-      userDisplayName: expect.any(String),
       userPrincipalName: expect.any(String),
+      userDisplayName: expect.any(String),
+      isMfaRegistered: expect.any(Boolean),
+      methodsRegistered: expect.any(Array),
+      userPreferredMethodForSecondaryAuthentication: expect.any(String),
     });
   });
 });

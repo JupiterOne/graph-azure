@@ -7,10 +7,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationStepContext, AzureIntegrationStep } from '../../types';
-import {
-  CredentialUserRegistrationDetails,
-  DirectoryGraphClient,
-} from './client';
+import { UserRegistrationDetails, DirectoryGraphClient } from './client';
 import {
   ACCOUNT_ENTITY_TYPE,
   STEP_AD_ACCOUNT,
@@ -80,20 +77,15 @@ export async function fetchUserRegistrationDetails(
   const { logger, instance, jobState } = executionContext;
   const graphClient = new DirectoryGraphClient(logger, instance.config);
 
-  const userRegistrationDetailsMap = new Map<
-    string,
-    CredentialUserRegistrationDetails
-  >();
-  await graphClient.iterateCredentialUserRegistrationDetails(
-    (registrationDetails) => {
-      if (registrationDetails.id) {
-        userRegistrationDetailsMap.set(
-          registrationDetails.id,
-          registrationDetails,
-        );
-      }
-    },
-  );
+  const userRegistrationDetailsMap = new Map<string, UserRegistrationDetails>();
+  await graphClient.iterateUserRegistrationDetails((registrationDetails) => {
+    if (registrationDetails.id) {
+      userRegistrationDetailsMap.set(
+        registrationDetails.id,
+        registrationDetails,
+      );
+    }
+  });
 
   await jobState.setData(
     'userRegistrationDetailsMap',
@@ -109,7 +101,7 @@ export async function fetchUsers(
 
   const accountEntity = await getAccountEntity(jobState);
   const userRegistrationDetailsMap = await jobState.getData<
-    Map<string, CredentialUserRegistrationDetails>
+    Map<string, UserRegistrationDetails>
   >('userRegistrationDetailsMap');
 
   await graphClient.iterateUsers(async (user) => {
@@ -246,7 +238,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [],
     executionHandler: fetchUserRegistrationDetails,
-    apiPermissions: ['Reports.Read.All'],
+    apiPermissions: ['AuditLog.Read.All'],
   },
   {
     id: STEP_AD_USERS,

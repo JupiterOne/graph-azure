@@ -8,7 +8,7 @@ import {
 
 import config, { configFromEnv } from '../../../test/integrationInstanceConfig';
 import {
-  CredentialUserRegistrationDetails,
+  UserRegistrationDetails,
   DirectoryGraphClient,
   GroupMember,
 } from './client';
@@ -119,10 +119,11 @@ test('iterateGroups', async () => {
   });
 });
 
-test('iterateCredentialUserRegistrationDetails', async () => {
+/* TODO record this test for user registration details using valid Tenant. */
+test.skip('iterateUserRegistrationDetails', async () => {
   recording = setupAzureRecording({
     directory: __dirname,
-    name: 'iterateCredentialUserRegistrationDetails',
+    name: 'iterateUserRegistrationDetails',
     options: {
       matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
     },
@@ -130,22 +131,20 @@ test('iterateCredentialUserRegistrationDetails', async () => {
 
   const client = new DirectoryGraphClient(logger, configFromEnv);
 
-  const resources: CredentialUserRegistrationDetails[] = [];
-  await client.iterateCredentialUserRegistrationDetails((e) => {
+  const resources: UserRegistrationDetails[] = [];
+  await client.iterateUserRegistrationDetails((e) => {
     resources.push(e);
   });
 
   expect(resources.length).toBeGreaterThan(0);
   resources.forEach((r) => {
     expect(r).toMatchObject({
-      authMethods: expect.any(Array),
       id: expect.any(String),
-      isCapable: expect.any(Boolean),
-      isEnabled: expect.any(Boolean),
-      isMfaRegistered: expect.any(Boolean),
-      isRegistered: expect.any(Boolean),
-      userDisplayName: expect.any(String),
       userPrincipalName: expect.any(String),
+      userDisplayName: expect.any(String),
+      isMfaRegistered: expect.any(Boolean),
+      methodsRegistered: expect.any(Array),
+      userPreferredMethodForSecondaryAuthentication: expect.any(String),
     });
   });
 });
@@ -245,7 +244,7 @@ describe('iterateUsers', () => {
 
     recording.server
       .get('https://graph.microsoft.com/v1.0/users')
-      .intercept((_req, res) => {
+      .intercept((req, res) => {
         res.status(404);
       });
 

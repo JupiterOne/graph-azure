@@ -202,22 +202,20 @@ describe('createUserEntity', () => {
     };
   }
 
-  function getMockCredentialDetails() {
+  function getMockRegistrationDetails() {
     return {
       userPrincipalName:
         'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
       userDisplayName: 'Andrew Kulakov',
-      authMethods: ['appCode'],
-      isRegistered: true,
-      isEnabled: true,
-      isCapable: true,
       isMfaRegistered: true,
+      methodsRegistered: ['mobilePhone', 'email'],
+      userPreferredMethodForSecondaryAuthentication: 'sms',
     };
   }
 
   test('properties transferred', () => {
     const mockUser = getMockUser();
-    const mockCredDetails = getMockCredentialDetails();
+    const mockCredDetails = getMockRegistrationDetails();
 
     const userEntity = createUserEntity(mockUser, mockCredDetails);
     expect(userEntity).toMatchGraphObjectSchema({ _class: USER_ENTITY_CLASS });
@@ -253,7 +251,9 @@ describe('createUserEntity', () => {
       userType: 'Member',
       userPrincipalName:
         'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
-      isMfaRegistered: true,
+      mfaEnabled: true,
+      mfaType: 'sms',
+      mfaMethods: ['mobilePhone', 'email'],
     });
   });
 

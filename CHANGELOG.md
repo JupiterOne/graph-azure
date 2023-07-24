@@ -1,3 +1,16 @@
+# v5.47.0 (Mon Jul 24 2023)
+
+#### 🚀 Enhancement
+
+- INT-8664 - add mfa properties to azure_user and fetch from non-deprecated endpoint [#579](https://github.com/JupiterOne/graph-azure/pull/579) (ronald.arias@contractor.jupiterone.com gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 2
+
+- Gonzalo Avalos Ribas (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Ronald Arias ([@RonaldEAM](https://github.com/RonaldEAM))
+
+---
+
 # v5.46.0 (Thu Jul 13 2023)
 
 #### 🚀 Enhancement

@@ -240,11 +240,11 @@ describe('iterateUsers', () => {
       name: 'iterateUsers404',
     });
 
-    const client = new DirectoryGraphClient(logger, configFromEnv);
+    const client = new DirectoryGraphClient(logger, config);
 
     recording.server
       .get('https://graph.microsoft.com/v1.0/users')
-      .intercept((_req, res) => {
+      .intercept((req, res) => {
         res.status(404);
       });
 

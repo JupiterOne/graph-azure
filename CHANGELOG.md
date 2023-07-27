@@ -1,3 +1,15 @@
+# v5.48.0 (Thu Jul 27 2023)
+
+#### 🚀 Enhancement
+
+- Change target filter key to id [#577](https://github.com/JupiterOne/graph-azure/pull/577) ([@chrichts](https://github.com/chrichts))
+
+#### Authors: 1
+
+- Chad Richts ([@chrichts](https://github.com/chrichts))
+
+---
+
 # v5.47.0 (Mon Jul 24 2023)
 
 #### 🚀 Enhancement

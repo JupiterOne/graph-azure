@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-azure",
-  "version": "5.48.0",
+  "version": "5.49.0",
   "description": "A graph conversion tool for https://azure.microsoft.com/.",
   "main": "src/index.js",
   "types": "src/index.d.ts",

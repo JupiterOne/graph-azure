@@ -1,3 +1,15 @@
+# v5.49.0 (Mon Jul 31 2023)
+
+#### 🚀 Enhancement
+
+- INT-8145: ingest azure devices [#580](https://github.com/JupiterOne/graph-azure/pull/580) ([@gastonyelmini](https://github.com/gastonyelmini))
+
+#### Authors: 1
+
+- Gaston Yelmini ([@gastonyelmini](https://github.com/gastonyelmini))
+
+---
+
 # v5.48.0 (Thu Jul 27 2023)
 
 #### 🚀 Enhancement

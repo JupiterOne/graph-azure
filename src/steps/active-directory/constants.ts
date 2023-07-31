@@ -6,6 +6,7 @@ export const STEP_AD_GROUPS = 'ad-groups';
 export const STEP_AD_GROUP_MEMBERS = 'ad-group-members';
 export const STEP_AD_USER_REGISTRATION_DETAILS = 'ad-user-registration-details';
 export const STEP_AD_USERS = 'ad-users';
+export const STEP_AD_DEVICES = 'ad-devices';
 export const STEP_AD_SERVICE_PRINCIPALS = 'ad-service-principals';
 export const STEP_AD_ROLE_DEFINITIONS = 'ad-role-definitions';
 export const STEP_AD_ROLE_ASSIGNMENTS = 'ad-role-assignments';
@@ -18,6 +19,9 @@ export const GROUP_ENTITY_CLASS = ['UserGroup'];
 
 export const USER_ENTITY_TYPE = 'azure_user';
 export const USER_ENTITY_CLASS = ['User'];
+
+export const DEVICE_ENTITY_TYPE = 'azure_device';
+export const DEVICE_ENTITY_CLASS = ['Device'];
 
 export const SERVICE_PRINCIPAL_ENTITY_TYPE = 'azure_service_principal';
 export const SERVICE_PRINCIPAL_ENTITY_CLASS = ['Service'];
@@ -36,6 +40,7 @@ export const GROUP_MEMBER_ENTITY_CLASS = 'User';
 
 export const ACCOUNT_GROUP_RELATIONSHIP_TYPE = 'azure_account_has_group';
 export const ACCOUNT_USER_RELATIONSHIP_TYPE = 'azure_account_has_user';
+export const USER_HAS_DEVICE_RELATIONSHIP_TYPE = 'azure_user_has_device';
 export const GROUP_MEMBER_RELATIONSHIP_TYPE = 'azure_group_has_member';
 
 export const ADEntities = {
@@ -48,6 +53,11 @@ export const ADEntities = {
     resourceName: '[AD] User',
     _type: USER_ENTITY_TYPE,
     _class: 'User',
+  },
+  DEVICE: {
+    resourceName: '[AD] Device',
+    _type: DEVICE_ENTITY_TYPE,
+    _class: DEVICE_ENTITY_CLASS,
   },
   USER_GROUP: {
     resourceName: '[AD] Group',
@@ -77,6 +87,12 @@ export const ADRelationships = {
     sourceType: ACCOUNT_ENTITY_TYPE,
     _class: RelationshipClass.HAS,
     targetType: USER_ENTITY_TYPE,
+  },
+  USER_HAS_DEVICE: {
+    _type: USER_HAS_DEVICE_RELATIONSHIP_TYPE,
+    sourceType: USER_ENTITY_TYPE,
+    _class: RelationshipClass.HAS,
+    targetType: DEVICE_ENTITY_TYPE,
   },
   ACCOUNT_HAS_GROUP: {
     _type: ACCOUNT_GROUP_RELATIONSHIP_TYPE,

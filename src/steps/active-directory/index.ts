@@ -21,6 +21,7 @@ import {
   ADRelationships,
   STEP_AD_ROLE_DEFINITIONS,
   STEP_AD_ROLE_ASSIGNMENTS,
+  STEP_AD_DEVICES,
 } from './constants';
 import {
   createAccountEntity,
@@ -31,6 +32,8 @@ import {
   createUserEntity,
   createServicePrincipalEntity,
   createRoleDefinitions,
+  createUserDeviceRelationship,
+  createDeviceEntity,
 } from './converters';
 
 export async function getAccountEntity(jobState: JobState): Promise<Entity> {
@@ -113,6 +116,29 @@ export async function fetchUsers(
     await jobState.addRelationship(
       createAccountUserRelationship(accountEntity, userEntity),
     );
+  });
+}
+
+export async function fetchDevices(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
+
+  await graphClient.iterateDevices(async (device) => {
+    const deviceEntity = createDeviceEntity(device);
+    await jobState.addEntity(deviceEntity);
+
+    if (device.registeredUsers) {
+      for (const registeredUser of device.registeredUsers) {
+        const userEntity = await jobState.findEntity(registeredUser.id);
+        if (userEntity) {
+          await jobState.addRelationship(
+            createUserDeviceRelationship(userEntity, deviceEntity),
+          );
+        }
+      }
+    }
   });
 }
 
@@ -248,6 +274,15 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_AD_USER_REGISTRATION_DETAILS],
     executionHandler: fetchUsers,
     apiPermissions: ['Directory.Read.All'],
+  },
+  {
+    id: STEP_AD_DEVICES,
+    name: 'Active Directory Devices',
+    entities: [ADEntities.DEVICE],
+    relationships: [ADRelationships.USER_HAS_DEVICE],
+    dependsOn: [STEP_AD_USERS],
+    executionHandler: fetchDevices,
+    apiPermissions: ['Device.Read.All'],
   },
   {
     id: STEP_AD_GROUPS,

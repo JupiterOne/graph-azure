@@ -34,6 +34,7 @@ import {
   USER_ENTITY_TYPE,
   STEP_AD_ROLE_DEFINITIONS,
   STEP_AD_ROLE_ASSIGNMENTS,
+  STEP_AD_DEVICES,
 } from './constants';
 import { getMockAccountEntity } from '../../../test/helpers/getMockEntity';
 import { IntegrationProviderAuthorizationError } from '@jupiterone/integration-sdk-core';
@@ -392,6 +393,24 @@ describe('ad-service-principals', () => {
 
     recording = setupAzureRecording({
       name: STEP_AD_ROLE_ASSIGNMENTS,
+      directory: __dirname,
+      options: {
+        recordFailedRequests: true,
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
+    });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  }, 100_000);
+
+  test('ad-devices', async () => {
+    const stepTestConfig = getStepTestConfigForStep(STEP_AD_DEVICES);
+
+    recording = setupAzureRecording({
+      name: STEP_AD_DEVICES,
       directory: __dirname,
       options: {
         recordFailedRequests: true,

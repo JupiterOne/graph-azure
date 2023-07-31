@@ -17,6 +17,7 @@ import {
   STEP_AD_USER_REGISTRATION_DETAILS,
   STEP_AD_ROLE_ASSIGNMENTS,
   STEP_AD_ROLE_DEFINITIONS,
+  STEP_AD_DEVICES,
 } from './steps/active-directory/constants';
 import { steps as computeSteps } from './steps/resource-manager/compute/constants';
 import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb/constants';
@@ -138,6 +139,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_ROLE_ASSIGNMENTS]: { disabled: true },
       [STEP_AD_ROLE_DEFINITIONS]: { disabled: true },
       [STEP_AD_USERS]: { disabled: true },
+      [STEP_AD_DEVICES]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
       [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
@@ -300,6 +302,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_ROLE_ASSIGNMENTS]: { disabled: false },
       [STEP_AD_ROLE_DEFINITIONS]: { disabled: false },
       [STEP_AD_USERS]: { disabled: false },
+      [STEP_AD_DEVICES]: { disabled: false },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: false },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
       [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
@@ -462,6 +465,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_ROLE_ASSIGNMENTS]: { disabled: true },
       [STEP_AD_ROLE_DEFINITIONS]: { disabled: true },
       [STEP_AD_USERS]: { disabled: true },
+      [STEP_AD_DEVICES]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: false },
       [STEP_RM_KEYVAULT_KEYS]: { disabled: false },
@@ -628,6 +632,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_ROLE_ASSIGNMENTS]: { disabled: true },
       [STEP_AD_ROLE_DEFINITIONS]: { disabled: true },
       [STEP_AD_USERS]: { disabled: true },
+      [STEP_AD_DEVICES]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
       [STEP_RM_KEYVAULT_KEYS]: { disabled: true },

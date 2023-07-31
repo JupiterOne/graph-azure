@@ -10,8 +10,14 @@ import {
   Relationship,
   assignTags,
   setRawData,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
-import { Group, Organization, User } from '@microsoft/microsoft-graph-types';
+import {
+  Device,
+  Group,
+  Organization,
+  User,
+} from '@microsoft/microsoft-graph-types';
 
 import { generateEntityKey } from '../../utils/generateKeys';
 import {
@@ -29,6 +35,8 @@ import {
   SERVICE_PRINCIPAL_ENTITY_CLASS,
   SERVICE_PRINCIPAL_ENTITY_TYPE,
   ADEntities,
+  DEVICE_ENTITY_CLASS,
+  DEVICE_ENTITY_TYPE,
 } from './constants';
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
@@ -142,6 +150,65 @@ export function createUserEntity(
   return userEntity;
 }
 
+export function createDeviceEntity(
+  data: Device & {
+    manufacturer?: string;
+    model?: string;
+    deviceCategory?: string;
+  },
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: {
+        ...data,
+        registeredUsers: data.registeredUsers?.map(
+          (registeredUser) => registeredUser.id,
+        ),
+      },
+      assign: {
+        _key: generateEntityKey(data.id),
+        _class: DEVICE_ENTITY_CLASS,
+        _type: DEVICE_ENTITY_TYPE,
+        name: data.displayName,
+        active: data.accountEnabled,
+        alternativeSecurityIds: data.alternativeSecurityIds?.map(
+          (alternativeSecurityId) =>
+            alternativeSecurityId.identityProvider || '',
+        ),
+        approximateLastSignInDateTime: parseTimePropertyValue(
+          data.approximateLastSignInDateTime,
+        ),
+        complianceExpirationDateTime: data.complianceExpirationDateTime,
+        deviceMetadata: data.deviceMetadata,
+        deviceVersion: data.deviceVersion,
+        manufacturer: data.manufacturer,
+        displayName: data.displayName,
+        isCompliant: data.isCompliant,
+        isManaged: data.isManaged,
+        onPremisesLastSyncDateTime: parseTimePropertyValue(
+          data.onPremisesLastSyncDateTime,
+        ),
+        onPremisesSyncEnabled: data.onPremisesSyncEnabled,
+        operatingSystem: data.operatingSystem,
+        operatingSystemVersion: data.operatingSystemVersion,
+        physicalIds: data.physicalIds,
+        profileType: data.profileType,
+        systemLabels: data.systemLabels,
+        trustType: data.trustType,
+        registeredUsers: data.registeredUsers?.map(
+          (registeredUser) => registeredUser.id || '',
+        ),
+        deviceId: data.deviceId,
+        category: data.deviceCategory,
+        make: data.manufacturer || 'Unknown',
+        model: data.model || 'Unknown',
+        serial: 'Unknown', // Serial number not provided by azure
+        lastSeenOn: 'Unknown',
+      },
+    },
+  });
+}
+
 export function createServicePrincipalEntity(data: any): Entity {
   const entity = createIntegrationEntity({
     entityData: {
@@ -226,5 +293,16 @@ export function createAccountUserRelationship(
     fromKey,
     toType: USER_ENTITY_TYPE,
     toKey,
+  });
+}
+
+export function createUserDeviceRelationship(
+  user: Entity,
+  device: Entity,
+): Relationship {
+  return createDirectRelationship({
+    _class: RelationshipClass.HAS,
+    from: user,
+    to: device,
   });
 }

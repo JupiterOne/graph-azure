@@ -8,6 +8,7 @@ import {
   Entity,
   Group,
   User,
+  Device,
 } from '@microsoft/microsoft-graph-types';
 
 import { GraphClient, IterableGraphResponse } from '../../azure/graph/client';
@@ -194,6 +195,21 @@ export class DirectoryGraphClient extends GraphClient {
     });
   }
 
+  // https://learn.microsoft.com/en-us/graph/api/device-list?view=graph-rest-1.0&tabs=http
+  public async iterateDevices(
+    callback: (device: Device) => void | Promise<void>,
+  ): Promise<void> {
+    const resourceUrl = '/devices';
+    this.logger.info('Iterating devices.');
+    return this.iterateResources({
+      resourceUrl,
+      callback,
+      options: {
+        expand: 'registeredUsers',
+      },
+    });
+  }
+
   // https://docs.microsoft.com/en-us/graph/api/serviceprincipal-list?view=graph-rest-1.0&tabs=http
   public async iterateServicePrincipals(
     callback: (a: any) => void | Promise<void>,
@@ -231,7 +247,7 @@ export class DirectoryGraphClient extends GraphClient {
     callback,
   }: {
     resourceUrl: string;
-    options?: { select?: string[]; useBeta?: boolean };
+    options?: { select?: string[]; useBeta?: boolean; expand?: string };
     callback: (item: T) => void | Promise<void>;
   }): Promise<void> {
     let nextLink: string | undefined;
@@ -242,6 +258,9 @@ export class DirectoryGraphClient extends GraphClient {
       }
       if (options?.select) {
         api = api.select(options.select);
+      }
+      if (options?.expand) {
+        api = api.expand(options.expand);
       }
 
       const response = await this.request<IterableGraphResponse<T>>(api);

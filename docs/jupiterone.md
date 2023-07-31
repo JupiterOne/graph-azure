@@ -309,6 +309,7 @@ The following entities are created:
 | FrontDoor Routing Rule                         | `azure_frontdoor_routing_rule`                    | `Rule`                             |
 | FrontDoor Rules Engine                         | `azure_frontdoor_rules_engine`                    | `Ruleset`                          |
 | [AD] Account                                   | `azure_account`                                   | `Account`                          |
+| [AD] Device                                    | `azure_device`                                    | `Device`                           |
 | [AD] Group                                     | `azure_user_group`                                | `UserGroup`                        |
 | [AD] Group Member                              | `azure_group_member`                              | `User`                             |
 | [AD] Role Definition                           | `azure_ad_role_definition`                        | `AccessRole`                       |
@@ -551,6 +552,7 @@ The following relationships are created:
 | `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing`      |
 | `azure_subscription`               | **PERFORMED**         | `azure_security_assessment`                       |
 | `azure_user`                       | **HAS**               | `ad-role-definitions`                             |
+| `azure_user`                       | **HAS**               | `azure_device`                                    |
 | `azure_vm`                         | **GENERATED**         | `azure_shared_image_version`                      |
 | `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
 | `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
@@ -741,9 +743,10 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START} -->
 
-| API Permissions List (3) |
+| API Permissions List (4) |
 | ------------------------ |
 | `AuditLog.Read.All`      |
+| `Device.Read.All`        |
 | `Directory.Read.All`     |
 | `Policy.Read.All`        |
 

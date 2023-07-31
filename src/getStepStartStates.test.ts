@@ -302,6 +302,7 @@ describe('getStepStartStates', () => {
       [STEP_AD_ROLE_ASSIGNMENTS]: { disabled: false },
       [STEP_AD_ROLE_DEFINITIONS]: { disabled: false },
       [STEP_AD_USERS]: { disabled: false },
+      [STEP_AD_DEVICES]: { disabled: false },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: false },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
       [STEP_RM_KEYVAULT_KEYS]: { disabled: true },

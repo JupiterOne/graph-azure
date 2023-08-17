@@ -6,6 +6,9 @@
   "types": "src/index.d.ts",
   "repository": "https://github.com/JupiterOne/graph-azure",
   "license": "MPL-2.0",
+  "engines": {
+    "node": ">=18.0.0 <19.x"
+  },
   "files": [
     "src",
     "jupiterone"

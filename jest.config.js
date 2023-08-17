@@ -1,4 +1,4 @@
 module.exports = {
   ...require('@jupiterone/integration-sdk-dev-tools/config/jest'),
-  setupFiles: ['cross-fetch/polyfill'],
+  setupFiles: ['<rootDir>/globalSetup.ts', 'cross-fetch/polyfill'],
 };

@@ -111,9 +111,8 @@ function redactAllPropertiesExcept(
   }
 }
 
-type MatchRequestsBy = Required<
-  SetupRecordingInput
->['options']['matchRequestsBy'];
+type MatchRequestsBy =
+  Required<SetupRecordingInput>['options']['matchRequestsBy'];
 
 interface UrlOptions {
   protocol?: boolean | MatchBy<string, string> | undefined;

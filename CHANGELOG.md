@@ -1,3 +1,16 @@
+# v5.49.1 (Thu Aug 17 2023)
+
+#### 🐛 Bug Fix
+
+- Removed findEntity to make step faster [#582](https://github.com/JupiterOne/graph-azure/pull/582) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Upgrade to node 18 [#581](https://github.com/JupiterOne/graph-azure/pull/581) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.49.0 (Mon Jul 31 2023)
 
 #### 🚀 Enhancement

@@ -1,22 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createDnsRecordSetEntity properties transferred 1`] = `
-Object {
+{
   "TTL": 3600,
-  "_class": Array [
+  "_class": [
     "DomainRecord",
   ],
   "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com/SOA/@",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "etag": "589999ef-895a-45ff-961e-6984428e321b",
         "fqdn": "jupiterone-dev.com.",
         "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com/SOA/@",
         "isAutoRegistered": false,
         "name": "@",
-        "soaRecord": Object {
+        "soaRecord": {
           "email": "azureprivatedns-host.microsoft.com",
           "expireTime": 2419200,
           "host": "azureprivatedns.net",
@@ -46,15 +46,15 @@ Object {
 `;
 
 exports[`createPrivateDnsZoneEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "DomainZone",
   ],
   "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "etag": "f7c2be09-f492-4470-9663-739cabcbecfd",
         "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com",
         "location": "global",
@@ -66,7 +66,7 @@ Object {
         "numberOfVirtualNetworkLinks": 0,
         "numberOfVirtualNetworkLinksWithRegistration": 0,
         "provisioningState": "Succeeded",
-        "tags": Object {},
+        "tags": {},
         "type": "Microsoft.Network/privateDnsZones",
       },
     },

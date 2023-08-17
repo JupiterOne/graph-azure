@@ -1,35 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createContainerRegistryEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Service",
   ],
   "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev",
         "location": "EastUs",
         "name": "j1dev",
         "provisioningState": "Succeeded",
         "resourceState": "Active",
-        "sku": Object {
+        "sku": {
           "name": "Standard_Microsoft",
         },
-        "tags": Object {},
+        "tags": {},
         "type": "Microsoft.Cdn/profiles",
       },
     },
   ],
   "_type": "azure_cdn_profile",
-  "category": Array [
+  "category": [
     "infrastructure",
   ],
   "createdOn": undefined,
   "displayName": "j1dev",
-  "function": Array [
+  "function": [
     "content-distribution",
   ],
   "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev",
@@ -43,22 +43,22 @@ Object {
 `;
 
 exports[`createContainerRegistryWebhookEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Gateway",
   ],
   "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
-        "contentTypesToCompress": Array [],
+      "rawData": {
+        "contentTypesToCompress": [],
         "defaultOriginGroup": undefined,
-        "deliveryPolicy": Object {
+        "deliveryPolicy": {
           "description": "",
-          "rules": Array [],
+          "rules": [],
         },
-        "geoFilters": Array [],
+        "geoFilters": [],
         "hostName": "j1dev.azureedge.net",
         "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/Microsoft.Cdn/profiles/j1dev/endpoints/j1dev",
         "isCompressionEnabled": false,
@@ -67,11 +67,11 @@ Object {
         "location": "EastUs",
         "name": "j1dev",
         "optimizationType": undefined,
-        "originGroups": Array [],
+        "originGroups": [],
         "originHostHeader": "www.jupiterone.com",
         "originPath": undefined,
-        "origins": Array [
-          Object {
+        "origins": [
+          {
             "enabled": true,
             "hostName": "www.jupiterone.com",
             "httpPort": 80,
@@ -90,20 +90,20 @@ Object {
         "provisioningState": "Succeeded",
         "queryStringCachingBehavior": "IgnoreQueryString",
         "resourceState": "Running",
-        "tags": Object {},
+        "tags": {},
         "type": "Microsoft.Cdn/profiles/endpoints",
-        "urlSigningKeys": Array [],
+        "urlSigningKeys": [],
         "webApplicationFirewallPolicyLink": undefined,
       },
     },
   ],
   "_type": "azure_cdn_endpoint",
-  "category": Array [
+  "category": [
     "data",
   ],
   "createdOn": undefined,
   "displayName": "j1dev",
-  "function": Array [
+  "function": [
     "content-distribution",
   ],
   "hostName": "j1dev.azureedge.net",

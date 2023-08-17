@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createRecommendationEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Finding",
   ],
   "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/ndowmon1-j1dev/providers/Microsoft.Advisor/recommendations/55c89362-b09e-3290-9517-b1441e537514",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "category": "Security",
-        "extendedProperties": Object {
+        "extendedProperties": {
           "assessmentKey": "88bbc99c-e5af-ddd7-6105-6150b2bfa519",
           "score": "5",
         },
@@ -22,11 +22,11 @@ Object {
         "lastUpdated": 2020-10-08T13:53:03.299Z,
         "name": "55c89362-b09e-3290-9517-b1441e537514",
         "recommendationTypeId": "88bbc99c-e5af-ddd7-6105-6150b2bfa519",
-        "resourceMetadata": Object {
+        "resourceMetadata": {
           "resourceId": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/ndowmon1-j1dev",
           "source": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/ndowmon1-j1dev/providers/Microsoft.Security/assessments/88bbc99c-e5af-ddd7-6105-6150b2bfa519",
         },
-        "shortDescription": Object {
+        "shortDescription": {
           "problem": "Diagnostic logs in Key Vault should be enabled",
           "solution": "Diagnostic logs in Key Vault should be enabled",
         },
@@ -54,7 +54,7 @@ Object {
   "shortDescriptionProblem": "Diagnostic logs in Key Vault should be enabled",
   "shortDescriptionSolution": "Diagnostic logs in Key Vault should be enabled",
   "source": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.keyvault/vaults/ndowmon1-j1dev/providers/Microsoft.Security/assessments/88bbc99c-e5af-ddd7-6105-6150b2bfa519",
-  "targets": Array [
+  "targets": [
     "Microsoft.KeyVault/vaults",
     "ndowmon1-j1dev",
   ],

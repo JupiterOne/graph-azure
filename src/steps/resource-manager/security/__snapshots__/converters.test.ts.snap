@@ -1,23 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createAssessmentEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Assessment",
   ],
   "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1devblobstorage/providers/Microsoft.Security/assessments/51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "displayName": "Storage account public access should be disallowed",
         "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1devblobstorage/providers/Microsoft.Security/assessments/51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
         "name": "51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
-        "resourceDetails": Object {
+        "resourceDetails": {
           "Id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourcegroups/j1dev/providers/microsoft.storage/storageaccounts/ndowmon1j1devblobstorage",
           "Source": "Azure",
         },
-        "status": Object {
+        "status": {
           "code": "Unhealthy",
         },
         "type": "Microsoft.Security/assessments",
@@ -45,15 +45,15 @@ Object {
 `;
 
 exports[`createSecurityContactEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Resource",
   ],
   "_key": "/subscriptions/20ff7fc3-e762-44dd-bd96-b71116dcdc23/providers/Microsoft.Security/securityContacts/default2",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "alertNotifications": "On",
         "alertsToAdmins": "On",
         "email": "chen@contoso.com",

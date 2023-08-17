@@ -48,9 +48,12 @@ export async function fetchStorageAccounts(
       storageAccount,
     });
 
-    const storageBlobServiceProperties = await storageAccountServiceClient.getBlobServiceProperties();
-    const storageQueueServiceProperties = await storageAccountServiceClient.getQueueServiceProperties();
-    const storageTableServiceProperties = await storageAccountServiceClient.getTableServiceProperties();
+    const storageBlobServiceProperties =
+      await storageAccountServiceClient.getBlobServiceProperties();
+    const storageQueueServiceProperties =
+      await storageAccountServiceClient.getQueueServiceProperties();
+    const storageTableServiceProperties =
+      await storageAccountServiceClient.getTableServiceProperties();
 
     let lastAccessKeyRegenerationDate: Date | undefined;
     /**
@@ -102,14 +105,13 @@ export async function fetchStorageAccounts(
   const keyVaultEntityMap = await buildKeyVaultEntityMap(executionContext);
 
   await client.iterateStorageAccounts(async (storageAccount) => {
-    const storageAccountServiceProperties = await getStorageAccountServiceProperties(
-      {
+    const storageAccountServiceProperties =
+      await getStorageAccountServiceProperties({
         name: storageAccount.name!,
         kind: storageAccount.kind!,
         skuTier: storageAccount.sku?.tier as SkuTier,
         id: storageAccount.id!,
-      },
-    );
+      });
     const storageAccountEntity = await jobState.addEntity(
       createStorageAccountEntity(
         webLinker,
@@ -175,11 +177,8 @@ async function associateStorageAccountWithKeyVault(
 ): Promise<void> {
   if (!storageAccount.encryption?.keyVaultProperties) return;
 
-  const {
-    keyName,
-    keyVaultUri,
-    keyVersion,
-  } = storageAccount.encryption?.keyVaultProperties;
+  const { keyName, keyVaultUri, keyVersion } =
+    storageAccount.encryption!.keyVaultProperties;
 
   if (!keyVaultUri) return;
 

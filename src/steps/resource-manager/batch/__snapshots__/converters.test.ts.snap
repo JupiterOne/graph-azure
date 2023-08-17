@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createBatchAccountEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Service",
   ],
   "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "accountEndpoint": "j1devbatchaccount.eastus.batch.azure.com",
         "activeJobAndJobScheduleQuota": 100,
-        "autoStorage": Object {
+        "autoStorage": {
           "lastKeySync": 2020-09-25T23:45:28.358Z,
           "storageAccountId": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/keionnedj1dev",
         },
@@ -31,13 +31,13 @@ Object {
   "_type": "azure_batch_account",
   "accountEndpoint": "j1devbatchaccount.eastus.batch.azure.com",
   "activeJobAndJobScheduleQuota": 100,
-  "category": Array [
+  "category": [
     "infrastructure",
   ],
   "createdOn": undefined,
   "dedicatedCoreQuota": 20,
   "displayName": "j1devbatchaccount",
-  "function": Array [
+  "function": [
     "batching",
   ],
   "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount",
@@ -53,19 +53,19 @@ Object {
 `;
 
 exports[`createBatchApplicationEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Process",
   ],
   "_key": "j1devbatchapplication",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "allowUpdates": true,
         "displayName": "",
         "id": "j1devbatchapplication",
-        "packages": Array [],
+        "packages": [],
       },
     },
   ],
@@ -80,16 +80,16 @@ Object {
 `;
 
 exports[`createBatchCertificateEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Certificate",
   ],
   "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/certificates/sha1-6820fee71b8312b01159d3c09fcb9f7ab24ae60d",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
-        "etag": "W/\\"0x8D861E3359DF585\\"",
+      "rawData": {
+        "etag": "W/"0x8D861E3359DF585"",
         "format": "Cer",
         "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/certificates/sha1-6820fee71b8312b01159d3c09fcb9f7ab24ae60d",
         "name": "sha1-6820fee71b8312b01159d3c09fcb9f7ab24ae60d",
@@ -105,7 +105,7 @@ Object {
   "_type": "azure_batch_certificate",
   "createdOn": undefined,
   "displayName": "sha1-6820fee71b8312b01159d3c09fcb9f7ab24ae60d",
-  "etag": "W/\\"0x8D861E3359DF585\\"",
+  "etag": "W/"0x8D861E3359DF585"",
   "format": "Cer",
   "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/certificates/sha1-6820fee71b8312b01159d3c09fcb9f7ab24ae60d",
   "name": "sha1-6820fee71b8312b01159d3c09fcb9f7ab24ae60d",
@@ -119,27 +119,27 @@ Object {
 `;
 
 exports[`createBatchPoolEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Cluster",
   ],
   "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/pools/j1devbatchpool",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "allocationState": "Steady",
         "allocationStateTransitionTime": 2020-09-26T00:04:02.868Z,
-        "autoScaleRun": Object {
+        "autoScaleRun": {
           "evaluationTime": 2020-09-26T03:30:46.770Z,
           "results": "$TargetDedicatedNodes=0;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue;maxNumberofVMs=2;pendingTaskSamplePercent=100;pendingTaskSamples=0;startingNumberOfVMs=1",
         },
         "creationTime": 2020-09-25T23:45:46.672Z,
         "currentDedicatedNodes": 0,
         "currentLowPriorityNodes": 0,
-        "deploymentConfiguration": Object {
-          "virtualMachineConfiguration": Object {
-            "imageReference": Object {
+        "deploymentConfiguration": {
+          "virtualMachineConfiguration": {
+            "imageReference": {
               "offer": "ubuntu-server-container",
               "publisher": "microsoft-azure-batch",
               "sku": "16-04-lts",
@@ -149,7 +149,7 @@ Object {
           },
         },
         "displayName": "J1 Dev Batch Account Pool",
-        "etag": "W/\\"0x8D861AF3884EB47\\"",
+        "etag": "W/"0x8D861AF3884EB47"",
         "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/pools/j1devbatchpool",
         "interNodeCommunication": "Disabled",
         "lastModified": 2020-09-26T00:00:46.833Z,
@@ -157,14 +157,14 @@ Object {
         "name": "j1devbatchpool",
         "provisioningState": "Succeeded",
         "provisioningStateTransitionTime": 2020-09-25T23:45:46.672Z,
-        "resizeOperationStatus": Object {
+        "resizeOperationStatus": {
           "nodeDeallocationOption": "Requeue",
           "resizeTimeout": "PT15M",
           "startTime": 2020-09-26T00:00:46.833Z,
           "targetDedicatedNodes": 0,
         },
-        "scaleSettings": Object {
-          "autoScale": Object {
+        "scaleSettings": {
+          "autoScale": {
             "evaluationInterval": "PT15M",
             "formula": "       startingNumberOfVMs = 1;
             maxNumberofVMs = 2;
@@ -173,18 +173,18 @@ Object {
       $TargetDedicatedNodes=min(maxNumberofVMs, pendingTaskSamples);",
           },
         },
-        "startTask": Object {
+        "startTask": {
           "commandLine": "echo 'Hello j1dev batch account'",
           "maxTaskRetryCount": 1,
-          "userIdentity": Object {
-            "autoUser": Object {
+          "userIdentity": {
+            "autoUser": {
               "elevationLevel": "NonAdmin",
               "scope": "Task",
             },
           },
           "waitForSuccess": true,
         },
-        "taskSchedulingPolicy": Object {
+        "taskSchedulingPolicy": {
           "nodeFillType": "Spread",
         },
         "vmSize": "STANDARD_A1",
@@ -197,7 +197,7 @@ Object {
   "currentDedicatedNodes": 0,
   "currentLowPriorityNodes": 0,
   "displayName": "J1 Dev Batch Account Pool",
-  "etag": "W/\\"0x8D861AF3884EB47\\"",
+  "etag": "W/"0x8D861AF3884EB47"",
   "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Batch/batchAccounts/j1devbatchaccount/pools/j1devbatchpool",
   "interNodeCommunication": "Disabled",
   "maxTasksPerNode": 1,

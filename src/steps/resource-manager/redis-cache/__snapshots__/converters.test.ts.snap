@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[` 1`] = `
-Object {
+{
   "linkedServerId": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-primary-redis-cache/linkedServers/keionned-j1dev-secondary-redis-cache",
   "primaryCacheId": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-primary-redis-cache",
   "primaryCacheName": "keionned-j1dev-primary-redis-cache",
@@ -15,51 +15,51 @@ Object {
 `;
 
 exports[`createRedisCacheEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Database",
     "DataStore",
     "Cluster",
   ],
   "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "accessKeys": undefined,
         "enableNonSslPort": false,
         "hostName": "keionned-j1dev-redis-cache.redis.cache.windows.net",
         "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache",
-        "instances": Array [
-          Object {
+        "instances": [
+          {
             "isMaster": true,
             "sslPort": 15000,
           },
-          Object {
+          {
             "isMaster": false,
             "sslPort": 15001,
           },
         ],
-        "linkedServers": Array [],
+        "linkedServers": [],
         "location": "East US",
         "minimumTlsVersion": "1.2",
         "name": "keionned-j1dev-redis-cache",
         "port": 6379,
         "provisioningState": "Succeeded",
-        "redisConfiguration": Object {
+        "redisConfiguration": {
           "maxclients": "2000",
           "maxfragmentationmemory-reserved": "125",
           "maxmemory-delta": "100",
           "maxmemory-reserved": "100",
         },
         "redisVersion": "4.0.14",
-        "sku": Object {
+        "sku": {
           "capacity": 2,
           "family": "C",
           "name": "Standard",
         },
         "sslPort": 6380,
-        "tags": Object {},
+        "tags": {},
         "type": "Microsoft.Cache/Redis",
       },
     },
@@ -85,15 +85,15 @@ Object {
 `;
 
 exports[`createRedisFirewallRuleEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Firewall",
   ],
   "_key": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "endIP": "2.3.4.5",
         "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/resourceGroups/j1dev/providers/Microsoft.Cache/Redis/keionned-j1dev-redis-cache/firewallRules/j1dev_redis_cache_firewall_rule",
         "name": "keionned-j1dev-redis-cache/j1dev_redis_cache_firewall_rule",
@@ -103,7 +103,7 @@ Object {
     },
   ],
   "_type": "azure_firewall_rule",
-  "category": Array [
+  "category": [
     "host",
   ],
   "createdOn": undefined,

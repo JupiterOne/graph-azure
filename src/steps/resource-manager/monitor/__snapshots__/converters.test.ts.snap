@@ -1,27 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createMonitorLogProfileEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Configuration",
   ],
   "_key": "/subscriptions/df602c9c-7aa0-407d-a6fb-eb20c8bd1192/providers/microsoft.insights/logprofiles/default",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
-        "categories": Array [
+      "rawData": {
+        "categories": [
           "Delete",
           "Write",
           "Action",
         ],
         "id": "/subscriptions/df602c9c-7aa0-407d-a6fb-eb20c8bd1192/providers/microsoft.insights/logprofiles/default",
         "location": "",
-        "locations": Array [
+        "locations": [
           "global",
         ],
         "name": "default",
-        "retentionPolicy": Object {
+        "retentionPolicy": {
           "days": 3,
           "enabled": true,
         },
@@ -32,7 +32,7 @@ Object {
     },
   ],
   "_type": "azure_monitor_log_profile",
-  "categories": Array [
+  "categories": [
     "Delete",
     "Write",
     "Action",
@@ -40,7 +40,7 @@ Object {
   "createdOn": undefined,
   "displayName": "default",
   "id": "/subscriptions/df602c9c-7aa0-407d-a6fb-eb20c8bd1192/providers/microsoft.insights/logprofiles/default",
-  "locations": Array [
+  "locations": [
     "global",
   ],
   "name": "default",

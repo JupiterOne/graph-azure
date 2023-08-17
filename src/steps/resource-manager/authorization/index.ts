@@ -240,20 +240,18 @@ export async function fetchClassicAdministrators(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new AuthorizationClient(instance.config, logger);
 
-  const classicAdministratorGroupEntity = createClassicAdministratorGroupEntity();
+  const classicAdministratorGroupEntity =
+    createClassicAdministratorGroupEntity();
   await jobState.addEntity(classicAdministratorGroupEntity);
 
   await client.iterateClassicAdministrators(async (ca) => {
-    const classicAdministratorHasUserRelationship = createClassicAdministratorHasUserMappedRelationship(
-      {
+    const classicAdministratorHasUserRelationship =
+      createClassicAdministratorHasUserMappedRelationship({
         webLinker,
         classicAdministratorGroupEntity,
         data: ca,
-      },
-    );
-    if (
-      !(await jobState.hasKey(classicAdministratorHasUserRelationship._key))
-    ) {
+      });
+    if (!jobState.hasKey(classicAdministratorHasUserRelationship._key)) {
       await jobState.addRelationship(classicAdministratorHasUserRelationship);
     }
   });

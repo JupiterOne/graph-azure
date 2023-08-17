@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createServiceBusNamespaceEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Service",
   ],
   "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "createdAt": 2020-09-15T19:29:34.723Z,
         "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev",
         "location": "East US",
@@ -17,23 +17,23 @@ Object {
         "name": "ndowmon1j1dev",
         "provisioningState": "Succeeded",
         "serviceBusEndpoint": "https://ndowmon1j1dev.servicebus.windows.net:443/",
-        "sku": Object {
+        "sku": {
           "name": "Standard",
           "tier": "Standard",
         },
-        "tags": Object {},
+        "tags": {},
         "type": "Microsoft.ServiceBus/Namespaces",
         "updatedAt": 2020-09-15T19:30:18.757Z,
       },
     },
   ],
   "_type": "azure_service_bus_namespace",
-  "category": Array [
+  "category": [
     "infrastructure",
   ],
   "createdOn": 1600198174723,
   "displayName": "ndowmon1j1dev",
-  "function": Array [
+  "function": [
     "event-delivery",
   ],
   "id": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev",
@@ -48,18 +48,18 @@ Object {
 `;
 
 exports[`createServiceBusQueueEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Queue",
   ],
   "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/queues/j1dev-queue",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "accessedAt": 0001-01-01T00:00:00.000Z,
         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
-        "countDetails": Object {
+        "countDetails": {
           "activeMessageCount": 0,
           "deadLetterMessageCount": 0,
           "scheduledMessageCount": 0,
@@ -117,18 +117,18 @@ Object {
 `;
 
 exports[`createServiceBusSubscriptionEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Subscription",
   ],
   "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic/subscriptions/j1dev",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "accessedAt": 2020-09-15T19:39:49.670Z,
         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
-        "countDetails": Object {
+        "countDetails": {
           "activeMessageCount": 0,
           "deadLetterMessageCount": 0,
           "scheduledMessageCount": 0,
@@ -176,18 +176,18 @@ Object {
 `;
 
 exports[`createServiceBusTopicEntity properties transferred 1`] = `
-Object {
-  "_class": Array [
+{
+  "_class": [
     "Queue",
   ],
   "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic",
-  "_rawData": Array [
-    Object {
+  "_rawData": [
+    {
       "name": "default",
-      "rawData": Object {
+      "rawData": {
         "accessedAt": 0001-01-01T00:00:00.000Z,
         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
-        "countDetails": Object {
+        "countDetails": {
           "activeMessageCount": 0,
           "deadLetterMessageCount": 0,
           "scheduledMessageCount": 0,

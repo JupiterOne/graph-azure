@@ -59,7 +59,8 @@ export async function fetchAccount(
   let accountEntity: Entity;
   try {
     const organization = await graphClient.fetchOrganization();
-    const securityDefaults = await graphClient.fetchIdentitySecurityDefaultsEnforcementPolicy();
+    const securityDefaults =
+      await graphClient.fetchIdentitySecurityDefaultsEnforcementPolicy();
     accountEntity = createAccountEntityWithOrganization(
       instance,
       organization,
@@ -173,9 +174,7 @@ export async function fetchGroupMembers(
       await graphClient.iterateGroupMembers(
         { groupId: groupEntity.id as string },
         async (groupMember) => {
-          const memberEntity = await jobState.findEntity(groupMember.id!);
-
-          if (!memberEntity) {
+          if (!jobState.hasKey(groupMember.id!)) {
             logger.warn(
               {
                 groupId: groupEntity.id,
@@ -186,11 +185,14 @@ export async function fetchGroupMembers(
             );
             return;
           }
+
           await jobState.addRelationship(
             createDirectRelationship({
-              from: groupEntity,
+              fromKey: groupEntity.id as string,
+              fromType: GROUP_ENTITY_TYPE,
               _class: RelationshipClass.HAS,
-              to: memberEntity,
+              toType: convertGraphTypeTo_type(groupMember['@odata.type']),
+              toKey: groupMember.id!,
             }),
           );
         },
@@ -247,6 +249,16 @@ export async function fetchADRoleAssignments(
       }),
     );
   });
+}
+function convertGraphTypeTo_type(graphType: string): string {
+  switch (graphType) {
+    case '#microsoft.graph.user':
+      return ADEntities.USER._type;
+    case '#microsoft.graph.group':
+      return ADEntities.USER_GROUP._type;
+    default:
+      return ADEntities.GROUP_MEMBER._type;
+  }
 }
 export const activeDirectorySteps: AzureIntegrationStep[] = [
   {

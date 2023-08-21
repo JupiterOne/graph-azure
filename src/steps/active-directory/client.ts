@@ -64,9 +64,10 @@ export class DirectoryGraphClient extends GraphClient {
     }
 
     try {
-      const response = await this.request<
-        IdentitySecurityDefaultsEnforcementPolicy
-      >(this.client.api(path));
+      const response =
+        await this.request<IdentitySecurityDefaultsEnforcementPolicy>(
+          this.client.api(path),
+        );
       return response;
     } catch (err) {
       // This endpoint is brittle, since it behaves differently whether the default directory (tenant) is a "personal"
@@ -253,14 +254,17 @@ export class DirectoryGraphClient extends GraphClient {
     let nextLink: string | undefined;
     do {
       let api = this.client.api(nextLink || resourceUrl);
-      if (options?.useBeta) {
-        api = api.version('beta');
-      }
-      if (options?.select) {
-        api = api.select(options.select);
-      }
-      if (options?.expand) {
-        api = api.expand(options.expand);
+      //nextlink: The URL also contains all the other query parameters present in the original request.
+      if (!nextLink) {
+        if (options?.useBeta) {
+          api = api.version('beta');
+        }
+        if (options?.select) {
+          api = api.select(options.select);
+        }
+        if (options?.expand) {
+          api = api.expand(options.expand);
+        }
       }
 
       const response = await this.request<IterableGraphResponse<T>>(api);

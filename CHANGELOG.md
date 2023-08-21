@@ -1,3 +1,15 @@
+# v5.49.2 (Mon Aug 21 2023)
+
+#### 🐛 Bug Fix
+
+- Corrected pagination of ad-users [#583](https://github.com/JupiterOne/graph-azure/pull/583) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.49.1 (Thu Aug 17 2023)
 
 #### 🐛 Bug Fix

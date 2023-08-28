@@ -1,8 +1,6 @@
-import { SecurityRulePortRange } from './types';
+import { RulePortRange } from './types';
 
-export default function parseSecurityRulePortRange(
-  portRange: string,
-): SecurityRulePortRange {
+export default function parseRulePortRange(portRange: string): RulePortRange {
   if (portRange && portRange.length > 0) {
     if (portRange === '*') {
       return {

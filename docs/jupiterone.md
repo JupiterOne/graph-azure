@@ -341,6 +341,7 @@ The following entities are created:
 | [RM] Event Grid Domain Topic                   | `azure_event_grid_domain_topic`                   | `Queue`                            |
 | [RM] Event Grid Topic                          | `azure_event_grid_topic`                          | `Queue`                            |
 | [RM] Event Grid Topic Subscription             | `azure_event_grid_topic_subscription`             | `Subscription`                     |
+| [RM] Firewall Policy                           | `azure_network_firewall_policy`                   | `Policy`                           |
 | [RM] Function App                              | `azure_function_app`                              | `Function`                         |
 | [RM] Gallery                                   | `azure_gallery`                                   | `Repository`                       |
 | [RM] Image                                     | `azure_image`                                     | `Image`                            |
@@ -452,6 +453,8 @@ The following relationships are created:
 | `azure_monitor_activity_log_alert` | **MONITORS**          | `ANY_SCOPE`                                       |
 | `azure_monitor_log_profile`        | **USES**              | `azure_storage_account`                           |
 | `azure_mysql_server`               | **HAS**               | `azure_mysql_database`                            |
+| `azure_network_firewall`           | **HAS**               | `azure_network_firewall_policy`                   |
+| `azure_network_firewall_policy`    | **EXTENDS**           | `azure_network_firewall_policy`                   |
 | `azure_network_watcher`            | **HAS**               | `azure_security_group_flow_logs`                  |
 | `azure_policy_assignment`          | **HAS**               | `azure_policy_state`                              |
 | `azure_policy_assignment`          | **USES**              | `azure_policy_definition`                         |
@@ -576,6 +579,10 @@ The following mapped relationships are created:
 | ------------------------ | --------------------- | ---------------------- | --------- |
 | `azure_network_watcher`  | **HAS**               | `*azure_location*`     | REVERSE   |
 | `azure_management_group` | **HAS**               | `*azure_subscription*` | FORWARD   |
+| `azure_network_firewall` | **ALLOWS**            | `*internet*`           | FORWARD   |
+| `azure_network_firewall` | **ALLOWS**            | `*internet*`           | REVERSE   |
+| `azure_network_firewall` | **DENIES**            | `*internet*`           | FORWARD   |
+| `azure_network_firewall` | **DENIES**            | `*internet*`           | REVERSE   |
 | `azure_subscription`     | **USES**              | `*azure_location*`     | FORWARD   |
 
 <!--
@@ -643,7 +650,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (94)                                       |
+| Role Permissions List (96)                                       |
 | ---------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                         |
 | `Microsoft.ApiManagement/service/apis/read`                      |
@@ -700,6 +707,8 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Network/azurefirewalls/read`                          |
 | `Microsoft.Network/dnszones/read`                                |
 | `Microsoft.Network/dnszones/recordsets/read`                     |
+| `Microsoft.Network/firewallPolicies/Read`                        |
+| `Microsoft.Network/firewallPolicies/ruleCollectionGroups/Read`   |
 | `Microsoft.Network/frontDoors/read`                              |
 | `Microsoft.Network/loadBalancers/read`                           |
 | `Microsoft.Network/networkInterfaces/read`                       |

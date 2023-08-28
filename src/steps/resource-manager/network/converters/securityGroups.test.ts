@@ -23,8 +23,7 @@ const webLinker = createAzureWebLinker('my.onmicrosoft.com');
 
 describe('build mapped relationships from security group rules', () => {
   const inboundRuleFromSingleIpToSubnet: SecurityRule = {
-    id:
-      '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/securityRules/Port_8080',
+    id: '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/securityRules/Port_8080',
     description: 'Test 8080',
     protocol: '*',
     sourcePortRange: '*',
@@ -44,8 +43,7 @@ describe('build mapped relationships from security group rules', () => {
   };
 
   const outboundRuleFromHighPortsToMultiplePortRanges: SecurityRule = {
-    id:
-      '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/securityRules/Port_Ranges',
+    id: '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/securityRules/Port_Ranges',
     description: 'Test port range',
     protocol: 'Tcp',
     sourcePortRange: '1024-65535',
@@ -69,8 +67,7 @@ describe('build mapped relationships from security group rules', () => {
   ];
 
   const inboundRuleFromAllVMsInVNET: SecurityRule = {
-    id:
-      '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/defaultSecurityRules/AllowVnetInBound',
+    id: '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh/defaultSecurityRules/AllowVnetInBound',
     description: 'Allow inbound traffic from all VMs in VNET',
     protocol: '*',
     sourcePortRange: '*',
@@ -92,8 +89,7 @@ describe('build mapped relationships from security group rules', () => {
   const defaultSecurityRules: SecurityRule[] = [inboundRuleFromAllVMsInVNET];
 
   const securityGroup: NetworkSecurityGroup = {
-    id:
-      '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh',
+    id: '/subscriptions/uuid/resourceGroups/xtest/providers/Microsoft.Network/networkSecurityGroups/test-ssh',
     name: 'test-ssh',
     type: 'Microsoft.Network/networkSecurityGroups',
     location: 'eastus2',

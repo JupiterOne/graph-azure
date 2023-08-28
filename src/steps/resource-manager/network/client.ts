@@ -1,6 +1,8 @@
+import * as msRest from '@azure/ms-rest-js';
 import { NetworkManagementClient } from '@azure/arm-network';
 import {
   AzureFirewall,
+  FirewallPolicy,
   FlowLog,
   LoadBalancer,
   NetworkInterface,
@@ -13,9 +15,14 @@ import {
 
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
+  request,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
+import * as Mappers from './mappers';
+import * as Parameters from './parameters';
+import { FirewallPolicyRuleCollectionGroup } from '@azure/arm-network-latest';
 
 export class NetworkClient extends Client {
   /**
@@ -41,6 +48,72 @@ export class NetworkClient extends Client {
       resourceDescription: 'network.azureFirewalls',
       callback,
     });
+  }
+
+  public async iterateFirewallPolicies(
+    resourceGroupName: string,
+    callback: (firewallPolicy: FirewallPolicy) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () =>
+          serviceClient.firewallPolicies.list(resourceGroupName),
+        listNext: serviceClient.firewallPolicies.listNext,
+      },
+      resourceDescription: 'network.firewallPolicies',
+      callback,
+    });
+  }
+
+  public async iterateFirewallPolicyRuleGroups(
+    subscriptionId: string,
+    resourceGroupName: string,
+    policyName: string,
+    callback: (
+      firewallPolicyRuleCollectionGroup: FirewallPolicyRuleCollectionGroup,
+    ) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+
+    let nextPageLink: string | undefined;
+    do {
+      const groups = await request(
+        async () =>
+          nextPageLink
+            ? await serviceClient.sendOperationRequest(
+                {
+                  resourceGroupName,
+                  firewallPolicyName: policyName,
+                  nextLink: nextPageLink,
+                  subscriptionId,
+                },
+                listFirewallPolicyRuleCollectionGroupsNextOperationSpec,
+              )
+            : await serviceClient.sendOperationRequest(
+                {
+                  resourceGroupName,
+                  firewallPolicyName: policyName,
+                  subscriptionId,
+                },
+                listFirewallPolicyRuleCollectionGroupsOperationSpec,
+              ),
+        this.logger,
+        'firewallPolicyRuleCollectionGroups',
+        FIVE_MINUTES,
+      );
+      for (const group of groups?.value || []) {
+        await callback(group);
+      }
+      nextPageLink = groups?.nexLink;
+    } while (nextPageLink);
   }
 
   public async iteratePrivateEndpoints(
@@ -181,14 +254,58 @@ export class NetworkClient extends Client {
         list: async () => {
           return serviceClient.flowLogs.list(resourceGroup, networkWatcherName);
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.flowLogs.listNext(nextLink);
-        },
+        listNext:
+          /* istanbul ignore next: testing iteration might be difficult */ async (
+            nextLink: string,
+          ) => {
+            return serviceClient.flowLogs.listNext(nextLink);
+          },
       },
       resourceDescription: 'network.networkSecurityGroupFlowLogs',
       callback,
     });
   }
 }
+
+const listFirewallPolicyRuleCollectionGroupsOperationSpec: msRest.OperationSpec =
+  {
+    path: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/firewallPolicies/{firewallPolicyName}/ruleCollectionGroups',
+    httpMethod: 'GET',
+    responses: {
+      200: {
+        bodyMapper: Mappers.FirewallPolicyRuleCollectionGroupListResult,
+      },
+      default: {
+        bodyMapper: Mappers.CloudError,
+      },
+    },
+    queryParameters: [Parameters.apiVersion],
+    urlParameters: [
+      Parameters.resourceGroupName,
+      Parameters.subscriptionId,
+      Parameters.firewallPolicyName,
+    ],
+    headerParameters: [Parameters.accept],
+    serializer: new msRest.Serializer(Mappers, false),
+  };
+const listFirewallPolicyRuleCollectionGroupsNextOperationSpec: msRest.OperationSpec =
+  {
+    path: '{nextLink}',
+    httpMethod: 'GET',
+    responses: {
+      200: {
+        bodyMapper: Mappers.FirewallPolicyRuleCollectionGroupListResult,
+      },
+      default: {
+        bodyMapper: Mappers.CloudError,
+      },
+    },
+    urlParameters: [
+      Parameters.resourceGroupName,
+      Parameters.subscriptionId,
+      Parameters.nextLink,
+      Parameters.firewallPolicyName,
+    ],
+    headerParameters: [Parameters.accept],
+    serializer: new msRest.Serializer(Mappers, false),
+  };

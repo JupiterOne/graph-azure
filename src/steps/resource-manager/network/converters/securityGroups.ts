@@ -23,8 +23,8 @@ import {
   SECURITY_GROUP_RULE_RELATIONSHIP_TYPE,
   NetworkEntities,
 } from '../constants';
-import parseSecurityRulePortRange from './parseSecurityRulePortRange';
-import { SecurityRulePortRange } from './types';
+import parseRulePortRange from './parseRulePortRange';
+import { RulePortRange } from './types';
 
 /**
  * The description of an entity that a security group rule references, used to
@@ -241,12 +241,13 @@ export function processSecurityGroupRule(rule: SecurityRule): Rule[] {
   return rules;
 }
 
-function parsePortRanges(rule: SecurityRule): SecurityRulePortRange[] {
+function parsePortRanges(rule: SecurityRule): RulePortRange[] {
   const definedRule = (e: string | undefined) => !!e;
-  return ([
-    rule.destinationPortRange,
-    ...(rule.destinationPortRanges || []),
-  ].filter(definedRule) as string[]).map(parseSecurityRulePortRange);
+  return (
+    [rule.destinationPortRange, ...(rule.destinationPortRanges || [])].filter(
+      definedRule,
+    ) as string[]
+  ).map(parseRulePortRange);
 }
 
 /**
@@ -274,7 +275,7 @@ function getDirectionalRulePrefixes(rule: SecurityRule) {
  */
 function buildFirewallRulePropertiesForPortRange(
   rule: SecurityRule,
-  portRange: SecurityRulePortRange,
+  portRange: RulePortRange,
 ): FirewallRuleProperties {
   return {
     ...convertProperties(rule, { stringifyArray: true }),

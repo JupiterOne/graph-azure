@@ -31,7 +31,13 @@ import {
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { IntegrationConfig } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
-import { NetworkEntities, NetworkRelationships } from './constants';
+import {
+  NetworkEntities,
+  NetworkRelationships,
+  STEP_RM_NETWORK_FIREWALL_POLICIES,
+  STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
+  STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
+} from './constants';
 import {
   configFromEnv,
   getStepTestConfigForStep,
@@ -1186,9 +1192,8 @@ describe('rm-network-private-endpoints', () => {
       },
     });
 
-    const { accountEntity, resourceGroupEntity } = getSetupEntities(
-      configFromEnv,
-    );
+    const { accountEntity, resourceGroupEntity } =
+      getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -1357,10 +1362,8 @@ describe('rm-network-private-endpoint-resource-relationships', () => {
       },
     });
 
-    const {
-      storageAccountEntities,
-      privateEndpointEntity,
-    } = await getSetupEntities(configFromEnv);
+    const { storageAccountEntities, privateEndpointEntity } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -1430,10 +1433,8 @@ describe('rm-network-private-endpoint-nic-relationships', () => {
       },
     });
 
-    const {
-      networkInterfaceEntities,
-      privateEndpointEntities,
-    } = await getSetupEntities(configFromEnv);
+    const { networkInterfaceEntities, privateEndpointEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -1494,19 +1495,22 @@ describe('rm-network-flow-logs', () => {
     });
 
     await fetchNetworkWatchers(context);
-    const networkWatcherEntities: Entity[] = context.jobState.collectedEntities.filter(
-      (e) => e._type === NetworkEntities.NETWORK_WATCHER._type,
-    );
+    const networkWatcherEntities: Entity[] =
+      context.jobState.collectedEntities.filter(
+        (e) => e._type === NetworkEntities.NETWORK_WATCHER._type,
+      );
 
     await fetchNetworkSecurityGroups(context);
-    const securityGroupEntities: Entity[] = context.jobState.collectedEntities.filter(
-      (e) => e._type === NetworkEntities.SECURITY_GROUP._type,
-    );
+    const securityGroupEntities: Entity[] =
+      context.jobState.collectedEntities.filter(
+        (e) => e._type === NetworkEntities.SECURITY_GROUP._type,
+      );
 
     await fetchStorageAccounts(context);
-    const storageAccountEntities: Entity[] = context.jobState.collectedEntities.filter(
-      (e) => e._type === storageEntities.STORAGE_ACCOUNT._type,
-    );
+    const storageAccountEntities: Entity[] =
+      context.jobState.collectedEntities.filter(
+        (e) => e._type === storageEntities.STORAGE_ACCOUNT._type,
+      );
 
     return {
       accountEntity,
@@ -1650,4 +1654,78 @@ describe('rm-network-location-watcher-relationships', () => {
 
     expect(mappedRelationships.length > 0);
   }, 100000);
+});
+
+describe(STEP_RM_NETWORK_FIREWALL_POLICIES, () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  test('success', async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_RM_NETWORK_FIREWALL_POLICIES,
+    );
+    recording = setupAzureRecording(
+      {
+        name: STEP_RM_NETWORK_FIREWALL_POLICIES,
+        directory: __dirname,
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  }, 500000);
+});
+
+describe(STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS, () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  test('success', async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
+    );
+    recording = setupAzureRecording(
+      {
+        name: STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
+        directory: __dirname,
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  });
+});
+
+describe(STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS, () => {
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
+
+  test('success', async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
+    );
+    recording = setupAzureRecording(
+      {
+        name: STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
+        directory: __dirname,
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    const mappedRelationships = stepResults.collectedRelationships;
+
+    expect(mappedRelationships.length > 0);
+  }, 500000);
 });

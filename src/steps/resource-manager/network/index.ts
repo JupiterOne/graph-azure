@@ -16,6 +16,7 @@ import {
   createMappedRelationship,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
+import { INTERNET } from '@jupiterone/data-model';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
@@ -40,9 +41,17 @@ import {
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
   NetworkMappedRelationships,
+  STEP_RM_NETWORK_FIREWALL_POLICIES,
+  STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
+  FIREWALL_POLICY_PARENT_CHILDREN_MAP,
+  STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
+  POLICY_INCLUDED_IN_FIREWALLS_MAP,
+  FIREWALL_RULE_RELATIONSHIP_TYPE,
 } from './constants';
 import {
   createAzureFirewallEntity,
+  createFirewallPolicyEntity,
+  createFirewallPolicyKey,
   createLoadBalancerBackendNicRelationship,
   createLoadBalancerEntity,
   createNetworkInterfaceEntity,
@@ -80,10 +89,40 @@ import {
 } from '../subscriptions/constants';
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
+import {
+  FirewallPolicyRuleCollectionGroup,
+  NetworkRule,
+} from '@azure/arm-network-latest';
+import parseRulePortRange from './converters/parseRulePortRange';
+import { hasInternetAddress } from '../../../azure/utils';
+import { RulePortRange } from './converters/types';
 
-type SubnetSecurityGroupMap = {
+interface SubnetSecurityGroupMap {
   [subnetId: string]: NetworkSecurityGroup;
-};
+}
+
+interface RuleProperties {
+  _type: string;
+  _class: RelationshipClass;
+  displayName: string;
+  protocols?: string;
+  egress: boolean;
+  outbound: boolean;
+  ingress: boolean;
+  inbound: boolean;
+  fromPort?: number;
+  toPort?: number;
+  portRange: string;
+  ruleGroupId?: string;
+  ruleName?: string;
+}
+
+interface BuildRulePropertiesParams {
+  rule: NetworkRule & { actionType: string };
+  direction: 'Inbound' | 'Outbound';
+  portRange: RulePortRange;
+  ruleGroupId?: string;
+}
 
 export async function fetchAzureFirewalls(
   executionContext: IntegrationStepContext,
@@ -93,6 +132,7 @@ export async function fetchAzureFirewalls(
 
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const policyIncludedInFirewallsMap = new Map<string, string[]>();
 
   await jobState.iterateEntities(
     { _type: RESOURCE_GROUP_ENTITY._type },
@@ -116,10 +156,281 @@ export async function fetchAzureFirewalls(
             executionContext,
             azureFirewallEntity,
           );
+
+          if (azureFirewall.firewallPolicy?.id) {
+            const firewallPolicyKey = createFirewallPolicyKey(
+              azureFirewall.firewallPolicy.id,
+            );
+            if (!jobState.hasKey(firewallPolicyKey)) {
+              return;
+            }
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.HAS,
+                fromKey: azureFirewallEntity._key,
+                fromType: NetworkEntities.AZURE_FIREWALL._type,
+                toKey: firewallPolicyKey,
+                toType: NetworkEntities.FIREWALL_POLICY._type,
+              }),
+            );
+            if (!policyIncludedInFirewallsMap.has(firewallPolicyKey)) {
+              policyIncludedInFirewallsMap.set(firewallPolicyKey, []);
+            }
+            policyIncludedInFirewallsMap.set(firewallPolicyKey, [
+              ...(policyIncludedInFirewallsMap.get(firewallPolicyKey) || []),
+              azureFirewallEntity._key,
+            ]);
+          }
         },
       );
     },
   );
+
+  await jobState.setData(
+    POLICY_INCLUDED_IN_FIREWALLS_MAP,
+    policyIncludedInFirewallsMap,
+  );
+}
+
+export async function fetchFirewallPolicies(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
+
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  const policyParentChildrenMap = new Map<string, string[]>();
+
+  await jobState.iterateEntities(
+    { _type: RESOURCE_GROUP_ENTITY._type },
+    async (resourceGroupEntity) => {
+      const { name } = resourceGroupEntity;
+
+      await client.iterateFirewallPolicies(
+        name as string,
+        async (firewallPolicy) => {
+          const firewallPolicyEntity = createFirewallPolicyEntity(
+            webLinker,
+            firewallPolicy,
+          );
+
+          if (!firewallPolicyEntity) {
+            return;
+          }
+
+          if (firewallPolicy.childPolicies?.length) {
+            policyParentChildrenMap.set(
+              firewallPolicyEntity._key,
+              firewallPolicy.childPolicies
+                .filter(({ id }) => id)
+                .map(({ id }) => createFirewallPolicyKey(id as string)),
+            );
+          }
+
+          await jobState.addEntity(firewallPolicyEntity);
+        },
+      );
+    },
+  );
+
+  await jobState.setData(
+    FIREWALL_POLICY_PARENT_CHILDREN_MAP,
+    policyParentChildrenMap,
+  );
+}
+
+export async function buildFirewallRuleRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const client = new NetworkClient(instance.config, logger);
+
+  const policyIncludedInFirewallsMap = (await jobState.getData(
+    POLICY_INCLUDED_IN_FIREWALLS_MAP,
+  )) as Map<string, string[]>;
+
+  const policyRulesMap = new Map<string, RuleProperties[]>();
+  const policyBasePolicyMap = new Map<string, string | null>();
+
+  await jobState.iterateEntities(
+    { _type: NetworkEntities.FIREWALL_POLICY._type },
+    async (firewallPolicyEntity) => {
+      const {
+        id: policyId,
+        name: policyName,
+        basePolicy,
+      } = firewallPolicyEntity;
+      policyBasePolicyMap.set(
+        firewallPolicyEntity._key,
+        basePolicy ? createFirewallPolicyKey(basePolicy as string) : null,
+      );
+      const resourceGroupName = (policyId as string).split('/')[4];
+      if (!resourceGroupName) {
+        return;
+      }
+      await client.iterateFirewallPolicyRuleGroups(
+        instance.config.subscriptionId as string,
+        resourceGroupName,
+        policyName as string,
+        (ruleGroup) => {
+          const rules = processFirewallCollectionGroupRules(ruleGroup);
+          for (const rule of rules) {
+            const targetPortRanges = (rule.destinationPorts || []).map(
+              parseRulePortRange,
+            );
+            for (const portRange of targetPortRanges) {
+              let direction: 'Inbound' | 'Outbound';
+              const isInboundRule =
+                rule.sourceAddresses?.length &&
+                hasInternetAddress(rule.sourceAddresses);
+              const isOutboundRule =
+                rule.destinationAddresses?.length &&
+                hasInternetAddress(rule.destinationAddresses);
+              if (isInboundRule) {
+                direction = 'Inbound';
+              } else if (isOutboundRule) {
+                direction = 'Outbound';
+              } else {
+                // East-west traffic
+                continue;
+              }
+
+              const ruleProperties = buildRuleProperties({
+                rule,
+                direction,
+                portRange,
+                ruleGroupId: ruleGroup.id,
+              });
+              if (!policyRulesMap.has(firewallPolicyEntity._key)) {
+                policyRulesMap.set(firewallPolicyEntity._key, []);
+              }
+              policyRulesMap.set(firewallPolicyEntity._key, [
+                ...(policyRulesMap.get(firewallPolicyEntity._key) || []),
+                ruleProperties,
+              ]);
+            }
+          }
+        },
+      );
+    },
+  );
+
+  for (const policyKey of policyBasePolicyMap.keys()) {
+    const firewallKeys = policyIncludedInFirewallsMap.get(policyKey) || [];
+    const getRecurRuleProperties = (policyKey: string): RuleProperties[] => {
+      const basePolicy = policyBasePolicyMap.get(policyKey);
+      return [
+        ...(policyRulesMap.get(policyKey) || []),
+        ...(basePolicy ? getRecurRuleProperties(basePolicy) : []),
+      ];
+    };
+
+    const rulePropertiesArr = getRecurRuleProperties(policyKey);
+    for (const ruleProperties of rulePropertiesArr) {
+      const mappedRelationships = firewallKeys.map((firewallKey) =>
+        createMappedRelationship({
+          _class: ruleProperties._class,
+          _mapping: {
+            relationshipDirection: ruleProperties.ingress
+              ? RelationshipDirection.REVERSE
+              : RelationshipDirection.FORWARD,
+            sourceEntityKey: firewallKey,
+            targetFilterKeys: [['_key']],
+            targetEntity: INTERNET,
+            skipTargetCreation: false,
+          },
+          properties: {
+            ...ruleProperties,
+            _key: `${FIREWALL_RULE_RELATIONSHIP_TYPE}:${firewallKey}:${
+              ruleProperties.ruleGroupId ?? ''
+            }:${(ruleProperties.ruleName ?? '')
+              .toLowerCase()
+              .replace(/ /g, '_')}:${ruleProperties.portRange}:internet`,
+          },
+        }),
+      );
+      await jobState.addRelationships(mappedRelationships);
+    }
+  }
+}
+
+function processFirewallCollectionGroupRules(
+  ruleGroup: FirewallPolicyRuleCollectionGroup,
+): (NetworkRule & { actionType: string })[] {
+  const rules: (NetworkRule & { actionType: string })[] = [];
+  for (const ruleCollection of ruleGroup.ruleCollections || []) {
+    if (!('action' in ruleCollection)) {
+      continue;
+    }
+    const actionType = ruleCollection.action?.type;
+    if (!actionType || !['Allow', 'Deny'].includes(actionType)) {
+      continue;
+    }
+    const networkRules = (ruleCollection.rules || []).filter(
+      (rule) => rule.ruleType === 'NetworkRule',
+    ) as NetworkRule[];
+    rules.push(
+      ...networkRules.map((rule) => ({
+        ...rule,
+        actionType,
+      })),
+    );
+  }
+  return rules;
+}
+
+function buildRuleProperties({
+  rule,
+  direction,
+  portRange,
+  ruleGroupId,
+}: BuildRulePropertiesParams): RuleProperties {
+  const relationshipClass =
+    rule.actionType === 'Allow'
+      ? RelationshipClass.ALLOWS
+      : RelationshipClass.DENIES;
+  return {
+    _type: FIREWALL_RULE_RELATIONSHIP_TYPE,
+    _class: relationshipClass,
+    displayName: relationshipClass,
+    protocols: rule.ipProtocols?.join(','),
+    egress: direction !== 'Inbound',
+    outbound: direction !== 'Inbound',
+    ingress: direction === 'Inbound',
+    inbound: direction === 'Inbound',
+    fromPort: portRange.fromPort,
+    toPort: portRange.toPort,
+    portRange: portRange.portRange,
+    ruleGroupId,
+    ruleName: rule.name,
+  };
+}
+
+export async function buildFirewallPoliciesRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  const policyParentChildrenMap = (await jobState.getData(
+    FIREWALL_POLICY_PARENT_CHILDREN_MAP,
+  )) as Map<string, string[]>;
+
+  for (const [parentPolicyKey, childrenPolicyKeys] of policyParentChildrenMap) {
+    await jobState.addRelationships(
+      childrenPolicyKeys
+        .filter((childPolicyKey) => jobState.hasKey(childPolicyKey))
+        .map((childPolicyKey) =>
+          createDirectRelationship({
+            _class: RelationshipClass.EXTENDS,
+            fromKey: childPolicyKey,
+            fromType: NetworkEntities.FIREWALL_POLICY._type,
+            toKey: parentPolicyKey,
+            toType: NetworkEntities.FIREWALL_POLICY._type,
+          }),
+        ),
+    );
+  }
 }
 
 export async function fetchNetworkInterfaces(
@@ -226,10 +537,8 @@ export async function fetchLoadBalancers(
                * "id": "/subscriptions/<uuid>/resourceGroups/xtest/providers/Microsoft.Network/networkInterfaces/j1234/ipConfigurations/ipconfig1",
                */
               const nicId = ip.id.split('/ipConfigurations')[0];
-              const loadBalancerNicRelationship = createLoadBalancerBackendNicRelationship(
-                lb,
-                nicId,
-              );
+              const loadBalancerNicRelationship =
+                createLoadBalancerBackendNicRelationship(lb, nicId);
               if (
                 !loadBalancerNicRelationshipKeys.has(
                   loadBalancerNicRelationship._key,
@@ -861,16 +1170,57 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     relationships: [
       NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL,
+      NetworkRelationships.NETWORK_AZURE_FIREWALL_HAS_FIREWALL_POLICY,
       ...getDiagnosticSettingsRelationshipsForResource(
         NetworkEntities.AZURE_FIREWALL,
       ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      STEP_RM_NETWORK_FIREWALL_POLICIES,
+    ],
     executionHandler: fetchAzureFirewalls,
     rolePermissions: [
       'Microsoft.Network/azurefirewalls/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+  },
+  {
+    id: STEP_RM_NETWORK_FIREWALL_POLICIES,
+    name: 'Network Firewall Policies',
+    entities: [NetworkEntities.FIREWALL_POLICY],
+    relationships: [],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchFirewallPolicies,
+    rolePermissions: ['Microsoft.Network/firewallPolicies/Read'],
+  },
+  {
+    id: STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
+    name: 'Network Firewall Rules Relationships',
+    entities: [],
+    relationships: [],
+    mappedRelationships: [
+      NetworkMappedRelationships.FIREWALL_ALLOWS_INTERNET_FORWARD,
+      NetworkMappedRelationships.FIREWALL_ALLOWS_INTERNET_REVERSE,
+      NetworkMappedRelationships.FIREWALL_DENIES_INTERNET_FORWARD,
+      NetworkMappedRelationships.FIREWALL_DENIES_INTERNET_REVERSE,
+    ],
+    dependsOn: [STEP_RM_NETWORK_FIREWALLS, STEP_RM_NETWORK_FIREWALL_POLICIES],
+    executionHandler: buildFirewallRuleRelationships,
+    rolePermissions: [
+      'Microsoft.Network/firewallPolicies/ruleCollectionGroups/Read',
+    ],
+  },
+  {
+    id: STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
+    name: 'Network Firewall Policy Relationships',
+    entities: [],
+    relationships: [
+      NetworkRelationships.NETWORK_FIREWALL_POLICY_EXTENDS_FIREWALL_POLICY,
+    ],
+    dependsOn: [STEP_RM_NETWORK_FIREWALL_POLICIES],
+    executionHandler: buildFirewallPoliciesRelationships,
   },
   {
     id: STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,

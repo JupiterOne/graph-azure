@@ -21,6 +21,7 @@ import {
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import { ResourcesClient } from '../resources/client';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchPrivateZones(
   executionContext: IntegrationStepContext,
@@ -67,7 +68,7 @@ export async function fetchPrivateRecordSets(
     { _type: PrivateDnsEntities.ZONE._type },
     async (dnsZoneEntity) => {
       await client.iteratePrivateDnsRecordSets(
-        (dnsZoneEntity as unknown) as { name: string; id: string },
+        dnsZoneEntity as unknown as { name: string; id: string },
         async (recordSet) => {
           const recordSetEntity = createPrivateDnsRecordSetEntity(
             webLinker,
@@ -97,6 +98,7 @@ export const privateDnsSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPrivateZones,
     rolePermissions: ['Microsoft.Network/privateDnsZones/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.PRIVATE_DNS,
   },
   {
     id: STEP_RM_PRIVATE_DNS_RECORD_SETS,
@@ -106,5 +108,6 @@ export const privateDnsSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_PRIVATE_DNS_ZONES],
     executionHandler: fetchPrivateRecordSets,
     rolePermissions: ['Microsoft.Network/privateDnsZones/recordsets/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.PRIVATE_DNS,
   },
 ];

@@ -25,6 +25,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchContainerRegistries(
   executionContext: IntegrationStepContext,
@@ -68,7 +69,7 @@ export async function fetchContainerRegistryWebhooks(
     { _type: ContainerRegistryEntities.REGISTRY._type },
     async (registryEntity) => {
       await client.iterateRegistryWebhooks(
-        (registryEntity as unknown) as { name: string; id: string },
+        registryEntity as unknown as { name: string; id: string },
         async (registryWebhook) => {
           const registryWebhookEntity = createContainerRegistryWebhookEntity(
             webLinker,
@@ -109,6 +110,7 @@ export const containerRegistrySteps: AzureIntegrationStep[] = [
       'Microsoft.ContainerRegistry/registries/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_REGISTRY,
   },
   {
     id: STEP_RM_CONTAINER_REGISTRY_WEBHOOKS,
@@ -118,5 +120,6 @@ export const containerRegistrySteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CONTAINER_REGISTRIES],
     executionHandler: fetchContainerRegistryWebhooks,
     rolePermissions: ['Microsoft.ContainerRegistry/registries/webhooks/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_REGISTRY,
   },
 ];

@@ -36,6 +36,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchEventGridDomains(
   executionContext: IntegrationStepContext,
@@ -129,10 +130,11 @@ export async function fetchEventGridDomainTopicSubscriptions(
             domainName,
           },
           async (domainTopicSubscription) => {
-            const domainTopicSubscriptionEntity = createEventGridTopicSubscriptionEntity(
-              webLinker,
-              domainTopicSubscription,
-            );
+            const domainTopicSubscriptionEntity =
+              createEventGridTopicSubscriptionEntity(
+                webLinker,
+                domainTopicSubscription,
+              );
             await jobState.addEntity(domainTopicSubscriptionEntity);
             await jobState.addRelationship(
               createDirectRelationship({
@@ -245,6 +247,7 @@ export const eventGridSteps: AzureIntegrationStep[] = [
       'Microsoft.EventGrid/domains/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_GRID,
   },
   {
     id: STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
@@ -258,6 +261,7 @@ export const eventGridSteps: AzureIntegrationStep[] = [
     ],
     executionHandler: fetchEventGridDomainTopics,
     rolePermissions: ['Microsoft.EventGrid/domains/topics/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_GRID,
   },
   {
     id: STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
@@ -274,6 +278,7 @@ export const eventGridSteps: AzureIntegrationStep[] = [
     rolePermissions: [
       'Microsoft.EventGrid/domains/topics/eventSubscriptions/read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_GRID,
   },
   {
     id: STEP_RM_EVENT_GRID_TOPICS,
@@ -292,6 +297,7 @@ export const eventGridSteps: AzureIntegrationStep[] = [
       'Microsoft.EventGrid/topics/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_GRID,
   },
   {
     id: STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
@@ -305,5 +311,6 @@ export const eventGridSteps: AzureIntegrationStep[] = [
     ],
     executionHandler: fetchEventGridTopicSubscriptions,
     rolePermissions: ['Microsoft.EventGrid/topics/eventSubscriptions/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_GRID,
   },
 ];

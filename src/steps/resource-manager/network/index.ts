@@ -89,6 +89,7 @@ import {
 } from '../subscriptions/constants';
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 import {
   FirewallPolicyRuleCollectionGroup,
   NetworkRule,
@@ -1071,6 +1072,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       'Microsoft.Network/publicIPAddresses/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_INTERFACES,
@@ -1086,6 +1088,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     executionHandler: fetchNetworkInterfaces,
     rolePermissions: ['Microsoft.Network/networkInterfaces/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_VIRTUAL_NETWORKS,
@@ -1113,6 +1116,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       'Microsoft.Network/virtualNetworks/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_SECURITY_GROUPS,
@@ -1139,6 +1143,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       'Microsoft.Network/networkSecurityGroups/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_LOAD_BALANCERS,
@@ -1160,6 +1165,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       'Microsoft.Network/loadBalancers/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_FIREWALLS,
@@ -1185,6 +1191,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       'Microsoft.Network/azurefirewalls/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_FIREWALL_POLICIES,
@@ -1194,6 +1201,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchFirewallPolicies,
     rolePermissions: ['Microsoft.Network/firewallPolicies/Read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
@@ -1211,6 +1219,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     rolePermissions: [
       'Microsoft.Network/firewallPolicies/ruleCollectionGroups/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
@@ -1221,6 +1230,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_RM_NETWORK_FIREWALL_POLICIES],
     executionHandler: buildFirewallPoliciesRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
@@ -1238,6 +1248,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       STEP_RM_NETWORK_VIRTUAL_NETWORKS,
     ],
     executionHandler: buildSecurityGroupRuleRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_WATCHERS,
@@ -1247,6 +1258,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchNetworkWatchers,
     rolePermissions: ['Microsoft.Network/networkWatchers/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
@@ -1256,6 +1268,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchPrivateEndpoints,
     rolePermissions: ['Microsoft.Network/privateEndpoints/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
@@ -1267,6 +1280,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       STEP_RM_NETWORK_VIRTUAL_NETWORKS,
     ],
     executionHandler: buildPrivateEndpointSubnetRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
@@ -1275,6 +1289,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     relationships: [NetworkRelationships.PRIVATE_ENDPOINT_USES_NIC],
     dependsOn: [STEP_RM_NETWORK_PRIVATE_ENDPOINTS, STEP_RM_NETWORK_INTERFACES],
     executionHandler: buildPrivateEndpointNetworkInterfaceRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
@@ -1286,6 +1301,7 @@ export const networkSteps: AzureIntegrationStep[] = [
       ...getResourceManagerSteps().executeFirstSteps,
     ],
     executionHandler: buildPrivateEndpointResourceRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_LOCATION_WATCHERS,
@@ -1297,6 +1313,7 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_RM_NETWORK_WATCHERS, subscriptionSteps.LOCATIONS],
     executionHandler: buildLocationNetworkWatcherRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
   {
     id: STEP_RM_NETWORK_FLOW_LOGS,
@@ -1314,5 +1331,6 @@ export const networkSteps: AzureIntegrationStep[] = [
     ],
     executionHandler: fetchNetworkSecurityGroupFlowLogs,
     rolePermissions: ['Microsoft.Network/networkWatchers/flowLogs/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },
 ];

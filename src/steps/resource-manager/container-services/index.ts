@@ -1,4 +1,5 @@
 import { createAzureWebLinker } from '../../../azure';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 import { AzureIntegrationStep, IntegrationStepContext } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
@@ -40,5 +41,6 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchClusters,
     rolePermissions: ['Microsoft.ContainerService/managedClusters/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_SERVICES,
   },
 ];

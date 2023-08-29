@@ -24,6 +24,7 @@ import {
 } from './constants';
 import { entities as SubscriptionEntities } from '../subscriptions/constants';
 import { createManagementGroupEntity } from './converters';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchManagementGroups(
   executionContext: IntegrationStepContext,
@@ -35,14 +36,13 @@ export async function fetchManagementGroups(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ManagementGroupClient(instance.config, logger);
 
-  const {
-    managementGroupEntity: tenantRootManagementGroupEntity,
-  } = await getGraphObjectsForManagementGroup({
-    webLinker,
-    executionContext,
-    client,
-    managementGroupId: instance.config.directoryId,
-  });
+  const { managementGroupEntity: tenantRootManagementGroupEntity } =
+    await getGraphObjectsForManagementGroup({
+      webLinker,
+      executionContext,
+      client,
+      managementGroupId: instance.config.directoryId,
+    });
 
   await jobState.addRelationship(
     createDirectRelationship({
@@ -93,12 +93,11 @@ export async function getGraphObjectsForManagementGroup(options: {
 
   for (const child of managementGroup.children || []) {
     if (child.type === '/providers/Microsoft.Management/managementGroups') {
-      const {
-        managementGroupEntity: childManagementGroupEntity,
-      } = await getGraphObjectsForManagementGroup({
-        ...options,
-        managementGroupId: child.name!,
-      });
+      const { managementGroupEntity: childManagementGroupEntity } =
+        await getGraphObjectsForManagementGroup({
+          ...options,
+          managementGroupId: child.name!,
+        });
       await jobState.addRelationship(
         createDirectRelationship({
           from: managementGroupEntity,
@@ -153,5 +152,6 @@ export const managementGroupSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchManagementGroups,
     rolePermissions: ['Microsoft.Management/managementGroups/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.MANAGEMENT_GROUPS,
   },
 ];

@@ -49,6 +49,7 @@ import {
 } from '../storage/constants';
 import { StorageAccount } from '@azure/arm-storage/esm/models';
 import { getResourceGroupName } from '../utils/matchers';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchGalleries(
   executionContext: IntegrationStepContext,
@@ -205,9 +206,8 @@ export async function fetchVirtualMachines(
   const client = new ComputeClient(instance.config, logger);
 
   await client.iterateVirtualMachines(async (vm) => {
-    let instanceView:
-      | VirtualMachinesInstanceViewResponse
-      | undefined = undefined;
+    let instanceView: VirtualMachinesInstanceViewResponse | undefined =
+      undefined;
     try {
       instanceView = await client.fetchInstanceView(
         vm.name,
@@ -494,10 +494,11 @@ export async function fetchVirtualMachineExtensions(
             provisioningState,
             ...vmExtensionSharedProperties
           } = vmExtension;
-          const vmExtensionEntity = await findOrCreateVirtualMachineExtensionEntity(
-            vmExtensionSharedProperties,
-            executionContext,
-          );
+          const vmExtensionEntity =
+            await findOrCreateVirtualMachineExtensionEntity(
+              vmExtensionSharedProperties,
+              executionContext,
+            );
 
           await jobState.addRelationship(
             createDirectRelationship({
@@ -810,6 +811,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchGalleries,
     rolePermissions: ['Microsoft.Compute/galleries/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.SHARED_IMAGES,
@@ -819,6 +821,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, steps.GALLERIES],
     executionHandler: fetchGalleryImages,
     rolePermissions: ['Microsoft.Compute/galleries/images/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.SHARED_IMAGE_VERSIONS,
@@ -828,6 +831,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, steps.SHARED_IMAGES],
     executionHandler: fetchGalleryImageVersions,
     rolePermissions: ['Microsoft.Compute/galleries/images/versions/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.SHARED_IMAGE_VERSION_SOURCE_RELATIONSHIPS,
@@ -838,6 +842,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [steps.SHARED_IMAGE_VERSIONS, steps.COMPUTE_VIRTUAL_MACHINES],
     executionHandler: buildGalleryImageVersionSourceRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
@@ -851,6 +856,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineImages,
     rolePermissions: ['Microsoft.Compute/images/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.COMPUTE_VIRTUAL_MACHINE_DISKS,
@@ -862,6 +868,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineDisks,
     rolePermissions: ['Microsoft.Compute/disks/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.COMPUTE_VIRTUAL_MACHINES,
@@ -875,6 +882,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachines,
     rolePermissions: ['Microsoft.Compute/virtualMachines/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.VIRTUAL_MACHINE_DISK_RELATIONSHIPS,
@@ -890,6 +898,7 @@ export const computeSteps: AzureIntegrationStep[] = [
       storageSteps.STORAGE_ACCOUNTS,
     ],
     executionHandler: buildVirtualMachineDiskRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.VIRTUAL_MACHINE_EXTENSIONS,
@@ -899,6 +908,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, steps.COMPUTE_VIRTUAL_MACHINES],
     executionHandler: fetchVirtualMachineExtensions,
     rolePermissions: ['Microsoft.Compute/virtualMachines/extensions/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.VIRTUAL_MACHINE_IMAGE_RELATIONSHIPS,
@@ -916,6 +926,7 @@ export const computeSteps: AzureIntegrationStep[] = [
       steps.SHARED_IMAGE_VERSIONS,
     ],
     executionHandler: buildVirtualMachineImageRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.VIRTUAL_MACHINE_MANAGED_IDENTITY_RELATIONSHIPS,
@@ -924,6 +935,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     relationships: [relationships.VIRTUAL_MACHINE_USES_MANAGED_IDENTITY],
     dependsOn: [steps.COMPUTE_VIRTUAL_MACHINES],
     executionHandler: buildVirtualMachineManagedIdentityRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.VIRTUAL_MACHINE_SCALE_SETS,
@@ -937,6 +949,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachineScaleSets,
     rolePermissions: ['Microsoft.Compute/virtualMachineScaleSets/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.VIRTUAL_MACHINE_SCALE_SETS_RELATIONSHIPS,
@@ -948,6 +961,7 @@ export const computeSteps: AzureIntegrationStep[] = [
       steps.COMPUTE_VIRTUAL_MACHINES,
     ],
     executionHandler: buildVMScaleSetsRelationship,
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS,
@@ -960,6 +974,7 @@ export const computeSteps: AzureIntegrationStep[] = [
       steps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
     ],
     executionHandler: buildVMScaleSetsImageRelationship,
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {
     id: steps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS,
@@ -972,5 +987,6 @@ export const computeSteps: AzureIntegrationStep[] = [
       steps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
     ],
     executionHandler: buildVMScaleSetsImageVersionRelationship,
+    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
 ];

@@ -29,6 +29,7 @@ import { SUBSCRIPTION_MATCHER } from '../utils/matchers';
 import { steps as subscriptionSteps } from '../subscriptions/constants';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
 import { ANY_SCOPE } from '../constants';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 const subscriptionRegex = new RegExp(SUBSCRIPTION_MATCHER);
 
@@ -156,6 +157,7 @@ export const resourcesSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchResourceGroups,
     rolePermissions: ['Microsoft.Resources/subscriptions/resourceGroups/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.RESOURCES,
   },
   {
     id: STEP_RM_RESOURCES_RESOURCE_LOCKS,
@@ -165,6 +167,7 @@ export const resourcesSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchResourceGroupLocks,
     rolePermissions: ['Microsoft.Authorization/locks/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.RESOURCES,
   },
   {
     id: STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
@@ -176,5 +179,6 @@ export const resourcesSteps: AzureIntegrationStep[] = [
       ...getResourceManagerSteps().executeFirstSteps,
     ],
     executionHandler: buildResourceHasResourceLockRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.RESOURCES,
   },
 ];

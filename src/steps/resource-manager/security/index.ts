@@ -22,6 +22,7 @@ import {
   entities as subscriptionEntities,
   steps as subscriptionSteps,
 } from '../subscriptions/constants';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchAssessments(
   executionContext: IntegrationStepContext,
@@ -162,9 +163,10 @@ export async function fetchSecurityCenterAutoProvisioningSettings(
   const subscriptionEntity = await jobState.findEntity(subscriptionId);
 
   await client.iterateAutoProvisioningSettings(async (setting) => {
-    const securityCenterAutoProvisioningSettingEntity = await jobState.addEntity(
-      createSecurityCenterAutoProvisioningSettingEntity(webLinker, setting),
-    );
+    const securityCenterAutoProvisioningSettingEntity =
+      await jobState.addEntity(
+        createSecurityCenterAutoProvisioningSettingEntity(webLinker, setting),
+      );
 
     if (!subscriptionEntity) return;
 
@@ -194,6 +196,7 @@ export const securitySteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAssessments,
     rolePermissions: ['Microsoft.Security/assessments/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SECURITY,
   },
   {
     id: SecuritySteps.SECURITY_CENTER_CONTACTS,
@@ -205,6 +208,7 @@ export const securitySteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterContacts,
     rolePermissions: ['Microsoft.Security/securityContacts/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SECURITY,
   },
   {
     id: SecuritySteps.PRICING_CONFIGURATIONS,
@@ -214,6 +218,7 @@ export const securitySteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterPricingConfigurations,
     rolePermissions: ['Microsoft.Security/pricings/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SECURITY,
   },
   {
     id: SecuritySteps.SETTINGS,
@@ -223,6 +228,7 @@ export const securitySteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterSettings,
     rolePermissions: ['Microsoft.Security/settings/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SECURITY,
   },
   {
     id: SecuritySteps.AUTO_PROVISIONING_SETTINGS,
@@ -234,5 +240,6 @@ export const securitySteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchSecurityCenterAutoProvisioningSettings,
     rolePermissions: ['Microsoft.Security/autoProvisioningSettings/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SECURITY,
   },
 ];

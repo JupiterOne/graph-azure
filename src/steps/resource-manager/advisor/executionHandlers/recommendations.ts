@@ -19,6 +19,7 @@ import {
 import { createRecommendationEntity } from '../converters';
 import { SecuritySteps } from '../../security/constants';
 import { ResourceRecommendationBase } from '@azure/arm-advisor/esm/models';
+import { INGESTION_SOURCE_IDS } from '../../../../constants';
 
 export async function fetchRecommendations(
   executionContext: IntegrationStepContext,
@@ -43,9 +44,8 @@ export async function buildAssesmentToRecommendationRelationship(
   await jobState.iterateEntities(
     { _type: AdvisorEntities.RECOMMENDATION._type },
     async (recommendationEntity) => {
-      const recommendation = getRawData<ResourceRecommendationBase>(
-        recommendationEntity,
-      )!;
+      const recommendation =
+        getRawData<ResourceRecommendationBase>(recommendationEntity)!;
       if (recommendation.resourceMetadata?.source) {
         const assessmentEntity = await jobState.findEntity(
           recommendation.resourceMetadata.source,
@@ -75,9 +75,8 @@ export async function buildResourceToRecommendationRelationship(
   await jobState.iterateEntities(
     { _type: AdvisorEntities.RECOMMENDATION._type },
     async (recommendationEntity) => {
-      const recommendation = getRawData<ResourceRecommendationBase>(
-        recommendationEntity,
-      )!;
+      const recommendation =
+        getRawData<ResourceRecommendationBase>(recommendationEntity)!;
       if (recommendation.resourceMetadata?.resourceId) {
         const resourceEntity = await jobState.findEntity(
           recommendation.resourceMetadata.resourceId,
@@ -108,6 +107,7 @@ export const recommendationSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchRecommendations,
     rolePermissions: ['Microsoft.Advisor/recommendations/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.ADVISOR_RECOMMENDATIONS,
   },
   {
     id: AdvisorSteps.ASSESSMENT_RECOMMENDATION_RELATIONSHIP,
@@ -125,5 +125,6 @@ export const recommendationSteps: AzureIntegrationStep[] = [
     dependsOn: [],
     executionHandler: buildResourceToRecommendationRelationship,
     dependencyGraphId: 'last',
+    ingestionSourceId: INGESTION_SOURCE_IDS.ADVISOR_RECOMMENDATIONS,
   },
 ];

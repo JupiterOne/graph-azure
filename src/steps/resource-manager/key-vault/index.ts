@@ -34,6 +34,7 @@ import {
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { getAccountEntity } from '../../active-directory';
 import { Vault } from '@azure/arm-keyvault/esm/models';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchKeyVaults(
   executionContext: IntegrationStepContext,
@@ -199,6 +200,7 @@ export const keyvaultSteps: AzureIntegrationStep[] = [
       'Microsoft.KeyVault/vaults/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.KEY_VAULT,
   },
   {
     id: KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS,
@@ -207,6 +209,7 @@ export const keyvaultSteps: AzureIntegrationStep[] = [
     relationships: [KeyVaultRelationships.KEY_VAULT_ALLOWS_PRINCIPAL],
     dependsOn: [STEP_RM_KEYVAULT_VAULTS],
     executionHandler: buildKeyVaultAccessPolicyRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.KEY_VAULT,
   },
   {
     id: STEP_RM_KEYVAULT_KEYS,
@@ -216,6 +219,7 @@ export const keyvaultSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_RM_KEYVAULT_VAULTS],
     executionHandler: fetchKeyVaultKeys,
     rolePermissions: ['Microsoft.KeyVault/vaults/keys/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.KEY_VAULT,
   },
   {
     id: STEP_RM_KEYVAULT_SECRETS,
@@ -225,5 +229,6 @@ export const keyvaultSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_RM_KEYVAULT_VAULTS],
     executionHandler: fetchKeyVaultSecrets,
     rolePermissions: ['Microsoft.KeyVault/vaults/secrets/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.KEY_VAULT,
   },
 ];

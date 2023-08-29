@@ -26,6 +26,7 @@ import {
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
 import { ActivityLogAlertResource } from '@azure/arm-monitor/esm/models';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchLogProfiles(
   executionContext: IntegrationStepContext,
@@ -164,6 +165,7 @@ export const monitorSteps: AzureIntegrationStep[] = [
     dependsOn: [subscriptionSteps.SUBSCRIPTION, storageSteps.STORAGE_ACCOUNTS],
     executionHandler: fetchLogProfiles,
     rolePermissions: ['Microsoft.Insights/LogProfiles/Read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.MONITOR,
   },
   {
     id: MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS,
@@ -173,6 +175,7 @@ export const monitorSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchActivityLogAlerts,
     rolePermissions: ['Microsoft.Insights/ActivityLogAlerts/Read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.MONITOR,
   },
   {
     id: MonitorSteps.MONITOR_ACTIVITY_LOG_ALERT_SCOPE_RELATIONSHIPS,
@@ -184,5 +187,6 @@ export const monitorSteps: AzureIntegrationStep[] = [
       ...getResourceManagerSteps().executeFirstSteps,
     ],
     executionHandler: buildActivityLogScopeRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.MONITOR,
   },
 ];

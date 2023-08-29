@@ -18,6 +18,7 @@ import { createDnsZoneEntity, createDnsRecordSetEntity } from './converters';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
 import { ResourcesClient } from '../resources/client';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchZones(
   executionContext: IntegrationStepContext,
@@ -65,7 +66,7 @@ export async function fetchRecordSets(
     { _type: DnsEntities.ZONE._type },
     async (dnsZoneEntity) => {
       await client.iterateDnsRecordSets(
-        (dnsZoneEntity as unknown) as { name: string; id: string },
+        dnsZoneEntity as unknown as { name: string; id: string },
         async (recordSet) => {
           const recordSetEntity = createDnsRecordSetEntity(
             webLinker,
@@ -95,6 +96,7 @@ export const dnsSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchZones,
     rolePermissions: ['Microsoft.Network/dnszones/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DNS,
   },
   {
     id: STEP_RM_DNS_RECORD_SETS,
@@ -104,5 +106,6 @@ export const dnsSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_DNS_ZONES],
     executionHandler: fetchRecordSets,
     rolePermissions: ['Microsoft.Network/dnszones/recordsets/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DNS,
   },
 ];

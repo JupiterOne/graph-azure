@@ -19,6 +19,7 @@ import createResourceGroupResourceRelationship, {
   createResourceGroupResourceRelationshipMetadata,
 } from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchCosmosDBSqlDatabases(
   executionContext: IntegrationStepContext,
@@ -75,5 +76,6 @@ export const cosmosdbSteps: AzureIntegrationStep[] = [
       'Microsoft.DocumentDB/databaseAccounts/read',
       'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.COSMOSDB,
   },
 ];

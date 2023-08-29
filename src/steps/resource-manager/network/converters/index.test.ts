@@ -30,26 +30,21 @@ describe('createAzureFirewallEntity', () => {
       additionalProperties: {},
       applicationRuleCollections: [],
       etag: expect.any(String),
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall',
       ipConfigurations: [
         {
           etag: expect.any(String),
-          id:
-            '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall/azureFirewallIpConfigurations/configuration',
+          id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall/azureFirewallIpConfigurations/configuration',
           name: 'configuration',
           privateIPAddress: '10.0.1.4',
           provisioningState: 'Succeeded',
           publicIPAddress: {
-            id:
-              '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev_az_fw_pub_ip',
+            id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev_az_fw_pub_ip',
           },
           subnet: {
-            id:
-              '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_az_fw_vm/subnets/AzureFirewallSubnet',
+            id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_az_fw_vm/subnets/AzureFirewallSubnet',
           },
-          type:
-            'Microsoft.Network/azureFirewalls/azureFirewallIpConfigurations',
+          type: 'Microsoft.Network/azureFirewalls/azureFirewallIpConfigurations',
         },
       ],
       location: 'eastus',
@@ -64,10 +59,8 @@ describe('createAzureFirewallEntity', () => {
     };
 
     expect(createAzureFirewallEntity(webLinker, data)).toEqual({
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall',
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall',
+      _key: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall',
       _class: NetworkEntities.AZURE_FIREWALL._class,
       _type: NetworkEntities.AZURE_FIREWALL._type,
       category: ['network'],
@@ -89,8 +82,7 @@ describe('createNetworkInterfaceEntity', () => {
   test('properties transferred', () => {
     const data: NetworkInterface = {
       name: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
       etag: 'W/"39076d6b-2dd2-4096-9af4-8df45d4fa312"',
       location: 'eastus',
       tags: {
@@ -101,19 +93,16 @@ describe('createNetworkInterfaceEntity', () => {
       ipConfigurations: [
         {
           name: 'j1devConfiguration',
-          id:
-            '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration',
+          id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration',
           etag: 'W/"39076d6b-2dd2-4096-9af4-8df45d4fa312"',
           provisioningState: 'Succeeded',
           privateIPAddress: '10.0.2.4',
           privateIPAllocationMethod: 'Dynamic',
           publicIPAddress: {
-            id:
-              '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+            id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
           },
           subnet: {
-            id:
-              '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+            id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
           },
           primary: true,
           privateIPAddressVersion: 'IPv4',
@@ -129,13 +118,11 @@ describe('createNetworkInterfaceEntity', () => {
       enableAcceleratedNetworking: false,
       enableIPForwarding: false,
       networkSecurityGroup: {
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
       },
       primary: true,
       virtualMachine: {
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Compute/virtualMachines/j1dev',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Compute/virtualMachines/j1dev',
       },
       hostedWorkloads: [],
       tapConfigurations: [],
@@ -145,13 +132,11 @@ describe('createNetworkInterfaceEntity', () => {
     expect(
       createNetworkInterfaceEntity(webLinker, data, ['192.168.0.1']),
     ).toEqual({
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      _key: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
       _type: 'azure_nic',
       _class: 'NetworkInterface',
       _rawData: [{ name: 'default', rawData: data }],
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
       resourceGuid: 'ab964820-ee40-4f8d-bfd9-0349b8b4f316',
       resourceGroup: 'j1dev',
       displayName: 'j1dev',
@@ -179,8 +164,7 @@ describe('createPublicIPAddressEntity', () => {
   test('properties transferred', () => {
     const data: PublicIPAddress = {
       name: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
       etag: 'W/"0d9bdc1d-3e57-42eb-8a6b-9be1241ef5bc"',
       location: 'eastus',
       tags: {
@@ -194,8 +178,7 @@ describe('createPublicIPAddressEntity', () => {
       idleTimeoutInMinutes: 4,
       ipTags: [],
       ipConfiguration: {
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration',
       },
       type: 'Microsoft.Network/publicIPAddresses',
       sku: {
@@ -204,13 +187,11 @@ describe('createPublicIPAddressEntity', () => {
     };
 
     expect(createPublicIPAddressEntity(webLinker, data)).toEqual({
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+      _key: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
       _type: 'azure_public_ip',
       _class: 'IpAddress',
       _rawData: [{ name: 'default', rawData: data }],
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/publicIPAddresses/j1dev',
       resourceGuid: 'd908c31d-c93a-4359-987f-8cfdd1b65a61',
       resourceGroup: 'j1dev',
       displayName: 'j1dev',
@@ -231,8 +212,7 @@ describe('createPublicIPAddressEntity', () => {
 describe('createNetworkSecurityGroupEntity', () => {
   const data: NetworkSecurityGroup = {
     name: 'j1dev',
-    id:
-      '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+    id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
     etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
     type: 'Microsoft.Network/networkSecurityGroups',
     location: 'eastus',
@@ -244,8 +224,7 @@ describe('createNetworkSecurityGroupEntity', () => {
     securityRules: [
       {
         name: 'SSH',
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/SSH',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/securityRules/SSH',
         etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
         provisioningState: 'Succeeded',
         protocol: 'Tcp',
@@ -265,8 +244,7 @@ describe('createNetworkSecurityGroupEntity', () => {
     defaultSecurityRules: [
       {
         name: 'AllowVnetInBound',
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetInBound',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetInBound',
         etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
         provisioningState: 'Succeeded',
         description: 'Allow inbound traffic from all VMs in VNET',
@@ -285,8 +263,7 @@ describe('createNetworkSecurityGroupEntity', () => {
       },
       {
         name: 'AllowAzureLoadBalancerInBound',
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowAzureLoadBalancerInBound',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowAzureLoadBalancerInBound',
         etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
         provisioningState: 'Succeeded',
         description: 'Allow inbound traffic from azure load balancer',
@@ -305,8 +282,7 @@ describe('createNetworkSecurityGroupEntity', () => {
       },
       {
         name: 'DenyAllInBound',
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllInBound',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllInBound',
         etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
         provisioningState: 'Succeeded',
         description: 'Deny all inbound traffic',
@@ -325,8 +301,7 @@ describe('createNetworkSecurityGroupEntity', () => {
       },
       {
         name: 'AllowVnetOutBound',
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetOutBound',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowVnetOutBound',
         etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
         provisioningState: 'Succeeded',
         description: 'Allow outbound traffic from all VMs to all VMs in VNET',
@@ -345,8 +320,7 @@ describe('createNetworkSecurityGroupEntity', () => {
       },
       {
         name: 'AllowInternetOutBound',
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowInternetOutBound',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/AllowInternetOutBound',
         etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
         provisioningState: 'Succeeded',
         description: 'Allow outbound traffic from all VMs to Internet',
@@ -365,8 +339,7 @@ describe('createNetworkSecurityGroupEntity', () => {
       },
       {
         name: 'DenyAllOutBound',
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllOutBound',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev/defaultSecurityRules/DenyAllOutBound',
         etag: 'W/"276c40f4-6483-4bce-9fce-b0d710c4fd92"',
         provisioningState: 'Succeeded',
         description: 'Deny all outbound traffic',
@@ -386,27 +359,23 @@ describe('createNetworkSecurityGroupEntity', () => {
     ],
     networkInterfaces: [
       {
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
       },
     ],
     subnets: [
       {
-        id:
-          '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+        id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
       },
     ],
   };
 
   const entity = {
-    _key:
-      '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+    _key: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
     _type: 'azure_security_group',
     _class: ['Firewall'],
     _rawData: [{ name: 'default', rawData: data }],
     createdOn: undefined,
-    id:
-      '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+    id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
     name: 'j1dev',
     displayName: 'j1dev',
     resourceGroup: 'j1dev',
@@ -444,8 +413,7 @@ describe('createVirtualNetworkEntity', () => {
   test('properties transferred', () => {
     const data: VirtualNetwork = {
       name: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
       etag: 'W/"4f9fb61f-5fa0-49c1-afbe-4c7d93bcab4c"',
       type: 'Microsoft.Network/virtualNetworks',
       location: 'eastus',
@@ -463,15 +431,13 @@ describe('createVirtualNetworkEntity', () => {
       subnets: [
         {
           name: 'j1dev',
-          id:
-            '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+          id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
           etag: 'W/"4f9fb61f-5fa0-49c1-afbe-4c7d93bcab4c"',
           provisioningState: 'Succeeded',
           addressPrefix: '10.0.2.0/24',
           ipConfigurations: [
             {
-              id:
-                '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration',
+              id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration',
             },
           ],
           serviceEndpoints: [],
@@ -486,14 +452,12 @@ describe('createVirtualNetworkEntity', () => {
     };
 
     const entity = {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      _key: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
       _type: 'azure_vnet',
       _class: ['Network'],
       _rawData: [{ name: 'default', rawData: data }],
       createdOn: undefined,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
       name: 'j1dev',
       displayName: 'j1dev (10.0.0.0/16)',
       resourceGroup: 'j1dev',
@@ -516,15 +480,13 @@ describe('createSubnetEntity', () => {
   test('properties transferred', () => {
     const data: Subnet = {
       name: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
       etag: 'W/"4f9fb61f-5fa0-49c1-afbe-4c7d93bcab4c"',
       provisioningState: 'Succeeded',
       addressPrefix: '10.0.2.0/24',
       ipConfigurations: [
         {
-          id:
-            '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration',
+          id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev/ipConfigurations/j1devConfiguration',
         },
       ],
       serviceEndpoints: [],
@@ -535,8 +497,7 @@ describe('createSubnetEntity', () => {
 
     const vnet: VirtualNetwork = {
       name: 'j1dev',
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
       etag: 'W/"4f9fb61f-5fa0-49c1-afbe-4c7d93bcab4c"',
       type: 'Microsoft.Network/virtualNetworks',
       location: 'eastus',
@@ -558,14 +519,12 @@ describe('createSubnetEntity', () => {
     };
 
     const entity = {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      _key: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
       _type: 'azure_subnet',
       _class: ['Network'],
       _rawData: [{ name: 'default', rawData: data }],
       createdOn: undefined,
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
       name: 'j1dev',
       displayName: 'j1dev (10.0.2.0/24)',
       resourceGroup: 'j1dev',
@@ -586,18 +545,15 @@ describe('createSubnetEntity', () => {
 describe('createNetworkSecurityGroupNicRelationship', () => {
   test('properties transferred', () => {
     const sg: NetworkSecurityGroup = {
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
     };
 
     const nic: NetworkInterface = {
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
     };
 
     const relationship: Relationship = {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|protects|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
+      _key: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|protects|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkInterfaces/j1dev',
       _type: 'azure_security_group_protects_nic',
       _class: 'PROTECTS',
       _fromEntityKey:
@@ -616,18 +572,15 @@ describe('createNetworkSecurityGroupNicRelationship', () => {
 describe('createVirtualNetworkSubnetRelationship', () => {
   test('properties transferred', () => {
     const subnet: Subnet = {
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
     };
 
     const vnet: VirtualNetwork = {
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev',
     };
 
     const relationship: Relationship = {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev|contains|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      _key: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev|contains|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
       _type: 'azure_vnet_contains_subnet',
       _class: 'CONTAINS',
       _fromEntityKey:
@@ -646,18 +599,15 @@ describe('createVirtualNetworkSubnetRelationship', () => {
 describe('createSecurityGroupSubnetRelationship', () => {
   test('properties transferred', () => {
     const sg: NetworkSecurityGroup = {
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev',
     };
 
     const subnet: Subnet = {
-      id:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      id: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
     };
 
     const relationship: Relationship = {
-      _key:
-        '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|protects|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
+      _key: '/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/networkSecurityGroups/j1dev|protects|/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev/subnets/j1dev',
       _type: 'azure_security_group_protects_subnet',
       _class: 'PROTECTS',
       _fromEntityKey:

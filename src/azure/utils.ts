@@ -1,3 +1,4 @@
+import { isInternet, isIpv4 } from '@jupiterone/integration-sdk-core';
 import {
   getResourceGroupName,
   RESOURCE_GROUP_MATCHER,
@@ -93,4 +94,13 @@ export function getEventGridDomainNameFromId(
 
     return domainName;
   }
+}
+
+/**
+ * Checks if a list of addresses is an internet address.
+ */
+export function hasInternetAddress(addresses: string[]) {
+  return addresses.some(
+    (address) => address === '*' || (isIpv4(address) && isInternet(address)),
+  );
 }

@@ -1,4 +1,4 @@
-export type SecurityRulePortRange = {
+export type RulePortRange = {
   /**
    * The original port range value.
    */

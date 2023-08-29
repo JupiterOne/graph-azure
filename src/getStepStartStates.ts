@@ -50,6 +50,9 @@ import {
   STEP_RM_NETWORK_PRIVATE_ENDPOINT_SUBNET_RELATIONSHIPS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_NIC_RELATIONSHIPS,
   STEP_RM_NETWORK_PRIVATE_ENDPOINTS_RESOURCE_RELATIONSHIPS,
+  STEP_RM_NETWORK_FIREWALL_POLICIES,
+  STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
+  STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
 } from './steps/resource-manager/network/constants';
 import { steps as storageSteps } from './steps/resource-manager/storage/constants';
 import {
@@ -162,11 +165,14 @@ export function getResourceManagerSteps(): GetApiSteps {
       KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS,
       STEP_RM_NETWORK_VIRTUAL_NETWORKS,
       STEP_RM_NETWORK_SECURITY_GROUPS,
+      STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
+      STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
       STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
       STEP_RM_NETWORK_INTERFACES,
       STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
       STEP_RM_NETWORK_LOAD_BALANCERS,
       STEP_RM_NETWORK_FIREWALLS,
+      STEP_RM_NETWORK_FIREWALL_POLICIES,
       STEP_RM_NETWORK_WATCHERS,
       STEP_RM_NETWORK_LOCATION_WATCHERS,
       STEP_RM_NETWORK_FLOW_LOGS,
@@ -323,18 +329,12 @@ export default async function getStepStartStates(
     disabled: !config.configureSubscriptionInstances || disableAllSteps,
   };
 
-  const {
-    executeFirstSteps: adFirstSteps,
-    executeLastSteps: adLastSteps,
-  } = getActiveDirectorySteps();
-  const {
-    executeFirstSteps: rmFirstSteps,
-    executeLastSteps: rmLastSteps,
-  } = getResourceManagerSteps();
-  const {
-    executeFirstSteps: mgFirstSteps,
-    executeLastSteps: mgLastSteps,
-  } = getManagementGroupSteps();
+  const { executeFirstSteps: adFirstSteps, executeLastSteps: adLastSteps } =
+    getActiveDirectorySteps();
+  const { executeFirstSteps: rmFirstSteps, executeLastSteps: rmLastSteps } =
+    getResourceManagerSteps();
+  const { executeFirstSteps: mgFirstSteps, executeLastSteps: mgLastSteps } =
+    getManagementGroupSteps();
   return {
     [STEP_AD_ACCOUNT]: { disabled: false },
     ...makeStepStartStates([...adFirstSteps, ...adLastSteps], activeDirectory),

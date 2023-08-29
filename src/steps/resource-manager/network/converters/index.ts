@@ -2,6 +2,7 @@ import map from 'lodash.map';
 
 import {
   AzureFirewall,
+  FirewallPolicy,
   FlowLog,
   FrontendIPConfiguration,
   IPConfiguration,
@@ -216,6 +217,41 @@ export function createAzureFirewallEntity(
         threatIntelMode: data.threatIntelMode,
         type: data.type,
         ...(data.zones && { zones: data.zones }),
+      },
+    },
+  });
+}
+
+export function createFirewallPolicyKey(
+  policyId: NonNullable<FirewallPolicy['id']>,
+): string {
+  return policyId.toLowerCase();
+}
+
+export function createFirewallPolicyEntity(
+  webLinker: AzureWebLinker,
+  data: FirewallPolicy,
+): Entity | null {
+  if (!data.id) {
+    return null;
+  }
+
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        id: data.id,
+        _key: createFirewallPolicyKey(data.id),
+        _type: NetworkEntities.FIREWALL_POLICY._type,
+        _class: NetworkEntities.FIREWALL_POLICY._class,
+        name: data.name,
+        displayName: data.name,
+        webLink: webLinker.portalResourceUrl(data.id),
+        region: data.location,
+        provisioningState: data.provisioningState,
+        threatIntelMode: data.threatIntelMode,
+        type: data.type,
+        basePolicy: data.basePolicy?.id,
       },
     },
   });

@@ -8,16 +8,28 @@ import { ANY_RESOURCE } from '../constants';
 import { entities as storageEntities } from '../storage/constants';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
+import { INTERNET } from '@jupiterone/data-model';
+
+// Keys for data in memory
+export const FIREWALL_POLICY_PARENT_CHILDREN_MAP =
+  'firewall-policy-parent-children-map';
+export const POLICY_INCLUDED_IN_FIREWALLS_MAP =
+  'policy-included-in-firewalls-map';
 
 // Step IDs
 export const STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES = 'rm-network-ip-addresses';
 export const STEP_RM_NETWORK_INTERFACES = 'rm-network-interfaces';
 export const STEP_RM_NETWORK_SECURITY_GROUPS = 'rm-network-security-groups';
+export const STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS =
+  'rm-network-firewall-rule-relationships';
 export const STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS =
   'rm-network-security-group-rules';
+export const STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS =
+  'rm-network-firewall-policy-relationships';
 export const STEP_RM_NETWORK_VIRTUAL_NETWORKS = 'rm-network-virtual-networks';
 export const STEP_RM_NETWORK_LOAD_BALANCERS = 'rm-network-load-balancers';
 export const STEP_RM_NETWORK_FIREWALLS = 'rm-network-firewalls';
+export const STEP_RM_NETWORK_FIREWALL_POLICIES = 'rm-network-firewall-policies';
 export const STEP_RM_NETWORK_WATCHERS = 'rm-network-watchers';
 export const STEP_RM_NETWORK_FLOW_LOGS = 'rm-network-flow-logs';
 export const STEP_RM_NETWORK_PRIVATE_ENDPOINTS = 'rm-network-private-endpoints';
@@ -36,6 +48,30 @@ export const NetworkEntities = {
     _type: 'azure_network_firewall',
     _class: ['Firewall'],
     resourceName: '[RM] Network Firewall',
+  },
+  FIREWALL_POLICY: {
+    _type: 'azure_network_firewall_policy',
+    _class: ['Policy'],
+    resourceName: '[RM] Firewall Policy',
+    schema: {
+      additionalProperties: true,
+      properties: {
+        id: { type: 'string' },
+        displayName: { type: 'string' },
+        region: { type: 'string' },
+        webLink: { type: 'string' },
+        provisioningState: { type: 'string' },
+        threatIntelMode: { type: 'string' },
+        type: { type: 'string' },
+      },
+      required: ['displayName', 'region', 'webLink'],
+    },
+    disableClassMatch: true,
+  },
+  FIREWALL_RULE_GROUP: {
+    _type: 'azure_network_firewall_rule_group',
+    _class: ['Ruleset'],
+    resourceName: '[RM] Firewall Rule Group',
   },
   VIRTUAL_NETWORK: {
     _type: 'azure_vnet',
@@ -86,33 +122,62 @@ export const NetworkEntities = {
 
 export const SECURITY_GROUP_RULE_RELATIONSHIP_TYPE =
   'azure_security_group_rule';
+export const FIREWALL_RULE_RELATIONSHIP_TYPE = 'azure_network_firewall_rule';
 
 // Relationships
 export const NetworkRelationships = {
-  RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL: createResourceGroupResourceRelationshipMetadata(
-    NetworkEntities.AZURE_FIREWALL._type,
-  ),
-  RESOURCE_GROUP_HAS_NETWORK_PUBLIC_IP_ADDRESS: createResourceGroupResourceRelationshipMetadata(
-    NetworkEntities.PUBLIC_IP_ADDRESS._type,
-  ),
-  RESOURCE_GROUP_HAS_NETWORK_NETWORK_INTERFACE: createResourceGroupResourceRelationshipMetadata(
-    NetworkEntities.NETWORK_INTERFACE._type,
-  ),
-  RESOURCE_GROUP_HAS_NETWORK_VIRTUAL_NETWORK: createResourceGroupResourceRelationshipMetadata(
-    NetworkEntities.VIRTUAL_NETWORK._type,
-  ),
-  RESOURCE_GROUP_HAS_NETWORK_SECURITY_GROUP: createResourceGroupResourceRelationshipMetadata(
-    NetworkEntities.SECURITY_GROUP._type,
-  ),
-  RESOURCE_GROUP_HAS_NETWORK_LOAD_BALANCER: createResourceGroupResourceRelationshipMetadata(
-    NetworkEntities.LOAD_BALANCER._type,
-  ),
-  RESOURCE_GROUP_HAS_NETWORK_WATCHER: createResourceGroupResourceRelationshipMetadata(
-    NetworkEntities.NETWORK_WATCHER._type,
-  ),
-  RESOURCE_GROUP_HAS_PRIVATE_ENDPOINT: createResourceGroupResourceRelationshipMetadata(
-    NetworkEntities.PRIVATE_ENDPOINT._type,
-  ),
+  RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL:
+    createResourceGroupResourceRelationshipMetadata(
+      NetworkEntities.AZURE_FIREWALL._type,
+    ),
+  RESOURCE_GROUP_HAS_NETWORK_PUBLIC_IP_ADDRESS:
+    createResourceGroupResourceRelationshipMetadata(
+      NetworkEntities.PUBLIC_IP_ADDRESS._type,
+    ),
+  RESOURCE_GROUP_HAS_NETWORK_NETWORK_INTERFACE:
+    createResourceGroupResourceRelationshipMetadata(
+      NetworkEntities.NETWORK_INTERFACE._type,
+    ),
+  RESOURCE_GROUP_HAS_NETWORK_VIRTUAL_NETWORK:
+    createResourceGroupResourceRelationshipMetadata(
+      NetworkEntities.VIRTUAL_NETWORK._type,
+    ),
+  RESOURCE_GROUP_HAS_NETWORK_SECURITY_GROUP:
+    createResourceGroupResourceRelationshipMetadata(
+      NetworkEntities.SECURITY_GROUP._type,
+    ),
+  RESOURCE_GROUP_HAS_NETWORK_LOAD_BALANCER:
+    createResourceGroupResourceRelationshipMetadata(
+      NetworkEntities.LOAD_BALANCER._type,
+    ),
+  RESOURCE_GROUP_HAS_NETWORK_WATCHER:
+    createResourceGroupResourceRelationshipMetadata(
+      NetworkEntities.NETWORK_WATCHER._type,
+    ),
+  RESOURCE_GROUP_HAS_PRIVATE_ENDPOINT:
+    createResourceGroupResourceRelationshipMetadata(
+      NetworkEntities.PRIVATE_ENDPOINT._type,
+    ),
+  NETWORK_AZURE_FIREWALL_HAS_FIREWALL_POLICY: {
+    _type: generateRelationshipType(
+      RelationshipClass.HAS,
+      NetworkEntities.AZURE_FIREWALL._type,
+      NetworkEntities.FIREWALL_POLICY._type,
+    ),
+    sourceType: NetworkEntities.AZURE_FIREWALL._type,
+    _class: RelationshipClass.HAS,
+    targetType: NetworkEntities.FIREWALL_POLICY._type,
+  },
+  NETWORK_FIREWALL_POLICY_EXTENDS_FIREWALL_POLICY: {
+    _type: generateRelationshipType(
+      RelationshipClass.EXTENDS,
+      NetworkEntities.FIREWALL_POLICY._type,
+      NetworkEntities.FIREWALL_POLICY._type,
+    ),
+    sourceType: NetworkEntities.FIREWALL_POLICY._type,
+    _class: RelationshipClass.EXTENDS,
+    targetType: NetworkEntities.FIREWALL_POLICY._type,
+  },
   NETWORK_VIRTUAL_NETWORK_CONTAINS_NETWORK_SUBNET: {
     _type: generateRelationshipType(
       RelationshipClass.CONTAINS,
@@ -216,7 +281,11 @@ export const NetworkRelationships = {
 };
 
 export const NetworkMappedRelationships: Record<
-  'LOCATION_HAS_NETWORK_WATCHER',
+  | 'LOCATION_HAS_NETWORK_WATCHER'
+  | 'FIREWALL_ALLOWS_INTERNET_FORWARD'
+  | 'FIREWALL_ALLOWS_INTERNET_REVERSE'
+  | 'FIREWALL_DENIES_INTERNET_FORWARD'
+  | 'FIREWALL_DENIES_INTERNET_REVERSE',
   StepMappedRelationshipMetadata
 > = {
   LOCATION_HAS_NETWORK_WATCHER: {
@@ -225,5 +294,45 @@ export const NetworkMappedRelationships: Record<
     _class: RelationshipClass.HAS,
     targetType: subscriptionEntities.LOCATION._type,
     direction: RelationshipDirection.REVERSE,
+  },
+  FIREWALL_ALLOWS_INTERNET_FORWARD: {
+    _type: FIREWALL_RULE_RELATIONSHIP_TYPE,
+    _class: RelationshipClass.ALLOWS,
+    sourceType: NetworkEntities.AZURE_FIREWALL._type,
+    targetType: INTERNET._type,
+    direction: RelationshipDirection.FORWARD,
+    schema: {
+      additionalProperties: true,
+    },
+  },
+  FIREWALL_ALLOWS_INTERNET_REVERSE: {
+    _type: FIREWALL_RULE_RELATIONSHIP_TYPE,
+    _class: RelationshipClass.ALLOWS,
+    sourceType: NetworkEntities.AZURE_FIREWALL._type,
+    targetType: INTERNET._type,
+    direction: RelationshipDirection.REVERSE,
+    schema: {
+      additionalProperties: true,
+    },
+  },
+  FIREWALL_DENIES_INTERNET_FORWARD: {
+    _type: FIREWALL_RULE_RELATIONSHIP_TYPE,
+    _class: RelationshipClass.DENIES,
+    sourceType: NetworkEntities.AZURE_FIREWALL._type,
+    targetType: INTERNET._type,
+    direction: RelationshipDirection.FORWARD,
+    schema: {
+      additionalProperties: true,
+    },
+  },
+  FIREWALL_DENIES_INTERNET_REVERSE: {
+    _type: FIREWALL_RULE_RELATIONSHIP_TYPE,
+    _class: RelationshipClass.DENIES,
+    sourceType: NetworkEntities.AZURE_FIREWALL._type,
+    targetType: INTERNET._type,
+    direction: RelationshipDirection.REVERSE,
+    schema: {
+      additionalProperties: true,
+    },
   },
 };

@@ -85,8 +85,7 @@ describe('iterateAzureFirewalls', () => {
             subnet: {
               id: `/subscriptions/${config.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/virtualNetworks/j1dev_az_fw_vm/subnets/AzureFirewallSubnet`,
             },
-            type:
-              'Microsoft.Network/azureFirewalls/azureFirewallIpConfigurations',
+            type: 'Microsoft.Network/azureFirewalls/azureFirewallIpConfigurations',
           },
         ],
         location: 'eastus',
@@ -242,8 +241,7 @@ describe('iterateNetworkSecurityGroups', () => {
             sourceAddressPrefixes: [],
             sourcePortRange: '*',
             sourcePortRanges: [],
-            type:
-              'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
+            type: 'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
           },
           {
             access: 'Allow',
@@ -263,8 +261,7 @@ describe('iterateNetworkSecurityGroups', () => {
             sourceAddressPrefixes: [],
             sourcePortRange: '*',
             sourcePortRanges: [],
-            type:
-              'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
+            type: 'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
           },
           {
             access: 'Deny',
@@ -284,8 +281,7 @@ describe('iterateNetworkSecurityGroups', () => {
             sourceAddressPrefixes: [],
             sourcePortRange: '*',
             sourcePortRanges: [],
-            type:
-              'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
+            type: 'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
           },
           {
             access: 'Allow',
@@ -306,8 +302,7 @@ describe('iterateNetworkSecurityGroups', () => {
             sourceAddressPrefixes: [],
             sourcePortRange: '*',
             sourcePortRanges: [],
-            type:
-              'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
+            type: 'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
           },
           {
             access: 'Allow',
@@ -327,8 +322,7 @@ describe('iterateNetworkSecurityGroups', () => {
             sourceAddressPrefixes: [],
             sourcePortRange: '*',
             sourcePortRanges: [],
-            type:
-              'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
+            type: 'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
           },
           {
             access: 'Deny',
@@ -348,8 +342,7 @@ describe('iterateNetworkSecurityGroups', () => {
             sourceAddressPrefixes: [],
             sourcePortRange: '*',
             sourcePortRanges: [],
-            type:
-              'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
+            type: 'Microsoft.Network/networkSecurityGroups/defaultSecurityRules',
           },
         ],
         etag: expect.any(String),

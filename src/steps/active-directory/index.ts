@@ -35,6 +35,7 @@ import {
   createUserDeviceRelationship,
   createDeviceEntity,
 } from './converters';
+import { INGESTION_SOURCE_IDS } from '../../constants';
 
 export async function getAccountEntity(jobState: JobState): Promise<Entity> {
   const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
@@ -268,6 +269,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     relationships: [],
     executionHandler: fetchAccount,
     apiPermissions: ['Directory.Read.All', 'Policy.Read.All'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.AD_GENERALS,
   },
   {
     id: STEP_AD_USER_REGISTRATION_DETAILS,
@@ -304,6 +306,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchGroups,
     apiPermissions: ['Directory.Read.All'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.AD_GROUPS,
   },
   {
     id: STEP_AD_GROUP_MEMBERS,

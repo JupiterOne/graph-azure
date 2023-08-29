@@ -34,6 +34,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { BatchAccount } from '@azure/arm-batch/esm/models';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchBatchAccounts(
   executionContext: IntegrationStepContext,
@@ -208,6 +209,7 @@ export const batchSteps: AzureIntegrationStep[] = [
       'Microsoft.Batch/batchAccounts/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.BATCH,
   },
   {
     id: STEP_RM_BATCH_POOL,

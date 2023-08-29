@@ -19,6 +19,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import { INGESTION_SOURCE_IDS } from '../../../../constants';
 
 export async function fetchSubscription(
   executionContext: IntegrationStepContext,
@@ -77,6 +78,7 @@ export const fetchSubscriptionSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscription,
     rolePermissions: ['Microsoft.Resources/subscriptions/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SUBSCRIPTIONS,
   },
   {
     id: steps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS,
@@ -88,5 +90,6 @@ export const fetchSubscriptionSteps: AzureIntegrationStep[] = [
     dependsOn: [steps.SUBSCRIPTION, storageSteps.STORAGE_ACCOUNTS],
     executionHandler: fetchSubscriptionDiagnosticSettings,
     rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SUBSCRIPTIONS,
   },
 ];

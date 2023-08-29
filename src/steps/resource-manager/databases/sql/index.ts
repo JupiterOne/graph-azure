@@ -31,6 +31,7 @@ import {
 } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../../resources/constants';
 import { Server } from '@azure/arm-sql/esm/models';
+import { INGESTION_SOURCE_IDS } from '../../../../constants';
 
 export async function fetchSQLServers(
   executionContext: IntegrationStepContext,
@@ -216,6 +217,7 @@ export const sqlSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchSQLServers,
     rolePermissions: ['Microsoft.Sql/servers/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,
   },
   {
     id: steps.SERVER_DIAGNOSTIC_SETTINGS,
@@ -227,6 +229,7 @@ export const sqlSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
     executionHandler: fetchSQLServerDiagnosticSettings,
     rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,
   },
   {
     id: steps.DATABASES,
@@ -236,6 +239,7 @@ export const sqlSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
     executionHandler: fetchSQLDatabases,
     rolePermissions: ['Microsoft.Sql/servers/databases/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,
   },
   {
     id: steps.SERVER_FIREWALL_RULES,
@@ -245,6 +249,7 @@ export const sqlSteps: AzureIntegrationStep[] = [
     dependsOn: [steps.SERVERS],
     executionHandler: fetchSQLServerFirewallRules,
     rolePermissions: ['Microsoft.Sql/servers/firewallRules/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,
   },
   {
     id: steps.SERVER_AD_ADMINS,
@@ -254,5 +259,6 @@ export const sqlSteps: AzureIntegrationStep[] = [
     dependsOn: [steps.SERVERS],
     executionHandler: fetchSQLServerActiveDirectoryAdmins,
     rolePermissions: ['Microsoft.Sql/servers/administrators/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,
   },
 ];

@@ -23,6 +23,7 @@ import {
   createRoutingRuleEntity,
   createRulesEngineEntity,
 } from './converters';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 async function fetchFrontDoors(
   executionContext: IntegrationStepContext,
@@ -168,6 +169,7 @@ export const frontdoorSteps: AzureIntegrationStep[] = [
     executionHandler: fetchFrontDoors,
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     rolePermissions: ['Microsoft.Network/frontDoors/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.FRONTDOOR,
   },
   {
     id: FrontDoorStepIds.FETCH_RULES_ENGINES,
@@ -176,6 +178,7 @@ export const frontdoorSteps: AzureIntegrationStep[] = [
     relationships: [FrontDoorRelationships.FRONTDOOR_HAS_RULES_ENGINE],
     executionHandler: fetchRulesEngines,
     dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
+    ingestionSourceId: INGESTION_SOURCE_IDS.FRONTDOOR,
   },
   {
     id: FrontDoorStepIds.FETCH_ROUTING_RULES,
@@ -184,6 +187,7 @@ export const frontdoorSteps: AzureIntegrationStep[] = [
     relationships: [FrontDoorRelationships.FRONTDOOR_HAS_ROUTING_RULE],
     executionHandler: fetchRoutingRules,
     dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
+    ingestionSourceId: INGESTION_SOURCE_IDS.FRONTDOOR,
   },
   {
     id: FrontDoorStepIds.FETCH_BACKEND_POOLS,
@@ -192,6 +196,7 @@ export const frontdoorSteps: AzureIntegrationStep[] = [
     relationships: [FrontDoorRelationships.FRONTDOOR_HAS_BACKEND_POOL],
     executionHandler: fetchBackendPools,
     dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
+    ingestionSourceId: INGESTION_SOURCE_IDS.FRONTDOOR,
   },
   {
     id: FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS,
@@ -200,5 +205,6 @@ export const frontdoorSteps: AzureIntegrationStep[] = [
     relationships: [FrontDoorRelationships.FRONTDOOR_HAS_FRONTEND_ENDPOINT],
     executionHandler: fetchFrontendEndpoints,
     dependsOn: [STEP_AD_ACCOUNT, FrontDoorStepIds.FETCH_FRONTDOORS],
+    ingestionSourceId: INGESTION_SOURCE_IDS.FRONTDOOR,
   },
 ];

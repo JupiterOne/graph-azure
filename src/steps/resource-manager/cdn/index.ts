@@ -22,6 +22,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchProfiles(
   executionContext: IntegrationStepContext,
@@ -59,7 +60,7 @@ export async function fetchEndpoints(
     { _type: CdnEntities.PROFILE._type },
     async (profileEntity) => {
       await client.iterateEndpoints(
-        (profileEntity as unknown) as { name: string; id: string },
+        profileEntity as unknown as { name: string; id: string },
         async (cdnEndpoint) => {
           const cdnEndpointEntity = createCdnEndpointEntity(
             webLinker,
@@ -100,6 +101,7 @@ export const cdnSteps: AzureIntegrationStep[] = [
       'Microsoft.Cdn/profiles/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.CDN,
   },
   {
     id: STEP_RM_CDN_ENDPOINTS,
@@ -115,5 +117,6 @@ export const cdnSteps: AzureIntegrationStep[] = [
       'Microsoft.Cdn/profiles/endpoints/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.CDN,
   },
 ];

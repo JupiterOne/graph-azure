@@ -24,6 +24,7 @@ import {
 } from '@azure/arm-appservice/esm/models';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchApps(
   executionContext: IntegrationStepContext,
@@ -191,6 +192,7 @@ export const appServiceSteps: AzureIntegrationStep[] = [
       'Microsoft.Web/sites/config/Read',
       'Microsoft.Web/sites/config/list/action',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.APPSERVICE,
   },
   {
     id: AppServiceSteps.APP_SERVICE_PLANS,
@@ -202,6 +204,7 @@ export const appServiceSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchAppServicePlans,
     rolePermissions: ['Microsoft.Web/serverfarms/Read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.APPSERVICE,
   },
   {
     id: AppServiceSteps.APP_TO_SERVICE_RELATIONSHIPS,
@@ -213,5 +216,6 @@ export const appServiceSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [AppServiceSteps.APPS, AppServiceSteps.APP_SERVICE_PLANS],
     executionHandler: buildAppToPlanRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.APPSERVICE,
   },
 ];

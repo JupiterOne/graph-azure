@@ -35,76 +35,79 @@ import { policyInsightSteps } from './steps/resource-manager/policy-insights';
 import { managementGroupSteps } from './steps/resource-manager/management-groups';
 import { containerServicesSteps } from './steps/resource-manager/container-services';
 import { frontdoorSteps } from './steps/resource-manager/frontdoor';
+import { ingestionConfig } from './config';
 
-export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
-  instanceConfigFields: {
-    clientId: {
-      type: 'string',
-      mask: false,
+export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
+  {
+    instanceConfigFields: {
+      clientId: {
+        type: 'string',
+        mask: false,
+      },
+      clientSecret: {
+        type: 'string',
+        mask: true,
+      },
+      directoryId: {
+        type: 'string',
+        mask: false,
+      },
+      subscriptionId: {
+        type: 'string',
+        mask: false,
+      },
+      ingestActiveDirectory: {
+        type: 'boolean',
+        mask: false,
+      },
+      configureSubscriptionInstances: {
+        type: 'boolean',
+        mask: false,
+      },
     },
-    clientSecret: {
-      type: 'string',
-      mask: true,
-    },
-    directoryId: {
-      type: 'string',
-      mask: false,
-    },
-    subscriptionId: {
-      type: 'string',
-      mask: false,
-    },
-    ingestActiveDirectory: {
-      type: 'boolean',
-      mask: false,
-    },
-    configureSubscriptionInstances: {
-      type: 'boolean',
-      mask: false,
-    },
-  },
-  validateInvocation,
+    validateInvocation,
 
-  getStepStartStates,
+    getStepStartStates,
 
-  integrationSteps: [
-    ...activeDirectorySteps,
-    ...computeSteps,
-    ...cosmosdbSteps,
-    ...databaseSteps,
-    ...keyvaultSteps,
-    ...networkSteps,
-    ...storageSteps,
-    ...interserviceSteps,
-    ...authorizationSteps,
-    ...resourcesSteps,
-    ...subscriptionSteps,
-    ...apiManagementSteps,
-    ...dnsSteps,
-    ...privateDnsSteps,
-    ...containerRegistrySteps,
-    ...serviceBusSteps,
-    ...cdnSteps,
-    ...batchSteps,
-    ...redisCacheSteps,
-    ...containerInstanceSteps,
-    // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last. See SDK #326: https://github.com/JupiterOne/sdk/issues/326
-    // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
-    ...frontdoorSteps,
-    ...eventGridSteps,
-    ...advisorSteps,
-    ...securitySteps,
-    ...policySteps,
-    ...monitorSteps,
-    ...appServiceSteps,
-    ...policyInsightSteps,
-    ...managementGroupSteps,
-    ...containerServicesSteps,
-  ],
+    integrationSteps: [
+      ...activeDirectorySteps,
+      ...computeSteps,
+      ...cosmosdbSteps,
+      ...databaseSteps,
+      ...keyvaultSteps,
+      ...networkSteps,
+      ...storageSteps,
+      ...interserviceSteps,
+      ...authorizationSteps,
+      ...resourcesSteps,
+      ...subscriptionSteps,
+      ...apiManagementSteps,
+      ...dnsSteps,
+      ...privateDnsSteps,
+      ...containerRegistrySteps,
+      ...serviceBusSteps,
+      ...cdnSteps,
+      ...batchSteps,
+      ...redisCacheSteps,
+      ...containerInstanceSteps,
+      // NOTE: Because any resource in Azure could be an Event Grid Topic, this step should be executed last. See SDK #326: https://github.com/JupiterOne/sdk/issues/326
+      // This will ensure that other resources that an organization has can be tracked as 'topics' so that we can associate Event Grid Topic Subscriptions to them.
+      ...frontdoorSteps,
+      ...eventGridSteps,
+      ...advisorSteps,
+      ...securitySteps,
+      ...policySteps,
+      ...monitorSteps,
+      ...appServiceSteps,
+      ...policyInsightSteps,
+      ...managementGroupSteps,
+      ...containerServicesSteps,
+    ],
 
-  normalizeGraphObjectKey: (_key) => _key.toLowerCase(),
-  dependencyGraphOrder: ['last'],
-};
+    normalizeGraphObjectKey: (_key) => _key.toLowerCase(),
+    dependencyGraphOrder: ['last'],
+    ingestionConfig,
+  };
 
 export const clients = {
   GraphClient,

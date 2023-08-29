@@ -17,6 +17,7 @@ import { createPolicyStateEntity } from './converters';
 import { PolicyState } from '@azure/arm-policyinsights/esm/models';
 import { PolicySteps } from '../policy/constants';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchLatestPolicyStatesForSubscription(
   executionContext: IntegrationStepContext,
@@ -165,6 +166,7 @@ export const policyInsightSteps: AzureIntegrationStep[] = [
     rolePermissions: [
       'Microsoft.PolicyInsights/policyStates/queryResults/read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.POLICY_INSIGHTS,
   },
   {
     id: PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS,
@@ -178,6 +180,7 @@ export const policyInsightSteps: AzureIntegrationStep[] = [
       PolicySteps.POLICY_ASSIGNMENTS,
     ],
     executionHandler: buildPolicyStateAssignmentRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.POLICY_INSIGHTS,
   },
   {
     id: PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS,
@@ -191,6 +194,7 @@ export const policyInsightSteps: AzureIntegrationStep[] = [
       PolicySteps.POLICY_DEFINITIONS,
     ],
     executionHandler: buildPolicyStateDefinitionRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.POLICY_INSIGHTS,
   },
   {
     id: PolicyInsightSteps.POLICY_STATE_TO_RESOURCE_RELATIONSHIPS,
@@ -202,5 +206,6 @@ export const policyInsightSteps: AzureIntegrationStep[] = [
       ...getResourceManagerSteps().executeFirstSteps,
     ],
     executionHandler: buildPolicyStateResourceRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.POLICY_INSIGHTS,
   },
 ];

@@ -25,6 +25,7 @@ import {
 } from './converters';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchServiceBusNamespaces(
   executionContext: IntegrationStepContext,
@@ -60,7 +61,7 @@ export async function fetchServiceBusQueues(
     { _type: ServiceBusEntities.NAMESPACE._type },
     async (namespaceEntity) => {
       await client.iterateQueues(
-        (namespaceEntity as unknown) as { name: string; id: string },
+        namespaceEntity as unknown as { name: string; id: string },
         async (queue) => {
           const queueEntity = createServiceBusQueueEntity(webLinker, queue);
           await jobState.addEntity(queueEntity);
@@ -90,7 +91,7 @@ export async function fetchServiceBusTopics(
     { _type: ServiceBusEntities.NAMESPACE._type },
     async (namespaceEntity) => {
       await client.iterateTopics(
-        (namespaceEntity as unknown) as { name: string; id: string },
+        namespaceEntity as unknown as { name: string; id: string },
         async (topic) => {
           const topicEntity = createServiceBusTopicEntity(webLinker, topic);
           await jobState.addEntity(topicEntity);
@@ -171,6 +172,7 @@ export const serviceBusSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchServiceBusNamespaces,
     rolePermissions: ['Microsoft.ServiceBus/namespaces/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SERVICE_BUS,
   },
   {
     id: STEP_RM_SERVICE_BUS_QUEUES,
@@ -180,6 +182,7 @@ export const serviceBusSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SERVICE_BUS_NAMESPACES],
     executionHandler: fetchServiceBusQueues,
     rolePermissions: ['Microsoft.ServiceBus/namespaces/queues/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SERVICE_BUS,
   },
   {
     id: STEP_RM_SERVICE_BUS_TOPICS,
@@ -189,6 +192,7 @@ export const serviceBusSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_SERVICE_BUS_NAMESPACES],
     executionHandler: fetchServiceBusTopics,
     rolePermissions: ['Microsoft.ServiceBus/namespaces/topics/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SERVICE_BUS,
   },
   {
     id: STEP_RM_SERVICE_BUS_SUBSCRIPTIONS,
@@ -200,5 +204,6 @@ export const serviceBusSteps: AzureIntegrationStep[] = [
     rolePermissions: [
       'Microsoft.ServiceBus/namespaces/topics/subscriptions/read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SERVICE_BUS,
   },
 ];

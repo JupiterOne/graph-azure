@@ -25,6 +25,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchApiManagementServices(
   executionContext: IntegrationStepContext,
@@ -65,7 +66,7 @@ export async function fetchApiManagementApis(
     { _type: ApiManagementEntities.SERVICE._type },
     async (serviceEntity) => {
       await client.iterateApiManagementServiceApis(
-        (serviceEntity as unknown) as { name: string; id: string },
+        serviceEntity as unknown as { name: string; id: string },
         async (api) => {
           const apiEntity = createApiManagementApiEntity(webLinker, api);
           await jobState.addEntity(apiEntity);
@@ -103,6 +104,7 @@ export const apiManagementSteps: AzureIntegrationStep[] = [
       'Microsoft.ApiManagement/service/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.API_MANAGEMENT,
   },
   {
     id: STEP_RM_API_MANAGEMENT_APIS,
@@ -112,5 +114,6 @@ export const apiManagementSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_API_MANAGEMENT_SERVICES],
     executionHandler: fetchApiManagementApis,
     rolePermissions: ['Microsoft.ApiManagement/service/apis/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.API_MANAGEMENT,
   },
 ];

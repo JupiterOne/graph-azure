@@ -15,6 +15,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export const databaseSteps: AzureIntegrationStep[] = [
   {
@@ -37,6 +38,7 @@ export const databaseSteps: AzureIntegrationStep[] = [
       'Microsoft.DBforMariaDB/servers/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,
   },
   {
     id: STEP_RM_DATABASE_MYSQL_DATABASES,
@@ -58,6 +60,7 @@ export const databaseSteps: AzureIntegrationStep[] = [
       'Microsoft.DBforMySQL/servers/databases/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,
   },
   ...postgreSqlSteps,
   ...sqlSteps,

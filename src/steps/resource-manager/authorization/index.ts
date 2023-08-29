@@ -34,6 +34,7 @@ import {
 import { generateEntityKey } from '../../../utils/generateKeys';
 import { Subscription } from '@azure/arm-subscriptions/esm/models';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchRoleAssignments(
   executionContext: IntegrationStepContext,
@@ -266,6 +267,7 @@ export const authorizationSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, steps.ROLE_DEFINITIONS],
     executionHandler: fetchRoleAssignments,
     rolePermissions: ['Microsoft.Authorization/roleAssignments/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.AUTHORIZATION,
   },
   {
     id: steps.ROLE_ASSIGNMENT_PRINCIPALS,
@@ -274,6 +276,7 @@ export const authorizationSteps: AzureIntegrationStep[] = [
     relationships: relationships.ROLE_ASSIGNMENT_ASSIGNED_PRINCIPALS,
     dependsOn: [steps.ROLE_ASSIGNMENTS],
     executionHandler: buildRoleAssignmentPrincipalRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.AUTHORIZATION,
   },
   {
     id: steps.ROLE_ASSIGNMENT_SCOPES,
@@ -285,6 +288,7 @@ export const authorizationSteps: AzureIntegrationStep[] = [
       ...getResourceManagerSteps().executeFirstSteps,
     ],
     executionHandler: buildRoleAssignmentScopeRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.AUTHORIZATION,
   },
   {
     id: steps.ROLE_DEFINITIONS,
@@ -294,6 +298,7 @@ export const authorizationSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
     executionHandler: fetchRoleDefinitions,
     rolePermissions: ['Microsoft.Authorization/roleDefinitions/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.AUTHORIZATION,
   },
   {
     id: steps.ROLE_ASSIGNMENT_DEFINITIONS,
@@ -302,6 +307,7 @@ export const authorizationSteps: AzureIntegrationStep[] = [
     relationships: [relationships.ROLE_ASSIGNMENT_USES_DEFINITION],
     dependsOn: [steps.ROLE_ASSIGNMENTS, steps.ROLE_DEFINITIONS],
     executionHandler: buildRoleAssignmentDefinitionRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.AUTHORIZATION,
   },
   {
     id: steps.CLASSIC_ADMINS,
@@ -311,5 +317,6 @@ export const authorizationSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchClassicAdministrators,
     rolePermissions: ['Microsoft.Authorization/classicAdministrators/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.AUTHORIZATION,
   },
 ];

@@ -29,6 +29,7 @@ import {
   steps as storageSteps,
   entities as storageEntities,
 } from '../storage/constants';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 interface VolumeRelationshipStrategy {
   shouldAddRelationship: (volume: Volume) => Boolean;
@@ -239,5 +240,6 @@ export const containerInstanceSteps: AzureIntegrationStep[] = [
     ],
     executionHandler: fetchContainerGroups,
     rolePermissions: ['Microsoft.ContainerInstance/containerGroups/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_INSTANCE,
   },
 ];

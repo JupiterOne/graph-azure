@@ -26,6 +26,7 @@ import {
 } from './constants';
 import { resourceGroupName } from '../../../azure/utils';
 import { RedisLinkedServerWithProperties } from '@azure/arm-rediscache/esm/models';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 const SECONDARY_SERVER_ROLE = 'Secondary';
 
 export async function fetchRedisCaches(
@@ -163,6 +164,7 @@ export const redisCacheSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchRedisCaches,
     rolePermissions: ['Microsoft.Cache/redis/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.REDIS_CACHE,
   },
   {
     id: STEP_RM_REDIS_FIREWALL_RULES,
@@ -172,6 +174,7 @@ export const redisCacheSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_REDIS_CACHES],
     executionHandler: fetchRedisFirewallRules,
     rolePermissions: ['Microsoft.Cache/redis/firewallRules/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.REDIS_CACHE,
   },
   {
     id: STEP_RM_REDIS_LINKED_SERVERS,
@@ -183,5 +186,6 @@ export const redisCacheSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_REDIS_CACHES],
     executionHandler: fetchRedisLinkedServers,
     rolePermissions: ['Microsoft.Cache/redis/linkedServers/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.REDIS_CACHE,
   },
 ];

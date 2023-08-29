@@ -29,6 +29,7 @@ import {
 } from '../key-vault/constants';
 import { Vault } from '@azure/arm-keyvault/esm/models';
 import { ContainerItem } from '@azure/storage-blob';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 // import { MonitorClient } from '../monitor/client';
 // import { compareAsc } from 'date-fns';
 
@@ -432,6 +433,7 @@ export const storageSteps: AzureIntegrationStep[] = [
       'Microsoft.Storage/storageAccounts/queueServices/read',
       'Microsoft.Storage/storageAccounts/tableServices/read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.STORAGE,
   },
   {
     id: steps.STORAGE_FILE_SHARES,
@@ -443,6 +445,7 @@ export const storageSteps: AzureIntegrationStep[] = [
     rolePermissions: [
       'Microsoft.Storage/storageAccounts/fileServices/shares/read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.STORAGE,
   },
   {
     id: steps.STORAGE_CONTAINERS,
@@ -454,6 +457,7 @@ export const storageSteps: AzureIntegrationStep[] = [
     rolePermissions: [
       'Microsoft.Storage/storageAccounts/blobServices/containers/read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.STORAGE,
   },
   {
     id: steps.STORAGE_QUEUES,
@@ -463,6 +467,7 @@ export const storageSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, steps.STORAGE_ACCOUNTS],
     executionHandler: fetchStorageQueues,
     rolePermissions: ['Microsoft.Storage/storageAccounts/queueServices/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.STORAGE,
   },
   {
     id: steps.STORAGE_TABLES,
@@ -474,5 +479,6 @@ export const storageSteps: AzureIntegrationStep[] = [
     rolePermissions: [
       'Microsoft.Storage/storageAccounts/tableServices/tables/read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.STORAGE,
   },
 ];

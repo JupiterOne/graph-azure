@@ -13,6 +13,7 @@ import { createPolicyAssignmentEntity } from './converters';
 import { getResourceManagerSteps } from '../../../getStepStartStates';
 import { PolicyAssignment } from '@azure/arm-policy/esm/models';
 import { findOrCreatePolicyDefinitionEntityFromPolicyAssignment } from './findOrCreatePolicyDefinitionEntityFromAssignment';
+import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchPolicyAssignments(
   executionContext: IntegrationStepContext,
@@ -88,11 +89,12 @@ export async function fetchPolicyDefinitionsForAssignments(
         policyAssignmentEntity,
       );
 
-      const policyDefinitionEntity = await findOrCreatePolicyDefinitionEntityFromPolicyAssignment(
-        executionContext,
-        policyDefinitionContext,
-        policyAssignment,
-      );
+      const policyDefinitionEntity =
+        await findOrCreatePolicyDefinitionEntityFromPolicyAssignment(
+          executionContext,
+          policyDefinitionContext,
+          policyAssignment,
+        );
 
       if (policyDefinitionEntity) {
         await jobState.addRelationship(
@@ -116,6 +118,7 @@ export const policySteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchPolicyAssignments,
     rolePermissions: ['Microsoft.Authorization/policyAssignments/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.POLICY,
   },
   {
     id: PolicySteps.POLICY_ASSIGNMENT_SCOPE_RELATIONSHIPS,
@@ -127,6 +130,7 @@ export const policySteps: AzureIntegrationStep[] = [
       ...getResourceManagerSteps().executeFirstSteps,
     ],
     executionHandler: buildPolicyAssignmentScopeRelationships,
+    ingestionSourceId: INGESTION_SOURCE_IDS.POLICY,
   },
   {
     id: PolicySteps.POLICY_DEFINITIONS,
@@ -146,5 +150,6 @@ export const policySteps: AzureIntegrationStep[] = [
       'Microsoft.Authorization/policyDefinitions/read',
       'Microsoft.Authorization/policySetDefinitions/read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.POLICY,
   },
 ];

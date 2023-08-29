@@ -18,6 +18,7 @@ import {
   mappedRelationships,
 } from '../constants';
 import { getLocationEntityProps } from '../converters';
+import { INGESTION_SOURCE_IDS } from '../../../../constants';
 
 export async function fetchLocations(
   executionContext: IntegrationStepContext,
@@ -88,5 +89,6 @@ export const locationSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTION],
     executionHandler: fetchLocations,
     rolePermissions: ['Microsoft.Resources/subscriptions/locations/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SUBSCRIPTIONS,
   },
 ];

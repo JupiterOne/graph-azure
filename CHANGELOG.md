@@ -1,3 +1,15 @@
+# v5.51.0 (Tue Aug 29 2023)
+
+#### 🚀 Enhancement
+
+- INT-8979 - ingest Firewall->ALLOWS->Internet mapped relationships; ingest firewall policies [#589](https://github.com/JupiterOne/graph-azure/pull/589) (ronald.arias@contractor.jupiterone.com)
+
+#### Authors: 1
+
+- Ronald Arias ([@RonaldEAM](https://github.com/RonaldEAM))
+
+---
+
 # v5.50.0 (Tue Aug 29 2023)
 
 #### 🚀 Enhancement

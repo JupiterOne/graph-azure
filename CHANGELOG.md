@@ -1,3 +1,15 @@
+# v5.52.0 (Fri Sep 01 2023)
+
+#### 🚀 Enhancement
+
+- Added a step for subscription usage details [#591](https://github.com/JupiterOne/graph-azure/pull/591) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.51.0 (Tue Aug 29 2023)
 
 #### 🚀 Enhancement

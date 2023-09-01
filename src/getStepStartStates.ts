@@ -221,6 +221,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       subscriptionSteps.SUBSCRIPTION,
       subscriptionSteps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS,
       subscriptionSteps.LOCATIONS,
+      subscriptionSteps.USAGE_DETAILS,
       STEP_RM_API_MANAGEMENT_SERVICES,
       STEP_RM_API_MANAGEMENT_APIS,
       STEP_RM_CONTAINER_SERVICES_CLUSTERS,

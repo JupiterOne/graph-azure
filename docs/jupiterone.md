@@ -401,6 +401,7 @@ The following entities are created:
 | [RM] Storage Table                             | `azure_storage_table`                             | `DataStore`, `Database`            |
 | [RM] Subnet                                    | `azure_subnet`                                    | `Network`                          |
 | [RM] Subscription                              | `azure_subscription`                              | `Account`                          |
+| [RM] Usage Details                             | `azure_usage_details`                             | `Site`                             |
 | [RM] Virtual Machine                           | `azure_vm`                                        | `Host`                             |
 | [RM] Virtual Machine Extension                 | `azure_vm_extension`                              | `Application`                      |
 | [RM] Virtual Machine Scale Set                 | `azure_vm_scale_set`                              | `Deployment`, `Group`              |
@@ -554,6 +555,7 @@ The following relationships are created:
 | `azure_subscription`               | **HAS**               | `azure_security_center_setting`                   |
 | `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing`      |
 | `azure_subscription`               | **PERFORMED**         | `azure_security_assessment`                       |
+| `azure_subscription`               | **HAS**               | `azure_usage_details`                             |
 | `azure_user`                       | **HAS**               | `ad-role-definitions`                             |
 | `azure_user`                       | **HAS**               | `azure_device`                                    |
 | `azure_vm`                         | **GENERATED**         | `azure_shared_image_version`                      |
@@ -650,7 +652,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (96)                                       |
+| Role Permissions List (97)                                       |
 | ---------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                         |
 | `Microsoft.ApiManagement/service/apis/read`                      |
@@ -679,6 +681,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Compute/virtualMachines/extensions/read`              |
 | `Microsoft.Compute/virtualMachines/read`                         |
 | `Microsoft.Compute/virtualMachineScaleSets/read`                 |
+| `Microsoft.Consumption/usageDetails/read`                        |
 | `Microsoft.ContainerInstance/containerGroups/read`               |
 | `Microsoft.ContainerRegistry/registries/read`                    |
 | `Microsoft.ContainerRegistry/registries/webhooks/read`           |

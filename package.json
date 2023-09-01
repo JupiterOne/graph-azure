@@ -48,6 +48,7 @@
     "@azure/arm-batch": "^4.0.0",
     "@azure/arm-cdn": "^5.0.0",
     "@azure/arm-compute": "^14.0.0",
+    "@azure/arm-consumption": "8.0.1",
     "@azure/arm-containerinstance": "^6.0.0",
     "@azure/arm-containerregistry": "^8.0.0",
     "@azure/arm-containerservice": "^14.1.0",

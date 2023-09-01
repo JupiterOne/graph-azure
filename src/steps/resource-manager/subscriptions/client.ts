@@ -3,7 +3,10 @@ import {
   SubscriptionMappers,
 } from '@azure/arm-subscriptions';
 import * as msRest from '@azure/ms-rest-js';
-
+import {
+  ConsumptionManagementClient,
+  ConsumptionManagementMappers,
+} from '@azure/arm-consumption';
 import { Subscription, Location } from '@azure/arm-subscriptions/esm/models';
 import {
   Client,
@@ -11,6 +14,7 @@ import {
   iterateAllResources,
   request,
 } from '../../../azure/resource-manager/client';
+import { UsageDetail } from '@azure/arm-consumption/esm/models';
 
 export class J1SubscriptionClient extends Client {
   public async getSubscription(subscriptionId: string) {
@@ -57,7 +61,30 @@ export class J1SubscriptionClient extends Client {
       callback,
     });
   }
-
+  public async getUsageDetails(
+    scope: string,
+  ): Promise<UsageDetail[] | undefined> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      ConsumptionManagementClient,
+      {
+        passSubscriptionId: false,
+      },
+    );
+    const usageDetails = await request(
+      // Need API version to 2020-01-01 in order to return subscription tags
+      // serviceClient.subscriptions.get() does not work because the api version is too old
+      // sendOperationRequest was the only way I found to change the API version with this sdk
+      async () =>
+        await serviceClient.sendOperationRequest(
+          { scope, options: { top: 1 } },
+          listUsageDetailsOperationSpec,
+        ),
+      this.logger,
+      'subscriptions',
+      FIVE_MINUTES,
+    );
+    return usageDetails?._response?.parsedBody;
+  }
   public async fetchSubscriptions(): Promise<Array<Subscription> | undefined> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       SubscriptionClient,
@@ -213,4 +240,57 @@ const getSubscriptionOperationSpec: msRest.OperationSpec = {
     },
   },
   serializer: new msRest.Serializer(SubscriptionMappers),
+};
+
+const top: msRest.OperationQueryParameter = {
+  parameterPath: ['options', 'top'],
+  mapper: {
+    serializedName: '$top',
+    constraints: {
+      InclusiveMaximum: 1000,
+      InclusiveMinimum: 1,
+    },
+    type: {
+      name: 'Number',
+    },
+  },
+};
+const scope0: msRest.OperationURLParameter = {
+  parameterPath: 'scope',
+  mapper: {
+    required: true,
+    serializedName: 'scope',
+    type: {
+      name: 'String',
+    },
+  },
+  skipEncoding: true,
+};
+const apiVersion2019: msRest.OperationQueryParameter = {
+  parameterPath: 'apiVersion',
+  mapper: {
+    required: true,
+    isConstant: true,
+    serializedName: 'api-version',
+    defaultValue: '2019-10-01',
+    type: {
+      name: 'String',
+    },
+  },
+};
+const listUsageDetailsOperationSpec: msRest.OperationSpec = {
+  httpMethod: 'GET',
+  path: '{scope}/providers/Microsoft.Consumption/usageDetails',
+  urlParameters: [scope0, top],
+  queryParameters: [apiVersion2019],
+  headerParameters: [acceptLanguage],
+  responses: {
+    200: {
+      bodyMapper: ConsumptionManagementMappers.UsageDetailsListResult,
+    },
+    default: {
+      bodyMapper: ConsumptionManagementMappers.ErrorResponse,
+    },
+  },
+  serializer: new msRest.Serializer(ConsumptionManagementMappers),
 };

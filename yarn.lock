@@ -688,6 +688,16 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
+"@azure/arm-consumption@8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@azure/arm-consumption/-/arm-consumption-8.0.1.tgz#65afc3a8fbf91cb9ed5216d0cb1536c3bd6395bb"
+  integrity sha512-8MfYeoxE2K9Z7LP6AD7xGOeZWs0XEpArnFLUldKVSrMTxmWtUIeVKsMJv52u8VVx7quN1J+hsSiQyez9fRaQPQ==
+  dependencies:
+    "@azure/core-auth" "^1.1.4"
+    "@azure/ms-rest-azure-js" "^2.1.0"
+    "@azure/ms-rest-js" "^2.2.0"
+    tslib "^1.10.0"
+
 "@azure/arm-containerinstance@^6.0.0":
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-containerinstance/-/arm-containerinstance-6.0.0.tgz#213a87526b621987ab6bd8eaf87e3e74265e28cb"

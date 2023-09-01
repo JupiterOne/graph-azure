@@ -33,6 +33,7 @@ export function createSubscriptionEntity(
         displayName: data.displayName,
         ...tags,
         webLink: webLinker.portalResourceUrl(data.id),
+        offerName: data.subscriptionPolicies?.quotaId,
       },
     },
   });
@@ -54,4 +55,24 @@ export function getLocationEntityProps(data: Location) {
     name: data.name,
     displayName: data.displayName,
   };
+}
+export function createSubscriptionUsageEntity(
+  webLinker: AzureWebLinker,
+  data: any,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id as string,
+        _type: entities.SUBSCRIPTION._type,
+        _class: entities.SUBSCRIPTION._class,
+        id: data.id,
+        offerId: data.offerId,
+        webLink: webLinker.portalResourceUrl(data.id),
+        productName: data.productOrderName ?? data.product,
+        kind: data.kind,
+      },
+    },
+  });
 }

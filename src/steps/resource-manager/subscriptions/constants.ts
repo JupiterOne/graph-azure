@@ -8,6 +8,7 @@ export const steps = {
   SUBSCRIPTION: 'rm-subscription',
   SUBSCRIPTION_DIAGNOSTIC_SETTINGS: 'rm-subscription-diagnostic-settings',
   LOCATIONS: 'rm-subscription-locations',
+  USAGE_DETAILS: 'rm-subscription-usage-details',
 };
 
 export const setDataKeys = {
@@ -39,6 +40,11 @@ export const entities = {
     _class: ['Site'],
     resourceName: '[RM] Location',
   },
+  USAGE: {
+    _type: 'azure_usage_details',
+    _class: ['Site'],
+    resourceName: '[RM] Usage Details',
+  },
 };
 
 export const relationships = {
@@ -47,6 +53,12 @@ export const relationships = {
     sourceType: entities.SUBSCRIPTION._type,
     _class: RelationshipClass.USES,
     targetType: entities.LOCATION._type,
+  },
+  SUBSCRIPTION_HAS_USAGE_DETAILS: {
+    _type: 'azure_subscription_uses_usage_details',
+    sourceType: entities.SUBSCRIPTION._type,
+    _class: RelationshipClass.HAS,
+    targetType: entities.USAGE._type,
   },
 };
 

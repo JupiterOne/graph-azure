@@ -31,6 +31,7 @@ describe('createSubscriptionEntity', () => {
       name: 'j1dev-subscription',
       displayName: 'j1dev-subscription',
       createdOn: undefined,
+      offerName: 'FreeTrial_2014-09-01',
       webLink: webLinker.portalResourceUrl('/subscriptions/subscription-id'),
     });
   });

@@ -1,3 +1,15 @@
+# v5.52.1 (Wed Sep 06 2023)
+
+#### 🐛 Bug Fix
+
+- Corrected type of entity [#592](https://github.com/JupiterOne/graph-azure/pull/592) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.52.0 (Fri Sep 01 2023)
 
 #### 🚀 Enhancement

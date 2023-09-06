@@ -65,8 +65,8 @@ export function createSubscriptionUsageEntity(
       source: data,
       assign: {
         _key: data.id as string,
-        _type: entities.SUBSCRIPTION._type,
-        _class: entities.SUBSCRIPTION._class,
+        _type: entities.USAGE._type,
+        _class: entities.USAGE._class,
         id: data.id,
         offerId: data.offerId,
         webLink: webLinker.portalResourceUrl(data.id),

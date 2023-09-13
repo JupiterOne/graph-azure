@@ -1,3 +1,15 @@
+# v5.52.2 (Wed Sep 13 2023)
+
+#### 🐛 Bug Fix
+
+- Added instanceCount to converter [#593](https://github.com/JupiterOne/graph-azure/pull/593) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.52.1 (Wed Sep 06 2023)
 
 #### 🐛 Bug Fix

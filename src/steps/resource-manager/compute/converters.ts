@@ -292,6 +292,7 @@ export function createVMScaleSetsEntity(
         overprovision: data.overprovision,
         platformFaultDomainCount: data.platformFaultDomainCount,
         sku: data.sku?.name,
+        instanceCount: data.sku?.capacity,
         automaticOSUpgrade:
           data.upgradePolicy?.automaticOSUpgradePolicy
             ?.enableAutomaticOSUpgrade,
@@ -326,25 +327,28 @@ export function createVMScaleSetsEntity(
             ?.storageUri,
         'virtualMachineProfile.evictionPolicy':
           data.virtualMachineProfile?.evictionPolicy,
-        'virtualMachineProfile.extensionProfile.extensions': data.virtualMachineProfile?.extensionProfile?.extensions
-          ?.map((extension) => extension.name)
-          .filter((e) => !!e) as string[],
+        'virtualMachineProfile.extensionProfile.extensions':
+          data.virtualMachineProfile?.extensionProfile?.extensions
+            ?.map((extension) => extension.name)
+            .filter((e) => !!e) as string[],
         'virtualMachineProfile.licenseType':
           data.virtualMachineProfile?.licenseType,
         'virtualMachineProfile.networkProfile.healthProbe.id':
           data.virtualMachineProfile?.networkProfile?.healthProbe?.id,
-        'virtualMachineProfile.networkProfile.networkInterfaceConfigurations': data.virtualMachineProfile?.networkProfile?.networkInterfaceConfigurations?.map(
-          (config) => config.name,
-        ),
+        'virtualMachineProfile.networkProfile.networkInterfaceConfigurations':
+          data.virtualMachineProfile?.networkProfile?.networkInterfaceConfigurations?.map(
+            (config) => config.name,
+          ),
         'virtualMachineProfile.osProfile.linuxConfiguration.disablePasswordAuthentication':
           data.virtualMachineProfile?.osProfile?.linuxConfiguration
             ?.disablePasswordAuthentication,
         'virtualMachineProfile.osProfile.linuxConfiguration.provisionVMAgent':
           data.virtualMachineProfile?.osProfile?.linuxConfiguration
             ?.provisionVMAgent,
-        'virtualMachineProfile.osProfile.linuxConfiguration.ssh.publicKeys': data.virtualMachineProfile?.osProfile?.linuxConfiguration?.ssh?.publicKeys
-          ?.map((key) => key.path)
-          .filter((e) => !!e) as string[],
+        'virtualMachineProfile.osProfile.linuxConfiguration.ssh.publicKeys':
+          data.virtualMachineProfile?.osProfile?.linuxConfiguration?.ssh?.publicKeys
+            ?.map((key) => key.path)
+            .filter((e) => !!e) as string[],
         'virtualMachineProfile.osProfile.adminUsername':
           data.virtualMachineProfile?.osProfile?.adminUsername,
         'virtualMachineProfile.osProfile.computerNamePrefix':
@@ -355,16 +359,18 @@ export function createVMScaleSetsEntity(
         'virtualMachineProfile.osProfile.windowsConfiguration.provisionVMAgent':
           data.virtualMachineProfile?.osProfile?.windowsConfiguration
             ?.provisionVMAgent,
-        'virtualMachineProfile.priority': data.virtualMachineProfile?.priority?.toString(),
+        'virtualMachineProfile.priority':
+          data.virtualMachineProfile?.priority?.toString(),
         'virtualMachineProfile.scheduledEventsProfile.terminateNotificationProfile.enable':
           data.virtualMachineProfile?.scheduledEventsProfile
             ?.terminateNotificationProfile?.enable,
         'virtualMachineProfile.scheduledEventsProfile.terminateNotificationProfile.notBeforeTimeout':
           data.virtualMachineProfile?.scheduledEventsProfile
             ?.terminateNotificationProfile?.notBeforeTimeout,
-        'virtualMachineProfile.storageProfile.dataDisks': data.virtualMachineProfile?.storageProfile?.dataDisks
-          ?.map((disk) => disk.name)
-          .filter((e) => !!e) as string[],
+        'virtualMachineProfile.storageProfile.dataDisks':
+          data.virtualMachineProfile?.storageProfile?.dataDisks
+            ?.map((disk) => disk.name)
+            .filter((e) => !!e) as string[],
         'virtualMachineProfile.storageProfile.imageReference.id':
           data.virtualMachineProfile?.storageProfile?.imageReference?.id,
         'virtualMachineProfile.storageProfile.imageReference.offer':

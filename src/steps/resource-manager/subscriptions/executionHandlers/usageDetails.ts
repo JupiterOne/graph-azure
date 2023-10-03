@@ -30,7 +30,7 @@ export async function fetchSubscriptionUsageDetails(
       } catch (error) {
         logger.warn({ error }, "Can't get subscription usage details.");
       }
-      if (usageDetails) {
+      if (usageDetails[0]) {
         const usageEntity = await jobState.addEntity(
           createSubscriptionUsageEntity(webLinker, usageDetails[0]),
         );

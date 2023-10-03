@@ -1,3 +1,15 @@
+# v5.52.3 (Tue Oct 03 2023)
+
+#### 🐛 Bug Fix
+
+- INT-9746: fix usage details undefined issue [#594](https://github.com/JupiterOne/graph-azure/pull/594) ([@gastonyelmini](https://github.com/gastonyelmini))
+
+#### Authors: 1
+
+- Gaston Yelmini ([@gastonyelmini](https://github.com/gastonyelmini))
+
+---
+
 # v5.52.2 (Wed Sep 13 2023)
 
 #### 🐛 Bug Fix

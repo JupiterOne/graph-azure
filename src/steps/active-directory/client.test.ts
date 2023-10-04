@@ -60,7 +60,8 @@ describe('fetchIdentitySecurityDefaultsEnforcementPolicy', () => {
     });
 
     const client = new DirectoryGraphClient(logger, configFromEnv);
-    const response = await client.fetchIdentitySecurityDefaultsEnforcementPolicy();
+    const response =
+      await client.fetchIdentitySecurityDefaultsEnforcementPolicy();
 
     expect(response).toMatchObject({
       isEnabled: expect.any(Boolean),
@@ -85,12 +86,14 @@ describe('fetchIdentitySecurityDefaultsEnforcementPolicy', () => {
     const publishEventSpy = jest.spyOn(logger, 'publishEvent');
 
     const client = new DirectoryGraphClient(logger, configFromEnv);
-    const response = await client.fetchIdentitySecurityDefaultsEnforcementPolicy();
+    const response =
+      await client.fetchIdentitySecurityDefaultsEnforcementPolicy();
 
     expect(response).toBeUndefined();
     expect(publishEventSpy).toHaveBeenCalledTimes(1);
     expect(publishEventSpy).toHaveBeenCalledWith({
       name: 'warn_missing_permission',
+      level: 'warn',
       description:
         'Unable to fetch data from /policies/identitySecurityDefaultsEnforcementPolicy. See https://github.com/JupiterOne/graph-azure/blob/master/docs/jupiterone.md#permissions for more information about optional permissions for this integration.',
     });

@@ -23,6 +23,7 @@ import { resourceGroupName } from '../../../azure/utils';
 import * as Mappers from './mappers';
 import * as Parameters from './parameters';
 import { FirewallPolicyRuleCollectionGroup } from '@azure/arm-network-latest';
+import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
 
 export class NetworkClient extends Client {
   /**
@@ -82,38 +83,53 @@ export class NetworkClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       NetworkManagementClient,
     );
-
-    let nextPageLink: string | undefined;
-    do {
-      const groups = await request(
-        async () =>
-          nextPageLink
-            ? await serviceClient.sendOperationRequest(
-                {
-                  resourceGroupName,
-                  firewallPolicyName: policyName,
-                  nextLink: nextPageLink,
-                  subscriptionId,
-                },
-                listFirewallPolicyRuleCollectionGroupsNextOperationSpec,
-              )
-            : await serviceClient.sendOperationRequest(
-                {
-                  resourceGroupName,
-                  firewallPolicyName: policyName,
-                  subscriptionId,
-                },
-                listFirewallPolicyRuleCollectionGroupsOperationSpec,
-              ),
-        this.logger,
-        'firewallPolicyRuleCollectionGroups',
-        FIVE_MINUTES,
-      );
-      for (const group of groups?.value || []) {
-        await callback(group);
+    try {
+      let nextPageLink: string | undefined;
+      do {
+        const groups = await request(
+          async () =>
+            nextPageLink
+              ? await serviceClient.sendOperationRequest(
+                  {
+                    resourceGroupName,
+                    firewallPolicyName: policyName,
+                    nextLink: nextPageLink,
+                    subscriptionId,
+                  },
+                  listFirewallPolicyRuleCollectionGroupsNextOperationSpec,
+                )
+              : await serviceClient.sendOperationRequest(
+                  {
+                    resourceGroupName,
+                    firewallPolicyName: policyName,
+                    subscriptionId,
+                  },
+                  listFirewallPolicyRuleCollectionGroupsOperationSpec,
+                ),
+          this.logger,
+          'firewallPolicyRuleCollectionGroups',
+          FIVE_MINUTES,
+        );
+        for (const group of groups?.value || []) {
+          await callback(group);
+        }
+        nextPageLink = groups?.nexLink;
+      } while (nextPageLink);
+    } catch (error) {
+      if (error.status === 403) {
+        this.logger.warn(
+          { error, resourceUrl: resourceGroupName },
+          'Encountered auth error in Azure Graph client.',
+        );
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingPermission,
+          description: `Received authorization error when attempting to call ${resourceGroupName}. Please update credentials to grant access.`,
+        });
+        return;
+      } else {
+        throw error;
       }
-      nextPageLink = groups?.nexLink;
-    } while (nextPageLink);
+    }
   }
 
   public async iteratePrivateEndpoints(

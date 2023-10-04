@@ -13,6 +13,7 @@ import {
   FIVE_MINUTES,
   iterateAllResources,
   request,
+  requestWithAuthErrorhandling,
 } from '../../../azure/resource-manager/client';
 import { UsageDetail } from '@azure/arm-consumption/esm/models';
 
@@ -70,7 +71,7 @@ export class J1SubscriptionClient extends Client {
         passSubscriptionId: false,
       },
     );
-    const usageDetails = await request(
+    const usageDetails = await requestWithAuthErrorhandling(
       // Need API version to 2020-01-01 in order to return subscription tags
       // serviceClient.subscriptions.get() does not work because the api version is too old
       // sendOperationRequest was the only way I found to change the API version with this sdk

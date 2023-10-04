@@ -5,6 +5,7 @@ import {
   RelationshipDirection,
   IntegrationExecutionContext,
   IntegrationProviderAuthorizationError,
+  IntegrationWarnEventName,
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker, createAzureWebLinker } from '../../../azure';
@@ -64,8 +65,8 @@ export async function validateManagementGroupStepInvocation(
   try {
     await client.getManagementGroup(tenantId);
   } catch (err) {
-    context.logger.publishEvent({
-      name: 'mgmt_group_auth_error',
+    context.logger.publishWarnEvent({
+      name: IntegrationWarnEventName.MissingPermission,
       description: `Error validating call to fetch the Tenant Root Management Group (https://management.azure.com/providers/Microsoft.Management/managementGroups/${tenantId}). Please grant the "Management Group Reader" role on the Tenant Root Group in order to fetch management group entities/relationships.`,
     });
     throw new IntegrationProviderAuthorizationError({

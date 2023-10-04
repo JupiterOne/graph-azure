@@ -10,6 +10,7 @@ import {
 import {
   IntegrationLogger,
   IntegrationProviderAPIError,
+  IntegrationWarnEventName,
 } from '@jupiterone/integration-sdk-core';
 import { retry } from '@lifeomic/attempt';
 import { FetchError } from 'node-fetch';
@@ -252,6 +253,36 @@ export interface IterateAllResourcesOptions<ServiceClientType, ResourceType> {
   endpointRatePeriod?: number;
 }
 
+export async function requestWithAuthErrorhandling<T extends ResourceResponse>(
+  resourceListCallback: () => Promise<T>,
+  logger: IntegrationLogger,
+  resourceDescription: string,
+  endpointRatePeriod: number,
+): Promise<T | undefined> {
+  try {
+    return await request(
+      resourceListCallback,
+      logger,
+      resourceDescription,
+      endpointRatePeriod,
+    );
+  } catch (error) {
+    if (error.status === 403) {
+      logger.warn(
+        { error, resourceUrl: resourceDescription },
+        'Encountered auth error in Azure Graph client.',
+      );
+      logger.publishWarnEvent({
+        name: IntegrationWarnEventName.MissingPermission,
+        description: `Received authorization error when attempting to call ${resourceDescription}. Please update credentials to grant access.`,
+      });
+      return;
+    } else {
+      throw error;
+    }
+  }
+}
+
 /**
  * Call an azure endpoint that returns a ResourceListResponse. Explicitly handle
  * known API errors that we may encounter, including retries.
@@ -338,42 +369,58 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
   logger,
   endpointRatePeriod = 5 * 60 * 1000,
 }: IterateAllResourcesOptions<ServiceClientType, ResourceType>): Promise<void> {
-  let nextLink: string | undefined;
-  do {
-    const response = await request(
-      async () => {
-        if ('listAllNext' in resourceEndpoint) {
-          return nextLink
-            ? /* istanbul ignore next: testing iteration might be difficult */
-              await resourceEndpoint.listAllNext(nextLink)
-            : await resourceEndpoint.listAll();
-        } else {
-          return resourceEndpoint.listNext && nextLink
-            ? /* istanbul ignore next: testing iteration might be difficult */
-              await resourceEndpoint.listNext(nextLink)
-            : await resourceEndpoint.list();
-        }
-      },
-      logger,
-      resourceDescription,
-      endpointRatePeriod,
-    );
-
-    if (response) {
-      logger.debug(
-        {
-          resourceCount: response.length,
-          resource: response._response.request.url,
-          nextLink: response.nextLink,
+  try {
+    let nextLink: string | undefined;
+    do {
+      const response = await request(
+        async () => {
+          if ('listAllNext' in resourceEndpoint) {
+            return nextLink
+              ? /* istanbul ignore next: testing iteration might be difficult */
+                await resourceEndpoint.listAllNext(nextLink)
+              : await resourceEndpoint.listAll();
+          } else {
+            return resourceEndpoint.listNext && nextLink
+              ? /* istanbul ignore next: testing iteration might be difficult */
+                await resourceEndpoint.listNext(nextLink)
+              : await resourceEndpoint.list();
+          }
         },
-        'Received resources for endpoint',
+        logger,
+        resourceDescription,
+        endpointRatePeriod,
       );
 
-      for (const e of response) {
-        await callback(e, serviceClient);
-      }
+      if (response) {
+        logger.debug(
+          {
+            resourceCount: response.length,
+            resource: response._response.request.url,
+            nextLink: response.nextLink,
+          },
+          'Received resources for endpoint',
+        );
 
-      nextLink = response.nextLink;
+        for (const e of response) {
+          await callback(e, serviceClient);
+        }
+
+        nextLink = response.nextLink;
+      }
+    } while (nextLink);
+  } catch (error) {
+    if (error.status === 403) {
+      logger.warn(
+        { error, resourceUrl: resourceEndpoint },
+        'Encountered auth error in Azure Graph client.',
+      );
+      logger.publishWarnEvent({
+        name: IntegrationWarnEventName.MissingPermission,
+        description: `Received authorization error when attempting to call ${resourceEndpoint}. Please update credentials to grant access.`,
+      });
+      return;
+    } else {
+      throw error;
     }
-  } while (nextLink);
+  }
 }

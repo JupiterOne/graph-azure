@@ -56,7 +56,7 @@ export async function fetchApps(
           'Warning: unable to fetch app configuration.',
         );
         if (err.statusCode === 403 && err.code === 'AuthorizationFailed') {
-          logger.publishEvent({
+          logger.publishWarnEvent({
             name: IntegrationWarnEventName.MissingPermission,
             description:
               'Missing permission "Microsoft.Web/sites/config/list/action", which is used to fetch WebApp Auth Settings. Please update the `JupiterOne Reader` Role in your Azure environment in order to fetch these settings for your WebApp.',

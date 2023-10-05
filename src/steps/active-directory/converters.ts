@@ -203,7 +203,7 @@ export function createDeviceEntity(
         make: data.manufacturer || 'Unknown',
         model: data.model || 'Unknown',
         serial: 'Unknown', // Serial number not provided by azure
-        lastSeenOn: 'Unknown',
+        lastSeenOn: parseTimePropertyValue(data.approximateLastSignInDateTime),
       },
     },
   });

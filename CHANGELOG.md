@@ -1,3 +1,15 @@
+# v5.52.6 (Fri Oct 06 2023)
+
+#### 🐛 Bug Fix
+
+- INT-9642 Bump SDK versions [#598](https://github.com/JupiterOne/graph-azure/pull/598) ([@JakeFerrero](https://github.com/JakeFerrero))
+
+#### Authors: 1
+
+- Jake Ferrero ([@JakeFerrero](https://github.com/JakeFerrero))
+
+---
+
 # v5.52.5 (Fri Oct 06 2023)
 
 #### 🐛 Bug Fix

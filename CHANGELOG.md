@@ -1,3 +1,15 @@
+# v5.52.5 (Fri Oct 06 2023)
+
+#### 🐛 Bug Fix
+
+- Change rate period of all calls related to Microsoft.Authorization scope [#597](https://github.com/JupiterOne/graph-azure/pull/597) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.52.4 (Wed Oct 04 2023)
 
 #### 🐛 Bug Fix

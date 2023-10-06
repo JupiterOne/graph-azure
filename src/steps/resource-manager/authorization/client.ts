@@ -6,6 +6,7 @@ import {
 } from '@azure/arm-authorization/esm/models';
 import {
   Client,
+  TEN_MINUTES,
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
@@ -30,6 +31,7 @@ export class AuthorizationClient extends Client {
       resourceDescription: 'authorization.roleDefinitions',
       logger: this.logger,
       callback,
+      endpointRatePeriod: TEN_MINUTES,
     });
   }
 

@@ -180,17 +180,27 @@ function retryResourceRequest<ResponseType>(
           );
           context.abort();
         } else {
-          const retry_after =
-            (err.response.headers.get('retry-after') ?? 0) * 1000;
-          logger.info(
-            {
-              err,
-              retry_after_seconds: retry_after,
-              attemptsRemaining: context.attemptsRemaining,
-            },
-            'Encountered retryable error in Resource Manager client.',
-          );
-          await sleep(retry_after);
+          if (err.statusCode === 429) {
+            const retry_after =
+              (err.response.headers.get('retry-after') ?? 0) * 1000;
+            logger.info(
+              {
+                err,
+                retry_after_seconds: retry_after,
+                attemptsRemaining: context.attemptsRemaining,
+              },
+              'Encountered retryable error in Resource Manager client. Will wait for retry.',
+            );
+            await sleep(retry_after);
+          } else {
+            logger.info(
+              {
+                err,
+                attemptsRemaining: context.attemptsRemaining,
+              },
+              'Encountered retryable error in Resource Manager client.',
+            );
+          }
         }
       },
     },

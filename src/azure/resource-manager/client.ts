@@ -170,7 +170,7 @@ function retryResourceRequest<ResponseType>(
       // which is the scenario we're aiming to address with our retry.
       //
       // Non Azure `RestError`s, such as ECONNRESET, should be retried.
-      handleError: (err, context, _options) => {
+      handleError: async (err, context, _options) => {
         if (err instanceof AzureRestError && err.statusCode !== 429) {
           logger.info(
             {
@@ -180,17 +180,24 @@ function retryResourceRequest<ResponseType>(
           );
           context.abort();
         } else {
+          const retry_after =
+            (err.response.headers.get('retry-after') ?? 0) * 1000;
           logger.info(
             {
               err,
+              retry_after_seconds: retry_after,
               attemptsRemaining: context.attemptsRemaining,
             },
             'Encountered retryable error in Resource Manager client.',
           );
+          await sleep(retry_after);
         }
       },
     },
   );
+  async function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 }
 
 export function createClient<T>(

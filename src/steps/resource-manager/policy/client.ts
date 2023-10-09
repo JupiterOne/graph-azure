@@ -1,6 +1,6 @@
 import {
   Client,
-  TEN_MINUTES,
+  FIVE_MINUTES,
   iterateAllResources,
   request,
 } from '../../../azure/resource-manager/client';
@@ -31,7 +31,7 @@ export class AzurePolicyClient extends Client {
       resourceEndpoint: serviceClient.policyAssignments,
       resourceDescription: 'policy.assignment',
       callback,
-      endpointRatePeriod: TEN_MINUTES,
+      endpointRatePeriod: FIVE_MINUTES,
     });
   }
 
@@ -45,7 +45,7 @@ export class AzurePolicyClient extends Client {
       async () => await serviceClient.policySetDefinitions.get(name),
       this.logger,
       'policySetDefinition',
-      TEN_MINUTES,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }
@@ -61,7 +61,7 @@ export class AzurePolicyClient extends Client {
       async () => await serviceClient.policySetDefinitions.getBuiltIn(name),
       this.logger,
       'policySetDefinition.getBuiltIn',
-      TEN_MINUTES,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }
@@ -81,7 +81,7 @@ export class AzurePolicyClient extends Client {
         ),
       this.logger,
       'policySetDefinition.getAtManagementGroup',
-      TEN_MINUTES,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }
@@ -96,7 +96,7 @@ export class AzurePolicyClient extends Client {
       async () => await serviceClient.policyDefinitions.get(name),
       this.logger,
       'policyDefinition',
-      TEN_MINUTES,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }
@@ -111,7 +111,7 @@ export class AzurePolicyClient extends Client {
       async () => await serviceClient.policyDefinitions.getBuiltIn(name),
       this.logger,
       'policyDefinition.getBuiltIn',
-      TEN_MINUTES,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }
@@ -131,7 +131,7 @@ export class AzurePolicyClient extends Client {
         ),
       this.logger,
       'policyDefinition.getAtManagementGroup',
-      TEN_MINUTES,
+      FIVE_MINUTES,
     );
     return response?._response?.parsedBody;
   }

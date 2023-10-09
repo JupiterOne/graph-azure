@@ -3,7 +3,6 @@ import { ResourceGroup } from '@azure/arm-resources/esm/models';
 import {
   Client,
   FIVE_MINUTES,
-  TEN_MINUTES,
   iterateAllResources,
   request,
 } from '../../../azure/resource-manager/client';
@@ -71,7 +70,7 @@ export class ResourcesClient extends Client {
       },
       resourceDescription: 'resources.resourceLocks',
       callback,
-      endpointRatePeriod: TEN_MINUTES,
+      endpointRatePeriod: FIVE_MINUTES,
     });
   }
 }

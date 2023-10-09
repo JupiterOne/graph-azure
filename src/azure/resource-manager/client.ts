@@ -20,7 +20,7 @@ import authenticate from './authenticate';
 import { bunyanLogPolicy } from './BunyanLogPolicy';
 import { AzureManagementClientCredentials } from './types';
 export const FIVE_MINUTES = 5 * 60 * 1000;
-export const TEN_MINUTES = 10 * 60 * 1000;
+
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
  */
@@ -153,10 +153,9 @@ function retryResourceRequest<ResponseType>(
       return requestFunc();
     },
     {
-      // Things aren't working as expected if we're asked to retry more than
-      // once. The request policy of the `ServiceClient` will handle all other
-      // retry scenarios.
-      maxAttempts: 3,
+      // Some scopes have really low throttle caps. Specially the Authorization scope.
+      // More retries == more possibilities of ingesting the 429s.
+      maxAttempts: 10,
 
       // No delay on the first attempt, wait for next period on subsequent
       // attempts. Assumes non-429 responses will not lead to subsequent
@@ -170,7 +169,7 @@ function retryResourceRequest<ResponseType>(
       // which is the scenario we're aiming to address with our retry.
       //
       // Non Azure `RestError`s, such as ECONNRESET, should be retried.
-      handleError: (err, context, _options) => {
+      handleError: async (err, context, _options) => {
         if (err instanceof AzureRestError && err.statusCode !== 429) {
           logger.info(
             {
@@ -180,17 +179,34 @@ function retryResourceRequest<ResponseType>(
           );
           context.abort();
         } else {
-          logger.info(
-            {
-              err,
-              attemptsRemaining: context.attemptsRemaining,
-            },
-            'Encountered retryable error in Resource Manager client.',
-          );
+          if (err.statusCode === 429) {
+            const retry_after =
+              (err.response.headers.get('retry-after') ?? 0) * 1000;
+            logger.info(
+              {
+                err,
+                retry_after_seconds: retry_after,
+                attemptsRemaining: context.attemptsRemaining,
+              },
+              'Encountered retryable error in Resource Manager client. Will wait for retry.',
+            );
+            await sleep(retry_after);
+          } else {
+            logger.info(
+              {
+                err,
+                attemptsRemaining: context.attemptsRemaining,
+              },
+              'Encountered retryable error in Resource Manager client.',
+            );
+          }
         }
       },
     },
   );
+  async function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 }
 
 export function createClient<T>(

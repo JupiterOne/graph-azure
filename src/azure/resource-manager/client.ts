@@ -20,7 +20,7 @@ import authenticate from './authenticate';
 import { bunyanLogPolicy } from './BunyanLogPolicy';
 import { AzureManagementClientCredentials } from './types';
 export const FIVE_MINUTES = 5 * 60 * 1000;
-export const FIFTEEN_MINUTES = 15 * 60 * 1000;
+
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
  */
@@ -153,10 +153,9 @@ function retryResourceRequest<ResponseType>(
       return requestFunc();
     },
     {
-      // Things aren't working as expected if we're asked to retry more than
-      // once. The request policy of the `ServiceClient` will handle all other
-      // retry scenarios.
-      maxAttempts: 4,
+      // Some scopes have really low throttle caps. Specially the Authorization scope.
+      // More retries == more possibilities of ingesting the 429s.
+      maxAttempts: 10,
 
       // No delay on the first attempt, wait for next period on subsequent
       // attempts. Assumes non-429 responses will not lead to subsequent

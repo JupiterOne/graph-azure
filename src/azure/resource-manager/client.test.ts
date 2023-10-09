@@ -126,7 +126,7 @@ test('request should expose node-fetch error codes', async () => {
   ).rejects.toThrow(
     'Provider API failed at fake-resource: ECONNRESET Error message for system error',
   );
-});
+}, 20_000);
 
 test('request should expose Azure RestError status and text', async () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function

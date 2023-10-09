@@ -1,3 +1,15 @@
+# v5.52.7 (Mon Oct 09 2023)
+
+#### 🐛 Bug Fix
+
+- INT-9746: add additional undefined check [#600](https://github.com/JupiterOne/graph-azure/pull/600) ([@gastonyelmini](https://github.com/gastonyelmini))
+
+#### Authors: 1
+
+- Gaston Yelmini ([@gastonyelmini](https://github.com/gastonyelmini))
+
+---
+
 # v5.52.6 (Fri Oct 06 2023)
 
 #### 🐛 Bug Fix

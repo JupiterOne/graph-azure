@@ -1,3 +1,15 @@
+# v5.52.8 (Mon Oct 09 2023)
+
+#### 🐛 Bug Fix
+
+- Changed retries and time between. Handle 429 [#599](https://github.com/JupiterOne/graph-azure/pull/599) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.52.7 (Mon Oct 09 2023)
 
 #### 🐛 Bug Fix

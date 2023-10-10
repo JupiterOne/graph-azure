@@ -20,7 +20,7 @@ import authenticate from './authenticate';
 import { bunyanLogPolicy } from './BunyanLogPolicy';
 import { AzureManagementClientCredentials } from './types';
 export const FIVE_MINUTES = 5 * 60 * 1000;
-
+export const DEFAULT_MAX_RETRIES = 5;
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
  */
@@ -147,6 +147,7 @@ function retryResourceRequest<ResponseType>(
   requestFunc: () => Promise<ResponseType>,
   endpointRatePeriod: number,
   logger: IntegrationLogger,
+  maxRetryAttempts: number = DEFAULT_MAX_RETRIES,
 ): Promise<ResponseType> {
   return retry(
     async (_context) => {
@@ -155,15 +156,16 @@ function retryResourceRequest<ResponseType>(
     {
       // Some scopes have really low throttle caps. Specially the Authorization scope.
       // More retries == more possibilities of ingesting the 429s.
-      maxAttempts: 10,
+      maxAttempts: maxRetryAttempts,
 
       // No delay on the first attempt, wait for next period on subsequent
       // attempts. Assumes non-429 responses will not lead to subsequent
       // attempts (`handleError` will abort for other error responses).
-      calculateDelay: (context, _options) => {
-        return context.attemptNum === 0 ? 0 : endpointRatePeriod;
-      },
-
+      // calculateDelay: (context, _options) => {
+      //   return context.attemptNum === 0 ? 0 : endpointRatePeriod;
+      // },
+      delay: endpointRatePeriod,
+      factor: 1.1,
       // Most errors will be handled by the request policies. They will raise
       // a `RestError.statusCode: 429` when they see two 429 responses in a row,
       // which is the scenario we're aiming to address with our retry.
@@ -268,6 +270,7 @@ export interface IterateAllResourcesOptions<ServiceClientType, ResourceType> {
   ) => void | Promise<void>;
   logger: IntegrationLogger;
   endpointRatePeriod?: number;
+  maxRetryAttempts?: number;
 }
 
 export async function requestWithAuthErrorhandling<T extends ResourceResponse>(
@@ -309,12 +312,14 @@ export async function request<T extends ResourceResponse>(
   logger: IntegrationLogger,
   resourceDescription: string,
   endpointRatePeriod: number,
+  maxRetryAttempts: number = DEFAULT_MAX_RETRIES,
 ): Promise<T | undefined> {
   try {
     const response = await retryResourceRequest<T>(
       resourceListCallback,
       endpointRatePeriod,
       logger,
+      maxRetryAttempts,
     );
     return response;
   } catch (err) {
@@ -385,6 +390,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
   callback,
   logger,
   endpointRatePeriod = 5 * 60 * 1000,
+  maxRetryAttempts = DEFAULT_MAX_RETRIES,
 }: IterateAllResourcesOptions<ServiceClientType, ResourceType>): Promise<void> {
   try {
     let nextLink: string | undefined;
@@ -406,6 +412,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
         logger,
         resourceDescription,
         endpointRatePeriod,
+        maxRetryAttempts,
       );
 
       if (response) {

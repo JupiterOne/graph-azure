@@ -1,5 +1,6 @@
 import {
   Client,
+  DEFAULT_MAX_RETRIES,
   FIVE_MINUTES,
   iterateAllResources,
   request,
@@ -32,6 +33,7 @@ export class AzurePolicyClient extends Client {
       resourceDescription: 'policy.assignment',
       callback,
       endpointRatePeriod: FIVE_MINUTES,
+      maxRetryAttempts: 4 * DEFAULT_MAX_RETRIES,
     });
   }
 
@@ -46,6 +48,7 @@ export class AzurePolicyClient extends Client {
       this.logger,
       'policySetDefinition',
       FIVE_MINUTES,
+      4 * DEFAULT_MAX_RETRIES,
     );
     return response?._response?.parsedBody;
   }
@@ -62,6 +65,7 @@ export class AzurePolicyClient extends Client {
       this.logger,
       'policySetDefinition.getBuiltIn',
       FIVE_MINUTES,
+      4 * DEFAULT_MAX_RETRIES,
     );
     return response?._response?.parsedBody;
   }
@@ -82,6 +86,7 @@ export class AzurePolicyClient extends Client {
       this.logger,
       'policySetDefinition.getAtManagementGroup',
       FIVE_MINUTES,
+      4 * DEFAULT_MAX_RETRIES,
     );
     return response?._response?.parsedBody;
   }
@@ -97,6 +102,7 @@ export class AzurePolicyClient extends Client {
       this.logger,
       'policyDefinition',
       FIVE_MINUTES,
+      4 * DEFAULT_MAX_RETRIES,
     );
     return response?._response?.parsedBody;
   }
@@ -112,6 +118,7 @@ export class AzurePolicyClient extends Client {
       this.logger,
       'policyDefinition.getBuiltIn',
       FIVE_MINUTES,
+      4 * DEFAULT_MAX_RETRIES,
     );
     return response?._response?.parsedBody;
   }
@@ -132,6 +139,7 @@ export class AzurePolicyClient extends Client {
       this.logger,
       'policyDefinition.getAtManagementGroup',
       FIVE_MINUTES,
+      4 * DEFAULT_MAX_RETRIES,
     );
     return response?._response?.parsedBody;
   }

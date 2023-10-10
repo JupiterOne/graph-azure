@@ -1,3 +1,15 @@
+# v5.52.9 (Tue Oct 10 2023)
+
+#### 🐛 Bug Fix
+
+- Add factor to retries - Max 20 retries for auth scope [#601](https://github.com/JupiterOne/graph-azure/pull/601) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.52.8 (Mon Oct 09 2023)
 
 #### 🐛 Bug Fix

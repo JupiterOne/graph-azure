@@ -414,21 +414,24 @@ The following relationships are created:
 
 | Source Entity `_type`              | Relationship `_class` | Target Entity `_type`                             |
 | ---------------------------------- | --------------------- | ------------------------------------------------- |
-| `azure_account`                    | **HAS**               | `azure_user_group`                                |
+| `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
+| `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
+| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
+| `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |
 | `azure_account`                    | **HAS**               | `azure_keyvault_service`                          |
 | `azure_account`                    | **HAS**               | `azure_management_group`                          |
 | `azure_account`                    | **HAS**               | `azure_user`                                      |
+| `azure_account`                    | **HAS**               | `azure_user_group`                                |
 | `azure_api_management_service`     | **HAS**               | `azure_api_management_api`                        |
-| `azure_security_assessment`        | **IDENTIFIED**        | `azure_advisor_recommendation`                    |
 | `azure_batch_account`              | **HAS**               | `azure_batch_application`                         |
 | `azure_batch_account`              | **HAS**               | `azure_batch_certificate`                         |
 | `azure_batch_account`              | **HAS**               | `azure_batch_pool`                                |
 | `azure_cdn_profile`                | **HAS**               | `azure_cdn_endpoint`                              |
 | `azure_classic_admin_group`        | **HAS**               | `azure_user`                                      |
+| `azure_container`                  | **USES**              | `azure_container_volume`                          |
 | `azure_container_group`            | **HAS**               | `azure_container`                                 |
 | `azure_container_group`            | **HAS**               | `azure_container_volume`                          |
 | `azure_container_registry`         | **HAS**               | `azure_container_registry_webhook`                |
-| `azure_container`                  | **USES**              | `azure_container_volume`                          |
 | `azure_container_volume`           | **USES**              | `azure_storage_file_share`                        |
 | `azure_cosmosdb_account`           | **HAS**               | `azure_cosmosdb_sql_database`                     |
 | `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
@@ -442,9 +445,6 @@ The following relationships are created:
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_rules_engine`                    |
 | `azure_function_app`               | **USES**              | `azure_app_service_plan`                          |
 | `azure_gallery`                    | **CONTAINS**          | `azure_shared_image`                              |
-| `azure_user_group`                 | **HAS**               | `azure_user_group`                                |
-| `azure_user_group`                 | **HAS**               | `azure_group_member`                              |
-| `azure_user_group`                 | **HAS**               | `azure_user`                                      |
 | `azure_keyvault_service`           | **ALLOWS**            | `ANY_PRINCIPAL`                                   |
 | `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_key`                              |
 | `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_secret`                           |
@@ -457,9 +457,9 @@ The following relationships are created:
 | `azure_network_firewall`           | **HAS**               | `azure_network_firewall_policy`                   |
 | `azure_network_firewall_policy`    | **EXTENDS**           | `azure_network_firewall_policy`                   |
 | `azure_network_watcher`            | **HAS**               | `azure_security_group_flow_logs`                  |
-| `azure_policy_assignment`          | **HAS**               | `azure_policy_state`                              |
 | `azure_policy_assignment`          | **USES**              | `azure_policy_definition`                         |
 | `azure_policy_assignment`          | **USES**              | `azure_policy_set_definition`                     |
+| `azure_policy_assignment`          | **HAS**               | `azure_policy_state`                              |
 | `azure_policy_definition`          | **DEFINES**           | `azure_policy_state`                              |
 | `azure_policy_set_definition`      | **CONTAINS**          | `azure_policy_definition`                         |
 | `azure_postgresql_server`          | **HAS**               | `azure_postgresql_database`                       |
@@ -467,8 +467,8 @@ The following relationships are created:
 | `azure_private_dns_zone`           | **HAS**               | `azure_private_dns_record_set`                    |
 | `azure_private_endpoint`           | **CONNECTS**          | `ANY_RESOURCE`                                    |
 | `azure_private_endpoint`           | **USES**              | `azure_nic`                                       |
-| `azure_redis_cache`                | **CONNECTS**          | `azure_redis_cache`                               |
 | `azure_redis_cache`                | **HAS**               | `azure_firewall_rule`                             |
+| `azure_redis_cache`                | **CONNECTS**          | `azure_redis_cache`                               |
 | `azure_resource_group`             | **HAS**               | `azure_api_management_service`                    |
 | `azure_resource_group`             | **HAS**               | `azure_app_service_plan`                          |
 | `azure_resource_group`             | **HAS**               | `azure_batch_account`                             |
@@ -506,10 +506,6 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_vm_scale_set`                              |
 | `azure_resource_group`             | **HAS**               | `azure_vnet`                                      |
 | `azure_resource_group`             | **HAS**               | `azure_web_app`                                   |
-| `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
-| `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
-| `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |
-| `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
 | `azure_resource_lock`              | **HAS**               | `ANY_SCOPE`                                       |
 | `azure_role_assignment`            | **ALLOWS**            | `ANY_SCOPE`                                       |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_application`                               |
@@ -518,58 +514,62 @@ The following relationships are created:
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_everyone`                                  |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_foreign_group`                             |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_msi`                                       |
+| `azure_role_assignment`            | **USES**              | `azure_role_definition`                           |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_service_principal`                         |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_unknown`                                   |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_unknown_principal_type`                    |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_user`                                      |
 | `azure_role_assignment`            | **ASSIGNED**          | `azure_user_group`                                |
-| `azure_role_assignment`            | **USES**              | `azure_role_definition`                           |
-| `azure_security_group_flow_logs`   | **USES**              | `azure_storage_account`                           |
-| `azure_security_group`             | **HAS**               | `azure_security_group_flow_logs`                  |
+| `azure_security_assessment`        | **IDENTIFIED**        | `azure_advisor_recommendation`                    |
 | `azure_security_group`             | **PROTECTS**          | `azure_nic`                                       |
-| `azure_security_group`             | **PROTECTS**          | `azure_subnet`                                    |
+| `azure_security_group`             | **HAS**               | `azure_security_group_flow_logs`                  |
 | `azure_security_group`             | **ALLOWS**            | `azure_subnet`                                    |
-| `azure_subnet`                     | **ALLOWS**            | `azure_security_group`                            |
 | `azure_security_group`             | **DENIES**            | `azure_subnet`                                    |
-| `azure_subnet`                     | **DENIES**            | `azure_security_group`                            |
+| `azure_security_group`             | **PROTECTS**          | `azure_subnet`                                    |
+| `azure_security_group_flow_logs`   | **USES**              | `azure_storage_account`                           |
 | `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_queue`                         |
 | `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_topic`                         |
 | `azure_service_bus_topic`          | **HAS**               | `azure_service_bus_subscription`                  |
 | `azure_service_principal`          | **HAS**               | `ad-role-definitions`                             |
 | `azure_shared_image`               | **HAS**               | `azure_shared_image_version`                      |
-| `azure_sql_server`                 | **HAS**               | `azure_sql_server_active_directory_admin`         |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_database`                              |
+| `azure_sql_server`                 | **HAS**               | `azure_sql_server_active_directory_admin`         |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_server_firewall_rule`                  |
+| `azure_storage_account`            | **USES**              | `azure_keyvault_service`                          |
 | `azure_storage_account`            | **HAS**               | `azure_storage_container`                         |
 | `azure_storage_account`            | **HAS**               | `azure_storage_file_share`                        |
 | `azure_storage_account`            | **HAS**               | `azure_storage_queue`                             |
 | `azure_storage_account`            | **HAS**               | `azure_storage_table`                             |
-| `azure_storage_account`            | **USES**              | `azure_keyvault_service`                          |
 | `azure_subnet`                     | **HAS**               | `azure_private_endpoint`                          |
+| `azure_subnet`                     | **ALLOWS**            | `azure_security_group`                            |
+| `azure_subnet`                     | **DENIES**            | `azure_security_group`                            |
 | `azure_subnet`                     | **HAS**               | `azure_vm`                                        |
-| `azure_subscription`               | **CONTAINS**          | `azure_role_definition`                           |
 | `azure_subscription`               | **HAS**               | `azure_monitor_log_profile`                       |
 | `azure_subscription`               | **HAS**               | `azure_resource_group`                            |
+| `azure_subscription`               | **CONTAINS**          | `azure_role_definition`                           |
+| `azure_subscription`               | **PERFORMED**         | `azure_security_assessment`                       |
 | `azure_subscription`               | **HAS**               | `azure_security_center_auto_provisioning_setting` |
 | `azure_subscription`               | **HAS**               | `azure_security_center_contact`                   |
 | `azure_subscription`               | **HAS**               | `azure_security_center_setting`                   |
 | `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing`      |
-| `azure_subscription`               | **PERFORMED**         | `azure_security_assessment`                       |
 | `azure_subscription`               | **HAS**               | `azure_usage_details`                             |
 | `azure_user`                       | **HAS**               | `ad-role-definitions`                             |
 | `azure_user`                       | **HAS**               | `azure_device`                                    |
-| `azure_vm`                         | **GENERATED**         | `azure_shared_image_version`                      |
-| `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
-| `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
+| `azure_user_group`                 | **HAS**               | `azure_group_member`                              |
+| `azure_user_group`                 | **HAS**               | `azure_user`                                      |
+| `azure_user_group`                 | **HAS**               | `azure_user_group`                                |
 | `azure_vm`                         | **USES**              | `azure_image`                                     |
 | `azure_vm`                         | **USES**              | `azure_managed_disk`                              |
-| `azure_vm`                         | **USES**              | `azure_service_principal`                         |
 | `azure_vm`                         | **USES**              | `azure_nic`                                       |
 | `azure_vm`                         | **USES**              | `azure_public_ip`                                 |
-| `azure_vm`                         | **USES**              | `azure_vm_scale_set`                              |
+| `azure_vm`                         | **USES**              | `azure_service_principal`                         |
 | `azure_vm`                         | **USES**              | `azure_shared_image`                              |
+| `azure_vm`                         | **GENERATED**         | `azure_shared_image_version`                      |
 | `azure_vm`                         | **USES**              | `azure_shared_image_version`                      |
 | `azure_vm`                         | **USES**              | `azure_storage_account`                           |
+| `azure_vm`                         | **USES**              | `azure_vm_scale_set`                              |
+| `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
+| `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
 | `azure_vnet`                       | **CONTAINS**          | `azure_subnet`                                    |
 | `azure_web_app`                    | **USES**              | `azure_app_service_plan`                          |
 
@@ -579,12 +579,12 @@ The following mapped relationships are created:
 
 | Source Entity `_type`    | Relationship `_class` | Target Entity `_type`  | Direction |
 | ------------------------ | --------------------- | ---------------------- | --------- |
-| `azure_network_watcher`  | **HAS**               | `*azure_location*`     | REVERSE   |
 | `azure_management_group` | **HAS**               | `*azure_subscription*` | FORWARD   |
 | `azure_network_firewall` | **ALLOWS**            | `*internet*`           | FORWARD   |
 | `azure_network_firewall` | **ALLOWS**            | `*internet*`           | REVERSE   |
 | `azure_network_firewall` | **DENIES**            | `*internet*`           | FORWARD   |
 | `azure_network_firewall` | **DENIES**            | `*internet*`           | REVERSE   |
+| `azure_network_watcher`  | **HAS**               | `*azure_location*`     | REVERSE   |
 | `azure_subscription`     | **USES**              | `*azure_location*`     | FORWARD   |
 
 <!--

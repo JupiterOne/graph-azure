@@ -71,6 +71,7 @@ export class ResourcesClient extends Client {
       resourceDescription: 'resources.resourceLocks',
       callback,
       endpointRatePeriod: FIVE_MINUTES,
+      maxRetryAttempts: 20,
     });
   }
 }

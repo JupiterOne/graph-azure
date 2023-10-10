@@ -6,6 +6,7 @@ import {
 } from '@azure/arm-authorization/esm/models';
 import {
   Client,
+  DEFAULT_MAX_RETRIES,
   FIVE_MINUTES,
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
@@ -32,6 +33,7 @@ export class AuthorizationClient extends Client {
       logger: this.logger,
       callback,
       endpointRatePeriod: FIVE_MINUTES,
+      maxRetryAttempts: 4 * DEFAULT_MAX_RETRIES,
     });
   }
 

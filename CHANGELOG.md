@@ -1,3 +1,15 @@
+# v5.52.10 (Wed Oct 11 2023)
+
+#### 🐛 Bug Fix
+
+- DEVICE-253 - Add lastSeenOn property for devices [#596](https://github.com/JupiterOne/graph-azure/pull/596) ([@jzolo22](https://github.com/jzolo22))
+
+#### Authors: 1
+
+- Julia Zolotarev ([@jzolo22](https://github.com/jzolo22))
+
+---
+
 # v5.52.9 (Tue Oct 10 2023)
 
 #### 🐛 Bug Fix

@@ -31,7 +31,7 @@ export function createAppEntity({
     entityData: {
       source: data,
       assign: {
-        _key: data.id as string,
+        _key: `${data.id}-${data.defaultHostName}`,
         _type: metadata._type,
         _class: metadata._class,
         id: data.id,

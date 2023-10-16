@@ -48,12 +48,18 @@ export type ResourceGetResponse<T> = T & ResourceResponse;
 
 export abstract class Client {
   private auth: AzureManagementClientCredentials;
-
+  private clientSecretCredentials: ClientSecretCredential;
   constructor(
     private config: IntegrationConfig,
     readonly logger: IntegrationLogger,
     readonly noRetryPolicy = false,
-  ) {}
+  ) {
+    this.clientSecretCredentials = new ClientSecretCredential(
+      this.config.directoryId,
+      this.config.clientId,
+      this.config.clientSecret,
+    );
+  }
 
   /**
    * Provides `ClientSecretCredentials` for data access clients. Resource
@@ -62,12 +68,7 @@ export abstract class Client {
    * @see authenticate
    */
   getClientSecretCredentials(): ClientSecretCredential {
-    // TODO cache this?
-    return new ClientSecretCredential(
-      this.config.directoryId,
-      this.config.clientId,
-      this.config.clientSecret,
-    );
+    return this.clientSecretCredentials;
   }
 
   /**

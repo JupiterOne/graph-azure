@@ -99,9 +99,9 @@ export async function fetchResourceGroupLocks(
       await client.iterateLocks(
         resourceGroupEntity.name as string,
         async (lock) => {
-          if (!jobState.hasKey(lock.id!)) {
+          const lockEntity = createResourceLockEntitiy(webLinker, lock);
+          if (!jobState.hasKey(lockEntity._key)) {
             //The same lock can be applied to multiple resource groups.
-            const lockEntity = createResourceLockEntitiy(webLinker, lock);
             await jobState.addEntity(lockEntity);
           } else {
             logger.info(

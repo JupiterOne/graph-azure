@@ -100,7 +100,15 @@ export async function fetchResourceGroupLocks(
         resourceGroupEntity.name as string,
         async (lock) => {
           const lockEntity = createResourceLockEntitiy(webLinker, lock);
-          await jobState.addEntity(lockEntity);
+          if (!jobState.hasKey(lockEntity._key)) {
+            //The same lock can be applied to multiple resource groups.
+            await jobState.addEntity(lockEntity);
+          } else {
+            logger.info(
+              { lockId: lock.id },
+              'Found a duplicated key for locks',
+            );
+          }
         },
       );
     },

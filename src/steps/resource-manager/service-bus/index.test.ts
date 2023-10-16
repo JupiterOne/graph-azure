@@ -34,8 +34,7 @@ test('step - service bus namespaces', async () => {
     instanceConfig,
     entities: [
       {
-        _key:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev',
+        _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev',
         _type: 'azure_resource_group',
         _class: ['Group'],
       },
@@ -54,8 +53,7 @@ test('step - service bus namespaces', async () => {
 
   expect(context.jobState.collectedRelationships).toEqual([
     {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev',
+      _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev',
       _type: 'azure_resource_group_has_service_bus_namespace',
       _class: 'HAS',
       _fromEntityKey:
@@ -84,12 +82,10 @@ test('step - service bus queues', async () => {
     instanceConfig,
     entities: [
       {
-        _key:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev',
+        _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev',
         _type: 'azure_service_bus_namespace',
         _class: ['Service'],
-        id:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev',
+        id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev',
         name: 'ndowmon1j1dev',
       },
     ],
@@ -106,8 +102,7 @@ test('step - service bus queues', async () => {
 
   expect(context.jobState.collectedRelationships).toEqual([
     {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/queues/j1dev-queue',
+      _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/queues/j1dev-queue',
       _type: 'azure_service_bus_namespace_has_queue',
       _class: 'HAS',
       _fromEntityKey:
@@ -136,12 +131,10 @@ test('step - service bus topics', async () => {
     instanceConfig,
     entities: [
       {
-        _key:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev',
+        _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev',
         _type: 'azure_service_bus_namespace',
         _class: ['Service'],
-        id:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev',
+        id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev',
         name: 'ndowmon1j1dev',
       },
     ],
@@ -159,8 +152,7 @@ test('step - service bus topics', async () => {
 
   expect(context.jobState.collectedRelationships).toEqual([
     {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic',
+      _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic',
       _type: 'azure_service_bus_namespace_has_topic',
       _class: 'HAS',
       _fromEntityKey:
@@ -189,12 +181,10 @@ test('step - service bus subscriptions', async () => {
     instanceConfig,
     entities: [
       {
-        _key:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic',
+        _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic/subscriptions/j1dev-Microsoft.ServiceBus/Namespaces/Topics/Subscriptions',
         _type: 'azure_service_bus_topic',
         _class: ['Queue'],
-        id:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic',
+        id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic',
         name: 'j1dev-topic',
       },
     ],
@@ -212,14 +202,13 @@ test('step - service bus subscriptions', async () => {
 
   expect(context.jobState.collectedRelationships).toEqual([
     {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic/subscriptions/j1dev',
+      _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic/subscriptions/j1dev-Microsoft.ServiceBus/Namespaces/Topics/Subscriptions|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic/subscriptions/j1dev-Microsoft.ServiceBus/Namespaces/Topics/Subscriptions',
       _type: 'azure_service_bus_topic_has_subscription',
       _class: 'HAS',
       _fromEntityKey:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic',
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic/subscriptions/j1dev-Microsoft.ServiceBus/Namespaces/Topics/Subscriptions',
       _toEntityKey:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic/subscriptions/j1dev',
+        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic/subscriptions/j1dev-Microsoft.ServiceBus/Namespaces/Topics/Subscriptions',
       displayName: 'HAS',
     },
   ]);

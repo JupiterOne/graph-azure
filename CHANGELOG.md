@@ -1,3 +1,20 @@
+# v5.53.0 (Wed Oct 18 2023)
+
+#### 🚀 Enhancement
+
+- Int 9741 2 [#603](https://github.com/JupiterOne/graph-azure/pull/603) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### ⚠️ Pushed to `main`
+
+- Populate CODEOWENRS, baseline package.json and baseline cortex.yaml ([@jablonnc](https://github.com/jablonnc))
+
+#### Authors: 2
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+- Noah Jablonski ([@jablonnc](https://github.com/jablonnc))
+
+---
+
 # v5.52.11 (Mon Oct 16 2023)
 
 #### 🐛 Bug Fix

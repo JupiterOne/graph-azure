@@ -88,6 +88,23 @@ export function mutateSubscriptionAndDirectory(
       .replace(new RegExp(config.directoryId, 'g'), 'directory-id')
       .replace(new RegExp(config.subscriptionId!, 'g'), 'subscription-id');
   }
+  if (entry.request.queryString) {
+    entry.request.queryString = entry.request.queryString.map((entry) => ({
+      name: entry.name,
+      value: entry.value
+        .replace(new RegExp(config.directoryId, 'g'), 'directory-id')
+        .replace(new RegExp(config.subscriptionId!, 'g'), 'subscription-id'),
+    }));
+  }
+  if (entry.response.headers) {
+    entry.response.headers = entry.response.headers.map((entry) => ({
+      name: entry.name,
+      value: entry.value
+        .toString()
+        .replace(new RegExp(config.directoryId, 'g'), 'directory-id')
+        .replace(new RegExp(config.subscriptionId!, 'g'), 'subscription-id'),
+    }));
+  }
 }
 
 function redactAllPropertiesExcept(

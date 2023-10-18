@@ -42,7 +42,7 @@ test(
   500_000,
 );
 
-test.only(
+test(
   STEP_RM_KEYVAULT_KEYS,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(STEP_RM_KEYVAULT_KEYS);
@@ -68,7 +68,6 @@ test.only(
               config: stepTestConfig.instanceConfig,
             }),
           },
-          logLevel: 'info',
         },
       },
       stepTestConfig.instanceConfig,
@@ -127,6 +126,27 @@ test(
     recording = setupAzureRecording(
       {
         name: KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS,
+        directory: __dirname,
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults.collectedRelationships.length).toBeGreaterThan(0);
+  },
+  500_000,
+);
+
+test(
+  KeyVaultStepIds.KEY_VAULT_DIAGNOSTIC_SETTINGS,
+  async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      KeyVaultStepIds.KEY_VAULT_DIAGNOSTIC_SETTINGS,
+    );
+
+    recording = setupAzureRecording(
+      {
+        name: KeyVaultStepIds.KEY_VAULT_DIAGNOSTIC_SETTINGS,
         directory: __dirname,
       },
       stepTestConfig.instanceConfig,

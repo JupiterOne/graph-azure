@@ -11,6 +11,7 @@ export const STEP_RM_KEYVAULT_VAULTS = 'rm-keyvault-vaults';
 
 export const KeyVaultStepIds = {
   KEY_VAULT_PRINCIPAL_RELATIONSHIPS: 'rm-keyvault-principal-relationships',
+  KEY_VAULT_DIAGNOSTIC_SETTINGS: 'rm-keyvault-diagnostic-settings',
 };
 
 export const STEP_RM_KEYVAULT_KEYS = 'rm-keyvault-keys';

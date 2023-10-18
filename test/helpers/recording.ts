@@ -88,6 +88,23 @@ export function mutateSubscriptionAndDirectory(
       .replace(new RegExp(config.directoryId, 'g'), 'directory-id')
       .replace(new RegExp(config.subscriptionId!, 'g'), 'subscription-id');
   }
+  if (entry.request.queryString) {
+    entry.request.queryString = entry.request.queryString.map((entry) => ({
+      name: entry.name,
+      value: entry.value
+        .replace(new RegExp(config.directoryId, 'g'), 'directory-id')
+        .replace(new RegExp(config.subscriptionId!, 'g'), 'subscription-id'),
+    }));
+  }
+  if (entry.response.headers) {
+    entry.response.headers = entry.response.headers.map((entry) => ({
+      name: entry.name,
+      value: entry.value
+        .toString()
+        .replace(new RegExp(config.directoryId, 'g'), 'directory-id')
+        .replace(new RegExp(config.subscriptionId!, 'g'), 'subscription-id'),
+    }));
+  }
 }
 
 function redactAllPropertiesExcept(
@@ -140,7 +157,6 @@ export function getMatchRequestsBy({
     url = options.url as UrlOptions;
     delete options.url;
   }
-
   return {
     headers: false,
     url: {
@@ -148,7 +164,15 @@ export function getMatchRequestsBy({
       pathname: (pathname: string): string => {
         pathname = pathname.replace(config.directoryId, 'directory-id');
         pathname = pathname.replace(
+          config.directoryId.toLowerCase(),
+          'directory-id',
+        );
+        pathname = pathname.replace(
           config.subscriptionId || 'subscription-id',
+          'subscription-id',
+        );
+        pathname = pathname.replace(
+          config.subscriptionId?.toLowerCase() || 'subscription-id',
           'subscription-id',
         );
         return pathname;

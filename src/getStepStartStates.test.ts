@@ -148,6 +148,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
       [STEP_RM_KEYVAULT_SECRETS]: { disabled: true },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
+      [KeyVaultStepIds.KEY_VAULT_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: true },
@@ -315,6 +316,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
       [STEP_RM_KEYVAULT_SECRETS]: { disabled: true },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
+      [KeyVaultStepIds.KEY_VAULT_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: true },
@@ -465,7 +467,12 @@ describe('getStepStartStates', () => {
 
   test("subscriptionId: 'value'", async () => {
     const context = createMockExecutionContext({
-      instanceConfig: { subscriptionId: '1234' } as IntegrationConfig,
+      instanceConfig: {
+        subscriptionId: '1234',
+        directoryId: 'tenantId',
+        clientId: 'clientId',
+        clientSecret: 'clientSecret',
+      } as IntegrationConfig,
     });
     const states = await getStepStartStates(context);
     expect(states).toEqual({
@@ -482,6 +489,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_KEYVAULT_KEYS]: { disabled: false },
       [STEP_RM_KEYVAULT_SECRETS]: { disabled: false },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: false },
+      [KeyVaultStepIds.KEY_VAULT_DIAGNOSTIC_SETTINGS]: { disabled: false },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: false },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: false },
       [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: false },
@@ -653,6 +661,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
       [STEP_RM_KEYVAULT_SECRETS]: { disabled: true },
       [KeyVaultStepIds.KEY_VAULT_PRINCIPAL_RELATIONSHIPS]: { disabled: true },
+      [KeyVaultStepIds.KEY_VAULT_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [STEP_RM_NETWORK_VIRTUAL_NETWORKS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUPS]: { disabled: true },
       [STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS]: { disabled: true },

@@ -35,7 +35,7 @@ import {
 import { getAccountEntity } from '../../active-directory';
 import { Vault } from '@azure/arm-keyvault/esm/models';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
-
+import { steps as storageSteps } from '../storage/constants';
 export async function fetchKeyVaults(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -58,13 +58,23 @@ export async function fetchKeyVaults(
         to: vaultEntity,
       }),
     );
-
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-      executionContext,
-      vaultEntity,
-      KeyVaultEntities.KEY_VAULT,
-    );
   });
+}
+
+export async function buildDiagosticSettingsRelationships(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: KeyVaultEntities.KEY_VAULT._type },
+    async (vaultEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        vaultEntity,
+        KeyVaultEntities.KEY_VAULT,
+      );
+    },
+  );
 }
 
 export async function fetchKeyVaultKeys(
@@ -181,25 +191,30 @@ export const keyvaultSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_KEYVAULT_VAULTS,
     name: 'Key Vaults',
-    entities: [
-      KeyVaultEntities.KEY_VAULT,
-      ...diagnosticSettingsEntitiesForResource,
-    ],
+    entities: [KeyVaultEntities.KEY_VAULT],
     relationships: [
       KeyVaultRelationships.ACCOUNT_HAS_KEY_VAULT,
       createResourceGroupResourceRelationshipMetadata(
         KEY_VAULT_SERVICE_ENTITY_TYPE,
       ),
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchKeyVaults,
+    rolePermissions: ['Microsoft.KeyVault/vaults/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.KEY_VAULT,
+  },
+  {
+    id: KeyVaultStepIds.KEY_VAULT_DIAGNOSTIC_SETTINGS,
+    name: 'Key Vault Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
+    relationships: [
       ...getDiagnosticSettingsRelationshipsForResource(
         KeyVaultEntities.KEY_VAULT,
       ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    executionHandler: fetchKeyVaults,
-    rolePermissions: [
-      'Microsoft.KeyVault/vaults/read',
-      'Microsoft.Insights/DiagnosticSettings/Read',
-    ],
+    dependsOn: [STEP_RM_KEYVAULT_VAULTS, storageSteps.STORAGE_ACCOUNTS],
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
+    executionHandler: buildDiagosticSettingsRelationships,
     ingestionSourceId: INGESTION_SOURCE_IDS.KEY_VAULT,
   },
   {

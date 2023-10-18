@@ -11,6 +11,7 @@ export const STEP_RM_KEYVAULT_VAULTS = 'rm-keyvault-vaults';
 
 export const KeyVaultStepIds = {
   KEY_VAULT_PRINCIPAL_RELATIONSHIPS: 'rm-keyvault-principal-relationships',
+  KEY_VAULT_DIAGNOSTIC_SETTINGS: 'rm-keyvault-diagnostic-settings',
 };
 
 export const STEP_RM_KEYVAULT_KEYS = 'rm-keyvault-keys';
@@ -69,7 +70,7 @@ export const KEY_VAULT_SECRET_RELATIONSHIP_TYPE = generateRelationshipType(
 
 export const KeyVaultRelationships = {
   KEY_VAULT_ALLOWS_PRINCIPAL: {
-    _type: 'azure_keyvault_service_allows_principal',
+    _type: 'mapping_source_allows_azure_principal',
     sourceType: KeyVaultEntities.KEY_VAULT._type,
     _class: RelationshipClass.ALLOWS,
     targetType: ANY_PRINCIPAL,

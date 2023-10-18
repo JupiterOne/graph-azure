@@ -69,7 +69,7 @@ export const KEY_VAULT_SECRET_RELATIONSHIP_TYPE = generateRelationshipType(
 
 export const KeyVaultRelationships = {
   KEY_VAULT_ALLOWS_PRINCIPAL: {
-    _type: 'azure_keyvault_service_allows_principal',
+    _type: 'mapping_source_allows_azure_principal',
     sourceType: KeyVaultEntities.KEY_VAULT._type,
     _class: RelationshipClass.ALLOWS,
     targetType: ANY_PRINCIPAL,

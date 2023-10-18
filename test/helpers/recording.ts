@@ -140,7 +140,6 @@ export function getMatchRequestsBy({
     url = options.url as UrlOptions;
     delete options.url;
   }
-
   return {
     headers: false,
     url: {
@@ -148,7 +147,15 @@ export function getMatchRequestsBy({
       pathname: (pathname: string): string => {
         pathname = pathname.replace(config.directoryId, 'directory-id');
         pathname = pathname.replace(
+          config.directoryId.toLowerCase(),
+          'directory-id',
+        );
+        pathname = pathname.replace(
           config.subscriptionId || 'subscription-id',
+          'subscription-id',
+        );
+        pathname = pathname.replace(
+          config.subscriptionId?.toLowerCase() || 'subscription-id',
           'subscription-id',
         );
         return pathname;

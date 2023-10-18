@@ -15,13 +15,11 @@ import {
 import { fetchAccount } from '../../active-directory';
 import {
   buildPrivateEndpointNetworkInterfaceRelationships,
-  buildPrivateEndpointResourceRelationships,
   buildPrivateEndpointSubnetRelationships,
   buildSecurityGroupRuleRelationships,
   fetchAzureFirewalls,
   fetchLoadBalancers,
   fetchNetworkInterfaces,
-  fetchNetworkSecurityGroupFlowLogs,
   fetchNetworkSecurityGroups,
   fetchNetworkWatchers,
   fetchPrivateEndpoints,
@@ -37,6 +35,10 @@ import {
   STEP_RM_NETWORK_FIREWALL_POLICIES,
   STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
   STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
+  STEP_RM_NETWORK_FLOW_LOGS,
+  STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+  STEP_RM_NETWORK_SECURITY_GROUPS,
+  STEP_RM_NETWORK_WATCHERS,
 } from './constants';
 import {
   configFromEnv,
@@ -47,9 +49,7 @@ import {
   getMockResourceGroupEntity,
 } from '../../../../test/helpers/getMockEntity';
 import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
-import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
-import { entities as storageEntities } from '../storage/constants';
-import { fetchStorageAccounts } from '../storage';
+import { steps as storageSteps } from '../storage/constants';
 
 const GUID_REGEX = new RegExp(
   '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
@@ -130,7 +130,7 @@ let instanceConfig: IntegrationConfig;
 let context: MockIntegrationStepExecutionContext<IntegrationConfig>;
 
 describe('network steps', () => {
-  beforeAll(async () => {
+  it('Should simulate dependency order of execution', async () => {
     instanceConfig = {
       clientId: process.env.CLIENT_ID || 'clientId',
       clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
@@ -180,7 +180,11 @@ describe('network steps', () => {
       await recording.stop();
     }
   });
-
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
+  });
   it('should collect Azure Network Entities', () => {
     const { collectedEntities } = context.jobState;
 
@@ -1015,717 +1019,441 @@ describe('network steps', () => {
       },
     );
   });
-});
 
-describe('step = fetch azure firewalls', () => {
-  beforeAll(async () => {
-    instanceConfig = {
-      clientId: process.env.CLIENT_ID || 'clientId',
-      clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
-      directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
-      subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
-      developerId: 'keionned',
-    };
+  describe('step = fetch azure firewalls', () => {
+    beforeAll(async () => {
+      instanceConfig = {
+        clientId: process.env.CLIENT_ID || 'clientId',
+        clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
+        directoryId: '4a17becb-fb42-4633-b5c8-5ab66f28d195',
+        subscriptionId: '87f62f44-9dad-4284-a08f-f2fb3d8b528a',
+        developerId: 'keionned',
+      };
 
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'resource-manager-step-azure-firewalls',
-      options: {
-        recordFailedRequests: true,
-      },
-    });
-
-    const resourceGroupEntity: Entity = {
-      _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
-      _type: 'azure_resource_group',
-      _class: ['Group'],
-      name: 'j1dev',
-      id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
-    };
-
-    context = createMockAzureStepExecutionContext({
-      instanceConfig,
-      entities: [resourceGroupEntity],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: {
-          defaultDomain: 'www.fake-domain.com',
-          _type: ACCOUNT_ENTITY_TYPE,
-          _key: 'azure_account_id',
-          id: 'azure_account_id',
+      recording = setupAzureRecording({
+        directory: __dirname,
+        name: 'resource-manager-step-azure-firewalls',
+        options: {
+          recordFailedRequests: true,
         },
-      },
-    });
+      });
 
-    await fetchAzureFirewalls(context);
-  });
+      const resourceGroupEntity: Entity = {
+        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+        _type: 'azure_resource_group',
+        _class: ['Group'],
+        name: 'j1dev',
+        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+      };
 
-  afterAll(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
-
-  it('should collect an Azure Network Azure Firewall entity', () => {
-    const { collectedEntities } = context.jobState;
-
-    expect(collectedEntities).toContainEqual(
-      expect.objectContaining({
-        id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
-        _type: NetworkEntities.AZURE_FIREWALL._type,
-        _class: NetworkEntities.AZURE_FIREWALL._class,
-        category: ['network'],
-        createdOn: undefined,
-        displayName: 'j1dev_firewall',
-        name: 'j1dev_firewall',
-        provisioningState: 'Succeeded',
-        region: 'eastus',
-        threatIntelMode: 'Alert',
-        type: 'Microsoft.Network/azureFirewalls',
-        webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
-      }),
-    );
-  });
-
-  it('should collect an Azure Resource Group has Azure Network Azure Firewall relationship', () => {
-    const { collectedRelationships } = context.jobState;
-
-    expect(collectedRelationships).toContainEqual(
-      expect.objectContaining({
-        _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
-        _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
-        _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
-        _type:
-          NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL._type,
-        _class:
-          NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL._class,
-        displayName:
-          NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL._class,
-      }),
-    );
-  });
-});
-
-describe('rm-network-watchers', () => {
-  afterEach(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
-
-  function getSetupEntities() {
-    const accountEntity = getMockAccountEntity(configFromEnv);
-
-    /**
-     * Azure auto-provisions a `NetworkWatcherRG` resource group in every subscription:
-     * https://docs.microsoft.com/en-us/answers/questions/27211/what-is-the-networkwatcherrg.html
-     */
-    const resourceGroupEntity = {
-      name: 'NetworkWatcherRG',
-      _type: RESOURCE_GROUP_ENTITY._type,
-      _class: RESOURCE_GROUP_ENTITY._class,
-      _key: 'resource-group-key',
-    };
-
-    return { accountEntity, resourceGroupEntity };
-  }
-
-  test('success', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'rm-network-watchers',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
-      },
-    });
-
-    const { accountEntity, resourceGroupEntity } = getSetupEntities();
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [resourceGroupEntity],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
-      },
-    });
-
-    await fetchNetworkWatchers(context);
-
-    const networkWatcherEntities = context.jobState.collectedEntities;
-
-    expect(networkWatcherEntities.length).toBeGreaterThan(0);
-    expect(networkWatcherEntities).toMatchGraphObjectSchema({
-      _class: NetworkEntities.NETWORK_WATCHER._class,
-    });
-
-    const networkWatcherResourceGroupRelationships =
-      context.jobState.collectedRelationships;
-
-    expect(networkWatcherResourceGroupRelationships.length).toBe(
-      networkWatcherEntities.length,
-    );
-    expect(
-      networkWatcherResourceGroupRelationships,
-    ).toMatchDirectRelationshipSchema({});
-  });
-});
-
-describe('rm-network-private-endpoints', () => {
-  afterEach(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
-
-  function getSetupEntities(config: IntegrationConfig) {
-    const accountEntity = getMockAccountEntity(config);
-    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
-    return { accountEntity, resourceGroupEntity };
-  }
-
-  test('success', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'rm-network-private-endpoints',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
-      },
-    });
-
-    const { accountEntity, resourceGroupEntity } =
-      getSetupEntities(configFromEnv);
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [accountEntity, resourceGroupEntity],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
-      },
-    });
-
-    await fetchPrivateEndpoints(context);
-
-    const privateEndpointEntities = context.jobState.collectedEntities;
-
-    expect(privateEndpointEntities.length).toBeGreaterThan(0);
-    /**
-     * The Azure private endpoint does not comply with JupiterOne's network endpoint class, because
-     * J1's NetworkEndpoint requires the "ipAddress" property. However, the Azure private endpoint
-     * relates back to a network interface, which is where the IP address is defined.
-     */
-    // expect(privateEndpointEntities).toMatchGraphObjectSchema({
-    //   _class: NetworkEntities.PRIVATE_ENDPOINT._class,
-    // });
-
-    const privateEndpointResourceGroupRelationships =
-      context.jobState.collectedRelationships;
-
-    expect(privateEndpointResourceGroupRelationships.length).toBe(
-      privateEndpointEntities.length,
-    );
-    expect(
-      privateEndpointResourceGroupRelationships,
-    ).toMatchDirectRelationshipSchema({});
-  });
-});
-
-describe('rm-network-private-endpoint-subnet-relationships', () => {
-  afterEach(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
-
-  async function getSetupEntities(config: IntegrationConfig) {
-    const accountEntity = getMockAccountEntity(config);
-    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [accountEntity, resourceGroupEntity],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
-      },
-    });
-
-    await fetchPrivateEndpoints(context);
-    await fetchVirtualNetworks(context);
-
-    const subnetEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === NetworkEntities.SUBNET._type,
-    );
-    const privateEndpointEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === NetworkEntities.PRIVATE_ENDPOINT._type,
-    );
-
-    expect(privateEndpointEntities.length).toBeGreaterThan(0);
-
-    return { privateEndpointEntities, subnetEntities };
-  }
-
-  test('success', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'rm-network-private-endpoint-subnet-relationships',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
-      },
-    });
-
-    const { subnetEntities, privateEndpointEntities } = await getSetupEntities(
-      configFromEnv,
-    );
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [...subnetEntities, ...privateEndpointEntities],
-    });
-
-    await buildPrivateEndpointSubnetRelationships(context);
-
-    const privateEndpointSubnetRelationships =
-      context.jobState.collectedRelationships;
-
-    expect(context.jobState.collectedEntities).toHaveLength(0);
-
-    expect(privateEndpointSubnetRelationships.length).toBe(
-      privateEndpointEntities.length,
-    );
-    expect(privateEndpointSubnetRelationships).toMatchDirectRelationshipSchema({
-      schema: {
-        properties: {
-          _type: {
-            const:
-              NetworkRelationships.NETWORK_SUBNET_HAS_PRIVATE_ENDPOINT._type,
+      context = createMockAzureStepExecutionContext({
+        instanceConfig,
+        entities: [resourceGroupEntity],
+        setData: {
+          [ACCOUNT_ENTITY_TYPE]: {
+            defaultDomain: 'www.fake-domain.com',
+            _type: ACCOUNT_ENTITY_TYPE,
+            _key: 'azure_account_id',
+            id: 'azure_account_id',
           },
         },
-      },
-    });
-  }, 10000);
-});
+      });
 
-describe('rm-network-private-endpoint-resource-relationships', () => {
-  afterEach(async () => {
-    if (recording) {
-      await recording.stop();
-    }
+      await fetchAzureFirewalls(context);
+    });
+
+    afterAll(async () => {
+      if (recording) {
+        await recording.stop();
+      }
+    });
+
+    it('should collect an Azure Network Azure Firewall entity', () => {
+      const { collectedEntities } = context.jobState;
+
+      expect(collectedEntities).toContainEqual(
+        expect.objectContaining({
+          id: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
+          _type: NetworkEntities.AZURE_FIREWALL._type,
+          _class: NetworkEntities.AZURE_FIREWALL._class,
+          category: ['network'],
+          createdOn: undefined,
+          displayName: 'j1dev_firewall',
+          name: 'j1dev_firewall',
+          provisioningState: 'Succeeded',
+          region: 'eastus',
+          threatIntelMode: 'Alert',
+          type: 'Microsoft.Network/azureFirewalls',
+          webLink: `https://portal.azure.com/#@www.fake-domain.com/resource/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
+        }),
+      );
+    });
+
+    it('should collect an Azure Resource Group has Azure Network Azure Firewall relationship', () => {
+      const { collectedRelationships } = context.jobState;
+
+      expect(collectedRelationships).toContainEqual(
+        expect.objectContaining({
+          _fromEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev`,
+          _key: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev|has|/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
+          _toEntityKey: `/subscriptions/${instanceConfig.subscriptionId}/resourceGroups/j1dev/providers/Microsoft.Network/azureFirewalls/j1dev_firewall`,
+          _type:
+            NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL
+              ._type,
+          _class:
+            NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL
+              ._class,
+          displayName:
+            NetworkRelationships.RESOURCE_GROUP_HAS_NETWORK_AZURE_FIREWALL
+              ._class,
+        }),
+      );
+    });
   });
 
-  async function getSetupEntities(config: IntegrationConfig) {
-    const accountEntity = getMockAccountEntity(config);
-    const resourceGroupEntity = getMockResourceGroupEntity(
-      'DefaultResourceGroup-CUS',
-    );
+  describe('rm-network-watchers', () => {
+    function getSetupEntities() {
+      const accountEntity = getMockAccountEntity(configFromEnv);
 
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [accountEntity, resourceGroupEntity],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
-      },
+      /**
+       * Azure auto-provisions a `NetworkWatcherRG` resource group in every subscription:
+       * https://docs.microsoft.com/en-us/answers/questions/27211/what-is-the-networkwatcherrg.html
+       */
+      const resourceGroupEntity = {
+        name: 'NetworkWatcherRG',
+        _type: RESOURCE_GROUP_ENTITY._type,
+        _class: RESOURCE_GROUP_ENTITY._class,
+        _key: 'resource-group-key',
+      };
+
+      return { accountEntity, resourceGroupEntity };
+    }
+
+    test('success', async () => {
+      recording = setupAzureRecording({
+        directory: __dirname,
+        name: 'rm-network-watchers',
+        options: {
+          matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        },
+      });
+
+      const { accountEntity, resourceGroupEntity } = getSetupEntities();
+
+      const context = createMockAzureStepExecutionContext({
+        instanceConfig: configFromEnv,
+        entities: [resourceGroupEntity],
+        setData: {
+          [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        },
+      });
+
+      await fetchNetworkWatchers(context);
+
+      const networkWatcherEntities = context.jobState.collectedEntities;
+
+      expect(networkWatcherEntities.length).toBeGreaterThan(0);
+      expect(networkWatcherEntities).toMatchGraphObjectSchema({
+        _class: NetworkEntities.NETWORK_WATCHER._class,
+      });
+
+      const networkWatcherResourceGroupRelationships =
+        context.jobState.collectedRelationships;
+
+      expect(networkWatcherResourceGroupRelationships.length).toBe(
+        networkWatcherEntities.length,
+      );
+      expect(
+        networkWatcherResourceGroupRelationships,
+      ).toMatchDirectRelationshipSchema({});
     });
+  });
 
-    await fetchStorageAccounts(context);
-    const storageAccountEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === storageEntities.STORAGE_ACCOUNT._type,
-    );
+  describe('rm-network-private-endpoints', () => {
+    test('success', async () => {
+      const stepTestConfig = getStepTestConfigForStep(
+        STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+      );
+      recording = setupAzureRecording(
+        {
+          name: STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+          directory: __dirname,
+        },
+        stepTestConfig.instanceConfig,
+      );
 
-    await fetchPrivateEndpoints(context);
-    const privateEndpointEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === NetworkEntities.PRIVATE_ENDPOINT._type,
-    );
-    const examplePrivateEndpointEntities = privateEndpointEntities.filter(
-      (e) => e.name === 'private-endpoint',
-    );
-    expect(examplePrivateEndpointEntities).toHaveLength(1);
+      const stepResults = await executeStepWithDependencies(stepTestConfig);
+      expect(stepResults).toMatchStepMetadata(stepTestConfig);
+    }, 500_000);
+  });
 
-    return {
-      privateEndpointEntity: examplePrivateEndpointEntities[0],
-      storageAccountEntities,
-    };
-  }
+  describe('rm-network-private-endpoint-subnet-relationships', () => {
+    async function getSetupEntities(config: IntegrationConfig) {
+      const accountEntity = getMockAccountEntity(config);
+      const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
 
-  test('success', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'rm-network-private-endpoint-resource-relationships',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({
-          config: configFromEnv,
-          options: {
-            headers: false,
-            url: {
-              query: false,
+      const context = createMockAzureStepExecutionContext({
+        instanceConfig: configFromEnv,
+        entities: [accountEntity, resourceGroupEntity],
+        setData: {
+          [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        },
+      });
+
+      await fetchPrivateEndpoints(context);
+      await fetchVirtualNetworks(context);
+
+      const subnetEntities = context.jobState.collectedEntities.filter(
+        (e) => e._type === NetworkEntities.SUBNET._type,
+      );
+      const privateEndpointEntities = context.jobState.collectedEntities.filter(
+        (e) => e._type === NetworkEntities.PRIVATE_ENDPOINT._type,
+      );
+
+      expect(privateEndpointEntities.length).toBeGreaterThan(0);
+
+      return { privateEndpointEntities, subnetEntities };
+    }
+
+    test('success', async () => {
+      recording = setupAzureRecording({
+        directory: __dirname,
+        name: 'rm-network-private-endpoint-subnet-relationships',
+        options: {
+          matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        },
+      });
+
+      const { subnetEntities, privateEndpointEntities } =
+        await getSetupEntities(configFromEnv);
+
+      const context = createMockAzureStepExecutionContext({
+        instanceConfig: configFromEnv,
+        entities: [...subnetEntities, ...privateEndpointEntities],
+      });
+
+      await buildPrivateEndpointSubnetRelationships(context);
+
+      const privateEndpointSubnetRelationships =
+        context.jobState.collectedRelationships;
+
+      expect(context.jobState.collectedEntities).toHaveLength(0);
+
+      expect(privateEndpointSubnetRelationships.length).toBe(
+        privateEndpointEntities.length,
+      );
+      expect(
+        privateEndpointSubnetRelationships,
+      ).toMatchDirectRelationshipSchema({
+        schema: {
+          properties: {
+            _type: {
+              const:
+                NetworkRelationships.NETWORK_SUBNET_HAS_PRIVATE_ENDPOINT._type,
             },
           },
-        }),
-      },
-    });
-
-    const { storageAccountEntities, privateEndpointEntity } =
-      await getSetupEntities(configFromEnv);
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [...storageAccountEntities, privateEndpointEntity],
-    });
-
-    await buildPrivateEndpointResourceRelationships(context);
-
-    const privateEndpointResourceRelationships =
-      context.jobState.collectedRelationships;
-
-    expect(context.jobState.collectedEntities).toHaveLength(0);
-
-    expect(privateEndpointResourceRelationships.length).toBe(1);
-    expect(
-      privateEndpointResourceRelationships,
-    ).toMatchDirectRelationshipSchema({});
-  }, 50000);
-});
-
-describe('rm-network-private-endpoint-nic-relationships', () => {
-  afterEach(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
-
-  async function getSetupEntities(config: IntegrationConfig) {
-    const accountEntity = getMockAccountEntity(config);
-    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [accountEntity, resourceGroupEntity],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
-      },
-    });
-
-    await fetchPrivateEndpoints(context);
-
-    /**
-     * This step sets the `publicIpAddresses` raw data, which is required for
-     * fetchNetworkInterfaces.
-     */
-    await fetchPublicIPAddresses(context);
-    await fetchNetworkInterfaces(context);
-
-    const networkInterfaceEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === NetworkEntities.NETWORK_INTERFACE._type,
-    );
-    const privateEndpointEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === NetworkEntities.PRIVATE_ENDPOINT._type,
-    );
-
-    expect(privateEndpointEntities.length).toBeGreaterThan(0);
-
-    return { privateEndpointEntities, networkInterfaceEntities };
-  }
-
-  test('success', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'rm-network-private-endpoint-nic-relationships',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
-      },
-    });
-
-    const { networkInterfaceEntities, privateEndpointEntities } =
-      await getSetupEntities(configFromEnv);
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [...networkInterfaceEntities, ...privateEndpointEntities],
-    });
-
-    await buildPrivateEndpointNetworkInterfaceRelationships(context);
-
-    const privateEndpointNetworkInterfaceRelationships =
-      context.jobState.collectedRelationships;
-
-    expect(context.jobState.collectedEntities).toHaveLength(0);
-
-    expect(privateEndpointNetworkInterfaceRelationships.length).toBe(
-      privateEndpointEntities.length,
-    );
-    expect(
-      privateEndpointNetworkInterfaceRelationships,
-    ).toMatchDirectRelationshipSchema({
-      schema: {
-        properties: {
-          _type: {
-            const: NetworkRelationships.PRIVATE_ENDPOINT_USES_NIC._type,
-          },
         },
-      },
-    });
-  }, 25000);
-});
-
-describe('rm-network-flow-logs', () => {
-  afterEach(async () => {
-    if (recording) {
-      await recording.stop();
-    }
+      });
+    }, 10000);
   });
 
-  async function getSetupEntities(config: IntegrationConfig) {
-    const accountEntity = getMockAccountEntity(config);
-
-    /**
-     * Azure auto-provisions a `NetworkWatcherRG` resource group in every subscription:
-     * https://docs.microsoft.com/en-us/answers/questions/27211/what-is-the-networkwatcherrg.html
-     */
-    const resourceGroupEntity = {
-      name: 'NetworkWatcherRG',
-      _type: RESOURCE_GROUP_ENTITY._type,
-      _class: RESOURCE_GROUP_ENTITY._class,
-      _key: 'resource-group-key',
-    };
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: config,
-      entities: [resourceGroupEntity],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
-      },
-    });
-
-    await fetchNetworkWatchers(context);
-    const networkWatcherEntities: Entity[] =
-      context.jobState.collectedEntities.filter(
-        (e) => e._type === NetworkEntities.NETWORK_WATCHER._type,
+  describe('rm-network-private-endpoint-resource-relationships', () => {
+    test('success', async () => {
+      const stepTestConfig = getStepTestConfigForStep(
+        STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
       );
 
-    await fetchNetworkSecurityGroups(context);
-    const securityGroupEntities: Entity[] =
-      context.jobState.collectedEntities.filter(
-        (e) => e._type === NetworkEntities.SECURITY_GROUP._type,
+      recording = setupAzureRecording(
+        {
+          name: STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
+          directory: __dirname,
+        },
+        stepTestConfig.instanceConfig,
       );
 
-    await fetchStorageAccounts(context);
-    const storageAccountEntities: Entity[] =
-      context.jobState.collectedEntities.filter(
-        (e) => e._type === storageEntities.STORAGE_ACCOUNT._type,
+      const stepResults = await executeStepWithDependencies({
+        ...stepTestConfig,
+        dependencyStepIds: [
+          STEP_RM_NETWORK_WATCHERS,
+          STEP_RM_NETWORK_SECURITY_GROUPS,
+          storageSteps.STORAGE_ACCOUNTS,
+        ],
+      });
+
+      expect(stepResults).toMatchStepMetadata(stepTestConfig);
+    }, 500_000);
+  });
+
+  describe('rm-network-private-endpoint-nic-relationships', () => {
+    async function getSetupEntities(config: IntegrationConfig) {
+      const accountEntity = getMockAccountEntity(config);
+      const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
+
+      const context = createMockAzureStepExecutionContext({
+        instanceConfig: configFromEnv,
+        entities: [accountEntity, resourceGroupEntity],
+        setData: {
+          [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        },
+      });
+
+      await fetchPrivateEndpoints(context);
+
+      /**
+       * This step sets the `publicIpAddresses` raw data, which is required for
+       * fetchNetworkInterfaces.
+       */
+      await fetchPublicIPAddresses(context);
+      await fetchNetworkInterfaces(context);
+
+      const networkInterfaceEntities =
+        context.jobState.collectedEntities.filter(
+          (e) => e._type === NetworkEntities.NETWORK_INTERFACE._type,
+        );
+      const privateEndpointEntities = context.jobState.collectedEntities.filter(
+        (e) => e._type === NetworkEntities.PRIVATE_ENDPOINT._type,
       );
 
-    return {
-      accountEntity,
-      networkWatcherEntities,
-      securityGroupEntities,
-      storageAccountEntities,
-    };
-  }
+      expect(privateEndpointEntities.length).toBeGreaterThan(0);
 
-  function separateFlowLogRelationships(relationships: Relationship[]) {
-    const {
-      targets: securityGroupFlowLogsRelationships,
-      rest: restAfterSecurityGroupFlowLogs,
-    } = filterGraphObjects(
-      relationships,
-      (r) =>
-        r._type ===
-        NetworkRelationships.NETWORK_SECURITY_GROUP_HAS_FLOW_LOGS._type,
-    );
-    const {
-      targets: flowLogsStorageAccountRelationships,
-      rest: restAFterFlowLogsStorageAccounts,
-    } = filterGraphObjects(
-      restAfterSecurityGroupFlowLogs,
-      (r) =>
-        r._type ===
-        NetworkRelationships
-          .NETWORK_SECURITY_GROUP_FLOW_LOGS_USES_STORAGE_ACCOUNT._type,
-    );
-    const {
-      targets: watcherFlowLogsRelationships,
-      rest: restAfterWatcherFlowLogsRelationships,
-    } = filterGraphObjects(
-      restAFterFlowLogsStorageAccounts,
-      (r) =>
-        r._type === NetworkRelationships.NETWORK_WATCHER_HAS_FLOW_LOGS._type,
-    );
-    return {
-      securityGroupFlowLogsRelationships,
-      flowLogsStorageAccountRelationships,
-      watcherFlowLogsRelationships,
-      restRelationships: restAfterWatcherFlowLogsRelationships,
-    };
-  }
+      return { privateEndpointEntities, networkInterfaceEntities };
+    }
 
-  test('success', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'rm-network-flow-logs',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({
-          config: configFromEnv,
-          options: {
-            headers: false,
-            url: {
-              query: false,
+    test('success', async () => {
+      recording = setupAzureRecording({
+        directory: __dirname,
+        name: 'rm-network-private-endpoint-nic-relationships',
+        options: {
+          matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
+        },
+      });
+
+      const { networkInterfaceEntities, privateEndpointEntities } =
+        await getSetupEntities(configFromEnv);
+
+      const context = createMockAzureStepExecutionContext({
+        instanceConfig: configFromEnv,
+        entities: [...networkInterfaceEntities, ...privateEndpointEntities],
+      });
+
+      await buildPrivateEndpointNetworkInterfaceRelationships(context);
+
+      const privateEndpointNetworkInterfaceRelationships =
+        context.jobState.collectedRelationships;
+
+      expect(context.jobState.collectedEntities).toHaveLength(0);
+
+      expect(privateEndpointNetworkInterfaceRelationships.length).toBe(
+        privateEndpointEntities.length,
+      );
+      expect(
+        privateEndpointNetworkInterfaceRelationships,
+      ).toMatchDirectRelationshipSchema({
+        schema: {
+          properties: {
+            _type: {
+              const: NetworkRelationships.PRIVATE_ENDPOINT_USES_NIC._type,
             },
           },
-        }),
-      },
+        },
+      });
+    }, 25000);
+  });
+
+  describe('rm-network-flow-logs', () => {
+    test('success', async () => {
+      const stepTestConfig = getStepTestConfigForStep(
+        STEP_RM_NETWORK_FLOW_LOGS,
+      );
+
+      recording = setupAzureRecording(
+        {
+          name: STEP_RM_NETWORK_FLOW_LOGS,
+          directory: __dirname,
+        },
+        stepTestConfig.instanceConfig,
+      );
+
+      const stepResults = await executeStepWithDependencies(stepTestConfig);
+      expect(stepResults).toMatchStepMetadata(stepTestConfig);
+    }, 500_000);
+  });
+
+  describe('rm-network-location-watcher-relationships', () => {
+    test('success', async () => {
+      const stepTestConfig = getStepTestConfigForStep(
+        'rm-network-location-watcher-relationships',
+      );
+
+      recording = setupAzureRecording(
+        {
+          name: 'rm-network-location-watcher-relationships',
+          directory: __dirname,
+        },
+        stepTestConfig.instanceConfig,
+      );
+
+      const stepResults = await executeStepWithDependencies(stepTestConfig);
+      const mappedRelationships = stepResults.collectedRelationships;
+
+      expect(mappedRelationships.length > 0);
+    }, 100000);
+  });
+
+  describe(STEP_RM_NETWORK_FIREWALL_POLICIES, () => {
+    test('success', async () => {
+      const stepTestConfig = getStepTestConfigForStep(
+        STEP_RM_NETWORK_FIREWALL_POLICIES,
+      );
+      recording = setupAzureRecording(
+        {
+          name: STEP_RM_NETWORK_FIREWALL_POLICIES,
+          directory: __dirname,
+        },
+        stepTestConfig.instanceConfig,
+      );
+
+      const stepResults = await executeStepWithDependencies(stepTestConfig);
+      expect(stepResults).toMatchStepMetadata(stepTestConfig);
+    }, 500000);
+  });
+
+  describe(STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS, () => {
+    test('success', async () => {
+      const stepTestConfig = getStepTestConfigForStep(
+        STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
+      );
+      recording = setupAzureRecording(
+        {
+          name: STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
+          directory: __dirname,
+        },
+        stepTestConfig.instanceConfig,
+      );
+
+      const stepResults = await executeStepWithDependencies(stepTestConfig);
+      expect(stepResults).toMatchStepMetadata(stepTestConfig);
     });
-
-    const {
-      accountEntity,
-      networkWatcherEntities,
-      securityGroupEntities,
-      storageAccountEntities,
-    } = await getSetupEntities(configFromEnv);
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [
-        ...networkWatcherEntities,
-        ...securityGroupEntities,
-        ...storageAccountEntities,
-      ],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
-      },
-    });
-
-    await fetchNetworkSecurityGroupFlowLogs(context);
-
-    const nsgFlowLogEntities = context.jobState.collectedEntities;
-
-    expect(nsgFlowLogEntities.length).toBeGreaterThan(0);
-    expect(nsgFlowLogEntities).toMatchGraphObjectSchema({
-      _class: NetworkEntities.SECURITY_GROUP_FLOW_LOGS._class,
-    });
-
-    const {
-      securityGroupFlowLogsRelationships,
-      flowLogsStorageAccountRelationships,
-      watcherFlowLogsRelationships,
-      restRelationships,
-    } = separateFlowLogRelationships(context.jobState.collectedRelationships);
-
-    expect(securityGroupFlowLogsRelationships.length).toBe(
-      nsgFlowLogEntities.length,
-    );
-    expect(securityGroupFlowLogsRelationships).toMatchDirectRelationshipSchema(
-      {},
-    );
-
-    expect(flowLogsStorageAccountRelationships.length).toBe(
-      nsgFlowLogEntities.length,
-    );
-    expect(flowLogsStorageAccountRelationships).toMatchDirectRelationshipSchema(
-      {},
-    );
-
-    expect(watcherFlowLogsRelationships.length).toBe(nsgFlowLogEntities.length);
-    expect(watcherFlowLogsRelationships).toMatchDirectRelationshipSchema({});
-
-    expect(restRelationships.length).toBe(0);
-  }, 50000);
-});
-
-describe('rm-network-location-watcher-relationships', () => {
-  afterEach(async () => {
-    if (recording) {
-      await recording.stop();
-    }
   });
 
-  test('success', async () => {
-    const stepTestConfig = getStepTestConfigForStep(
-      'rm-network-location-watcher-relationships',
-    );
+  describe(STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS, () => {
+    test('success', async () => {
+      const stepTestConfig = getStepTestConfigForStep(
+        STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
+      );
+      recording = setupAzureRecording(
+        {
+          name: STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
+          directory: __dirname,
+        },
+        stepTestConfig.instanceConfig,
+      );
 
-    recording = setupAzureRecording(
-      {
-        name: 'rm-network-location-watcher-relationships',
-        directory: __dirname,
-      },
-      stepTestConfig.instanceConfig,
-    );
+      const stepResults = await executeStepWithDependencies(stepTestConfig);
+      const mappedRelationships = stepResults.collectedRelationships;
 
-    const stepResults = await executeStepWithDependencies(stepTestConfig);
-    const mappedRelationships = stepResults.collectedRelationships;
-
-    expect(mappedRelationships.length > 0);
-  }, 100000);
-});
-
-describe(STEP_RM_NETWORK_FIREWALL_POLICIES, () => {
-  afterEach(async () => {
-    if (recording) {
-      await recording.stop();
-    }
+      expect(mappedRelationships.length > 0);
+    }, 500000);
   });
-
-  test('success', async () => {
-    const stepTestConfig = getStepTestConfigForStep(
-      STEP_RM_NETWORK_FIREWALL_POLICIES,
-    );
-    recording = setupAzureRecording(
-      {
-        name: STEP_RM_NETWORK_FIREWALL_POLICIES,
-        directory: __dirname,
-      },
-      stepTestConfig.instanceConfig,
-    );
-
-    const stepResults = await executeStepWithDependencies(stepTestConfig);
-    expect(stepResults).toMatchStepMetadata(stepTestConfig);
-  }, 500000);
-});
-
-describe(STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS, () => {
-  afterEach(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
-
-  test('success', async () => {
-    const stepTestConfig = getStepTestConfigForStep(
-      STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
-    );
-    recording = setupAzureRecording(
-      {
-        name: STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
-        directory: __dirname,
-      },
-      stepTestConfig.instanceConfig,
-    );
-
-    const stepResults = await executeStepWithDependencies(stepTestConfig);
-    expect(stepResults).toMatchStepMetadata(stepTestConfig);
-  });
-});
-
-describe(STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS, () => {
-  afterEach(async () => {
-    if (recording) {
-      await recording.stop();
-    }
-  });
-
-  test('success', async () => {
-    const stepTestConfig = getStepTestConfigForStep(
-      STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
-    );
-    recording = setupAzureRecording(
-      {
-        name: STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
-        directory: __dirname,
-      },
-      stepTestConfig.instanceConfig,
-    );
-
-    const stepResults = await executeStepWithDependencies(stepTestConfig);
-    const mappedRelationships = stepResults.collectedRelationships;
-
-    expect(mappedRelationships.length > 0);
-  }, 500000);
 });

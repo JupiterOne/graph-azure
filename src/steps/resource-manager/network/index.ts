@@ -88,7 +88,6 @@ import {
   steps as subscriptionSteps,
 } from '../subscriptions/constants';
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
-import { getResourceManagerSteps } from '../../../getStepStartStates';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
 import {
   FirewallPolicyRuleCollectionGroup,
@@ -1296,10 +1295,8 @@ export const networkSteps: AzureIntegrationStep[] = [
     name: 'Private Endpoint to Resource Relationships',
     entities: [],
     relationships: [NetworkRelationships.PRIVATE_ENDPOINT_CONNECTS_RESOURCE],
-    dependsOn: [
-      STEP_RM_NETWORK_PRIVATE_ENDPOINTS,
-      ...getResourceManagerSteps().executeFirstSteps,
-    ],
+    dependsOn: [],
+    dependencyGraphId: 'last',
     executionHandler: buildPrivateEndpointResourceRelationships,
     ingestionSourceId: INGESTION_SOURCE_IDS.NETWORK,
   },

@@ -569,7 +569,6 @@ The following relationships are created:
 | `azure_vm`                         | **USES**              | `azure_storage_account`                           |
 | `azure_vm`                         | **USES**              | `azure_vm_scale_set`                              |
 | `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
-| `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
 | `azure_vnet`                       | **CONTAINS**          | `azure_subnet`                                    |
 | `azure_web_app`                    | **USES**              | `azure_app_service_plan`                          |
 

@@ -767,40 +767,6 @@ export async function buildVMScaleSetsImageRelationship(
   );
   await jobState.addRelationships(relationships);
 }
-export async function buildVMScaleSetsImageVersionRelationship(
-  executionContext: IntegrationStepContext,
-): Promise<void> {
-  const { jobState } = executionContext;
-  const relationships: Relationship[] = [];
-
-  await jobState.iterateEntities(
-    { _type: entities.VIRTUAL_MACHINE_SCALE_SET._type },
-    async (vmssEntity) => {
-      const vmss = getRawData<VirtualMachineScaleSet>(vmssEntity);
-      const imageReference =
-        vmss?.virtualMachineProfile?.storageProfile?.imageReference;
-      const imageRefId = imageReference?.id;
-      if (!imageRefId) {
-        return;
-      }
-
-      const galleryImageVersionEntity = await jobState.findEntity(imageRefId);
-      if (
-        galleryImageVersionEntity &&
-        galleryImageVersionEntity?._type == entities.SHARED_IMAGE_VERSION._type
-      ) {
-        relationships.push(
-          createDirectRelationship({
-            _class: RelationshipClass.USES,
-            from: vmssEntity,
-            to: galleryImageVersionEntity,
-          }),
-        );
-      }
-    },
-  );
-  await jobState.addRelationships(relationships);
-}
 
 export const computeSteps: AzureIntegrationStep[] = [
   {
@@ -974,19 +940,6 @@ export const computeSteps: AzureIntegrationStep[] = [
       steps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
     ],
     executionHandler: buildVMScaleSetsImageRelationship,
-    ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
-  },
-  {
-    id: steps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS,
-    name: 'Virtual Scale Sets Image Version Reationships',
-    entities: [],
-    relationships: [relationships.VM_SCALE_SETS_USES_SHARED_IMAGE_VERSION],
-    dependsOn: [
-      steps.VIRTUAL_MACHINE_SCALE_SETS,
-      steps.SHARED_IMAGE_VERSIONS,
-      steps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
-    ],
-    executionHandler: buildVMScaleSetsImageVersionRelationship,
     ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
 ];

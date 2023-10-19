@@ -147,15 +147,22 @@ export async function fetchServiceBusSubscriptions(
               webLinker,
               subscription,
             );
-            await jobState.addEntity(subscriptionEntity);
+            if (!jobState.hasKey(subscriptionEntity._key)) {
+              await jobState.addEntity(subscriptionEntity);
 
-            await jobState.addRelationship(
-              createDirectRelationship({
-                _class: RelationshipClass.HAS,
-                from: topicEntity,
-                to: subscriptionEntity,
-              }),
-            );
+              await jobState.addRelationship(
+                createDirectRelationship({
+                  _class: RelationshipClass.HAS,
+                  from: topicEntity,
+                  to: subscriptionEntity,
+                }),
+              );
+            } else {
+              logger.info(
+                { serviceBusTopicSubscriptionKey: subscriptionEntity._key },
+                'Found duplicated key',
+              );
+            }
           },
         );
       }

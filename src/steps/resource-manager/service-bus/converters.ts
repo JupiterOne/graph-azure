@@ -80,7 +80,7 @@ export function createServiceBusSubscriptionEntity(
       source: data,
       assign: {
         ...convertProperties(data),
-        _key: `${data.id}-${data.type}`,
+        _key: data.id,
         _type: ServiceBusEntities.SUBSCRIPTION._type,
         _class: ServiceBusEntities.SUBSCRIPTION._class,
         id: data.id,

@@ -121,7 +121,7 @@ exports[`createServiceBusSubscriptionEntity properties transferred 1`] = `
   "_class": [
     "Subscription",
   ],
-  "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic/subscriptions/j1dev-Microsoft.ServiceBus/Namespaces/Topics/Subscriptions",
+  "_key": "/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.ServiceBus/namespaces/ndowmon1j1dev/topics/j1dev-topic/subscriptions/j1dev",
   "_rawData": [
     {
       "name": "default",

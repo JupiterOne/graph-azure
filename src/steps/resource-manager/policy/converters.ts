@@ -17,7 +17,8 @@ export function createPolicyAssignmentEntity(
   webLinker: AzureWebLinker,
   data: PolicyAssignment,
 ): Entity {
-  const { metadata, ...pa } = data;
+  // Remove parameters since they could be causing an upload error.
+  const { metadata, parameters, ...pa } = data;
   const assignedBy = metadata?.assignedBy;
   const createdOn = parseTimePropertyValue(metadata?.createdOn);
   const updatedOn = parseTimePropertyValue(metadata?.updatedOn);

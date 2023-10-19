@@ -329,13 +329,14 @@ export async function buildFirewallRuleRelationships(
 
     const rulePropertiesArr = getRecurRuleProperties(policyKey);
     for (const ruleProperties of rulePropertiesArr) {
+      const direction = ruleProperties.ingress
+        ? RelationshipDirection.REVERSE
+        : RelationshipDirection.FORWARD;
       const mappedRelationships = firewallKeys.map((firewallKey) =>
         createMappedRelationship({
           _class: ruleProperties._class,
           _mapping: {
-            relationshipDirection: ruleProperties.ingress
-              ? RelationshipDirection.REVERSE
-              : RelationshipDirection.FORWARD,
+            relationshipDirection: direction,
             sourceEntityKey: firewallKey,
             targetFilterKeys: [['_key']],
             targetEntity: INTERNET,
@@ -347,7 +348,9 @@ export async function buildFirewallRuleRelationships(
               ruleProperties.ruleGroupId ?? ''
             }:${(ruleProperties.ruleName ?? '')
               .toLowerCase()
-              .replace(/ /g, '_')}:${ruleProperties.portRange}:internet`,
+              .replace(/ /g, '_')}:${direction}:${
+              ruleProperties.portRange
+            }:internet`,
           },
         }),
       );

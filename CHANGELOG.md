@@ -1,3 +1,15 @@
+# v5.53.1 (Thu Oct 19 2023)
+
+#### 🐛 Bug Fix
+
+- Resolved issues [#604](https://github.com/JupiterOne/graph-azure/pull/604) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.53.0 (Wed Oct 18 2023)
 
 #### 🚀 Enhancement

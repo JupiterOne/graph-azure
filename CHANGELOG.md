@@ -1,3 +1,15 @@
+# v5.53.2 (Thu Oct 19 2023)
+
+#### 🐛 Bug Fix
+
+- Duplicated keys and upload errors [#605](https://github.com/JupiterOne/graph-azure/pull/605) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.53.1 (Thu Oct 19 2023)
 
 #### 🐛 Bug Fix

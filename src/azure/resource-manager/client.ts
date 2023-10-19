@@ -54,10 +54,15 @@ export abstract class Client {
     readonly logger: IntegrationLogger,
     readonly noRetryPolicy = false,
   ) {
+    /// This integration only work on single tenant: https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/identity
+    process.env.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH = '1';
     this.clientSecretCredentials = new ClientSecretCredential(
       this.config.directoryId,
       this.config.clientId,
       this.config.clientSecret,
+      {
+        additionallyAllowedTenants: [],
+      },
     );
   }
 

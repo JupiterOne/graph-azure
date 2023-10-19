@@ -68,9 +68,8 @@ describe('rm-compute-galleries', () => {
       },
     });
 
-    const { accountEntity, resourceGroupEntity } = getSetupEntities(
-      configFromEnv,
-    );
+    const { accountEntity, resourceGroupEntity } =
+      getSetupEntities(configFromEnv);
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
       entities: [resourceGroupEntity],
@@ -266,15 +265,13 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
   describe('managed disk', () => {
     describe('os disk', () => {
       const virtualMachine: VirtualMachine = {
-        id:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+        id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
         location: 'eastus',
         storageProfile: {
           osDisk: {
             createOption: 'FromImage',
             managedDisk: {
-              id:
-                '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
+              id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
             },
           },
         },
@@ -284,8 +281,7 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
 
       test('should create relationship if disk in job state', async () => {
         const disk: Disk = {
-          id:
-            '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
+          id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
           location: 'eastus',
           creationData: {
             createOption: 'FromImage',
@@ -348,8 +344,7 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
 
     describe('data disk', () => {
       const virtualMachine: VirtualMachine = {
-        id:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+        id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
         location: 'eastus',
         storageProfile: {
           dataDisks: [
@@ -357,8 +352,7 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
               lun: 0,
               createOption: 'FromImage',
               managedDisk: {
-                id:
-                  '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
+                id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
               },
             },
           ],
@@ -369,8 +363,7 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
 
       test('should create relationship if disk in job state', async () => {
         const disk: Disk = {
-          id:
-            '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
+          id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/disks/j1dev_OsDisk_1_7f47e29fbfbe4fec8432d07d3d03fa34',
           location: 'eastus',
           creationData: {
             createOption: 'FromImage',
@@ -435,15 +428,13 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
   describe('unmanaged disk', () => {
     describe('os disk', () => {
       const virtualMachine: VirtualMachine = {
-        id:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+        id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
         location: 'eastus',
         storageProfile: {
           osDisk: {
             createOption: 'FromImage',
             vhd: {
-              uri:
-                'https://j1dev.blob.core.windows.net/vhds/non-managed-os20210321180131.vhd',
+              uri: 'https://j1dev.blob.core.windows.net/vhds/non-managed-os20210321180131.vhd',
             },
           },
         },
@@ -516,8 +507,7 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
 
     describe('data disk', () => {
       const virtualMachine: VirtualMachine = {
-        id:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
+        id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/J1DEV/providers/Microsoft.Compute/virtualMachines/j1dev',
         location: 'eastus',
         storageProfile: {
           dataDisks: [
@@ -525,8 +515,7 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
               lun: 0,
               createOption: 'FromImage',
               vhd: {
-                uri:
-                  'https://j1dev.blob.core.windows.net/vhds/non-managed-os20210321180131.vhd',
+                uri: 'https://j1dev.blob.core.windows.net/vhds/non-managed-os20210321180131.vhd',
               },
             },
           ],
@@ -604,8 +593,7 @@ describe('rm-compute-virtual-machine-disk-relationships', () => {
           lun: 1,
           createOption: 'FromImage',
           vhd: {
-            uri:
-              'https://j1dev.blob.core.windows.net/vhds/non-managed-os00000000000000.vhd',
+            uri: 'https://j1dev.blob.core.windows.net/vhds/non-managed-os00000000000000.vhd',
           },
         });
 
@@ -690,10 +678,8 @@ describe('rm-compute-virtual-machine-extensions', () => {
       },
     });
 
-    const {
-      accountEntity,
-      vmEntities: virtualMachineEntities,
-    } = await getSetupEntities(configFromEnv);
+    const { accountEntity, vmEntities: virtualMachineEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -755,9 +741,10 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
       (e) => e._type === entities.SHARED_IMAGE._type,
     );
 
-    const sharedImageVersionEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === entities.SHARED_IMAGE_VERSION._type,
-    );
+    const sharedImageVersionEntities =
+      context.jobState.collectedEntities.filter(
+        (e) => e._type === entities.SHARED_IMAGE_VERSION._type,
+      );
 
     return {
       accountEntity,
@@ -769,20 +756,17 @@ describe('rm-compute-virtual-machine-image-relationships', () => {
   }
 
   function separateRelationships(collectedRelationships: Relationship[]) {
-    const {
-      targets: vmImageRelationships,
-      rest: restAfterImage,
-    } = filterGraphObjects(
-      collectedRelationships,
-      (r) => r._type === relationships.VIRTUAL_MACHINE_USES_IMAGE._type,
-    );
-    const {
-      targets: sharedImageRelationships,
-      rest: restAfterSharedImage,
-    } = filterGraphObjects(
-      restAfterImage,
-      (r) => r._type === relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE._type,
-    );
+    const { targets: vmImageRelationships, rest: restAfterImage } =
+      filterGraphObjects(
+        collectedRelationships,
+        (r) => r._type === relationships.VIRTUAL_MACHINE_USES_IMAGE._type,
+      );
+    const { targets: sharedImageRelationships, rest: restAfterSharedImage } =
+      filterGraphObjects(
+        restAfterImage,
+        (r) =>
+          r._type === relationships.VIRTUAL_MACHINE_USES_SHARED_IMAGE._type,
+      );
     const {
       targets: sharedImageVersionRelationships,
       rest: restAfterSharedImageVersion,
@@ -918,11 +902,8 @@ describe('rm-compute-shared-image-version-source-relationships', () => {
       },
     });
 
-    const {
-      accountEntity,
-      imageVersionEntity,
-      virtualMachineEntities,
-    } = await getSetupEntities(configFromEnv);
+    const { accountEntity, imageVersionEntity, virtualMachineEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -962,11 +943,8 @@ describe('rm-compute-shared-image-version-source-relationships', () => {
       },
     });
 
-    const {
-      accountEntity,
-      imageVersionEntity,
-      virtualMachineEntities,
-    } = await getSetupEntities(configFromEnv);
+    const { accountEntity, imageVersionEntity, virtualMachineEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -1120,24 +1098,6 @@ describe('rm-compute-virtual-machines-scale-sets', () => {
 
     recording = setupAzureRecording({
       name: steps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS,
-      directory: __dirname,
-      options: {
-        matchRequestsBy: getMatchRequestsBy({
-          config: stepTestConfig.instanceConfig,
-        }),
-      },
-    });
-
-    const stepResults = await executeStepWithDependencies(stepTestConfig);
-    expect(stepResults).toMatchStepMetadata(stepTestConfig);
-  }, 10_000);
-  test('rm-virtual-machines-scale-sets-image-version-relationships', async () => {
-    const stepTestConfig = getStepTestConfigForStep(
-      steps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS,
-    );
-
-    recording = setupAzureRecording({
-      name: steps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS,
       directory: __dirname,
       options: {
         matchRequestsBy: getMatchRequestsBy({

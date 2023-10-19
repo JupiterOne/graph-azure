@@ -29,8 +29,6 @@ export const steps = {
     'rm-virtual-machines-scale-sets-relationships',
   VM_SCALE_SETS_IMAGE_RELATIONSHIPS:
     'rm-virtual-machines-scale-sets-image-relationships',
-  VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS:
-    'rm-virtual-machines-scale-sets-image-version-relationships',
 };
 
 // Graph object

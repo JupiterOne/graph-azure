@@ -196,9 +196,6 @@ describe('getStepStartStates', () => {
       [computeSteps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS]: {
         disabled: true,
       },
-      [computeSteps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS]: {
-        disabled: true,
-      },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: true },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: true },
@@ -362,9 +359,6 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [computeSteps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS]: {
-        disabled: true,
-      },
-      [computeSteps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS]: {
         disabled: true,
       },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },
@@ -537,9 +531,6 @@ describe('getStepStartStates', () => {
       [computeSteps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS]: {
         disabled: false,
       },
-      [computeSteps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS]: {
-        disabled: false,
-      },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_MARIADB_DATABASES]: { disabled: false },
       [STEP_RM_DATABASE_MYSQL_DATABASES]: { disabled: false },
@@ -707,9 +698,6 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [computeSteps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS]: {
-        disabled: true,
-      },
-      [computeSteps.VM_SCALE_SETS_IMAGE_VERSION_RELATIONSHIPS]: {
         disabled: true,
       },
       [STEP_RM_COSMOSDB_SQL_DATABASES]: { disabled: true },

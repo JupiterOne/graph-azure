@@ -67,16 +67,22 @@ export async function fetchApps(
     }
 
     const metadata = getMetadataForApp(logger, app);
-    const appEntity = await jobState.addEntity(
-      createAppEntity({
-        webLinker,
-        data: app,
-        metadata,
-        appConfig,
-        appAuthSettings,
-      }),
-    );
-    await createResourceGroupResourceRelationship(executionContext, appEntity);
+    const appEntity = createAppEntity({
+      webLinker,
+      data: app,
+      metadata,
+      appConfig,
+      appAuthSettings,
+    });
+    if (!jobState.hasKey(appEntity._key)) {
+      await jobState.addEntity(appEntity);
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        appEntity,
+      );
+    } else {
+      logger.info({ key: appEntity._key }, 'Found duplicated key');
+    }
   });
 }
 

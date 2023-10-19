@@ -273,7 +273,7 @@ export function createVMScaleSetsEntity(
   webLinker: AzureWebLinker,
   data: VirtualMachineScaleSet,
 ) {
-  return createIntegrationEntity({
+  const entity = createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
@@ -314,7 +314,6 @@ export function createVMScaleSetsEntity(
         singlePlacementGroup: data.singlePlacementGroup,
         zoneBalance: data.zoneBalance,
         zones: data.zones,
-        ...data.tags,
         //virtualMachineProfile
 
         'virtualMachineProfile.billingProfile.maxPrice':
@@ -389,6 +388,8 @@ export function createVMScaleSetsEntity(
       },
     },
   });
+  assignTags(entity, data.tags);
+  return entity;
 }
 export const testFunctions = {
   usesManagedDisks,

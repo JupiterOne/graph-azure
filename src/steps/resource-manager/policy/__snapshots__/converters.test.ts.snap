@@ -48,7 +48,6 @@ exports[`createPolicyAssignmentEntity properties transferred 1`] = `
   "enforcementMode": "Default",
   "id": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56/providers/Microsoft.Authorization/policyAssignments/SecurityCenterBuiltIn",
   "name": "ASC Default (subscription: 40474ebe-55a2-4071-8fa8-b610acdd8e56)",
-  "parameters.systemUpdatesMonitoringEffect": "AuditIfNotExists",
   "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8",
   "scope": "/subscriptions/40474ebe-55a2-4071-8fa8-b610acdd8e56",
   "sku.name": "A0",

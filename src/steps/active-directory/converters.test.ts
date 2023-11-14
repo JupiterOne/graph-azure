@@ -191,6 +191,7 @@ describe('createUserEntity', () => {
       accountEnabled: true,
       mail: 'admin_test@dualboot.com',
       mobilePhone: '+1 2223334444',
+      usageLocation: 'US',
       officeLocation: 'DBP',
       preferredLanguage: undefined,
       surname: 'Kulakov',

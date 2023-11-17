@@ -54,6 +54,6 @@ export const usageDetailsSteps: AzureIntegrationStep[] = [
     dependsOn: [steps.SUBSCRIPTION, steps.SUBSCRIPTION_DIAGNOSTIC_SETTINGS],
     executionHandler: fetchSubscriptionUsageDetails,
     rolePermissions: ['Microsoft.Consumption/usageDetails/read'],
-    ingestionSourceId: INGESTION_SOURCE_IDS.SUBSCRIPTIONS,
+    ingestionSourceId: INGESTION_SOURCE_IDS.SUBSCRIPTION_USAGE,
   },
 ];

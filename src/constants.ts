@@ -30,5 +30,5 @@ export const INGESTION_SOURCE_IDS = {
   SERVICE_BUS: 'service-bus',
   STORAGE: 'storage',
   SUBSCRIPTIONS: 'subscriptions',
-  SUBSCRIPTION_USAGE: 'subscriptions_usag',
+  SUBSCRIPTION_USAGE: 'subscriptions_usage',
 };

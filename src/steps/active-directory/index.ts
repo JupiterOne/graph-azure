@@ -297,6 +297,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_USERS],
     executionHandler: fetchDevices,
     apiPermissions: ['Device.Read.All'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.AD_DEVICES,
   },
   {
     id: STEP_AD_GROUPS,

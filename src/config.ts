@@ -13,7 +13,14 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     title: 'Active directory groups',
     description:
       'Gather information related to user groups and group membership.',
-    defaultsToDisabled: false,
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
+  [INGESTION_SOURCE_IDS.AD_DEVICES]: {
+    title: 'Active directory devices',
+    description:
+      'Gather information related to user devices and device ownership.',
+    defaultsToDisabled: true,
     cannotBeDisabled: false,
   },
   [INGESTION_SOURCE_IDS.ADVISOR_RECOMMENDATIONS]: {
@@ -130,13 +137,13 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     title: 'Network',
     description:
       'Fetch network configuration and information, such as public IP addresses, network interfaces, virtual networks, security groups, load balancers, Azure Firewalls, private endpoints, and more',
-    defaultsToDisabled: false,
+    defaultsToDisabled: true,
     cannotBeDisabled: false,
   },
   [INGESTION_SOURCE_IDS.POLICY]: {
     title: 'Authorization policy',
     description: 'Gather information about policy assignments and definitions.',
-    defaultsToDisabled: false,
+    defaultsToDisabled: true,
     cannotBeDisabled: false,
   },
   [INGESTION_SOURCE_IDS.POLICY_INSIGHTS]: {
@@ -180,7 +187,7 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     title: 'Storage',
     description:
       'Ingest storage accounts, tables, queues, containers and file shares.',
-    defaultsToDisabled: false,
+    defaultsToDisabled: true,
     cannotBeDisabled: false,
   },
   [INGESTION_SOURCE_IDS.SUBSCRIPTIONS]: {
@@ -188,5 +195,11 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     description: 'Ingest subscription details and locations.',
     defaultsToDisabled: false,
     cannotBeDisabled: true,
+  },
+  [INGESTION_SOURCE_IDS.SUBSCRIPTION_USAGE]: {
+    title: 'Subscription Usage',
+    description: 'Ingest subscription usage details.',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
   },
 };

@@ -1,6 +1,7 @@
 export const INGESTION_SOURCE_IDS = {
   AD_GENERALS: 'ad-generals',
   AD_GROUPS: 'ad-groups',
+  AD_DEVICES: 'ad-devices',
   ADVISOR_RECOMMENDATIONS: 'advisor-recommendations',
   API_MANAGEMENT: 'api-management',
   APPSERVICE: 'app-service',
@@ -29,4 +30,5 @@ export const INGESTION_SOURCE_IDS = {
   SERVICE_BUS: 'service-bus',
   STORAGE: 'storage',
   SUBSCRIPTIONS: 'subscriptions',
+  SUBSCRIPTION_USAGE: 'subscriptions_usag',
 };

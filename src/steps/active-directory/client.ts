@@ -173,7 +173,7 @@ export class DirectoryGraphClient extends GraphClient {
   public async iterateUsers(
     callback: (user: User) => void | Promise<void>,
   ): Promise<void> {
-    const resourceUrl = '/users?$select=businessPhones,displayName,accountEnabled,mail,givenName,surname,userPrincipalName,jobTitle,mobilePhone,officeLocation,preferredLanguage,id,usageLocation,userType';
+    const resourceUrl = '/users';
     this.logger.info('Iterating users.');
     const defaultSelect = [
       'businessPhones',

@@ -144,6 +144,7 @@ export function getActiveDirectorySteps(): GetApiSteps {
       STEP_AD_SERVICE_PRINCIPALS,
       STEP_AD_ROLE_ASSIGNMENTS,
       STEP_AD_ROLE_DEFINITIONS,
+      subscriptionSteps.ALL_SKIPPED_SUBSCRIPTIONS,
     ],
     executeLastSteps: [],
   };

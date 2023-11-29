@@ -1,3 +1,16 @@
+# v5.54.1 (Wed Nov 29 2023)
+
+#### 🐛 Bug Fix
+
+- add usageLocation [#606](https://github.com/JupiterOne/graph-azure/pull/606) ([@SeaBlooms](https://github.com/SeaBlooms) gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 2
+
+- Colin Blumer ([@SeaBlooms](https://github.com/SeaBlooms))
+- Gonzalo Avalos Ribas (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+---
+
 # v5.54.0 (Wed Nov 29 2023)
 
 #### 🚀 Enhancement

@@ -9,6 +9,7 @@ export const steps = {
   SUBSCRIPTION_DIAGNOSTIC_SETTINGS: 'rm-subscription-diagnostic-settings',
   LOCATIONS: 'rm-subscription-locations',
   USAGE_DETAILS: 'rm-subscription-usage-details',
+  ALL_SKIPPED_SUBSCRIPTIONS: 'rm-skipped-subscription',
 };
 
 export const setDataKeys = {

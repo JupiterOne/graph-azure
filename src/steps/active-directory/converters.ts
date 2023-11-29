@@ -136,6 +136,8 @@ export function createUserEntity(
           registrationDetails?.userPreferredMethodForSecondaryAuthentication,
         mfaMethods: registrationDetails?.methodsRegistered,
         accountEnabled: data.accountEnabled,
+        officeLocation: data.officeLocation,
+        usageLocation: data.usageLocation
       },
     },
   });

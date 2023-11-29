@@ -1,3 +1,27 @@
+# v5.54.0 (Wed Nov 29 2023)
+
+#### 🚀 Enhancement
+
+- INT-9996: Ingest azure skipped subscriptions [#608](https://github.com/JupiterOne/graph-azure/pull/608) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v5.53.3 (Fri Nov 17 2023)
+
+#### 🐛 Bug Fix
+
+- Disable steps by default [#607](https://github.com/JupiterOne/graph-azure/pull/607) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.53.2 (Thu Oct 19 2023)
 
 #### 🐛 Bug Fix

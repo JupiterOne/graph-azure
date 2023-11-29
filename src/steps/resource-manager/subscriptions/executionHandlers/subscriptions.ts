@@ -20,6 +20,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../../constants';
+import { Subscription } from '@microsoft/microsoft-graph-types';
 
 export async function fetchSubscription(
   executionContext: IntegrationStepContext,
@@ -53,6 +54,36 @@ export async function fetchSubscription(
   }
 }
 
+/**
+ * This step is a part of INT-9996
+ *
+ * @param executionContext
+ */
+export async function fetchAllSkippedSubscriptions(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new J1SubscriptionClient(instance.config, logger);
+
+  const subscriptions = await client.fetchSubscriptions();
+  if (subscriptions) {
+    for (const subscription of subscriptions) {
+      const subscriptionWithDetails = await client.fetchSubscription(
+        subscription.subscriptionId!,
+      );
+      if ((subscriptionWithDetails as any).tags?.JupiterOne === 'SKIP') {
+        const subscriptionEntity = createSubscriptionEntity(
+          webLinker,
+          subscriptionWithDetails as Subscription,
+        );
+        await jobState.addEntity(subscriptionEntity);
+      }
+    }
+  }
+}
+
 export async function fetchSubscriptionDiagnosticSettings(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -77,6 +108,16 @@ export const fetchSubscriptionSteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchSubscription,
+    rolePermissions: ['Microsoft.Resources/subscriptions/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SUBSCRIPTIONS,
+  },
+  {
+    id: steps.ALL_SKIPPED_SUBSCRIPTIONS,
+    name: 'Skipped Subscriptions',
+    entities: [entities.SUBSCRIPTION],
+    relationships: [],
+    dependsOn: [STEP_AD_ACCOUNT],
+    executionHandler: fetchAllSkippedSubscriptions,
     rolePermissions: ['Microsoft.Resources/subscriptions/read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.SUBSCRIPTIONS,
   },

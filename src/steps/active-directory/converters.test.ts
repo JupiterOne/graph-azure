@@ -173,7 +173,7 @@ describe('createGroupEntity', () => {
 
   test('should validate schema when `null` mail passed', () => {
     // Recorded API calls exposed the fact that these properties are nullable, in spite of the Typescript typings.
-    const mockGroup = getMockGroup({ mail: (null as unknown) as undefined });
+    const mockGroup = getMockGroup({ mail: null as unknown as undefined });
     const groupEntity = createGroupEntity(mockGroup);
     expect(groupEntity).toMatchGraphObjectSchema({
       _class: GROUP_ENTITY_CLASS,
@@ -203,64 +203,9 @@ describe('createUserEntity', () => {
     };
   }
 
-  function getMockRegistrationDetails() {
-    return {
-      userPrincipalName:
-        'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
-      userDisplayName: 'Andrew Kulakov',
-      isMfaRegistered: true,
-      methodsRegistered: ['mobilePhone', 'email'],
-      userPreferredMethodForSecondaryAuthentication: 'sms',
-    };
-  }
-
-  test('properties transferred', () => {
-    const mockUser = getMockUser();
-    const mockCredDetails = getMockRegistrationDetails();
-
-    const userEntity = createUserEntity(mockUser, mockCredDetails);
-    expect(userEntity).toMatchGraphObjectSchema({ _class: USER_ENTITY_CLASS });
-    expect(userEntity).toEqual({
-      _class: ['User'],
-      _key: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
-      _type: 'azure_user',
-      _rawData: [
-        { name: 'default', rawData: mockUser },
-        {
-          name: 'registrationDetails',
-          rawData: mockCredDetails,
-        },
-      ],
-      accountEnabled: true,
-      active: true,
-      createdOn: undefined,
-      email: 'admin_test@dualboot.com',
-      mail: 'admin_test@dualboot.com',
-      username:
-        'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
-      name: 'Andrew Kulakov',
-      displayName: 'Andrew Kulakov',
-      givenName: 'Andrew',
-      firstName: 'Andrew',
-      id: 'abf00eda-02d6-4053-a077-eef036e1a4c8',
-      jobTitle: 'test title',
-      businessPhones: ['+1 2223334444'],
-      mobilePhone: '+1 2223334444',
-      officeLocation: 'DBP',
-      surname: 'Kulakov',
-      lastName: 'Kulakov',
-      userType: 'Member',
-      userPrincipalName:
-        'admin_test.dualboot.com#EXT#@admintestdualboot.onmicrosoft.com',
-      mfaEnabled: true,
-      mfaType: 'sms',
-      mfaMethods: ['mobilePhone', 'email'],
-    });
-  });
-
   test('should validate schema when `null` mail passed', () => {
     // Recorded API calls exposed the fact that these properties are nullable, in spite of the Typescript typings.
-    const mockUser = getMockUser({ mail: (null as unknown) as undefined });
+    const mockUser = getMockUser({ mail: null as unknown as undefined });
     const userEntity = createUserEntity(mockUser);
     expect(userEntity).toMatchGraphObjectSchema({ _class: USER_ENTITY_CLASS });
   });

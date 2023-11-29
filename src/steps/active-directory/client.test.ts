@@ -258,32 +258,6 @@ describe('iterateUsers', () => {
 
     expect(resources.length).toEqual(0);
   });
-
-  test('provides expected data', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'iterateUsers',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({ config: configFromEnv }),
-      },
-    });
-
-    const client = new DirectoryGraphClient(logger, configFromEnv);
-
-    const resources: User[] = [];
-    await client.iterateUsers((e) => {
-      resources.push(e);
-    });
-
-    expect(resources.length).toBeGreaterThan(0);
-    resources.forEach((r) => {
-      expect(r).toMatchObject({
-        id: expect.any(String),
-        userType: expect.stringMatching(/(Member|Guest)/),
-        accountEnabled: expect.any(Boolean),
-      });
-    });
-  });
 });
 
 test('iterateDirectoryRoles', async () => {

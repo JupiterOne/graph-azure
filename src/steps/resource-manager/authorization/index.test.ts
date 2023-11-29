@@ -194,12 +194,8 @@ describe('rm-authorization-role-assignment-principal-relationships', () => {
       },
     });
 
-    const {
-      userEntities,
-      groupEntities,
-      servicePrincipalEntities,
-      roleAssignmentEntities,
-    } = await getSetupEntities(configFromEnv);
+    const { userEntities, groupEntities, roleAssignmentEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,

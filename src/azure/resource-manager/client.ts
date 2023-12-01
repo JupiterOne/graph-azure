@@ -54,7 +54,7 @@ export abstract class Client {
     readonly logger: IntegrationLogger,
     readonly noRetryPolicy = false,
   ) {
-    /// This integration only work on single tenant: https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/identity
+    /// This integration only works on single tenant: https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/identity
     process.env.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH = '1';
     this.clientSecretCredentials = new ClientSecretCredential(
       this.config.directoryId,
@@ -207,6 +207,7 @@ function retryResourceRequest<ResponseType>(
               },
               'Encountered retryable error in Resource Manager client.',
             );
+            context.aborted = false; //Sometimes ECONNRESET errors are not being retried, this could help
           }
         }
       },

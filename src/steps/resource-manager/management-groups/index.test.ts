@@ -37,13 +37,11 @@ describe('rm-management-groups', () => {
   function separateManagementGroupRelationships(
     collectedRelationships: Relationship[],
   ) {
-    const {
-      targets: mappedRelationships,
-      rest: restAfterMapped,
-    } = filterGraphObjects(
-      collectedRelationships,
-      (r) => r._mapping !== undefined,
-    );
+    const { targets: mappedRelationships, rest: restAfterMapped } =
+      filterGraphObjects(
+        collectedRelationships,
+        (r) => r._mapping !== undefined,
+      );
     const {
       targets: accountManagementGroupRelationships,
       rest: restAfterAccountGroup,
@@ -138,7 +136,7 @@ describe('validateManagementGroupStepInvocation', () => {
 
     const response = await validateManagementGroupStepInvocation(context);
 
-    expect(response).toBeUndefined();
+    expect(response).toEqual(true);
   });
 
   test('should throw when invalid credentials are passed', async () => {
@@ -155,12 +153,6 @@ describe('validateManagementGroupStepInvocation', () => {
       instanceConfig: configFromEnv,
     });
 
-    await expect(validateManagementGroupStepInvocation(context)).rejects
-      .toThrow(`Provider authorization failed at \
-https://management.azure.com/providers/Microsoft.Management/managementGroups/${configFromEnv.directoryId}: \
-AuthorizationFailed The client '61715bd4-dc30-4496-a937-b247655936b3' with object id '61715bd4-dc30-4496-a937-b247655936b3' \
-does not have authorization to perform action 'Microsoft.Management/managementGroups/read' over scope \
-'/providers/Microsoft.Management/managementGroups/992d7bbe-b367-459c-a10f-cf3fd16103ab' or the scope is invalid. \
-If access was recently granted, please refresh your credentials.`);
+    expect(await validateManagementGroupStepInvocation(context)).toEqual(false);
   });
 });

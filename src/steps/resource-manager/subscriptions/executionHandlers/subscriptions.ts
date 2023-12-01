@@ -73,7 +73,12 @@ export async function fetchAllSkippedSubscriptions(
       const subscriptionWithDetails = await client.fetchSubscription(
         subscription.subscriptionId!,
       );
-      if ((subscriptionWithDetails as any).tags?.JupiterOne === 'SKIP') {
+      if (
+        (subscription as any).tags?.JupiterOne === 'SKIP' ||
+        (subscription as any).tags?.jupiterone === 'skip' ||
+        ((subscription as any).tags &&
+          (subscription as any).tags['j1-integration'] === 'SKIP')
+      ) {
         const subscriptionEntity = createSubscriptionEntity(
           webLinker,
           subscriptionWithDetails as Subscription,

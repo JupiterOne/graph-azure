@@ -6,7 +6,7 @@ import {
 } from '@jupiterone/integration-sdk-testing';
 
 import config from '../../../test/integrationInstanceConfig';
-import { Client, request } from './client';
+import { Client, DEFAULT_MAX_RETRIES, request } from './client';
 import { setupAzureRecording } from '../../../test/helpers/recording';
 
 import { FetchError } from 'node-fetch';
@@ -238,4 +238,22 @@ test('request should expose Azure RestError status and text when message is Stri
   ).rejects.toThrow(
     'Provider API failed at fake-resource: 401 Please register to Microsoft.Security in order to view your security status',
   );
+});
+
+test('Should retry after failing once ', async () => {
+  let counter = 0;
+
+  await expect(
+    async () =>
+      await request(
+        () => {
+          counter++;
+          throw new Error();
+        },
+        createMockIntegrationLogger(),
+        'fake-resource',
+        100,
+      ),
+  ).rejects.toThrow();
+  expect(counter).toEqual(DEFAULT_MAX_RETRIES);
 });

@@ -4,7 +4,6 @@ import {
   createMappedRelationship,
   RelationshipDirection,
   IntegrationExecutionContext,
-  IntegrationProviderAuthorizationError,
   IntegrationWarnEventName,
 } from '@jupiterone/integration-sdk-core';
 
@@ -30,7 +29,9 @@ import { INGESTION_SOURCE_IDS } from '../../../constants';
 export async function fetchManagementGroups(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  await validateManagementGroupStepInvocation(executionContext);
+  if (!(await validateManagementGroupStepInvocation(executionContext))) {
+    return;
+  }
 
   const { instance, logger, jobState } = executionContext;
   const accountEntity = await getAccountEntity(jobState);
@@ -56,7 +57,7 @@ export async function fetchManagementGroups(
 
 export async function validateManagementGroupStepInvocation(
   context: IntegrationExecutionContext<IntegrationConfig>,
-) {
+): Promise<boolean> {
   const client = new ManagementGroupClient(
     context.instance.config,
     context.logger,
@@ -64,17 +65,13 @@ export async function validateManagementGroupStepInvocation(
   const tenantId = context.instance.config.directoryId;
   try {
     await client.getManagementGroup(tenantId);
+    return true;
   } catch (err) {
     context.logger.publishWarnEvent({
       name: IntegrationWarnEventName.MissingPermission,
       description: `Error validating call to fetch the Tenant Root Management Group (https://management.azure.com/providers/Microsoft.Management/managementGroups/${tenantId}). Please grant the "Management Group Reader" role on the Tenant Root Group in order to fetch management group entities/relationships.`,
     });
-    throw new IntegrationProviderAuthorizationError({
-      cause: err,
-      status: err.status || err.code,
-      statusText: err.statusText || err.message,
-      endpoint: `https://management.azure.com/providers/Microsoft.Management/managementGroups/${tenantId}`,
-    });
+    return false;
   }
 }
 

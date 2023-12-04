@@ -1,3 +1,15 @@
+# v5.54.4 (Mon Dec 04 2023)
+
+#### 🐛 Bug Fix
+
+- Int 10054: add error handling [#611](https://github.com/JupiterOne/graph-azure/pull/611) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.54.3 (Fri Dec 01 2023)
 
 #### 🐛 Bug Fix

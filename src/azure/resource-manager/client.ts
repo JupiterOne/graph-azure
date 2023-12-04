@@ -366,8 +366,6 @@ export async function request<T extends ResourceResponse>(
         status = err.code!;
         statusText = err.message;
       } else {
-        console.log(err);
-        console.log(Object.getOwnPropertyNames(err));
         status = err.statusCode;
         statusText = err.statusText;
       }

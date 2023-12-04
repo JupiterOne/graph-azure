@@ -61,7 +61,7 @@ export abstract class Client {
       this.config.clientId,
       this.config.clientSecret,
       {
-        additionallyAllowedTenants: [],
+        additionallyAllowedTenants: ['*'],
       },
     );
   }
@@ -94,7 +94,11 @@ export abstract class Client {
     },
   ): Promise<T> {
     if (!this.auth) {
-      this.auth = await authenticate(this.config);
+      this.auth = await retryResourceRequest(
+        async () => await authenticate(this.config),
+        FIVE_MINUTES,
+        this.logger,
+      );
     }
     const client = createClient(ctor, {
       auth: this.auth,

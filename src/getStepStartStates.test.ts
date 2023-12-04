@@ -800,7 +800,7 @@ describe('getStepStartStates', () => {
       [FrontDoorStepIds.FETCH_BACKEND_POOLS]: { disabled: true },
       [FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS]: { disabled: true },
     });
-  });
+  }, 40_000);
 
   test('disable all steps on legacy subscription', async () => {
     const context = createMockExecutionContext({

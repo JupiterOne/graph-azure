@@ -632,7 +632,7 @@ describe('getStepStartStates', () => {
       [FrontDoorStepIds.FETCH_BACKEND_POOLS]: { disabled: false },
       [FrontDoorStepIds.FETCH_FRONTEND_ENDPOINTS]: { disabled: false },
     });
-  });
+  }, 100_000);
 
   test('configureSubscriptionInstances: true', async () => {
     const context = createMockExecutionContext({

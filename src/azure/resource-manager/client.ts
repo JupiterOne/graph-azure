@@ -61,7 +61,7 @@ export abstract class Client {
       this.config.clientId,
       this.config.clientSecret,
       {
-        additionallyAllowedTenants: [],
+        additionallyAllowedTenants: ['*'],
       },
     );
   }
@@ -94,7 +94,11 @@ export abstract class Client {
     },
   ): Promise<T> {
     if (!this.auth) {
-      this.auth = await authenticate(this.config);
+      this.auth = await retryResourceRequest(
+        async () => await authenticate(this.config),
+        FIVE_MINUTES,
+        this.logger,
+      );
     }
     const client = createClient(ctor, {
       auth: this.auth,
@@ -178,7 +182,19 @@ function retryResourceRequest<ResponseType>(
       //
       // Non Azure `RestError`s, such as ECONNRESET, should be retried.
       handleError: async (err, context, _options) => {
-        if (err instanceof AzureRestError && err.statusCode !== 429) {
+        if (
+          err?.message &&
+          typeof err?.message == 'string' &&
+          err.message.includes('Get Token request returned http error: 4')
+        ) {
+          logger.info(
+            {
+              err,
+            },
+            'Encountered non-retryable error in Get Token request client.',
+          );
+          context.abort();
+        } else if (err instanceof AzureRestError && err.statusCode !== 429) {
           logger.info(
             {
               err,

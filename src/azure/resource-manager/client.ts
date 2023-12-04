@@ -182,7 +182,19 @@ function retryResourceRequest<ResponseType>(
       //
       // Non Azure `RestError`s, such as ECONNRESET, should be retried.
       handleError: async (err, context, _options) => {
-        if (err instanceof AzureRestError && err.statusCode !== 429) {
+        if (
+          err?.message &&
+          typeof err?.message == 'string' &&
+          err.message.includes('Get Token request returned http error: 4')
+        ) {
+          logger.info(
+            {
+              err,
+            },
+            'Encountered non-retryable error in Get Token request client.',
+          );
+          context.abort();
+        } else if (err instanceof AzureRestError && err.statusCode !== 429) {
           logger.info(
             {
               err,
@@ -354,6 +366,8 @@ export async function request<T extends ResourceResponse>(
         status = err.code!;
         statusText = err.message;
       } else {
+        console.log(err);
+        console.log(Object.getOwnPropertyNames(err));
         status = err.statusCode;
         statusText = err.statusText;
       }

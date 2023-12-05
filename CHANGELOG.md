@@ -1,3 +1,15 @@
+# v5.54.5 (Tue Dec 05 2023)
+
+#### 🐛 Bug Fix
+
+- Handle key and secret permissions errors [#612](https://github.com/JupiterOne/graph-azure/pull/612) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.54.4 (Mon Dec 04 2023)
 
 #### 🐛 Bug Fix

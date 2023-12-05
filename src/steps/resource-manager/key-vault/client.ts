@@ -67,7 +67,7 @@ export class KeyVaultClient extends Client {
         );
         this.logger.publishWarnEvent({
           name: IntegrationWarnEventName.MissingEntity,
-          description: `This tenant/application is not allowed to access to keys for vault ${vaultUri}`,
+          description: `This tenant/application is not allowed to access keys for vault ${vaultUri}`,
         });
       } else {
         throw err;
@@ -106,11 +106,11 @@ export class KeyVaultClient extends Client {
         //using another tenant. For now, lets just skip this cases.
         this.logger.warn(
           { err: err, vaultUri: vaultUri },
-          'Failed to retrieve a VaultSevret',
+          'Failed to retrieve a VaultSecret',
         );
         this.logger.publishWarnEvent({
           name: IntegrationWarnEventName.MissingEntity,
-          description: `This tenant/application is not allowed to access to secrets for vault ${vaultUri}`,
+          description: `This tenant/application is not allowed to access secrets for vault ${vaultUri}`,
         });
       } else {
         throw err;

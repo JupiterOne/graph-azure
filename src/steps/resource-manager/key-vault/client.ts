@@ -54,6 +54,21 @@ export class KeyVaultClient extends Client {
           name: IntegrationWarnEventName.MissingPermission,
           description: `Missing a Key Vault access policy. A Key Vault access policy determines whether a given security principal can perform different operations on Key Vault secrets, keys and certificates. Please follow the steps outlined here https://go.microsoft.com/fwlink/?linkid=2125287 and assign a "list" key permission in order to fetch these keys for your Key Vault ${vaultUri}.`,
         });
+      } else if (
+        err.statusCode === 401 &&
+        err.message.toString().includes('AKV10032')
+      ) {
+        //https://learn.microsoft.com/en-us/azure/storage/common/customer-managed-keys-configure-cross-tenant-existing-account?tabs=azure-portal
+        //We could have cases where an AD has the keyvault but we need to access the keys
+        //using another tenant. For now, lets just skip this cases.
+        this.logger.warn(
+          { err: err, vaultUri: vaultUri },
+          'Failed to retrieve a VaultKey',
+        );
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingEntity,
+          description: `This tenant/application is not allowed to access keys for vault ${vaultUri}`,
+        });
       } else {
         throw err;
       }
@@ -81,6 +96,21 @@ export class KeyVaultClient extends Client {
         this.logger.publishWarnEvent({
           name: IntegrationWarnEventName.MissingPermission,
           description: `Missing a Key Vault access policy. A Key Vault access policy determines whether a given security principal can perform different operations on Key Vault secrets, keys and certificates. Please follow the steps outlined here https://go.microsoft.com/fwlink/?linkid=2125287 and assign a "list" secret permission in order to fetch these secrets for your Key Vault ${vaultUri}.`,
+        });
+      } else if (
+        err.statusCode === 401 &&
+        err.message.toString().includes('AKV10032')
+      ) {
+        //https://learn.microsoft.com/en-us/azure/storage/common/customer-managed-keys-configure-cross-tenant-existing-account?tabs=azure-portal
+        //We could have cases where an AD has the keyvault but we need to access the secrets
+        //using another tenant. For now, lets just skip this cases.
+        this.logger.warn(
+          { err: err, vaultUri: vaultUri },
+          'Failed to retrieve a VaultSecret',
+        );
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingEntity,
+          description: `This tenant/application is not allowed to access secrets for vault ${vaultUri}`,
         });
       } else {
         throw err;

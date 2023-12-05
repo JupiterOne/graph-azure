@@ -60,9 +60,6 @@ export abstract class Client {
       this.config.directoryId,
       this.config.clientId,
       this.config.clientSecret,
-      {
-        additionallyAllowedTenants: ['*'],
-      },
     );
   }
 

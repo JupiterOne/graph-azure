@@ -1,3 +1,20 @@
+# v5.54.6 (Wed Dec 06 2023)
+
+#### 🐛 Bug Fix
+
+- Remove configuration [#613](https://github.com/JupiterOne/graph-azure/pull/613) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### ⚠️ Pushed to `main`
+
+- Fix x-cortex-service-groups where tier-4 was set incorrectly ([@jablonnc](https://github.com/jablonnc))
+
+#### Authors: 2
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+- Noah Jablonski ([@jablonnc](https://github.com/jablonnc))
+
+---
+
 # v5.54.5 (Tue Dec 05 2023)
 
 #### 🐛 Bug Fix

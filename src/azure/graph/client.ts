@@ -118,7 +118,7 @@ export abstract class GraphClient {
         delay: 200,
         handleError: (err, context, options) => {
           const endpoint = (graphRequest as any).buildFullUrl?.();
-          this.logger.info(
+          this.logger.warn(
             {
               err,
               endpoint,
@@ -131,7 +131,7 @@ export abstract class GraphClient {
             err.code === 'Authentication_ExpiredToken' ||
             err.code === 'InvalidAuthenticationToken'
           ) {
-            this.logger.info('Refreshing access token');
+            this.logger.debug('Refreshing access token');
             shouldRefreshAccessToken = true;
           }
         },

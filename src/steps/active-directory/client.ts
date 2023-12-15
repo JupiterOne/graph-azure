@@ -90,7 +90,7 @@ export class DirectoryGraphClient extends GraphClient {
     callback: (role: DirectoryRole) => void | Promise<void>,
   ): Promise<void> {
     const resourceUrl = '/directoryRoles';
-    this.logger.info('Iterating directory roles.');
+    this.logger.debug('Iterating directory roles.');
     return this.iterateResources({
       resourceUrl,
       callback,
@@ -103,7 +103,7 @@ export class DirectoryGraphClient extends GraphClient {
     callback: (member: DirectoryObject) => void | Promise<void>,
   ): Promise<void> {
     const resourceUrl = `/directoryRoles/${roleId}/members`;
-    this.logger.info({ roleId }, 'Iterating directory role members.');
+    this.logger.debug({ roleId }, 'Iterating directory role members.');
     return this.iterateResources({
       resourceUrl,
       callback,
@@ -115,7 +115,7 @@ export class DirectoryGraphClient extends GraphClient {
     callback: (user: Group) => void | Promise<void>,
   ): Promise<void> {
     const resourceUrl = '/groups';
-    this.logger.info('Iterating groups.');
+    this.logger.debug('Iterating groups.');
     return this.iterateResources({
       resourceUrl,
       callback,
@@ -129,7 +129,7 @@ export class DirectoryGraphClient extends GraphClient {
     try {
       const resourceUrl =
         '/reports/authenticationMethods/userRegistrationDetails';
-      this.logger.info('Iterating user registration details.');
+      this.logger.debug('Iterating user registration details.');
 
       return await this.iterateResources({
         resourceUrl,
@@ -160,7 +160,7 @@ export class DirectoryGraphClient extends GraphClient {
     callback: (user: GroupMember) => void | Promise<void>,
   ): Promise<void> {
     const resourceUrl = `/groups/${input.groupId}/members`;
-    this.logger.info({ groupId: input.groupId }, 'Iterating group members.');
+    this.logger.debug({ groupId: input.groupId }, 'Iterating group members.');
 
     return this.iterateResources({
       resourceUrl,
@@ -174,7 +174,7 @@ export class DirectoryGraphClient extends GraphClient {
     callback: (user: User) => void | Promise<void>,
   ): Promise<void> {
     const resourceUrl = '/users';
-    this.logger.info('Iterating users.');
+    this.logger.debug('Iterating users.');
     const defaultSelect = [
       'businessPhones',
       'displayName',
@@ -202,7 +202,7 @@ export class DirectoryGraphClient extends GraphClient {
     callback: (device: Device) => void | Promise<void>,
   ): Promise<void> {
     const resourceUrl = '/devices';
-    this.logger.info('Iterating devices.');
+    this.logger.debug('Iterating devices.');
     return this.iterateResources({
       resourceUrl,
       callback,
@@ -217,7 +217,7 @@ export class DirectoryGraphClient extends GraphClient {
     callback: (a: any) => void | Promise<void>,
   ): Promise<void> {
     const resourceUrl = '/servicePrincipals';
-    this.logger.info('Iterating service principals.');
+    this.logger.debug('Iterating service principals.');
     return this.iterateResources({
       resourceUrl,
       callback,

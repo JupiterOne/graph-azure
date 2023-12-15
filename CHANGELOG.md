@@ -1,3 +1,15 @@
+# v5.54.7 (Fri Dec 15 2023)
+
+#### 🐛 Bug Fix
+
+- [NOTICKET] Adjust log levels of erroneous messages [#614](https://github.com/JupiterOne/graph-azure/pull/614) ([@ImDevinC](https://github.com/ImDevinC))
+
+#### Authors: 1
+
+- Devin Collins ([@ImDevinC](https://github.com/ImDevinC))
+
+---
+
 # v5.54.6 (Wed Dec 06 2023)
 
 #### 🐛 Bug Fix

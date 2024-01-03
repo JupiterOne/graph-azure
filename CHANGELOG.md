@@ -1,3 +1,20 @@
+# v5.54.8 (Wed Jan 03 2024)
+
+#### 🐛 Bug Fix
+
+- DEVICE-369 - Add aadDeviceId to Devices [#615](https://github.com/JupiterOne/graph-azure/pull/615) ([@mknoedel](https://github.com/mknoedel))
+
+#### ⚠️ Pushed to `main`
+
+- Apply remove-codeql with multi-gitter [ci skip] ([@electricgull](https://github.com/electricgull))
+
+#### Authors: 2
+
+- Cameron Griffin ([@electricgull](https://github.com/electricgull))
+- Michael Knoedel ([@mknoedel](https://github.com/mknoedel))
+
+---
+
 # v5.54.7 (Fri Dec 15 2023)
 
 #### 🐛 Bug Fix

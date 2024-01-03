@@ -137,7 +137,7 @@ export function createUserEntity(
         mfaMethods: registrationDetails?.methodsRegistered,
         accountEnabled: data.accountEnabled,
         officeLocation: data.officeLocation,
-        usageLocation: data.usageLocation
+        usageLocation: data.usageLocation,
       },
     },
   });
@@ -201,6 +201,7 @@ export function createDeviceEntity(
           (registeredUser) => registeredUser.id || '',
         ),
         deviceId: data.deviceId,
+        aadDeviceId: data.deviceId,
         category: data.deviceCategory,
         make: data.manufacturer || 'Unknown',
         model: data.model || 'Unknown',

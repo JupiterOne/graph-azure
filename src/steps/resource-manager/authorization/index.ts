@@ -33,7 +33,6 @@ import {
 } from '@azure/arm-authorization/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
 import { Subscription } from '@azure/arm-subscriptions/esm/models';
-import { getResourceManagerSteps } from '../../../getStepStartStates';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
 
 export async function fetchRoleAssignments(
@@ -283,11 +282,9 @@ export const authorizationSteps: AzureIntegrationStep[] = [
     name: 'Role Assignment to Scope Relationships',
     entities: [],
     relationships: [relationships.ROLE_ASSIGNMENT_ALLOWS_ANY_SCOPE],
-    dependsOn: [
-      steps.ROLE_ASSIGNMENTS,
-      ...getResourceManagerSteps().executeFirstSteps,
-    ],
+    dependsOn: [],
     executionHandler: buildRoleAssignmentScopeRelationships,
+    dependencyGraphId: 'last',
     ingestionSourceId: INGESTION_SOURCE_IDS.AUTHORIZATION,
   },
   {

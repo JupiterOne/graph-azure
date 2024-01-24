@@ -48,22 +48,16 @@ export class J1ApiManagementClient extends Client {
       do {
         const apiManagement: any = await request(
           async () =>
-            nextPageLink
-              ? await serviceClient.sendOperationRequest(
-                  {
-                    resourceGroupName: resourceGroup,
-                    serviceName: serviceName,
-                    nextLink: nextPageLink,
-                  },
-                  listByServiceNextOperationSpec,
-                )
-              : await serviceClient.sendOperationRequest(
-                  {
-                    resourceGroupName: resourceGroup,
-                    serviceName: serviceName,
-                  },
-                  listByServiceOperationSpec,
-                ),
+            await serviceClient.sendOperationRequest(
+              {
+                resourceGroupName: resourceGroup,
+                serviceName: serviceName,
+                nextLink: nextPageLink,
+              },
+              nextPageLink
+                ? listByServiceNextOperationSpec
+                : listByServiceOperationSpec,
+            ),
           this.logger,
           'api.Management.ServiceApis',
           FIVE_MINUTES,

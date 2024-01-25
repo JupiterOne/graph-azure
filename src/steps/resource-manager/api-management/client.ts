@@ -5,9 +5,16 @@ import {
 } from '@azure/arm-apimanagement/esm/models';
 import {
   Client,
+  FIVE_MINUTES,
   iterateAllResources,
+  request,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
+import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
+import {
+  listByServiceNextOperationSpec,
+  listByServiceOperationSpec,
+} from './parameters';
 
 export class J1ApiManagementClient extends Client {
   public async iterateApiManagementServices(
@@ -36,21 +43,44 @@ export class J1ApiManagementClient extends Client {
     const resourceGroup = resourceGroupName(apiService.id, true)!;
     const serviceName = apiService.name!;
 
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.api.listByService(resourceGroup, serviceName);
-        },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.api.listByServiceNext(nextLink);
-        },
-      },
-      resourceDescription: 'apiManagement.api',
-      callback,
-    });
+    try {
+      let nextPageLink: string | undefined;
+      do {
+        const apiManagement: any = await request(
+          async () =>
+            await serviceClient.sendOperationRequest(
+              {
+                resourceGroupName: resourceGroup,
+                serviceName: serviceName,
+                nextLink: nextPageLink,
+              },
+              nextPageLink
+                ? listByServiceNextOperationSpec
+                : listByServiceOperationSpec,
+            ),
+          this.logger,
+          'api.Management.ServiceApis',
+          FIVE_MINUTES,
+        );
+        for (const service of apiManagement || []) {
+          await callback(service);
+        }
+        nextPageLink = apiManagement?.nexLink;
+      } while (nextPageLink);
+    } catch (error) {
+      if (error.status === 403) {
+        this.logger.warn(
+          { error, resourceUrl: resourceGroupName },
+          'Encountered auth error in Azure Graph client.',
+        );
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingPermission,
+          description: `Received authorization error when attempting to call ${resourceGroup}. Please update credentials to grant access.`,
+        });
+        return;
+      } else {
+        throw error;
+      }
+    }
   }
 }

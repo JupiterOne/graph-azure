@@ -415,6 +415,7 @@ The following relationships are created:
 | Source Entity `_type`              | Relationship `_class` | Target Entity `_type`                             |
 | ---------------------------------- | --------------------- | ------------------------------------------------- |
 | `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
+| `ANY_RESOURCE`                     | **GENERATED**         | `azure_shared_image_version`                      |
 | `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
 | `ANY_SCOPE`                        | **HAS**               | `azure_diagnostic_setting`                        |
 | `ANY_SCOPE`                        | **HAS**               | `azure_policy_assignment`                         |
@@ -567,6 +568,7 @@ The following relationships are created:
 | `azure_vm`                         | **GENERATED**         | `azure_shared_image_version`                      |
 | `azure_vm`                         | **USES**              | `azure_shared_image_version`                      |
 | `azure_vm`                         | **USES**              | `azure_storage_account`                           |
+| `azure_vm`                         | **USES**              | `azure_vm_extension`                              |
 | `azure_vm`                         | **USES**              | `azure_vm_scale_set`                              |
 | `azure_vm_scale_set`               | **USES**              | `azure_shared_image`                              |
 | `azure_vnet`                       | **CONTAINS**          | `azure_subnet`                                    |

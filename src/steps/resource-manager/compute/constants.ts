@@ -6,6 +6,7 @@ import { SERVICE_PRINCIPAL_ENTITY_TYPE } from '../../active-directory/constants'
 
 import { entities as storageEntities } from '../storage/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
+import { ANY_RESOURCE } from '../constants';
 
 // Step IDs
 export const steps = {
@@ -63,6 +64,7 @@ export const entities = {
     resourceName: '[RM] Azure Managed Disk',
     _type: 'azure_managed_disk',
     _class: ['DataStore', 'Disk'],
+    disableClassMatch: true,
   },
   VIRTUAL_MACHINE: {
     resourceName: '[RM] Virtual Machine',
@@ -164,5 +166,17 @@ export const relationships = {
     sourceType: entities.VIRTUAL_MACHINE_SCALE_SET._type,
     _class: RelationshipClass.USES,
     targetType: entities.SHARED_IMAGE._type,
+  },
+  RESOURCE_GENERATED_IMAGE_SOURCE: {
+    _type: 'mapping_source_generated_azure_image_source',
+    sourceType: ANY_RESOURCE,
+    _class: RelationshipClass.GENERATED,
+    targetType: entities.SHARED_IMAGE_VERSION._type,
+  },
+  VM_USES_EXTENSIONS: {
+    _type: 'azure_vm_uses_extension',
+    sourceType: entities.VIRTUAL_MACHINE._type,
+    _class: RelationshipClass.USES,
+    targetType: entities.VIRTUAL_MACHINE_EXTENSION._type,
   },
 };

@@ -29,6 +29,7 @@ import {
   createVirtualMachineExtensionEntity,
   createVMScaleSetsEntity,
   getVirtualMachineExtensionKey,
+  makeResourceGroupUppercase,
   VirtualMachineExtensionSharedProperties,
 } from './converters';
 import createResourceGroupResourceRelationship, {
@@ -90,7 +91,6 @@ export async function fetchGalleryImages(
         async (image) => {
           const sharedImageEntity = createSharedImage(webLinker, image);
           await jobState.addEntity(sharedImageEntity);
-
           await jobState.addRelationship(
             createDirectRelationship({
               _class: RelationshipClass.CONTAINS,
@@ -155,13 +155,14 @@ export async function buildGalleryImageVersionSourceRelationships(
 
       const sourceId = imageVersion?.storageProfile.source?.id;
       if (!sourceId) return;
-
       const sourceEntity = await jobState.findEntity(sourceId);
-
-      if (sourceEntity) {
+      const lowerCaseSourceEntity = await jobState.findEntity(
+        sourceId.toLowerCase(),
+      );
+      if (sourceEntity || lowerCaseSourceEntity) {
         await jobState.addRelationship(
           createDirectRelationship({
-            from: sourceEntity,
+            from: (sourceEntity ?? lowerCaseSourceEntity)!,
             _class: RelationshipClass.GENERATED,
             to: imageVersionEntity,
           }),
@@ -550,7 +551,9 @@ export async function buildVirtualMachineImageRelationships(
       if (!imageRefId) {
         return;
       }
-      const imageEntity = await jobState.findEntity(imageRefId);
+      const imageEntity =
+        (await jobState.findEntity(imageRefId)) ??
+        (await jobState.findEntity(makeResourceGroupUppercase(imageRefId)));
       if (imageEntity) {
         relationships.push(
           createDirectRelationship({
@@ -603,7 +606,6 @@ export async function buildVirtualMachineManagedIdentityRelationships(
     { _type: entities.VIRTUAL_MACHINE._type },
     async (vmEntity) => {
       const vm = getRawData<VirtualMachine>(vmEntity);
-
       if (
         vm?.identity?.type === 'SystemAssigned' ||
         vm?.identity?.type === 'SystemAssigned, UserAssigned'
@@ -753,7 +755,9 @@ export async function buildVMScaleSetsImageRelationship(
       if (!imageRefId) {
         return;
       }
-      const imageEntity = await jobState.findEntity(imageRefId);
+      const imageEntity =
+        (await jobState.findEntity(imageRefId)) ??
+        (await jobState.findEntity(makeResourceGroupUppercase(imageRefId)));
       if (imageEntity) {
         relationships.push(
           createDirectRelationship({
@@ -805,6 +809,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     entities: [],
     relationships: [
       relationships.VIRTUAL_MACHINE_GENERATED_SHARED_IMAGE_VERSION,
+      relationships.RESOURCE_GENERATED_IMAGE_SOURCE,
     ],
     dependsOn: [steps.SHARED_IMAGE_VERSIONS, steps.COMPUTE_VIRTUAL_MACHINES],
     executionHandler: buildGalleryImageVersionSourceRelationships,
@@ -870,7 +875,7 @@ export const computeSteps: AzureIntegrationStep[] = [
     id: steps.VIRTUAL_MACHINE_EXTENSIONS,
     name: 'Virtual Machine Extensions',
     entities: [entities.VIRTUAL_MACHINE_EXTENSION],
-    relationships: [],
+    relationships: [relationships.VIRTUAL_MACHINE_USES_EXTENSION],
     dependsOn: [STEP_AD_ACCOUNT, steps.COMPUTE_VIRTUAL_MACHINES],
     executionHandler: fetchVirtualMachineExtensions,
     rolePermissions: ['Microsoft.Compute/virtualMachines/extensions/read'],

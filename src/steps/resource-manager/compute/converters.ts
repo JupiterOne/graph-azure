@@ -394,3 +394,13 @@ export function createVMScaleSetsEntity(
 export const testFunctions = {
   usesManagedDisks,
 };
+export function makeResourceGroupUppercase(id: string) {
+  const splittedId = id.split('/');
+  const newId = splittedId.reduce((prev, current, index) => {
+    if (index == 4) {
+      return prev + '/' + current.toUpperCase();
+    }
+    return (prev ?? '') + '/' + current;
+  });
+  return newId;
+}

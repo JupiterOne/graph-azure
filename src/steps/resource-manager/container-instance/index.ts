@@ -129,7 +129,6 @@ export async function fetchContainerGroups(
             executionContext,
             containerGroupEntity,
           );
-
           /**
            * NOTE: There is not call/function in the Container Instance Management Client to get volumes by container group.
            * Instead, volumes are returned in an array on the container group.
@@ -189,7 +188,6 @@ export async function fetchContainerGroups(
              * NOTE: If the Container is connected to a Volume via a volumeMount,
              * we want to record that relationship.
              */
-
             for (const volumeMount of container.volumeMounts || []) {
               const volumeKey = `${id}/volumes/${volumeMount.name}`;
               // Find the previously tracked volume so that we can record a relationship between the container and the volume
@@ -237,6 +235,7 @@ export const containerInstanceSteps: AzureIntegrationStep[] = [
       STEP_AD_ACCOUNT,
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
       storageSteps.STORAGE_ACCOUNTS,
+      storageSteps.STORAGE_FILE_SHARES,
     ],
     executionHandler: fetchContainerGroups,
     rolePermissions: ['Microsoft.ContainerInstance/containerGroups/read'],

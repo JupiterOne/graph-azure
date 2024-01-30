@@ -32,6 +32,7 @@ import {
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../../resources/constants';
 import { Server } from '@azure/arm-sql/esm/models';
 import { INGESTION_SOURCE_IDS } from '../../../../constants';
+import { steps as storageSteps } from '../../storage/constants';
 
 export async function fetchSQLServers(
   executionContext: IntegrationStepContext,
@@ -226,7 +227,7 @@ export const sqlSteps: AzureIntegrationStep[] = [
     relationships: [
       ...getDiagnosticSettingsRelationshipsForResource(entities.SERVER),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
+    dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS, storageSteps.STORAGE_ACCOUNTS],
     executionHandler: fetchSQLServerDiagnosticSettings,
     rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,

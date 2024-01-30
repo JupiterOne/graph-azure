@@ -28,6 +28,7 @@ import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../../resources/constants';
 import { Server } from '@azure/arm-postgresql/esm/models';
 import { createPosgreSqlServerFirewallRuleEntity } from './converters';
 import { INGESTION_SOURCE_IDS } from '../../../../constants';
+import { steps as storageSteps } from '../../storage/constants';
 
 export async function fetchPostgreSQLServers(
   executionContext: IntegrationStepContext,
@@ -146,7 +147,11 @@ export const postgreSqlSteps: AzureIntegrationStep[] = [
         PostgreSQLEntities.SERVER,
       ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      storageSteps.STORAGE_ACCOUNTS,
+    ],
     executionHandler: fetchPostgreSQLServers,
     rolePermissions: [
       'Microsoft.Insights/DiagnosticSettings/Read',

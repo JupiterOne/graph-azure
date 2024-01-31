@@ -434,7 +434,6 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
         endpointRatePeriod,
         maxRetryAttempts,
       );
-
       if (response) {
         logger.debug(
           {
@@ -444,11 +443,24 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
           },
           'Received resources for endpoint',
         );
-
         for (const e of response) {
           await callback(e, serviceClient);
         }
-
+        // On some cases the event grid would return
+        // an invalid next link, it would follow the shape of
+        // skiptoken=[{"token":null,"range":{"min":"05C1DF6B5557E0","max":"FF"}}] inside the uri
+        // when we call that next link, it hangs. I believe this also might be happening on other steps.
+        // Check the recording for 'rm-event-grid-domain-topic-subscriptions'
+        if (
+          response.nextLink &&
+          decodeURIComponent(response.nextLink)?.includes('"token":null')
+        ) {
+          logger.info(
+            { nextLink },
+            'Iteration stopped because of invalid skiptoken',
+          );
+          return;
+        }
         nextLink = response.nextLink;
       }
     } while (nextLink);

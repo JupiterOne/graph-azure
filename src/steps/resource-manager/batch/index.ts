@@ -35,6 +35,7 @@ import {
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { BatchAccount } from '@azure/arm-batch/esm/models';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchBatchAccounts(
   executionContext: IntegrationStepContext,
@@ -203,7 +204,11 @@ export const batchSteps: AzureIntegrationStep[] = [
         BatchEntities.BATCH_ACCOUNT,
       ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      storageSteps.STORAGE_ACCOUNTS,
+    ],
     executionHandler: fetchBatchAccounts,
     rolePermissions: [
       'Microsoft.Batch/batchAccounts/read',

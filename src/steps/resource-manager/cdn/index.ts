@@ -23,6 +23,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchProfiles(
   executionContext: IntegrationStepContext,
@@ -95,7 +96,11 @@ export const cdnSteps: AzureIntegrationStep[] = [
       CdnRelationships.RESOURCE_GROUP_HAS_PROFILE,
       ...getDiagnosticSettingsRelationshipsForResource(CdnEntities.PROFILE),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      storageSteps.STORAGE_ACCOUNTS,
+    ],
     executionHandler: fetchProfiles,
     rolePermissions: [
       'Microsoft.Cdn/profiles/read',

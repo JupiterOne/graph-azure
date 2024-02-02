@@ -77,11 +77,9 @@ test('rm-advisor-resource-recommendation-relationships', async () => {
       },
       options: {
         recordFailedRequests: true,
-        matchRequestsBy: {
-          ...getMatchRequestsBy({
-            config: stepTestConfig.instanceConfig,
-          }),
-        },
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
       },
     },
     stepTestConfig.instanceConfig,
@@ -92,4 +90,4 @@ test('rm-advisor-resource-recommendation-relationships', async () => {
     dependencyStepIds: [AdvisorSteps.RECOMMENDATIONS, STEP_RM_BATCH_ACCOUNT],
   });
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
-}, 10_000);
+}, 100_000);

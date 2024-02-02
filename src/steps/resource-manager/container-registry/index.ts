@@ -26,6 +26,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchContainerRegistries(
   executionContext: IntegrationStepContext,
@@ -104,7 +105,11 @@ export const containerRegistrySteps: AzureIntegrationStep[] = [
         ContainerRegistryEntities.REGISTRY,
       ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      storageSteps.STORAGE_ACCOUNTS,
+    ],
     executionHandler: fetchContainerRegistries,
     rolePermissions: [
       'Microsoft.ContainerRegistry/registries/read',

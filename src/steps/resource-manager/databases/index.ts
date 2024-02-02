@@ -16,6 +16,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { steps as storageSteps } from '../storage/constants';
 
 export const databaseSteps: AzureIntegrationStep[] = [
   {
@@ -31,7 +32,11 @@ export const databaseSteps: AzureIntegrationStep[] = [
       MariaDBRelationships.MARIADB_SERVER_HAS_MARIADB_DATABASE,
       ...getDiagnosticSettingsRelationshipsForResource(MariaDBEntities.SERVER),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      storageSteps.STORAGE_ACCOUNTS,
+    ],
     executionHandler: fetchMariaDBDatabases,
     rolePermissions: [
       'Microsoft.DBforMariaDB/servers/databases/read',
@@ -53,7 +58,11 @@ export const databaseSteps: AzureIntegrationStep[] = [
       MySQLRelationships.MYSQL_SERVER_HAS_MYSQL_DATABASE,
       ...getDiagnosticSettingsRelationshipsForResource(MySQLEntities.SERVER),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_RESOURCES_RESOURCE_GROUPS,
+      storageSteps.STORAGE_ACCOUNTS,
+    ],
     executionHandler: fetchMySQLDatabases,
     rolePermissions: [
       'Microsoft.DBforMySQL/servers/read',

@@ -32,7 +32,6 @@ export class CdnClient extends Client {
     );
     const resourceGroup = resourceGroupName(profile.id, true)!;
     const profileName = profile.name;
-
     return iterateAllResources({
       logger: this.logger,
       serviceClient,
@@ -43,11 +42,12 @@ export class CdnClient extends Client {
             profileName,
           );
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.endpoints.listByProfileNext(nextLink);
-        },
+        listNext:
+          /* istanbul ignore next: testing iteration might be difficult */ async (
+            nextLink: string,
+          ) => {
+            return serviceClient.endpoints.listByProfileNext(nextLink);
+          },
       },
       resourceDescription: 'cdn.endpoint',
       callback,

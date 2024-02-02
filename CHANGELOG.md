@@ -1,3 +1,20 @@
+# v6.0.0 (Fri Feb 02 2024)
+
+#### 💥 Breaking Change
+
+- Int 10207 - Change tests to execute with dependencies part 2 [#619](https://github.com/JupiterOne/graph-azure/pull/619) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### 🐛 Bug Fix
+
+- Int 10070 - Test using execute steps with depedencies. Part 1 [#618](https://github.com/JupiterOne/graph-azure/pull/618) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Int 10063 remove converter and client tests [#617](https://github.com/JupiterOne/graph-azure/pull/617) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.54.8 (Wed Jan 03 2024)
 
 #### 🐛 Bug Fix

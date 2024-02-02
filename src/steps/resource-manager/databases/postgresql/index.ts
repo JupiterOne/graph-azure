@@ -34,32 +34,43 @@ export async function fetchPostgreSQLServers(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await getAccountEntity(jobState);
-  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
-  const client = new PostgreSQLClient(instance.config, logger);
+  //INT-10292
+  try {
+    const accountEntity = await getAccountEntity(jobState);
+    const webLinker = createAzureWebLinker(
+      accountEntity.defaultDomain as string,
+    );
+    const client = new PostgreSQLClient(instance.config, logger);
 
-  await client.iterateServers(async (server) => {
-    const serverConfigurations = await client.getServerConfigurations({
-      name: server.name!,
-      id: server.id!,
+    await client.iterateServers(async (server) => {
+      const serverConfigurations = await client.getServerConfigurations({
+        name: server.name!,
+        id: server.id!,
+      });
+      const serverEntity = createDbServerEntity(
+        webLinker,
+        server,
+        PostgreSQLEntities.SERVER._type,
+        serverConfigurations,
+      );
+      await jobState.addEntity(serverEntity);
+      await createResourceGroupResourceRelationship(
+        executionContext,
+        serverEntity,
+      );
+
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        serverEntity,
+      );
     });
-    const serverEntity = createDbServerEntity(
-      webLinker,
-      server,
-      PostgreSQLEntities.SERVER._type,
-      serverConfigurations,
+  } catch (error) {
+    logger.info(
+      { error },
+      'An error happened while executing fetchPostgreSQLServers',
     );
-    await jobState.addEntity(serverEntity);
-    await createResourceGroupResourceRelationship(
-      executionContext,
-      serverEntity,
-    );
-
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-      executionContext,
-      serverEntity,
-    );
-  });
+    throw error;
+  }
 }
 
 export async function fetchPostgreSQLDatabases(

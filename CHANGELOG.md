@@ -1,3 +1,15 @@
+# v6.0.2 (Mon Feb 05 2024)
+
+#### 🐛 Bug Fix
+
+- Remove previously added depends on [#621](https://github.com/JupiterOne/graph-azure/pull/621) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v6.0.1 (Fri Feb 02 2024)
 
 #### 🐛 Bug Fix

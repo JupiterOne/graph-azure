@@ -26,7 +26,6 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
-import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchApiManagementServices(
   executionContext: IntegrationStepContext,
@@ -99,12 +98,9 @@ export const apiManagementSteps: AzureIntegrationStep[] = [
         ApiManagementEntities.SERVICE,
       ),
     ],
-    dependsOn: [
-      STEP_AD_ACCOUNT,
-      STEP_RM_RESOURCES_RESOURCE_GROUPS,
-      storageSteps.STORAGE_ACCOUNTS,
-    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApiManagementServices,
+    dependencyGraphId: 'last',
     rolePermissions: [
       'Microsoft.ApiManagement/service/read',
       'Microsoft.Insights/DiagnosticSettings/Read',

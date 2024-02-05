@@ -8,6 +8,9 @@ import {
   setupAzureRecording,
   getMatchRequestsBy,
 } from '../../../../test/helpers/recording';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
+import { steps as storageSteps } from '../storage/constants';
+import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 
 let recording: Recording;
 
@@ -34,7 +37,14 @@ test(
       stepTestConfig.instanceConfig,
     );
 
-    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    const stepResults = await executeStepWithDependencies({
+      ...stepTestConfig,
+      dependencyStepIds: [
+        STEP_AD_ACCOUNT,
+        STEP_RM_RESOURCES_RESOURCE_GROUPS,
+        storageSteps.STORAGE_ACCOUNTS,
+      ],
+    });
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
   100_000,
@@ -58,7 +68,14 @@ test(
       stepTestConfig.instanceConfig,
     );
 
-    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    const stepResults = await executeStepWithDependencies({
+      ...stepTestConfig,
+      dependencyStepIds: [
+        STEP_AD_ACCOUNT,
+        STEP_RM_CDN_PROFILE,
+        storageSteps.STORAGE_ACCOUNTS,
+      ],
+    });
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
   100_000,

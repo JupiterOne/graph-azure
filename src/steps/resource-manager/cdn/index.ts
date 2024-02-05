@@ -86,11 +86,6 @@ export async function fetchEndpoints(
               to: cdnEndpointEntity,
             }),
           );
-
-          await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-            executionContext,
-            cdnEndpointEntity,
-          );
         },
       );
     },
@@ -116,7 +111,7 @@ export const cdnSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_CDN_PROFILE,
     name: 'CDN Profiles',
-    entities: [CdnEntities.PROFILE, ...diagnosticSettingsEntitiesForResource],
+    entities: [CdnEntities.PROFILE],
     relationships: [CdnRelationships.RESOURCE_GROUP_HAS_PROFILE],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchProfiles,

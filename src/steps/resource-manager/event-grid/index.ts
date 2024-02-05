@@ -37,7 +37,6 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
-import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchEventGridDomains(
   executionContext: IntegrationStepContext,
@@ -242,11 +241,8 @@ export const eventGridSteps: AzureIntegrationStep[] = [
         EventGridEntities.DOMAIN,
       ),
     ],
-    dependsOn: [
-      STEP_AD_ACCOUNT,
-      STEP_RM_RESOURCES_RESOURCE_GROUPS,
-      storageSteps.STORAGE_ACCOUNTS,
-    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependencyGraphId: 'last',
     executionHandler: fetchEventGridDomains,
     rolePermissions: [
       'Microsoft.EventGrid/domains/read',
@@ -296,11 +292,8 @@ export const eventGridSteps: AzureIntegrationStep[] = [
       EventGridRelationships.RESOURCE_GROUP_HAS_TOPIC,
       ...getDiagnosticSettingsRelationshipsForResource(EventGridEntities.TOPIC),
     ],
-    dependsOn: [
-      STEP_AD_ACCOUNT,
-      STEP_RM_RESOURCES_RESOURCE_GROUPS,
-      storageSteps.STORAGE_ACCOUNTS,
-    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    dependencyGraphId: 'last',
     executionHandler: fetchEventGridTopics,
     rolePermissions: [
       'Microsoft.EventGrid/topics/read',

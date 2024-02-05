@@ -7,7 +7,8 @@ import { createResourceGroupResourceRelationshipMetadata } from '../utils/create
 // Fetch Resource Groups
 export const STEP_RM_API_MANAGEMENT_SERVICES = 'rm-api-management-services';
 export const STEP_RM_API_MANAGEMENT_APIS = 'rm-api-management-apis';
-
+export const STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS =
+  'm-api-management-services-diagnostic-settings';
 export const ApiManagementEntities = {
   SERVICE: {
     _type: 'azure_api_management_service',

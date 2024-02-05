@@ -65,6 +65,7 @@ import { steps as subscriptionSteps } from './steps/resource-manager/subscriptio
 import {
   STEP_RM_API_MANAGEMENT_SERVICES,
   STEP_RM_API_MANAGEMENT_APIS,
+  STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS,
 } from './steps/resource-manager/api-management/constants';
 import {
   STEP_RM_DNS_ZONES,
@@ -87,6 +88,7 @@ import {
 import {
   STEP_RM_CDN_PROFILE,
   STEP_RM_CDN_ENDPOINTS,
+  STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS,
 } from './steps/resource-manager/cdn/constants';
 import {
   STEP_RM_BATCH_ACCOUNT,
@@ -228,6 +230,7 @@ describe('getStepStartStates', () => {
       [subscriptionSteps.LOCATIONS]: { disabled: true },
       [subscriptionSteps.USAGE_DETAILS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
+      [STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
       [STEP_RM_DNS_ZONES]: { disabled: true },
       [STEP_RM_CONTAINER_SERVICES_CLUSTERS]: { disabled: true },
@@ -241,6 +244,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: true },
       [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_CDN_PROFILE]: { disabled: true },
+      [STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [STEP_RM_CDN_ENDPOINTS]: { disabled: true },
       [STEP_RM_BATCH_ACCOUNT]: { disabled: true },
       [STEP_RM_BATCH_POOL]: { disabled: true },
@@ -394,6 +398,7 @@ describe('getStepStartStates', () => {
       [subscriptionSteps.LOCATIONS]: { disabled: true },
       [subscriptionSteps.USAGE_DETAILS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
+      [STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
       [STEP_RM_DNS_ZONES]: { disabled: true },
       [STEP_RM_CONTAINER_SERVICES_CLUSTERS]: { disabled: true },
@@ -407,6 +412,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: true },
       [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_CDN_PROFILE]: { disabled: true },
+      [STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [STEP_RM_CDN_ENDPOINTS]: { disabled: true },
       [STEP_RM_BATCH_ACCOUNT]: { disabled: true },
       [STEP_RM_BATCH_POOL]: { disabled: true },
@@ -565,6 +571,9 @@ describe('getStepStartStates', () => {
       [subscriptionSteps.LOCATIONS]: { disabled: false },
       [subscriptionSteps.USAGE_DETAILS]: { disabled: false },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: false },
+      [STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS]: {
+        disabled: false,
+      },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: false },
       [STEP_RM_DNS_ZONES]: { disabled: false },
       [STEP_RM_CONTAINER_SERVICES_CLUSTERS]: { disabled: false },
@@ -578,6 +587,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: false },
       [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: false },
       [STEP_RM_CDN_PROFILE]: { disabled: false },
+      [STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS]: { disabled: false },
       [STEP_RM_CDN_ENDPOINTS]: { disabled: false },
       [STEP_RM_BATCH_ACCOUNT]: { disabled: false },
       [STEP_RM_BATCH_POOL]: { disabled: false },
@@ -735,6 +745,7 @@ describe('getStepStartStates', () => {
       [subscriptionSteps.LOCATIONS]: { disabled: true },
       [subscriptionSteps.USAGE_DETAILS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_SERVICES]: { disabled: true },
+      [STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [STEP_RM_API_MANAGEMENT_APIS]: { disabled: true },
       [STEP_RM_DNS_ZONES]: { disabled: true },
       [STEP_RM_CONTAINER_SERVICES_CLUSTERS]: { disabled: true },
@@ -748,6 +759,7 @@ describe('getStepStartStates', () => {
       [STEP_RM_SERVICE_BUS_TOPICS]: { disabled: true },
       [STEP_RM_SERVICE_BUS_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_CDN_PROFILE]: { disabled: true },
+      [STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS]: { disabled: true },
       [STEP_RM_CDN_ENDPOINTS]: { disabled: true },
       [STEP_RM_BATCH_ACCOUNT]: { disabled: true },
       [STEP_RM_BATCH_POOL]: { disabled: true },

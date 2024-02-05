@@ -13,6 +13,7 @@ import {
   ApiManagementRelationships,
   STEP_RM_API_MANAGEMENT_SERVICES,
   STEP_RM_API_MANAGEMENT_APIS,
+  STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS,
 } from './constants';
 import {
   createApiManagementServiceEntity,
@@ -26,6 +27,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchApiManagementServices(
   executionContext: IntegrationStepContext,
@@ -46,12 +48,21 @@ export async function fetchApiManagementServices(
       executionContext,
       apiManagementServiceEntity,
     );
-
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-      executionContext,
-      apiManagementServiceEntity,
-    );
   });
+}
+async function fetchDiagnosticSettingsForApiManagementServices(
+  executionContext: IntegrationStepContext,
+) {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: ApiManagementEntities.SERVICE._type },
+    async (apiManagementServiceEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        apiManagementServiceEntity,
+      );
+    },
+  );
 }
 
 export async function fetchApiManagementApis(
@@ -88,22 +99,25 @@ export const apiManagementSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_API_MANAGEMENT_SERVICES,
     name: 'API Management Services',
-    entities: [
-      ApiManagementEntities.SERVICE,
-      ...diagnosticSettingsEntitiesForResource,
-    ],
+    entities: [ApiManagementEntities.SERVICE],
+    relationships: [ApiManagementRelationships.RESOURCE_GROUP_HAS_SERVICE],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchApiManagementServices,
+    rolePermissions: ['Microsoft.ApiManagement/service/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.API_MANAGEMENT,
+  },
+  {
+    id: STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS,
+    name: 'API Management Services Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
     relationships: [
-      ApiManagementRelationships.RESOURCE_GROUP_HAS_SERVICE,
       ...getDiagnosticSettingsRelationshipsForResource(
         ApiManagementEntities.SERVICE,
       ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    executionHandler: fetchApiManagementServices,
-    rolePermissions: [
-      'Microsoft.ApiManagement/service/read',
-      'Microsoft.Insights/DiagnosticSettings/Read',
-    ],
+    dependsOn: [STEP_RM_API_MANAGEMENT_SERVICES, storageSteps.STORAGE_ACCOUNTS],
+    executionHandler: fetchDiagnosticSettingsForApiManagementServices,
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.API_MANAGEMENT,
   },
   {

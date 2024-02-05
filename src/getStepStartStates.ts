@@ -64,6 +64,7 @@ import { steps as subscriptionSteps } from './steps/resource-manager/subscriptio
 import {
   STEP_RM_API_MANAGEMENT_APIS,
   STEP_RM_API_MANAGEMENT_SERVICES,
+  STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS,
 } from './steps/resource-manager/api-management/constants';
 import {
   STEP_RM_DNS_ZONES,
@@ -86,6 +87,7 @@ import {
 import {
   STEP_RM_CDN_PROFILE,
   STEP_RM_CDN_ENDPOINTS,
+  STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS,
 } from './steps/resource-manager/cdn/constants';
 import {
   STEP_RM_BATCH_ACCOUNT,
@@ -224,6 +226,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       subscriptionSteps.LOCATIONS,
       subscriptionSteps.USAGE_DETAILS,
       STEP_RM_API_MANAGEMENT_SERVICES,
+      STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS,
       STEP_RM_API_MANAGEMENT_APIS,
       STEP_RM_CONTAINER_SERVICES_CLUSTERS,
       STEP_RM_DNS_ZONES,
@@ -237,6 +240,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_SERVICE_BUS_TOPICS,
       STEP_RM_SERVICE_BUS_SUBSCRIPTIONS,
       STEP_RM_CDN_PROFILE,
+      STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS,
       STEP_RM_CDN_ENDPOINTS,
       STEP_RM_BATCH_ACCOUNT,
       STEP_RM_BATCH_POOL,

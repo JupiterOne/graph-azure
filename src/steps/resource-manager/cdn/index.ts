@@ -96,7 +96,6 @@ export const cdnSteps: AzureIntegrationStep[] = [
       ...getDiagnosticSettingsRelationshipsForResource(CdnEntities.PROFILE),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
     executionHandler: fetchProfiles,
     rolePermissions: [
       'Microsoft.Cdn/profiles/read',
@@ -114,7 +113,6 @@ export const cdnSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CDN_PROFILE],
     executionHandler: fetchEndpoints,
-    dependencyGraphId: 'last',
     rolePermissions: [
       'Microsoft.Cdn/profiles/endpoints/read',
       'Microsoft.Insights/DiagnosticSettings/Read',

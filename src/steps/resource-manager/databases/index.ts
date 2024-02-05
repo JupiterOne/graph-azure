@@ -32,7 +32,6 @@ export const databaseSteps: AzureIntegrationStep[] = [
       ...getDiagnosticSettingsRelationshipsForResource(MariaDBEntities.SERVER),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
     executionHandler: fetchMariaDBDatabases,
     rolePermissions: [
       'Microsoft.DBforMariaDB/servers/databases/read',
@@ -55,7 +54,6 @@ export const databaseSteps: AzureIntegrationStep[] = [
       ...getDiagnosticSettingsRelationshipsForResource(MySQLEntities.SERVER),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
     executionHandler: fetchMySQLDatabases,
     rolePermissions: [
       'Microsoft.DBforMySQL/servers/read',

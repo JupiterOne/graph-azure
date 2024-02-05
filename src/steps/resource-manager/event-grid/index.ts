@@ -242,7 +242,6 @@ export const eventGridSteps: AzureIntegrationStep[] = [
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
     executionHandler: fetchEventGridDomains,
     rolePermissions: [
       'Microsoft.EventGrid/domains/read',
@@ -293,7 +292,6 @@ export const eventGridSteps: AzureIntegrationStep[] = [
       ...getDiagnosticSettingsRelationshipsForResource(EventGridEntities.TOPIC),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
     executionHandler: fetchEventGridTopics,
     rolePermissions: [
       'Microsoft.EventGrid/topics/read',

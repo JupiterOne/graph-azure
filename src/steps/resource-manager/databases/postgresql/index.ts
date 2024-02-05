@@ -158,7 +158,6 @@ export const postgreSqlSteps: AzureIntegrationStep[] = [
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
     executionHandler: fetchPostgreSQLServers,
     rolePermissions: [
       'Microsoft.Insights/DiagnosticSettings/Read',

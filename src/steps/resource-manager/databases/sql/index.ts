@@ -227,7 +227,6 @@ export const sqlSteps: AzureIntegrationStep[] = [
       ...getDiagnosticSettingsRelationshipsForResource(entities.SERVER),
     ],
     dependsOn: [STEP_AD_ACCOUNT, steps.SERVERS],
-    dependencyGraphId: 'last',
     executionHandler: fetchSQLServerDiagnosticSettings,
     rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,

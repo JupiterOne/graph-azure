@@ -100,7 +100,6 @@ export const apiManagementSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApiManagementServices,
-    dependencyGraphId: 'last',
     rolePermissions: [
       'Microsoft.ApiManagement/service/read',
       'Microsoft.Insights/DiagnosticSettings/Read',

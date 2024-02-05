@@ -204,7 +204,6 @@ export const batchSteps: AzureIntegrationStep[] = [
       ),
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
     executionHandler: fetchBatchAccounts,
     rolePermissions: [
       'Microsoft.Batch/batchAccounts/read',

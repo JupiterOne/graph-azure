@@ -1,3 +1,15 @@
+# v6.1.0 (Tue Feb 06 2024)
+
+#### 🚀 Enhancement
+
+- Separate the diagnostic settings into two different steps [#622](https://github.com/JupiterOne/graph-azure/pull/622) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v6.0.2 (Mon Feb 05 2024)
 
 #### 🐛 Bug Fix

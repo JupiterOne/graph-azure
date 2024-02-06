@@ -10,6 +10,8 @@ import {
 
 export const steps = {
   SERVERS: 'rm-database-postgresql-servers',
+  SERVERS_DIAGNOSTIC_SETTINGS:
+    'rm-database-postgresql-servers-diagnostic-settings',
   DATABASES: 'rm-database-postgresql-databases',
   SERVER_FIREWALL_RULES: 'rm-database-postgresql-server-firewall-rules',
 };
@@ -33,9 +35,10 @@ export const PostgreSQLEntities = {
 };
 
 export const PostgreSQLRelationships = {
-  RESOURCE_GROUP_HAS_POSTGRESQL_SERVER: createResourceGroupResourceRelationshipMetadata(
-    PostgreSQLEntities.SERVER._type,
-  ),
+  RESOURCE_GROUP_HAS_POSTGRESQL_SERVER:
+    createResourceGroupResourceRelationshipMetadata(
+      PostgreSQLEntities.SERVER._type,
+    ),
   POSTGRESQL_SERVER_HAS_POSTGRESQL_DATABASE: {
     _type: generateRelationshipType(
       RelationshipClass.HAS,

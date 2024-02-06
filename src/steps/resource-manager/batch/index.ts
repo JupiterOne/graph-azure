@@ -20,6 +20,7 @@ import {
   STEP_RM_BATCH_POOL,
   STEP_RM_BATCH_APPLICATION,
   STEP_RM_BATCH_CERTIFICATE,
+  STEP_RM_BATCH_ACCOUNT_DIAGNOSTIC_SETTINGS,
 } from './constants';
 import {
   createBatchAccountEntity,
@@ -35,6 +36,7 @@ import {
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { BatchAccount } from '@azure/arm-batch/esm/models';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchBatchAccounts(
   executionContext: IntegrationStepContext,
@@ -61,12 +63,22 @@ export async function fetchBatchAccounts(
             executionContext,
             batchAccountEntity,
           );
-
-          await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-            executionContext,
-            batchAccountEntity,
-          );
         },
+      );
+    },
+  );
+}
+
+async function fetchBatchAccountsDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: BatchEntities.BATCH_ACCOUNT._type },
+    async (batchAccount) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        batchAccount,
       );
     },
   );
@@ -193,23 +205,25 @@ export const batchSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_BATCH_ACCOUNT,
     name: 'Batch Accounts',
-    entities: [
-      BatchEntities.BATCH_ACCOUNT,
-      ...diagnosticSettingsEntitiesForResource,
-    ],
+    entities: [BatchEntities.BATCH_ACCOUNT],
+    relationships: [BatchAccountRelationships.RESOURCE_GROUP_HAS_BATCH_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchBatchAccounts,
+    rolePermissions: ['Microsoft.Batch/batchAccounts/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.BATCH,
+  },
+  {
+    id: STEP_RM_BATCH_ACCOUNT_DIAGNOSTIC_SETTINGS,
+    name: 'Batch Accounts Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
     relationships: [
-      BatchAccountRelationships.RESOURCE_GROUP_HAS_BATCH_ACCOUNT,
       ...getDiagnosticSettingsRelationshipsForResource(
         BatchEntities.BATCH_ACCOUNT,
       ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
-    executionHandler: fetchBatchAccounts,
-    rolePermissions: [
-      'Microsoft.Batch/batchAccounts/read',
-      'Microsoft.Insights/DiagnosticSettings/Read',
-    ],
+    dependsOn: [STEP_RM_BATCH_ACCOUNT, storageSteps.STORAGE_ACCOUNTS],
+    executionHandler: fetchBatchAccountsDiagnosticSettings,
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.BATCH,
   },
   {

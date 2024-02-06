@@ -33,11 +33,6 @@ export async function fetchMySQLDatabases(
       serverEntity,
     );
 
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-      executionContext,
-      serverEntity,
-    );
-
     try {
       await client.iterateDatabases(server, async (e) => {
         const databaseEntity = createDatabaseEntity(
@@ -65,4 +60,18 @@ export async function fetchMySQLDatabases(
       // to communicate to the synchronizer that only a subset is partial.
     }
   });
+}
+export async function fetchMySQLDatabasesDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: MySQLEntities.SERVER._type },
+    async (serverEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        serverEntity,
+      );
+    },
+  );
 }

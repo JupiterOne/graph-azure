@@ -5,7 +5,11 @@ import {
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 export const STEP_RM_CDN_PROFILE = 'rm-cdn-profiles';
+export const STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS =
+  'rm-cdn-profiles-diagnostic-settings';
 export const STEP_RM_CDN_ENDPOINTS = 'rm-cdn-endpoints';
+export const STEP_RM_CDN_ENDPOINTS_DIAGNOSTIC_SETTINGS =
+  'rm-cdn-endpoints-diagnostic-settings';
 
 export const CdnEntities = {
   PROFILE: {

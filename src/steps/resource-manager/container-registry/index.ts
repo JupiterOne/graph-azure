@@ -12,6 +12,7 @@ import {
   ContainerRegistryEntities,
   ContainerRegistryRelationships,
   STEP_RM_CONTAINER_REGISTRIES,
+  STEP_RM_CONTAINER_REGISTRIES_DIAGNOSTIC_SETTINGS,
   STEP_RM_CONTAINER_REGISTRY_WEBHOOKS,
 } from './constants';
 import {
@@ -26,6 +27,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchContainerRegistries(
   executionContext: IntegrationStepContext,
@@ -46,12 +48,22 @@ export async function fetchContainerRegistries(
       executionContext,
       registryEntity,
     );
-
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-      executionContext,
-      registryEntity,
-    );
   });
+}
+
+async function fetchContainerRegistriesDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: ContainerRegistryEntities.REGISTRY._type },
+    async (registryEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        registryEntity,
+      );
+    },
+  );
 }
 
 export async function fetchContainerRegistryWebhooks(
@@ -94,23 +106,25 @@ export const containerRegistrySteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_CONTAINER_REGISTRIES,
     name: 'Container Registries',
-    entities: [
-      ContainerRegistryEntities.REGISTRY,
-      ...diagnosticSettingsEntitiesForResource,
-    ],
+    entities: [ContainerRegistryEntities.REGISTRY],
+    relationships: [ContainerRegistryRelationships.RESOURCE_GROUP_HAS_ZONE],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchContainerRegistries,
+    rolePermissions: ['Microsoft.ContainerRegistry/registries/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_REGISTRY,
+  },
+  {
+    id: STEP_RM_CONTAINER_REGISTRIES_DIAGNOSTIC_SETTINGS,
+    name: 'Container Registries Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
     relationships: [
-      ContainerRegistryRelationships.RESOURCE_GROUP_HAS_ZONE,
       ...getDiagnosticSettingsRelationshipsForResource(
         ContainerRegistryEntities.REGISTRY,
       ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
-    executionHandler: fetchContainerRegistries,
-    rolePermissions: [
-      'Microsoft.ContainerRegistry/registries/read',
-      'Microsoft.Insights/DiagnosticSettings/Read',
-    ],
+    dependsOn: [STEP_RM_CONTAINER_REGISTRIES, storageSteps.STORAGE_ACCOUNTS],
+    executionHandler: fetchContainerRegistriesDiagnosticSettings,
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_REGISTRY,
   },
   {

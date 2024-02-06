@@ -28,6 +28,7 @@ import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../../resources/constants';
 import { Server } from '@azure/arm-postgresql/esm/models';
 import { createPosgreSqlServerFirewallRuleEntity } from './converters';
 import { INGESTION_SOURCE_IDS } from '../../../../constants';
+import { steps as storageSteps } from '../../storage/constants';
 
 export async function fetchPostgreSQLServers(
   executionContext: IntegrationStepContext,
@@ -57,11 +58,6 @@ export async function fetchPostgreSQLServers(
         executionContext,
         serverEntity,
       );
-
-      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-        executionContext,
-        serverEntity,
-      );
     });
   } catch (error) {
     logger.info(
@@ -70,6 +66,21 @@ export async function fetchPostgreSQLServers(
     );
     throw error;
   }
+}
+
+async function fetchPostgreSQLServersDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: PostgreSQLEntities.SERVER._type },
+    async (serverEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        serverEntity,
+      );
+    },
+  );
 }
 
 export async function fetchPostgreSQLDatabases(
@@ -147,23 +158,27 @@ export const postgreSqlSteps: AzureIntegrationStep[] = [
   {
     id: steps.SERVERS,
     name: 'PostgreSQL Servers',
-    entities: [
-      PostgreSQLEntities.SERVER,
-      ...diagnosticSettingsEntitiesForResource,
-    ],
+    entities: [PostgreSQLEntities.SERVER],
     relationships: [
       PostgreSQLRelationships.RESOURCE_GROUP_HAS_POSTGRESQL_SERVER,
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchPostgreSQLServers,
+    rolePermissions: ['Microsoft.DBforPostgreSQL/servers/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,
+  },
+  {
+    id: steps.SERVERS_DIAGNOSTIC_SETTINGS,
+    name: 'PostgreSQL Servers Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
+    relationships: [
       ...getDiagnosticSettingsRelationshipsForResource(
         PostgreSQLEntities.SERVER,
       ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
-    executionHandler: fetchPostgreSQLServers,
-    rolePermissions: [
-      'Microsoft.Insights/DiagnosticSettings/Read',
-      'Microsoft.DBforPostgreSQL/servers/read',
-    ],
+    dependsOn: [steps.SERVERS, storageSteps.STORAGE_ACCOUNTS],
+    executionHandler: fetchPostgreSQLServersDiagnosticSettings,
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.DATABASES,
   },
   {

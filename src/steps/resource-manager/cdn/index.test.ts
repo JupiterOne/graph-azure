@@ -2,15 +2,17 @@ import {
   Recording,
   executeStepWithDependencies,
 } from '@jupiterone/integration-sdk-testing';
-import { STEP_RM_CDN_ENDPOINTS, STEP_RM_CDN_PROFILE } from './constants';
+import {
+  STEP_RM_CDN_ENDPOINTS,
+  STEP_RM_CDN_ENDPOINTS_DIAGNOSTIC_SETTINGS,
+  STEP_RM_CDN_PROFILE,
+  STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS,
+} from './constants';
 import { getStepTestConfigForStep } from '../../../../test/integrationInstanceConfig';
 import {
   setupAzureRecording,
   getMatchRequestsBy,
 } from '../../../../test/helpers/recording';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
-import { steps as storageSteps } from '../storage/constants';
-import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 
 let recording: Recording;
 
@@ -37,14 +39,33 @@ test(
       stepTestConfig.instanceConfig,
     );
 
-    const stepResults = await executeStepWithDependencies({
-      ...stepTestConfig,
-      dependencyStepIds: [
-        STEP_AD_ACCOUNT,
-        STEP_RM_RESOURCES_RESOURCE_GROUPS,
-        storageSteps.STORAGE_ACCOUNTS,
-      ],
-    });
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  },
+  100_000,
+);
+
+test(
+  STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS,
+  async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS,
+    );
+
+    recording = setupAzureRecording(
+      {
+        name: STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS,
+        directory: __dirname,
+        options: {
+          matchRequestsBy: getMatchRequestsBy({
+            config: stepTestConfig.instanceConfig,
+          }),
+        },
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
   100_000,
@@ -68,14 +89,32 @@ test(
       stepTestConfig.instanceConfig,
     );
 
-    const stepResults = await executeStepWithDependencies({
-      ...stepTestConfig,
-      dependencyStepIds: [
-        STEP_AD_ACCOUNT,
-        STEP_RM_CDN_PROFILE,
-        storageSteps.STORAGE_ACCOUNTS,
-      ],
-    });
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  },
+  100_000,
+);
+test(
+  STEP_RM_CDN_ENDPOINTS_DIAGNOSTIC_SETTINGS,
+  async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_RM_CDN_ENDPOINTS_DIAGNOSTIC_SETTINGS,
+    );
+
+    recording = setupAzureRecording(
+      {
+        name: STEP_RM_CDN_ENDPOINTS_DIAGNOSTIC_SETTINGS,
+        directory: __dirname,
+        options: {
+          matchRequestsBy: getMatchRequestsBy({
+            config: stepTestConfig.instanceConfig,
+          }),
+        },
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
   100_000,

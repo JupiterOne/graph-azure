@@ -13,6 +13,8 @@ import {
   CdnRelationships,
   STEP_RM_CDN_PROFILE,
   STEP_RM_CDN_ENDPOINTS,
+  STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS,
+  STEP_RM_CDN_ENDPOINTS_DIAGNOSTIC_SETTINGS,
 } from './constants';
 import { createCdnProfileEntity, createCdnEndpointEntity } from './converters';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
@@ -23,6 +25,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchProfiles(
   executionContext: IntegrationStepContext,
@@ -40,14 +43,22 @@ export async function fetchProfiles(
       executionContext,
       profileEntity,
     );
-
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-      executionContext,
-      profileEntity,
-    );
   });
 }
-
+async function fetchProfilesDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: CdnEntities.PROFILE._type },
+    async (profileEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        profileEntity,
+      );
+    },
+  );
+}
 export async function fetchEndpoints(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -75,12 +86,22 @@ export async function fetchEndpoints(
               to: cdnEndpointEntity,
             }),
           );
-
-          await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-            executionContext,
-            cdnEndpointEntity,
-          );
         },
+      );
+    },
+  );
+}
+
+export async function fetchEndpointsDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: CdnEntities.ENDPOINT._type },
+    async (cdnEndpointEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        cdnEndpointEntity,
       );
     },
   );
@@ -90,35 +111,45 @@ export const cdnSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_CDN_PROFILE,
     name: 'CDN Profiles',
-    entities: [CdnEntities.PROFILE, ...diagnosticSettingsEntitiesForResource],
+    entities: [CdnEntities.PROFILE],
+    relationships: [CdnRelationships.RESOURCE_GROUP_HAS_PROFILE],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchProfiles,
+    rolePermissions: ['Microsoft.Cdn/profiles/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.CDN,
+  },
+  {
+    id: STEP_RM_CDN_PROFILE_DIAGNOSTIC_SETTINGS,
+    name: 'CDN Profiles Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
     relationships: [
-      CdnRelationships.RESOURCE_GROUP_HAS_PROFILE,
       ...getDiagnosticSettingsRelationshipsForResource(CdnEntities.PROFILE),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    dependencyGraphId: 'last',
-    executionHandler: fetchProfiles,
-    rolePermissions: [
-      'Microsoft.Cdn/profiles/read',
-      'Microsoft.Insights/DiagnosticSettings/Read',
-    ],
+    dependsOn: [STEP_RM_CDN_PROFILE, storageSteps.STORAGE_ACCOUNTS],
+    executionHandler: fetchProfilesDiagnosticSettings,
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.CDN,
   },
   {
     id: STEP_RM_CDN_ENDPOINTS,
     name: 'CDN Endpoints',
-    entities: [CdnEntities.ENDPOINT, ...diagnosticSettingsEntitiesForResource],
-    relationships: [
-      CdnRelationships.PROFILE_HAS_ENDPOINT,
-      ...getDiagnosticSettingsRelationshipsForResource(CdnEntities.ENDPOINT),
-    ],
+    entities: [CdnEntities.ENDPOINT],
+    relationships: [CdnRelationships.PROFILE_HAS_ENDPOINT],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CDN_PROFILE],
     executionHandler: fetchEndpoints,
-    dependencyGraphId: 'last',
-    rolePermissions: [
-      'Microsoft.Cdn/profiles/endpoints/read',
-      'Microsoft.Insights/DiagnosticSettings/Read',
+    rolePermissions: ['Microsoft.Cdn/profiles/endpoints/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.CDN,
+  },
+  {
+    id: STEP_RM_CDN_ENDPOINTS_DIAGNOSTIC_SETTINGS,
+    name: 'CDN Endpoints Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
+    relationships: [
+      ...getDiagnosticSettingsRelationshipsForResource(CdnEntities.ENDPOINT),
     ],
+    dependsOn: [storageSteps.STORAGE_ACCOUNTS, STEP_RM_CDN_ENDPOINTS],
+    executionHandler: fetchEndpointsDiagnosticSettings,
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.CDN,
   },
 ];

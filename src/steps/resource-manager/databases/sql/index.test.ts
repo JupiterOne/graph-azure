@@ -8,8 +8,6 @@ import {
   getMatchRequestsBy,
 } from '../../../../../test/helpers/recording';
 import { steps } from './constants';
-import { STEP_AD_ACCOUNT } from '../../../active-directory/constants';
-import { steps as storageSteps } from '../../storage/constants';
 
 let recording: Recording;
 
@@ -65,14 +63,7 @@ test(
       stepTestConfig.instanceConfig,
     );
 
-    const stepResults = await executeStepWithDependencies({
-      ...stepTestConfig,
-      dependencyStepIds: [
-        STEP_AD_ACCOUNT,
-        steps.SERVERS,
-        storageSteps.STORAGE_ACCOUNTS,
-      ],
-    });
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
   100_000,

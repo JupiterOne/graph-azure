@@ -5,6 +5,8 @@ import {
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 export const STEP_RM_CONTAINER_REGISTRIES = 'rm-container-registries';
+export const STEP_RM_CONTAINER_REGISTRIES_DIAGNOSTIC_SETTINGS =
+  'rm-container-registries-diagnostic-settings';
 export const STEP_RM_CONTAINER_REGISTRY_WEBHOOKS =
   'rm-container-registry-webhooks';
 

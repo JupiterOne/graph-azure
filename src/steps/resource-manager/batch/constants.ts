@@ -5,6 +5,8 @@ import {
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 export const STEP_RM_BATCH_ACCOUNT = 'rm-batch-account';
+export const STEP_RM_BATCH_ACCOUNT_DIAGNOSTIC_SETTINGS =
+  'rm-batch-account-diagnostic-settings';
 export const STEP_RM_BATCH_POOL = 'rm-batch-pool';
 export const STEP_RM_BATCH_APPLICATION = 'rm-batch-application';
 export const STEP_RM_BATCH_CERTIFICATE = 'rm-batch-certificate';
@@ -33,9 +35,10 @@ export const BatchEntities = {
 };
 
 export const BatchAccountRelationships = {
-  RESOURCE_GROUP_HAS_BATCH_ACCOUNT: createResourceGroupResourceRelationshipMetadata(
-    BatchEntities.BATCH_ACCOUNT._type,
-  ),
+  RESOURCE_GROUP_HAS_BATCH_ACCOUNT:
+    createResourceGroupResourceRelationshipMetadata(
+      BatchEntities.BATCH_ACCOUNT._type,
+    ),
 
   BATCH_ACCOUNT_HAS_BATCH_POOL: {
     _type: generateRelationshipType(

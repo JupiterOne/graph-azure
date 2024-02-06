@@ -4,7 +4,6 @@ import {
   FirewallRule,
   Server,
 } from '@azure/arm-postgresql/esm/models';
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 
 import {
   Client,
@@ -37,7 +36,7 @@ export class PostgreSQLClient extends Client {
     const serverName = server.name;
 
     try {
-      const response = serviceClient.configurations.listByServer(
+      const response = await serviceClient.configurations.listByServer(
         resourceGroup,
         serverName,
       );
@@ -45,13 +44,9 @@ export class PostgreSQLClient extends Client {
     } catch (err) {
       this.logger.warn(
         {
-          err: new IntegrationProviderAPIError({
-            endpoint: 'postgresql.servers.configurations',
-            status: err.status,
-            statusText: err.statusText,
-            cause: err,
-          }),
+          err: err,
           server: server.id,
+          resourceGroup,
         },
         'Failed to obtain configurations for server.',
       );

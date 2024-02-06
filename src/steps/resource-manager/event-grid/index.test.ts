@@ -9,14 +9,13 @@ import {
 } from '../../../../test/helpers/recording';
 import {
   STEP_RM_EVENT_GRID_DOMAINS,
+  STEP_RM_EVENT_GRID_DOMAINS_DIAGNOSTIC_SETTINGS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
   STEP_RM_EVENT_GRID_TOPICS,
+  STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
 } from './constants';
-import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
-import { steps as storageSteps } from '../storage/constants';
-import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 
 let recording: Recording;
 
@@ -43,17 +42,36 @@ test(
       stepTestConfig.instanceConfig,
     );
 
-    const stepResults = await executeStepWithDependencies({
-      ...stepTestConfig,
-      dependencyStepIds: [
-        STEP_AD_ACCOUNT,
-        STEP_RM_RESOURCES_RESOURCE_GROUPS,
-        storageSteps.STORAGE_ACCOUNTS,
-      ],
-    });
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
-  1000_000,
+  100_000,
+);
+
+test(
+  STEP_RM_EVENT_GRID_DOMAINS_DIAGNOSTIC_SETTINGS,
+  async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_RM_EVENT_GRID_DOMAINS_DIAGNOSTIC_SETTINGS,
+    );
+
+    recording = setupAzureRecording(
+      {
+        name: STEP_RM_EVENT_GRID_DOMAINS_DIAGNOSTIC_SETTINGS,
+        directory: __dirname,
+        options: {
+          matchRequestsBy: getMatchRequestsBy({
+            config: stepTestConfig.instanceConfig,
+          }),
+        },
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  },
+  100_000,
 );
 
 test(
@@ -79,7 +97,7 @@ test(
     const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
-  1000_000,
+  100_000,
 );
 test(
   STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
@@ -104,7 +122,7 @@ test(
     const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
-  1000_000,
+  100_000,
 );
 test(
   STEP_RM_EVENT_GRID_TOPICS,
@@ -124,18 +142,38 @@ test(
       stepTestConfig.instanceConfig,
     );
 
-    const stepResults = await executeStepWithDependencies({
-      ...stepTestConfig,
-      dependencyStepIds: [
-        STEP_AD_ACCOUNT,
-        STEP_RM_RESOURCES_RESOURCE_GROUPS,
-        storageSteps.STORAGE_ACCOUNTS,
-      ],
-    });
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
-  1000_000,
+  100_000,
 );
+
+test(
+  STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
+  async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
+    );
+
+    recording = setupAzureRecording(
+      {
+        name: STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
+        directory: __dirname,
+        options: {
+          matchRequestsBy: getMatchRequestsBy({
+            config: stepTestConfig.instanceConfig,
+          }),
+        },
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  },
+  100_000,
+);
+
 test(
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
   async () => {
@@ -159,5 +197,5 @@ test(
     const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
-  1000_000,
+  100_000,
 );

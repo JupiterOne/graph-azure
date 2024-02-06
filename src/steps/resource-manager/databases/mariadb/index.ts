@@ -33,11 +33,6 @@ export async function fetchMariaDBDatabases(
       serverEntity,
     );
 
-    await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-      executionContext,
-      serverEntity,
-    );
-
     try {
       await client.iterateDatabases(server, async (database) => {
         const databaseEntity = createDatabaseEntity(
@@ -66,4 +61,18 @@ export async function fetchMariaDBDatabases(
       // to communicate to the synchronizer that only a subset is partial.
     }
   });
+}
+export async function fetchMariaDBDatabasesDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: MariaDBEntities.SERVER._type },
+    async (serverEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        serverEntity,
+      );
+    },
+  );
 }

@@ -24,7 +24,9 @@ import { steps as computeSteps } from './steps/resource-manager/compute/constant
 import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb/constants';
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
+  STEP_RM_DATABASE_MARIADB_DATABASES_DIAGNOSTIC_SETTINGS,
   STEP_RM_DATABASE_MYSQL_DATABASES,
+  STEP_RM_DATABASE_MYSQL_DATABASES_DIAGNOSTIC_SETTINGS,
 } from './steps/resource-manager/databases/constants';
 import { steps as postgreSqlDatabaseSteps } from './steps/resource-manager/databases/postgresql/constants';
 import { steps as sqlDatabaseSteps } from './steps/resource-manager/databases/sql/constants';
@@ -106,9 +108,11 @@ import {
 import { STEP_RM_CONTAINER_GROUPS } from './steps/resource-manager/container-instance/constants';
 import {
   STEP_RM_EVENT_GRID_DOMAINS,
+  STEP_RM_EVENT_GRID_DOMAINS_DIAGNOSTIC_SETTINGS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
   STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
   STEP_RM_EVENT_GRID_TOPICS,
+  STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
 } from './steps/resource-manager/event-grid/constants';
 import { AdvisorSteps } from './steps/resource-manager/advisor/constants';
@@ -202,8 +206,11 @@ export function getResourceManagerSteps(): GetApiSteps {
       computeSteps.VM_SCALE_SETS_IMAGE_RELATIONSHIPS,
       STEP_RM_COSMOSDB_SQL_DATABASES,
       STEP_RM_DATABASE_MARIADB_DATABASES,
+      STEP_RM_DATABASE_MARIADB_DATABASES_DIAGNOSTIC_SETTINGS,
       STEP_RM_DATABASE_MYSQL_DATABASES,
+      STEP_RM_DATABASE_MYSQL_DATABASES_DIAGNOSTIC_SETTINGS,
       postgreSqlDatabaseSteps.SERVERS,
+      postgreSqlDatabaseSteps.SERVERS_DIAGNOSTIC_SETTINGS,
       postgreSqlDatabaseSteps.DATABASES,
       postgreSqlDatabaseSteps.SERVER_FIREWALL_RULES,
       sqlDatabaseSteps.SERVERS,
@@ -257,8 +264,10 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_REDIS_LINKED_SERVERS,
       STEP_RM_CONTAINER_GROUPS,
       STEP_RM_EVENT_GRID_DOMAINS,
+      STEP_RM_EVENT_GRID_DOMAINS_DIAGNOSTIC_SETTINGS,
       STEP_RM_EVENT_GRID_DOMAIN_TOPICS,
       STEP_RM_EVENT_GRID_TOPICS,
+      STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
       STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
       STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
       SecuritySteps.ASSESSMENTS,

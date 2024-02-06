@@ -5,12 +5,16 @@ import {
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 
 export const STEP_RM_EVENT_GRID_DOMAINS = 'rm-event-grid-domains';
+export const STEP_RM_EVENT_GRID_DOMAINS_DIAGNOSTIC_SETTINGS =
+  'rm-event-grid-domains-diagnostic-settings';
 export const STEP_RM_EVENT_GRID_DOMAIN_TOPICS = 'rm-event-grid-domain-topics';
 export const STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS =
   'rm-event-grid-domain-topic-subscriptions';
 export const STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS =
   'rm-event-grid-topic-subscriptions';
 export const STEP_RM_EVENT_GRID_TOPICS = 'rm-event-grid-topics';
+export const STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS =
+  'rm-event-grid-topics-diagnostic-settings';
 
 export const EventGridEntities = {
   DOMAIN: {

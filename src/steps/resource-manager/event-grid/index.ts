@@ -20,6 +20,8 @@ import {
   STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
   STEP_RM_EVENT_GRID_TOPICS,
+  STEP_RM_EVENT_GRID_DOMAINS_DIAGNOSTIC_SETTINGS,
+  STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
 } from './constants';
 import {
   createEventGridDomainEntity,
@@ -37,6 +39,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchEventGridDomains(
   executionContext: IntegrationStepContext,
@@ -60,12 +63,22 @@ export async function fetchEventGridDomains(
             executionContext,
             domainEntity,
           );
-
-          await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-            executionContext,
-            domainEntity,
-          );
         },
+      );
+    },
+  );
+}
+
+export async function fetchEventGridDomainsDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: EventGridEntities.DOMAIN._type },
+    async (domainEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        domainEntity,
       );
     },
   );
@@ -172,12 +185,22 @@ export async function fetchEventGridTopics(
             executionContext,
             topicEntity,
           );
-
-          await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
-            executionContext,
-            topicEntity,
-          );
         },
+      );
+    },
+  );
+}
+
+export async function fetchEventGridTopicsDiagnosticSettings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: EventGridEntities.TOPIC._type },
+    async (topicEntity) => {
+      await createDiagnosticSettingsEntitiesAndRelationshipsForResource(
+        executionContext,
+        topicEntity,
       );
     },
   );
@@ -231,22 +254,25 @@ export const eventGridSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_EVENT_GRID_DOMAINS,
     name: 'Event Grid Domains',
-    entities: [
-      EventGridEntities.DOMAIN,
-      ...diagnosticSettingsEntitiesForResource,
-    ],
+    entities: [EventGridEntities.DOMAIN],
+    relationships: [EventGridRelationships.RESOURCE_GROUP_HAS_DOMAIN],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchEventGridDomains,
+    rolePermissions: ['Microsoft.EventGrid/domains/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_GRID,
+  },
+  {
+    id: STEP_RM_EVENT_GRID_DOMAINS_DIAGNOSTIC_SETTINGS,
+    name: 'Event Grid Domains Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
     relationships: [
-      EventGridRelationships.RESOURCE_GROUP_HAS_DOMAIN,
       ...getDiagnosticSettingsRelationshipsForResource(
         EventGridEntities.DOMAIN,
       ),
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-    executionHandler: fetchEventGridDomains,
-    rolePermissions: [
-      'Microsoft.EventGrid/domains/read',
-      'Microsoft.Insights/DiagnosticSettings/Read',
-    ],
+    dependsOn: [STEP_RM_EVENT_GRID_DOMAINS, storageSteps.STORAGE_ACCOUNTS],
+    executionHandler: fetchEventGridDomainsDiagnosticSettings,
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_GRID,
   },
   {
@@ -283,20 +309,26 @@ export const eventGridSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_EVENT_GRID_TOPICS,
     name: 'Event Grid Topics',
-    entities: [
-      EventGridEntities.TOPIC,
-      ...diagnosticSettingsEntitiesForResource,
-    ],
-    relationships: [
-      EventGridRelationships.RESOURCE_GROUP_HAS_TOPIC,
-      ...getDiagnosticSettingsRelationshipsForResource(EventGridEntities.TOPIC),
-    ],
+    entities: [EventGridEntities.TOPIC],
+    relationships: [EventGridRelationships.RESOURCE_GROUP_HAS_TOPIC],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchEventGridTopics,
     rolePermissions: [
       'Microsoft.EventGrid/topics/read',
       'Microsoft.Insights/DiagnosticSettings/Read',
     ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_GRID,
+  },
+  {
+    id: STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
+    name: 'Event Grid Topics Diagnostic Settings',
+    entities: [...diagnosticSettingsEntitiesForResource],
+    relationships: [
+      ...getDiagnosticSettingsRelationshipsForResource(EventGridEntities.TOPIC),
+    ],
+    dependsOn: [STEP_RM_EVENT_GRID_TOPICS, storageSteps.STORAGE_ACCOUNTS],
+    executionHandler: fetchEventGridTopicsDiagnosticSettings,
+    rolePermissions: ['Microsoft.Insights/DiagnosticSettings/Read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_GRID,
   },
   {

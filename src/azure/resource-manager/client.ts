@@ -155,6 +155,7 @@ function retryResourceRequest<ResponseType>(
   endpointRatePeriod: number,
   logger: IntegrationLogger,
   maxRetryAttempts: number = DEFAULT_MAX_RETRIES,
+  timeout?: number,
 ): Promise<ResponseType> {
   return retry(
     async (_context) => {
@@ -173,6 +174,7 @@ function retryResourceRequest<ResponseType>(
       // },
       delay: endpointRatePeriod,
       factor: 1.1,
+      timeout: timeout,
       // Most errors will be handled by the request policies. They will raise
       // a `RestError.statusCode: 429` when they see two 429 responses in a row,
       // which is the scenario we're aiming to address with our retry.
@@ -298,6 +300,7 @@ export async function requestWithAuthErrorhandling<T extends ResourceResponse>(
   logger: IntegrationLogger,
   resourceDescription: string,
   endpointRatePeriod: number,
+  timeout?: number,
 ): Promise<T | undefined> {
   try {
     return await request(
@@ -305,6 +308,7 @@ export async function requestWithAuthErrorhandling<T extends ResourceResponse>(
       logger,
       resourceDescription,
       endpointRatePeriod,
+      timeout,
     );
   } catch (error) {
     if (error.status === 403) {
@@ -333,6 +337,7 @@ export async function request<T extends ResourceResponse>(
   resourceDescription: string,
   endpointRatePeriod: number,
   maxRetryAttempts: number = DEFAULT_MAX_RETRIES,
+  timeout?: number,
 ): Promise<T | undefined> {
   try {
     const response = await retryResourceRequest<T>(
@@ -340,6 +345,7 @@ export async function request<T extends ResourceResponse>(
       endpointRatePeriod,
       logger,
       maxRetryAttempts,
+      timeout,
     );
     return response;
   } catch (err) {

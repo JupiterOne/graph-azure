@@ -1,3 +1,15 @@
+# v6.1.2 (Wed Feb 14 2024)
+
+#### 🐛 Bug Fix
+
+- Add timeout to usageDetails [#624](https://github.com/JupiterOne/graph-azure/pull/624) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v6.1.1 (Tue Feb 06 2024)
 
 #### 🐛 Bug Fix

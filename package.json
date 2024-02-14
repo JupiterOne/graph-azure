@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-azure",
-  "version": "6.1.1",
+  "version": "6.1.2",
   "description": "A graph conversion tool for https://azure.microsoft.com/.",
   "repository": {
     "type": "git",

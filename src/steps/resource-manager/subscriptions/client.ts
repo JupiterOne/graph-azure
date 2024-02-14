@@ -77,11 +77,12 @@ export class J1SubscriptionClient extends Client {
       // sendOperationRequest was the only way I found to change the API version with this sdk
       async () =>
         await serviceClient.sendOperationRequest(
-          { scope, options: { top: 1 } },
+          { scope },
           listUsageDetailsOperationSpec,
         ),
       this.logger,
       'subscriptions',
+      FIVE_MINUTES,
       FIVE_MINUTES,
     );
     return usageDetails?._response?.parsedBody;
@@ -248,7 +249,7 @@ const top: msRest.OperationQueryParameter = {
   mapper: {
     serializedName: '$top',
     constraints: {
-      InclusiveMaximum: 1000,
+      InclusiveMaximum: 1,
       InclusiveMinimum: 1,
     },
     type: {

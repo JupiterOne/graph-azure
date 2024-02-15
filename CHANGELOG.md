@@ -1,3 +1,15 @@
+# v6.1.3 (Thu Feb 15 2024)
+
+#### 🐛 Bug Fix
+
+- Changed where the timeout goes [#625](https://github.com/JupiterOne/graph-azure/pull/625) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v6.1.2 (Wed Feb 14 2024)
 
 #### 🐛 Bug Fix

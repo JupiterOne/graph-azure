@@ -77,12 +77,11 @@ export class J1SubscriptionClient extends Client {
       // sendOperationRequest was the only way I found to change the API version with this sdk
       async () =>
         await serviceClient.sendOperationRequest(
-          { scope },
+          { scope, options: { timeout: FIVE_MINUTES } },
           listUsageDetailsOperationSpec,
         ),
       this.logger,
       'subscriptions',
-      FIVE_MINUTES,
       FIVE_MINUTES,
     );
     return usageDetails?._response?.parsedBody;

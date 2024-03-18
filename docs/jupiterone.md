@@ -319,6 +319,7 @@ The following entities are created:
 | [RM] API Management Service                    | `azure_api_management_service`                    | `Gateway`                          |
 | [RM] Advisor Recommendation                    | `azure_advisor_recommendation`                    | `Finding`                          |
 | [RM] App Service Plan                          | `azure_app_service_plan`                          | `Configuration`                    |
+| [RM] Azure Ddos Protection Plans               | `azure_ddos_protection_plan`                      | `Configuration`                    |
 | [RM] Azure Kubernetes Cluster                  | `azure_kubernetes_cluster`                        | `Cluster`                          |
 | [RM] Azure Managed Disk                        | `azure_managed_disk`                              | `DataStore`, `Disk`                |
 | [RM] Batch Account                             | `azure_batch_account`                             | `Service`                          |
@@ -653,7 +654,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (97)                                       |
+| Role Permissions List (98)                                       |
 | ---------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                         |
 | `Microsoft.ApiManagement/service/apis/read`                      |
@@ -709,6 +710,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.KeyVault/vaults/secrets/read`                         |
 | `Microsoft.Management/managementGroups/read`                     |
 | `Microsoft.Network/azurefirewalls/read`                          |
+| `Microsoft.Network/ddosProtectionPlans/read`                     |
 | `Microsoft.Network/dnszones/read`                                |
 | `Microsoft.Network/dnszones/recordsets/read`                     |
 | `Microsoft.Network/firewallPolicies/Read`                        |

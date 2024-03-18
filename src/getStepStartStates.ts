@@ -125,6 +125,7 @@ import { ManagementGroupSteps } from './steps/resource-manager/management-groups
 import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
+import { DDOS_STEPS } from './steps/resource-manager/ddos/constant';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -270,6 +271,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
       STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
       STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
+      DDOS_STEPS.PROTECTION_PLAN,
       SecuritySteps.ASSESSMENTS,
       SecuritySteps.SECURITY_CENTER_CONTACTS,
       SecuritySteps.SETTINGS,

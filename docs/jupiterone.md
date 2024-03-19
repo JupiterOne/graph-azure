@@ -407,6 +407,7 @@ The following entities are created:
 | [RM] Virtual Machine Scale Set                 | `azure_vm_scale_set`                              | `Deployment`, `Group`              |
 | [RM] Virtual Network                           | `azure_vnet`                                      | `Network`                          |
 | [RM] Web App                                   | `azure_web_app`                                   | `Application`                      |
+| [RM] Workspaces                                | `azure_synapse_workspace`                         | `Configuration`                    |
 
 ### Relationships
 
@@ -653,7 +654,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (97)                                       |
+| Role Permissions List (98)                                       |
 | ---------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                         |
 | `Microsoft.ApiManagement/service/apis/read`                      |
@@ -748,6 +749,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Storage/storageAccounts/read`                         |
 | `Microsoft.Storage/storageAccounts/tableServices/read`           |
 | `Microsoft.Storage/storageAccounts/tableServices/tables/read`    |
+| `Microsoft.Synapse/workspaces/read`                              |
 | `Microsoft.Web/serverfarms/Read`                                 |
 | `Microsoft.Web/sites/config/list/action`                         |
 | `Microsoft.Web/sites/config/Read`                                |

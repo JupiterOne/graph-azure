@@ -78,6 +78,7 @@
     "@azure/arm-sql": "^7.0.1",
     "@azure/arm-storage": "^15.3.0",
     "@azure/arm-subscriptions": "^2.0.0",
+    "@azure/arm-synapse": "^8.0.0",
     "@azure/data-tables": "^12.1.2",
     "@azure/identity": "3.0.0",
     "@azure/keyvault-keys": "4.7.0",

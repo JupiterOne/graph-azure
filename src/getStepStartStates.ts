@@ -125,6 +125,7 @@ import { ManagementGroupSteps } from './steps/resource-manager/management-groups
 import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
+import { SYNAPSE_STEPS } from './steps/resource-manager/synapse/constant';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -285,6 +286,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
       PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS,
       PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS,
+      SYNAPSE_STEPS.SYNAPSE_WORKSPACES,
       ...Object.values(FrontDoorStepIds),
     ],
     executeLastSteps: [

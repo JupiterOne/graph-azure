@@ -36,6 +36,7 @@ import { managementGroupSteps } from './steps/resource-manager/management-groups
 import { containerServicesSteps } from './steps/resource-manager/container-services';
 import { frontdoorSteps } from './steps/resource-manager/frontdoor';
 import { ingestionConfig } from './config';
+import { SynapseSteps } from './steps/resource-manager/synapse';
 
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
   {
@@ -102,6 +103,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
       ...policyInsightSteps,
       ...managementGroupSteps,
       ...containerServicesSteps,
+      ...SynapseSteps,
     ],
 
     normalizeGraphObjectKey: (_key) => _key.toLowerCase(),

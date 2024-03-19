@@ -7,7 +7,7 @@ export class SynapseClient extends Client {
    * Retrieves all Synapse Workspaces from an Azure Subscription
    * @param callback A callback function to be called after retrieving a Synapse Workspace
    */
-  public async iterateDomains(
+  public async iterateWorkspaces(
     subscriptionId: string,
     callback: (s: Workspace) => void | Promise<void>,
   ): Promise<void> {

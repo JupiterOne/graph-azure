@@ -287,6 +287,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS,
       PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS,
       SYNAPSE_STEPS.SYNAPSE_WORKSPACES,
+      SYNAPSE_STEPS.SYNAPSE_SERVICE,
       ...Object.values(FrontDoorStepIds),
     ],
     executeLastSteps: [

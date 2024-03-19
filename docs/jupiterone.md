@@ -379,6 +379,7 @@ The following entities are created:
 | [RM] Role Assignment                           | `azure_role_assignment`                           | `AccessPolicy`                     |
 | [RM] Role Definition                           | `azure_role_definition`                           | `AccessRole`                       |
 | [RM] SQL Database                              | `azure_sql_database`                              | `Database`, `DataStore`            |
+| [RM] SQL Pool                                  | `azure_synapse_sql_pool`                          | `Configuration`                    |
 | [RM] SQL Server                                | `azure_sql_server`                                | `Database`, `DataStore`, `Host`    |
 | [RM] SQL Server Active Directory Admin         | `azure_sql_server_active_directory_admin`         | `AccessRole`                       |
 | [RM] SQL Server Firewall Rule                  | `azure_sql_server_firewall_rule`                  | `Firewall`                         |

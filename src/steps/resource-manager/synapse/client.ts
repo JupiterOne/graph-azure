@@ -1,6 +1,10 @@
 import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
 import { Client } from '../../../azure/resource-manager/client';
-import { SynapseManagementClient, Workspace } from '@azure/arm-synapse';
+import {
+  SynapseManagementClient,
+  Workspace,
+  SqlPool,
+} from '@azure/arm-synapse';
 
 export class SynapseClient extends Client {
   /**
@@ -35,6 +39,46 @@ export class SynapseClient extends Client {
         this.logger.publishWarnEvent({
           name: IntegrationWarnEventName.MissingEntity,
           description: `This tenant/application is not allowed to access workspaces`,
+        });
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  public async iterateSqlPools(
+    subscriptionId: string,
+    resourceGroupName: string,
+    workspaceName: string,
+    callback: (s: SqlPool) => void | Promise<void>,
+  ): Promise<void> {
+    const credential = this.getClientSecretCredentials();
+    const client = new SynapseManagementClient(credential, subscriptionId);
+    try {
+      for await (let sqlPool of client.sqlPools.listByWorkspace(
+        resourceGroupName,
+        workspaceName,
+      )) {
+        await callback(sqlPool);
+      }
+    } catch (err) {
+      if (err.statusCode === 403) {
+        this.logger.warn({ err }, err.message);
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingPermission,
+          description: err.message,
+        });
+      } else if (
+        err.statusCode === 401 &&
+        err.message.toString().includes('AKV10032')
+      ) {
+        this.logger.warn(
+          { err: err },
+          'Failed to retrieve a Synapse SQL Pool data',
+        );
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingEntity,
+          description: `This tenant/application is not allowed to access SQL Pool`,
         });
       } else {
         throw err;

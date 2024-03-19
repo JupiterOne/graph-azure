@@ -1,4 +1,5 @@
 import {
+  IntegrationMissingKeyError,
   RelationshipClass,
   createDirectRelationship,
 } from '@jupiterone/integration-sdk-core';
@@ -17,6 +18,7 @@ import {
   createSynapseServiceEntity,
   createWorkspaceEntity,
   getSynapseServiceKey,
+  createSqlPoolEntity,
 } from './converter';
 
 export async function fetchSynapseWorkspaces(
@@ -65,6 +67,42 @@ export async function buildSynapseServiceWorkspaceRelationship(
   );
 }
 
+export async function fetchSynapseSqlPool(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  const client = new SynapseClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: SynapseEntities.WORKSPACE._type },
+    async (workspaceEntity) => {
+      const resourceGroupName = workspaceEntity.resourceGroupName as string;
+      const workspaceName = workspaceEntity.displayName as string;
+
+      if (!resourceGroupName || !workspaceName) {
+        throw new IntegrationMissingKeyError(
+          `Either Resource Group Name or Workspace name missing
+           Workspace: ${workspaceName} 
+           RespurceGroupName: ${resourceGroupName}
+          `,
+        );
+      }
+      await client.iterateSqlPools(
+        instance.config.subscriptionId as string,
+        resourceGroupName,
+        workspaceName,
+        async (sqlPool) => {
+          const sqlPoolEntity = createSqlPoolEntity(webLinker, sqlPool);
+          await jobState.addEntity(sqlPoolEntity);
+        },
+      );
+    },
+  );
+}
+
 export const SynapseSteps: AzureIntegrationStep[] = [
   {
     id: SYNAPSE_STEPS.SYNAPSE_WORKSPACES,
@@ -96,6 +134,16 @@ export const SynapseSteps: AzureIntegrationStep[] = [
       SYNAPSE_STEPS.SYNAPSE_WORKSPACES,
     ],
     executionHandler: buildSynapseServiceWorkspaceRelationship,
+    rolePermissions: [],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
+  },
+  {
+    id: SYNAPSE_STEPS.SYNAPSE_SQL_POOL,
+    name: 'Synapse SQL Pool',
+    entities: [SynapseEntities.SYNAPSE_SQL_POOL],
+    relationships: [],
+    dependsOn: [SYNAPSE_STEPS.SYNAPSE_WORKSPACES],
+    executionHandler: fetchSynapseSqlPool,
     rolePermissions: [],
     ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
   },

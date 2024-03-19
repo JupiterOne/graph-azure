@@ -8,6 +8,7 @@ export const SYNAPSE_STEPS = {
   SYNAPSE_WORKSPACES: 'fetch-synpase-workspaces',
   SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP:
     'build-synapse-service-workspace-relationship',
+  SYNAPSE_SQL_POOL: 'fetch-synapse-sql-pools',
 };
 
 export const SynapseEntities = {
@@ -20,6 +21,11 @@ export const SynapseEntities = {
     _type: 'azure_synapse',
     _class: 'Service',
     resourceName: 'Azure Synapse Analytics',
+  },
+  SYNAPSE_SQL_POOL: {
+    _type: 'azure_synapse_sql_pool',
+    _class: 'Configuration',
+    resourceName: '[RM] SQL Pool',
   },
 };
 

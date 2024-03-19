@@ -3,7 +3,7 @@ import {
   createIntegrationEntity,
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
-import { Workspace } from '@azure/arm-synapse';
+import { Workspace, SqlPool } from '@azure/arm-synapse';
 import { SynapseEntities } from './constant';
 
 export function getSynapseServiceKey(uniqueId: string) {
@@ -12,6 +12,14 @@ export function getSynapseServiceKey(uniqueId: string) {
 
 export function getSynapseWorkspaceKey(uniqueId: string) {
   return `${SynapseEntities.WORKSPACE._type}:${uniqueId}`;
+}
+
+export function getSynapseSQLKey(uniqueId: string) {
+  return `${SynapseEntities.SYNAPSE_SQL_POOL._type}:${uniqueId}`;
+}
+
+function getResourceGroupName(id: string) {
+  return id.split('/')[4];
 }
 
 export function createWorkspaceEntity(
@@ -29,6 +37,7 @@ export function createWorkspaceEntity(
         name: data.name,
         webLink: webLinker.portalResourceUrl(data.id),
         type: data.type,
+        resourceGroupName: getResourceGroupName(data.id as string),
       },
     },
   });
@@ -50,6 +59,30 @@ export function createSynapseServiceEntity(instnaceId: string): Entity {
         category: ['Analysis'],
         function: ['Analysis'],
         endpoint: 'https://portal.azure.com',
+      },
+    },
+  });
+}
+
+export function createSqlPoolEntity(webLinker: AzureWebLinker, data: SqlPool) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: getSynapseSQLKey(data.id as string),
+        _type: SynapseEntities.SYNAPSE_SQL_POOL._type,
+        _class: SynapseEntities.SYNAPSE_SQL_POOL._class,
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        location: data.location,
+        collection: data.collation,
+        status: data.status,
+        createdDate: data.creationDate?.toLocaleDateString(),
+        storageAccountType: data.storageAccountType,
+        provisioningState: data.provisioningState,
+        maxSizebytes: data.maxSizeBytes,
+        webLink: webLinker.portalResourceUrl(data.id),
       },
     },
   });

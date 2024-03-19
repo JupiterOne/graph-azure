@@ -289,6 +289,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       SYNAPSE_STEPS.SYNAPSE_WORKSPACES,
       SYNAPSE_STEPS.SYNAPSE_SERVICE,
       SYNAPSE_STEPS.SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP,
+      SYNAPSE_STEPS.SYNAPSE_SQL_POOL,
       ...Object.values(FrontDoorStepIds),
     ],
     executeLastSteps: [

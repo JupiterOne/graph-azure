@@ -558,6 +558,7 @@ The following relationships are created:
 | `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing`      |
 | `azure_subscription`               | **HAS**               | `azure_usage_details`                             |
 | `azure_synapse`                    | **HAS**               | `azure_synapse_workspace`                         |
+| `azure_synapse_workspace`          | **HAS**               | `azure_synapse_sql_pool`                          |
 | `azure_user`                       | **HAS**               | `ad-role-definitions`                             |
 | `azure_user`                       | **HAS**               | `azure_device`                                    |
 | `azure_user_group`                 | **HAS**               | `azure_group_member`                              |

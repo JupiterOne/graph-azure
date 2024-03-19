@@ -19,6 +19,7 @@ import {
   createWorkspaceEntity,
   getSynapseServiceKey,
   createSqlPoolEntity,
+  getSynapseWorkspaceKey,
 } from './converter';
 
 export async function fetchSynapseWorkspaces(
@@ -81,23 +82,61 @@ export async function fetchSynapseSqlPool(
     async (workspaceEntity) => {
       const resourceGroupName = workspaceEntity.resourceGroupName as string;
       const workspaceName = workspaceEntity.displayName as string;
+      const workspaceUID = workspaceEntity.workspaceUID as string;
 
-      if (!resourceGroupName || !workspaceName) {
+      if (!resourceGroupName || !workspaceName || !workspaceUID) {
         throw new IntegrationMissingKeyError(
-          `Either Resource Group Name or Workspace name missing
-           Workspace: ${workspaceName} 
-           RespurceGroupName: ${resourceGroupName}
-          `,
+          `One or more required values are undefined:
+          - Workspace Name: ${workspaceName}
+          - Resource Group Name: ${resourceGroupName}
+          - Workspace UUID: ${workspaceUID}
+         `,
         );
       }
+
       await client.iterateSqlPools(
         instance.config.subscriptionId as string,
         resourceGroupName,
         workspaceName,
         async (sqlPool) => {
-          const sqlPoolEntity = createSqlPoolEntity(webLinker, sqlPool);
+          const sqlPoolEntity = createSqlPoolEntity(
+            webLinker,
+            sqlPool,
+            workspaceUID,
+          );
           await jobState.addEntity(sqlPoolEntity);
         },
+      );
+    },
+  );
+}
+
+export async function buildSynapseWorkspaceSQLPoolRelationship(
+  executionContext: IntegrationStepContext,
+) {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: SynapseEntities.SYNAPSE_SQL_POOL._type },
+    async (sqlPoolEntity) => {
+      const workspaceKey = getSynapseWorkspaceKey(
+        sqlPoolEntity.workspaceUID as string,
+      );
+
+      if (!workspaceKey) {
+        throw new IntegrationMissingKeyError(
+          `Workspace key Missing ${workspaceKey}`,
+        );
+      }
+
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: RelationshipClass.HAS,
+          fromKey: workspaceKey,
+          fromType: SynapseEntities.WORKSPACE._type,
+          toKey: sqlPoolEntity._key,
+          toType: SynapseEntities.SYNAPSE_SQL_POOL._type,
+        }),
       );
     },
   );
@@ -144,6 +183,19 @@ export const SynapseSteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [SYNAPSE_STEPS.SYNAPSE_WORKSPACES],
     executionHandler: fetchSynapseSqlPool,
+    rolePermissions: [],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
+  },
+  {
+    id: SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP,
+    name: 'Build Synapse Workspace and SQL Pool Relationship',
+    entities: [],
+    relationships: [SynapseRelationship.SYNAPSE_WORKSPACE_HAS_SQL_POOL],
+    dependsOn: [
+      SYNAPSE_STEPS.SYNAPSE_WORKSPACES,
+      SYNAPSE_STEPS.SYNAPSE_SQL_POOL,
+    ],
+    executionHandler: buildSynapseWorkspaceSQLPoolRelationship,
     rolePermissions: [],
     ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
   },

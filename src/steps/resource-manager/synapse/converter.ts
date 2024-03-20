@@ -3,26 +3,21 @@ import {
   createIntegrationEntity,
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
-import { Workspace, SqlPool } from '@azure/arm-synapse';
+import {
+  Workspace,
+  SqlPool,
+  DataMaskingPolicy,
+  DataMaskingRule,
+} from '@azure/arm-synapse';
 import { SynapseEntities } from './constant';
 import { generateEntityKey } from '../../../utils/generateKeys';
 
 // If uniqueId is undefined or not of correct type, raise error
 const validateUniqeId = generateEntityKey;
 
-export function getSynapseServiceKey(uniqueId: string) {
+export function getSynapseEntityKey(uniqueId: string, entityType: string) {
   validateUniqeId(uniqueId);
-  return `${SynapseEntities.SYNAPSE_SERVICE._type}:${uniqueId}`;
-}
-
-export function getSynapseWorkspaceKey(uniqueId: string) {
-  validateUniqeId(uniqueId);
-  return `${SynapseEntities.WORKSPACE._type}:${uniqueId}`;
-}
-
-export function getSynapseSQLKey(uniqueId: string) {
-  validateUniqeId(uniqueId);
-  return `${SynapseEntities.SYNAPSE_SQL_POOL._type}:${uniqueId}`;
+  return `${entityType}:${uniqueId}`;
 }
 
 function getResourceGroupName(id: string) {
@@ -37,7 +32,10 @@ export function createWorkspaceEntity(
     entityData: {
       source: data,
       assign: {
-        _key: getSynapseWorkspaceKey(data.workspaceUID as string),
+        _key: getSynapseEntityKey(
+          data.workspaceUID as string,
+          SynapseEntities.WORKSPACE._type,
+        ),
         _type: SynapseEntities.WORKSPACE._type,
         _class: SynapseEntities.WORKSPACE._class,
         id: data.id,
@@ -60,7 +58,10 @@ export function createSynapseServiceEntity(instnaceId: string): Entity {
     entityData: {
       source: {},
       assign: {
-        _key: getSynapseServiceKey(instnaceId),
+        _key: getSynapseEntityKey(
+          instnaceId,
+          SynapseEntities.SYNAPSE_SERVICE._type,
+        ),
         _type: SynapseEntities.SYNAPSE_SERVICE._type,
         _class: SynapseEntities.SYNAPSE_SERVICE._class,
         name: SynapseEntities.SYNAPSE_SERVICE.resourceName,
@@ -81,7 +82,10 @@ export function createSqlPoolEntity(
     entityData: {
       source: data,
       assign: {
-        _key: getSynapseSQLKey(data.id as string),
+        _key: getSynapseEntityKey(
+          data.id as string,
+          SynapseEntities.SYNAPSE_SQL_POOL._type,
+        ),
         _type: SynapseEntities.SYNAPSE_SQL_POOL._type,
         _class: SynapseEntities.SYNAPSE_SQL_POOL._class,
         id: data.id,
@@ -96,6 +100,73 @@ export function createSqlPoolEntity(
         maxSizebytes: data.maxSizeBytes,
         webLink: webLinker.portalResourceUrl(data.id),
         workspaceUID: workspaceUID,
+      },
+    },
+  });
+}
+
+export function createDataMaskingPolicyEntity(
+  webLinker: AzureWebLinker,
+  data: DataMaskingPolicy,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: getSynapseEntityKey(
+          data.id as string,
+          SynapseEntities.SYNAPSE_DATA_MASKING_POLICY._type,
+        ),
+        _type: SynapseEntities.SYNAPSE_DATA_MASKING_POLICY._type,
+        _class: SynapseEntities.SYNAPSE_DATA_MASKING_POLICY._class,
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        location: data.location,
+        webLink: webLinker.portalResourceUrl(data.id),
+        dataMaskingState: data.dataMaskingState,
+        applicationPrincipals: data.applicationPrincipals,
+        exemptPrincipals: data.exemptPrincipals,
+        maskingLevel: data.maskingLevel,
+        managedBy: data.managedBy,
+        kind: data.kind,
+      },
+    },
+  });
+}
+
+export function createDataMaskingRuleEntity(
+  webLinker: AzureWebLinker,
+  data: DataMaskingRule,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: getSynapseEntityKey(
+          data.id as string,
+          SynapseEntities.SYNAPSE_DATA_MASKING_RULE._type,
+        ),
+        _type: SynapseEntities.SYNAPSE_DATA_MASKING_RULE._type,
+        _class: SynapseEntities.SYNAPSE_DATA_MASKING_RULE._class,
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        location: data.location,
+        webLink: webLinker.portalResourceUrl(data.id),
+        kind: data.kind,
+        idPropertiesId: data.idPropertiesId,
+        aliasName: data.aliasName,
+        ruleState: data.ruleState,
+        schemaName: data.schemaName,
+        tableName: data.tableName,
+        columnName: data.columnName,
+        maskingFunction: data.maskingFunction,
+        numberFrom: data.numberFrom,
+        numberTo: data.numberTo,
+        prefixSize: data.prefixSize,
+        suffixSize: data.suffixSize,
+        replacementString: data.replacementString,
       },
     },
   });

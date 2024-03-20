@@ -4,6 +4,8 @@ import {
   SynapseManagementClient,
   Workspace,
   SqlPool,
+  DataMaskingPolicy,
+  DataMaskingRule,
 } from '@azure/arm-synapse';
 
 export class SynapseClient extends Client {
@@ -79,6 +81,89 @@ export class SynapseClient extends Client {
         this.logger.publishWarnEvent({
           name: IntegrationWarnEventName.MissingEntity,
           description: `This tenant/application is not allowed to access SQL Pool`,
+        });
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  public async iterateDataMaskingPolicies(
+    subscriptionId: string,
+    resourceGroupName: string,
+    workspaceName: string,
+    sqlPoolName: string,
+    callback: (s: DataMaskingPolicy) => void | Promise<void>,
+  ) {
+    const credential = this.getClientSecretCredentials();
+    const client = new SynapseManagementClient(credential, subscriptionId);
+    try {
+      const result = await client.dataMaskingPolicies.get(
+        resourceGroupName,
+        workspaceName,
+        sqlPoolName,
+      );
+      await callback(result);
+    } catch (err) {
+      if (err.statusCode === 403) {
+        this.logger.warn({ err }, err.message);
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingPermission,
+          description: err.message,
+        });
+      } else if (
+        err.statusCode === 401 &&
+        err.message.toString().includes('AKV10032')
+      ) {
+        this.logger.warn(
+          { err: err },
+          'Failed to retrieve a Synapse Data Masking Policy',
+        );
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingEntity,
+          description: `This tenant/application is not allowed to access Data Masking Policy`,
+        });
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  public async iterateDataMaskingRules(
+    subscriptionId: string,
+    resourceGroupName: string,
+    workspaceName: string,
+    sqlPoolName: string,
+    callback: (s: DataMaskingRule) => void | Promise<void>,
+  ) {
+    const credential = this.getClientSecretCredentials();
+    const client = new SynapseManagementClient(credential, subscriptionId);
+    try {
+      for await (let dataMaskingrule of client.dataMaskingRules.listBySqlPool(
+        resourceGroupName,
+        workspaceName,
+        sqlPoolName,
+      )) {
+        await callback(dataMaskingrule);
+      }
+    } catch (err) {
+      if (err.statusCode === 403) {
+        this.logger.warn({ err }, err.message);
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingPermission,
+          description: err.message,
+        });
+      } else if (
+        err.statusCode === 401 &&
+        err.message.toString().includes('AKV10032')
+      ) {
+        this.logger.warn(
+          { err: err },
+          'Failed to retrieve a Synapse Data Masking Rule',
+        );
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingEntity,
+          description: `This tenant/application is not allowed to access Data Masking Rule`,
         });
       } else {
         throw err;

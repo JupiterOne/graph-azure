@@ -17,9 +17,10 @@ import {
 import {
   createSynapseServiceEntity,
   createWorkspaceEntity,
-  getSynapseServiceKey,
   createSqlPoolEntity,
-  getSynapseWorkspaceKey,
+  getSynapseEntityKey,
+  createDataMaskingPolicyEntity,
+  createDataMaskingRuleEntity,
 } from './converter';
 
 export async function fetchSynapseWorkspaces(
@@ -58,10 +59,37 @@ export async function buildSynapseServiceWorkspaceRelationship(
       await jobState.addRelationship(
         createDirectRelationship({
           _class: RelationshipClass.HAS,
-          fromKey: getSynapseServiceKey(instance.id),
+          fromKey: getSynapseEntityKey(
+            instance.id,
+            SynapseEntities.SYNAPSE_SERVICE._type,
+          ),
           fromType: SynapseEntities.SYNAPSE_SERVICE._type,
           toKey: workspaceEntity._key,
           toType: SynapseEntities.WORKSPACE._type,
+        }),
+      );
+    },
+  );
+}
+
+export async function buildSynapseServiceSqlPoolRelationship(
+  executionContext: IntegrationStepContext,
+) {
+  const { instance, jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: SynapseEntities.SYNAPSE_SQL_POOL._type },
+    async (sqlPoolEntity) => {
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: RelationshipClass.HAS,
+          fromKey: getSynapseEntityKey(
+            instance.id,
+            SynapseEntities.SYNAPSE_SERVICE._type,
+          ),
+          fromType: SynapseEntities.SYNAPSE_SERVICE._type,
+          toKey: sqlPoolEntity._key,
+          toType: SynapseEntities.SYNAPSE_SQL_POOL._type,
         }),
       );
     },
@@ -119,8 +147,9 @@ export async function buildSynapseWorkspaceSQLPoolRelationship(
   await jobState.iterateEntities(
     { _type: SynapseEntities.SYNAPSE_SQL_POOL._type },
     async (sqlPoolEntity) => {
-      const workspaceKey = getSynapseWorkspaceKey(
+      const workspaceKey = getSynapseEntityKey(
         sqlPoolEntity.workspaceUID as string,
+        SynapseEntities.WORKSPACE._type,
       );
 
       if (!workspaceKey) {
@@ -136,6 +165,112 @@ export async function buildSynapseWorkspaceSQLPoolRelationship(
           fromType: SynapseEntities.WORKSPACE._type,
           toKey: sqlPoolEntity._key,
           toType: SynapseEntities.SYNAPSE_SQL_POOL._type,
+        }),
+      );
+    },
+  );
+}
+
+export async function fetchSynapseDataMaskingPolicy(
+  executionContext: IntegrationStepContext,
+) {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  const client = new SynapseClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: SynapseEntities.SYNAPSE_SQL_POOL._type },
+    async (sqlPool) => {
+      const sqlPoolId = sqlPool.id as string;
+      const idPartitions = sqlPoolId.split('/');
+
+      const resourceGroupName = idPartitions[4];
+      const workspaceName = idPartitions[8];
+      const sqlPoolName = idPartitions[10];
+
+      await client.iterateDataMaskingPolicies(
+        instance.config.subscriptionId as string,
+        resourceGroupName,
+        workspaceName,
+        sqlPoolName,
+        async (dataMaskingPolicy) => {
+          const dataMaskingPolicyEntity = createDataMaskingPolicyEntity(
+            webLinker,
+            dataMaskingPolicy,
+          );
+          await jobState.addEntity(dataMaskingPolicyEntity);
+        },
+      );
+    },
+  );
+}
+
+export async function fetchSynapseDataMaskingRules(
+  executionContext: IntegrationStepContext,
+) {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  const client = new SynapseClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: SynapseEntities.SYNAPSE_SQL_POOL._type },
+    async (sqlPool) => {
+      const sqlPoolId = sqlPool.id as string;
+      const idPartitions = sqlPoolId.split('/');
+
+      const resourceGroupName = idPartitions[4];
+      const workspaceName = idPartitions[8];
+      const sqlPoolName = idPartitions[10];
+
+      await client.iterateDataMaskingRules(
+        instance.config.subscriptionId as string,
+        resourceGroupName,
+        workspaceName,
+        sqlPoolName,
+        async (dataMaskingRule) => {
+          const dataMaskingRuleEntity = createDataMaskingRuleEntity(
+            webLinker,
+            dataMaskingRule,
+          );
+          await jobState.addEntity(dataMaskingRuleEntity);
+        },
+      );
+    },
+  );
+}
+
+export async function buildSynapseSQLPoolDataMaskingPilicyRelationship(
+  executionContext: IntegrationStepContext,
+) {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: SynapseEntities.SYNAPSE_DATA_MASKING_POLICY._type },
+    async (dataMaskingPolicyEntity) => {
+      const dataMaskingPolicyId = dataMaskingPolicyEntity.id as string;
+      const sqlPoolId = dataMaskingPolicyId.split('/').slice(0, -2).join('/');
+      const sqlPoolKey = getSynapseEntityKey(
+        sqlPoolId,
+        SynapseEntities.SYNAPSE_SQL_POOL._type,
+      );
+
+      if (!sqlPoolKey) {
+        throw new IntegrationMissingKeyError(
+          `Workspace key Missing ${sqlPoolKey}`,
+        );
+      }
+
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: RelationshipClass.ASSIGNED,
+          fromKey: sqlPoolKey,
+          fromType: SynapseEntities.SYNAPSE_SQL_POOL._type,
+          toKey: dataMaskingPolicyEntity._key,
+          toType: SynapseEntities.SYNAPSE_DATA_MASKING_POLICY._type,
         }),
       );
     },
@@ -187,6 +322,16 @@ export const SynapseSteps: AzureIntegrationStep[] = [
     ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
   },
   {
+    id: SYNAPSE_STEPS.SYNAPSE_SERVICE_SQL_POOL_RELATIONSHIP,
+    name: 'Build Synapse Service and SQL Pool Relationship',
+    entities: [],
+    relationships: [SynapseRelationship.SYNAPSE_SERVICE_HAS_SQL_POOL],
+    dependsOn: [SYNAPSE_STEPS.SYNAPSE_SERVICE, SYNAPSE_STEPS.SYNAPSE_SQL_POOL],
+    executionHandler: buildSynapseServiceSqlPoolRelationship,
+    rolePermissions: [],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
+  },
+  {
     id: SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP,
     name: 'Build Synapse Workspace and SQL Pool Relationship',
     entities: [],
@@ -196,6 +341,44 @@ export const SynapseSteps: AzureIntegrationStep[] = [
       SYNAPSE_STEPS.SYNAPSE_SQL_POOL,
     ],
     executionHandler: buildSynapseWorkspaceSQLPoolRelationship,
+    rolePermissions: [],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
+  },
+  {
+    id: SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_POLICY,
+    name: 'Fetch Synapse Data Masking Policy',
+    entities: [SynapseEntities.SYNAPSE_DATA_MASKING_POLICY],
+    relationships: [],
+    dependsOn: [SYNAPSE_STEPS.SYNAPSE_SQL_POOL],
+    executionHandler: fetchSynapseDataMaskingPolicy,
+    rolePermissions: [
+      'Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/read',
+    ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
+  },
+  {
+    // Revisit this step: duplicate key issue, all rules sharing same id
+    id: SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_RULE,
+    name: 'Fetch Synapse Data Masking Rule',
+    entities: [SynapseEntities.SYNAPSE_DATA_MASKING_RULE],
+    relationships: [],
+    dependsOn: [SYNAPSE_STEPS.SYNAPSE_SQL_POOL],
+    executionHandler: fetchSynapseDataMaskingRules,
+    rolePermissions: [
+      'Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/rules/read',
+    ],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
+  },
+  {
+    id: SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP,
+    name: 'Build Synapse SQL Pool Data Masking Policy Relationship',
+    entities: [],
+    relationships: [SynapseRelationship.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY],
+    dependsOn: [
+      SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_POLICY,
+      SYNAPSE_STEPS.SYNAPSE_SQL_POOL,
+    ],
+    executionHandler: buildSynapseSQLPoolDataMaskingPilicyRelationship,
     rolePermissions: [],
     ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
   },

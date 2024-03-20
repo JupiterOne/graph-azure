@@ -6,6 +6,7 @@ import {
   SqlPool,
   DataMaskingPolicy,
   DataMaskingRule,
+  Key,
 } from '@azure/arm-synapse';
 
 export class SynapseClient extends Client {
@@ -81,6 +82,43 @@ export class SynapseClient extends Client {
         this.logger.publishWarnEvent({
           name: IntegrationWarnEventName.MissingEntity,
           description: `This tenant/application is not allowed to access SQL Pool`,
+        });
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  public async iterateSynapseKeys(
+    subscriptionId: string,
+    resourceGroupName: string,
+    workspaceName: string,
+    callback: (s: Key) => void | Promise<void>,
+  ): Promise<void> {
+    const credential = this.getClientSecretCredentials();
+    const client = new SynapseManagementClient(credential, subscriptionId);
+    try {
+      for await (let synapseKey of client.keys.listByWorkspace(
+        resourceGroupName,
+        workspaceName,
+      )) {
+        await callback(synapseKey);
+      }
+    } catch (err) {
+      if (err.statusCode === 403) {
+        this.logger.warn({ err }, err.message);
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingPermission,
+          description: err.message,
+        });
+      } else if (
+        err.statusCode === 401 &&
+        err.message.toString().includes('AKV10032')
+      ) {
+        this.logger.warn({ err: err }, 'Failed to retrieve a Synapse Key data');
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingEntity,
+          description: `This tenant/application is not allowed to access Key`,
         });
       } else {
         throw err;

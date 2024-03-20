@@ -21,7 +21,10 @@ import {
   getSynapseEntityKey,
   createDataMaskingPolicyEntity,
   createDataMaskingRuleEntity,
+  createSynapseKeyEntity,
 } from './converter';
+import { entities, steps } from '../subscriptions/constants';
+import { STEP_RM_KEYVAULT_VAULTS } from '../key-vault/constants';
 
 export async function fetchSynapseWorkspaces(
   executionContext: IntegrationStepContext,
@@ -45,7 +48,27 @@ export async function createSynapseService(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, jobState } = executionContext;
+
+  // create synapse service
   await jobState.addEntity(createSynapseServiceEntity(instance.id));
+
+  // if subscription id is not present integartion will throw error while validating config
+  const subscriptionKey = `/subscriptions/${instance.config.subscriptionId}`;
+  const synapseServiceKey = getSynapseEntityKey(
+    instance.config.subscriptionId as string,
+    SynapseEntities.SYNAPSE_SERVICE._type,
+  );
+
+  // add subscription and synapse service relationship
+  await jobState.addRelationship(
+    createDirectRelationship({
+      _class: RelationshipClass.HAS,
+      fromKey: subscriptionKey,
+      fromType: entities.SUBSCRIPTION._type,
+      toKey: synapseServiceKey,
+      toType: SynapseEntities.SYNAPSE_SERVICE._type,
+    }),
+  );
 }
 
 export async function buildSynapseServiceWorkspaceRelationship(
@@ -53,16 +76,17 @@ export async function buildSynapseServiceWorkspaceRelationship(
 ) {
   const { instance, jobState } = executionContext;
 
+  const synapseServiceKey = getSynapseEntityKey(
+    instance.id,
+    SynapseEntities.SYNAPSE_SERVICE._type,
+  );
   await jobState.iterateEntities(
     { _type: SynapseEntities.WORKSPACE._type },
     async (workspaceEntity) => {
       await jobState.addRelationship(
         createDirectRelationship({
           _class: RelationshipClass.HAS,
-          fromKey: getSynapseEntityKey(
-            instance.id,
-            SynapseEntities.SYNAPSE_SERVICE._type,
-          ),
+          fromKey: synapseServiceKey,
           fromType: SynapseEntities.SYNAPSE_SERVICE._type,
           toKey: workspaceEntity._key,
           toType: SynapseEntities.WORKSPACE._type,
@@ -90,6 +114,37 @@ export async function buildSynapseServiceSqlPoolRelationship(
           fromType: SynapseEntities.SYNAPSE_SERVICE._type,
           toKey: sqlPoolEntity._key,
           toType: SynapseEntities.SYNAPSE_SQL_POOL._type,
+        }),
+      );
+    },
+  );
+}
+
+export async function buildSynapseServiceKeysRelationship(
+  executionContext: IntegrationStepContext,
+) {
+  const { instance, jobState } = executionContext;
+
+  const synapseServiceKey = getSynapseEntityKey(
+    instance.id,
+    SynapseEntities.SYNAPSE_SERVICE._type,
+  );
+
+  if (!synapseServiceKey) {
+    throw new IntegrationMissingKeyError(
+      `Synapse Service Key Missing ${synapseServiceKey}`,
+    );
+  }
+  await jobState.iterateEntities(
+    { _type: SynapseEntities.SYNAPSE_KEYS._type },
+    async (synapseKeyEntity) => {
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: RelationshipClass.HAS,
+          fromKey: synapseServiceKey,
+          fromType: SynapseEntities.SYNAPSE_SERVICE._type,
+          toKey: synapseKeyEntity._key,
+          toType: SynapseEntities.SYNAPSE_KEYS._type,
         }),
       );
     },
@@ -139,6 +194,50 @@ export async function fetchSynapseSqlPool(
   );
 }
 
+export async function fetchSynapseKeys(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+
+  const client = new SynapseClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: SynapseEntities.WORKSPACE._type },
+    async (workspaceEntity) => {
+      const resourceGroupName = workspaceEntity.resourceGroupName as string;
+      const workspaceName = workspaceEntity.displayName as string;
+      const workspaceUID = workspaceEntity.workspaceUID as string;
+
+      if (!resourceGroupName || !workspaceName || !workspaceUID) {
+        throw new IntegrationMissingKeyError(
+          `One or more required values are undefined:
+          - Workspace Name: ${workspaceName}
+          - Resource Group Name: ${resourceGroupName}
+          - Workspace UUID: ${workspaceUID}
+         `,
+        );
+      }
+
+      await client.iterateSynapseKeys(
+        instance.config.subscriptionId as string,
+        resourceGroupName,
+        workspaceName,
+        async (synapseKey) => {
+          const synapseKeyEntity = createSynapseKeyEntity(
+            webLinker,
+            synapseKey,
+            workspaceUID,
+          );
+          await jobState.addEntity(synapseKeyEntity);
+        },
+      );
+    },
+  );
+}
+
+// TODO:  This function need to correct
 export async function buildSynapseWorkspaceSQLPoolRelationship(
   executionContext: IntegrationStepContext,
 ) {
@@ -165,6 +264,70 @@ export async function buildSynapseWorkspaceSQLPoolRelationship(
           fromType: SynapseEntities.WORKSPACE._type,
           toKey: sqlPoolEntity._key,
           toType: SynapseEntities.SYNAPSE_SQL_POOL._type,
+        }),
+      );
+    },
+  );
+}
+
+export async function buildSynapseWorkspaceKeysRelationship(
+  executionContext: IntegrationStepContext,
+) {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: SynapseEntities.SYNAPSE_KEYS._type },
+    async (synapseKeyEntity) => {
+      const workspaceKey = getSynapseEntityKey(
+        synapseKeyEntity.workspaceUID as string,
+        SynapseEntities.WORKSPACE._type,
+      );
+
+      if (!workspaceKey) {
+        throw new IntegrationMissingKeyError(
+          `Workspace key Missing ${workspaceKey}`,
+        );
+      }
+
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: RelationshipClass.HAS,
+          fromKey: workspaceKey,
+          fromType: SynapseEntities.WORKSPACE._type,
+          toKey: synapseKeyEntity._key,
+          toType: SynapseEntities.SYNAPSE_KEYS._type,
+        }),
+      );
+    },
+  );
+}
+
+export async function buildVaultServiceSynapseKeyRelationship(
+  executionContext: IntegrationStepContext,
+) {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: SynapseEntities.SYNAPSE_KEYS._type },
+    async (synapseKeyEntity) => {
+      const workspaceKey = getSynapseEntityKey(
+        synapseKeyEntity.workspaceUID as string,
+        SynapseEntities.WORKSPACE._type,
+      );
+
+      if (!workspaceKey) {
+        throw new IntegrationMissingKeyError(
+          `Workspace key Missing ${workspaceKey}`,
+        );
+      }
+
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: RelationshipClass.HAS,
+          fromKey: workspaceKey,
+          fromType: SynapseEntities.WORKSPACE._type,
+          toKey: synapseKeyEntity._key,
+          toType: SynapseEntities.SYNAPSE_KEYS._type,
         }),
       );
     },
@@ -292,8 +455,8 @@ export const SynapseSteps: AzureIntegrationStep[] = [
     id: SYNAPSE_STEPS.SYNAPSE_SERVICE,
     name: 'Synapse Service',
     entities: [SynapseEntities.SYNAPSE_SERVICE],
-    relationships: [],
-    dependsOn: [],
+    relationships: [SynapseRelationship.SUBSCRIPTION_HAS_SYNAPSE_SERVICE],
+    dependsOn: [steps.SUBSCRIPTION],
     executionHandler: createSynapseService,
     rolePermissions: [],
     ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
@@ -332,6 +495,16 @@ export const SynapseSteps: AzureIntegrationStep[] = [
     ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
   },
   {
+    id: SYNAPSE_STEPS.SYNAPSE_SERVICE_KEY_RELATIONSHIP,
+    name: 'Build Synapse Service and key Relationship',
+    entities: [],
+    relationships: [SynapseRelationship.SYNAPSE_SERVICE_KEYS],
+    dependsOn: [SYNAPSE_STEPS.SYNAPSE_SERVICE, SYNAPSE_STEPS.SYNAPSE_KEYS],
+    executionHandler: buildSynapseServiceKeysRelationship,
+    rolePermissions: [],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
+  },
+  {
     id: SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP,
     name: 'Build Synapse Workspace and SQL Pool Relationship',
     entities: [],
@@ -341,6 +514,16 @@ export const SynapseSteps: AzureIntegrationStep[] = [
       SYNAPSE_STEPS.SYNAPSE_SQL_POOL,
     ],
     executionHandler: buildSynapseWorkspaceSQLPoolRelationship,
+    rolePermissions: [],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
+  },
+  {
+    id: SYNAPSE_STEPS.SYNAPSE_WORKSPACE_KEYS_RELATIONSHIP,
+    name: 'Build Synapse Workspace and Keys Relationship',
+    entities: [],
+    relationships: [SynapseRelationship.SYNAPSE_WORKSPACE_HAS_KEYS],
+    dependsOn: [SYNAPSE_STEPS.SYNAPSE_WORKSPACES, SYNAPSE_STEPS.SYNAPSE_KEYS],
+    executionHandler: buildSynapseWorkspaceKeysRelationship,
     rolePermissions: [],
     ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
   },
@@ -357,7 +540,7 @@ export const SynapseSteps: AzureIntegrationStep[] = [
     ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
   },
   {
-    // Revisit this step: duplicate key issue, all rules sharing same id
+    // TODO: Revisit this step: duplicate key issue, all rules sharing same id
     id: SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_RULE,
     name: 'Fetch Synapse Data Masking Rule',
     entities: [SynapseEntities.SYNAPSE_DATA_MASKING_RULE],
@@ -373,12 +556,34 @@ export const SynapseSteps: AzureIntegrationStep[] = [
     id: SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP,
     name: 'Build Synapse SQL Pool Data Masking Policy Relationship',
     entities: [],
-    relationships: [SynapseRelationship.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY],
+    relationships: [
+      SynapseRelationship.SYNAPSE_SQL_POOL_ASSIGNED_DATA_MASKING_POLICY,
+    ],
     dependsOn: [
       SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_POLICY,
       SYNAPSE_STEPS.SYNAPSE_SQL_POOL,
     ],
     executionHandler: buildSynapseSQLPoolDataMaskingPilicyRelationship,
+    rolePermissions: [],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
+  },
+  {
+    id: SYNAPSE_STEPS.SYNAPSE_KEYS,
+    name: 'Fetch Synapse Keys',
+    entities: [SynapseEntities.SYNAPSE_KEYS],
+    relationships: [],
+    dependsOn: [SYNAPSE_STEPS.SYNAPSE_WORKSPACES],
+    executionHandler: fetchSynapseKeys,
+    rolePermissions: ['Microsoft.Synapse/workspaces/keys/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
+  },
+  {
+    id: SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP,
+    name: 'Build Key Vault Service Synapse Keys Relationship',
+    entities: [],
+    relationships: [SynapseRelationship.VALUT_SERVICE_HAS_SYNAPSE_KEY],
+    dependsOn: [SYNAPSE_STEPS.SYNAPSE_KEYS, STEP_RM_KEYVAULT_VAULTS],
+    executionHandler: buildVaultServiceSynapseKeyRelationship,
     rolePermissions: [],
     ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
   },

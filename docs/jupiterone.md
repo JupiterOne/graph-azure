@@ -405,6 +405,7 @@ The following entities are created:
 | [RM] Storage Table                             | `azure_storage_table`                             | `DataStore`, `Database`            |
 | [RM] Subnet                                    | `azure_subnet`                                    | `Network`                          |
 | [RM] Subscription                              | `azure_subscription`                              | `Account`                          |
+| [RM] Synapse Keys                              | `azure_synapse_key`                               | `Key`                              |
 | [RM] Usage Details                             | `azure_usage_details`                             | `Site`                             |
 | [RM] Virtual Machine                           | `azure_vm`                                        | `Host`                             |
 | [RM] Virtual Machine Extension                 | `azure_vm_extension`                              | `Application`                      |
@@ -454,6 +455,7 @@ The following relationships are created:
 | `azure_keyvault_service`           | **ALLOWS**            | `ANY_PRINCIPAL`                                   |
 | `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_key`                              |
 | `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_secret`                           |
+| `azure_keyvault_service`           | **HAS**               | `azure_synapse_key`                               |
 | `azure_lb`                         | **CONNECTS**          | `azure_nic`                                       |
 | `azure_management_group`           | **CONTAINS**          | `azure_management_group`                          |
 | `azure_mariadb_server`             | **HAS**               | `azure_mariadb_database`                          |
@@ -558,10 +560,13 @@ The following relationships are created:
 | `azure_subscription`               | **HAS**               | `azure_security_center_contact`                   |
 | `azure_subscription`               | **HAS**               | `azure_security_center_setting`                   |
 | `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing`      |
+| `azure_subscription`               | **HAS**               | `azure_synapse`                                   |
 | `azure_subscription`               | **HAS**               | `azure_usage_details`                             |
+| `azure_synapse`                    | **HAS**               | `azure_synapse_key`                               |
 | `azure_synapse`                    | **HAS**               | `azure_synapse_sql_pool`                          |
 | `azure_synapse`                    | **HAS**               | `azure_synapse_workspace`                         |
-| `azure_synapse_sql_pool`           | **HAS**               | `azure_synapse_masking_policy`                    |
+| `azure_synapse_sql_pool`           | **ASSIGNED**          | `azure_synapse_masking_policy`                    |
+| `azure_synapse_workspace`          | **HAS**               | `azure_synapse_key`                               |
 | `azure_synapse_workspace`          | **HAS**               | `azure_synapse_sql_pool`                          |
 | `azure_user`                       | **HAS**               | `ad-role-definitions`                             |
 | `azure_user`                       | **HAS**               | `azure_device`                                    |
@@ -662,7 +667,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (100)                                            |
+| Role Permissions List (101)                                            |
 | ---------------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                               |
 | `Microsoft.ApiManagement/service/apis/read`                            |
@@ -757,6 +762,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Storage/storageAccounts/read`                               |
 | `Microsoft.Storage/storageAccounts/tableServices/read`                 |
 | `Microsoft.Storage/storageAccounts/tableServices/tables/read`          |
+| `Microsoft.Synapse/workspaces/keys/read`                               |
 | `Microsoft.Synapse/workspaces/read`                                    |
 | `Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/read`       |
 | `Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/rules/read` |

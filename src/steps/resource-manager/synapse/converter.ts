@@ -8,6 +8,7 @@ import {
   SqlPool,
   DataMaskingPolicy,
   DataMaskingRule,
+  Key,
 } from '@azure/arm-synapse';
 import { SynapseEntities } from './constant';
 import { generateEntityKey } from '../../../utils/generateKeys';
@@ -98,6 +99,33 @@ export function createSqlPoolEntity(
         storageAccountType: data.storageAccountType,
         provisioningState: data.provisioningState,
         maxSizebytes: data.maxSizeBytes,
+        webLink: webLinker.portalResourceUrl(data.id),
+        workspaceUID: workspaceUID,
+      },
+    },
+  });
+}
+
+export function createSynapseKeyEntity(
+  webLinker: AzureWebLinker,
+  data: Key,
+  workspaceUID: string,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: getSynapseEntityKey(
+          data.id as string,
+          SynapseEntities.SYNAPSE_KEYS._type,
+        ),
+        _type: SynapseEntities.SYNAPSE_KEYS._type,
+        _class: SynapseEntities.SYNAPSE_KEYS._class,
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        isActiveCMK: data.isActiveCMK,
+        keyVaultUrl: data.keyVaultUrl,
         webLink: webLinker.portalResourceUrl(data.id),
         workspaceUID: workspaceUID,
       },

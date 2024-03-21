@@ -436,6 +436,8 @@ The following relationships are created:
 | `azure_container_registry`         | **HAS**               | `azure_container_registry_webhook`                |
 | `azure_container_volume`           | **USES**              | `azure_storage_file_share`                        |
 | `azure_cosmosdb_account`           | **HAS**               | `azure_cosmosdb_sql_database`                     |
+| `azure_ddos_protection_plan`       | **ASSIGNED**          | `azure_public_ip`                                 |
+| `azure_ddos_protection_plan`       | **ASSIGNED**          | `azure_vnet`                                      |
 | `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
 | `azure_dns_zone`                   | **HAS**               | `azure_dns_record_set`                            |
 | `azure_event_grid_domain`          | **HAS**               | `azure_event_grid_domain_topic`                   |
@@ -478,6 +480,7 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_container_group`                           |
 | `azure_resource_group`             | **HAS**               | `azure_container_registry`                        |
 | `azure_resource_group`             | **HAS**               | `azure_cosmosdb_account`                          |
+| `azure_resource_group`             | **HAS**               | `azure_ddos_protection_plan`                      |
 | `azure_resource_group`             | **HAS**               | `azure_dns_zone`                                  |
 | `azure_resource_group`             | **HAS**               | `azure_event_grid_domain`                         |
 | `azure_resource_group`             | **HAS**               | `azure_event_grid_topic`                          |
@@ -546,6 +549,7 @@ The following relationships are created:
 | `azure_subnet`                     | **ALLOWS**            | `azure_security_group`                            |
 | `azure_subnet`                     | **DENIES**            | `azure_security_group`                            |
 | `azure_subnet`                     | **HAS**               | `azure_vm`                                        |
+| `azure_subscription`               | **HAS**               | `azure_ddos_protection_plan`                      |
 | `azure_subscription`               | **HAS**               | `azure_monitor_log_profile`                       |
 | `azure_subscription`               | **HAS**               | `azure_resource_group`                            |
 | `azure_subscription`               | **CONTAINS**          | `azure_role_definition`                           |

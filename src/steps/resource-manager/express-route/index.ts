@@ -212,7 +212,7 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     relationships: [
       ExpressRouteRelationships.AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE,
     ],
-    dependsOn: [],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchAzureBgpServiceCommunities,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },
@@ -221,7 +221,7 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     name: 'Azure Application Gateway',
     entities: [ExpressRouteEntities.AZURE_APPLICATION_GATEWAY],
     relationships: [],
-    dependsOn: [],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchAzureApplicationGateway,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },

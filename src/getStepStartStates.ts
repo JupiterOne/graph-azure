@@ -115,6 +115,19 @@ import {
   STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
   STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
 } from './steps/resource-manager/event-grid/constants';
+import {
+  STEP_AZURE_EVENT_HUB,
+  STEP_EVENT_HUB_NAMESPACE,
+  STEP_AZURE_CONSUMER_GROUP,
+  STEP_EVENT_HUB_CLUSTER,
+  STEP_EVENT_HUB_KEYS,
+  EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION,
+  EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION,
+  STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
+  STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
+  STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION,
+  STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION,
+} from './steps/resource-manager/event-hub/constants';
 import { AdvisorSteps } from './steps/resource-manager/advisor/constants';
 import { SecuritySteps } from './steps/resource-manager/security/constants';
 import { PolicySteps } from './steps/resource-manager/policy/constants';
@@ -126,6 +139,12 @@ import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/co
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
 import { SYNAPSE_STEPS } from './steps/resource-manager/synapse/constant';
+import { DdosSteps } from './steps/resource-manager/ddos/constant';
+import { STEP_AZURE_APPLICATION_SECURITY_GROUP } from './steps/resource-manager/application-security-group/constants';
+import {
+  STEP_AZURE_APPLICATION_GATEWAY,
+  STEP_AZURE_BGP_SERVICE_COMMUNITIES,
+} from './steps/resource-manager/express-route/constants';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -180,6 +199,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
       STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
       STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
+      STEP_AZURE_APPLICATION_SECURITY_GROUP,
       STEP_RM_NETWORK_INTERFACES,
       STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
       STEP_RM_NETWORK_LOAD_BALANCERS,
@@ -271,6 +291,20 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_EVENT_GRID_TOPICS_DIAGNOSTIC_SETTINGS,
       STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS,
       STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS,
+      STEP_EVENT_HUB_NAMESPACE,
+      STEP_EVENT_HUB_KEYS,
+      STEP_AZURE_EVENT_HUB,
+      STEP_AZURE_CONSUMER_GROUP,
+      STEP_EVENT_HUB_CLUSTER,
+      STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION,
+      STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
+      STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION,
+      STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
+      EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION,
+      EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION,
+      // STEP_AZURE_EXPRESS_ROUTE_CIRCUIT,
+      STEP_AZURE_BGP_SERVICE_COMMUNITIES,
+      STEP_AZURE_APPLICATION_GATEWAY,
       SecuritySteps.ASSESSMENTS,
       SecuritySteps.SECURITY_CENTER_CONTACTS,
       SecuritySteps.SETTINGS,
@@ -299,6 +333,10 @@ export function getResourceManagerSteps(): GetApiSteps {
       SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_RULE,
       SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP,
       SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP,
+      DdosSteps.PROTECTION_PLAN,
+      DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP,
+      DdosSteps.DDOS_PROTECTION_PLAN_VNET_RELATIONSHIP,
+      DdosSteps.RESOURCE_GROUPS_DDOS_PROTECTION_PLAN_RELATIONSHIP,
       ...Object.values(FrontDoorStepIds),
     ],
     executeLastSteps: [

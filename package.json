@@ -44,10 +44,10 @@
     "document:permissions": " yarn ts-node commands/documentPermissions.ts documentPermissions"
   },
   "dependencies": {
-    "@azure/arm-advisor": "^2.0.0",
+    "@azure/arm-advisor": "^3.2.0",
     "@azure/arm-apimanagement": "^6.0.0",
     "@azure/arm-appservice": "^7.0.0",
-    "@azure/arm-authorization": "^8.3.2",
+    "@azure/arm-authorization": "^9.0.0",
     "@azure/arm-batch": "^4.0.0",
     "@azure/arm-cdn": "^5.0.0",
     "@azure/arm-compute": "^14.0.0",
@@ -58,6 +58,8 @@
     "@azure/arm-cosmosdb": "^7.0.0",
     "@azure/arm-dns": "^4.0.0",
     "@azure/arm-eventgrid": "^9.0.0",
+    "@azure/arm-eventhub": "^5.1.0",
+    "@azure/arm-eventhub-profile-2020-09-01-hybrid": "^2.1.0",
     "@azure/arm-frontdoor": "^4.1.1",
     "@azure/arm-keyvault": "^1.2.1",
     "@azure/arm-locks": "^1.2.2",
@@ -80,7 +82,7 @@
     "@azure/arm-subscriptions": "^2.0.0",
     "@azure/arm-synapse": "^8.0.0",
     "@azure/data-tables": "^12.1.2",
-    "@azure/identity": "3.0.0",
+    "@azure/identity": "^3.0.0",
     "@azure/keyvault-keys": "4.7.0",
     "@azure/keyvault-secrets": "4.7.0",
     "@azure/ms-rest-nodeauth": "^2.0.5",
@@ -91,8 +93,10 @@
     "@microsoft/microsoft-graph-types": "^1.10.0",
     "cross-fetch": "^3.0.4",
     "date-fns": "^2.24.0",
+    "install": "^0.13.0",
     "lodash.map": "^4.6.0",
-    "lodash.snakecase": "^4.1.1"
+    "lodash.snakecase": "^4.1.1",
+    "npm": "^10.5.0"
   },
   "resolutions": {
     "@azure/ms-rest-azure-js": "^2.0.0",

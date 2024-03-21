@@ -18,7 +18,7 @@ export class MyNetworkManagementClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       AzureNetworkManagementClient,
     );
-    await serviceClient.applicationSecurityGroups;
+    serviceClient.applicationSecurityGroups;
     const { resourceGroupName } = applicationSecurityGroups;
 
     return iterateAllResources({

@@ -1,11 +1,8 @@
 import {
-  EventHubManagementClient,
-  ConsumerGroup,
-  Eventhub,
+  EventHubManagementClient
 } from '@azure/arm-eventhub';
 import {
-  Client,
-  iterateAllResources,
+  Client
 } from '../../../azure/resource-manager/client';
 import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
 
@@ -24,7 +21,7 @@ export class EventHubClient extends Client {
     subscriptionId: string,
     callback: (namespace) => void | Promise<void>,
   ): Promise<void> {
-    const credential = await this.getClientSecretCredentials();
+    const credential = this.getClientSecretCredentials();
     const client = new EventHubManagementClient(credential, subscriptionId);
 
     try {
@@ -53,14 +50,14 @@ export class EventHubClient extends Client {
     subscriptionId: string,
     callback: (cluster) => void | Promise<void>,
   ): Promise<void> {
-    const credential = await this.getClientSecretCredentials();
+    const credential = this.getClientSecretCredentials();
     const serviceClient = new EventHubManagementClient(
       credential,
       subscriptionId,
     );
 
     try {
-      for await (const cluster of await serviceClient.clusters.listBySubscription()) {
+      for await (const cluster of serviceClient.clusters.listBySubscription()) {
         await callback(cluster);
       }
     } catch (err) {
@@ -88,14 +85,14 @@ export class EventHubClient extends Client {
     eventHubName: string,
     callback: (consumerGroups) => void | Promise<void>,
   ): Promise<void> {
-    const credential = await this.getClientSecretCredentials();
+    const credential = this.getClientSecretCredentials();
     const serviceClient = new EventHubManagementClient(
       credential,
       subscriptionId,
     );
 
     try {
-      for await (const consumerGroup of await serviceClient.consumerGroups.listByEventHub(
+      for await (const consumerGroup of serviceClient.consumerGroups.listByEventHub(
         resourceGroupName,
         namespaceName,
         eventHubName,
@@ -126,11 +123,11 @@ export class EventHubClient extends Client {
     namespaceName: string,
     callback: (eventHubs) => void | Promise<void>,
   ): Promise<void> {
-    const credential = await this.getClientSecretCredentials();
+    const credential = this.getClientSecretCredentials();
     const client = new EventHubManagementClient(credential, subscriptionId);
 
     try {
-      for await (const eventHub of await client.eventHubs.listByNamespace(
+      for await (const eventHub of client.eventHubs.listByNamespace(
         resourceGroupName,
         namespaceName,
       )) {

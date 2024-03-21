@@ -1,26 +1,13 @@
-import {
-  createDirectRelationship,
-  RelationshipClass,
-} from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
-import {
-  RESOURCE_GROUP_ENTITY,
-  STEP_RM_RESOURCES_RESOURCE_GROUPS,
-} from '../resources/constants';
-import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { ExpressRouteClient } from './client';
 import {
   ExpressRouteRelationships,
   ExpressRouteEntities,
-  STEP_AZURE_EXPRESS_ROUTE_CIRCUIT,
   STEP_AZURE_APPLICATION_GATEWAY,
   STEP_AZURE_BGP_SERVICE_COMMUNITIES,
-  STEP_AZURE_EXPRESS_ROUTE,
-  STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
-  STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
   STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
 } from './constants';
 import {
@@ -29,7 +16,6 @@ import {
   createAzureExpressRouteCircuitConnectionEntity,
   createAzureExpressRouteCircuitEntity,
   createAzureExpressRouteCrossConnectionEntity,
-  createAzureExpressRouteEntity,
   createAzurePeerExpressRouteCircuitConnectionEntity,
 } from './converters';
 import { resourceGroupName } from '../../../azure/utils';
@@ -52,7 +38,6 @@ export async function fetchAzureExpressRouteCircuit(
 
   // Fetch all expressRouteCircuits
   await client.iterateExpressRouteCircuit(async (expressRouteCircuit) => {
-    console.log('expressRouteCircuit===========', expressRouteCircuit);
     const expressRouteCircuitEntity = createAzureExpressRouteCircuitEntity(
       webLinker,
       expressRouteCircuit,
@@ -157,7 +142,6 @@ export async function fetchAzureApplicationGateway(
 
   // Fetch all EventHub namespaces
   await client.iterateApplicationGateway(async (applicationGateway) => {
-    console.log('=========applicationGateway========', applicationGateway);
     const applicationGatewayEntity = createAzureApplicationGatewayEntity(
       webLinker,
       applicationGateway,

@@ -21,7 +21,7 @@ export class SynapseClient extends Client {
     const credential = this.getClientSecretCredentials();
     const client = new SynapseManagementClient(credential, subscriptionId);
     try {
-      for await (let workspace of client.workspaces.list()) {
+      for await (const workspace of client.workspaces.list()) {
         await callback(workspace);
       }
     } catch (err) {
@@ -58,7 +58,7 @@ export class SynapseClient extends Client {
     const credential = this.getClientSecretCredentials();
     const client = new SynapseManagementClient(credential, subscriptionId);
     try {
-      for await (let sqlPool of client.sqlPools.listByWorkspace(
+      for await (const sqlPool of client.sqlPools.listByWorkspace(
         resourceGroupName,
         workspaceName,
       )) {
@@ -98,7 +98,7 @@ export class SynapseClient extends Client {
     const credential = this.getClientSecretCredentials();
     const client = new SynapseManagementClient(credential, subscriptionId);
     try {
-      for await (let synapseKey of client.keys.listByWorkspace(
+      for await (const synapseKey of client.keys.listByWorkspace(
         resourceGroupName,
         workspaceName,
       )) {
@@ -177,7 +177,7 @@ export class SynapseClient extends Client {
     const credential = this.getClientSecretCredentials();
     const client = new SynapseManagementClient(credential, subscriptionId);
     try {
-      for await (let dataMaskingrule of client.dataMaskingRules.listBySqlPool(
+      for await (const dataMaskingrule of client.dataMaskingRules.listBySqlPool(
         resourceGroupName,
         workspaceName,
         sqlPoolName,

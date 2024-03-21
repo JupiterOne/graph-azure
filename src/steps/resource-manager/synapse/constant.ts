@@ -25,6 +25,8 @@ export const SYNAPSE_STEPS = {
     'build-sql-pool-data-masking-policy-relationship',
   KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP:
     'build-vault-service-synapse-key-relationship',
+  SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP:
+    'build-synapse-sql-pool-data-masking-relationship',
 };
 
 export const SynapseEntities = {
@@ -140,5 +142,15 @@ export const SynapseRelationship = {
     sourceType: KEY_VAULT_SERVICE_ENTITY_TYPE,
     _class: RelationshipClass.HAS,
     targetType: SynapseEntities.SYNAPSE_KEYS._type,
+  },
+  SYNAPSE_SQL_POOL_HAS_DATA_MASKING_RULE: {
+    _type: generateRelationshipType(
+      RelationshipClass.HAS,
+      SynapseEntities.SYNAPSE_SQL_POOL,
+      SynapseEntities.SYNAPSE_DATA_MASKING_RULE,
+    ),
+    sourceType: SynapseEntities.SYNAPSE_SQL_POOL._type,
+    _class: RelationshipClass.HAS,
+    targetType: SynapseEntities.SYNAPSE_DATA_MASKING_RULE._type,
   },
 };

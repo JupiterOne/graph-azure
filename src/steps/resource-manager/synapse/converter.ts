@@ -172,7 +172,7 @@ export function createDataMaskingRuleEntity(
       source: data,
       assign: {
         _key: getSynapseEntityKey(
-          data.id as string,
+          `${data.id!}:${data.idPropertiesId!}`,
           SynapseEntities.SYNAPSE_DATA_MASKING_RULE._type,
         ),
         _type: SynapseEntities.SYNAPSE_DATA_MASKING_RULE._type,

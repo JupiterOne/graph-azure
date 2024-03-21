@@ -566,6 +566,7 @@ The following relationships are created:
 | `azure_synapse`                    | **HAS**               | `azure_synapse_sql_pool`                          |
 | `azure_synapse`                    | **HAS**               | `azure_synapse_workspace`                         |
 | `azure_synapse_sql_pool`           | **ASSIGNED**          | `azure_synapse_masking_policy`                    |
+| `azure_synapse_sql_pool`           | **HAS**               | `azure_synapse_masking_rule`                      |
 | `azure_synapse_workspace`          | **HAS**               | `azure_synapse_key`                               |
 | `azure_synapse_workspace`          | **HAS**               | `azure_synapse_sql_pool`                          |
 | `azure_user`                       | **HAS**               | `ad-role-definitions`                             |

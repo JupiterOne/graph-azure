@@ -37,6 +37,7 @@ import { managementGroupSteps } from './steps/resource-manager/management-groups
 import { containerServicesSteps } from './steps/resource-manager/container-services';
 import { frontdoorSteps } from './steps/resource-manager/frontdoor';
 import { ingestionConfig } from './config';
+import { DdosServiceSteps } from './steps/resource-manager/ddos';
 import { eventHubStep } from './steps/resource-manager/event-hub';
 import { applicationSecurityGroupSteps } from './steps/resource-manager/application-security-group';
 
@@ -105,9 +106,10 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
       ...policyInsightSteps,
       ...managementGroupSteps,
       ...containerServicesSteps,
+      ...DdosServiceSteps,
       ...eventHubStep,
       ...expressRouteSteps,
-      ...applicationSecurityGroupSteps,
+      ...applicationSecurityGroupSteps
     ],
 
     normalizeGraphObjectKey: (_key) => _key.toLowerCase(),

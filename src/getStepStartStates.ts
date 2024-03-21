@@ -138,6 +138,7 @@ import { ManagementGroupSteps } from './steps/resource-manager/management-groups
 import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
+import { DdosSteps } from './steps/resource-manager/ddos/constant';
 import { STEP_AZURE_APPLICATION_SECURITY_GROUP } from './steps/resource-manager/application-security-group/constants';
 import {
   STEP_AZURE_APPLICATION_GATEWAY,
@@ -318,6 +319,10 @@ export function getResourceManagerSteps(): GetApiSteps {
       PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
       PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS,
       PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS,
+      DdosSteps.PROTECTION_PLAN,
+      DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP,
+      DdosSteps.DDOS_PROTECTION_PLAN_VNET_RELATIONSHIP,
+      DdosSteps.RESOURCE_GROUPS_DDOS_PROTECTION_PLAN_RELATIONSHIP,
       ...Object.values(FrontDoorStepIds),
     ],
     executeLastSteps: [

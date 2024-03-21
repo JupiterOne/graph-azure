@@ -16,7 +16,7 @@ import {
   createProtectionPlanEntity,
   getDdosProtectionPlanKey,
 } from './converter';
-import { entities } from '../subscriptions/constants';
+import { entities, steps } from '../subscriptions/constants';
 import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
@@ -36,6 +36,17 @@ export async function fetchProtectionPlans(
     await jobState.addEntity(protectionPlanEntity);
 
     const protectionPlanKey = getDdosProtectionPlanKey(protectionPlanEntity.id);
+
+    if (
+      !jobState.hasKey(protectionPlanKey) ||
+      !jobState.hasKey(subscriptionKey)
+    ) {
+      throw new IntegrationMissingKeyError(`
+        Cannot Build Relationship. Error : Entity Key Missing.  
+        Protection Plan Key : ${protectionPlanKey}
+        Subscription Key : ${subscriptionKey}
+      `);
+    }
 
     // add subscription and Ddos Protection plan relationship
     await jobState.addRelationship(
@@ -63,6 +74,13 @@ export async function buildProtectionPlanPublicIpRelationship(
       if (!publicIPAddresses) return;
       for (const publicIpAddress of publicIPAddresses) {
         if (publicIpAddress) {
+          if (!jobState.hasKey(publicIpAddress)) {
+            throw new IntegrationMissingKeyError(`
+              Cannot Build Relationship. Error : Entity Key Missing.  
+              Public IP Address Key : ${publicIpAddress}
+            `);
+          }
+
           await jobState.addRelationship(
             createDirectRelationship({
               _class: RelationshipClass.ASSIGNED,
@@ -92,6 +110,13 @@ export async function buildProtectionPlanVnetRelationship(
       if (!virtualNetworks) return;
       for (const vnet of virtualNetworks) {
         if (vnet) {
+          if (!jobState.hasKey(vnet)) {
+            throw new IntegrationMissingKeyError(`
+              Cannot Build Relationship. Error : Entity Key Missing.  
+              Virtual Network Key : ${vnet}
+            `);
+          }
+
           await jobState.addRelationship(
             createDirectRelationship({
               _class: RelationshipClass.ASSIGNED,
@@ -123,7 +148,7 @@ export async function buildResourceGroupProtectionPlanRelationship(
         .slice(0, 5)
         .join('/');
 
-      if (!resourceGroupKey) {
+      if (!jobState.hasKey(resourceGroupKey)) {
         throw new IntegrationMissingKeyError(
           `Resource Group Key Missing ${resourceGroupKey}`,
         );
@@ -148,7 +173,7 @@ export const DdosServiceSteps: AzureIntegrationStep[] = [
     name: 'Fetch Ddos Protection Plan',
     entities: [DdosEntities.PROTECTION_PLAN],
     relationships: [DdosRelationships.SUBSCRIPTION_HAS_PROTECTION_PLAN],
-    dependsOn: [],
+    dependsOn: [steps.SUBSCRIPTION],
     executionHandler: fetchProtectionPlans,
     rolePermissions: ['Microsoft.Network/ddosProtectionPlans/read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.DDOS,

@@ -34,5 +34,6 @@ export const INGESTION_SOURCE_IDS = {
   STORAGE: 'storage',
   SUBSCRIPTIONS: 'subscriptions',
   SUBSCRIPTION_USAGE: 'subscriptions_usage',
+  SYNAPSE: 'synapse',
   DDOS: 'ddos',
 };

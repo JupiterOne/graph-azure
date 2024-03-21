@@ -138,6 +138,7 @@ import { ManagementGroupSteps } from './steps/resource-manager/management-groups
 import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
+import { SYNAPSE_STEPS } from './steps/resource-manager/synapse/constant';
 import { DdosSteps } from './steps/resource-manager/ddos/constant';
 import { STEP_AZURE_APPLICATION_SECURITY_GROUP } from './steps/resource-manager/application-security-group/constants';
 import {
@@ -319,6 +320,19 @@ export function getResourceManagerSteps(): GetApiSteps {
       PolicyInsightSteps.SUBSCRIPTION_POLICY_STATES,
       PolicyInsightSteps.POLICY_STATE_TO_ASSIGNMENT_RELATIONSHIPS,
       PolicyInsightSteps.POLICY_STATE_TO_DEFINITION_RELATIONSHIPS,
+      SYNAPSE_STEPS.SYNAPSE_SERVICE,
+      SYNAPSE_STEPS.SYNAPSE_WORKSPACES,
+      SYNAPSE_STEPS.SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP,
+      SYNAPSE_STEPS.SYNAPSE_SQL_POOL,
+      SYNAPSE_STEPS.SYNAPSE_SERVICE_SQL_POOL_RELATIONSHIP,
+      SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP,
+      SYNAPSE_STEPS.SYNAPSE_KEYS,
+      SYNAPSE_STEPS.SYNAPSE_SERVICE_KEY_RELATIONSHIP,
+      SYNAPSE_STEPS.SYNAPSE_WORKSPACE_KEYS_RELATIONSHIP,
+      SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_POLICY,
+      SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_RULE,
+      SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP,
+      SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP,
       DdosSteps.PROTECTION_PLAN,
       DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP,
       DdosSteps.DDOS_PROTECTION_PLAN_VNET_RELATIONSHIP,

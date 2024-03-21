@@ -37,6 +37,7 @@ import { managementGroupSteps } from './steps/resource-manager/management-groups
 import { containerServicesSteps } from './steps/resource-manager/container-services';
 import { frontdoorSteps } from './steps/resource-manager/frontdoor';
 import { ingestionConfig } from './config';
+import { SynapseSteps } from './steps/resource-manager/synapse';
 import { DdosServiceSteps } from './steps/resource-manager/ddos';
 import { eventHubStep } from './steps/resource-manager/event-hub';
 import { applicationSecurityGroupSteps } from './steps/resource-manager/application-security-group';
@@ -106,6 +107,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
       ...policyInsightSteps,
       ...managementGroupSteps,
       ...containerServicesSteps,
+      ...SynapseSteps,
       ...DdosServiceSteps,
       ...eventHubStep,
       ...expressRouteSteps,

@@ -1,9 +1,10 @@
 import {
   createDirectRelationship,
   getRawData,
+  IntegrationMissingKeyError,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { EHNamespace, Eventhub, Namespaces } from '@azure/arm-eventhub';
+import { EHNamespace } from '@azure/arm-eventhub';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
@@ -16,7 +17,6 @@ import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
 } from '../resources/constants';
-import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { EventHubClient } from './client';
 import {
   EventHubEntities,
@@ -27,13 +27,13 @@ import {
   STEP_AZURE_CONSUMER_GROUP,
   STEP_EVENT_HUB_CLUSTER,
   EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION,
-  AZURE_EVENT_HUB_HAS_EVENT_HUB_CLUSTER,
   STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
   STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION,
   STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
   STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION,
   STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION,
   EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION,
+  STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION,
 } from './constants';
 import {
   createEventHubNamespaceEntity,
@@ -42,16 +42,7 @@ import {
   createAzureEventHubKeysEntity,
   createEventHubEntity,
 } from './converters';
-import { resourceGroupName } from '../../../azure/utils';
-import {
-  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
-  diagnosticSettingsEntitiesForResource,
-  getDiagnosticSettingsRelationshipsForResource,
-} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
-import { steps as storageSteps } from '../storage/constants';
-import { ResourceRecommendationBase } from '@azure/arm-advisor';
-import { buildActivityLogScopeRelationships } from '../monitor';
 
 export async function fetchEventHubNamespaces(
   executionContext: IntegrationStepContext,
@@ -103,6 +94,10 @@ export async function fetchAzureEventHub(
   );
 }
 
+/**
+ * Create relationship between Azure Event Hub Namespace and Azure Event Hub entities.
+ * @param executionContext
+ */
 export async function buildEventHubNamespaceEventHubRelationship(
   executionContext: IntegrationStepContext,
 ) {
@@ -114,18 +109,29 @@ export async function buildEventHubNamespaceEventHubRelationship(
         0,
         eventHubEntity._key.lastIndexOf('/eventhubs'),
       );
-      await jobState.addRelationship(
-        createDirectRelationship({
-          _class: RelationshipClass.HAS,
-          fromKey: eventHubNamespaceEntityKey,
-          fromType: EventHubEntities.EVENT_HUB_NAMESPACE._type,
-          toKey: eventHubEntity._key,
-          toType: EventHubEntities.AZURE_EVENT_HUB._type,
-        }),
-      );
+      if (jobState.hasKey(eventHubNamespaceEntityKey)) {
+        // Check if the event hub namespace key exists
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.HAS,
+            fromKey: eventHubNamespaceEntityKey,
+            fromType: EventHubEntities.EVENT_HUB_NAMESPACE._type,
+            toKey: eventHubEntity._key,
+            toType: EventHubEntities.AZURE_EVENT_HUB._type,
+          }),
+        );
+      } else {
+        throw new IntegrationMissingKeyError(
+          `Build Event Hub Namespace Event Hub Relationship: ${eventHubNamespaceEntityKey} Missing.`,
+        );
+      }
     },
   );
 }
+/**
+ * Create relationship between Azure Event Hub Namespace and Azure Event Hub Keys entities.
+ * @param executionContext
+ */
 export async function buildEventHubNamespaceEventHubKeyRelationship(
   executionContext: IntegrationStepContext,
 ) {
@@ -135,20 +141,64 @@ export async function buildEventHubNamespaceEventHubKeyRelationship(
     async (eventHubKeyEntity) => {
       const eventHubNamespaceEntityKey =
         eventHubKeyEntity.namespaceId as string;
-      await jobState.addRelationship(
-        createDirectRelationship({
-          _class: RelationshipClass.HAS,
-          fromKey: eventHubNamespaceEntityKey,
-          fromType: EventHubEntities.EVENT_HUB_NAMESPACE._type,
-          toKey: eventHubKeyEntity._key,
-          toType: EventHubEntities.EVENT_HUB_KEYS._type,
-        }),
-      );
+      if (jobState.hasKey(eventHubNamespaceEntityKey)) {
+        // Check if the event hub namespace key exists
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.HAS,
+            fromKey: eventHubNamespaceEntityKey,
+            fromType: EventHubEntities.EVENT_HUB_NAMESPACE._type,
+            toKey: eventHubKeyEntity._key,
+            toType: EventHubEntities.EVENT_HUB_KEYS._type,
+          }),
+        );
+      } else {
+        throw new IntegrationMissingKeyError(
+          `Build Event Hub Namespace Event Hub Key Relationship: ${eventHubNamespaceEntityKey} Missing.`,
+        );
+      }
     },
   );
 }
 
+/**
+ * Create relationship between Azure Subscription and Azure Event Hub entities.
+ * @param executionContext
+ */
 export async function buildAzureSubscriptionAzureEventHubRelation(
+  executionContext: IntegrationStepContext,
+) {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: EventHubEntities.AZURE_EVENT_HUB._type },
+    async (eventHubEntity) => {
+      const subscriptionEntityKey = eventHubEntity._key.substring(
+        0,
+        eventHubEntity._key.lastIndexOf('/subscriptions'),
+      );
+
+      if (jobState.hasKey(subscriptionEntityKey)) {
+        // Check if the subscription key exists
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.HAS,
+            fromKey: subscriptionEntityKey,
+            fromType: entities.SUBSCRIPTION._type,
+            toKey: eventHubEntity._key,
+            toType: EventHubEntities.AZURE_EVENT_HUB._type,
+          }),
+        );
+      } else {
+        throw new IntegrationMissingKeyError(
+          `Build Azure Subscription Azure Event Hub Relationship: ${subscriptionEntityKey} Missing.`,
+        );
+      }
+    },
+  );
+}
+
+export async function buildAzureEventHubLocationRelationship(
   executionContext: IntegrationStepContext,
 ) {
   const { jobState } = executionContext;
@@ -172,6 +222,10 @@ export async function buildAzureSubscriptionAzureEventHubRelation(
   );
 }
 
+/**
+ * Create relationship between Azure Resource Group and Azure Event Hub entities.
+ * @param executionContext
+ */
 export async function buildAzureResourceGroupAzureEventHubRelation(
   executionContext: IntegrationStepContext,
 ) {
@@ -183,15 +237,23 @@ export async function buildAzureResourceGroupAzureEventHubRelation(
         0,
         eventHubEntity._key.lastIndexOf('/resourceGroups'),
       );
-      await jobState.addRelationship(
-        createDirectRelationship({
-          _class: RelationshipClass.HAS,
-          fromKey: resourceGroupEntityKey,
-          fromType: RESOURCE_GROUP_ENTITY._type,
-          toKey: eventHubEntity._key,
-          toType: EventHubEntities.AZURE_EVENT_HUB._type,
-        }),
-      );
+
+      if (jobState.hasKey(resourceGroupEntityKey)) {
+        // Check if the resource group key exists
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.HAS,
+            fromKey: resourceGroupEntityKey,
+            fromType: RESOURCE_GROUP_ENTITY._type,
+            toKey: eventHubEntity._key,
+            toType: EventHubEntities.AZURE_EVENT_HUB._type,
+          }),
+        );
+      } else {
+        throw new IntegrationMissingKeyError(
+          `Build Azure Resource Group Azure Event Hub Relationship: ${resourceGroupEntityKey} Missing.`,
+        );
+      }
     },
   );
 }
@@ -230,21 +292,7 @@ export async function buildEventHubKeysKeyVaultRelation(
   const { jobState } = executionContext;
   await jobState.iterateEntities(
     { _type: EventHubEntities.AZURE_EVENT_HUB._type },
-    async (eventHubEntity) => {
-      const resourceGroupEntityKey = eventHubEntity._key.substring(
-        0,
-        eventHubEntity._key.lastIndexOf('/resourceGroups'),
-      );
-      await jobState.addRelationship(
-        createDirectRelationship({
-          _class: RelationshipClass.HAS,
-          fromKey: resourceGroupEntityKey,
-          fromType: RESOURCE_GROUP_ENTITY._type,
-          toKey: eventHubEntity._key,
-          toType: EventHubEntities.AZURE_EVENT_HUB._type,
-        }),
-      );
-    },
+    async (eventHubEntity) => {},
   );
 }
 
@@ -279,6 +327,10 @@ export async function fetchAzureConsumerGroup(
   );
 }
 
+/**
+ * Create relationship between Azure Consumer Group and Azure Event Hub entities.
+ * @param executionContext
+ */
 export async function buildAzureConsumerGroupEventHubRelationship(
   executionContext: IntegrationStepContext,
 ) {
@@ -290,15 +342,23 @@ export async function buildAzureConsumerGroupEventHubRelationship(
         0,
         consumerGroupEntity._key.lastIndexOf('/eventhubs'),
       );
-      await jobState.addRelationship(
-        createDirectRelationship({
-          _class: RelationshipClass.HAS,
-          fromKey: consumerGroupEntity._key,
-          fromType: EventHubEntities.AZURE_CONSUMER_GROUP._type,
-          toKey: eventHubEntityKey,
-          toType: EventHubEntities.AZURE_EVENT_HUB._type,
-        }),
-      );
+
+      if (jobState.hasKey(eventHubEntityKey)) {
+        // Check if the event hub key exists
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.HAS,
+            fromKey: consumerGroupEntity._key,
+            fromType: EventHubEntities.AZURE_CONSUMER_GROUP._type,
+            toKey: eventHubEntityKey,
+            toType: EventHubEntities.AZURE_EVENT_HUB._type,
+          }),
+        );
+      } else {
+        throw new IntegrationMissingKeyError(
+          `Build Azure Consumer Group Event Hub Relationship: ${eventHubEntityKey} Missing.`,
+        );
+      }
     },
   );
 }
@@ -323,27 +383,10 @@ export async function fetchEventHubCluster(
   );
 }
 
-export async function buildEventHubEventHubClusterRelationship(
-  executionContext: IntegrationStepContext,
-) {
-  const { jobState } = executionContext;
-  await jobState.iterateEntities(
-    { _type: EventHubEntities.EVENT_HUB_CLUSTER._type },
-    async (clusterEntity) => {
-      const eventHubEntityKey = clusterEntity._key;
-      await jobState.addRelationship(
-        createDirectRelationship({
-          _class: RelationshipClass.HAS,
-          fromKey: clusterEntity._key,
-          fromType: EventHubEntities.EVENT_HUB_CLUSTER._type,
-          toKey: eventHubEntityKey,
-          toType: EventHubEntities.AZURE_EVENT_HUB._type,
-        }),
-      );
-    },
-  );
-}
-
+/**
+ * Create relationship between Event Hub Cluster and Event Hub Namespace entities.
+ * @param executionContext
+ */
 export async function buildEventHubClusterEventHubNamespaceRelation(
   executionContext: IntegrationStepContext,
 ) {
@@ -354,15 +397,23 @@ export async function buildEventHubClusterEventHubNamespaceRelation(
       // Check if clusterArmId is defined
       if (eventHubNamespaceEntity.clusterArmId !== undefined) {
         const clusterEntityKey = eventHubNamespaceEntity.clusterArmId as string;
-        await jobState.addRelationship(
-          createDirectRelationship({
-            _class: RelationshipClass.HAS,
-            fromKey: clusterEntityKey,
-            fromType: EventHubEntities.EVENT_HUB_CLUSTER._type,
-            toKey: eventHubNamespaceEntity._key,
-            toType: EventHubEntities.AZURE_EVENT_HUB._type,
-          }),
-        );
+
+        if (jobState.hasKey(clusterEntityKey)) {
+          // Check if the cluster key exists
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              fromKey: clusterEntityKey,
+              fromType: EventHubEntities.EVENT_HUB_CLUSTER._type,
+              toKey: eventHubNamespaceEntity._key,
+              toType: EventHubEntities.AZURE_EVENT_HUB._type,
+            }),
+          );
+        } else {
+          throw new IntegrationMissingKeyError(
+            `Build Event Hub Cluster Event Hub Namespace Relationship: ${clusterEntityKey} Missing.`,
+          );
+        }
       }
     },
   );
@@ -456,6 +507,18 @@ export const eventHubStep: AzureIntegrationStep[] = [
     executionHandler: fetchAzureEventHub,
     ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
   },
+  // {
+  //   id: STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION,
+  //   name: 'Build Azure Event Hub Has Location Relation',
+  //   entities: [EventHubEntities.AZURE_EVENT_HUB],
+  //   relationships: [],
+  //   dependsOn: [
+  //     STEP_AZURE_EVENT_HUB,
+  //     steps.LOCATIONS
+  //   ],
+  //   executionHandler: buildAzureEventHubLocationRelationship,
+  //   ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
+  // },
   {
     id: STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION,
     name: 'Build Azure Subscription Has Azure Event Hub',
@@ -494,15 +557,4 @@ export const eventHubStep: AzureIntegrationStep[] = [
     executionHandler: buildEventHubClusterEventHubNamespaceRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
   },
-  // {
-  //   id: AZURE_EVENT_HUB_HAS_EVENT_HUB_CLUSTER,
-  //   name: 'Event Hub Has Event Hub Cluster',
-  //   entities: [],
-  //   relationships: [
-  //     EventHubRelationships.AZURE_EVENT_HUB_HAS_EVENT_HUB_CLUSTER
-  //   ],
-  //   dependsOn: [STEP_AZURE_EVENT_HUB, STEP_EVENT_HUB_CLUSTER],
-  //   executionHandler: buildEventHubEventHubClusterRelationship,
-  //   ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
-  // }
 ];

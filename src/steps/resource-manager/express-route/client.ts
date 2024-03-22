@@ -3,6 +3,7 @@ import {
   Client,
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
+import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
 
 export class ExpressRouteClient extends Client {
   /**
@@ -111,17 +112,87 @@ export class ExpressRouteClient extends Client {
    * @returns A promise that resolves to an array of EHNamespace objects
    */
   public async iterateExpressRouteCircuitConnection(
+    subscriptionId,
+    resourceGroupName,
+    circuitName,
+    peeringName,
     callback: (s) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      NetworkManagementClient,
-    );
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: serviceClient.expressRouteCircuitConnections,
-      resourceDescription: 'expressRouteCircuitConnections',
-      callback,
-    });
+    const credential = this.getClientSecretCredentials();
+    const client = new NetworkManagementClient(credential, subscriptionId);
+    try {
+      for await (const expressRouteCircuitConnection of serviceClient.expressRouteCircuitConnections.list(
+        resourceGroupName,
+        circuitName,
+        peeringName,
+      )) {
+        await callback(expressRouteCircuitConnection);
+      }
+    } catch (err) {
+      if (err.statusCode === 403) {
+        this.logger.warn({ err }, err.message);
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingPermission,
+          description: err.message,
+        });
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  //   public async iterateExpressRouteCircuitConnection(
+  //     resourceGroupName,
+  //         circuitName,
+  //         peeringName,
+  //     callback: (s) => void | Promise<void>,
+  //   ): Promise<void> {
+  //     const serviceClient = await this.getAuthenticatedServiceClient(
+  //       NetworkManagementClient,
+  //     );
+  //     return iterateAllResources({
+  //       logger: this.logger,
+  //       serviceClient,
+  //       resourceEndpoint: serviceClient.expressRouteCircuitConnections.list(resourceGroupName,
+  //         circuitName,
+  //         peeringName),
+  //       resourceDescription: 'expressRouteCircuitConnections',
+  //       callback,
+  //     });
+  //   }
+  // }
+
+  /**
+   * Retrieves all EventHub data for a Resource Group from an Azure Subscription
+   * @param callback A callback function to be called after retrieving an Event Grid Domain
+   * @returns A promise that resolves to an array of EHNamespace objects
+   */
+  public async iterateEventHubs(
+    subscriptionId: string,
+    resourceGroupName: string,
+    namespaceName: string,
+    callback: (eventHubs) => void | Promise<void>,
+  ): Promise<void> {
+    const credential = this.getClientSecretCredentials();
+    const client = new EventHubManagementClient(credential, subscriptionId);
+
+    try {
+      for await (const eventHub of client.eventHubs.listByNamespace(
+        resourceGroupName,
+        namespaceName,
+      )) {
+        await callback(eventHub);
+      }
+    } catch (err) {
+      if (err.statusCode === 403) {
+        this.logger.warn({ err }, err.message);
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingPermission,
+          description: err.message,
+        });
+      } else {
+        throw err;
+      }
+    }
   }
 }

@@ -5,6 +5,15 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
 import { ExpressRouteEntities } from './constants';
+import { generateEntityKey } from '../../../utils/generateKeys';
+
+// If uniqueId is undefined or not of correct type, raise error
+const validateUniqeId = generateEntityKey;
+
+export function getazureExpressRouteKey(uniqueId: string, entityType: string) {
+  validateUniqeId(uniqueId);
+  return `${entityType}:${uniqueId}`;
+}
 
 export function createAzureExpressRouteCircuitConnectionEntity(
   webLinker: AzureWebLinker,
@@ -114,22 +123,21 @@ export function createAzurePeerExpressRouteCircuitConnectionEntity(
   });
 }
 
-export function createAzureExpressRouteEntity(
-  webLinker: AzureWebLinker,
-  data,
-): Entity {
+export function createAzureExpressRouteEntity(instnaceId: string): Entity {
   return createIntegrationEntity({
     entityData: {
-      source: data,
+      source: {},
       assign: {
-        ...convertProperties(data),
-        _key: data.id as string,
-        _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT._type,
-        _class: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT._class,
-        webLink: webLinker.portalResourceUrl(data.id),
-        id: data.id,
-        name: data.name,
-        type: data.type,
+        _key: getazureExpressRouteKey(
+          instnaceId,
+          ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type,
+        ),
+        _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type,
+        _class: ExpressRouteEntities.AZURE_EXPRESS_ROUTE._class,
+        name: ExpressRouteEntities.AZURE_EXPRESS_ROUTE.resourceName,
+        category: ['network'],
+        function: ['provisioning', 'encryption', 'networking'],
+        endpoint: 'https://portal.azure.com',
       },
     },
   });

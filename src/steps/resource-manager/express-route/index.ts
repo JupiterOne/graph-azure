@@ -9,6 +9,16 @@ import {
   STEP_AZURE_APPLICATION_GATEWAY,
   STEP_AZURE_BGP_SERVICE_COMMUNITIES,
   STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
+  STEP_AZURE_EXPRESS_ROUTE_CIRCUIT,
+  STEP_AZURE_EXPRESS_ROUTE,
+  STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
+  STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION,
+  STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION,
+  STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION,
+  STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION,
+  STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION,
+  STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION,
+  STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION,
 } from './constants';
 import {
   createAzureApplicationGatewayEntity,
@@ -16,16 +26,17 @@ import {
   createAzureExpressRouteCircuitConnectionEntity,
   createAzureExpressRouteCircuitEntity,
   createAzureExpressRouteCrossConnectionEntity,
+  createAzureExpressRouteEntity,
   createAzurePeerExpressRouteCircuitConnectionEntity,
+  getazureExpressRouteKey,
 } from './converters';
-import { resourceGroupName } from '../../../azure/utils';
-import {
-  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
-  diagnosticSettingsEntitiesForResource,
-  getDiagnosticSettingsRelationshipsForResource,
-} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
-import { steps as storageSteps } from '../storage/constants';
+import {
+  IntegrationMissingKeyError,
+  RelationshipClass,
+  createDirectRelationship,
+} from '@jupiterone/integration-sdk-core';
+import { entities, steps } from '../subscriptions/constants';
 
 export async function fetchAzureExpressRouteCircuit(
   executionContext: IntegrationStepContext,
@@ -49,10 +60,38 @@ export async function fetchAzureExpressRouteCircuit(
 export async function fetchAzureExpressRoute(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { instance, logger, jobState } = executionContext;
-  const accountEntity = await getAccountEntity(jobState);
-  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const { instance, jobState } = executionContext;
+  // create Express Route service
+  await jobState.addEntity(createAzureExpressRouteEntity(instance.id));
+
+  // if subscription id is not present integartion will throw error while validating config
+  const subscriptionKey = `/subscriptions/${instance.config.subscriptionId}`;
+  const azureExpressRouteKey = getazureExpressRouteKey(
+    instance.id as string,
+    ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type,
+  );
+
+  if (!jobState.hasKey(azureExpressRouteKey)) {
+    throw new IntegrationMissingKeyError(
+      `Express Route Service Key Missing ${subscriptionKey}`,
+    );
+  }
+  // add subscription and synapse service relationship
+  await jobState.addRelationship(
+    createDirectRelationship({
+      _class: RelationshipClass.HAS,
+      fromKey: subscriptionKey,
+      fromType: entities.SUBSCRIPTION._type,
+      toKey: azureExpressRouteKey,
+      toType: ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type,
+    }),
+  );
 }
+export async function buildAzureExpressRouteExpressRouteCircuitRelation() {}
+
+export async function buildAzureExpressRouteExpressRouteCircuitConnectionRelation() {}
+
+export async function buildAzureExpressRouteExpressRouteCrossConnectionRelation() {}
 
 export async function fetchAzureExpressRouteCircuitConnection(
   executionContext: IntegrationStepContext,
@@ -151,42 +190,94 @@ export async function fetchAzureApplicationGateway(
 }
 
 export const expressRouteSteps: AzureIntegrationStep[] = [
-  // {
-  //   id: STEP_AZURE_EXPRESS_ROUTE_CIRCUIT,
-  //   name: 'Express Route Circuit',
-  //   entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT],
-  //   relationships: [
-  //     // ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
-  //     // ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION
-  //   ],
-  //   dependsOn: [],
-  //   executionHandler: fetchAzureExpressRouteCircuit,
-  //   ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE
-  // },
-  // {
-  //   id: STEP_AZURE_EXPRESS_ROUTE,
-  //   name: 'Azure Express Route',
-  //   entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE],
-  //   relationships: [
-  //     ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT,
-  //     ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
-  //     ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
-  //     ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
-  //     ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY
-  //   ],
-  //   dependsOn: [STEP_AD_ACCOUNT],
-  //   executionHandler: fetchAzureExpressRoute,
-  //   ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE
-  // },
-  // {
-  //   id: STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
-  //   name: 'Express Route Circuit Connection',
-  //   entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION],
-  //   relationships: [],
-  //   dependsOn: [STEP_AD_ACCOUNT],
-  //   executionHandler: fetchAzureExpressRouteCircuitConnection,
-  //   ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE
-  // },
+  {
+    id: STEP_AZURE_EXPRESS_ROUTE_CIRCUIT,
+    name: 'Express Route Circuit',
+    entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT],
+    relationships: [
+      // ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
+      // ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION
+    ],
+    dependsOn: [STEP_AD_ACCOUNT],
+    executionHandler: fetchAzureExpressRouteCircuit,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
+  {
+    id: STEP_AZURE_EXPRESS_ROUTE,
+    name: 'Azure Express Route',
+    entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE],
+    relationships: [
+      ExpressRouteRelationships.AZURE_SUBSCRIPTION_HAS_AZURE_EXPRESS_ROUTE,
+    ],
+    dependsOn: [steps.SUBSCRIPTION],
+    executionHandler: fetchAzureExpressRoute,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
+  {
+    id: STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION,
+    name: 'Build Azure Express Route Has Express Route Circuit',
+    entities: [],
+    relationships: [
+      ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT,
+    ],
+    dependsOn: [steps.SUBSCRIPTION, STEP_AZURE_EXPRESS_ROUTE],
+    executionHandler: buildAzureExpressRouteExpressRouteCircuitRelation,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
+  {
+    id: STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION,
+    name: 'Azure Express Route',
+    entities: [],
+    relationships: [
+      ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
+    ],
+    dependsOn: [steps.SUBSCRIPTION, STEP_AZURE_EXPRESS_ROUTE],
+    executionHandler:
+      buildAzureExpressRouteExpressRouteCircuitConnectionRelation,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
+  {
+    id: STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION,
+    name: 'Azure Express Route',
+    entities: [],
+    relationships: [
+      ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
+    ],
+    dependsOn: [steps.SUBSCRIPTION, STEP_AZURE_EXPRESS_ROUTE],
+    executionHandler: buildAzureExpressRouteExpressRouteCrossConnectionRelation,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
+  {
+    id: STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION,
+    name: 'Azure Express Route',
+    entities: [],
+    relationships: [
+      ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
+    ],
+    dependsOn: [steps.SUBSCRIPTION, STEP_AZURE_EXPRESS_ROUTE],
+    executionHandler: buildAzureExpressRouteExpressRouteCrossConnectionRelation,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
+  {
+    id: STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION,
+    name: 'Azure Express Route',
+    entities: [],
+    relationships: [
+      ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY,
+    ],
+    dependsOn: [steps.SUBSCRIPTION, STEP_AZURE_EXPRESS_ROUTE],
+    executionHandler: buildAzureExpressRouteExpressRouteCrossConnectionRelation,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
+  {
+    id: STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
+    name: 'Express Route Circuit Connection',
+    entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION],
+    relationships: [],
+    dependsOn: [STEP_AD_ACCOUNT],
+    executionHandler: fetchAzureExpressRouteCircuitConnection,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
   // {
   //   id: STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
   //   name: 'Express Route Cross Circuit',
@@ -196,15 +287,15 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
   //   executionHandler: fetchAzureExpressRouteCrossConnection,
   //   ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE
   // },
-  {
-    id: STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
-    name: 'Azure Peer Express Route Connection',
-    entities: [ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION],
-    relationships: [],
-    dependsOn: [STEP_AD_ACCOUNT],
-    executionHandler: fetchAzurePeerExpressRouteConnection,
-    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
-  },
+  // {
+  //   id: STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
+  //   name: 'Azure Peer Express Route Connection',
+  //   entities: [ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION],
+  //   relationships: [],
+  //   dependsOn: [STEP_AD_ACCOUNT],
+  //   executionHandler: fetchAzurePeerExpressRouteConnection,
+  //   ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  // },
   {
     id: STEP_AZURE_BGP_SERVICE_COMMUNITIES,
     name: 'Azure Bgp Service Communities',
@@ -212,7 +303,29 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     relationships: [
       ExpressRouteRelationships.AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE,
     ],
-    dependsOn: [],
+    dependsOn: [STEP_AD_ACCOUNT],
+    executionHandler: fetchAzureBgpServiceCommunities,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
+  {
+    id: STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION,
+    name: 'Azure Bgp Service Communities',
+    entities: [ExpressRouteEntities.AZURE_BGP_SERVICE_COMMUNITIES],
+    relationships: [
+      ExpressRouteRelationships.AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE,
+    ],
+    dependsOn: [STEP_AD_ACCOUNT],
+    executionHandler: fetchAzureBgpServiceCommunities,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
+  {
+    id: STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION,
+    name: 'Azure Bgp Service Communities',
+    entities: [ExpressRouteEntities.AZURE_BGP_SERVICE_COMMUNITIES],
+    relationships: [
+      ExpressRouteRelationships.AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE,
+    ],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchAzureBgpServiceCommunities,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },
@@ -221,7 +334,7 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     name: 'Azure Application Gateway',
     entities: [ExpressRouteEntities.AZURE_APPLICATION_GATEWAY],
     relationships: [],
-    dependsOn: [],
+    dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchAzureApplicationGateway,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },

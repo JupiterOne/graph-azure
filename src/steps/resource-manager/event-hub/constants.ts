@@ -127,17 +127,6 @@ export const EventHubRelationships = {
     targetType: entities.LOCATION._type,
   },
 
-  AZURE_EVENT_HUB_HAS_EVENT_HUB_CLUSTER: {
-    _type: generateRelationshipType(
-      RelationshipClass.HAS,
-      EventHubEntities.AZURE_EVENT_HUB,
-      EventHubEntities.EVENT_HUB_CLUSTER,
-    ),
-    sourceType: EventHubEntities.AZURE_EVENT_HUB._type,
-    _class: RelationshipClass.HAS,
-    targetType: EventHubEntities.EVENT_HUB_CLUSTER._type,
-  },
-
   AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB: {
     _type: generateRelationshipType(
       RelationshipClass.HAS,

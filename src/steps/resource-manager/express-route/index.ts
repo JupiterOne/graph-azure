@@ -18,14 +18,7 @@ import {
   createAzureExpressRouteCrossConnectionEntity,
   createAzurePeerExpressRouteCircuitConnectionEntity,
 } from './converters';
-import { resourceGroupName } from '../../../azure/utils';
-import {
-  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
-  diagnosticSettingsEntitiesForResource,
-  getDiagnosticSettingsRelationshipsForResource,
-} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
-import { steps as storageSteps } from '../storage/constants';
 
 export async function fetchAzureExpressRouteCircuit(
   executionContext: IntegrationStepContext,
@@ -49,9 +42,10 @@ export async function fetchAzureExpressRouteCircuit(
 export async function fetchAzureExpressRoute(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { instance, logger, jobState } = executionContext;
-  const accountEntity = await getAccountEntity(jobState);
-  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  // TODO:
+  // const { jobState } = executionContext;
+  // const accountEntity = await getAccountEntity(jobState);
+  // const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
 }
 
 export async function fetchAzureExpressRouteCircuitConnection(

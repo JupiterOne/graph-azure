@@ -432,7 +432,7 @@ export async function buildEventHubClusterEventHubNamespaceRelation(
           // Check if the cluster key exists
           await jobState.addRelationship(
             createDirectRelationship({
-              _class: RelationshipClass.HAS,
+              _class: RelationshipClass.ASSIGNED,
               fromKey: clusterEntityKey,
               fromType: EventHubEntities.EVENT_HUB_CLUSTER._type,
               toKey: eventHubNamespaceEntity._key,

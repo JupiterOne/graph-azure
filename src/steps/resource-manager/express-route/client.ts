@@ -4,6 +4,7 @@ import {
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
 import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
+import { EventHubManagementClient } from '@azure/arm-eventhub';
 
 export class ExpressRouteClient extends Client {
   /**
@@ -112,16 +113,18 @@ export class ExpressRouteClient extends Client {
    * @returns A promise that resolves to an array of EHNamespace objects
    */
   public async iterateExpressRouteCircuitConnection(
-    subscriptionId,
     resourceGroupName,
     circuitName,
     peeringName,
     callback: (s) => void | Promise<void>,
   ): Promise<void> {
     const credential = this.getClientSecretCredentials();
-    const client = new NetworkManagementClient(credential, subscriptionId);
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      NetworkManagementClient,
+    );
+    // const client = new NetworkManagementClient(credential, subscriptionId);
     try {
-      for await (const expressRouteCircuitConnection of serviceClient.expressRouteCircuitConnections.list(
+      for (const expressRouteCircuitConnection of await serviceClient.expressRouteCircuitConnections.list(
         resourceGroupName,
         circuitName,
         peeringName,
@@ -141,26 +144,6 @@ export class ExpressRouteClient extends Client {
     }
   }
 
-  //   public async iterateExpressRouteCircuitConnection(
-  //     resourceGroupName,
-  //         circuitName,
-  //         peeringName,
-  //     callback: (s) => void | Promise<void>,
-  //   ): Promise<void> {
-  //     const serviceClient = await this.getAuthenticatedServiceClient(
-  //       NetworkManagementClient,
-  //     );
-  //     return iterateAllResources({
-  //       logger: this.logger,
-  //       serviceClient,
-  //       resourceEndpoint: serviceClient.expressRouteCircuitConnections.list(resourceGroupName,
-  //         circuitName,
-  //         peeringName),
-  //       resourceDescription: 'expressRouteCircuitConnections',
-  //       callback,
-  //     });
-  //   }
-  // }
 
   /**
    * Retrieves all EventHub data for a Resource Group from an Azure Subscription

@@ -27,7 +27,7 @@ export function createProtectionPlanEntity(data: DdosProtectionPlan): Entity {
         _class: DdosEntities.PROTECTION_PLAN._class,
         type: data.type,
         name: data.name,
-        location: data.name,
+        location: data.location,
         etag: data.etag,
         provisioningState: data.provisioningState,
         publicIPAddresses: publicIps,

@@ -36,8 +36,6 @@ export async function fetchLocations(
         async (location) => {
           const locationProps = getLocationEntityProps(location);
 
-          console.log('=======locationProps=============', locationProps);
-
           await jobState.addRelationship(
             createMappedRelationship({
               _class: RelationshipClass.USES,

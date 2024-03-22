@@ -220,17 +220,15 @@ export async function buildAzureEventHubLocationRelationship(
   await jobState.iterateEntities(
     { _type: EventHubEntities.AZURE_EVENT_HUB._type },
     async (eventHubEntity) => {
-      const subscriptionEntityKey = eventHubEntity._key.substring(
-        0,
-        eventHubEntity._key.lastIndexOf('/subscriptions'),
-      );
+      const locationKey = `azure_location_${eventHubEntity.location}`;
+      
       await jobState.addRelationship(
         createDirectRelationship({
           _class: RelationshipClass.HAS,
-          fromKey: subscriptionEntityKey,
-          fromType: entities.SUBSCRIPTION._type,
-          toKey: eventHubEntity._key,
-          toType: EventHubEntities.AZURE_EVENT_HUB._type,
+          fromKey: eventHubEntity._key,
+          fromType: EventHubEntities.AZURE_EVENT_HUB._type,
+          toKey: locationKey,
+          toType: entities.LOCATION._type,
         }),
       );
     },
@@ -539,18 +537,15 @@ export const eventHubStep: AzureIntegrationStep[] = [
     executionHandler: fetchAzureEventHub,
     ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
   },
-  // {
-  //   id: STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION,
-  //   name: 'Build Azure Event Hub Has Location Relation',
-  //   entities: [EventHubEntities.AZURE_EVENT_HUB],
-  //   relationships: [],
-  //   dependsOn: [
-  //     STEP_AZURE_EVENT_HUB,
-  //     steps.LOCATIONS
-  //   ],
-  //   executionHandler: buildAzureEventHubLocationRelationship,
-  //   ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
-  // },
+  {
+    id: STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION,
+    name: 'Build Azure Event Hub Has Location Relation',
+    entities: [],
+    relationships: [EventHubRelationships.AZURE_EVENT_HUB_HAS_LOCATION],
+    dependsOn: [STEP_AZURE_EVENT_HUB, steps.LOCATIONS],
+    executionHandler: buildAzureEventHubLocationRelationship,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
+  },
   {
     id: STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION,
     name: 'Build Azure Subscription Has Azure Event Hub',

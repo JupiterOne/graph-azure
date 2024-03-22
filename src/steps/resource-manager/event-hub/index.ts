@@ -17,6 +17,7 @@ import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
 } from '../resources/constants';
+// import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { EventHubClient } from './client';
 import {
   EventHubEntities,
@@ -27,6 +28,7 @@ import {
   STEP_AZURE_CONSUMER_GROUP,
   STEP_EVENT_HUB_CLUSTER,
   EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION,
+  // AZURE_EVENT_HUB_HAS_EVENT_HUB_CLUSTER,
   STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
   STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION,
   STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
@@ -42,7 +44,20 @@ import {
   createAzureEventHubKeysEntity,
   createEventHubEntity,
 } from './converters';
+// import { resourceGroupName } from '../../../azure/utils';
+// import {
+//   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
+//   diagnosticSettingsEntitiesForResource,
+//   getDiagnosticSettingsRelationshipsForResource,
+// } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import {
+  KEY_VAULT_SERVICE_ENTITY_TYPE,
+  STEP_RM_KEYVAULT_VAULTS,
+} from '../key-vault/constants';
+// import { steps as storageSteps } from '../storage/constants';
+// import { ResourceRecommendationBase } from '@azure/arm-advisor';
+// import { buildActivityLogScopeRelationships } from '../monitor';
 
 export async function fetchEventHubNamespaces(
   executionContext: IntegrationStepContext,
@@ -290,9 +305,26 @@ export async function buildEventHubKeysKeyVaultRelation(
   executionContext: IntegrationStepContext,
 ) {
   const { jobState } = executionContext;
+
   await jobState.iterateEntities(
-    { _type: EventHubEntities.AZURE_EVENT_HUB._type },
-    async (eventHubEntity) => {},
+    { _type: KEY_VAULT_SERVICE_ENTITY_TYPE },
+    async (keyVaultEntity) => {
+      let eventHubKey = keyVaultEntity.vaultUrl as string;
+      eventHubKey = eventHubKey.endsWith('/')
+        ? eventHubKey.slice(0, -1)
+        : eventHubKey;
+      if (jobState.hasKey(eventHubKey)) {
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.USES,
+            fromKey: eventHubKey,
+            fromType: EventHubEntities.EVENT_HUB_KEYS._type,
+            toKey: keyVaultEntity._key,
+            toType: KEY_VAULT_SERVICE_ENTITY_TYPE,
+          }),
+        );
+      }
+    },
   );
 }
 
@@ -460,15 +492,15 @@ export const eventHubStep: AzureIntegrationStep[] = [
     executionHandler: buildEventHubNamespaceEventHubKeyRelationship,
     ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
   },
-  // {
-  //   id: STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION,
-  //   name: 'Build Event Hub Keys Uses Key Vault Relation',
-  //   entities: [],
-  //   relationships: [],
-  //   dependsOn: [STEP_EVENT_HUB_NAMESPACE, STEP_EVENT_HUB_KEYS, ],
-  //   executionHandler: buildEventHubKeysKeyVaultRelation,
-  //   ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
-  // },
+  {
+    id: STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION,
+    name: 'Build Event Hub Keys Uses Key Vault Relation',
+    entities: [],
+    relationships: [EventHubRelationships.EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT],
+    dependsOn: [STEP_EVENT_HUB_KEYS, STEP_RM_KEYVAULT_VAULTS],
+    executionHandler: buildEventHubKeysKeyVaultRelation,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
+  },
   {
     id: STEP_AZURE_CONSUMER_GROUP,
     name: 'Azure Consumer Group',

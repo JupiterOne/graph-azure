@@ -127,6 +127,7 @@ import {
   STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
   STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION,
   STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION,
+  STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION
 } from './steps/resource-manager/event-hub/constants';
 import { AdvisorSteps } from './steps/resource-manager/advisor/constants';
 import { SecuritySteps } from './steps/resource-manager/security/constants';
@@ -134,7 +135,7 @@ import { PolicySteps } from './steps/resource-manager/policy/constants';
 import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
-// import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
+import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
 import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
@@ -182,7 +183,7 @@ export function getActiveDirectorySteps(): GetApiSteps {
 export function getManagementGroupSteps(): GetApiSteps {
   return {
     executeFirstSteps: [
-      // ManagementGroupSteps.MANAGEMENT_GROUPS
+      ManagementGroupSteps.MANAGEMENT_GROUPS
     ],
     executeLastSteps: [],
   };
@@ -201,7 +202,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
       STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
       STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
-      STEP_AZURE_APPLICATION_SECURITY_GROUP,
+      // STEP_AZURE_APPLICATION_SECURITY_GROUP,
       STEP_RM_NETWORK_INTERFACES,
       STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
       STEP_RM_NETWORK_LOAD_BALANCERS,
@@ -304,9 +305,10 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
       EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION,
       EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION,
+      STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION,
       // STEP_AZURE_EXPRESS_ROUTE_CIRCUIT,
-      STEP_AZURE_BGP_SERVICE_COMMUNITIES,
-      STEP_AZURE_APPLICATION_GATEWAY,
+      // STEP_AZURE_BGP_SERVICE_COMMUNITIES,
+      // STEP_AZURE_APPLICATION_GATEWAY,
       SecuritySteps.ASSESSMENTS,
       SecuritySteps.SECURITY_CENTER_CONTACTS,
       SecuritySteps.SETTINGS,
@@ -335,6 +337,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_RULE,
       SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP,
       SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP,
+      SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP,
       DdosSteps.PROTECTION_PLAN,
       DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP,
       DdosSteps.DDOS_PROTECTION_PLAN_VNET_RELATIONSHIP,

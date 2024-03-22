@@ -52,18 +52,18 @@ export async function fetchApplicationSecurityGroup(
 }
 
 export const applicationSecurityGroupSteps: AzureIntegrationStep[] = [
-  // {
-  //   id: STEP_AZURE_APPLICATION_SECURITY_GROUP,
-  //   name: 'Application Security Group',
-  //   entities: [
-  //     ApplicationSecurityGroupEntities.AZURE_APPLICATION_SECURITY_GROUP,
-  //   ],
-  //   relationships: [
-  //     AzureApplicationSecurityGroupRelationships.AZURE_APPLICATION_SECURITY_GROUP_PROTECTS_VIRTUAL_MACHINE,
-  //     AzureApplicationSecurityGroupRelationships.AZURE_APPLICATION_SECURITY_GROUP_ALLOWS_FIREWALL_RULE_GROUP,
-  //   ],
-  //   dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
-  //   executionHandler: fetchApplicationSecurityGroup,
-  //   ingestionSourceId: INGESTION_SOURCE_IDS.APPLICATION_SECURITY_GROUP,
-  // },
+  {
+    id: STEP_AZURE_APPLICATION_SECURITY_GROUP,
+    name: 'Application Security Group',
+    entities: [
+      ApplicationSecurityGroupEntities.AZURE_APPLICATION_SECURITY_GROUP,
+    ],
+    relationships: [
+      AzureApplicationSecurityGroupRelationships.AZURE_APPLICATION_SECURITY_GROUP_PROTECTS_VIRTUAL_MACHINE,
+      AzureApplicationSecurityGroupRelationships.AZURE_APPLICATION_SECURITY_GROUP_ALLOWS_FIREWALL_RULE_GROUP,
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
+    executionHandler: fetchApplicationSecurityGroup,
+    ingestionSourceId: INGESTION_SOURCE_IDS.APPLICATION_SECURITY_GROUP,
+  },
 ];

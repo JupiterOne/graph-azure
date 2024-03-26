@@ -31,10 +31,10 @@ export const STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EXPRESS_ROUTE_RELATION =
 export const STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION =
   'rm-azure-subscription-has-azure-bgp-service-communities-relation';
 export const STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION =
-  'rm-azure-bgp-service-communities-has-azure-express-route-relation';//done
+  'rm-azure-bgp-service-communities-has-azure-express-route-relation'; 
 export const STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION =
-  'rm-azure-express-route-has-azure-application-gateway-relation'; //done
-export const STEP_AZURE_APPLICATION_GATEWAY = 'rm-azure-application-gateway'; //done
+  'rm-azure-express-route-has-azure-application-gateway-relation'; 
+export const STEP_AZURE_APPLICATION_GATEWAY = 'rm-azure-application-gateway'; 
 
 export const ExpressRouteEntities = {
   AZURE_EXPRESS_ROUTE_CIRCUIT: {

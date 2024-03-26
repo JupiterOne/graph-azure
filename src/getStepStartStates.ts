@@ -56,7 +56,7 @@ import {
   STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
   STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
 } from './steps/resource-manager/network/constants';
-import { steps as storageSteps } from './steps/resource-manager/storage/constants';
+import { steps, steps as storageSteps } from './steps/resource-manager/storage/constants';
 import {
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
   STEP_RM_RESOURCES_RESOURCE_LOCKS,
@@ -128,6 +128,7 @@ import {
   STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION,
   STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION,
   STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION,
+  STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION,
 } from './steps/resource-manager/event-hub/constants';
 import { AdvisorSteps } from './steps/resource-manager/advisor/constants';
 import { SecuritySteps } from './steps/resource-manager/security/constants';
@@ -136,7 +137,7 @@ import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
 import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
-import { STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './steps/resource-manager/container-services/constants';
+import { STEP_RM_CONTAINER_SERVICES_CLUSTERS, Steps } from './steps/resource-manager/container-services/constants';
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
 import { STEP_AZURE_APPLICATION_SECURITY_GROUP } from './steps/resource-manager/application-security-group/constants';
@@ -226,6 +227,10 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_NETWORK_WATCHERS,
       STEP_RM_NETWORK_LOCATION_WATCHERS,
       STEP_RM_NETWORK_FLOW_LOGS,
+      Steps.KUBERNETES_SERVICE,
+      Steps.ACCESS_ROLE,
+      Steps.MAINTENANCE_CONFIGURATION,
+      Steps.KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE,
       computeSteps.COMPUTE_VIRTUAL_MACHINE_IMAGES,
       computeSteps.COMPUTE_VIRTUAL_MACHINE_DISKS,
       computeSteps.COMPUTE_VIRTUAL_MACHINES,
@@ -321,6 +326,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION,
       EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION,
       STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION,
+      STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION,
       STEP_AZURE_EXPRESS_ROUTE_CIRCUIT,
       STEP_AZURE_APPLICATION_GATEWAY,
       STEP_AZURE_BGP_SERVICE_COMMUNITIES,

@@ -15,10 +15,6 @@ export const EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION =
 export const EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION =
   'rm-event-hub-namespace-has-event-hub-key-relation';
 export const STEP_AZURE_EVENT_HUB = 'rm-azure-event-hub';
-export const STEP_AZURE_EVENT_HUB_HAS_EVENT_HUB_CLUSTER_RELATION =
-  'rm-event-hub-has-event-hub-cluster-relation';
-export const AZURE_EVENT_HUB_HAS_EVENT_HUB_CLUSTER =
-  'rm-azure-event-hub-has-event-hub-cluster';
 export const STEP_EVENT_HUB_CLUSTER = 'rm-event-hub-cluster';
 export const STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION =
   'rm-event-hub-cluster-assigned-event-hub-namespace-relation';

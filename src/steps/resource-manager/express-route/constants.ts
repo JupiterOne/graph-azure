@@ -40,7 +40,7 @@ export const ExpressRouteEntities = {
   AZURE_EXPRESS_ROUTE_CIRCUIT: {
     _type: 'azure_expressroute_circuit',
     _class: ['Network'],
-    resourceName: '[RM Azure Express Route Circuit',
+    resourceName: '[RM] Azure Express Route Circuit',
   },
   AZURE_PEER_EXPRESS_ROUTE_CONNECTION: {
     _type: 'azure_peer_expressroute_circut_connection',

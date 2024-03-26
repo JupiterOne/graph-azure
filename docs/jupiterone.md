@@ -303,6 +303,8 @@ The following entities are created:
 
 | Resources                                      | Entity `_type`                                    | Entity `_class`                    |
 | ---------------------------------------------- | ------------------------------------------------- | ---------------------------------- |
+| Azure Application Gateway                      | `azure_application_gateway`                       | `Network`                          |
+| Azure Application Security Groups              | `azure_application_security_group`                | `Firewall`                         |
 | Azure Synapse Analytics                        | `azure_synapse`                                   | `Service`                          |
 | FrontDoor                                      | `azure_frontdoor`                                 | `Service`                          |
 | FrontDoor Backend Pool                         | `azure_frontdoor_backend_pool`                    | `Configuration`                    |
@@ -318,11 +320,16 @@ The following entities are created:
 | [AD] User                                      | `azure_user`                                      | `User`                             |
 | [RM] API Management API                        | `azure_api_management_api`                        | `ApplicationEndpoint`              |
 | [RM] API Management Service                    | `azure_api_management_service`                    | `Gateway`                          |
+| [RM] Access Role                               | `azure_kube_cluster_role`                         | `AccessRole`                       |
 | [RM] Advisor Recommendation                    | `azure_advisor_recommendation`                    | `Finding`                          |
 | [RM] App Service Plan                          | `azure_app_service_plan`                          | `Configuration`                    |
+| [RM] Azure Bgp Service Communities             | `azure_bgp_service_communities`                   | `Network`                          |
 | [RM] Azure Consumer Group                      | `azure_event_hub_consumer_group`                  | `Channel`                          |
 | [RM] Azure Ddos Protection Plans               | `azure_ddos_protection_plan`                      | `Configuration`                    |
 | [RM] Azure Event Hub                           | `azure_event_hub`                                 | `Service`                          |
+| [RM] Azure Express Route                       | `azure_expressroute`                              | `Service`                          |
+| [RM] Azure Express Route Circuit               | `azure_expressroute_circuit`                      | `Network`                          |
+| [RM] Azure Express Route Circuit Connections   | `azure_expressroute_circut_connection`            | `Network`                          |
 | [RM] Azure Kubernetes Cluster                  | `azure_kubernetes_cluster`                        | `Cluster`                          |
 | [RM] Azure Managed Disk                        | `azure_managed_disk`                              | `DataStore`, `Disk`                |
 | [RM] Batch Account                             | `azure_batch_account`                             | `Service`                          |
@@ -357,7 +364,9 @@ The following entities are created:
 | [RM] Key Vault                                 | `azure_keyvault_service`                          | `Service`                          |
 | [RM] Key Vault Key                             | `azure_keyvault_key`                              | `Key`                              |
 | [RM] Key Vault Secret                          | `azure_keyvault_secret`                           | `Secret`                           |
+| [RM] Kubernetes Service                        | `azure_kube_service`                              | `Service`                          |
 | [RM] Load Balancer                             | `azure_lb`                                        | `Gateway`                          |
+| [RM] Managed Cluster                           | `azure_kube_maintenance_configuration`            | `Cluster`                          |
 | [RM] Management Group                          | `azure_management_group`                          | `Group`                            |
 | [RM] MariaDB Database                          | `azure_mariadb_database`                          | `Database`, `DataStore`            |
 | [RM] MariaDB Server                            | `azure_mariadb_server`                            | `Database`, `DataStore`, `Host`    |
@@ -436,9 +445,12 @@ The following relationships are created:
 | `azure_account`                    | **HAS**               | `azure_user`                                      |
 | `azure_account`                    | **HAS**               | `azure_user_group`                                |
 | `azure_api_management_service`     | **HAS**               | `azure_api_management_api`                        |
+| `azure_application_security_group` | **PROTECTS**          | `azure_network_firewall_rule_group`               |
+| `azure_application_security_group` | **PROTECTS**          | `azure_vm`                                        |
 | `azure_batch_account`              | **HAS**               | `azure_batch_application`                         |
 | `azure_batch_account`              | **HAS**               | `azure_batch_certificate`                         |
 | `azure_batch_account`              | **HAS**               | `azure_batch_pool`                                |
+| `azure_bgp_service_communities`    | **HAS**               | `azure_expressroute`                              |
 | `azure_cdn_profile`                | **HAS**               | `azure_cdn_endpoint`                              |
 | `azure_classic_admin_group`        | **HAS**               | `azure_user`                                      |
 | `azure_container`                  | **USES**              | `azure_container_volume`                          |
@@ -454,11 +466,15 @@ The following relationships are created:
 | `azure_event_grid_domain`          | **HAS**               | `azure_event_grid_domain_topic`                   |
 | `azure_event_grid_domain_topic`    | **HAS**               | `azure_event_grid_topic_subscription`             |
 | `azure_event_grid_topic`           | **HAS**               | `azure_event_grid_topic_subscription`             |
+| `azure_event_hub`                  | **HAS**               | `azure_location`                                  |
 | `azure_event_hub_cluster`          | **ASSIGNED**          | `azure_event_hub_namespace`                       |
 | `azure_event_hub_consumer_group`   | **HAS**               | `azure_event_hub`                                 |
 | `azure_event_hub_key`              | **USES**              | `azure_keyvault_service`                          |
 | `azure_event_hub_namespace`        | **HAS**               | `azure_event_hub`                                 |
 | `azure_event_hub_namespace`        | **HAS**               | `azure_event_hub_key`                             |
+| `azure_expressroute`               | **HAS**               | `azure_application_gateway`                       |
+| `azure_expressroute`               | **HAS**               | `azure_expressroute`                              |
+| `azure_expressroute`               | **HAS**               | `azure_expressroute_circut_connection`            |
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_backend_pool`                    |
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_frontend_endpoint`               |
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_routing_rule`                    |
@@ -469,6 +485,8 @@ The following relationships are created:
 | `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_key`                              |
 | `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_secret`                           |
 | `azure_keyvault_service`           | **HAS**               | `azure_synapse_key`                               |
+| `azure_kube_service`               | **CONTAINS**          | `azure_kube_cluster_role`                         |
+| `azure_kubernetes_cluster`         | **HAS**               | `azure_kube_maintenance_configuration`            |
 | `azure_lb`                         | **CONNECTS**          | `azure_nic`                                       |
 | `azure_management_group`           | **CONTAINS**          | `azure_management_group`                          |
 | `azure_mariadb_server`             | **HAS**               | `azure_mariadb_database`                          |
@@ -567,6 +585,8 @@ The following relationships are created:
 | `azure_subnet`                     | **DENIES**            | `azure_security_group`                            |
 | `azure_subnet`                     | **HAS**               | `azure_vm`                                        |
 | `azure_subscription`               | **HAS**               | `azure_ddos_protection_plan`                      |
+| `azure_subscription`               | **HAS**               | `azure_expressroute`                              |
+| `azure_subscription`               | **HAS**               | `azure_kube_service`                              |
 | `azure_subscription`               | **HAS**               | `azure_monitor_log_profile`                       |
 | `azure_subscription`               | **HAS**               | `azure_resource_group`                            |
 | `azure_subscription`               | **CONTAINS**          | `azure_role_definition`                           |

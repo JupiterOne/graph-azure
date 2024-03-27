@@ -46,10 +46,7 @@ export const applicationSecurityGroupSteps: AzureIntegrationStep[] = [
     entities: [
       ApplicationSecurityGroupEntities.AZURE_APPLICATION_SECURITY_GROUP,
     ],
-    relationships: [
-      AzureApplicationSecurityGroupRelationships.AZURE_APPLICATION_SECURITY_GROUP_PROTECTS_VIRTUAL_MACHINE,
-      AzureApplicationSecurityGroupRelationships.AZURE_APPLICATION_SECURITY_GROUP_ALLOWS_FIREWALL_RULE_GROUP,
-    ],
+    relationships: [],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApplicationSecurityGroup,
     ingestionSourceId: INGESTION_SOURCE_IDS.APPLICATION_SECURITY_GROUP,

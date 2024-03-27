@@ -20,7 +20,7 @@ export function createApplicationSecurityGroupEntity(data): Entity {
             ._class,
         id: data.id,
         name: data.name,
-        category: data.type,
+        category: ['application'],
         etag: data.etag,
       },
     },

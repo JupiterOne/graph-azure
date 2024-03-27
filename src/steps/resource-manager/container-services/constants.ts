@@ -97,7 +97,7 @@ export const Entities: Record<
   },
   ACCESS_ROLE: {
     resourceName: '[RM] Access Role',
-    _type: 'azure_kube_cluster_role',
+    _type: 'azure_kube_trusted_access_role',
     _class: ['AccessRole'],
     schema: {
       properties: {},

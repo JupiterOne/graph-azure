@@ -37,27 +37,34 @@ export const SynapseEntities = {
   },
   SYNAPSE_KEYS: {
     _type: 'azure_synapse_key',
-    _class: 'Key',
+    _class: ['Key'],
     resourceName: '[RM] Synapse Keys',
   },
   SYNAPSE_SERVICE: {
     _type: 'azure_synapse',
-    _class: 'Service',
+    _class: ['Service'],
     resourceName: 'Azure Synapse Analytics',
   },
   SYNAPSE_SQL_POOL: {
     _type: 'azure_synapse_sql_pool',
-    _class: 'Configuration',
+    _class: ['Configuration'],
     resourceName: '[RM] SQL Pool',
   },
   SYNAPSE_DATA_MASKING_POLICY: {
     _type: 'azure_synapse_masking_policy',
-    _class: 'Policy',
+    _class: ['Policy'],
     resourceName: '[RM] Data Masking Policy',
+    schema: {
+      properties: {
+        title: { exclude: true },
+        summary: { exclude: true },
+        content: { exclude: true },
+      },
+    },
   },
   SYNAPSE_DATA_MASKING_RULE: {
     _type: 'azure_synapse_masking_rule',
-    _class: 'Rule',
+    _class: ['Rule'],
     resourceName: '[RM] Data Masking Rule',
   },
 };

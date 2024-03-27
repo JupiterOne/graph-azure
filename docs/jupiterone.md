@@ -584,6 +584,7 @@ The following relationships are created:
 | `azure_subnet`                     | **ALLOWS**            | `azure_security_group`                            |
 | `azure_subnet`                     | **DENIES**            | `azure_security_group`                            |
 | `azure_subnet`                     | **HAS**               | `azure_vm`                                        |
+| `azure_subscription`               | **HAS**               | `azure_bgp_service_communities`                   |
 | `azure_subscription`               | **HAS**               | `azure_ddos_protection_plan`                      |
 | `azure_subscription`               | **HAS**               | `azure_expressroute`                              |
 | `azure_subscription`               | **HAS**               | `azure_kube_service`                              |

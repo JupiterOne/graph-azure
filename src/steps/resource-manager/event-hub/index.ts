@@ -187,7 +187,6 @@ export async function buildAzureSubscriptionAzureEventHubRelation(
   await jobState.iterateEntities(
     { _type: EventHubEntities.AZURE_EVENT_HUB._type },
     async (eventHubEntity) => {
-      console.log
       const subscriptionEntityKey = eventHubEntity._key.substring(
         0,
         eventHubEntity._key.lastIndexOf('/resourceGroups'),

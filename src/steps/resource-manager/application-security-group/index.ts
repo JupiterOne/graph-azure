@@ -1,7 +1,3 @@
-import {
-  createDirectRelationship,
-  RelationshipClass,
-} from '@jupiterone/integration-sdk-core';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
@@ -10,7 +6,6 @@ import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
 } from '../resources/constants';
-import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { MyNetworkManagementClient } from './client';
 import {
   ApplicationSecurityGroupEntities,
@@ -18,14 +13,7 @@ import {
   STEP_AZURE_APPLICATION_SECURITY_GROUP,
 } from './constants';
 import { createApplicationSecurityGroupEntity } from './converters';
-import { resourceGroupName } from '../../../azure/utils';
-import {
-  createDiagnosticSettingsEntitiesAndRelationshipsForResource,
-  diagnosticSettingsEntitiesForResource,
-  getDiagnosticSettingsRelationshipsForResource,
-} from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
-import { relationships, steps as storageSteps } from '../storage/constants';
 
 export async function fetchApplicationSecurityGroup(
   executionContext: IntegrationStepContext,

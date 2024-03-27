@@ -63,6 +63,7 @@ export function createAzureExpressRouteCrossConnectionEntity(
 export function createAzureBgpServiceCommunitiesEntity(
   webLinker: AzureWebLinker,
   data,
+  subscriptionKey
 ): Entity {
   return createIntegrationEntity({
     entityData: {
@@ -76,6 +77,7 @@ export function createAzureBgpServiceCommunitiesEntity(
         id: data.id,
         name: data.name,
         type: data.type,
+        subscriptionKey: subscriptionKey
       },
     },
   });
@@ -123,7 +125,9 @@ export function createAzurePeerExpressRouteCircuitConnectionEntity(
   });
 }
 
-export function createAzureExpressRouteEntity(instnaceId: string): Entity {
+export function createAzureExpressRouteEntity(instnaceId: string,
+  subscriptionKey
+  ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: {},
@@ -138,6 +142,8 @@ export function createAzureExpressRouteEntity(instnaceId: string): Entity {
         category: ['network'],
         function: ['provisioning', 'encryption', 'networking'],
         endpoint: 'https://portal.azure.com',
+        subscriptionKey: subscriptionKey
+
       },
     },
   });

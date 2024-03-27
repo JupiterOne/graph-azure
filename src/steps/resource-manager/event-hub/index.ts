@@ -17,7 +17,6 @@ import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
 } from '../resources/constants';
-// import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { EventHubClient } from './client';
 import {
   EventHubEntities,
@@ -44,20 +43,11 @@ import {
   createAzureEventHubKeysEntity,
   createEventHubEntity,
 } from './converters';
-// import { resourceGroupName } from '../../../azure/utils';
-// import {
-//   createDiagnosticSettingsEntitiesAndRelationshipsForResource,
-//   diagnosticSettingsEntitiesForResource,
-//   getDiagnosticSettingsRelationshipsForResource,
-// } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
 import {
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   STEP_RM_KEYVAULT_VAULTS,
 } from '../key-vault/constants';
-// import { steps as storageSteps } from '../storage/constants';
-// import { ResourceRecommendationBase } from '@azure/arm-advisor';
-// import { buildActivityLogScopeRelationships } from '../monitor';
 
 export async function fetchEventHubNamespaces(
   executionContext: IntegrationStepContext,
@@ -143,6 +133,7 @@ export async function buildEventHubNamespaceEventHubRelationship(
     },
   );
 }
+
 /**
  * Create relationship between Azure Event Hub Namespace and Azure Event Hub Keys entities.
  * @param executionContext
@@ -357,40 +348,46 @@ export async function fetchAzureConsumerGroup(
   );
 }
 
-/**
- * Create relationship between Azure Consumer Group and Azure Event Hub entities.
- * @param executionContext
- */
 export async function buildAzureConsumerGroupEventHubRelationship(
   executionContext: IntegrationStepContext,
 ) {
-  const { jobState } = executionContext;
-  await jobState.iterateEntities(
-    { _type: EventHubEntities.AZURE_CONSUMER_GROUP._type },
-    async (consumerGroupEntity) => {
-      const eventHubEntityKey = consumerGroupEntity._key.substring(
-        0,
-        consumerGroupEntity._key.lastIndexOf('/eventhubs'),
-      );
+  {
+    {
+      const { instance, jobState } = executionContext;
+      await jobState.iterateEntities(
+        { _type: EventHubEntities.AZURE_CONSUMER_GROUP._type },
+        async (consumerGroupEntity) => {
+          // Find the index of the segment after eventhubs
+          const endIndex = consumerGroupEntity._key.indexOf('/eventhubs') + '/eventhubs'.length;
 
-      if (jobState.hasKey(eventHubEntityKey)) {
-        // Check if the event hub key exists
-        await jobState.addRelationship(
-          createDirectRelationship({
-            _class: RelationshipClass.HAS,
-            fromKey: consumerGroupEntity._key,
-            fromType: EventHubEntities.AZURE_CONSUMER_GROUP._type,
-            toKey: eventHubEntityKey,
-            toType: EventHubEntities.AZURE_EVENT_HUB._type,
-          }),
-        );
-      } else {
-        throw new IntegrationMissingKeyError(
-          `Build Azure Consumer Group Event Hub Relationship: ${eventHubEntityKey} Missing.`,
-        );
-      }
-    },
-  );
+          // Find the index of the next '/' after eventhubs
+          const nextSlashIndex = consumerGroupEntity._key.indexOf('/', endIndex + 1);
+
+          // Extract the substring up to the next '/' after eventhubs
+          const eventHubEntityKey = consumerGroupEntity._key.substring(0, nextSlashIndex);
+
+          console.log("======eventHubEntityKey====", eventHubEntityKey)
+    
+          if (jobState.hasKey(eventHubEntityKey)) {
+            // Check if the event hub key exists
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.HAS,
+                fromKey: consumerGroupEntity._key,
+                fromType: EventHubEntities.AZURE_CONSUMER_GROUP._type,
+                toKey: eventHubEntityKey,
+                toType: EventHubEntities.AZURE_EVENT_HUB._type,
+              }),
+            );
+          } else {
+            throw new IntegrationMissingKeyError(
+              `Build Azure Consumer Group Event Hub Relationship: ${eventHubEntityKey} Missing.`,
+            );
+          }
+        },
+      );
+    }
+  }
 }
 
 export async function fetchEventHubCluster(

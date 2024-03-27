@@ -26,8 +26,6 @@ export const STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_R
   'rm-azure-express-route-has-azure-express-route-cross-connection-relation';
 export const STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION =
   'rm-azure-express-route-has-azure-peer-express-route-connection-relation';
-export const STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EXPRESS_ROUTE_RELATION =
-  'rm-azure-subscription-has-azure-express-route-relation';
 export const STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION =
   'rm-azure-subscription-has-azure-bgp-service-communities-relation';
 export const STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION =

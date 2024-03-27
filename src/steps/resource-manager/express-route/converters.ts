@@ -15,6 +15,17 @@ export function getazureExpressRouteKey(uniqueId: string, entityType: string) {
   return `${entityType}:${uniqueId}`;
 }
 
+
+function getEntityFromId(id: string, entityName): string {
+  const parts = id.split('/');
+  const index = parts.indexOf(entityName);
+  if (index !== -1 && index + 1 < parts.length) {
+    return parts[index + 1];
+  } else {
+    throw new Error('Invalid id format');
+  }
+}
+
 export function createAzureExpressRouteCircuitConnectionEntity(
   webLinker: AzureWebLinker,
   data,
@@ -120,6 +131,8 @@ export function createAzurePeerExpressRouteCircuitConnectionEntity(
         id: data.id,
         name: data.name,
         type: data.type,
+        resourceGroups: getEntityFromId(data.id, 'resourceGroups'),
+        circuitName: getEntityFromId(data.id, 'expressRouteCircuits')
       },
     },
   });
@@ -165,6 +178,7 @@ export function createAzureExpressRouteCircuitEntity(
         id: data.id,
         name: data.name,
         type: data.type,
+        resourceGroups: getEntityFromId(data.id, 'resourceGroups')
       },
     },
   });

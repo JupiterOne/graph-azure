@@ -73,18 +73,32 @@ export class ExpressRouteClient extends Client {
    * @returns A promise that resolves to an array of EHNamespace objects
    */
   public async iteratePeerExpressRouteConnection(
+    resourceGroup,
+    circuitName,
     callback: (s) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       NetworkManagementClient,
     );
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: serviceClient.peerExpressRouteCircuitConnections,
-      resourceDescription: 'peerExpressRouteCircuitConnections',
-      callback,
-    });
+    try {
+      for (const expressRouteCircuitConnection of await serviceClient.peerExpressRouteCircuitConnections.list(
+        resourceGroup,
+        circuitName,
+        "AzurePrivatePeering",
+      )) {
+        await callback(expressRouteCircuitConnection);
+      }
+    } catch (err) {
+      if (err.statusCode === 403) {
+        this.logger.warn({ err }, err.message);
+        this.logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingPermission,
+          description: err.message,
+        });
+      } else {
+        throw err;
+      }
+    }
   }
 
   /**
@@ -118,11 +132,9 @@ export class ExpressRouteClient extends Client {
     peeringName,
     callback: (s) => void | Promise<void>,
   ): Promise<void> {
-    const credential = this.getClientSecretCredentials();
     const serviceClient = await this.getAuthenticatedServiceClient(
       NetworkManagementClient,
     );
-    // const client = new NetworkManagementClient(credential, subscriptionId);
     try {
       for (const expressRouteCircuitConnection of await serviceClient.expressRouteCircuitConnections.list(
         resourceGroupName,

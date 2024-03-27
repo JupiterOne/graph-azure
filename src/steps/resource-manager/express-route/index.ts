@@ -14,12 +14,12 @@ import {
   STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
   STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION,
   STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION,
-  STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION,
+  // STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION,
   STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION,
-  STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION,
+  // STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION,
   STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION,
   STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION,
-  STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
+  // STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
   STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION,
 } from './constants';
 import {
@@ -383,19 +383,24 @@ export async function fetchAzureExpressRouteCircuitConnection(
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ExpressRouteClient(instance.config, logger);
+  await jobState.iterateEntities(
+    { _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT._type },
+    async (expressRouteCircuitEntity) => {
+      const resourceGroups = expressRouteCircuitEntity.resourceGroups as string;
+      const circuitName = expressRouteCircuitEntity.name as string;
 
-  // Fetch all AzureExpressRoute CircuitConnection
-  await client.iterateExpressRouteCircuitConnection(
-    "j1dev",
-    "direct",
-    "AzurePrivatePeering",
-    async (routeCircuitConnection) => {
-      const routeCircuitConnectionEntity =
-        createAzureExpressRouteCircuitConnectionEntity(
-          webLinker,
-          routeCircuitConnection,
-        );
-      await jobState.addEntity(routeCircuitConnectionEntity);
+      await client.iterateExpressRouteCircuitConnection(
+        resourceGroups,
+        circuitName,
+        "AzurePrivatePeering",
+        async (routeCircuitConnection) => {
+          const routeCircuitConnectionEntity = createAzureExpressRouteCircuitConnectionEntity(
+            webLinker,
+            routeCircuitConnection,
+          );
+          await jobState.addEntity(routeCircuitConnectionEntity);
+        },
+      );
     },
   );
 }
@@ -429,14 +434,24 @@ export async function fetchAzurePeerExpressRouteConnection(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ExpressRouteClient(instance.config, logger);
 
-  // Fetch all EventHub namespaces
-  await client.iteratePeerExpressRouteConnection(async (namespace) => {
-    const namespaceEntity = createAzurePeerExpressRouteCircuitConnectionEntity(
-      webLinker,
-      namespace,
-    );
-    await jobState.addEntity(namespaceEntity);
-  });
+  await jobState.iterateEntities(
+    { _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT._type },
+    async (expressRouteEntity) => {
+      const resourceGroups = expressRouteEntity.resourceGroups as string;
+      const circuitName = expressRouteEntity.name as string;
+      await client.iteratePeerExpressRouteConnection(
+        resourceGroups,
+        circuitName,
+        async (peerConnection) => {
+          const peerConnectionEntity = createAzurePeerExpressRouteCircuitConnectionEntity(
+            webLinker,
+            peerConnection,
+          );
+          await jobState.addEntity(peerConnectionEntity);
+        },
+      );
+    },
+  );
 }
 
 export async function fetchAzureBgpServiceCommunities(
@@ -545,15 +560,6 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },
   {
-    id: STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
-    name: 'Express Route Circuit Connection',
-    entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION],
-    relationships: [],
-    dependsOn: [STEP_AD_ACCOUNT],
-    executionHandler: fetchAzureExpressRouteCircuitConnection,
-    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
-  },
-  {
     id: STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION,
     name: 'Build Azure Express Route Circuit and Azure Express Route Circuit Connection Relation',
     entities: [],
@@ -586,15 +592,24 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
   //   executionHandler: fetchAzureExpressRouteCrossConnection,
   //   ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE
   // },
-  // {
-  //   id: STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
-  //   name: 'Azure Peer Express Route Connection',
-  //   entities: [ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION],
-  //   relationships: [],
-  //   dependsOn: [STEP_AD_ACCOUNT],
-  //   executionHandler: fetchAzurePeerExpressRouteConnection,
-  //   ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
-  // },
+  {
+    id: STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
+    name: 'Azure Peer Express Route Connection',
+    entities: [ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION],
+    relationships: [],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_AZURE_EXPRESS_ROUTE_CIRCUIT],
+    executionHandler: fetchAzurePeerExpressRouteConnection,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
+  {
+    id: STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
+    name: 'Express Route Circuit Connection',
+    entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION],
+    relationships: [],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION],
+    executionHandler: fetchAzureExpressRouteCircuitConnection,
+    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
+  },
   {
     id: STEP_AZURE_BGP_SERVICE_COMMUNITIES,
     name: 'Azure Bgp Service Communities',

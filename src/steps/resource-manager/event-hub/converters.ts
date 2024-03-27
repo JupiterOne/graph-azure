@@ -5,6 +5,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
 import { EventHubEntities } from './constants';
+import { Eventhub } from '@azure/arm-eventhub';
 
 export function createEventHubNamespaceEntity(
   webLinker: AzureWebLinker,
@@ -28,7 +29,7 @@ export function createEventHubNamespaceEntity(
   });
 }
 
-export function createEventHubEntity(webLinker: AzureWebLinker, data): Entity {
+export function createEventHubEntity(webLinker: AzureWebLinker, data: Eventhub): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -41,9 +42,11 @@ export function createEventHubEntity(webLinker: AzureWebLinker, data): Entity {
         id: data.id,
         name: data.name,
         type: data.type,
-        resourceGroupName: getEntityFromId(data.id, 'resourceGroups'),
-        namespace: getEntityFromId(data.id, 'namespaces'),
-        subscriptionId: getEntityFromId(data.id, 'subscriptions'),
+        category: ['platform'],
+        function: ['queuing'],
+        resourceGroupName: getEntityFromId(data.id as string, 'resourceGroups'),
+        namespace: getEntityFromId(data.id as string, 'namespaces'),
+        subscriptionId: getEntityFromId(data.id as string, 'subscriptions'),
       },
     },
   });
@@ -113,7 +116,7 @@ export function createAzureEventHubKeysEntity(data, namespaceId): Entity {
         _key: data.keyVaultUri as string,
         _type: EventHubEntities.EVENT_HUB_KEYS._type,
         _class: EventHubEntities.EVENT_HUB_KEYS._class,
-        keyName: data.keyName,
+        name: data.keyName,
         keyVaultUri: data.keyVaultUri,
         namespaceId: namespaceId,
       },

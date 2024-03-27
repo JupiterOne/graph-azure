@@ -1,5 +1,5 @@
 import {
-  EventHubManagementClient
+  EventHubManagementClient, Eventhub
 } from '@azure/arm-eventhub';
 import {
   Client
@@ -121,7 +121,7 @@ export class EventHubClient extends Client {
     subscriptionId: string,
     resourceGroupName: string,
     namespaceName: string,
-    callback: (eventHubs) => void | Promise<void>,
+    callback: (eventHubs: Eventhub) => void | Promise<void>,
   ): Promise<void> {
     const credential = this.getClientSecretCredentials();
     const client = new EventHubManagementClient(credential, subscriptionId);

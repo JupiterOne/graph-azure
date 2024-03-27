@@ -1,10 +1,14 @@
 import {
   generateRelationshipType,
   RelationshipClass,
+  RelationshipDirection,
+  StepMappedRelationshipMetadata,
 } from '@jupiterone/integration-sdk-core';
 import { entities } from '../subscriptions/constants';
 import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
 import { KeyVaultEntities } from '../key-vault/constants';
+import { entities as subscriptionEntities } from '../subscriptions/constants';
+
 
 export const STEP_EVENT_HUB_KEYS = 'rm-azure-event-hub-key';
 export const STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION =
@@ -112,17 +116,6 @@ export const EventHubRelationships = {
     targetType: EventHubEntities.AZURE_EVENT_HUB._type,
   },
 
-  AZURE_EVENT_HUB_HAS_LOCATION: {
-    _type: generateRelationshipType(
-      RelationshipClass.HAS,
-      EventHubEntities.AZURE_EVENT_HUB,
-      entities.LOCATION,
-    ),
-    sourceType: EventHubEntities.AZURE_EVENT_HUB._type,
-    _class: RelationshipClass.HAS,
-    targetType: entities.LOCATION._type,
-  },
-
   AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB: {
     _type: generateRelationshipType(
       RelationshipClass.HAS,
@@ -145,3 +138,17 @@ export const EventHubRelationships = {
     targetType: EventHubEntities.AZURE_EVENT_HUB._type,
   },
 };
+
+
+export const EventHubMappedRelationships: Record<
+  | 'AZURE_EVENT_HUB_HAS_LOCATION',
+  StepMappedRelationshipMetadata
+> = {
+  AZURE_EVENT_HUB_HAS_LOCATION: {
+    _type: 'azure_event_hub_has_location',
+    sourceType: EventHubEntities.AZURE_EVENT_HUB._type,
+    _class: RelationshipClass.HAS,
+    targetType: subscriptionEntities.LOCATION._type,
+    direction: RelationshipDirection.FORWARD,
+  },
+}

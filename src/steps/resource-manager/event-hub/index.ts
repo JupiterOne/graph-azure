@@ -1,8 +1,11 @@
 import {
   createDirectRelationship,
+  createMappedRelationship,
   getRawData,
+  IntegrationError,
   IntegrationMissingKeyError,
   RelationshipClass,
+  RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 import { EHNamespace } from '@azure/arm-eventhub';
 import { createAzureWebLinker } from '../../../azure';
@@ -13,6 +16,10 @@ import {
   steps,
   entities,
 } from '../../resource-manager/subscriptions/constants';
+import {
+  setDataKeys as subscriptionsSetDataKeys,
+  SetDataTypes as SubscriptionSetDataTypes,
+} from '../subscriptions/constants';
 import {
   RESOURCE_GROUP_ENTITY,
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
@@ -35,6 +42,7 @@ import {
   STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION,
   EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION,
   STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION,
+  EventHubMappedRelationships,
 } from './constants';
 import {
   createEventHubNamespaceEntity,
@@ -90,7 +98,7 @@ export async function fetchAzureEventHub(
         namespaceName,
         async (eventHub) => {
           const eventHubEntity = createEventHubEntity(webLinker, eventHub);
-          if (!jobState.hasKey(eventHub.key)) {
+          if (!jobState.hasKey(eventHubEntity._key)) {
             await jobState.addEntity(eventHubEntity);
           }
         },
@@ -179,9 +187,10 @@ export async function buildAzureSubscriptionAzureEventHubRelation(
   await jobState.iterateEntities(
     { _type: EventHubEntities.AZURE_EVENT_HUB._type },
     async (eventHubEntity) => {
+      console.log
       const subscriptionEntityKey = eventHubEntity._key.substring(
         0,
-        eventHubEntity._key.lastIndexOf('/subscriptions'),
+        eventHubEntity._key.lastIndexOf('/resourceGroups'),
       );
 
       if (jobState.hasKey(subscriptionEntityKey)) {
@@ -204,24 +213,53 @@ export async function buildAzureSubscriptionAzureEventHubRelation(
   );
 }
 
+
 export async function buildAzureEventHubLocationRelationship(
   executionContext: IntegrationStepContext,
-) {
-  const { jobState } = executionContext;
+): Promise<void> {
+  const { logger, jobState } = executionContext;
+
+  const locationNameMap = await jobState.getData<
+    SubscriptionSetDataTypes['locationNameMap']
+  >(subscriptionsSetDataKeys.locationNameMap);
+
+  if (!locationNameMap) {
+    throw new IntegrationError({
+      message:
+        'Could not find locationNameMap data in job state; cannot build location => Event Hub relationships.',
+      code: 'LOCATION_NAME_MAP_NOT_FOUND',
+    });
+  }
+
+  const locations = Object.keys(locationNameMap);
   await jobState.iterateEntities(
     { _type: EventHubEntities.AZURE_EVENT_HUB._type },
     async (eventHubEntity) => {
-      const locationKey = `azure_location_${eventHubEntity.location}`;
-      
-      await jobState.addRelationship(
-        createDirectRelationship({
-          _class: RelationshipClass.HAS,
-          fromKey: eventHubEntity._key,
-          fromType: EventHubEntities.AZURE_EVENT_HUB._type,
-          toKey: locationKey,
-          toType: entities.LOCATION._type,
-        }),
-      );
+      const locationProps =
+        locationNameMap[eventHubEntity.location as string];
+
+      if (locationProps) {
+        await jobState.addRelationship(
+          createMappedRelationship({
+            _class: RelationshipClass.HAS,
+            _type:
+            EventHubMappedRelationships.AZURE_EVENT_HUB_HAS_LOCATION._type,
+            source: eventHubEntity,
+            target: locationProps,
+            targetFilterKeys: [['_key']],
+            relationshipDirection: RelationshipDirection.FORWARD,
+            skipTargetCreation: false,
+          }),
+        );
+      } else {
+        logger.warn(
+          {
+            EventHub: eventHubEntity.location,
+            locations,
+          },
+          'WARNING: Could not find matching location for Event Hub. The locationNameMap may be constructed incorrectly',
+        );
+      }
     },
   );
 }
@@ -353,7 +391,7 @@ export async function buildAzureConsumerGroupEventHubRelationship(
 ) {
   {
     {
-      const { instance, jobState } = executionContext;
+      const { jobState } = executionContext;
       await jobState.iterateEntities(
         { _type: EventHubEntities.AZURE_CONSUMER_GROUP._type },
         async (consumerGroupEntity) => {
@@ -431,7 +469,7 @@ export async function buildEventHubClusterEventHubNamespaceRelation(
               fromKey: clusterEntityKey,
               fromType: EventHubEntities.EVENT_HUB_CLUSTER._type,
               toKey: eventHubNamespaceEntity._key,
-              toType: EventHubEntities.AZURE_EVENT_HUB._type,
+              toType: EventHubEntities.EVENT_HUB_NAMESPACE._type,
             }),
           );
         } else {
@@ -536,7 +574,7 @@ export const eventHubStep: AzureIntegrationStep[] = [
     id: STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION,
     name: 'Build Azure Event Hub Has Location Relation',
     entities: [],
-    relationships: [EventHubRelationships.AZURE_EVENT_HUB_HAS_LOCATION],
+    relationships: [EventHubMappedRelationships.AZURE_EVENT_HUB_HAS_LOCATION],
     dependsOn: [STEP_AZURE_EVENT_HUB, steps.LOCATIONS],
     executionHandler: buildAzureEventHubLocationRelationship,
     ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
@@ -545,7 +583,7 @@ export const eventHubStep: AzureIntegrationStep[] = [
     id: STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION,
     name: 'Build Azure Subscription Has Azure Event Hub',
     entities: [],
-    relationships: [],
+    relationships: [EventHubRelationships.AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB],
     dependsOn: [STEP_AZURE_EVENT_HUB, steps.SUBSCRIPTION],
     executionHandler: buildAzureSubscriptionAzureEventHubRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
@@ -554,7 +592,7 @@ export const eventHubStep: AzureIntegrationStep[] = [
     id: STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION,
     name: 'Build Azure ResourceGroup Has Azure Event Hub',
     entities: [],
-    relationships: [],
+    relationships: [EventHubRelationships.AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB],
     dependsOn: [STEP_AZURE_EVENT_HUB, steps.SUBSCRIPTION],
     executionHandler: buildAzureResourceGroupAzureEventHubRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,

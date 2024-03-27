@@ -577,15 +577,15 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
       buildAzureExpressRouteExpressRouteCircuitConnectionRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },
-  {
-    id: STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
-    name: 'Express Route Cross Circuit',
-    entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CROSS_CONNECTION],
-    relationships: [],
-    dependsOn: [STEP_AD_ACCOUNT],
-    executionHandler: fetchAzureExpressRouteCrossConnection,
-    ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE
-  },
+  // {
+  //   id: STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
+  //   name: 'Express Route Cross Circuit',
+  //   entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CROSS_CONNECTION],
+  //   relationships: [],
+  //   dependsOn: [STEP_AD_ACCOUNT],
+  //   executionHandler: fetchAzureExpressRouteCrossConnection,
+  //   ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE
+  // },
   // {
   //   id: STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
   //   name: 'Azure Peer Express Route Connection',

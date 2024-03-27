@@ -56,7 +56,7 @@ import {
   STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
   STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
 } from './steps/resource-manager/network/constants';
-import { steps, steps as storageSteps } from './steps/resource-manager/storage/constants';
+import { steps as storageSteps } from './steps/resource-manager/storage/constants';
 import {
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
   STEP_RM_RESOURCES_RESOURCE_LOCKS,
@@ -156,7 +156,7 @@ import {
   STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION,
   // STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION,
   // STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION,
-  STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
+  // STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
   STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION,
 } from './steps/resource-manager/express-route/constants';
 import { SYNAPSE_STEPS } from './steps/resource-manager/synapse/constant';

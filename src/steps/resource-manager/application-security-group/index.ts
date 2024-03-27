@@ -19,8 +19,8 @@ export async function fetchApplicationSecurityGroup(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
-  const accountEntity = await getAccountEntity(jobState);
-  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  // const accountEntity = await getAccountEntity(jobState);
+  // const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new MyNetworkManagementClient(instance.config, logger);
 
   await jobState.iterateEntities(

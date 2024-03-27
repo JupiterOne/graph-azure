@@ -365,8 +365,6 @@ export async function buildAzureConsumerGroupEventHubRelationship(
 
           // Extract the substring up to the next '/' after eventhubs
           const eventHubEntityKey = consumerGroupEntity._key.substring(0, nextSlashIndex);
-
-          console.log("======eventHubEntityKey====", eventHubEntityKey)
     
           if (jobState.hasKey(eventHubEntityKey)) {
             // Check if the event hub key exists

@@ -44,6 +44,7 @@ export function createAzureExpressRouteCircuitConnectionEntity(
         id: data.id,
         name: data.name,
         type: data.type,
+        public: false,
       },
     },
   });
@@ -66,6 +67,7 @@ export function createAzureExpressRouteCrossConnectionEntity(
         id: data.id,
         name: data.name,
         type: data.type,
+        public: false,
       },
     },
   });
@@ -88,7 +90,8 @@ export function createAzureBgpServiceCommunitiesEntity(
         id: data.id,
         name: data.name,
         type: data.type,
-        subscriptionKey: subscriptionKey
+        subscriptionKey: subscriptionKey,
+        public: false,
       },
     },
   });
@@ -110,6 +113,7 @@ export function createAzureApplicationGatewayEntity(
         id: data.id,
         name: data.name,
         type: data.type,
+        public: false,
       },
     },
   });
@@ -132,7 +136,8 @@ export function createAzurePeerExpressRouteCircuitConnectionEntity(
         name: data.name,
         type: data.type,
         resourceGroups: getEntityFromId(data.id, 'resourceGroups'),
-        circuitName: getEntityFromId(data.id, 'expressRouteCircuits')
+        circuitName: getEntityFromId(data.id, 'expressRouteCircuits'),
+        public: false,
       },
     },
   });
@@ -156,7 +161,6 @@ export function createAzureExpressRouteEntity(instnaceId: string,
         function: ['provisioning', 'encryption', 'networking'],
         endpoint: 'https://portal.azure.com',
         subscriptionKey: subscriptionKey
-
       },
     },
   });
@@ -178,7 +182,9 @@ export function createAzureExpressRouteCircuitEntity(
         id: data.id,
         name: data.name,
         type: data.type,
-        resourceGroups: getEntityFromId(data.id, 'resourceGroups')
+        resourceGroups: getEntityFromId(data.id, 'resourceGroups'),
+        public: false,
+
       },
     },
   });

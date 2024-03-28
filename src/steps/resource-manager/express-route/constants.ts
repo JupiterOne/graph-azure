@@ -39,35 +39,77 @@ export const ExpressRouteEntities = {
     _type: 'azure_expressroute_circuit',
     _class: ['Network'],
     resourceName: '[RM] Azure Express Route Circuit',
+    schema: {
+      properties: {
+        CIDR: { exclude: true },
+        internal: { exclude: true },
+      },
+    },
   },
   AZURE_PEER_EXPRESS_ROUTE_CONNECTION: {
     _type: 'azure_peer_expressroute_circut_connection',
     _class: ['Network'],
+    schema: {
+      properties: {
+        CIDR: { exclude: true },
+        internal: { exclude: true },
+      },
+    },
     resourceName: '[RM] Azure Peer Express Route Circuit Connection',
   },
   AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION: {
     _type: 'azure_expressroute_circuit_connection',
     _class: ['Network'],
+    schema: {
+      properties: {
+        CIDR: { exclude: true },
+        internal: { exclude: true },
+      },
+    },
     resourceName: '[RM] Azure Express Route Circuit Connections',
   },
   AZURE_EXPRESS_ROUTE_CROSS_CONNECTION: {
     _type: 'azure_expressroute_cross_connection',
     _class: ['Network'],
+    schema: {
+      properties: {
+        CIDR: { exclude: true },
+        internal: { exclude: true },
+      },
+    },
     resourceName: '[RM] Azure Express Route Cross Connections',
   },
   AZURE_EXPRESS_ROUTE: {
     _type: 'azure_expressroute',
     _class: ['Service'],
+    schema: {
+      properties: {
+        CIDR: { exclude: true },
+        internal: { exclude: true },
+      },
+    },
     resourceName: '[RM] Azure Express Route',
   },
   AZURE_BGP_SERVICE_COMMUNITIES: {
     _type: 'azure_bgp_service_communities',
     _class: ['Network'],
+    schema: {
+      properties: {
+        CIDR: { exclude: true },
+        internal: { exclude: true },
+      },
+    },
     resourceName: '[RM] Azure Bgp Service Communities',
   },
   AZURE_APPLICATION_GATEWAY: {
     _type: 'azure_application_gateway',
     _class: ['Network'],
+    schema: {
+      properties: {
+        CIDR: { exclude: true },
+        internal: { exclude : true },
+      },
+    },
     resourceName: 'Azure Application Gateway',
   },
 };

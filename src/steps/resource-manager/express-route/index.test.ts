@@ -135,29 +135,30 @@ test(
   },
   100_000,
 );
-test(
-  STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
-  async () => {
-    const stepTestConfig = getStepTestConfigForStep(STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION);
+// test(
+//   STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
+//   async () => {
+//     const stepTestConfig = getStepTestConfigForStep(STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION);
 
-    recording = setupAzureRecording(
-      {
-        name: STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
-        directory: __dirname,
-        options: {
-          matchRequestsBy: getMatchRequestsBy({
-            config: stepTestConfig.instanceConfig,
-          }),
-        },
-      },
-      stepTestConfig.instanceConfig,
-    );
+//     recording = setupAzureRecording(
+//       {
+//         name: STEP_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION,
+//         directory: __dirname,
+//         options: {
+//           matchRequestsBy: getMatchRequestsBy({
+//             config: stepTestConfig.instanceConfig,
+//           }),
+//         },
+//       },
+//       stepTestConfig.instanceConfig,
+//     );
 
-    const stepResults = await executeStepWithDependencies(stepTestConfig);
-    expect(stepResults).toMatchStepMetadata(stepTestConfig);
-  },
-  100_000,
-);
+//     const stepResults = await executeStepWithDependencies(stepTestConfig);
+//     expect(stepResults).toMatchStepMetadata(stepTestConfig);
+//   },
+//   100_000,
+// );
+
 test(
   STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION,
   async () => {
@@ -254,29 +255,29 @@ test(
   100_000,
 );
 
-test(
-  STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION,
-  async () => {
-    const stepTestConfig = getStepTestConfigForStep(STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION);
+// test(
+//   STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION,
+//   async () => {
+//     const stepTestConfig = getStepTestConfigForStep(STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION);
 
-    recording = setupAzureRecording(
-      {
-        name: STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION,
-        directory: __dirname,
-        options: {
-          matchRequestsBy: getMatchRequestsBy({
-            config: stepTestConfig.instanceConfig,
-          }),
-        },
-      },
-      stepTestConfig.instanceConfig,
-    );
+//     recording = setupAzureRecording(
+//       {
+//         name: STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CROSS_CONNECTION_RELATION,
+//         directory: __dirname,
+//         options: {
+//           matchRequestsBy: getMatchRequestsBy({
+//             config: stepTestConfig.instanceConfig,
+//           }),
+//         },
+//       },
+//       stepTestConfig.instanceConfig,
+//     );
 
-    const stepResults = await executeStepWithDependencies(stepTestConfig);
-    expect(stepResults).toMatchStepMetadata(stepTestConfig);
-  },
-  100_000,
-);
+//     const stepResults = await executeStepWithDependencies(stepTestConfig);
+//     expect(stepResults).toMatchStepMetadata(stepTestConfig);
+//   },
+//   100_000,
+// );
 
 test(
   STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION,

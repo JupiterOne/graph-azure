@@ -92,7 +92,7 @@ export function createAccessRoleEntity(
         _type: Entities.ACCESS_ROLE._type,
         _class: Entities.ACCESS_ROLE._class,
         name: data.name,
-        rules: data.rules?.toString(),
+        // rules: data.rules?.toString(),
         sourceResourceType: data.sourceResourceType,
         webLink: webLinker.portalResourceUrl(data.name),
       },

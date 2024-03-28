@@ -17,7 +17,7 @@ export class ContainerServicesClient extends Client {
       this.getClientSecretCredentials(),
       config.subscriptionId,
     );
-    for await(const item of serviceClient.managedClusters.list()) {
+    for await (const item of serviceClient.managedClusters.list()) {
       await callback(item);
     }
   }
@@ -32,7 +32,7 @@ export class ContainerServicesClient extends Client {
       config.subscriptionId,
     );
     const resourceGroup = resourceGroupName(cluster.id, true);
-    for await(const item of serviceClient.maintenanceConfigurations.listByManagedCluster(
+    for await (const item of serviceClient.maintenanceConfigurations.listByManagedCluster(
       resourceGroup,
       cluster.name,
     )) {
@@ -51,7 +51,7 @@ export class ContainerServicesClient extends Client {
     );
     const resourceGroup = resourceGroupName(cluster.id, true)!;
     const resourceName = cluster.name;
-    for await(const item of serviceClient.trustedAccessRoleBindings.list(
+    for await (const item of serviceClient.trustedAccessRoleBindings.list(
       resourceGroup,
       resourceName,
     )) {
@@ -74,22 +74,40 @@ export class ContainerServicesClient extends Client {
     )) {
       locationsArray.push(item);
     }
-
     const serviceClient = new ContainerServiceClient(
       this.getClientSecretCredentials(),
       config.subscriptionId,
     );
+    // for (const location of locationsArray) {
+    //   // console.log("---location-----",location.name)
+    // }
 
-    for (const location of locationsArray) {
-      try {
-        for await (const item of serviceClient.trustedAccessRoles.list(
-          location.name!,
-        )) {
-          await callback(item, location.name);
-        }
-      } catch (e) {
-        // NoRegisteredProviderFound: Ignore the error as there are no resources on the location
+    const locationArray = ["east-us", "uaecentral"]; // Corrected array name to locationArray
+    // const client = new ContainerServiceClient(credential, subscriptionId);
+
+    for (let location of locationArray) { // Loop over locationArray
+      const resArray: any = []; // Simplified array initialization
+
+      const roles = serviceClient.trustedAccessRoles.list(location);
+
+      for await (let item of roles) {
+        resArray.push(item);
       }
+      // console.log(resArray);
+      for (let role of resArray)
+      await callback(role, 'east-us')
+      
     }
+
+    //   try {
+    //     for await (const item of serviceClient.trustedAccessRoles.list('east-us'))
+    //      {
+    //       console.log("---trustedAccessRoles-----",item[0])
+    //       // await callback(item[0], 'east-us');
+    //     }
+    //   } catch (e) {
+    //     // NoRegisteredProviderFound: Ignore the error as there are no resources on the location
+    //   }
+    // }
   }
 }

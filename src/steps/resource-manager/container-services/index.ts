@@ -27,6 +27,7 @@ import {
   createAccessRoleEntity,
   createKubernetesServiceEntity,
   getKubernetesServiceKey,
+  getAccessRoleKey,
 } from './converters';
 
 export async function fetchClusters(
@@ -93,7 +94,18 @@ export async function fetchAccessRoles(
         accessRole,
         locationName,
       );
-      await jobState.addEntity(accessRoleEntity);
+
+      console.log("accessRole===", accessRole)
+      console.log(jobState.hasKey(getAccessRoleKey(accessRole.name, locationName)))
+
+      if (!jobState.hasKey(getAccessRoleKey(accessRole.name, locationName)))
+      {
+        
+        await jobState.addEntity(accessRoleEntity);
+      }
+      else{
+        console.log(getAccessRoleKey(accessRole.name, locationName))
+      }
 
       const relationship = createMappedRelationship({
         _key: accessRoleEntity._key,

@@ -98,36 +98,25 @@ export async function fetchAccessRoles(
         accessRole,
         locationName,
       );
+      await jobState.addEntity(accessRoleEntity);
 
-      console.log("accessRole===", accessRole)
-      console.log(jobState.hasKey(getAccessRoleKey(accessRole.name, locationName)))
-
-      if (!jobState.hasKey(getAccessRoleKey(accessRole.name, locationName)))
-      {
-        
-        await jobState.addEntity(accessRoleEntity);
-      }
-      else{
-        console.log(getAccessRoleKey(accessRole.name, locationName))
-      }
-
-      const relationship = createMappedRelationship({
-        _key: accessRoleEntity._key,
-        _type: Entities.ACCESS_ROLE._type,
-        _class: RelationshipClass.IS,
-        _mapping: {
-          sourceEntityKey: accessRoleEntity._key,
-          relationshipDirection: RelationshipDirection.FORWARD,
-          targetEntity: {
-            _key: `ClusterRole: ${accessRoleEntity._key}`,
-            _class: 'AccessRole',
-            _type: 'kube_role',
-          },
-          targetFilterKeys: [['_class', '_key']],
-          skipTargetCreation: true,
-        },
-      });
-      await jobState.addRelationship(relationship);
+      // const relationship = createMappedRelationship({
+      //   _key: accessRoleEntity._key,
+      //   _type: Entities.ACCESS_ROLE._type,
+      //   _class: RelationshipClass.IS,
+      //   _mapping: {
+      //     sourceEntityKey: accessRoleEntity._key,
+      //     relationshipDirection: RelationshipDirection.FORWARD,
+      //     targetEntity: {
+      //       _key: `ClusterRole: ${accessRoleEntity._key}`,
+      //       _class: 'AccessRole',
+      //       _type: 'kube_role',
+      //     },
+      //     targetFilterKeys: [['_class', '_key']],
+      //     skipTargetCreation: true,
+      //   },
+      // });
+      // await jobState.addRelationship(relationship);
     },
   );
 }

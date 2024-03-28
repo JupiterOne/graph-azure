@@ -68,7 +68,7 @@ export class ContainerServicesClient extends Client {
       config.subscriptionId,
     );
 
-    const locationsArray: Array<Location> = [];
+    const locationsArray: any = [];
     for await (const item of subscriptionClient.subscriptions.listLocations(
       config.subscriptionId,
     )) {
@@ -78,36 +78,30 @@ export class ContainerServicesClient extends Client {
       this.getClientSecretCredentials(),
       config.subscriptionId,
     );
-    // for (const location of locationsArray) {
-    //   // console.log("---location-----",location.name)
-    // }
 
-    const locationArray = ["east-us", "uaecentral"]; // Corrected array name to locationArray
-    // const client = new ContainerServiceClient(credential, subscriptionId);
+    for (let location of locationsArray) {
+      const resArray: any = [];
+      try {
+        const roles = serviceClient.trustedAccessRoles.list(location.name);
 
-    for (let location of locationArray) { // Loop over locationArray
-      const resArray: any = []; // Simplified array initialization
+        for await (let item of roles) {
+          resArray.push(item);
+        }
 
-      const roles = serviceClient.trustedAccessRoles.list(location);
-
-      for await (let item of roles) {
-        resArray.push(item);
+        for (let role of resArray) {
+          await callback(role, location.name);
+        }
+      } catch (error) {
+        if (error.statusCode && error.statusCode === 400) {
+          console.error(`No registered resource provider found for location '${location.name}'.`);
+          // Skipping this location and continue with the next one
+          continue;
+        } else {
+          // Rethrow the error if it's not a 400 error
+          throw error;
+        }
       }
-      // console.log(resArray);
-      for (let role of resArray)
-      await callback(role, 'east-us')
-      
     }
-
-    //   try {
-    //     for await (const item of serviceClient.trustedAccessRoles.list('east-us'))
-    //      {
-    //       console.log("---trustedAccessRoles-----",item[0])
-    //       // await callback(item[0], 'east-us');
-    //     }
-    //   } catch (e) {
-    //     // NoRegisteredProviderFound: Ignore the error as there are no resources on the location
-    //   }
-    // }
   }
+
 }

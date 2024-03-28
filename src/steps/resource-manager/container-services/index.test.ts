@@ -7,7 +7,7 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { getStepTestConfigForStep } from '../../../../test/integrationInstanceConfig';
-import { STEP_RM_CONTAINER_MAINTENANCE_CONFIGURATION, STEP_RM_CONTAINER_SERVICES_CLUSTERS } from './constants';
+import { STEP_RM_CONTAINER_SERVICES_CLUSTERS, Steps } from './constants';
 
 let recording: Recording | undefined;
 afterEach(async () => {
@@ -20,7 +20,7 @@ test('rm-container-services-clusters', async () => {
   );
   recording = setupAzureRecording({
     directory: __dirname,
-    name: 'rm-container-services-cluster',
+    name: 'rm-container-services-clusters',
     options: {
       matchRequestsBy: getMatchRequestsBy({
         config: stepTestConfig.instanceConfig,
@@ -32,13 +32,13 @@ test('rm-container-services-clusters', async () => {
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
 }, 100_000);
 
-test('rm-container-maintenance-configuration', async () => {
+test('rm-maintenance-configurations', async () => {
   const stepTestConfig = getStepTestConfigForStep(
-    STEP_RM_CONTAINER_MAINTENANCE_CONFIGURATION,
+    Steps.MAINTENANCE_CONFIGURATION,
   );
   recording = setupAzureRecording({
     directory: __dirname,
-    name: 'rm-container-services-cluster',
+    name: 'rm-maintenance-configurations',
     options: {
       matchRequestsBy: getMatchRequestsBy({
         config: stepTestConfig.instanceConfig,
@@ -50,32 +50,47 @@ test('rm-container-maintenance-configuration', async () => {
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
 }, 100_000);
 
-
-test('rm-container-services-cluster', async () => {
+test('rm-access-role', async () => {
   const stepTestConfig = getStepTestConfigForStep(
-    STEP_RM_CONTAINER_SERVICES_CLUSTERS,
+    Steps.ACCESS_ROLE,
   );
   recording = setupAzureRecording({
     directory: __dirname,
-    name: 'rm-container-services-cluster',
+    name: 'rm-access-role',
     options: {
       matchRequestsBy: getMatchRequestsBy({
         config: stepTestConfig.instanceConfig,
       }),
     },
   });
-
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
 }, 100_000);
 
-test('rm-container-services-cluster', async () => {
+test('rm-kubernetes-service', async () => {
   const stepTestConfig = getStepTestConfigForStep(
-    STEP_RM_CONTAINER_SERVICES_CLUSTERS,
+    Steps.KUBERNETES_SERVICE,
   );
   recording = setupAzureRecording({
     directory: __dirname,
-    name: 'rm-container-services-cluster',
+    name: 'rm-kubernetes-service',
+    options: {
+      matchRequestsBy: getMatchRequestsBy({
+        config: stepTestConfig.instanceConfig,
+      }),
+    },
+  });
+  const stepResults = await executeStepWithDependencies(stepTestConfig);
+  expect(stepResults).toMatchStepMetadata(stepTestConfig);
+}, 100_000);
+
+test('rm-kubernetes-service-contains-access-role-relationship', async () => {
+  const stepTestConfig = getStepTestConfigForStep(
+    Steps.KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE,
+  );
+  recording = setupAzureRecording({
+    directory: __dirname,
+    name: 'rm-kubernetes-service-contains-access-role-relationship',
     options: {
       matchRequestsBy: getMatchRequestsBy({
         config: stepTestConfig.instanceConfig,

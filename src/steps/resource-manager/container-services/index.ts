@@ -4,7 +4,6 @@ import { AzureIntegrationStep, IntegrationStepContext } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../resources/constants';
-import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 import { ContainerServicesClient } from './client';
 import {
   createDirectRelationship,
@@ -29,6 +28,7 @@ import {
   getKubernetesServiceKey,
   getAccessRoleKey,
 } from './converters';
+import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 
 export async function fetchClusters(
   executionContext: IntegrationStepContext,
@@ -42,6 +42,10 @@ export async function fetchClusters(
     const clusterEntity = createClusterEntity(webLinker, cluster);
     await jobState.addEntity(clusterEntity);
 
+    await createResourceGroupResourceRelationship(
+      executionContext,
+      clusterEntity,
+    );
   });
 }
 

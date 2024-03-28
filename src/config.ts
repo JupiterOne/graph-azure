@@ -36,6 +36,13 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     defaultsToDisabled: false,
     cannotBeDisabled: false,
   },
+  [INGESTION_SOURCE_IDS.APPLICATION_SECURITY_GROUP]: {
+    title: 'Application Security Group',
+    description:
+      'Ingest API management services and application security group.',
+    defaultsToDisabled: false,
+    cannotBeDisabled: false,
+  },
   [INGESTION_SOURCE_IDS.APPSERVICE]: {
     title: 'App service',
     description: 'Ingest apps and service plans.',
@@ -106,6 +113,12 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
   [INGESTION_SOURCE_IDS.EVENT_GRID]: {
     title: 'Event grid',
     description: 'Gather information about domains and topics.',
+    defaultsToDisabled: false,
+    cannotBeDisabled: false,
+  },
+  [INGESTION_SOURCE_IDS.EVENT_HUB]: {
+    title: 'Event hub',
+    description: 'Gather information about cluster and namespaces.',
     defaultsToDisabled: false,
     cannotBeDisabled: false,
   },

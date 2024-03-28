@@ -303,6 +303,9 @@ The following entities are created:
 
 | Resources                                      | Entity `_type`                                    | Entity `_class`                    |
 | ---------------------------------------------- | ------------------------------------------------- | ---------------------------------- |
+| Azure Application Gateway                      | `azure_application_gateway`                       | `Network`                          |
+| Azure Application Security Groups              | `azure_application_security_group`                | `Firewall`                         |
+| Azure Synapse Analytics                        | `azure_synapse`                                   | `Service`                          |
 | FrontDoor                                      | `azure_frontdoor`                                 | `Service`                          |
 | FrontDoor Backend Pool                         | `azure_frontdoor_backend_pool`                    | `Configuration`                    |
 | FrontDoor Frontend Endpoint                    | `azure_frontdoor_frontend_endpoint`               | `Gateway`                          |
@@ -317,8 +320,16 @@ The following entities are created:
 | [AD] User                                      | `azure_user`                                      | `User`                             |
 | [RM] API Management API                        | `azure_api_management_api`                        | `ApplicationEndpoint`              |
 | [RM] API Management Service                    | `azure_api_management_service`                    | `Gateway`                          |
+| [RM] Access Role                               | `azure_kube_cluster_role`                         | `AccessRole`                       |
 | [RM] Advisor Recommendation                    | `azure_advisor_recommendation`                    | `Finding`                          |
 | [RM] App Service Plan                          | `azure_app_service_plan`                          | `Configuration`                    |
+| [RM] Azure Bgp Service Communities             | `azure_bgp_service_communities`                   | `Network`                          |
+| [RM] Azure Consumer Group                      | `azure_event_hub_consumer_group`                  | `Channel`                          |
+| [RM] Azure Ddos Protection Plans               | `azure_ddos_protection_plan`                      | `Configuration`                    |
+| [RM] Azure Event Hub                           | `azure_event_hub`                                 | `Service`                          |
+| [RM] Azure Express Route                       | `azure_expressroute`                              | `Service`                          |
+| [RM] Azure Express Route Circuit               | `azure_expressroute_circuit`                      | `Network`                          |
+| [RM] Azure Express Route Circuit Connections   | `azure_expressroute_circut_connection`            | `Network`                          |
 | [RM] Azure Kubernetes Cluster                  | `azure_kubernetes_cluster`                        | `Cluster`                          |
 | [RM] Azure Managed Disk                        | `azure_managed_disk`                              | `DataStore`, `Disk`                |
 | [RM] Batch Account                             | `azure_batch_account`                             | `Service`                          |
@@ -337,10 +348,15 @@ The following entities are created:
 | [RM] Cosmos DB Database                        | `azure_cosmosdb_sql_database`                     | `Database`, `DataStore`            |
 | [RM] DNS Record Set                            | `azure_dns_record_set`                            | `DomainRecord`                     |
 | [RM] DNS Zone                                  | `azure_dns_zone`                                  | `DomainZone`                       |
+| [RM] Data Masking Policy                       | `azure_synapse_masking_policy`                    | `Policy`                           |
+| [RM] Data Masking Rule                         | `azure_synapse_masking_rule`                      | `Rule`                             |
 | [RM] Event Grid Domain                         | `azure_event_grid_domain`                         | `Service`                          |
 | [RM] Event Grid Domain Topic                   | `azure_event_grid_domain_topic`                   | `Queue`                            |
 | [RM] Event Grid Topic                          | `azure_event_grid_topic`                          | `Queue`                            |
 | [RM] Event Grid Topic Subscription             | `azure_event_grid_topic_subscription`             | `Subscription`                     |
+| [RM] Event Hub Cluster                         | `azure_event_hub_cluster`                         | `Cluster`                          |
+| [RM] Event Hub Keys                            | `azure_event_hub_key`                             | `Key`                              |
+| [RM] Event Hub Namespace                       | `azure_event_hub_namespace`                       | `Group`                            |
 | [RM] Firewall Policy                           | `azure_network_firewall_policy`                   | `Policy`                           |
 | [RM] Function App                              | `azure_function_app`                              | `Function`                         |
 | [RM] Gallery                                   | `azure_gallery`                                   | `Repository`                       |
@@ -348,7 +364,9 @@ The following entities are created:
 | [RM] Key Vault                                 | `azure_keyvault_service`                          | `Service`                          |
 | [RM] Key Vault Key                             | `azure_keyvault_key`                              | `Key`                              |
 | [RM] Key Vault Secret                          | `azure_keyvault_secret`                           | `Secret`                           |
+| [RM] Kubernetes Service                        | `azure_kube_service`                              | `Service`                          |
 | [RM] Load Balancer                             | `azure_lb`                                        | `Gateway`                          |
+| [RM] Managed Cluster                           | `azure_kube_maintenance_configuration`            | `Cluster`                          |
 | [RM] Management Group                          | `azure_management_group`                          | `Group`                            |
 | [RM] MariaDB Database                          | `azure_mariadb_database`                          | `Database`, `DataStore`            |
 | [RM] MariaDB Server                            | `azure_mariadb_server`                            | `Database`, `DataStore`, `Host`    |
@@ -378,6 +396,7 @@ The following entities are created:
 | [RM] Role Assignment                           | `azure_role_assignment`                           | `AccessPolicy`                     |
 | [RM] Role Definition                           | `azure_role_definition`                           | `AccessRole`                       |
 | [RM] SQL Database                              | `azure_sql_database`                              | `Database`, `DataStore`            |
+| [RM] SQL Pool                                  | `azure_synapse_sql_pool`                          | `Configuration`                    |
 | [RM] SQL Server                                | `azure_sql_server`                                | `Database`, `DataStore`, `Host`    |
 | [RM] SQL Server Active Directory Admin         | `azure_sql_server_active_directory_admin`         | `AccessRole`                       |
 | [RM] SQL Server Firewall Rule                  | `azure_sql_server_firewall_rule`                  | `Firewall`                         |
@@ -401,12 +420,14 @@ The following entities are created:
 | [RM] Storage Table                             | `azure_storage_table`                             | `DataStore`, `Database`            |
 | [RM] Subnet                                    | `azure_subnet`                                    | `Network`                          |
 | [RM] Subscription                              | `azure_subscription`                              | `Account`                          |
+| [RM] Synapse Keys                              | `azure_synapse_key`                               | `Key`                              |
 | [RM] Usage Details                             | `azure_usage_details`                             | `Site`                             |
 | [RM] Virtual Machine                           | `azure_vm`                                        | `Host`                             |
 | [RM] Virtual Machine Extension                 | `azure_vm_extension`                              | `Application`                      |
 | [RM] Virtual Machine Scale Set                 | `azure_vm_scale_set`                              | `Deployment`, `Group`              |
 | [RM] Virtual Network                           | `azure_vnet`                                      | `Network`                          |
 | [RM] Web App                                   | `azure_web_app`                                   | `Application`                      |
+| [RM] Workspaces                                | `azure_synapse_workspace`                         | `Configuration`                    |
 
 ### Relationships
 
@@ -424,9 +445,12 @@ The following relationships are created:
 | `azure_account`                    | **HAS**               | `azure_user`                                      |
 | `azure_account`                    | **HAS**               | `azure_user_group`                                |
 | `azure_api_management_service`     | **HAS**               | `azure_api_management_api`                        |
+| `azure_application_security_group` | **PROTECTS**          | `azure_network_firewall_rule_group`               |
+| `azure_application_security_group` | **PROTECTS**          | `azure_vm`                                        |
 | `azure_batch_account`              | **HAS**               | `azure_batch_application`                         |
 | `azure_batch_account`              | **HAS**               | `azure_batch_certificate`                         |
 | `azure_batch_account`              | **HAS**               | `azure_batch_pool`                                |
+| `azure_bgp_service_communities`    | **HAS**               | `azure_expressroute`                              |
 | `azure_cdn_profile`                | **HAS**               | `azure_cdn_endpoint`                              |
 | `azure_classic_admin_group`        | **HAS**               | `azure_user`                                      |
 | `azure_container`                  | **USES**              | `azure_container_volume`                          |
@@ -435,11 +459,22 @@ The following relationships are created:
 | `azure_container_registry`         | **HAS**               | `azure_container_registry_webhook`                |
 | `azure_container_volume`           | **USES**              | `azure_storage_file_share`                        |
 | `azure_cosmosdb_account`           | **HAS**               | `azure_cosmosdb_sql_database`                     |
+| `azure_ddos_protection_plan`       | **ASSIGNED**          | `azure_public_ip`                                 |
+| `azure_ddos_protection_plan`       | **ASSIGNED**          | `azure_vnet`                                      |
 | `azure_diagnostic_setting`         | **USES**              | `azure_storage_account`                           |
 | `azure_dns_zone`                   | **HAS**               | `azure_dns_record_set`                            |
 | `azure_event_grid_domain`          | **HAS**               | `azure_event_grid_domain_topic`                   |
 | `azure_event_grid_domain_topic`    | **HAS**               | `azure_event_grid_topic_subscription`             |
 | `azure_event_grid_topic`           | **HAS**               | `azure_event_grid_topic_subscription`             |
+| `azure_event_hub`                  | **HAS**               | `azure_location`                                  |
+| `azure_event_hub_cluster`          | **ASSIGNED**          | `azure_event_hub_namespace`                       |
+| `azure_event_hub_consumer_group`   | **HAS**               | `azure_event_hub`                                 |
+| `azure_event_hub_key`              | **USES**              | `azure_keyvault_service`                          |
+| `azure_event_hub_namespace`        | **HAS**               | `azure_event_hub`                                 |
+| `azure_event_hub_namespace`        | **HAS**               | `azure_event_hub_key`                             |
+| `azure_expressroute`               | **HAS**               | `azure_application_gateway`                       |
+| `azure_expressroute`               | **HAS**               | `azure_expressroute`                              |
+| `azure_expressroute`               | **HAS**               | `azure_expressroute_circut_connection`            |
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_backend_pool`                    |
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_frontend_endpoint`               |
 | `azure_frontdoor`                  | **HAS**               | `azure_frontdoor_routing_rule`                    |
@@ -449,6 +484,9 @@ The following relationships are created:
 | `azure_keyvault_service`           | **ALLOWS**            | `ANY_PRINCIPAL`                                   |
 | `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_key`                              |
 | `azure_keyvault_service`           | **CONTAINS**          | `azure_keyvault_secret`                           |
+| `azure_keyvault_service`           | **HAS**               | `azure_synapse_key`                               |
+| `azure_kube_service`               | **CONTAINS**          | `azure_kube_cluster_role`                         |
+| `azure_kubernetes_cluster`         | **HAS**               | `azure_kube_maintenance_configuration`            |
 | `azure_lb`                         | **CONNECTS**          | `azure_nic`                                       |
 | `azure_management_group`           | **CONTAINS**          | `azure_management_group`                          |
 | `azure_mariadb_server`             | **HAS**               | `azure_mariadb_database`                          |
@@ -477,6 +515,7 @@ The following relationships are created:
 | `azure_resource_group`             | **HAS**               | `azure_container_group`                           |
 | `azure_resource_group`             | **HAS**               | `azure_container_registry`                        |
 | `azure_resource_group`             | **HAS**               | `azure_cosmosdb_account`                          |
+| `azure_resource_group`             | **HAS**               | `azure_ddos_protection_plan`                      |
 | `azure_resource_group`             | **HAS**               | `azure_dns_zone`                                  |
 | `azure_resource_group`             | **HAS**               | `azure_event_grid_domain`                         |
 | `azure_resource_group`             | **HAS**               | `azure_event_grid_topic`                          |
@@ -545,6 +584,10 @@ The following relationships are created:
 | `azure_subnet`                     | **ALLOWS**            | `azure_security_group`                            |
 | `azure_subnet`                     | **DENIES**            | `azure_security_group`                            |
 | `azure_subnet`                     | **HAS**               | `azure_vm`                                        |
+| `azure_subscription`               | **HAS**               | `azure_bgp_service_communities`                   |
+| `azure_subscription`               | **HAS**               | `azure_ddos_protection_plan`                      |
+| `azure_subscription`               | **HAS**               | `azure_expressroute`                              |
+| `azure_subscription`               | **HAS**               | `azure_kube_service`                              |
 | `azure_subscription`               | **HAS**               | `azure_monitor_log_profile`                       |
 | `azure_subscription`               | **HAS**               | `azure_resource_group`                            |
 | `azure_subscription`               | **CONTAINS**          | `azure_role_definition`                           |
@@ -553,7 +596,15 @@ The following relationships are created:
 | `azure_subscription`               | **HAS**               | `azure_security_center_contact`                   |
 | `azure_subscription`               | **HAS**               | `azure_security_center_setting`                   |
 | `azure_subscription`               | **HAS**               | `azure_security_center_subscription_pricing`      |
+| `azure_subscription`               | **HAS**               | `azure_synapse`                                   |
 | `azure_subscription`               | **HAS**               | `azure_usage_details`                             |
+| `azure_synapse`                    | **HAS**               | `azure_synapse_key`                               |
+| `azure_synapse`                    | **HAS**               | `azure_synapse_sql_pool`                          |
+| `azure_synapse`                    | **HAS**               | `azure_synapse_workspace`                         |
+| `azure_synapse_sql_pool`           | **ASSIGNED**          | `azure_synapse_masking_policy`                    |
+| `azure_synapse_sql_pool`           | **HAS**               | `azure_synapse_masking_rule`                      |
+| `azure_synapse_workspace`          | **HAS**               | `azure_synapse_key`                               |
+| `azure_synapse_workspace`          | **HAS**               | `azure_synapse_sql_pool`                          |
 | `azure_user`                       | **HAS**               | `ad-role-definitions`                             |
 | `azure_user`                       | **HAS**               | `azure_device`                                    |
 | `azure_user_group`                 | **HAS**               | `azure_group_member`                              |
@@ -653,105 +704,207 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (97)                                       |
-| ---------------------------------------------------------------- |
-| `Microsoft.Advisor/recommendations/read`                         |
-| `Microsoft.ApiManagement/service/apis/read`                      |
-| `Microsoft.ApiManagement/service/read`                           |
-| `Microsoft.Authorization/classicAdministrators/read`             |
-| `Microsoft.Authorization/locks/read`                             |
-| `Microsoft.Authorization/policyAssignments/read`                 |
-| `Microsoft.Authorization/policyDefinitions/read`                 |
-| `Microsoft.Authorization/policySetDefinitions/read`              |
-| `Microsoft.Authorization/roleAssignments/read`                   |
-| `Microsoft.Authorization/roleDefinitions/read`                   |
-| `Microsoft.Batch/batchAccounts/applications/read`                |
-| `Microsoft.Batch/batchAccounts/certificates/read`                |
-| `Microsoft.Batch/batchAccounts/pools/read`                       |
-| `Microsoft.Batch/batchAccounts/read`                             |
-| `Microsoft.Cache/redis/firewallRules/read`                       |
-| `Microsoft.Cache/redis/linkedServers/read`                       |
-| `Microsoft.Cache/redis/read`                                     |
-| `Microsoft.Cdn/profiles/endpoints/read`                          |
-| `Microsoft.Cdn/profiles/read`                                    |
-| `Microsoft.Compute/disks/read`                                   |
-| `Microsoft.Compute/galleries/images/read`                        |
-| `Microsoft.Compute/galleries/images/versions/read`               |
-| `Microsoft.Compute/galleries/read`                               |
-| `Microsoft.Compute/images/read`                                  |
-| `Microsoft.Compute/virtualMachines/extensions/read`              |
-| `Microsoft.Compute/virtualMachines/read`                         |
-| `Microsoft.Compute/virtualMachineScaleSets/read`                 |
-| `Microsoft.Consumption/usageDetails/read`                        |
-| `Microsoft.ContainerInstance/containerGroups/read`               |
-| `Microsoft.ContainerRegistry/registries/read`                    |
-| `Microsoft.ContainerRegistry/registries/webhooks/read`           |
-| `Microsoft.ContainerService/managedClusters/read`                |
-| `Microsoft.DBforMariaDB/servers/databases/read`                  |
-| `Microsoft.DBforMariaDB/servers/read`                            |
-| `Microsoft.DBforMySQL/servers/databases/read`                    |
-| `Microsoft.DBforMySQL/servers/read`                              |
-| `Microsoft.DBforPostgreSQL/servers/databases/read`               |
-| `Microsoft.DBforPostgreSQL/servers/firewallRules/read`           |
-| `Microsoft.DBforPostgreSQL/servers/read`                         |
-| `Microsoft.DocumentDB/databaseAccounts/read`                     |
-| `Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read`        |
-| `Microsoft.EventGrid/domains/read`                               |
-| `Microsoft.EventGrid/domains/topics/eventSubscriptions/read`     |
-| `Microsoft.EventGrid/domains/topics/read`                        |
-| `Microsoft.EventGrid/topics/eventSubscriptions/read`             |
-| `Microsoft.EventGrid/topics/read`                                |
-| `Microsoft.Insights/ActivityLogAlerts/Read`                      |
-| `Microsoft.Insights/DiagnosticSettings/Read`                     |
-| `Microsoft.Insights/LogProfiles/Read`                            |
-| `Microsoft.KeyVault/vaults/keys/read`                            |
-| `Microsoft.KeyVault/vaults/read`                                 |
-| `Microsoft.KeyVault/vaults/secrets/read`                         |
-| `Microsoft.Management/managementGroups/read`                     |
-| `Microsoft.Network/azurefirewalls/read`                          |
-| `Microsoft.Network/dnszones/read`                                |
-| `Microsoft.Network/dnszones/recordsets/read`                     |
-| `Microsoft.Network/firewallPolicies/Read`                        |
-| `Microsoft.Network/firewallPolicies/ruleCollectionGroups/Read`   |
-| `Microsoft.Network/frontDoors/read`                              |
-| `Microsoft.Network/loadBalancers/read`                           |
-| `Microsoft.Network/networkInterfaces/read`                       |
-| `Microsoft.Network/networkSecurityGroups/read`                   |
-| `Microsoft.Network/networkWatchers/flowLogs/read`                |
-| `Microsoft.Network/networkWatchers/read`                         |
-| `Microsoft.Network/privateDnsZones/read`                         |
-| `Microsoft.Network/privateDnsZones/recordsets/read`              |
-| `Microsoft.Network/privateEndpoints/read`                        |
-| `Microsoft.Network/publicIPAddresses/read`                       |
-| `Microsoft.Network/virtualNetworks/read`                         |
-| `Microsoft.PolicyInsights/policyStates/queryResults/read`        |
-| `Microsoft.Resources/subscriptions/locations/read`               |
-| `Microsoft.Resources/subscriptions/read`                         |
-| `Microsoft.Resources/subscriptions/resourceGroups/read`          |
-| `Microsoft.Security/assessments/read`                            |
-| `Microsoft.Security/autoProvisioningSettings/read`               |
-| `Microsoft.Security/pricings/read`                               |
-| `Microsoft.Security/securityContacts/read`                       |
-| `Microsoft.Security/settings/read`                               |
-| `Microsoft.ServiceBus/namespaces/queues/read`                    |
-| `Microsoft.ServiceBus/namespaces/read`                           |
-| `Microsoft.ServiceBus/namespaces/topics/read`                    |
-| `Microsoft.ServiceBus/namespaces/topics/subscriptions/read`      |
-| `Microsoft.Sql/servers/administrators/read`                      |
-| `Microsoft.Sql/servers/databases/read`                           |
-| `Microsoft.Sql/servers/firewallRules/read`                       |
-| `Microsoft.Sql/servers/read`                                     |
-| `Microsoft.Storage/storageAccounts/blobServices/containers/read` |
-| `Microsoft.Storage/storageAccounts/blobServices/read`            |
-| `Microsoft.Storage/storageAccounts/fileServices/shares/read`     |
-| `Microsoft.Storage/storageAccounts/queueServices/read`           |
-| `Microsoft.Storage/storageAccounts/read`                         |
-| `Microsoft.Storage/storageAccounts/tableServices/read`           |
-| `Microsoft.Storage/storageAccounts/tableServices/tables/read`    |
-| `Microsoft.Web/serverfarms/Read`                                 |
-| `Microsoft.Web/sites/config/list/action`                         |
-| `Microsoft.Web/sites/config/Read`                                |
-| `Microsoft.Web/sites/Read`                                       |
+| Role Permissions List (101)                                            |
+| ---------------------------------------------------------------------- |
+| `Microsoft.Advisor/recommendations/read`                               |
+| `Microsoft.ApiManagement/service/apis/read`                            |
+| `Microsoft.ApiManagement/service/read`                                 |
+| `Microsoft.Authorization/classicAdministrators/read`                   |
+| `Microsoft.Authorization/locks/read`                                   |
+| `Microsoft.Authorization/policyAssignments/read`                       |
+| `Microsoft.Authorization/policyDefinitions/read`                       |
+| `Microsoft.Authorization/policySetDefinitions/read`                    |
+| `Microsoft.Authorization/roleAssignments/read`                         |
+| `Microsoft.Authorization/roleDefinitions/read`                         |
+| `Microsoft.Batch/batchAccounts/applications/read`                      |
+| `Microsoft.Batch/batchAccounts/certificates/read`                      |
+| `Microsoft.Batch/batchAccounts/pools/read`                             |
+| `Microsoft.Batch/batchAccounts/read`                                   |
+| `Microsoft.Cache/redis/firewallRules/read`                             |
+| `Microsoft.Cache/redis/linkedServers/read`                             |
+| `Microsoft.Cache/redis/read`                                           |
+| `Microsoft.Cdn/profiles/endpoints/read`                                |
+| `Microsoft.Cdn/profiles/read`                                          |
+| `Microsoft.Compute/disks/read`                                         |
+| `Microsoft.Compute/galleries/images/read`                              |
+| `Microsoft.Compute/galleries/images/versions/read`                     |
+| `Microsoft.Compute/galleries/read`                                     |
+| `Microsoft.Compute/images/read`                                        |
+| `Microsoft.Compute/virtualMachines/extensions/read`                    |
+| `Microsoft.Compute/virtualMachines/read`                               |
+| `Microsoft.Compute/virtualMachineScaleSets/read`                       |
+| `Microsoft.Consumption/usageDetails/read`                              |
+| `Microsoft.ContainerInstance/containerGroups/read`                     |
+| `Microsoft.ContainerRegistry/registries/read`                          |
+| `Microsoft.ContainerRegistry/registries/webhooks/read`                 |
+| `Microsoft.ContainerService/managedClusters/read`                      |
+| `Microsoft.DBforMariaDB/servers/databases/read`                        |
+| `Microsoft.DBforMariaDB/servers/read`                                  |
+| `Microsoft.DBforMySQL/servers/databases/read`                          |
+| `Microsoft.DBforMySQL/servers/read`                                    |
+| `Microsoft.DBforPostgreSQL/servers/databases/read`                     |
+| `Microsoft.DBforPostgreSQL/servers/firewallRules/read`                 |
+| `Microsoft.DBforPostgreSQL/servers/read`                               |
+| `Microsoft.DocumentDB/databaseAccounts/read`                           |
+| `Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read`              |
+| `Microsoft.EventGrid/domains/read`                                     |
+| `Microsoft.EventGrid/domains/topics/eventSubscriptions/read`           |
+| `Microsoft.EventGrid/domains/topics/read`                              |
+| `Microsoft.EventGrid/topics/eventSubscriptions/read`                   |
+| `Microsoft.EventGrid/topics/read`                                      |
+| `Microsoft.Insights/ActivityLogAlerts/Read`                            |
+| `Microsoft.Insights/DiagnosticSettings/Read`                           |
+| `Microsoft.Insights/LogProfiles/Read`                                  |
+| `Microsoft.KeyVault/vaults/keys/read`                                  |
+| `Microsoft.KeyVault/vaults/read`                                       |
+| `Microsoft.KeyVault/vaults/secrets/read`                               |
+| `Microsoft.Management/managementGroups/read`                           |
+| `Microsoft.Network/azurefirewalls/read`                                |
+| `Microsoft.Network/dnszones/read`                                      |
+| `Microsoft.Network/dnszones/recordsets/read`                           |
+| `Microsoft.Network/firewallPolicies/Read`                              |
+| `Microsoft.Network/firewallPolicies/ruleCollectionGroups/Read`         |
+| `Microsoft.Network/frontDoors/read`                                    |
+| `Microsoft.Network/loadBalancers/read`                                 |
+| `Microsoft.Network/networkInterfaces/read`                             |
+| `Microsoft.Network/networkSecurityGroups/read`                         |
+| `Microsoft.Network/networkWatchers/flowLogs/read`                      |
+| `Microsoft.Network/networkWatchers/read`                               |
+| `Microsoft.Network/privateDnsZones/read`                               |
+| `Microsoft.Network/privateDnsZones/recordsets/read`                    |
+| `Microsoft.Network/privateEndpoints/read`                              |
+| `Microsoft.Network/publicIPAddresses/read`                             |
+| `Microsoft.Network/virtualNetworks/read`                               |
+| `Microsoft.PolicyInsights/policyStates/queryResults/read`              |
+| `Microsoft.Resources/subscriptions/locations/read`                     |
+| `Microsoft.Resources/subscriptions/read`                               |
+| `Microsoft.Resources/subscriptions/resourceGroups/read`                |
+| `Microsoft.Security/assessments/read`                                  |
+| `Microsoft.Security/autoProvisioningSettings/read`                     |
+| `Microsoft.Security/pricings/read`                                     |
+| `Microsoft.Security/securityContacts/read`                             |
+| `Microsoft.Security/settings/read`                                     |
+| `Microsoft.ServiceBus/namespaces/queues/read`                          |
+| `Microsoft.ServiceBus/namespaces/read`                                 |
+| `Microsoft.ServiceBus/namespaces/topics/read`                          |
+| `Microsoft.ServiceBus/namespaces/topics/subscriptions/read`            |
+| `Microsoft.Sql/servers/administrators/read`                            |
+| `Microsoft.Sql/servers/databases/read`                                 |
+| `Microsoft.Sql/servers/firewallRules/read`                             |
+| `Microsoft.Sql/servers/read`                                           |
+| `Microsoft.Storage/storageAccounts/blobServices/containers/read`       |
+| `Microsoft.Storage/storageAccounts/blobServices/read`                  |
+| `Microsoft.Storage/storageAccounts/fileServices/shares/read`           |
+| `Microsoft.Storage/storageAccounts/queueServices/read`                 |
+| `Microsoft.Storage/storageAccounts/read`                               |
+| `Microsoft.Storage/storageAccounts/tableServices/read`                 |
+| `Microsoft.Storage/storageAccounts/tableServices/tables/read`          |
+| `Microsoft.Synapse/workspaces/keys/read`                               |
+| `Microsoft.Synapse/workspaces/read`                                    |
+| `Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/read`       |
+| `Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/rules/read` |
+| `Microsoft.Web/serverfarms/Read`                                       |
+| `Microsoft.Web/sites/config/list/action`                               |
+| `Microsoft.Web/sites/config/Read`                                      |
+| `Microsoft.Web/sites/Read`                                             |
+| `Microsoft.Advisor/recommendations/read`                               |
+| `Microsoft.ApiManagement/service/apis/read`                            |
+| `Microsoft.ApiManagement/service/read`                                 |
+| `Microsoft.Authorization/classicAdministrators/read`                   |
+| `Microsoft.Authorization/locks/read`                                   |
+| `Microsoft.Authorization/policyAssignments/read`                       |
+| `Microsoft.Authorization/policyDefinitions/read`                       |
+| `Microsoft.Authorization/policySetDefinitions/read`                    |
+| `Microsoft.Authorization/roleAssignments/read`                         |
+| `Microsoft.Authorization/roleDefinitions/read`                         |
+| `Microsoft.Batch/batchAccounts/applications/read`                      |
+| `Microsoft.Batch/batchAccounts/certificates/read`                      |
+| `Microsoft.Batch/batchAccounts/pools/read`                             |
+| `Microsoft.Batch/batchAccounts/read`                                   |
+| `Microsoft.Cache/redis/firewallRules/read`                             |
+| `Microsoft.Cache/redis/linkedServers/read`                             |
+| `Microsoft.Cache/redis/read`                                           |
+| `Microsoft.Cdn/profiles/endpoints/read`                                |
+| `Microsoft.Cdn/profiles/read`                                          |
+| `Microsoft.Compute/disks/read`                                         |
+| `Microsoft.Compute/galleries/images/read`                              |
+| `Microsoft.Compute/galleries/images/versions/read`                     |
+| `Microsoft.Compute/galleries/read`                                     |
+| `Microsoft.Compute/images/read`                                        |
+| `Microsoft.Compute/virtualMachines/extensions/read`                    |
+| `Microsoft.Compute/virtualMachines/read`                               |
+| `Microsoft.Compute/virtualMachineScaleSets/read`                       |
+| `Microsoft.Consumption/usageDetails/read`                              |
+| `Microsoft.ContainerInstance/containerGroups/read`                     |
+| `Microsoft.ContainerRegistry/registries/read`                          |
+| `Microsoft.ContainerRegistry/registries/webhooks/read`                 |
+| `Microsoft.ContainerService/managedClusters/read`                      |
+| `Microsoft.DBforMariaDB/servers/databases/read`                        |
+| `Microsoft.DBforMariaDB/servers/read`                                  |
+| `Microsoft.DBforMySQL/servers/databases/read`                          |
+| `Microsoft.DBforMySQL/servers/read`                                    |
+| `Microsoft.DBforPostgreSQL/servers/databases/read`                     |
+| `Microsoft.DBforPostgreSQL/servers/firewallRules/read`                 |
+| `Microsoft.DBforPostgreSQL/servers/read`                               |
+| `Microsoft.DocumentDB/databaseAccounts/read`                           |
+| `Microsoft.DocumentDB/databaseAccounts/sqlDatabases/read`              |
+| `Microsoft.EventGrid/domains/read`                                     |
+| `Microsoft.EventGrid/domains/topics/eventSubscriptions/read`           |
+| `Microsoft.EventGrid/domains/topics/read`                              |
+| `Microsoft.EventGrid/topics/eventSubscriptions/read`                   |
+| `Microsoft.EventGrid/topics/read`                                      |
+| `Microsoft.Insights/ActivityLogAlerts/Read`                            |
+| `Microsoft.Insights/DiagnosticSettings/Read`                           |
+| `Microsoft.Insights/LogProfiles/Read`                                  |
+| `Microsoft.KeyVault/vaults/keys/read`                                  |
+| `Microsoft.KeyVault/vaults/read`                                       |
+| `Microsoft.KeyVault/vaults/secrets/read`                               |
+| `Microsoft.Management/managementGroups/read`                           |
+| `Microsoft.Network/azurefirewalls/read`                                |
+| `Microsoft.Network/ddosProtectionPlans/read`                           |
+| `Microsoft.Network/dnszones/read`                                      |
+| `Microsoft.Network/dnszones/recordsets/read`                           |
+| `Microsoft.Network/firewallPolicies/Read`                              |
+| `Microsoft.Network/firewallPolicies/ruleCollectionGroups/Read`         |
+| `Microsoft.Network/frontDoors/read`                                    |
+| `Microsoft.Network/loadBalancers/read`                                 |
+| `Microsoft.Network/networkInterfaces/read`                             |
+| `Microsoft.Network/networkSecurityGroups/read`                         |
+| `Microsoft.Network/networkWatchers/flowLogs/read`                      |
+| `Microsoft.Network/networkWatchers/read`                               |
+| `Microsoft.Network/privateDnsZones/read`                               |
+| `Microsoft.Network/privateDnsZones/recordsets/read`                    |
+| `Microsoft.Network/privateEndpoints/read`                              |
+| `Microsoft.Network/publicIPAddresses/read`                             |
+| `Microsoft.Network/virtualNetworks/read`                               |
+| `Microsoft.PolicyInsights/policyStates/queryResults/read`              |
+| `Microsoft.Resources/subscriptions/locations/read`                     |
+| `Microsoft.Resources/subscriptions/read`                               |
+| `Microsoft.Resources/subscriptions/resourceGroups/read`                |
+| `Microsoft.Security/assessments/read`                                  |
+| `Microsoft.Security/autoProvisioningSettings/read`                     |
+| `Microsoft.Security/pricings/read`                                     |
+| `Microsoft.Security/securityContacts/read`                             |
+| `Microsoft.Security/settings/read`                                     |
+| `Microsoft.ServiceBus/namespaces/queues/read`                          |
+| `Microsoft.ServiceBus/namespaces/read`                                 |
+| `Microsoft.ServiceBus/namespaces/topics/read`                          |
+| `Microsoft.ServiceBus/namespaces/topics/subscriptions/read`            |
+| `Microsoft.Sql/servers/administrators/read`                            |
+| `Microsoft.Sql/servers/databases/read`                                 |
+| `Microsoft.Sql/servers/firewallRules/read`                             |
+| `Microsoft.Sql/servers/read`                                           |
+| `Microsoft.Storage/storageAccounts/blobServices/containers/read`       |
+| `Microsoft.Storage/storageAccounts/blobServices/read`                  |
+| `Microsoft.Storage/storageAccounts/fileServices/shares/read`           |
+| `Microsoft.Storage/storageAccounts/queueServices/read`                 |
+| `Microsoft.Storage/storageAccounts/read`                               |
+| `Microsoft.Storage/storageAccounts/tableServices/read`                 |
+| `Microsoft.Storage/storageAccounts/tableServices/tables/read`          |
+| `Microsoft.Web/serverfarms/Read`                                       |
+| `Microsoft.Web/sites/config/list/action`                               |
+| `Microsoft.Web/sites/config/Read`                                      |
+| `Microsoft.Web/sites/Read`                                             |
 
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START} -->

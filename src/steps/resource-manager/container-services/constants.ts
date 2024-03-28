@@ -66,17 +66,17 @@ export const Steps = {
   ACCESS_ROLE: 'rm-access-role',
   KUBERNETES_SERVICE: 'rm-kubernetes-service',
   MANAGED_CLUSTER_HAS_MAINTENANCE_CONFIGURATION:
-    'Managed Cluster Has Maintenance Configuration Relationship',
+    'rm-managed-cluster-has-maintenance-configuration-relationship',
   MANAGED_CLUSTER_CONTAINS_ROLE_BINDING:
-    'Managed Cluster Contains Role Binding',
+    'rm-managed-cluster-contains-role-binding',
   KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE:
-    'Kubernetes Service Contains Access Role Relationship',
+    'rm-kubernetes-service-contains-access-role-relationship',
   AZURE_SUBSCRIPTION_HAS_KUBERNETES_SERVICE:
-    'Azure Subscription Has Kubernetes Service Relationship',
+    'rm-azure-subscription-has-kubernetes-service-relationship',
   MANAGED_CLUSTER_IS_KUBE_CLUSTER:
-    'Managed Cluster Is Kube Cluster Relationship',
+    'rm-managed-cluster-is-kube-cluster-relationship',
   ACCESS_ROLE_IS_KUBE_CLUSTER_ROLE:
-    'Access Role Is Kube Cluster Role Relationship',
+    'rm-access-role-is-kube-cluster-role-relationship',
 };
 
 export const Entities: Record<
@@ -97,7 +97,7 @@ export const Entities: Record<
   },
   ACCESS_ROLE: {
     resourceName: '[RM] Access Role',
-    _type: 'azure_kube_trusted_access_role',
+    _type: 'azure_kube_cluster_role',
     _class: ['AccessRole'],
     schema: {
       properties: {},

@@ -1,6 +1,4 @@
-import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
-import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import {
   RESOURCE_GROUP_ENTITY,
@@ -9,7 +7,6 @@ import {
 import { MyNetworkManagementClient } from './client';
 import {
   ApplicationSecurityGroupEntities,
-  AzureApplicationSecurityGroupRelationships,
   STEP_AZURE_APPLICATION_SECURITY_GROUP,
 } from './constants';
 import { createApplicationSecurityGroupEntity } from './converters';

@@ -12,6 +12,7 @@ import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
+import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../../resource-manager/resources/constants'
 import {
   steps,
   entities,
@@ -22,7 +23,6 @@ import {
 } from '../subscriptions/constants';
 import {
   RESOURCE_GROUP_ENTITY,
-  STEP_RM_RESOURCES_RESOURCE_GROUPS,
 } from '../resources/constants';
 import { EventHubClient } from './client';
 import {
@@ -276,9 +276,8 @@ export async function buildAzureResourceGroupAzureEventHubRelation(
     async (eventHubEntity) => {
       const resourceGroupEntityKey = eventHubEntity._key.substring(
         0,
-        eventHubEntity._key.lastIndexOf('/resourceGroups'),
+        eventHubEntity._key.lastIndexOf('/providers'),
       );
-
       if (jobState.hasKey(resourceGroupEntityKey)) {
         // Check if the resource group key exists
         await jobState.addRelationship(
@@ -592,7 +591,7 @@ export const eventHubStep: AzureIntegrationStep[] = [
     name: 'Build Azure ResourceGroup Has Azure Event Hub',
     entities: [],
     relationships: [EventHubRelationships.AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB],
-    dependsOn: [STEP_AZURE_EVENT_HUB, steps.SUBSCRIPTION],
+    dependsOn: [STEP_AZURE_EVENT_HUB, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: buildAzureResourceGroupAzureEventHubRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.EVENT_HUB,
   },

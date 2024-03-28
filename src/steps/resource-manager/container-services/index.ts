@@ -41,10 +41,6 @@ export async function fetchClusters(
     const clusterEntity = createClusterEntity(webLinker, cluster);
     await jobState.addEntity(clusterEntity);
 
-    await createResourceGroupResourceRelationship(
-      executionContext,
-      clusterEntity,
-    );
   });
 }
 

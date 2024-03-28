@@ -17,7 +17,7 @@ export class ContainerServicesClient extends Client {
       this.getClientSecretCredentials(),
       config.subscriptionId,
     );
-    for (const item of await serviceClient.managedClusters.list()) {
+    for await(const item of serviceClient.managedClusters.list()) {
       await callback(item);
     }
   }
@@ -32,7 +32,7 @@ export class ContainerServicesClient extends Client {
       config.subscriptionId,
     );
     const resourceGroup = resourceGroupName(cluster.id, true);
-    for (const item of await serviceClient.maintenanceConfigurations.listByManagedCluster(
+    for await(const item of serviceClient.maintenanceConfigurations.listByManagedCluster(
       resourceGroup,
       cluster.name,
     )) {
@@ -51,7 +51,7 @@ export class ContainerServicesClient extends Client {
     );
     const resourceGroup = resourceGroupName(cluster.id, true)!;
     const resourceName = cluster.name;
-    for (const item of await serviceClient.trustedAccessRoleBindings.list(
+    for await(const item of serviceClient.trustedAccessRoleBindings.list(
       resourceGroup,
       resourceName,
     )) {

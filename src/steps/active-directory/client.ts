@@ -143,7 +143,7 @@ export class DirectoryGraphClient extends GraphClient {
             endpoint: 'reports.authenticationMethods.userRegistrationDetails',
             status: err.status,
             statusText: err.statusText,
-            cause: err,
+            cause: err.statusText,
           }),
         },
         'Failed to obtain user registration details',
@@ -187,7 +187,7 @@ export class DirectoryGraphClient extends GraphClient {
       'surname',
       'userPrincipalName',
       'id',
-      'usageLocation'
+      'usageLocation',
     ];
     const select = [...defaultSelect, 'userType', 'accountEnabled'];
     return this.iterateResources({
@@ -280,7 +280,7 @@ export class DirectoryGraphClient extends GraphClient {
               this.logger.warn(
                 {
                   resourceUrl,
-                  err,
+                  error: err.message,
                 },
                 'Callback error while iterating an API response in DirectoryGraphClient',
               );
@@ -293,7 +293,7 @@ export class DirectoryGraphClient extends GraphClient {
     } catch (error) {
       if (error.status === 403) {
         this.logger.warn(
-          { error, resourceUrl: resourceUrl },
+          { error: error.message, resourceUrl: resourceUrl },
           'Encountered auth error in Azure Graph client.',
         );
         this.logger.publishWarnEvent({

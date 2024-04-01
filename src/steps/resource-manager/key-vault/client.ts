@@ -49,7 +49,7 @@ export class KeyVaultClient extends Client {
       // For those KeyVaults where the permission for listing keys is missing
       // a warn message will be shown indicating that
       if (err.statusCode === 403) {
-        this.logger.warn({ err }, err.message);
+        this.logger.warn({}, err.message);
         this.logger.publishWarnEvent({
           name: IntegrationWarnEventName.MissingPermission,
           description: `Missing a Key Vault access policy. A Key Vault access policy determines whether a given security principal can perform different operations on Key Vault secrets, keys and certificates. Please follow the steps outlined here https://go.microsoft.com/fwlink/?linkid=2125287 and assign a "list" key permission in order to fetch these keys for your Key Vault ${vaultUri}.`,
@@ -62,7 +62,7 @@ export class KeyVaultClient extends Client {
         //We could have cases where an AD has the keyvault but we need to access the keys
         //using another tenant. For now, lets just skip this cases.
         this.logger.warn(
-          { err: err, vaultUri: vaultUri },
+          { error: err.message, vaultUri: vaultUri },
           'Failed to retrieve a VaultKey',
         );
         this.logger.publishWarnEvent({
@@ -92,7 +92,7 @@ export class KeyVaultClient extends Client {
       // For those KeyVaults where the permission for listing secrets is missing
       // a warn message will be shown indicating that
       if (err.statusCode === 403) {
-        this.logger.warn({ err }, err.message);
+        this.logger.warn({}, err.message);
         this.logger.publishWarnEvent({
           name: IntegrationWarnEventName.MissingPermission,
           description: `Missing a Key Vault access policy. A Key Vault access policy determines whether a given security principal can perform different operations on Key Vault secrets, keys and certificates. Please follow the steps outlined here https://go.microsoft.com/fwlink/?linkid=2125287 and assign a "list" secret permission in order to fetch these secrets for your Key Vault ${vaultUri}.`,
@@ -105,7 +105,7 @@ export class KeyVaultClient extends Client {
         //We could have cases where an AD has the keyvault but we need to access the secrets
         //using another tenant. For now, lets just skip this cases.
         this.logger.warn(
-          { err: err, vaultUri: vaultUri },
+          { error: err.message, vaultUri: vaultUri },
           'Failed to retrieve a VaultSecret',
         );
         this.logger.publishWarnEvent({

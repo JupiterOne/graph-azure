@@ -76,7 +76,10 @@ export class SecurityClient extends Client {
         callback,
       });
     } catch (err) {
-      this.logger.warn({ err }, 'Error iterating security settings.');
+      this.logger.warn(
+        { error: err.message },
+        'Error iterating security settings.',
+      );
     }
   }
 

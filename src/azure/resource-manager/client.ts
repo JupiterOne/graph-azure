@@ -188,7 +188,7 @@ function retryResourceRequest<ResponseType>(
         ) {
           logger.info(
             {
-              err,
+              error: err.message,
             },
             'Encountered non-retryable error in Get Token request client.',
           );
@@ -196,7 +196,7 @@ function retryResourceRequest<ResponseType>(
         } else if (err instanceof AzureRestError && err.statusCode !== 429) {
           logger.info(
             {
-              err,
+              error: err.message,
             },
             'Encountered non-retryable error in Resource Manager client.',
           );
@@ -217,7 +217,7 @@ function retryResourceRequest<ResponseType>(
           } else {
             logger.info(
               {
-                err,
+                error: err.message,
                 attemptsRemaining: context.attemptsRemaining,
               },
               'Encountered retryable error in Resource Manager client.',
@@ -388,7 +388,7 @@ export async function request<T extends ResourceResponse>(
       }
 
       throw new IntegrationProviderAPIError({
-        cause: err,
+        message: statusText,
         endpoint: resourceDescription,
         status,
         statusText,
@@ -473,7 +473,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
   } catch (error) {
     if (error.status === 403) {
       logger.warn(
-        { error, resourceUrl: resourceEndpoint },
+        { error: error.message, resourceUrl: resourceEndpoint },
         'Encountered auth error in Azure Graph client.',
       );
       logger.publishWarnEvent({

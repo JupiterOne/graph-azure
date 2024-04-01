@@ -95,6 +95,7 @@ export function createAccessRoleEntity(
         // rules: data.rules?.toString(),
         sourceResourceType: data.sourceResourceType,
         webLink: webLinker.portalResourceUrl(data.name),
+        locationName: locationName
       },
     },
   });

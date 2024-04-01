@@ -6,7 +6,7 @@ import {
   ManagedCluster,
   MaintenanceConfiguration,
 } from '@azure/arm-containerservice/src/models';
-import { Location } from '@azure/arm-subscriptions/esm/models';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 export class ContainerServicesClient extends Client {
   public async iterateClusters(
@@ -61,6 +61,7 @@ export class ContainerServicesClient extends Client {
 
   public async iterateAccessRoles(
     config,
+    logger: IntegrationLogger,
     callback: (e, location) => void | Promise<void>,
   ): Promise<void> {
     const subscriptionClient = new SubscriptionClient(
@@ -93,7 +94,7 @@ export class ContainerServicesClient extends Client {
         }
       } catch (error) {
         if (error.statusCode && error.statusCode === 400) {
-          console.error(`No registered resource provider found for location '${location.name}'.`);
+          logger.warn(`No registered resource provider found for location '${location.name}'.`);
           // Skipping this location and continue with the next one
           continue;
         } else {

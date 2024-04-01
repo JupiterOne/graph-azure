@@ -69,7 +69,7 @@ export async function fetchEventHubNamespaces(
   // Fetch all EventHub namespaces
   await client.iterateEventHubNamespaces(
     instance.config.subscriptionId as string,
-    async (namespace) => {
+    async (namespace: EHNamespace) => {
       const namespaceEntity = createEventHubNamespaceEntity(
         webLinker,
         namespace,

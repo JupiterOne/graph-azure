@@ -1,4 +1,5 @@
 import {
+  EHNamespace,
   EventHubManagementClient, Eventhub
 } from '@azure/arm-eventhub';
 import {
@@ -19,7 +20,7 @@ export class EventHubClient extends Client {
    */
   public async iterateEventHubNamespaces(
     subscriptionId: string,
-    callback: (namespace) => void | Promise<void>,
+    callback: (namespace: EHNamespace) => void | Promise<void>,
   ): Promise<void> {
     const credential = this.getClientSecretCredentials();
     const client = new EventHubManagementClient(credential, subscriptionId);

@@ -1,11 +1,11 @@
 import {
   Entity,
   createIntegrationEntity,
-  convertProperties,
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
 import { ExpressRouteEntities } from './constants';
 import { generateEntityKey } from '../../../utils/generateKeys';
+import { flattenObject } from '../utils/flattenObj';
 
 // If uniqueId is undefined or not of correct type, raise error
 const validateUniqeId = generateEntityKey;
@@ -34,16 +34,13 @@ export function createAzureExpressRouteCircuitConnectionEntity(
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
+        ...flattenObject(data),
         _key: data.id as string,
         _type:
           ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._type,
         _class:
           ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        id: data.id,
-        name: data.name,
-        type: data.type,
         public: false,
       },
     },
@@ -58,15 +55,12 @@ export function createAzureExpressRouteCrossConnectionEntity(
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
+        ...flattenObject(data),
         _key: data.id as string,
         _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CROSS_CONNECTION._type,
         _class:
           ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CROSS_CONNECTION._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        id: data.id,
-        name: data.name,
-        type: data.type,
         public: false,
       },
     },
@@ -82,14 +76,11 @@ export function createAzureBgpServiceCommunitiesEntity(
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
+        ...flattenObject(data),
         _key: data.id as string,
         _type: ExpressRouteEntities.AZURE_BGP_SERVICE_COMMUNITIES._type,
         _class: ExpressRouteEntities.AZURE_BGP_SERVICE_COMMUNITIES._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        id: data.id,
-        name: data.name,
-        type: data.type,
         subscriptionKey: subscriptionKey,
         public: false,
       },
@@ -105,14 +96,11 @@ export function createAzureApplicationGatewayEntity(
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
+        ...flattenObject(data),
         _key: data.id as string,
         _type: ExpressRouteEntities.AZURE_APPLICATION_GATEWAY._type,
         _class: ExpressRouteEntities.AZURE_APPLICATION_GATEWAY._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        id: data.id,
-        name: data.name,
-        type: data.type,
         public: false,
       },
     },
@@ -127,14 +115,11 @@ export function createAzurePeerExpressRouteCircuitConnectionEntity(
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
+        ...flattenObject(data),
         _key: data.id as string,
         _type: ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._type,
         _class: ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        id: data.id,
-        name: data.name,
-        type: data.type,
         resourceGroups: getEntityFromId(data.id, 'resourceGroups'),
         circuitName: getEntityFromId(data.id, 'expressRouteCircuits'),
         public: false,
@@ -174,17 +159,13 @@ export function createAzureExpressRouteCircuitEntity(
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
+        ...flattenObject(data),
         _key: data.id as string,
         _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT._type,
         _class: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        id: data.id,
-        name: data.name,
-        type: data.type,
         resourceGroups: getEntityFromId(data.id, 'resourceGroups'),
         public: false,
-
       },
     },
   });

@@ -1,21 +1,20 @@
 import {
   Entity,
   createIntegrationEntity,
-  convertProperties,
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
 import { EventHubEntities } from './constants';
-import { Eventhub } from '@azure/arm-eventhub';
+import { EHNamespace, Eventhub } from '@azure/arm-eventhub';
+import { flattenObject } from '../utils/flattenObj'
 
 export function createEventHubNamespaceEntity(
   webLinker: AzureWebLinker,
-  data,
+  data: EHNamespace,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
         _key: data.id as string,
         _type: EventHubEntities.EVENT_HUB_NAMESPACE._type,
         _class: EventHubEntities.EVENT_HUB_NAMESPACE._class,
@@ -23,7 +22,8 @@ export function createEventHubNamespaceEntity(
         id: data.id,
         name: data.name,
         type: data.type,
-        resourceGroupName: getEntityFromId(data.id, 'resourceGroups'),
+        resourceGroupName: getEntityFromId(data.id as string, 'resourceGroups'),
+        ...flattenObject(data)
       },
     },
   });
@@ -34,19 +34,16 @@ export function createEventHubEntity(webLinker: AzureWebLinker, data: Eventhub):
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
-        _key: data.id,
+        _key: data.id as string,
         _type: EventHubEntities.AZURE_EVENT_HUB._type,
         _class: EventHubEntities.AZURE_EVENT_HUB._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        id: data.id,
-        name: data.name,
-        type: data.type,
         category: ['platform'],
         function: ['queuing'],
         resourceGroupName: getEntityFromId(data.id as string, 'resourceGroups'),
         namespace: getEntityFromId(data.id as string, 'namespaces'),
         subscriptionId: getEntityFromId(data.id as string, 'subscriptions'),
+        ...flattenObject(data)
       },
     },
   });
@@ -70,16 +67,13 @@ export function createAzureConsumerGroupEntity(
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
         _key: data.id as string,
         _type: EventHubEntities.AZURE_CONSUMER_GROUP._type,
         _class: EventHubEntities.AZURE_CONSUMER_GROUP._class,
-        id: data.id,
-        name: data.name,
         webLink: webLinker.portalResourceUrl(data.id),
         category: ['network', 'security'],
         function: ['networking', 'monitoring'],
-        type: data.type,
+        ...flattenObject(data)
       },
     },
   });
@@ -93,14 +87,11 @@ export function createAzureEventHubClusterEntity(
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
+        ...flattenObject(data),
         _key: data.id as string,
         _type: EventHubEntities.EVENT_HUB_CLUSTER._type,
         _class: EventHubEntities.EVENT_HUB_CLUSTER._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        id: data.id,
-        name: data.name,
-        type: data.type,
         subscriptionId: getEntityFromId(data.id, 'subscriptions'),
       },
     },
@@ -112,12 +103,10 @@ export function createAzureEventHubKeysEntity(data, namespaceId): Entity {
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
+        ...flattenObject(data),
         _key: data.keyVaultUri as string,
         _type: EventHubEntities.EVENT_HUB_KEYS._type,
         _class: EventHubEntities.EVENT_HUB_KEYS._class,
-        name: data.keyName,
-        keyVaultUri: data.keyVaultUri,
         namespaceId: namespaceId,
       },
     },

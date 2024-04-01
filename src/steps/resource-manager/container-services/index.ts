@@ -92,6 +92,7 @@ export async function fetchAccessRoles(
 
   await client.iterateAccessRoles(
     instance.config,
+    logger,
     async (accessRole, locationName) => {
       const accessRoleEntity = createAccessRoleEntity(
         webLinker,

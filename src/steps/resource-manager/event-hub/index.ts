@@ -7,7 +7,7 @@ import {
   RelationshipClass,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
-import { EHNamespace } from '@azure/arm-eventhub';
+import { Cluster, EHNamespace } from '@azure/arm-eventhub';
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
@@ -434,7 +434,7 @@ export async function fetchEventHubCluster(
 
   await client.iterateEventHubCluster(
     instance.config.subscriptionId as string,
-    async (cluster) => {
+    async (cluster: Cluster) => {
       const clusterEntity = createAzureEventHubClusterEntity(
         webLinker,
         cluster,

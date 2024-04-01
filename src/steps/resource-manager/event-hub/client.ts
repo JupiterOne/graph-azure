@@ -1,4 +1,6 @@
 import {
+  Cluster,
+  ConsumerGroup,
   EHNamespace,
   EventHubManagementClient, Eventhub
 } from '@azure/arm-eventhub';
@@ -49,7 +51,7 @@ export class EventHubClient extends Client {
    */
   public async iterateEventHubCluster(
     subscriptionId: string,
-    callback: (cluster) => void | Promise<void>,
+    callback: (cluster: Cluster) => void | Promise<void>,
   ): Promise<void> {
     const credential = this.getClientSecretCredentials();
     const serviceClient = new EventHubManagementClient(
@@ -84,7 +86,7 @@ export class EventHubClient extends Client {
     resourceGroupName: string,
     namespaceName: string,
     eventHubName: string,
-    callback: (consumerGroups) => void | Promise<void>,
+    callback: (consumerGroups: ConsumerGroup) => void | Promise<void>,
   ): Promise<void> {
     const credential = this.getClientSecretCredentials();
     const serviceClient = new EventHubManagementClient(

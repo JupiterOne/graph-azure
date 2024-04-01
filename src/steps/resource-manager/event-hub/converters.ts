@@ -4,8 +4,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
 import { EventHubEntities } from './constants';
-import { EHNamespace, Eventhub } from '@azure/arm-eventhub';
-import { flattenObject } from '../utils/flattenObj'
+import { Cluster, ConsumerGroup, EHNamespace, Eventhub, KeyVaultProperties } from '@azure/arm-eventhub';
 
 export function createEventHubNamespaceEntity(
   webLinker: AzureWebLinker,
@@ -23,13 +22,20 @@ export function createEventHubNamespaceEntity(
         name: data.name,
         type: data.type,
         resourceGroupName: getEntityFromId(data.id as string, 'resourceGroups'),
-        ...flattenObject(data)
+        clusterArmId: data.clusterArmId,
+        location: data.location,
+        metricId: data.metricId,
+        serviceBusEndpoint: data.serviceBusEndpoint,
+        status: data.status,
       },
     },
   });
 }
 
-export function createEventHubEntity(webLinker: AzureWebLinker, data: Eventhub): Entity {
+export function createEventHubEntity(
+  webLinker: AzureWebLinker,
+  data: Eventhub,
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -38,12 +44,14 @@ export function createEventHubEntity(webLinker: AzureWebLinker, data: Eventhub):
         _type: EventHubEntities.AZURE_EVENT_HUB._type,
         _class: EventHubEntities.AZURE_EVENT_HUB._class,
         webLink: webLinker.portalResourceUrl(data.id),
+        id: data.id,
+        type: data.type,
+        status: data.status,
         category: ['platform'],
         function: ['queuing'],
         resourceGroupName: getEntityFromId(data.id as string, 'resourceGroups'),
         namespace: getEntityFromId(data.id as string, 'namespaces'),
         subscriptionId: getEntityFromId(data.id as string, 'subscriptions'),
-        ...flattenObject(data)
       },
     },
   });
@@ -61,7 +69,7 @@ function getEntityFromId(id: string, entityName): string {
 
 export function createAzureConsumerGroupEntity(
   webLinker: AzureWebLinker,
-  data,
+  data: ConsumerGroup,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
@@ -73,7 +81,11 @@ export function createAzureConsumerGroupEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         category: ['network', 'security'],
         function: ['networking', 'monitoring'],
-        ...flattenObject(data)
+        id: data.name,
+        name: data.name,
+        location: data.location,
+        type: data.type,
+        userMetaData: data.userMetadata,
       },
     },
   });
@@ -81,33 +93,42 @@ export function createAzureConsumerGroupEntity(
 
 export function createAzureEventHubClusterEntity(
   webLinker: AzureWebLinker,
-  data,
+  data: Cluster,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        ...flattenObject(data),
         _key: data.id as string,
         _type: EventHubEntities.EVENT_HUB_CLUSTER._type,
         _class: EventHubEntities.EVENT_HUB_CLUSTER._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        subscriptionId: getEntityFromId(data.id, 'subscriptions'),
+        subscriptionId: getEntityFromId(data.id as string, 'subscriptions'),
+        id: data.id,
+        name: data.name,
+        location: data.location,
+        createdOn: data.createdAt,
+        metricId: data.metricId,
+        status: data.status,
+        type: data.type,
       },
     },
   });
 }
 
-export function createAzureEventHubKeysEntity(data, namespaceId): Entity {
+export function createAzureEventHubKeysEntity(data: KeyVaultProperties, namespaceId): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        ...flattenObject(data),
         _key: data.keyVaultUri as string,
         _type: EventHubEntities.EVENT_HUB_KEYS._type,
         _class: EventHubEntities.EVENT_HUB_KEYS._class,
         namespaceId: namespaceId,
+        name: data.keyName,
+        id: data.keyName,
+        keyVaultUri: data.keyVaultUri,
+        keyVersion: data.keyVersion
       },
     },
   });

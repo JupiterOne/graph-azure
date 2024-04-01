@@ -5,6 +5,7 @@ import {
 } from '../../../azure/resource-manager/client';
 import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
 import { EventHubManagementClient } from '@azure/arm-eventhub';
+import { ApplicationGateway, BgpServiceCommunity, ExpressRouteCircuit, ExpressRouteCircuitConnection, ExpressRouteCrossConnection, PeerExpressRouteCircuitConnection } from '@azure/arm-network-latest';
 
 export class ExpressRouteClient extends Client {
   /**
@@ -13,7 +14,7 @@ export class ExpressRouteClient extends Client {
    * @returns A promise that resolves to an array of EHNamespace objects
    */
   public async iterateExpressRouteCircuit(
-    callback: (s) => void | Promise<void>,
+    callback: (s: ExpressRouteCircuit) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       NetworkManagementClient,
@@ -33,7 +34,7 @@ export class ExpressRouteClient extends Client {
    * @returns A promise that resolves to an array of EHNamespace objects
    */
   public async iterateBgpServiceCommunities(
-    callback: (s) => void | Promise<void>,
+    callback: (s: BgpServiceCommunity) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       NetworkManagementClient,
@@ -53,7 +54,7 @@ export class ExpressRouteClient extends Client {
    * @returns A promise that resolves to an array of EHNamespace objects
    */
   public async iterateApplicationGateway(
-    callback: (s) => void | Promise<void>,
+    callback: (s: ApplicationGateway) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       NetworkManagementClient,
@@ -75,7 +76,7 @@ export class ExpressRouteClient extends Client {
   public async iteratePeerExpressRouteConnection(
     resourceGroup,
     circuitName,
-    callback: (s) => void | Promise<void>,
+    callback: (s: PeerExpressRouteCircuitConnection) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       NetworkManagementClient,
@@ -107,7 +108,7 @@ export class ExpressRouteClient extends Client {
    * @returns A promise that resolves to an array of EHNamespace objects
    */
   public async iterateExpressRouteCrossConnection(
-    callback: (s) => void | Promise<void>,
+    callback: (s: ExpressRouteCrossConnection) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       NetworkManagementClient,
@@ -130,7 +131,7 @@ export class ExpressRouteClient extends Client {
     resourceGroupName,
     circuitName,
     peeringName,
-    callback: (s) => void | Promise<void>,
+    callback: (s: ExpressRouteCircuitConnection) => void | Promise<void>,
   ): Promise<void> {
     const serviceClient = await this.getAuthenticatedServiceClient(
       NetworkManagementClient,

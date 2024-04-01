@@ -3,14 +3,14 @@ import {
   createIntegrationEntity,
 } from '@jupiterone/integration-sdk-core';
 import { ApplicationSecurityGroupEntities } from './constants';
-import { flattenObject } from '../utils/flattenObj'
+import { ApplicationSecurityGroup } from '@azure/arm-network/esm/models';
 
-export function createApplicationSecurityGroupEntity(data): Entity {
+
+export function createApplicationSecurityGroupEntity(data: ApplicationSecurityGroup): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        ...flattenObject(data),
         _key: data.id as string,
         _type:
           ApplicationSecurityGroupEntities.AZURE_APPLICATION_SECURITY_GROUP
@@ -19,6 +19,12 @@ export function createApplicationSecurityGroupEntity(data): Entity {
           ApplicationSecurityGroupEntities.AZURE_APPLICATION_SECURITY_GROUP
             ._class,
         category: ['application'],
+        id: data.id,
+        name: data.name,
+        etag: data.etag,
+        provisioningState: data.provisioningState,
+        resourceGuid: data.resourceGuid,
+        type: data.type
       },
     },
   });

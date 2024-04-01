@@ -5,7 +5,14 @@ import {
 import { AzureWebLinker } from '../../../azure';
 import { ExpressRouteEntities } from './constants';
 import { generateEntityKey } from '../../../utils/generateKeys';
-import { flattenObject } from '../utils/flattenObj';
+import {
+  ApplicationGateway,
+  BgpServiceCommunity,
+  ExpressRouteCircuit,
+  ExpressRouteCircuitConnection,
+  ExpressRouteCrossConnection,
+  PeerExpressRouteCircuitConnection,
+} from '@azure/arm-network-latest';
 
 // If uniqueId is undefined or not of correct type, raise error
 const validateUniqeId = generateEntityKey;
@@ -14,7 +21,6 @@ export function getazureExpressRouteKey(uniqueId: string, entityType: string) {
   validateUniqeId(uniqueId);
   return `${entityType}:${uniqueId}`;
 }
-
 
 function getEntityFromId(id: string, entityName): string {
   const parts = id.split('/');
@@ -28,13 +34,12 @@ function getEntityFromId(id: string, entityName): string {
 
 export function createAzureExpressRouteCircuitConnectionEntity(
   webLinker: AzureWebLinker,
-  data,
+  data: ExpressRouteCircuitConnection,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        ...flattenObject(data),
         _key: data.id as string,
         _type:
           ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._type,
@@ -42,6 +47,18 @@ export function createAzureExpressRouteCircuitConnectionEntity(
           ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._class,
         webLink: webLinker.portalResourceUrl(data.id),
         public: false,
+        id: data.id,
+        name: data.name,
+        provisioningState: data.provisioningState,
+        addressPrefix: data.addressPrefix,
+        authorizationKey: data.authorizationKey,
+        circuitConnectionStatus: data.circuitConnectionStatus,
+        etag: data.etag,
+        peerExpressRouteCircuitPeeringId:
+          data.peerExpressRouteCircuitPeering?.id,
+        type: data.type,
+        authKey: data.authorizationKey,
+        peeringId: data.peerExpressRouteCircuitPeering?.id,
       },
     },
   });
@@ -49,19 +66,29 @@ export function createAzureExpressRouteCircuitConnectionEntity(
 
 export function createAzureExpressRouteCrossConnectionEntity(
   webLinker: AzureWebLinker,
-  data,
+  data: ExpressRouteCrossConnection,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        ...flattenObject(data),
         _key: data.id as string,
         _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CROSS_CONNECTION._type,
         _class:
           ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CROSS_CONNECTION._class,
         webLink: webLinker.portalResourceUrl(data.id),
+        id: data.id,
+        name: data.name,
         public: false,
+        bandwidthInMbps: data.bandwidthInMbps,
+        etag: data.etag,
+        expressRouteCircuitId: data.expressRouteCircuit?.id,
+        location: data.location,
+        peeringLocation: data.peeringLocation,
+        serviceProviderProvisioningState: data.serviceProviderProvisioningState,
+        primaryAzurePort: data.primaryAzurePort,
+        secondaryAzurePort: data.secondaryAzurePort,
+        serviceProviderNotes: data.serviceProviderNotes,
       },
     },
   });
@@ -69,20 +96,24 @@ export function createAzureExpressRouteCrossConnectionEntity(
 
 export function createAzureBgpServiceCommunitiesEntity(
   webLinker: AzureWebLinker,
-  data,
-  subscriptionKey
+  data: BgpServiceCommunity,
+  subscriptionKey,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        ...flattenObject(data),
         _key: data.id as string,
         _type: ExpressRouteEntities.AZURE_BGP_SERVICE_COMMUNITIES._type,
         _class: ExpressRouteEntities.AZURE_BGP_SERVICE_COMMUNITIES._class,
         webLink: webLinker.portalResourceUrl(data.id),
         subscriptionKey: subscriptionKey,
         public: false,
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        serviceName: data.serviceName,
+        location: data.location,
       },
     },
   });
@@ -90,18 +121,26 @@ export function createAzureBgpServiceCommunitiesEntity(
 
 export function createAzureApplicationGatewayEntity(
   webLinker: AzureWebLinker,
-  data,
+  data: ApplicationGateway,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        ...flattenObject(data),
         _key: data.id as string,
         _type: ExpressRouteEntities.AZURE_APPLICATION_GATEWAY._type,
         _class: ExpressRouteEntities.AZURE_APPLICATION_GATEWAY._class,
         webLink: webLinker.portalResourceUrl(data.id),
         public: false,
+        name: data.name,
+        id: data.id,
+        etag: data.etag,
+        type: data.type,
+        location: data.location,
+        provisioningState: data.provisioningState,
+        resourceGuid: data.resourceGuid,
+        operationalState: data.operationalState,
+        skuName: data.sku?.name
       },
     },
   });
@@ -109,28 +148,39 @@ export function createAzureApplicationGatewayEntity(
 
 export function createAzurePeerExpressRouteCircuitConnectionEntity(
   webLinker: AzureWebLinker,
-  data,
+  data: PeerExpressRouteCircuitConnection,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        ...flattenObject(data),
         _key: data.id as string,
         _type: ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._type,
         _class: ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        resourceGroups: getEntityFromId(data.id, 'resourceGroups'),
-        circuitName: getEntityFromId(data.id, 'expressRouteCircuits'),
+        resourceGroups: getEntityFromId(data.id as string, 'resourceGroups'),
+        circuitName: getEntityFromId(data.id as string, 'expressRouteCircuits'),
         public: false,
+        id: data.id,
+        name: data.name,
+        addressPrefix: data.addressPrefix,
+        authResourceGuid: data.authResourceGuid,
+        connectionName: data.connectionName,
+        etag: data.etag,
+        expressRouteCircuitPeeringId: data.expressRouteCircuitPeering?.id,
+        peerExpressRouteCircuitPeeringId:
+          data.peerExpressRouteCircuitPeering?.id,
+        provisioningState: data.provisioningState,
+        type: data.type,
       },
     },
   });
 }
 
-export function createAzureExpressRouteEntity(instnaceId: string,
-  subscriptionKey
-  ): Entity {
+export function createAzureExpressRouteEntity(
+  instnaceId: string,
+  subscriptionKey,
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: {},
@@ -145,7 +195,7 @@ export function createAzureExpressRouteEntity(instnaceId: string,
         category: ['network'],
         function: ['provisioning', 'encryption', 'networking'],
         endpoint: 'https://portal.azure.com',
-        subscriptionKey: subscriptionKey
+        subscriptionKey: subscriptionKey,
       },
     },
   });
@@ -153,19 +203,27 @@ export function createAzureExpressRouteEntity(instnaceId: string,
 
 export function createAzureExpressRouteCircuitEntity(
   webLinker: AzureWebLinker,
-  data,
+  data: ExpressRouteCircuit,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        ...flattenObject(data),
         _key: data.id as string,
         _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT._type,
         _class: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT._class,
         webLink: webLinker.portalResourceUrl(data.id),
-        resourceGroups: getEntityFromId(data.id, 'resourceGroups'),
+        resourceGroups: getEntityFromId(data.id as string, 'resourceGroups'),
         public: false,
+        name: data.name,
+        id: data.id,
+        authorizationStatus: data.authorizationStatus,
+        circuitProvisioningState: data.circuitProvisioningState,
+        location: data.location,
+        type: data.type,
+        authorizationKey: data.authorizationKey, 
+        serviceKey: data.serviceKey, 
+        etag: data.etag
       },
     },
   });

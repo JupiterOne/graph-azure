@@ -143,7 +143,7 @@ export class DirectoryGraphClient extends GraphClient {
             endpoint: 'reports.authenticationMethods.userRegistrationDetails',
             status: err.status,
             statusText: err.statusText,
-            cause: err.statusText,
+            cause: err,
           }),
         },
         'Failed to obtain user registration details',

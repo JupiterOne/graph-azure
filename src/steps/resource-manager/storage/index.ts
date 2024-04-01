@@ -284,7 +284,7 @@ export async function fetchStorageContainers(
       } catch (err) {
         logger.warn(
           {
-            err,
+            error: err.message,
             storageAccountName: storageAccount.name,
             storageAccountId: storageAccount.id,
           },

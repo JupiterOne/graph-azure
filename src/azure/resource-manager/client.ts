@@ -313,7 +313,7 @@ export async function requestWithAuthErrorhandling<T extends ResourceResponse>(
   } catch (error) {
     if (error.status === 403) {
       logger.warn(
-        { error, resourceUrl: resourceDescription },
+        { error: error.message, resourceUrl: resourceDescription },
         'Encountered auth error in Azure Graph client.',
       );
       logger.publishWarnEvent({

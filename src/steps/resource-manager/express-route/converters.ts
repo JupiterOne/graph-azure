@@ -217,11 +217,9 @@ export function createAzureExpressRouteCircuitEntity(
         public: false,
         name: data.name,
         id: data.id,
-        authorizationStatus: data.authorizationStatus,
         circuitProvisioningState: data.circuitProvisioningState,
         location: data.location,
-        type: data.type,
-        authorizationKey: data.authorizationKey, 
+        type: data.type, 
         serviceKey: data.serviceKey, 
         etag: data.etag
       },

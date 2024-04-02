@@ -80,16 +80,16 @@ export class ContainerServicesClient extends Client {
       config.subscriptionId,
     );
 
-    for (let location of locationsArray) {
+    for (const location of locationsArray) {
       const resArray: any = [];
       try {
         const roles = serviceClient.trustedAccessRoles.list(location.name);
 
-        for await (let item of roles) {
+        for await (const item of roles) {
           resArray.push(item);
         }
 
-        for (let role of resArray) {
+        for (const role of resArray) {
           await callback(role, location.name);
         }
       } catch (error) {

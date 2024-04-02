@@ -108,7 +108,7 @@ export function createAzureEventHubClusterEntity(
         id: data.id,
         name: data.name,
         location: data.location,
-        createdOn: data.createdAt,
+        createdOn: data.createdAt? parseInt(data.createdAt): 0,
         metricId: data.metricId,
         status: data.status,
         type: data.type,

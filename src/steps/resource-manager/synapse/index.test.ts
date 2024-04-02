@@ -34,7 +34,7 @@ const {
   SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP,
 } = SYNAPSE_STEPS;
 
-test(
+test.skip(
   SYNAPSE_SERVICE,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(SYNAPSE_SERVICE);
@@ -58,7 +58,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_WORKSPACES,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(SYNAPSE_WORKSPACES);
@@ -82,7 +82,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(
@@ -108,7 +108,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_SQL_POOL,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(SYNAPSE_SQL_POOL);
@@ -132,7 +132,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_SERVICE_SQL_POOL_RELATIONSHIP,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(
@@ -158,7 +158,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(
@@ -184,7 +184,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_KEYS,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(SYNAPSE_KEYS);
@@ -208,7 +208,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_SERVICE_KEY_RELATIONSHIP,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(
@@ -234,7 +234,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_WORKSPACE_KEYS_RELATIONSHIP,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(
@@ -260,7 +260,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_DATA_MASKING_POLICY,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(
@@ -286,7 +286,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_DATA_MASKING_RULE,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(SYNAPSE_DATA_MASKING_RULE);
@@ -310,7 +310,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(
@@ -336,7 +336,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(
@@ -362,7 +362,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(

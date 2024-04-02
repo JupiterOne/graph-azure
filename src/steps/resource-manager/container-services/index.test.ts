@@ -51,9 +51,7 @@ test('rm-maintenance-configurations', async () => {
 }, 100_000);
 
 test('rm-access-role', async () => {
-  const stepTestConfig = getStepTestConfigForStep(
-    Steps.ACCESS_ROLE,
-  );
+  const stepTestConfig = getStepTestConfigForStep(Steps.ACCESS_ROLE);
   recording = setupAzureRecording({
     directory: __dirname,
     name: 'rm-access-role',
@@ -61,6 +59,7 @@ test('rm-access-role', async () => {
       matchRequestsBy: getMatchRequestsBy({
         config: stepTestConfig.instanceConfig,
       }),
+      recordFailedRequests: true,
     },
   });
   const stepResults = await executeStepWithDependencies(stepTestConfig);
@@ -68,9 +67,7 @@ test('rm-access-role', async () => {
 }, 100_000);
 
 test('rm-kubernetes-service', async () => {
-  const stepTestConfig = getStepTestConfigForStep(
-    Steps.KUBERNETES_SERVICE,
-  );
+  const stepTestConfig = getStepTestConfigForStep(Steps.KUBERNETES_SERVICE);
   recording = setupAzureRecording({
     directory: __dirname,
     name: 'rm-kubernetes-service',
@@ -95,6 +92,7 @@ test('rm-kubernetes-service-contains-access-role-relationship', async () => {
       matchRequestsBy: getMatchRequestsBy({
         config: stepTestConfig.instanceConfig,
       }),
+      recordFailedRequests: true,
     },
   });
 

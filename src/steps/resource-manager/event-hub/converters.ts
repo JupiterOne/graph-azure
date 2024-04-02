@@ -49,6 +49,7 @@ export function createEventHubEntity(
         status: data.status,
         category: ['platform'],
         function: ['queuing'],
+        location: data.location,
         resourceGroupName: getEntityFromId(data.id as string, 'resourceGroups'),
         namespace: getEntityFromId(data.id as string, 'namespaces'),
         subscriptionId: getEntityFromId(data.id as string, 'subscriptions'),

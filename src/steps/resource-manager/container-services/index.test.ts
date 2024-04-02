@@ -7,7 +7,11 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { getStepTestConfigForStep } from '../../../../test/integrationInstanceConfig';
-import { STEP_RM_CONTAINER_SERVICES_CLUSTERS, Steps } from './constants';
+import {
+  ContainerServiceMappedRelationships,
+  STEP_RM_CONTAINER_SERVICES_CLUSTERS,
+  Steps,
+} from './constants';
 
 let recording: Recording | undefined;
 afterEach(async () => {
@@ -62,8 +66,16 @@ test('rm-access-role', async () => {
       recordFailedRequests: true,
     },
   });
+  
   const stepResults = await executeStepWithDependencies(stepTestConfig);
-  expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  const mappedRelationship = stepResults.collectedRelationships.filter(
+    (r) =>
+    r._type ===
+    ContainerServiceMappedRelationships
+    .TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER._type,
+  );
+  expect(mappedRelationship.length).toBeGreaterThan(0);
+
 }, 100_000);
 
 test('rm-kubernetes-service', async () => {

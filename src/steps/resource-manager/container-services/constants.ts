@@ -3,6 +3,8 @@ import {
   StepEntityMetadata,
   StepRelationshipMetadata,
   RelationshipClass,
+  StepMappedRelationshipMetadata,
+  RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 import { entities } from '../subscriptions/constants';
 
@@ -74,9 +76,7 @@ export const Steps = {
   AZURE_SUBSCRIPTION_HAS_KUBERNETES_SERVICE:
     'rm-azure-subscription-has-kubernetes-service-relationship',
   MANAGED_CLUSTER_IS_KUBE_CLUSTER:
-    'rm-managed-cluster-is-kube-cluster-relationship',
-  ACCESS_ROLE_IS_KUBE_CLUSTER_ROLE:
-    'rm-access-role-is-kube-cluster-role-relationship',
+    'rm-managed-cluster-is-kube-cluster-relationship'
 };
 
 export const Entities: Record<
@@ -146,7 +146,7 @@ export const Relationships: Record<
     targetType: Entities.ROLE_BINDING._type,
   },
   KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE: {
-    _type: 'azure_kube_service_contains_cluster_role',
+    _type: 'azure_kube_service_contains_trusted_access_role',
     sourceType: Entities.KUBERNETES_SERVICE._type,
     _class: RelationshipClass.CONTAINS,
     targetType: Entities.ACCESS_ROLE._type,
@@ -170,3 +170,18 @@ export const Relationships: Record<
     targetType: Entities.ACCESS_ROLE._type,
   },
 };
+
+
+
+export const ContainerServiceMappedRelationships: Record<
+  | 'TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER',
+  StepMappedRelationshipMetadata
+> = {
+  TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER: {
+    _type: 'azure_kube_trusted_access_role_is_kube_cluster_role',
+    sourceType: 'azure_kube_trusted_access_role',
+    _class: RelationshipClass.HAS,
+    targetType: 'kube_cluster_role',
+    direction: RelationshipDirection.FORWARD,
+  },
+}

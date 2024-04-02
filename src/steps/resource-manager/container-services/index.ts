@@ -18,6 +18,7 @@ import {
   Steps,
   Entities,
   Relationships,
+  ContainerServiceMappedRelationships,
 } from './constants';
 import { entities } from '../subscriptions/constants';
 import {
@@ -26,7 +27,6 @@ import {
   createAccessRoleEntity,
   createKubernetesServiceEntity,
   getKubernetesServiceKey,
-  getAccessRoleKey,
 } from './converters';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 
@@ -101,23 +101,25 @@ export async function fetchAccessRoles(
       );
       await jobState.addEntity(accessRoleEntity);
 
-      // const relationship = createMappedRelationship({
-      //   _key: accessRoleEntity._key,
-      //   _type: Entities.ACCESS_ROLE._type,
-      //   _class: RelationshipClass.IS,
-      //   _mapping: {
-      //     sourceEntityKey: accessRoleEntity._key,
-      //     relationshipDirection: RelationshipDirection.FORWARD,
-      //     targetEntity: {
-      //       _key: `ClusterRole: ${accessRoleEntity._key}`,
-      //       _class: 'AccessRole',
-      //       _type: 'kube_role',
-      //     },
-      //     targetFilterKeys: [['_class', '_key']],
-      //     skipTargetCreation: true,
-      //   },
-      // });
-      // await jobState.addRelationship(relationship);
+      const relationship = createMappedRelationship({
+        _key: `${accessRoleEntity._key}|IS|ClusterRole:${accessRoleEntity._key}`,
+        _type:
+          ContainerServiceMappedRelationships
+            .TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER._type,
+        _class: RelationshipClass.IS,
+        _mapping: {
+          sourceEntityKey: accessRoleEntity._key,
+          relationshipDirection: RelationshipDirection.FORWARD,
+          targetEntity: {
+            _key: `ClusterRole:${accessRoleEntity._key}`,
+            _class: 'AccessRole',
+            _type: 'kube_cluster_role',
+          },
+          targetFilterKeys: [['_class', '_type']],
+          skipTargetCreation: true,
+        },
+      });
+      await jobState.addRelationship(relationship);
     },
   );
 }
@@ -177,7 +179,9 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     id: Steps.MAINTENANCE_CONFIGURATION,
     name: 'Fetch Container Maintenance Configurations',
     entities: [Entities.MAINTENANCE_CONFIGURATION],
-    relationships: [Relationships.MANAGED_CLUSTER_HAS_MAINTENANCE_CONFIGURATION],
+    relationships: [
+      Relationships.MANAGED_CLUSTER_HAS_MAINTENANCE_CONFIGURATION,
+    ],
     dependsOn: [
       STEP_RM_CONTAINER_SERVICES_CLUSTERS,
       STEP_RM_RESOURCES_RESOURCE_GROUPS,
@@ -199,7 +203,9 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     id: Steps.ACCESS_ROLE,
     name: 'Fetch Trusted Access Roles',
     entities: [Entities.ACCESS_ROLE],
-    relationships: [],
+    relationships: [
+      ContainerServiceMappedRelationships.TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER,
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CONTAINER_SERVICES_CLUSTERS],
     executionHandler: fetchAccessRoles,
   },

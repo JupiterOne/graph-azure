@@ -70,7 +70,7 @@ export class J1ApiManagementClient extends Client {
     } catch (error) {
       if (error.status === 403) {
         this.logger.warn(
-          { error, resourceUrl: resourceGroupName },
+          { error: error.message, resourceUrl: resourceGroupName },
           'Encountered auth error in Azure Graph client.',
         );
         this.logger.publishWarnEvent({

@@ -106,7 +106,7 @@ export function createStorageAccountServiceClient(options: {
           logger.warn(
             {
               storageAccount,
-              e,
+              error: e.message,
             },
             'Failed to get table service properties for storage account',
           );
@@ -190,11 +190,12 @@ export class StorageClient extends Client {
                 accountName,
               );
             },
-            listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-              nextLink: string,
-            ) => {
-              return serviceClient.blobContainers.listNext(nextLink);
-            },
+            listNext:
+              /* istanbul ignore next: testing iteration might be difficult */ async (
+                nextLink: string,
+              ) => {
+                return serviceClient.blobContainers.listNext(nextLink);
+              },
           },
           resourceDescription: 'storage.blobContainers',
           callback,
@@ -311,11 +312,12 @@ export class StorageClient extends Client {
           list: async function listFileShares() {
             return serviceClient.fileShares.list(resourceGroup, accountName);
           },
-          listNext: /* istanbul ignore next: testing iteration might be difficult */ async function listNextFileShares(
-            nextLink: string,
-          ) {
-            return serviceClient.fileShares.listNext(nextLink);
-          },
+          listNext:
+            /* istanbul ignore next: testing iteration might be difficult */ async function listNextFileShares(
+              nextLink: string,
+            ) {
+              return serviceClient.fileShares.listNext(nextLink);
+            },
         },
         resourceDescription: 'storage.fileShares',
         callback,

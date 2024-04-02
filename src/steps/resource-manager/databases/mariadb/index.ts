@@ -52,7 +52,7 @@ export async function fetchMariaDBDatabases(
       });
     } catch (err) {
       logger.warn(
-        { err, server: { id: server.id, type: server.type } },
+        { error: err.message, server: { id: server.id, type: server.type } },
         'Failure fetching databases for server',
       );
       // In the case this is a transient failure, ideally we would avoid

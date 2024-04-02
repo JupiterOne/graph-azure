@@ -119,7 +119,7 @@ export class SQLClient extends Client {
     } catch (err) {
       this.logger.warn(
         {
-          err: err,
+          error: err.message,
           server: server.id,
         },
         'Failed to obtain encryption protectors for server',
@@ -150,7 +150,7 @@ export class SQLClient extends Client {
     } catch (err) {
       this.logger.warn(
         {
-          err: err,
+          err: err.message,
           server: server.id,
           database: database.id,
         },
@@ -180,7 +180,7 @@ export class SQLClient extends Client {
     } catch (err) {
       this.logger.warn(
         {
-          err: err,
+          error: err.message,
           server: server.id,
         },
         'Failed to obtain auditing for server',
@@ -211,7 +211,7 @@ export class SQLClient extends Client {
     } catch (err) {
       this.logger.warn(
         {
-          err: err,
+          error: err.message,
           server: server.id,
           database: database.id,
         },
@@ -241,7 +241,7 @@ export class SQLClient extends Client {
     } catch (err) {
       this.logger.warn(
         {
-          err: err,
+          error: err.message,
           server: server.id,
         },
         'Failed to obtain vulnerability assessments for server',
@@ -270,7 +270,7 @@ export class SQLClient extends Client {
     } catch (err) {
       this.logger.warn(
         {
-          err: err,
+          error: err.message,
           server: server.id,
         },
         'Failed to obtain security alert policies for server',

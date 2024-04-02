@@ -51,10 +51,10 @@ export class AuthorizationClient extends Client {
     } catch (err) {
       /* istanbul ignore else */
       if (err.statusCode === 404) {
-        this.logger.warn({ err }, 'Resources not found');
+        this.logger.warn({ error: err.message }, 'Resources not found');
       } else {
         throw new IntegrationProviderAPIError({
-          cause: err,
+          cause: err.statusText,
           endpoint: 'authorization.roleAssignments',
           status: err.statusCode,
           statusText: err.statusText,
@@ -77,10 +77,10 @@ export class AuthorizationClient extends Client {
     } catch (err) {
       /* istanbul ignore else */
       if (err.statusCode === 404) {
-        this.logger.warn({ err }, 'Resources not found');
+        this.logger.warn({ error: err.message }, 'Resources not found');
       } else {
         throw new IntegrationProviderAPIError({
-          cause: err,
+          cause: err.statusText,
           endpoint: 'authorization.classicAdministrators',
           status: err.statusCode,
           statusText: err.statusText,

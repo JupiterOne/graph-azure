@@ -52,7 +52,11 @@ export async function fetchApps(
         );
       } catch (err) {
         logger.warn(
-          { err, name: app.name, resourceGroup: app.resourceGroup },
+          {
+            error: err.message,
+            name: app.name,
+            resourceGroup: app.resourceGroup,
+          },
           'Warning: unable to fetch app configuration.',
         );
         if (err.statusCode === 403 && err.code === 'AuthorizationFailed') {

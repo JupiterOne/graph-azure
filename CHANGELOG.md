@@ -1,3 +1,15 @@
+# v6.1.5 (Wed Apr 03 2024)
+
+#### 🐛 Bug Fix
+
+- Removed more raw errors being logged [#632](https://github.com/JupiterOne/graph-azure/pull/632) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v6.1.4 (Tue Apr 02 2024)
 
 #### 🐛 Bug Fix

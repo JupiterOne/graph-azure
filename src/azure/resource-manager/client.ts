@@ -207,7 +207,7 @@ function retryResourceRequest<ResponseType>(
               (err.response.headers.get('retry-after') ?? 0) * 1000;
             logger.info(
               {
-                err,
+                error: err.message,
                 retry_after_seconds: retry_after,
                 attemptsRemaining: context.attemptsRemaining,
               },
@@ -351,7 +351,7 @@ export async function request<T extends ResourceResponse>(
   } catch (err) {
     /* istanbul ignore else */
     if (err.statusCode === 404 && resourceDescription != 'subscriptions') {
-      logger.warn({ err }, 'Resources not found');
+      logger.warn({ error: err.message }, 'Resources not found');
     } else {
       let status = '';
       let statusText = '';

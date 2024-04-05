@@ -1,3 +1,15 @@
+# v6.2.0 (Fri Apr 05 2024)
+
+#### 🚀 Enhancement
+
+- Add azure_defender_alerts and vuln severity config [#633](https://github.com/JupiterOne/graph-azure/pull/633) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v6.1.5 (Wed Apr 03 2024)
 
 #### 🐛 Bug Fix

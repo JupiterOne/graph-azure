@@ -1,17 +1,25 @@
-import { createDirectRelationship } from '@jupiterone/integration-sdk-core';
+import {
+  RelationshipClass,
+  RelationshipDirection,
+  createDirectRelationship,
+  createMappedRelationship,
+} from '@jupiterone/integration-sdk-core';
 
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
 import { STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { SecurityClient } from './client';
+import { entities as subEntities } from './../subscriptions/constants';
 import {
   SecurityEntities,
+  SecurityMappedRelationships,
   SecurityRelationships,
   SecuritySteps,
 } from './constants';
 import {
   createAssessmentEntity,
+  createDefenderAlertEntity,
   createPricingConfigEntity,
   createSecurityCenterAutoProvisioningSettingEntity,
   createSecurityCenterSettingEntity,
@@ -187,6 +195,61 @@ export async function fetchSecurityCenterAutoProvisioningSettings(
   });
 }
 
+export async function fetchDefenderAlerts(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new SecurityClient(instance.config, logger);
+
+  const subscriptionId = `/subscriptions/${instance.config.subscriptionId}`;
+
+  const allowedSeverities = instance.config.defenderAlertsSeverities
+    ? instance.config.defenderAlertsSeverities.split(',')
+    : [];
+
+  await client.iterateDefenderAlerts(async (alert) => {
+    if (
+      !allowedSeverities.includes(
+        alert.reportedSeverity?.toLocaleUpperCase() ?? 'UNKNOWN',
+      )
+    )
+      return;
+    const alertEntity = createDefenderAlertEntity(webLinker, alert);
+    await jobState.addEntity(alertEntity);
+
+    if (jobState.hasKey(subscriptionId)) {
+      await jobState.addRelationship(
+        createDirectRelationship({
+          fromKey: subscriptionId,
+          fromType: subEntities.SUBSCRIPTION._type,
+          toKey: alertEntity._key,
+          toType: alertEntity._type,
+          _class: RelationshipClass.HAS,
+        }),
+      );
+    }
+    if (alert.associatedResource) {
+      await jobState.addRelationship(
+        createMappedRelationship({
+          _class: RelationshipClass.HAS,
+          _type: SecurityMappedRelationships.RESOURCE_HAS_DEFENDER_ALERT._type,
+          _mapping: {
+            relationshipDirection: RelationshipDirection.REVERSE,
+            sourceEntityKey: alertEntity._key,
+            targetFilterKeys: [['_key']],
+            targetEntity: {
+              _key: alert.associatedResource.toLowerCase(),
+            },
+            skipTargetCreation: true,
+          },
+        }),
+      );
+    }
+  });
+}
+
 export const securitySteps: AzureIntegrationStep[] = [
   {
     id: SecuritySteps.ASSESSMENTS,
@@ -241,5 +304,18 @@ export const securitySteps: AzureIntegrationStep[] = [
     executionHandler: fetchSecurityCenterAutoProvisioningSettings,
     rolePermissions: ['Microsoft.Security/autoProvisioningSettings/read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.SECURITY,
+  },
+  {
+    id: SecuritySteps.DEFENDER_ALERTS,
+    name: 'Defender Alerts',
+    entities: [SecurityEntities.DEFENDER_ALERT],
+    relationships: [
+      SecurityRelationships.SUBSCRIPTION_HAS_DEFENDER_ALERT,
+      SecurityMappedRelationships.RESOURCE_HAS_DEFENDER_ALERT,
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, subscriptionSteps.SUBSCRIPTION],
+    executionHandler: fetchDefenderAlerts,
+    rolePermissions: ['Microsoft.Security/alerts/read'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.DEFENDER_ALERTS,
   },
 ];

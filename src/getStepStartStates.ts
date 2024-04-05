@@ -274,6 +274,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       SecuritySteps.SECURITY_CENTER_CONTACTS,
       SecuritySteps.SETTINGS,
       SecuritySteps.AUTO_PROVISIONING_SETTINGS,
+      SecuritySteps.DEFENDER_ALERTS,
       SecuritySteps.PRICING_CONFIGURATIONS,
       MonitorSteps.MONITOR_LOG_PROFILES,
       MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS,

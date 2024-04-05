@@ -1,5 +1,6 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
+import { ANY_RESOURCE } from '../constants';
 
 export const SecuritySteps = {
   ASSESSMENTS: 'rm-security-assessments',
@@ -7,6 +8,7 @@ export const SecuritySteps = {
   PRICING_CONFIGURATIONS: 'rm-security-center-pricing-configs',
   SETTINGS: 'rm-security-center-settings',
   AUTO_PROVISIONING_SETTINGS: 'rm-security-center-auto-provisioning-settings',
+  DEFENDER_ALERTS: 'rm-security-defender-alerts',
 };
 
 export const SecurityEntities = {
@@ -54,6 +56,11 @@ export const SecurityEntities = {
       required: ['id', 'name', 'type', 'autoProvision'],
     },
   },
+  DEFENDER_ALERT: {
+    _type: 'azure_defender_alert',
+    _class: ['Vulnerability'],
+    resourceName: '[RM] Defender Alert',
+  },
 };
 
 export const SecurityRelationships = {
@@ -87,5 +94,19 @@ export const SecurityRelationships = {
     sourceType: subscriptionEntities.SUBSCRIPTION._type,
     _class: RelationshipClass.HAS,
     targetType: SecurityEntities.AUTO_PROVISIONING_SETTING._type,
+  },
+  SUBSCRIPTION_HAS_DEFENDER_ALERT: {
+    _type: 'azure_subscription_has_defender_alert',
+    sourceType: subscriptionEntities.SUBSCRIPTION._type,
+    _class: RelationshipClass.HAS,
+    targetType: SecurityEntities.DEFENDER_ALERT._type,
+  },
+};
+export const SecurityMappedRelationships = {
+  RESOURCE_HAS_DEFENDER_ALERT: {
+    _type: 'mapping_source_has_defender_alert',
+    sourceType: ANY_RESOURCE,
+    _class: RelationshipClass.HAS,
+    targetType: SecurityEntities.DEFENDER_ALERT._type,
   },
 };

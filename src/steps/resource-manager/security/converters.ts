@@ -13,6 +13,7 @@ import {
   Pricing,
   Setting,
   AutoProvisioningSetting,
+  Alert,
 } from '@azure/arm-security/esm/models';
 
 function findSecurityAssessmentScannedResourceId(
@@ -146,6 +147,32 @@ export function createSecurityCenterAutoProvisioningSettingEntity(
         name: data.name,
         type: data.type,
         autoProvision: data.autoProvision,
+        webLink: webLinker.portalResourceUrl(data.id),
+      },
+    },
+  });
+}
+
+export function createDefenderAlertEntity(
+  webLinker: AzureWebLinker,
+  data: Alert,
+): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: data.id!,
+        _type: SecurityEntities.DEFENDER_ALERT._type,
+        _class: SecurityEntities.DEFENDER_ALERT._class,
+        id: data.id,
+        name: data.alertName,
+        type: data.type,
+        open: data.state == 'Active' ? true : false,
+        severity: data.reportedSeverity ?? 'unknown',
+        category: data.compromisedEntity,
+        blocking: !data.canBeInvestigated,
+        production: !data.compromisedEntity?.startsWith('Sample'),
+        public: false, //No alert should be public
         webLink: webLinker.portalResourceUrl(data.id),
       },
     },

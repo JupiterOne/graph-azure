@@ -5,7 +5,10 @@ import {
   fetchSecurityCenterPricingConfigurations,
   fetchSecurityCenterSettings,
 } from '.';
-import { Recording } from '@jupiterone/integration-sdk-testing';
+import {
+  Recording,
+  executeStepWithDependencies,
+} from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import {
   getMatchRequestsBy,
@@ -13,9 +16,16 @@ import {
 } from '../../../../test/helpers/recording';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
-import { SecurityEntities, SecurityRelationships } from './constants';
+import {
+  SecurityEntities,
+  SecurityRelationships,
+  SecuritySteps,
+} from './constants';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { configFromEnv } from '../../../../test/integrationInstanceConfig';
+import {
+  configFromEnv,
+  getStepTestConfigForStep,
+} from '../../../../test/integrationInstanceConfig';
 import {
   getMockAccountEntity,
   getMockSubscriptionEntity,
@@ -294,3 +304,39 @@ describe('rm-security-center-auto-provisioning-settings', () => {
     });
   });
 });
+
+test(
+  SecuritySteps.DEFENDER_ALERTS,
+  async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      SecuritySteps.DEFENDER_ALERTS,
+    );
+    stepTestConfig.instanceConfig = getConfigForTest(
+      stepTestConfig.instanceConfig,
+    );
+    recording = setupAzureRecording(
+      {
+        name: SecuritySteps.DEFENDER_ALERTS,
+        directory: __dirname,
+        options: {
+          matchRequestsBy: getMatchRequestsBy({
+            config: stepTestConfig.instanceConfig,
+          }),
+        },
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    const mappedRelationships = stepResults.collectedRelationships.filter(
+      (relationship) => relationship._mapping,
+    );
+    const directRelationships = stepResults.collectedRelationships.filter(
+      (relationship) => relationship._mapping!,
+    );
+    expect(mappedRelationships.length > 0);
+    expect(directRelationships.length > 0);
+    expect(stepResults.collectedEntities.length > 0);
+  },
+  1000_000,
+);

@@ -69,10 +69,13 @@ export class ExpressRouteClient extends Client {
   }
 
   /**
-   * Retrieves all application Gateways from an Azure Subscription
-   * @param callback A callback function to be called after retrieving an BgpServiceCommunities
-   * @returns A promise that resolves to an array of EHNamespace objects
-   */
+   * Retrieves all Peer Express Route connections associated with a specific Express Route circuit in an Azure Subscription.
+   * @param resourceGroup The name of the Resource Group containing the Express Route circuit.
+   * @param circuitName The name of the Express Route circuit.
+   * @param callback A callback function to be called with each retrieved Peer Express Route connection.
+   * @returns A promise that resolves once all Peer Express Route connections have been iterated through.
+   * @throws {Error} If an error occurs during the retrieval process.
+  */
   public async iteratePeerExpressRouteConnection(
     resourceGroup,
     circuitName,
@@ -103,10 +106,11 @@ export class ExpressRouteClient extends Client {
   }
 
   /**
-   * Retrieves all application Gateways from an Azure Subscription
-   * @param callback A callback function to be called after retrieving an BgpServiceCommunities
-   * @returns A promise that resolves to an array of EHNamespace objects
-   */
+   * Retrieves all Express Route cross connections from an Azure Subscription.
+   * @param callback A callback function to be called with each retrieved Express Route cross connection.
+   * @returns A promise that resolves once all Express Route cross connections have been iterated through.
+   * @throws {Error} If an error occurs during the retrieval process.
+ */
   public async iterateExpressRouteCrossConnection(
     callback: (s: ExpressRouteCrossConnection) => void | Promise<void>,
   ): Promise<void> {
@@ -122,11 +126,15 @@ export class ExpressRouteClient extends Client {
     });
   }
 
-  /**
-   * Retrieves all application Gateways from an Azure Subscription
-   * @param callback A callback function to be called after retrieving an BgpServiceCommunities
-   * @returns A promise that resolves to an array of EHNamespace objects
-   */
+ /**
+   * Retrieves all Express Route circuit connections associated with a specific Express Route circuit and peering in an Azure Subscription.
+   * @param resourceGroupName The name of the Resource Group containing the Express Route circuit.
+   * @param circuitName The name of the Express Route circuit.
+   * @param peeringName The name of the peering associated with the Express Route circuit.
+   * @param callback A callback function to be called with each retrieved Express Route circuit connection.
+   * @returns A promise that resolves once all Express Route circuit connections have been iterated through.
+   * @throws {Error} If an error occurs during the retrieval process.
+ */
   public async iterateExpressRouteCircuitConnection(
     resourceGroupName,
     circuitName,
@@ -143,41 +151,6 @@ export class ExpressRouteClient extends Client {
         peeringName,
       )) {
         await callback(expressRouteCircuitConnection);
-      }
-    } catch (err) {
-      if (err.statusCode === 403) {
-        this.logger.warn({ err }, err.message);
-        this.logger.publishWarnEvent({
-          name: IntegrationWarnEventName.MissingPermission,
-          description: err.message,
-        });
-      } else {
-        throw err;
-      }
-    }
-  }
-
-
-  /**
-   * Retrieves all EventHub data for a Resource Group from an Azure Subscription
-   * @param callback A callback function to be called after retrieving an Event Grid Domain
-   * @returns A promise that resolves to an array of EHNamespace objects
-   */
-  public async iterateEventHubs(
-    subscriptionId: string,
-    resourceGroupName: string,
-    namespaceName: string,
-    callback: (eventHubs) => void | Promise<void>,
-  ): Promise<void> {
-    const credential = this.getClientSecretCredentials();
-    const client = new EventHubManagementClient(credential, subscriptionId);
-
-    try {
-      for await (const eventHub of client.eventHubs.listByNamespace(
-        resourceGroupName,
-        namespaceName,
-      )) {
-        await callback(eventHub);
       }
     } catch (err) {
       if (err.statusCode === 403) {

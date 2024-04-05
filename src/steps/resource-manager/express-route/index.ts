@@ -166,7 +166,7 @@ export async function buildAzureExpressRoutePeerExpressRouteCircuitConnectionRel
 export async function buildAzureExpressRouteCircuitPeerExpressRouteCircuitConnectionRelation(executionContext: IntegrationStepContext) {
   {
     {
-      const { instance, jobState } = executionContext;
+      const { jobState } = executionContext;
       await jobState.iterateEntities(
         { _type: ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._type },
         async (azurePeerExpressRouteEntity) => {
@@ -200,7 +200,6 @@ export async function buildAzureExpressRouteCircuitPeerExpressRouteCircuitConnec
 }
 
 export async function buildAzureExpressRouteExpressRouteCrossConnectionRelation() {
-
 }
 
 export async function buildAzureSubscriptionAndAzureBgpCommunitiesRelation(
@@ -297,7 +296,7 @@ export async function buildAzureExpressRouteExpressRouteCircuitConnectionRelatio
 export async function buildAzureExpressRouteCircuitExpressRouteCircuitConnectionRelation(executionContext: IntegrationStepContext) {
   {
     {
-      const { instance, jobState } = executionContext;
+      const { jobState } = executionContext;
       await jobState.iterateEntities(
         { _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._type },
         async (azureExpressRouteCircuitConnectionEntity) => {
@@ -439,7 +438,7 @@ export async function fetchAzureExpressRouteCrossConnection(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ExpressRouteClient(instance.config, logger);
 
-  // Fetch all EventHub namespaces
+  // Fetch all Azure Express Route Cross connections
   await client.iterateExpressRouteCrossConnection(
     async (expressRouteCrossConnection) => {
       const expressRouteCrossConnectionEntity =
@@ -490,7 +489,7 @@ export async function fetchAzureBgpServiceCommunities(
 
   const subscriptionKey = `/subscriptions/${instance.config.subscriptionId}`;
 
-  // Fetch all EventHub namespaces
+  // Fetch all Azure Bgp service Communities
   await client.iterateBgpServiceCommunities(async (bgpServiceCommunity) => {
     const bgpServiceCommunityEntity = createAzureBgpServiceCommunitiesEntity(
       webLinker,
@@ -509,7 +508,7 @@ export async function fetchAzureApplicationGateway(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ExpressRouteClient(instance.config, logger);
 
-  // Fetch all EventHub namespaces
+  // Fetch all Azure Application Gateway
   await client.iterateApplicationGateway(async (applicationGateway) => {
     const applicationGatewayEntity = createAzureApplicationGatewayEntity(
       webLinker,

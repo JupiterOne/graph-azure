@@ -11,9 +11,12 @@ import {
 
 export class SynapseClient extends Client {
   /**
-   * Retrieves all Synapse Workspaces from an Azure Subscription
-   * @param callback A callback function to be called after retrieving a Synapse Workspace
-   */
+   * Retrieves all Synapse Workspaces from an Azure Subscription.
+   * @param subscriptionId The ID of the Azure Subscription containing the Synapse Workspaces.
+   * @param callback A callback function to be called with each retrieved Synapse Workspace.
+   * @returns A promise that resolves once all Synapse Workspaces have been iterated through.
+   * @throws {Error} If an error occurs during the retrieval process.
+  */
   public async iterateWorkspaces(
     subscriptionId: string,
     callback: (s: Workspace) => void | Promise<void>,
@@ -49,6 +52,15 @@ export class SynapseClient extends Client {
     }
   }
 
+  /**
+   * Retrieves all SQL Pools from a Synapse Workspace in an Azure Subscription.
+   * @param subscriptionId The ID of the Azure Subscription containing the Synapse Workspace.
+   * @param resourceGroupName The name of the Resource Group containing the Synapse Workspace.
+   * @param workspaceName The name of the Synapse Workspace.
+   * @param callback A callback function to be called with each retrieved SQL Pool.
+   * @returns A promise that resolves once all SQL Pools have been iterated through.
+   * @throws {Error} If an error occurs during the retrieval process.
+ */
   public async iterateSqlPools(
     subscriptionId: string,
     resourceGroupName: string,
@@ -89,6 +101,15 @@ export class SynapseClient extends Client {
     }
   }
 
+  /**
+   * Retrieves all keys associated with a Synapse Workspace in an Azure Subscription.
+   * @param subscriptionId The ID of the Azure Subscription containing the Synapse Workspace.
+   * @param resourceGroupName The name of the Resource Group containing the Synapse Workspace.
+   * @param workspaceName The name of the Synapse Workspace.
+   * @param callback A callback function to be called with each retrieved key.
+   * @returns A promise that resolves once all keys have been iterated through.
+   * @throws {Error} If an error occurs during the retrieval process.
+   */
   public async iterateSynapseKeys(
     subscriptionId: string,
     resourceGroupName: string,
@@ -126,6 +147,16 @@ export class SynapseClient extends Client {
     }
   }
 
+  /**
+   * Retrieves the data masking policy associated with a specific SQL pool in a Synapse workspace.
+   * @param subscriptionId The ID of the Azure Subscription containing the Synapse workspace.
+   * @param resourceGroupName The name of the Resource Group containing the Synapse workspace.
+   * @param workspaceName The name of the Synapse workspace.
+   * @param sqlPoolName The name of the SQL pool.
+   * @param callback A callback function to be called with the retrieved data masking policy.
+   * @returns {Promise<void>} A promise that resolves once the data masking policy has been retrieved and the callback function has been executed.
+   * @throws {Error} If an error occurs during the retrieval process.
+ */
   public async iterateDataMaskingPolicies(
     subscriptionId: string,
     resourceGroupName: string,
@@ -167,6 +198,16 @@ export class SynapseClient extends Client {
     }
   }
 
+  /**
+   * Retrieves all data masking rules associated with a specific SQL pool in a Synapse workspace.
+   * @param subscriptionId The ID of the Azure Subscription containing the Synapse workspace.
+   * @param resourceGroupName The name of the Resource Group containing the Synapse workspace.
+   * @param workspaceName The name of the Synapse workspace.
+   * @param sqlPoolName The name of the SQL pool.
+   * @param callback A callback function to be called with each retrieved data masking rule.
+   * @returns {Promise<void>} A promise that resolves once all data masking rules have been iterated through.
+   * @throws {Error} If an error occurs during the retrieval process.
+ */
   public async iterateDataMaskingRules(
     subscriptionId: string,
     resourceGroupName: string,

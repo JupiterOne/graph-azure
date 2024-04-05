@@ -337,6 +337,7 @@ The following entities are created:
 | [RM] Cosmos DB Database                        | `azure_cosmosdb_sql_database`                     | `Database`, `DataStore`            |
 | [RM] DNS Record Set                            | `azure_dns_record_set`                            | `DomainRecord`                     |
 | [RM] DNS Zone                                  | `azure_dns_zone`                                  | `DomainZone`                       |
+| [RM] Defender Alert                            | `azure_defender_alert`                            | `Vulnerability`                    |
 | [RM] Event Grid Domain                         | `azure_event_grid_domain`                         | `Service`                          |
 | [RM] Event Grid Domain Topic                   | `azure_event_grid_domain_topic`                   | `Queue`                            |
 | [RM] Event Grid Topic                          | `azure_event_grid_topic`                          | `Queue`                            |
@@ -414,6 +415,7 @@ The following relationships are created:
 
 | Source Entity `_type`              | Relationship `_class` | Target Entity `_type`                             |
 | ---------------------------------- | --------------------- | ------------------------------------------------- |
+| `ANY_RESOURCE`                     | **HAS**               | `azure_defender_alert`                            |
 | `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
 | `ANY_RESOURCE`                     | **GENERATED**         | `azure_shared_image_version`                      |
 | `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
@@ -545,6 +547,7 @@ The following relationships are created:
 | `azure_subnet`                     | **ALLOWS**            | `azure_security_group`                            |
 | `azure_subnet`                     | **DENIES**            | `azure_security_group`                            |
 | `azure_subnet`                     | **HAS**               | `azure_vm`                                        |
+| `azure_subscription`               | **HAS**               | `azure_defender_alert`                            |
 | `azure_subscription`               | **HAS**               | `azure_monitor_log_profile`                       |
 | `azure_subscription`               | **HAS**               | `azure_resource_group`                            |
 | `azure_subscription`               | **CONTAINS**          | `azure_role_definition`                           |
@@ -653,7 +656,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (97)                                       |
+| Role Permissions List (98)                                       |
 | ---------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                         |
 | `Microsoft.ApiManagement/service/apis/read`                      |
@@ -728,6 +731,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Resources/subscriptions/locations/read`               |
 | `Microsoft.Resources/subscriptions/read`                         |
 | `Microsoft.Resources/subscriptions/resourceGroups/read`          |
+| `Microsoft.Security/alerts/read`                                 |
 | `Microsoft.Security/assessments/read`                            |
 | `Microsoft.Security/autoProvisioningSettings/read`               |
 | `Microsoft.Security/pricings/read`                               |

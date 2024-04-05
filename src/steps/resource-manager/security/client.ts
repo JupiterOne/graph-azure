@@ -1,5 +1,6 @@
 import { SecurityCenter } from '@azure/arm-security';
 import {
+  Alert,
   AutoProvisioningSetting,
   Pricing,
   SecurityAssessment,
@@ -99,6 +100,20 @@ export class SecurityClient extends Client {
     });
   }
 
+  public async iterateDefenderAlerts(
+    callback: (s: Alert) => void | Promise<void>,
+  ): Promise<void> {
+    const serviceClient = await this.getAuthenticatedServiceClient(
+      SecurityCenter,
+    );
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: serviceClient.alerts,
+      resourceDescription: 'security.alerts',
+      callback,
+    });
+  }
   /**
    * This operation retrieves the list of all security contact configurations for the given subscription.
    * @param callback A callback function to be called after retrieving a Security Contact

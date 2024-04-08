@@ -183,7 +183,7 @@ export function createAzureExpressRouteEntity(
 ): Entity {
   return createIntegrationEntity({
     entityData: {
-      source: {},
+      source: undefined,
       assign: {
         _key: getazureExpressRouteKey(
           instnaceId,

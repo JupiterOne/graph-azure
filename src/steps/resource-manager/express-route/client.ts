@@ -4,7 +4,6 @@ import {
   iterateAllResources,
 } from '../../../azure/resource-manager/client';
 import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
-import { EventHubManagementClient } from '@azure/arm-eventhub';
 import { ApplicationGateway, BgpServiceCommunity, ExpressRouteCircuit, ExpressRouteCircuitConnection, ExpressRouteCrossConnection, PeerExpressRouteCircuitConnection } from '@azure/arm-network-latest';
 
 export class ExpressRouteClient extends Client {

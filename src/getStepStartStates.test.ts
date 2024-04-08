@@ -132,7 +132,7 @@ import {
   STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION,
   EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION
 } from './steps/resource-manager/event-hub/constants';
-import { STEP_AZURE_APPLICATION_SECURITY_GROUP } from './steps/resource-manager/application-security-group/constants';
+import { STEP_AZURE_APPLICATION_SECURITY_GROUP, STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION } from './steps/resource-manager/application-security-group/constants';
 import { DdosSteps } from './steps/resource-manager/ddos/constant'
 import {
   STEP_AZURE_EXPRESS_ROUTE,
@@ -334,6 +334,7 @@ describe('getStepStartStates', () => {
       [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: true },
       [STEP_AZURE_EVENT_HUB]: { disabled: true },
       [STEP_AZURE_APPLICATION_SECURITY_GROUP]: { disabled: true },
+      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: { disabled: false },
       [STEP_EVENT_HUB_CLUSTER]: { disabled: true },
       [STEP_AZURE_CONSUMER_GROUP]: { disabled: true },
       [STEP_EVENT_HUB_KEYS]: { disabled: true },
@@ -566,6 +567,7 @@ describe('getStepStartStates', () => {
       [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: true },
       [STEP_AZURE_EVENT_HUB]: { disabled: true },
       [STEP_AZURE_APPLICATION_SECURITY_GROUP]: { disabled: true },
+      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: { disabled: false },
       [STEP_EVENT_HUB_CLUSTER]: { disabled: true },
       [STEP_AZURE_CONSUMER_GROUP]: { disabled: true },
       [STEP_EVENT_HUB_KEYS]: { disabled: true },
@@ -806,6 +808,7 @@ describe('getStepStartStates', () => {
       [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: false },
       [STEP_AZURE_EVENT_HUB]: { disabled: false },
       [STEP_AZURE_APPLICATION_SECURITY_GROUP]: { disabled: false },
+      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: { disabled: false },
       [STEP_EVENT_HUB_CLUSTER]: { disabled: false },
       [STEP_AZURE_CONSUMER_GROUP]: { disabled: false },
       [STEP_EVENT_HUB_KEYS]: { disabled: false },
@@ -1041,6 +1044,7 @@ describe('getStepStartStates', () => {
       [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: true },
       [STEP_AZURE_EVENT_HUB]: { disabled: true },
       [STEP_AZURE_APPLICATION_SECURITY_GROUP]: { disabled: true },
+      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: { disabled: false },
       [STEP_EVENT_HUB_CLUSTER]: { disabled: true },
       [STEP_AZURE_CONSUMER_GROUP]: { disabled: true },
       [STEP_EVENT_HUB_KEYS]: { disabled: true },

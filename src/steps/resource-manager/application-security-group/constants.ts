@@ -8,6 +8,8 @@ import { NetworkEntities } from '../network/constants';
 export const STEP_AZURE_APPLICATION_SECURITY_GROUP =
   'rm-azure-application-security-group';
 
+export const STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION = 'rm-azure-application-security-group-virtual-machine-relation'
+
 export const ApplicationSecurityGroupEntities = {
   AZURE_APPLICATION_SECURITY_GROUP: {
     _type: 'azure_application_security_group',

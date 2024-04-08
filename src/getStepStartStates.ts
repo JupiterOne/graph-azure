@@ -140,7 +140,10 @@ import { ManagementGroupSteps } from './steps/resource-manager/management-groups
 import { STEP_RM_CONTAINER_SERVICES_CLUSTERS, Steps } from './steps/resource-manager/container-services/constants';
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
-import { STEP_AZURE_APPLICATION_SECURITY_GROUP } from './steps/resource-manager/application-security-group/constants';
+import {
+  STEP_AZURE_APPLICATION_SECURITY_GROUP,
+  STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION
+} from './steps/resource-manager/application-security-group/constants';
 import {
   STEP_AZURE_APPLICATION_GATEWAY,
   STEP_AZURE_BGP_SERVICE_COMMUNITIES,
@@ -218,6 +221,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       STEP_RM_NETWORK_FIREWALL_POLICY_RELATIONSHIPS,
       STEP_RM_NETWORK_SECURITY_GROUP_RULE_RELATIONSHIPS,
       STEP_AZURE_APPLICATION_SECURITY_GROUP,
+      STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION,
       STEP_RM_NETWORK_INTERFACES,
       STEP_RM_NETWORK_PUBLIC_IP_ADDRESSES,
       STEP_RM_NETWORK_LOAD_BALANCERS,

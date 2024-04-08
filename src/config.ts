@@ -122,6 +122,24 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     defaultsToDisabled: false,
     cannotBeDisabled: false,
   },
+  [INGESTION_SOURCE_IDS.EXPRESS_ROUTE]: {
+    title: 'Express Route',
+    description: 'Gather information about Route Circuit and Peer Connections.',
+    defaultsToDisabled: false,
+    cannotBeDisabled: false,
+  },
+  [INGESTION_SOURCE_IDS.SYNAPSE]: {
+    title: 'Synapse Service',
+    description: 'Gather information about Sql Pools and Workspaces.',
+    defaultsToDisabled: false,
+    cannotBeDisabled: false,
+  },
+  [INGESTION_SOURCE_IDS.DDOS]: {
+    title: 'DDOS',
+    description: 'Gather information about Ddos Protection Plans.',
+    defaultsToDisabled: false,
+    cannotBeDisabled: false,
+  },
   [INGESTION_SOURCE_IDS.FRONTDOOR]: {
     title: 'Frontdoor',
     description: 'Gather information frontdoors, rules, pools and endpoints.',

@@ -36,6 +36,7 @@ function mapVirtualMachineStatus(status?: InstanceViewStatus) {
 }
 
 export function createVirtualMachineEntity(
+  asgs: any,
   webLinker: AzureWebLinker,
   data: VirtualMachine,
   instanceView?: VirtualMachinesInstanceViewResponse,
@@ -96,6 +97,7 @@ export function createVirtualMachineEntity(
     ),
     hostname: null,
     webLink: webLinker.portalResourceUrl(data.id),
+    applicationSecurityGroup: asgs
   };
 
   assignTags(entity, data.tags);

@@ -53,30 +53,36 @@ export async function createSynapseService(
   const { instance, jobState } = executionContext;
 
   // create synapse service
-  await jobState.addEntity(createSynapseServiceEntity(instance.id));
+  await jobState.addEntity(createSynapseServiceEntity(instance.id, instance.config.subscriptionId));
+  await jobState.iterateEntities(
+    { _type: entities.SUBSCRIPTION._type },
 
-  // if subscription id is not present integartion will throw error while validating config
-  const subscriptionKey = `/subscriptions/${instance.config.subscriptionId}`;
-  const synapseServiceKey = getSynapseEntityKey(
-    instance.id as string,
-    SynapseEntities.SYNAPSE_SERVICE._type,
-  );
-
-  if (!jobState.hasKey(synapseServiceKey)) {
-    throw new IntegrationMissingKeyError(
-      `Synapse Service Key Missing ${synapseServiceKey}`,
-    );
-  }
-
-  // add subscription and synapse service relationship
-  await jobState.addRelationship(
-    createDirectRelationship({
-      _class: RelationshipClass.HAS,
-      fromKey: subscriptionKey,
-      fromType: entities.SUBSCRIPTION._type,
-      toKey: synapseServiceKey,
-      toType: SynapseEntities.SYNAPSE_SERVICE._type,
-    }),
+    async (subscriptionEntity) => {
+      if (subscriptionEntity._key == undefined && !jobState.hasKey(subscriptionEntity._key)) {
+        throw new IntegrationMissingKeyError(
+          `subscriptionEntity Key Missing ${subscriptionEntity._key}`,
+        );
+      }
+      const synapseServiceKey = getSynapseEntityKey(
+        instance.id as string,
+        SynapseEntities.SYNAPSE_SERVICE._type,
+      );
+      if (!jobState.hasKey(synapseServiceKey)) {
+        throw new IntegrationMissingKeyError(
+          `Synapse Service Key Missing ${synapseServiceKey}`,
+        );
+      }
+      // add subscription and synapse service relationship
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: RelationshipClass.HAS,
+          fromKey: subscriptionEntity._Key as string,
+          fromType: entities.SUBSCRIPTION._type,
+          toKey: synapseServiceKey,
+          toType: SynapseEntities.SYNAPSE_SERVICE._type,
+        }),
+      );
+    },
   );
 }
 

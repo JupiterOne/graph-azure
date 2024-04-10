@@ -51,7 +51,6 @@ import {
 import { StorageAccount } from '@azure/arm-storage/esm/models';
 import { getResourceGroupName } from '../utils/matchers';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
-import { ApplicationSecurityGroup } from '@azure/arm-network-latest';
 
 export async function fetchGalleries(
   executionContext: IntegrationStepContext,
@@ -207,17 +206,16 @@ export async function fetchVirtualMachines(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ComputeClient(instance.config, logger);
 
-  let asgsArray: any = []; // Provide type annotation
+  const asgsArray: any = []; // Provide type annotation
 
   await client.iterateVirtualMachines(async (vm) => {
     // Extracting resource group name from the virtual machine ID
     const resourceGroupName = getResourceGroupName(vm.id || '') as string;
-    let networkInterfaces = vm.networkProfile?.networkInterfaces || [];
+    const networkInterfaces = vm.networkProfile?.networkInterfaces || [];
     for (const nicRef of networkInterfaces) {
       const nicId = nicRef.id?.split("/").pop(); 
       if (nicId) { 
         const asgs = await client.getASGs(resourceGroupName, nicId);
-        // console.log('asgs========= ', asgs); 
         asgsArray.push(asgs); // Store each value of asgs in an array
       }
     }

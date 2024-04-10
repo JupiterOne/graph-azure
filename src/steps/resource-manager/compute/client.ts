@@ -71,8 +71,8 @@ export class ComputeClient extends Client {
       const nic = await networkClient.networkInterfaces.get(resourceGroupName, nicId);
       return nic && nic.ipConfigurations && nic.ipConfigurations[0]?.applicationSecurityGroups || [];
     } catch (error) {
-      console.error(`Error occurred while retrieving ASGs for NIC ${nicId}:`);
-      console.error(error.message);
+      this.logger.error(`Error occurred while retrieving ASGs for NIC ${nicId}:`);
+      this.logger.error(error.message);
       return [];
     }
   }

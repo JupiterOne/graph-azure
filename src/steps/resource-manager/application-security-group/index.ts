@@ -41,11 +41,11 @@ export async function fetchApplicationSecurityGroup(
 export async function buildAzureApplicationSecurityGroupVirtualMachineRelation(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { jobState } = executionContext;
+  const { jobState , logger} = executionContext;
   await jobState.iterateEntities(
     { _type: entities.VIRTUAL_MACHINE._type },
     async (virtualMachineEntity) => {
-      let listOfApplicationSecurityGroups = virtualMachineEntity.applicationSecurityGroup as string[];
+      const listOfApplicationSecurityGroups = virtualMachineEntity.applicationSecurityGroup as string[];
       // Iterate over each application security group if a vm
       for (const ApplicationSecurityGroup of listOfApplicationSecurityGroups) {
         // Check if ApplicationSecurityGroup is defined and non-empty
@@ -68,13 +68,12 @@ export async function buildAzureApplicationSecurityGroupVirtualMachineRelation(
             }
           }
         } else {
-          console.log("applicationSecurityGroupEntityKey is undefined or empty.");
+          logger.warn("applicationSecurityGroupEntityKey is undefined or empty.");
         }
       }
     },
   );
 }
-
 
 
 

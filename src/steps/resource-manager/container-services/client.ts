@@ -23,7 +23,7 @@ export class ContainerServicesClient extends Client {
   ): Promise<void> {
     const serviceClient = new ContainerServiceClient(
       this.getClientSecretCredentials(),
-      config.subscriptionId,
+      config.subscriptionId as string,
     );
     for await (const item of serviceClient.managedClusters.list()) {
       await callback(item);

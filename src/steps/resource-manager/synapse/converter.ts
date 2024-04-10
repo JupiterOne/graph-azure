@@ -54,7 +54,9 @@ export function createWorkspaceEntity(
  * create Synapse service entity.
  * @returns  Synapse Entity
  */
-export function createSynapseServiceEntity(instnaceId: string): Entity {
+export function createSynapseServiceEntity(
+  instnaceId: string,
+  subscriptionKey,): Entity {
   return createIntegrationEntity({
     entityData: {
       source: undefined,
@@ -69,6 +71,7 @@ export function createSynapseServiceEntity(instnaceId: string): Entity {
         category: ['Analysis'],
         function: ['Analysis'],
         endpoint: 'https://portal.azure.com',
+        subscriptionKey: subscriptionKey,
       },
     },
   });

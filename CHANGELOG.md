@@ -1,3 +1,15 @@
+# v6.3.0 (Thu Apr 11 2024)
+
+#### 🚀 Enhancement
+
+- Added service_principal assigned user, groups and service principals [#634](https://github.com/JupiterOne/graph-azure/pull/634) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v6.2.0 (Fri Apr 05 2024)
 
 #### 🚀 Enhancement

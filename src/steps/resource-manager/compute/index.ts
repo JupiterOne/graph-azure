@@ -206,9 +206,21 @@ export async function fetchVirtualMachines(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ComputeClient(instance.config, logger);
 
+  const asgsArray: any = []; // Provide type annotation
+
   await client.iterateVirtualMachines(async (vm) => {
-    let instanceView: VirtualMachinesInstanceViewResponse | undefined =
-      undefined;
+    // Extracting resource group name from the virtual machine ID
+    const resourceGroupName = getResourceGroupName(vm.id || '') as string;
+    const networkInterfaces = vm.networkProfile?.networkInterfaces || [];
+    for (const nicRef of networkInterfaces) {
+      const nicId = nicRef.id?.split("/").pop(); 
+      if (nicId) { 
+        const asgs = await client.getASGs(resourceGroupName, nicId);
+        asgsArray.push(asgs); // Store each value of asgs in an array
+      }
+    }
+
+    let instanceView: VirtualMachinesInstanceViewResponse | undefined;
     try {
       instanceView = await client.fetchInstanceView(
         vm.name,
@@ -226,11 +238,14 @@ export async function fetchVirtualMachines(
     }
 
     const virtualMachineEntity = createVirtualMachineEntity(
+      asgsArray,
       webLinker,
       vm,
       instanceView,
     );
     await jobState.addEntity(virtualMachineEntity);
+
+    // console.log("virtualMachineEntity===", virtualMachineEntity)
 
     await createResourceGroupResourceRelationship(
       executionContext,

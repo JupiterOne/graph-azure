@@ -10,6 +10,8 @@ export const STEP_AD_DEVICES = 'ad-devices';
 export const STEP_AD_SERVICE_PRINCIPALS = 'ad-service-principals';
 export const STEP_AD_ROLE_DEFINITIONS = 'ad-role-definitions';
 export const STEP_AD_ROLE_ASSIGNMENTS = 'ad-role-assignments';
+export const STEP_AD_SERVICE_PRICIPAL_ACCESS =
+  'ad-role-service_principal_access';
 // Graph objects
 export const ACCOUNT_ENTITY_TYPE = 'azure_account';
 export const ACCOUNT_ENTITY_CLASS = ['Account'];
@@ -129,5 +131,23 @@ export const ADRelationships = {
     sourceType: SERVICE_PRINCIPAL_ENTITY_TYPE,
     _class: RelationshipClass.HAS,
     targetType: STEP_AD_ROLE_DEFINITIONS,
+  },
+  SERVICE_PRINCIPAL_ASSIGNED_USER_GROUP: {
+    _type: 'azure_service_principal_assigned_user_group',
+    sourceType: SERVICE_PRINCIPAL_ENTITY_TYPE,
+    _class: RelationshipClass.ASSIGNED,
+    targetType: GROUP_ENTITY_TYPE,
+  },
+  SERVICE_PRINCIPAL_ASSIGNED_USER: {
+    _type: 'azure_service_principal_assigned_user',
+    sourceType: SERVICE_PRINCIPAL_ENTITY_TYPE,
+    _class: RelationshipClass.ASSIGNED,
+    targetType: USER_ENTITY_TYPE,
+  },
+  SERVICE_PRINCIPAL_ASSIGNED_SERVICE_PRINCIPAL: {
+    _type: 'azure_service_principal_assigned_principal',
+    sourceType: SERVICE_PRINCIPAL_ENTITY_TYPE,
+    _class: RelationshipClass.ASSIGNED,
+    targetType: SERVICE_PRINCIPAL_ENTITY_TYPE,
   },
 };

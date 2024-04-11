@@ -10,7 +10,7 @@ export const STEP_AD_DEVICES = 'ad-devices';
 export const STEP_AD_SERVICE_PRINCIPALS = 'ad-service-principals';
 export const STEP_AD_ROLE_DEFINITIONS = 'ad-role-definitions';
 export const STEP_AD_ROLE_ASSIGNMENTS = 'ad-role-assignments';
-export const STEP_AD_SERVICE_PRICIPAL_ACCESS =
+export const STEP_AD_SERVICE_PRINCIPAL_ACCESS =
   'ad-role-service_principal_access';
 // Graph objects
 export const ACCOUNT_ENTITY_TYPE = 'azure_account';
@@ -151,3 +151,9 @@ export const ADRelationships = {
     targetType: SERVICE_PRINCIPAL_ENTITY_TYPE,
   },
 };
+
+export enum EntityPrincipalType {
+  ServicePrincipal = 'ServicePrincipal',
+  Group = 'Group',
+  User = 'User',
+}

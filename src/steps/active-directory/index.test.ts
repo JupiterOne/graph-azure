@@ -35,7 +35,7 @@ import {
   STEP_AD_ROLE_DEFINITIONS,
   STEP_AD_ROLE_ASSIGNMENTS,
   STEP_AD_DEVICES,
-  STEP_AD_SERVICE_PRICIPAL_ACCESS,
+  STEP_AD_SERVICE_PRINCIPAL_ACCESS,
 } from './constants';
 import { getMockAccountEntity } from '../../../test/helpers/getMockEntity';
 import { IntegrationProviderAuthorizationError } from '@jupiterone/integration-sdk-core';
@@ -426,14 +426,14 @@ describe('ad-service-principals', () => {
   }, 100_000);
 
   test(
-    STEP_AD_SERVICE_PRICIPAL_ACCESS,
+    STEP_AD_SERVICE_PRINCIPAL_ACCESS,
     async () => {
       const stepTestConfig = getStepTestConfigForStep(
-        STEP_AD_SERVICE_PRICIPAL_ACCESS,
+        STEP_AD_SERVICE_PRINCIPAL_ACCESS,
       );
 
       recording = setupAzureRecording({
-        name: STEP_AD_SERVICE_PRICIPAL_ACCESS,
+        name: STEP_AD_SERVICE_PRINCIPAL_ACCESS,
         directory: __dirname,
         options: {
           recordFailedRequests: true,

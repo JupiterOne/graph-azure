@@ -22,7 +22,8 @@ import {
   STEP_AD_ROLE_DEFINITIONS,
   STEP_AD_ROLE_ASSIGNMENTS,
   STEP_AD_DEVICES,
-  STEP_AD_SERVICE_PRICIPAL_ACCESS,
+  STEP_AD_SERVICE_PRINCIPAL_ACCESS,
+  EntityPrincipalType,
 } from './constants';
 import {
   createAccountEntity,
@@ -281,11 +282,13 @@ export async function fetchServicePrincipalAccess(
   );
 }
 
-function convertPrincipalTypeTo_type(principalType: string) {
+function convertPrincipalTypeTo_type(
+  principalType: EntityPrincipalType,
+): string {
   switch (principalType) {
-    case 'ServicePrincipal':
+    case EntityPrincipalType.ServicePrincipal:
       return ADEntities.SERVICE_PRINCIPAL._type;
-    case 'Group':
+    case EntityPrincipalType.Group:
       return ADEntities.USER_GROUP._type;
     default:
       return ADEntities.USER._type;
@@ -397,7 +400,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     apiPermissions: ['Directory.Read.All'],
   },
   {
-    id: STEP_AD_SERVICE_PRICIPAL_ACCESS,
+    id: STEP_AD_SERVICE_PRINCIPAL_ACCESS,
     name: 'Active Directory Service Principal Access',
     entities: [],
     relationships: [

@@ -223,6 +223,17 @@ export class DirectoryGraphClient extends GraphClient {
       callback,
     });
   }
+
+  public async iterateServicePrincipalMembers(
+    callback: (a: any) => void | Promise<void>,
+    serviceId: string,
+  ): Promise<void> {
+    const resourceUrl = `/servicePrincipals/${serviceId}/appRoleAssignedTo`;
+    return this.iterateResources({
+      resourceUrl,
+      callback,
+    });
+  }
   public async iterateRoleDefinitions(
     callback: (a: any) => void | Promise<void>,
   ): Promise<void> {

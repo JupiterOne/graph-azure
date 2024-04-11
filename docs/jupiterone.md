@@ -534,6 +534,9 @@ The following relationships are created:
 | `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_topic`                         |
 | `azure_service_bus_topic`          | **HAS**               | `azure_service_bus_subscription`                  |
 | `azure_service_principal`          | **HAS**               | `ad-role-definitions`                             |
+| `azure_service_principal`          | **ASSIGNED**          | `azure_service_principal`                         |
+| `azure_service_principal`          | **ASSIGNED**          | `azure_user`                                      |
+| `azure_service_principal`          | **ASSIGNED**          | `azure_user_group`                                |
 | `azure_shared_image`               | **HAS**               | `azure_shared_image_version`                      |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_database`                              |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_server_active_directory_admin`         |

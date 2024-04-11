@@ -22,6 +22,8 @@ import {
   STEP_AD_ROLE_DEFINITIONS,
   STEP_AD_ROLE_ASSIGNMENTS,
   STEP_AD_DEVICES,
+  STEP_AD_SERVICE_PRINCIPAL_ACCESS,
+  EntityPrincipalType,
 } from './constants';
 import {
   createAccountEntity,
@@ -251,6 +253,47 @@ export async function fetchADRoleAssignments(
     );
   });
 }
+
+export async function fetchServicePrincipalAccess(
+  executionContext: IntegrationStepContext,
+) {
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
+  await jobState.iterateEntities(
+    { _type: ADEntities.SERVICE_PRINCIPAL._type },
+    async (servicePrincipal) => {
+      await graphClient.iterateServicePrincipalMembers(async (member) => {
+        if (jobState.hasKey(member.principalId)) {
+          const _type = convertPrincipalTypeTo_type(member.principalType);
+          const relationship = createDirectRelationship({
+            toKey: member.principalId,
+            toType: _type,
+            _class: RelationshipClass.ASSIGNED,
+            fromKey: servicePrincipal._key,
+            fromType: servicePrincipal._type,
+          });
+          if (jobState.hasKey(relationship._key)) {
+            return;
+          }
+          await jobState.addRelationship(relationship);
+        }
+      }, servicePrincipal._key);
+    },
+  );
+}
+
+function convertPrincipalTypeTo_type(
+  principalType: EntityPrincipalType,
+): string {
+  switch (principalType) {
+    case EntityPrincipalType.ServicePrincipal:
+      return ADEntities.SERVICE_PRINCIPAL._type;
+    case EntityPrincipalType.Group:
+      return ADEntities.USER_GROUP._type;
+    default:
+      return ADEntities.USER._type;
+  }
+}
 function convertGraphTypeTo_type(graphType: string): string {
   switch (graphType) {
     case '#microsoft.graph.user':
@@ -354,6 +397,19 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
       STEP_AD_SERVICE_PRINCIPALS,
     ],
     executionHandler: fetchADRoleAssignments,
+    apiPermissions: ['Directory.Read.All'],
+  },
+  {
+    id: STEP_AD_SERVICE_PRINCIPAL_ACCESS,
+    name: 'Active Directory Service Principal Access',
+    entities: [],
+    relationships: [
+      ADRelationships.SERVICE_PRINCIPAL_ASSIGNED_USER_GROUP,
+      ADRelationships.SERVICE_PRINCIPAL_ASSIGNED_USER,
+      ADRelationships.SERVICE_PRINCIPAL_ASSIGNED_SERVICE_PRINCIPAL,
+    ],
+    dependsOn: [STEP_AD_GROUPS, STEP_AD_USERS, STEP_AD_SERVICE_PRINCIPALS],
+    executionHandler: fetchServicePrincipalAccess,
     apiPermissions: ['Directory.Read.All'],
   },
 ];

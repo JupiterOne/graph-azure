@@ -9,14 +9,13 @@ import {
 import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 export class ContainerServicesClient extends Client {
-
   /**
    * Retrieves all managed clusters from an Azure Container Service.
    * @param config The configuration object containing necessary parameters such as subscriptionId.
    * @param callback A callback function to be called with each retrieved managed cluster.
    * @returns A promise that resolves once all managed clusters have been iterated through.
    * @throws {Error} If an error occurs during the retrieval process.
- */
+   */
   public async iterateClusters(
     config,
     callback: (cluster: ManagedCluster) => void | Promise<void>,
@@ -37,7 +36,7 @@ export class ContainerServicesClient extends Client {
    * @param callback A callback function to be called with each retrieved maintenance configuration.
    * @returns A promise that resolves once all maintenance configurations have been iterated through.
    * @throws {Error} If an error occurs during the retrieval process.
- */
+   */
   public async iterateMaintenanceConfigurations(
     config,
     cluster: { name: string; id: string },
@@ -63,7 +62,7 @@ export class ContainerServicesClient extends Client {
    * @param callback A callback function to be called with each retrieved role binding.
    * @returns A promise that resolves once all role bindings have been iterated through.
    * @throws {Error} If an error occurs during the retrieval process.
- */
+   */
   public async iterateRoleBindings(
     config,
     cluster: { name: string; id: string },
@@ -90,7 +89,7 @@ export class ContainerServicesClient extends Client {
    * @param callback A callback function to be called with each retrieved access role and its location.
    * @returns A promise that resolves once all access roles have been iterated through.
    * @throws {Error} If an error occurs during the retrieval process.
- */
+   */
   public async iterateAccessRoles(
     config,
     logger: IntegrationLogger,
@@ -126,7 +125,9 @@ export class ContainerServicesClient extends Client {
         }
       } catch (error) {
         if (error.statusCode && error.statusCode === 400) {
-          logger.warn(`No registered resource provider found for location '${location.name}'.`);
+          logger.warn(
+            `No registered resource provider found for location '${location.name}'.`,
+          );
           // Skipping this location and continue with the next one
           continue;
         } else {
@@ -136,5 +137,4 @@ export class ContainerServicesClient extends Client {
       }
     }
   }
-
 }

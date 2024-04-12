@@ -79,27 +79,21 @@ describe('rm-compute-network-relationships', () => {
   }
 
   function separateComputeNetworkRelationships(relationships: Relationship[]) {
-    const {
-      targets: vmNicRelationships,
-      rest: restAfterVmNic,
-    } = filterGraphObjects(
-      relationships,
-      (r) => r._type === InterserviceRelationships.VM_USES_NIC._type,
-    );
-    const {
-      targets: subnetVmRelationships,
-      rest: restAfterSubnetVm,
-    } = filterGraphObjects(
-      restAfterVmNic,
-      (r) => r._type === InterserviceRelationships.SUBNET_HAS_VM._type,
-    );
-    const {
-      targets: vmPublicIpRelationships,
-      rest: restAfterVmPublicIp,
-    } = filterGraphObjects(
-      restAfterSubnetVm,
-      (r) => r._type === InterserviceRelationships.VM_USES_PUBLIC_IP._type,
-    );
+    const { targets: vmNicRelationships, rest: restAfterVmNic } =
+      filterGraphObjects(
+        relationships,
+        (r) => r._type === InterserviceRelationships.VM_USES_NIC._type,
+      );
+    const { targets: subnetVmRelationships, rest: restAfterSubnetVm } =
+      filterGraphObjects(
+        restAfterVmNic,
+        (r) => r._type === InterserviceRelationships.SUBNET_HAS_VM._type,
+      );
+    const { targets: vmPublicIpRelationships, rest: restAfterVmPublicIp } =
+      filterGraphObjects(
+        restAfterSubnetVm,
+        (r) => r._type === InterserviceRelationships.VM_USES_PUBLIC_IP._type,
+      );
 
     return {
       vmNicRelationships,

@@ -76,7 +76,7 @@ export const Steps = {
   AZURE_SUBSCRIPTION_HAS_KUBERNETES_SERVICE:
     'rm-azure-subscription-has-kubernetes-service-relationship',
   MANAGED_CLUSTER_IS_KUBE_CLUSTER:
-    'rm-managed-cluster-is-kube-cluster-relationship'
+    'rm-managed-cluster-is-kube-cluster-relationship',
 };
 
 export const Entities: Record<
@@ -171,8 +171,6 @@ export const Relationships: Record<
   },
 };
 
-
-
 export const ContainerServiceMappedRelationships: Record<
   | 'TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER'
   | 'ROLE_BINDING_IS_KUBERNETES_CLUSTER_ROLE_BINDING',
@@ -192,4 +190,4 @@ export const ContainerServiceMappedRelationships: Record<
     targetType: 'kube_cluster_role_binding',
     direction: RelationshipDirection.FORWARD,
   },
-}
+};

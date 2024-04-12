@@ -53,12 +53,17 @@ export async function createSynapseService(
   const { instance, jobState } = executionContext;
 
   // create synapse service
-  await jobState.addEntity(createSynapseServiceEntity(instance.id, instance.config.subscriptionId));
+  await jobState.addEntity(
+    createSynapseServiceEntity(instance.id, instance.config.subscriptionId),
+  );
   await jobState.iterateEntities(
     { _type: entities.SUBSCRIPTION._type },
 
     async (subscriptionEntity) => {
-      if (subscriptionEntity._key == undefined && !jobState.hasKey(subscriptionEntity._key)) {
+      if (
+        subscriptionEntity._key == undefined &&
+        !jobState.hasKey(subscriptionEntity._key)
+      ) {
         throw new IntegrationMissingKeyError(
           `subscriptionEntity Key Missing ${subscriptionEntity._key}`,
         );

@@ -16,7 +16,7 @@ export class SynapseClient extends Client {
    * @param callback A callback function to be called with each retrieved Synapse Workspace.
    * @returns A promise that resolves once all Synapse Workspaces have been iterated through.
    * @throws {Error} If an error occurs during the retrieval process.
-  */
+   */
   public async iterateWorkspaces(
     subscriptionId: string,
     callback: (s: Workspace) => void | Promise<void>,
@@ -60,7 +60,7 @@ export class SynapseClient extends Client {
    * @param callback A callback function to be called with each retrieved SQL Pool.
    * @returns A promise that resolves once all SQL Pools have been iterated through.
    * @throws {Error} If an error occurs during the retrieval process.
- */
+   */
   public async iterateSqlPools(
     subscriptionId: string,
     resourceGroupName: string,
@@ -156,7 +156,7 @@ export class SynapseClient extends Client {
    * @param callback A callback function to be called with the retrieved data masking policy.
    * @returns {Promise<void>} A promise that resolves once the data masking policy has been retrieved and the callback function has been executed.
    * @throws {Error} If an error occurs during the retrieval process.
- */
+   */
   public async iterateDataMaskingPolicies(
     subscriptionId: string,
     resourceGroupName: string,
@@ -207,7 +207,7 @@ export class SynapseClient extends Client {
    * @param callback A callback function to be called with each retrieved data masking rule.
    * @returns {Promise<void>} A promise that resolves once all data masking rules have been iterated through.
    * @throws {Error} If an error occurs during the retrieval process.
- */
+   */
   public async iterateDataMaskingRules(
     subscriptionId: string,
     resourceGroupName: string,

@@ -34,8 +34,7 @@ describe('#createResourceGroupResourceRelationship', () => {
       _class: 'HAS',
       _fromEntityKey:
         '/subscriptions/subscription-id/resourceGroups/resource-group-id',
-      _key:
-        '/subscriptions/subscription-id/resourceGroups/resource-group-id|has|/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft/KeyVault/vaults/key-vault-id',
+      _key: '/subscriptions/subscription-id/resourceGroups/resource-group-id|has|/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft/KeyVault/vaults/key-vault-id',
       _toEntityKey:
         '/subscriptions/subscription-id/resourceGroups/resource-group-id/providers/Microsoft/KeyVault/vaults/key-vault-id',
       _type: 'azure_resource_group_has_keyvault_service',
@@ -74,8 +73,7 @@ describe('#createResourceGroupResourceRelationship', () => {
       _class: 'HAS',
       _fromEntityKey:
         '/subscriptions/subscription-id/resourceGroups/resource-group-id',
-      _key:
-        '/subscriptions/subscription-id/resourceGroups/resource-group-id|has|/subscriptions/subscription-id/resourcegroups/resource-group-id/providers/Microsoft/KeyVault/vaults/key-vault-id',
+      _key: '/subscriptions/subscription-id/resourceGroups/resource-group-id|has|/subscriptions/subscription-id/resourcegroups/resource-group-id/providers/Microsoft/KeyVault/vaults/key-vault-id',
       _toEntityKey:
         '/subscriptions/subscription-id/resourcegroups/resource-group-id/providers/Microsoft/KeyVault/vaults/key-vault-id',
       _type: 'azure_resource_group_has_keyvault_service',
@@ -148,8 +146,7 @@ describe('#createResourceGroupResourceRelationship', () => {
     const resourceEntity: Entity = {
       _class: ['Service'],
       _type: 'azure_keyvault_service',
-      _key:
-        '/subscriptions/subscription-id/resourceGroups/RESOURCE-GROUP-ID/providers/Microsoft/KeyVault/vaults/key-vault-id',
+      _key: '/subscriptions/subscription-id/resourceGroups/RESOURCE-GROUP-ID/providers/Microsoft/KeyVault/vaults/key-vault-id',
     };
 
     await createResourceGroupResourceRelationship(context, resourceEntity);
@@ -161,8 +158,7 @@ describe('#createResourceGroupResourceRelationship', () => {
       _class: 'HAS',
       _fromEntityKey:
         '/subscriptions/subscription-id/resourceGroups/resource-group-id',
-      _key:
-        '/subscriptions/subscription-id/resourceGroups/resource-group-id|has|/subscriptions/subscription-id/resourceGroups/RESOURCE-GROUP-ID/providers/Microsoft/KeyVault/vaults/key-vault-id',
+      _key: '/subscriptions/subscription-id/resourceGroups/resource-group-id|has|/subscriptions/subscription-id/resourceGroups/RESOURCE-GROUP-ID/providers/Microsoft/KeyVault/vaults/key-vault-id',
       _toEntityKey:
         '/subscriptions/subscription-id/resourceGroups/RESOURCE-GROUP-ID/providers/Microsoft/KeyVault/vaults/key-vault-id',
       _type: 'azure_resource_group_has_keyvault_service',

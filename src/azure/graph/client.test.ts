@@ -137,10 +137,10 @@ test('client.request should retry requests 3 times', async () => {
   (graphClientError as any).statusText = 'Server Error';
   const mockGet = jest.fn().mockRejectedValue(graphClientError);
 
-  const mockGraphRequest: GraphRequest = ({
+  const mockGraphRequest: GraphRequest = {
     get: mockGet,
     buildFullUrl: () => 'https://hostname/endpoint',
-  } as unknown) as GraphRequest;
+  } as unknown as GraphRequest;
 
   await expect(client.request(mockGraphRequest)).rejects.toThrow(
     'Provider API failed at https://hostname/endpoint: 400 Server Error',
@@ -155,14 +155,14 @@ test('client.request should expose node-fetch error codes', async () => {
   const systemError = new Error('system error');
   (systemError as any).code = 'ECONNRESET';
 
-  const mockGraphRequest: GraphRequest = ({
+  const mockGraphRequest: GraphRequest = {
     get: jest
       .fn()
       .mockRejectedValue(
         new FetchError('Error message for system error', 'system', systemError),
       ),
     buildFullUrl: () => 'https://hostname/endpoint',
-  } as unknown) as GraphRequest;
+  } as unknown as GraphRequest;
 
   await expect(client.request(mockGraphRequest)).rejects.toThrow(
     'Provider API failed at https://hostname/endpoint: ECONNRESET Error message for system error',

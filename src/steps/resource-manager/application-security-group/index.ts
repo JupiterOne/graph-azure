@@ -11,11 +11,15 @@ import {
   STEP_AZURE_APPLICATION_SECURITY_GROUP,
   STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION,
 } from './constants';
-import { steps } from '../compute/constants'
-import { entities } from '../compute/constants'
+import { steps } from '../compute/constants';
+import { entities } from '../compute/constants';
 import { createApplicationSecurityGroupEntity } from './converters';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
-import { IntegrationMissingKeyError, RelationshipClass, createDirectRelationship } from '@jupiterone/integration-sdk-core';
+import {
+  IntegrationMissingKeyError,
+  RelationshipClass,
+  createDirectRelationship,
+} from '@jupiterone/integration-sdk-core';
 
 export async function fetchApplicationSecurityGroup(
   executionContext: IntegrationStepContext,
@@ -41,11 +45,12 @@ export async function fetchApplicationSecurityGroup(
 export async function buildAzureApplicationSecurityGroupVirtualMachineRelation(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
-  const { jobState , logger} = executionContext;
+  const { jobState, logger } = executionContext;
   await jobState.iterateEntities(
     { _type: entities.VIRTUAL_MACHINE._type },
     async (virtualMachineEntity) => {
-      const listOfApplicationSecurityGroups = virtualMachineEntity.applicationSecurityGroup as string[];
+      const listOfApplicationSecurityGroups =
+        virtualMachineEntity.applicationSecurityGroup as string[];
       // Iterate over each application security group if a vm
       for (const ApplicationSecurityGroup of listOfApplicationSecurityGroups) {
         // Check if ApplicationSecurityGroup is defined and non-empty
@@ -56,7 +61,9 @@ export async function buildAzureApplicationSecurityGroupVirtualMachineRelation(
                 createDirectRelationship({
                   _class: RelationshipClass.PROTECTS,
                   fromKey: applicationSecurityGroupEntityKey['id'],
-                  fromType: ApplicationSecurityGroupEntities.AZURE_APPLICATION_SECURITY_GROUP._type,
+                  fromType:
+                    ApplicationSecurityGroupEntities
+                      .AZURE_APPLICATION_SECURITY_GROUP._type,
                   toKey: virtualMachineEntity._key,
                   toType: entities.VIRTUAL_MACHINE._type,
                 }),
@@ -68,14 +75,14 @@ export async function buildAzureApplicationSecurityGroupVirtualMachineRelation(
             }
           }
         } else {
-          logger.warn("applicationSecurityGroupEntityKey is undefined or empty.");
+          logger.warn(
+            'applicationSecurityGroupEntityKey is undefined or empty.',
+          );
         }
       }
     },
   );
 }
-
-
 
 export const applicationSecurityGroupSteps: AzureIntegrationStep[] = [
   {
@@ -93,9 +100,14 @@ export const applicationSecurityGroupSteps: AzureIntegrationStep[] = [
     id: STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION,
     name: 'Build Azure Application Security Group and Virtual Machine Relation',
     entities: [],
-    relationships: [AzureApplicationSecurityGroupRelationships.AZURE_APPLICATION_SECURITY_GROUP_PROTECTS_VIRTUAL_MACHINE],
-    dependsOn: [STEP_AZURE_APPLICATION_SECURITY_GROUP, steps.COMPUTE_VIRTUAL_MACHINES],
+    relationships: [
+      AzureApplicationSecurityGroupRelationships.AZURE_APPLICATION_SECURITY_GROUP_PROTECTS_VIRTUAL_MACHINE,
+    ],
+    dependsOn: [
+      STEP_AZURE_APPLICATION_SECURITY_GROUP,
+      steps.COMPUTE_VIRTUAL_MACHINES,
+    ],
     executionHandler: buildAzureApplicationSecurityGroupVirtualMachineRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.APPLICATION_SECURITY_GROUP,
-  }
+  },
 ];

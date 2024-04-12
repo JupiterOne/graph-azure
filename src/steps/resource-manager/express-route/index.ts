@@ -65,7 +65,9 @@ export async function fetchAzureExpressRoute(
 ): Promise<void> {
   const { instance, jobState } = executionContext;
   // create Express Route service
-  await jobState.addEntity(createAzureExpressRouteEntity(instance.id, instance.config.subscriptionId));
+  await jobState.addEntity(
+    createAzureExpressRouteEntity(instance.id, instance.config.subscriptionId),
+  );
 
   // if subscription id is not present integartion will throw error while validating config
   const subscriptionKey = `/subscriptions/${instance.config.subscriptionId}`;
@@ -126,7 +128,6 @@ export async function buildAzureExpressRouteExpressRouteCircuitRelation(
   );
 }
 
-
 export async function buildAzureExpressRoutePeerExpressRouteCircuitConnectionRelation(
   executionContext: IntegrationStepContext,
 ) {
@@ -156,28 +157,39 @@ export async function buildAzureExpressRoutePeerExpressRouteCircuitConnectionRel
           fromKey: expressRouteKey,
           fromType: ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type,
           toKey: azureExpressRouteConnectionEntity._key,
-          toType: ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._type,
+          toType:
+            ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._type,
         }),
       );
     },
   );
 }
 
-export async function buildAzureExpressRouteCircuitPeerExpressRouteCircuitConnectionRelation(executionContext: IntegrationStepContext) {
+export async function buildAzureExpressRouteCircuitPeerExpressRouteCircuitConnectionRelation(
+  executionContext: IntegrationStepContext,
+) {
   {
     {
       const { jobState } = executionContext;
       await jobState.iterateEntities(
-        { _type: ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._type },
+        {
+          _type: ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._type,
+        },
         async (azurePeerExpressRouteEntity) => {
           // Find the index of the segment after expressRouteCircuits
-          const endIndex = azurePeerExpressRouteEntity._key.indexOf('/expressRouteCircuits') + '/expressRouteCircuits'.length;
+          const endIndex =
+            azurePeerExpressRouteEntity._key.indexOf('/expressRouteCircuits') +
+            '/expressRouteCircuits'.length;
 
           // Find the index of the next '/' after expressRouteCircuits
-          const nextSlashIndex = azurePeerExpressRouteEntity._key.indexOf('/', endIndex + 1);
+          const nextSlashIndex = azurePeerExpressRouteEntity._key.indexOf(
+            '/',
+            endIndex + 1,
+          );
 
           // Extract the substring up to the next '/' after expressRouteCircuits
-          const expressRouteCircuitEntityKey = azurePeerExpressRouteEntity._key.substring(0, nextSlashIndex);
+          const expressRouteCircuitEntityKey =
+            azurePeerExpressRouteEntity._key.substring(0, nextSlashIndex);
 
           if (!jobState.hasKey(expressRouteCircuitEntityKey)) {
             throw new IntegrationMissingKeyError(
@@ -190,7 +202,8 @@ export async function buildAzureExpressRouteCircuitPeerExpressRouteCircuitConnec
               fromKey: expressRouteCircuitEntityKey,
               fromType: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT._type,
               toKey: azurePeerExpressRouteEntity._key,
-              toType: ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._type,
+              toType:
+                ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION._type,
             }),
           );
         },
@@ -199,17 +212,18 @@ export async function buildAzureExpressRouteCircuitPeerExpressRouteCircuitConnec
   }
 }
 
-export async function buildAzureExpressRouteExpressRouteCrossConnectionRelation() {
-}
+export async function buildAzureExpressRouteExpressRouteCrossConnectionRelation() {}
 
 export async function buildAzureSubscriptionAndAzureBgpCommunitiesRelation(
-  executionContext: IntegrationStepContext) {
+  executionContext: IntegrationStepContext,
+) {
   const { jobState } = executionContext;
 
   await jobState.iterateEntities(
     { _type: ExpressRouteEntities.AZURE_BGP_SERVICE_COMMUNITIES._type },
     async (bgpServiceCommunityEntity) => {
-      const subscriptionEntityKey = (bgpServiceCommunityEntity.subscriptionKey as string)
+      const subscriptionEntityKey =
+        bgpServiceCommunityEntity.subscriptionKey as string;
       if (jobState.hasKey(subscriptionEntityKey)) {
         // Check if the subscription key exists
         await jobState.addRelationship(
@@ -230,13 +244,16 @@ export async function buildAzureSubscriptionAndAzureBgpCommunitiesRelation(
   );
 }
 
-export async function buildAzureSubscriptionAndAzureExpressRouteRelation(executionContext: IntegrationStepContext) {
+export async function buildAzureSubscriptionAndAzureExpressRouteRelation(
+  executionContext: IntegrationStepContext,
+) {
   const { jobState } = executionContext;
 
   await jobState.iterateEntities(
     { _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type },
     async (expressRouteEntity) => {
-      const subscriptionEntityKey = (expressRouteEntity.subscriptionKey as string)
+      const subscriptionEntityKey =
+        expressRouteEntity.subscriptionKey as string;
       if (jobState.hasKey(subscriptionEntityKey)) {
         // Check if the subscription key exists
         await jobState.addRelationship(
@@ -273,7 +290,9 @@ export async function buildAzureExpressRouteExpressRouteCircuitConnectionRelatio
   }
 
   await jobState.iterateEntities(
-    { _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._type },
+    {
+      _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._type,
+    },
     async (azureExpressRouteCircuitConnectionEntity) => {
       if (!jobState.hasKey(azureExpressRouteCircuitConnectionEntity._key)) {
         throw new IntegrationMissingKeyError(
@@ -286,28 +305,45 @@ export async function buildAzureExpressRouteExpressRouteCircuitConnectionRelatio
           fromKey: expressRouteKey,
           fromType: ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type,
           toKey: azureExpressRouteCircuitConnectionEntity._key,
-          toType: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._type,
+          toType:
+            ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._type,
         }),
       );
     },
   );
 }
 
-export async function buildAzureExpressRouteCircuitExpressRouteCircuitConnectionRelation(executionContext: IntegrationStepContext) {
+export async function buildAzureExpressRouteCircuitExpressRouteCircuitConnectionRelation(
+  executionContext: IntegrationStepContext,
+) {
   {
     {
       const { jobState } = executionContext;
       await jobState.iterateEntities(
-        { _type: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._type },
+        {
+          _type:
+            ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._type,
+        },
         async (azureExpressRouteCircuitConnectionEntity) => {
           // Find the index of the segment after expressRouteCircuits
-          const endIndex = azureExpressRouteCircuitConnectionEntity._key.indexOf('/expressRouteCircuits') + '/expressRouteCircuits'.length;
+          const endIndex =
+            azureExpressRouteCircuitConnectionEntity._key.indexOf(
+              '/expressRouteCircuits',
+            ) + '/expressRouteCircuits'.length;
 
           // Find the index of the next '/' after expressRouteCircuits
-          const nextSlashIndex = azureExpressRouteCircuitConnectionEntity._key.indexOf('/', endIndex + 1);
+          const nextSlashIndex =
+            azureExpressRouteCircuitConnectionEntity._key.indexOf(
+              '/',
+              endIndex + 1,
+            );
 
           // Extract the substring up to the next '/' after expressRouteCircuits
-          const expressRouteCircuitEntityKey = azureExpressRouteCircuitConnectionEntity._key.substring(0, nextSlashIndex);
+          const expressRouteCircuitEntityKey =
+            azureExpressRouteCircuitConnectionEntity._key.substring(
+              0,
+              nextSlashIndex,
+            );
 
           if (!jobState.hasKey(expressRouteCircuitEntityKey)) {
             throw new IntegrationMissingKeyError(
@@ -320,7 +356,9 @@ export async function buildAzureExpressRouteCircuitExpressRouteCircuitConnection
               fromKey: expressRouteCircuitEntityKey,
               fromType: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT._type,
               toKey: azureExpressRouteCircuitConnectionEntity._key,
-              toType: ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION._type,
+              toType:
+                ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION
+                  ._type,
             }),
           );
         },
@@ -367,7 +405,9 @@ export async function buildAzureExpressRouteApplicationGatewayRelation(
   }
 }
 
-export async function buildAzureBgpServiceCommunitiesAzureExpressRouteRelation(executionContext: IntegrationStepContext) {
+export async function buildAzureBgpServiceCommunitiesAzureExpressRouteRelation(
+  executionContext: IntegrationStepContext,
+) {
   const { instance, jobState } = executionContext;
   const expressRouteKey = getazureExpressRouteKey(
     instance.id,
@@ -398,7 +438,6 @@ export async function buildAzureBgpServiceCommunitiesAzureExpressRouteRelation(e
       );
     },
   );
-
 }
 
 export async function fetchAzureExpressRouteCircuitConnection(
@@ -417,12 +456,13 @@ export async function fetchAzureExpressRouteCircuitConnection(
       await client.iterateExpressRouteCircuitConnection(
         resourceGroups,
         circuitName,
-        "AzurePrivatePeering",
+        'AzurePrivatePeering',
         async (routeCircuitConnection) => {
-          const routeCircuitConnectionEntity = createAzureExpressRouteCircuitConnectionEntity(
-            webLinker,
-            routeCircuitConnection,
-          );
+          const routeCircuitConnectionEntity =
+            createAzureExpressRouteCircuitConnectionEntity(
+              webLinker,
+              routeCircuitConnection,
+            );
           await jobState.addEntity(routeCircuitConnectionEntity);
         },
       );
@@ -468,10 +508,11 @@ export async function fetchAzurePeerExpressRouteConnection(
         resourceGroups,
         circuitName,
         async (peerConnection) => {
-          const peerConnectionEntity = createAzurePeerExpressRouteCircuitConnectionEntity(
-            webLinker,
-            peerConnection,
-          );
+          const peerConnectionEntity =
+            createAzurePeerExpressRouteCircuitConnectionEntity(
+              webLinker,
+              peerConnection,
+            );
           await jobState.addEntity(peerConnectionEntity);
         },
       );
@@ -494,7 +535,7 @@ export async function fetchAzureBgpServiceCommunities(
     const bgpServiceCommunityEntity = createAzureBgpServiceCommunitiesEntity(
       webLinker,
       bgpServiceCommunity,
-      subscriptionKey
+      subscriptionKey,
     );
     await jobState.addEntity(bgpServiceCommunityEntity);
   });
@@ -523,8 +564,7 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     id: STEP_AZURE_EXPRESS_ROUTE_CIRCUIT,
     name: 'Express Route Circuit',
     entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT],
-    relationships: [
-    ],
+    relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
     executionHandler: fetchAzureExpressRouteCircuit,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
@@ -569,8 +609,12 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     relationships: [
       ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
     ],
-    dependsOn: [STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION, STEP_AZURE_EXPRESS_ROUTE],
-    executionHandler: buildAzureExpressRoutePeerExpressRouteCircuitConnectionRelation,
+    dependsOn: [
+      STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
+      STEP_AZURE_EXPRESS_ROUTE,
+    ],
+    executionHandler:
+      buildAzureExpressRoutePeerExpressRouteCircuitConnectionRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },
   {
@@ -580,8 +624,12 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     relationships: [
       ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
     ],
-    dependsOn: [STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION, STEP_AZURE_EXPRESS_ROUTE_CIRCUIT],
-    executionHandler: buildAzureExpressRouteCircuitPeerExpressRouteCircuitConnectionRelation,
+    dependsOn: [
+      STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
+      STEP_AZURE_EXPRESS_ROUTE_CIRCUIT,
+    ],
+    executionHandler:
+      buildAzureExpressRouteCircuitPeerExpressRouteCircuitConnectionRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },
   {
@@ -602,7 +650,10 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     relationships: [
       ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
     ],
-    dependsOn: [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT, STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION],
+    dependsOn: [
+      STEP_AZURE_EXPRESS_ROUTE_CIRCUIT,
+      STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
+    ],
     executionHandler:
       buildAzureExpressRouteCircuitExpressRouteCircuitConnectionRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
@@ -614,7 +665,10 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     relationships: [
       ExpressRouteRelationships.AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
     ],
-    dependsOn: [STEP_AZURE_EXPRESS_ROUTE, STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION],
+    dependsOn: [
+      STEP_AZURE_EXPRESS_ROUTE,
+      STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION,
+    ],
     executionHandler:
       buildAzureExpressRouteExpressRouteCircuitConnectionRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
@@ -670,7 +724,9 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     id: STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION,
     name: 'Build Azure Bgp Service Communities and Azure Express Route Relation',
     entities: [],
-    relationships: [ExpressRouteRelationships.AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE],
+    relationships: [
+      ExpressRouteRelationships.AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE,
+    ],
     dependsOn: [STEP_AZURE_BGP_SERVICE_COMMUNITIES, STEP_AZURE_EXPRESS_ROUTE],
     executionHandler: buildAzureBgpServiceCommunitiesAzureExpressRouteRelation,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,

@@ -9,7 +9,6 @@ import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
 import { KeyVaultEntities } from '../key-vault/constants';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 
-
 export const STEP_EVENT_HUB_KEYS = 'rm-azure-event-hub-key';
 export const STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION =
   'rm-event-hub-keys-uses-azure-key-vault-relation';
@@ -139,9 +138,8 @@ export const EventHubRelationships = {
   },
 };
 
-
 export const EventHubMappedRelationships: Record<
-  | 'AZURE_EVENT_HUB_HAS_LOCATION',
+  'AZURE_EVENT_HUB_HAS_LOCATION',
   StepMappedRelationshipMetadata
 > = {
   AZURE_EVENT_HUB_HAS_LOCATION: {
@@ -151,4 +149,4 @@ export const EventHubMappedRelationships: Record<
     targetType: subscriptionEntities.LOCATION._type,
     direction: RelationshipDirection.FORWARD,
   },
-}
+};

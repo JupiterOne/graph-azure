@@ -56,7 +56,8 @@ export function createWorkspaceEntity(
  */
 export function createSynapseServiceEntity(
   instnaceId: string,
-  subscriptionKey,): Entity {
+  subscriptionKey,
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: undefined,

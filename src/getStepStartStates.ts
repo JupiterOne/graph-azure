@@ -137,12 +137,15 @@ import { MonitorSteps } from './steps/resource-manager/monitor/constants';
 import { AppServiceSteps } from './steps/resource-manager/appservice/constants';
 import { PolicyInsightSteps } from './steps/resource-manager/policy-insights/constants';
 import { ManagementGroupSteps } from './steps/resource-manager/management-groups/constants';
-import { STEP_RM_CONTAINER_SERVICES_CLUSTERS, Steps } from './steps/resource-manager/container-services/constants';
+import {
+  STEP_RM_CONTAINER_SERVICES_CLUSTERS,
+  Steps,
+} from './steps/resource-manager/container-services/constants';
 import { FrontDoorStepIds } from './steps/resource-manager/frontdoor/constants';
 import { J1SubscriptionClient } from './steps/resource-manager/subscriptions/client';
 import {
   STEP_AZURE_APPLICATION_SECURITY_GROUP,
-  STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION
+  STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION,
 } from './steps/resource-manager/application-security-group/constants';
 import {
   STEP_AZURE_APPLICATION_GATEWAY,
@@ -200,9 +203,7 @@ export function getActiveDirectorySteps(): GetApiSteps {
 
 export function getManagementGroupSteps(): GetApiSteps {
   return {
-    executeFirstSteps: [
-      ManagementGroupSteps.MANAGEMENT_GROUPS
-    ],
+    executeFirstSteps: [ManagementGroupSteps.MANAGEMENT_GROUPS],
     executeLastSteps: [],
   };
 }

@@ -17,7 +17,7 @@ export async function authenticate(
   );
 
   return {
-    credentials: (response.credentials as unknown) as ServiceClientCredentials,
+    credentials: response.credentials as unknown as ServiceClientCredentials,
     subscriptionId: config.subscriptionId!,
   };
 }
@@ -30,14 +30,15 @@ export async function authenticate(
 export async function loginWithServicePrincipalSecretWithAuthResponse(
   config: IntegrationConfig,
 ): Promise<msRestNodeAuth.AuthResponse> {
-  const response = await msRestNodeAuth.loginWithServicePrincipalSecretWithAuthResponse(
-    config.clientId,
-    config.clientSecret,
-    config.directoryId,
-    {
-      tokenAudience: 'https://management.azure.com/',
-    },
-  );
+  const response =
+    await msRestNodeAuth.loginWithServicePrincipalSecretWithAuthResponse(
+      config.clientId,
+      config.clientSecret,
+      config.directoryId,
+      {
+        tokenAudience: 'https://management.azure.com/',
+      },
+    );
 
   return response;
 }

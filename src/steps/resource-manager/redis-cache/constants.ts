@@ -23,9 +23,10 @@ export const RedisCacheEntities = {
 };
 
 export const RedisCacheRelationships = {
-  RESOURCE_GROUP_HAS_REDIS_CACHE: createResourceGroupResourceRelationshipMetadata(
-    RedisCacheEntities.CACHE._type,
-  ),
+  RESOURCE_GROUP_HAS_REDIS_CACHE:
+    createResourceGroupResourceRelationshipMetadata(
+      RedisCacheEntities.CACHE._type,
+    ),
 
   REDIS_CACHE_HAS_FIREWALL_RULE: {
     _type: generateRelationshipType(

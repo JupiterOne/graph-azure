@@ -213,8 +213,8 @@ export async function fetchVirtualMachines(
     const resourceGroupName = getResourceGroupName(vm.id || '') as string;
     const networkInterfaces = vm.networkProfile?.networkInterfaces || [];
     for (const nicRef of networkInterfaces) {
-      const nicId = nicRef.id?.split("/").pop(); 
-      if (nicId) { 
+      const nicId = nicRef.id?.split('/').pop();
+      if (nicId) {
         const asgs = await client.getASGs(resourceGroupName, nicId);
         asgsArray.push(asgs); // Store each value of asgs in an array
       }

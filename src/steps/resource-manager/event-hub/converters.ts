@@ -4,7 +4,13 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
 import { EventHubEntities } from './constants';
-import { Cluster, ConsumerGroup, EHNamespace, Eventhub, KeyVaultProperties } from '@azure/arm-eventhub';
+import {
+  Cluster,
+  ConsumerGroup,
+  EHNamespace,
+  Eventhub,
+  KeyVaultProperties,
+} from '@azure/arm-eventhub';
 
 export function createEventHubNamespaceEntity(
   webLinker: AzureWebLinker,
@@ -108,7 +114,7 @@ export function createAzureEventHubClusterEntity(
         id: data.id,
         name: data.name,
         location: data.location,
-        createdOn: data.createdAt? parseInt(data.createdAt): 0,
+        createdOn: data.createdAt ? parseInt(data.createdAt) : 0,
         metricId: data.metricId,
         status: data.status,
         type: data.type,
@@ -117,7 +123,10 @@ export function createAzureEventHubClusterEntity(
   });
 }
 
-export function createAzureEventHubKeysEntity(data: KeyVaultProperties, namespaceId): Entity {
+export function createAzureEventHubKeysEntity(
+  data: KeyVaultProperties,
+  namespaceId,
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -129,7 +138,7 @@ export function createAzureEventHubKeysEntity(data: KeyVaultProperties, namespac
         name: data.keyName,
         id: data.keyName,
         keyVaultUri: data.keyVaultUri,
-        keyVersion: data.keyVersion
+        keyVersion: data.keyVersion,
       },
     },
   });

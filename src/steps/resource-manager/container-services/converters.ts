@@ -34,7 +34,7 @@ function getEntityFromId(id: string, entityName, logger): string {
     }
   } catch (error) {
     logger.error('Error:', error.message);
-    return ''; 
+    return '';
   }
 }
 
@@ -68,7 +68,11 @@ export function createClusterEntity(
         enablePodSecurityPolicy: data.enablePodSecurityPolicy,
         disableLocalAccounts: data.disableLocalAccounts,
         webLink: webLinker.portalResourceUrl(data.id),
-        resourceGroupName: getEntityFromId(data.id as string, 'resourcegroups', logger),
+        resourceGroupName: getEntityFromId(
+          data.id as string,
+          'resourcegroups',
+          logger,
+        ),
       },
     },
   });
@@ -113,7 +117,7 @@ export function createAccessRoleEntity(
         // rules: data.rules?.toString(),
         sourceResourceType: data.sourceResourceType,
         webLink: webLinker.portalResourceUrl(data.name),
-        locationName: locationName
+        locationName: locationName,
       },
     },
   });
@@ -144,7 +148,11 @@ export function createRoleBindingEntity(
         lastModifiedByType: data.systemData?.lastModifiedByType,
         type: data.type,
         webLink: webLinker.portalResourceUrl(data.id),
-        clusterName: getEntityFromId(data.id as string, 'managedClusters', logger),
+        clusterName: getEntityFromId(
+          data.id as string,
+          'managedClusters',
+          logger,
+        ),
       },
     },
   });

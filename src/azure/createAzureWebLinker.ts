@@ -12,7 +12,8 @@ import { AzureWebLinker } from './types';
  *
  *   "/subscriptions/dccea45f-7035-4a17-8731-1fd46aaa74a0/resourceGroups/j1dev/providers/Microsoft.Storage/storageAccounts/j1dev/blobServices/default/containers/bootdiagnostics-j1dev-58e204bf-f42b-4fdf-ac34-37409045a752"
  */
-const blobStorageId = /(\/subscriptions\/.+\/resourceGroups\/.+\/providers\/Microsoft.Storage\/storageAccounts\/.+)\/blobServices\/.+\/containers\/(.+)/;
+const blobStorageId =
+  /(\/subscriptions\/.+\/resourceGroups\/.+\/providers\/Microsoft.Storage\/storageAccounts\/.+)\/blobServices\/.+\/containers\/(.+)/;
 
 export default function createAzureWebLinker(
   defaultDomain: string | undefined,

@@ -41,7 +41,7 @@ export async function fetchClusters(
   const client = new ContainerServicesClient(instance.config, logger);
 
   await client.iterateClusters(instance.config, async (cluster) => {
-    const clusterEntity = createClusterEntity(logger,webLinker, cluster);
+    const clusterEntity = createClusterEntity(logger, webLinker, cluster);
     await jobState.addEntity(clusterEntity);
 
     await createResourceGroupResourceRelationship(
@@ -84,8 +84,9 @@ export async function fetchMaintenanceConfigurations(
   );
 }
 
-export async function fetchRoleBindings(  executionContext: IntegrationStepContext,
-) :Promise<void> {
+export async function fetchRoleBindings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
   const { instance, logger, jobState } = executionContext;
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
@@ -105,12 +106,12 @@ export async function fetchRoleBindings(  executionContext: IntegrationStepConte
           );
           if (!jobState.hasKey(rolebindingEntity._key)) {
             await jobState.addEntity(rolebindingEntity);
-          }    
+          }
           const relationship = createMappedRelationship({
             _key: generateRelationshipKey(rolebindingEntity._key),
             _type:
               ContainerServiceMappedRelationships
-            .ROLE_BINDING_IS_KUBERNETES_CLUSTER_ROLE_BINDING._type,
+                .ROLE_BINDING_IS_KUBERNETES_CLUSTER_ROLE_BINDING._type,
             _class: RelationshipClass.IS,
             _mapping: {
               sourceEntityKey: rolebindingEntity._key,
@@ -123,10 +124,12 @@ export async function fetchRoleBindings(  executionContext: IntegrationStepConte
               targetFilterKeys: [['_class', '_type']],
               skipTargetCreation: true,
             },
-          });    
-          if (!jobState.hasKey(generateRelationshipKey(rolebindingEntity._key))) {
-            await jobState.addRelationship(relationship); 
-          }          
+          });
+          if (
+            !jobState.hasKey(generateRelationshipKey(rolebindingEntity._key))
+          ) {
+            await jobState.addRelationship(relationship);
+          }
         },
       );
     },
@@ -153,7 +156,7 @@ export async function fetchAccessRoles(
       await jobState.addEntity(accessRoleEntity);
 
       const relationship = createMappedRelationship({
-        _key: generateRelationshipKey(accessRoleEntity._key), 
+        _key: generateRelationshipKey(accessRoleEntity._key),
         _type:
           ContainerServiceMappedRelationships
             .TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER._type,
@@ -244,7 +247,6 @@ export async function buildKubernetesClusterRoleBindingRelationship(
           `Build Kubernetes Cluster and Role Binding Relationship: ${kubernetesClusterEntityKey} Missing.`,
         );
       }
-    
     },
   );
 }
@@ -252,7 +254,6 @@ export async function buildKubernetesClusterRoleBindingRelationship(
 function generateRelationshipKey(entityKey: string): string {
   return `${entityKey}|IS|ClusterRole:${entityKey}`;
 }
-
 
 export const containerServicesSteps: AzureIntegrationStep[] = [
   {
@@ -293,7 +294,7 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     id: Steps.ACCESS_ROLE,
     name: 'Fetch Trusted Access Roles',
     entities: [Entities.ACCESS_ROLE],
-    relationships:[],
+    relationships: [],
     mappedRelationships: [
       ContainerServiceMappedRelationships.TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER,
     ],
@@ -304,7 +305,9 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     id: Steps.ROLE_BINDING,
     name: 'Fetch Role Bindings',
     entities: [Entities.ROLE_BINDING],
-    relationships: [ContainerServiceMappedRelationships.ROLE_BINDING_IS_KUBERNETES_CLUSTER_ROLE_BINDING,],
+    relationships: [
+      ContainerServiceMappedRelationships.ROLE_BINDING_IS_KUBERNETES_CLUSTER_ROLE_BINDING,
+    ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CONTAINER_SERVICES_CLUSTERS],
     executionHandler: fetchRoleBindings,
   },

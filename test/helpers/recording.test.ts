@@ -117,19 +117,15 @@ test('should not re-record azure resource-manager API calls that use an explicit
   const recordingName = 'matchRequestsBy-resource-manager-explicit-resource-id';
   // Record using valid credentials for IntegrationConfig
   recording = setupMatchRequestRecording(recordingName, configFromEnv);
-  const {
-    keyVaults,
-    diagnosticSettings,
-  } = await getKeyVaultsAndDiagnosticSettings(configFromEnv);
+  const { keyVaults, diagnosticSettings } =
+    await getKeyVaultsAndDiagnosticSettings(configFromEnv);
   await recording.stop();
 
   // Now setup recording using `mockInstanceConfig`. Even with different arguments,
   // the tests should pass if the recording matches.
   recording = setupMatchRequestRecording(recordingName, mockInstanceConfig);
-  const {
-    keyVaults: badKeyVaults,
-    diagnosticSettings: badDiagnosticSettings,
-  } = await getKeyVaultsAndDiagnosticSettings(mockInstanceConfig);
+  const { keyVaults: badKeyVaults, diagnosticSettings: badDiagnosticSettings } =
+    await getKeyVaultsAndDiagnosticSettings(mockInstanceConfig);
   await recording.stop();
 
   expect(keyVaults).toEqual(badKeyVaults);

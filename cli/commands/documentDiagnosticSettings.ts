@@ -64,9 +64,10 @@ async function executeDocumentAction(
   );
   log.info('\nExisting documentation file successfully loaded!\n');
 
-  const newGeneratedDocumentationSection = generateDiagnosticSettingsDocumentationFromMetadata(
-    diagnosticSettingsRelationships,
-  );
+  const newGeneratedDocumentationSection =
+    generateDiagnosticSettingsDocumentationFromMetadata(
+      diagnosticSettingsRelationships,
+    );
 
   log.info('\nGenerated integration documentation section:');
   log.info('---------------------------------------------\n');

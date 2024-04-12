@@ -4,9 +4,8 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-export type IntegrationStepContext = IntegrationStepExecutionContext<
-  IntegrationConfig
->;
+export type IntegrationStepContext =
+  IntegrationStepExecutionContext<IntegrationConfig>;
 
 /**
  * Properties provided by the `IntegrationInstance.config`. Values identifying

@@ -97,7 +97,7 @@ export function createVirtualMachineEntity(
     ),
     hostname: null,
     webLink: webLinker.portalResourceUrl(data.id),
-    applicationSecurityGroup: asgs
+    applicationSecurityGroup: asgs,
   };
 
   assignTags(entity, data.tags);

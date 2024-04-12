@@ -244,9 +244,6 @@ export async function fetchVirtualMachines(
       instanceView,
     );
     await jobState.addEntity(virtualMachineEntity);
-
-    // console.log("virtualMachineEntity===", virtualMachineEntity)
-
     await createResourceGroupResourceRelationship(
       executionContext,
       virtualMachineEntity,

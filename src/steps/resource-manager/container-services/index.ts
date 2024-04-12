@@ -41,7 +41,7 @@ export async function fetchClusters(
   const client = new ContainerServicesClient(instance.config, logger);
 
   await client.iterateClusters(instance.config, async (cluster) => {
-    const clusterEntity = createClusterEntity(webLinker, cluster);
+    const clusterEntity = createClusterEntity(logger,webLinker, cluster);
     await jobState.addEntity(clusterEntity);
 
     await createResourceGroupResourceRelationship(
@@ -99,6 +99,7 @@ export async function fetchRoleBindings(  executionContext: IntegrationStepConte
         clusterEntity as unknown as { name: string; id: string },
         async (rolebinding) => {
           const rolebindingEntity = createRoleBindingEntity(
+            logger,
             webLinker,
             rolebinding,
           );
@@ -106,7 +107,7 @@ export async function fetchRoleBindings(  executionContext: IntegrationStepConte
             await jobState.addEntity(rolebindingEntity);
           }    
           const relationship = createMappedRelationship({
-            _key: `${rolebindingEntity._key}|IS|ClusterRole:${rolebindingEntity._key}`,
+            _key: generateRelationshipKey(rolebindingEntity._key),
             _type:
               ContainerServiceMappedRelationships
             .ROLE_BINDING_IS_KUBERNETES_CLUSTER_ROLE_BINDING._type,
@@ -123,9 +124,9 @@ export async function fetchRoleBindings(  executionContext: IntegrationStepConte
               skipTargetCreation: true,
             },
           });    
-          if (!jobState.hasKey(`${rolebindingEntity._key}|IS|ClusterRole:${rolebindingEntity._key}`)) {
+          if (!jobState.hasKey(generateRelationshipKey(rolebindingEntity._key))) {
             await jobState.addRelationship(relationship); 
-          } 
+          }          
         },
       );
     },
@@ -152,7 +153,7 @@ export async function fetchAccessRoles(
       await jobState.addEntity(accessRoleEntity);
 
       const relationship = createMappedRelationship({
-        _key: `${accessRoleEntity._key}|IS|ClusterRole:${accessRoleEntity._key}`,
+        _key: generateRelationshipKey(accessRoleEntity._key), 
         _type:
           ContainerServiceMappedRelationships
             .TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER._type,
@@ -247,6 +248,11 @@ export async function buildKubernetesClusterRoleBindingRelationship(
     },
   );
 }
+
+function generateRelationshipKey(entityKey: string): string {
+  return `${entityKey}|IS|ClusterRole:${entityKey}`;
+}
+
 
 export const containerServicesSteps: AzureIntegrationStep[] = [
   {

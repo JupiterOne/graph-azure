@@ -111,7 +111,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
       ...DdosServiceSteps,
       ...eventHubStep,
       ...expressRouteSteps,
-      ...applicationSecurityGroupSteps
+      ...applicationSecurityGroupSteps,
     ],
 
     normalizeGraphObjectKey: (_key) => _key.toLowerCase(),

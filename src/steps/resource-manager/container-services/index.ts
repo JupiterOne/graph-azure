@@ -8,6 +8,7 @@ import { ContainerServicesClient } from './client';
 import {
   createDirectRelationship,
   createMappedRelationship,
+  IntegrationMissingKeyError,
   RelationshipClass,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
@@ -27,6 +28,7 @@ import {
   createAccessRoleEntity,
   createKubernetesServiceEntity,
   getKubernetesServiceKey,
+  createRoleBindingEntity,
 } from './converters';
 import createResourceGroupResourceRelationship from '../utils/createResourceGroupResourceRelationship';
 
@@ -39,7 +41,7 @@ export async function fetchClusters(
   const client = new ContainerServicesClient(instance.config, logger);
 
   await client.iterateClusters(instance.config, async (cluster) => {
-    const clusterEntity = createClusterEntity(webLinker, cluster);
+    const clusterEntity = createClusterEntity(logger, webLinker, cluster);
     await jobState.addEntity(clusterEntity);
 
     await createResourceGroupResourceRelationship(
@@ -82,6 +84,58 @@ export async function fetchMaintenanceConfigurations(
   );
 }
 
+export async function fetchRoleBindings(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { instance, logger, jobState } = executionContext;
+  const accountEntity = await getAccountEntity(jobState);
+  const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const client = new ContainerServicesClient(instance.config, logger);
+
+  await jobState.iterateEntities(
+    { _type: ContainerServicesEntities.KUBERNETES_CLUSTER._type },
+    async (clusterEntity) => {
+      await client.iterateRoleBindings(
+        instance.config,
+        clusterEntity as unknown as { name: string; id: string },
+        async (rolebinding) => {
+          const rolebindingEntity = createRoleBindingEntity(
+            logger,
+            webLinker,
+            rolebinding,
+          );
+          if (!jobState.hasKey(rolebindingEntity._key)) {
+            await jobState.addEntity(rolebindingEntity);
+          }
+          const relationship = createMappedRelationship({
+            _key: generateRelationshipKey(rolebindingEntity._key),
+            _type:
+              ContainerServiceMappedRelationships
+                .ROLE_BINDING_IS_KUBERNETES_CLUSTER_ROLE_BINDING._type,
+            _class: RelationshipClass.IS,
+            _mapping: {
+              sourceEntityKey: rolebindingEntity._key,
+              relationshipDirection: RelationshipDirection.FORWARD,
+              targetEntity: {
+                _key: `ClusterRoleBinding:${rolebindingEntity._key}`,
+                _class: 'AccessPolicy',
+                _type: 'kube_cluster_role_binding',
+              },
+              targetFilterKeys: [['_class', '_type']],
+              skipTargetCreation: true,
+            },
+          });
+          if (
+            !jobState.hasKey(generateRelationshipKey(rolebindingEntity._key))
+          ) {
+            await jobState.addRelationship(relationship);
+          }
+        },
+      );
+    },
+  );
+}
+
 export async function fetchAccessRoles(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -102,7 +156,7 @@ export async function fetchAccessRoles(
       await jobState.addEntity(accessRoleEntity);
 
       const relationship = createMappedRelationship({
-        _key: `${accessRoleEntity._key}|IS|ClusterRole:${accessRoleEntity._key}`,
+        _key: generateRelationshipKey(accessRoleEntity._key),
         _type:
           ContainerServiceMappedRelationships
             .TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER._type,
@@ -123,6 +177,7 @@ export async function fetchAccessRoles(
     },
   );
 }
+
 export async function kubernetesService(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
@@ -164,6 +219,42 @@ export async function buildKubernetesAccessRoleRelationship(
   );
 }
 
+export async function buildKubernetesClusterRoleBindingRelationship(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+  await jobState.iterateEntities(
+    { _type: Entities.ROLE_BINDING._type },
+    async (rolebindingEntity) => {
+      // Extract substring till the desired part
+      const kubernetesClusterEntityKey = rolebindingEntity._key.substring(
+        0,
+        rolebindingEntity._key.lastIndexOf('/trustedAccessRoleBindings'),
+      );
+      if (jobState.hasKey(kubernetesClusterEntityKey)) {
+        // Check if the kubernetesClusterEntityKey exists
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.CONTAINS,
+            fromKey: kubernetesClusterEntityKey,
+            fromType: ContainerServicesEntities.KUBERNETES_CLUSTER._type,
+            toKey: rolebindingEntity._key,
+            toType: Entities.ROLE_BINDING._type,
+          }),
+        );
+      } else {
+        throw new IntegrationMissingKeyError(
+          `Build Kubernetes Cluster and Role Binding Relationship: ${kubernetesClusterEntityKey} Missing.`,
+        );
+      }
+    },
+  );
+}
+
+function generateRelationshipKey(entityKey: string): string {
+  return `${entityKey}|IS|ClusterRole:${entityKey}`;
+}
+
 export const containerServicesSteps: AzureIntegrationStep[] = [
   {
     id: STEP_RM_CONTAINER_SERVICES_CLUSTERS,
@@ -203,11 +294,22 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     id: Steps.ACCESS_ROLE,
     name: 'Fetch Trusted Access Roles',
     entities: [Entities.ACCESS_ROLE],
-    relationships: [
+    relationships: [],
+    mappedRelationships: [
       ContainerServiceMappedRelationships.TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER,
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CONTAINER_SERVICES_CLUSTERS],
     executionHandler: fetchAccessRoles,
+  },
+  {
+    id: Steps.ROLE_BINDING,
+    name: 'Fetch Role Bindings',
+    entities: [Entities.ROLE_BINDING],
+    relationships: [
+      ContainerServiceMappedRelationships.ROLE_BINDING_IS_KUBERNETES_CLUSTER_ROLE_BINDING,
+    ],
+    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CONTAINER_SERVICES_CLUSTERS],
+    executionHandler: fetchRoleBindings,
   },
   {
     id: Steps.KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE,
@@ -216,5 +318,13 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     relationships: [Relationships.KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE],
     dependsOn: [Steps.ACCESS_ROLE, Steps.KUBERNETES_SERVICE],
     executionHandler: buildKubernetesAccessRoleRelationship,
+  },
+  {
+    id: Steps.MANAGED_CLUSTER_CONTAINS_ROLE_BINDING,
+    name: 'Kubernetes Service Contains Role Binding',
+    entities: [],
+    relationships: [Relationships.MANAGED_CLUSTER_CONTAINS_ROLE_BINDING],
+    dependsOn: [STEP_RM_CONTAINER_SERVICES_CLUSTERS, Steps.ROLE_BINDING],
+    executionHandler: buildKubernetesClusterRoleBindingRelationship,
   },
 ];

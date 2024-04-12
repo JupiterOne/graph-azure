@@ -110,12 +110,10 @@ test('step - private dns record sets', async () => {
     instanceConfig,
     entities: [
       {
-        _key:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com',
+        _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com',
         _type: 'azure_private_dns_zone',
         _class: ['DomainZone'],
-        id:
-          '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com',
+        id: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com',
         name: 'jupiterone-dev.com',
       },
     ],
@@ -133,8 +131,7 @@ test('step - private dns record sets', async () => {
 
   expect(context.jobState.collectedRelationships).toEqual([
     {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com/SOA/@',
+      _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com/SOA/@',
       _type: 'azure_private_dns_zone_has_record_set',
       _class: 'HAS',
       _fromEntityKey:
@@ -144,8 +141,7 @@ test('step - private dns record sets', async () => {
       displayName: 'HAS',
     },
     {
-      _key:
-        '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com/A/j1dev',
+      _key: '/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com|has|/subscriptions/d3803fd6-2ba4-4286-80aa-f3d613ad59a7/resourceGroups/j1dev/providers/Microsoft.Network/privateDnsZones/jupiterone-dev.com/A/j1dev',
       _type: 'azure_private_dns_zone_has_record_set',
       _class: 'HAS',
       _fromEntityKey:

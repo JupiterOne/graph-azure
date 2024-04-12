@@ -23,9 +23,8 @@ export const MySQLEntities = {
 };
 
 export const MySQLRelationships = {
-  RESOURCE_GROUP_HAS_MYSQL_SERVER: createResourceGroupResourceRelationshipMetadata(
-    MySQLEntities.SERVER._type,
-  ),
+  RESOURCE_GROUP_HAS_MYSQL_SERVER:
+    createResourceGroupResourceRelationshipMetadata(MySQLEntities.SERVER._type),
 
   MYSQL_SERVER_HAS_MYSQL_DATABASE: {
     _type: generateRelationshipType(

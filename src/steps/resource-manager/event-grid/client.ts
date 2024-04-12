@@ -152,12 +152,8 @@ export class EventGridClient extends Client {
       EventGridManagementClient,
     );
 
-    const {
-      resourceGroupName,
-      topicName,
-      topicType,
-      providerNamespace,
-    } = topicInfo;
+    const { resourceGroupName, topicName, topicType, providerNamespace } =
+      topicInfo;
 
     return iterateAllResources({
       logger: this.logger,

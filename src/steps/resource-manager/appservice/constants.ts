@@ -29,12 +29,14 @@ export const AppServiceRelationships = {
   RESOURCE_GROUP_HAS_WEB_APP: createResourceGroupResourceRelationshipMetadata(
     AppServiceEntities.WEB_APP._type,
   ),
-  RESOURCE_GROUP_HAS_FUNCTION_APP: createResourceGroupResourceRelationshipMetadata(
-    AppServiceEntities.FUNCTION_APP._type,
-  ),
-  RESOURCE_GROUP_HAS_APP_SERVICE_PLAN: createResourceGroupResourceRelationshipMetadata(
-    AppServiceEntities.APP_SERVICE_PLAN._type,
-  ),
+  RESOURCE_GROUP_HAS_FUNCTION_APP:
+    createResourceGroupResourceRelationshipMetadata(
+      AppServiceEntities.FUNCTION_APP._type,
+    ),
+  RESOURCE_GROUP_HAS_APP_SERVICE_PLAN:
+    createResourceGroupResourceRelationshipMetadata(
+      AppServiceEntities.APP_SERVICE_PLAN._type,
+    ),
   WEB_APP_USES_PLAN: {
     _type: 'azure_web_app_uses_app_service_plan',
     sourceType: AppServiceEntities.WEB_APP._type,

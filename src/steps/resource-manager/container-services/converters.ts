@@ -23,7 +23,23 @@ export function getAccessRoleKey(name, location) {
   return `azure_access_role_${name}_location_${location} `;
 }
 
+function getEntityFromId(id: string, entityName, logger): string {
+  try {
+    const parts = id.split('/');
+    const index = parts.indexOf(entityName);
+    if (index !== -1 && index + 1 < parts.length) {
+      return parts[index + 1];
+    } else {
+      throw new Error('Invalid id format');
+    }
+  } catch (error) {
+    logger.error('Error:', error.message);
+    return '';
+  }
+}
+
 export function createClusterEntity(
+  logger,
   webLinker: AzureWebLinker,
   data: ManagedCluster,
 ): Entity {
@@ -45,12 +61,18 @@ export function createClusterEntity(
         kubernetesVersion: data.kubernetesVersion,
         dnsPrefix: data.dnsPrefix,
         fqdn: data.fqdn,
+        adminGroupObjectIDs: data.aadProfile?.adminGroupObjectIDs,
         nodeResourceGroup: data.nodeResourceGroup,
         // 8.5 Enable RBAC within Azure Kubernetes Clusters
         enableRBAC: data.enableRbac,
         enablePodSecurityPolicy: data.enablePodSecurityPolicy,
         disableLocalAccounts: data.disableLocalAccounts,
         webLink: webLinker.portalResourceUrl(data.id),
+        resourceGroupName: getEntityFromId(
+          data.id as string,
+          'resourcegroups',
+          logger,
+        ),
       },
     },
   });
@@ -95,13 +117,14 @@ export function createAccessRoleEntity(
         // rules: data.rules?.toString(),
         sourceResourceType: data.sourceResourceType,
         webLink: webLinker.portalResourceUrl(data.name),
-        locationName: locationName
+        locationName: locationName,
       },
     },
   });
 }
 
 export function createRoleBindingEntity(
+  logger,
   webLinker: AzureWebLinker,
   data: TrustedAccessRoleBinding,
 ): Entity {
@@ -125,6 +148,11 @@ export function createRoleBindingEntity(
         lastModifiedByType: data.systemData?.lastModifiedByType,
         type: data.type,
         webLink: webLinker.portalResourceUrl(data.id),
+        clusterName: getEntityFromId(
+          data.id as string,
+          'managedClusters',
+          logger,
+        ),
       },
     },
   });

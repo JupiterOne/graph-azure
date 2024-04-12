@@ -5,8 +5,9 @@ import {
 import { ApplicationSecurityGroupEntities } from './constants';
 import { ApplicationSecurityGroup } from '@azure/arm-network/esm/models';
 
-
-export function createApplicationSecurityGroupEntity(data: ApplicationSecurityGroup): Entity {
+export function createApplicationSecurityGroupEntity(
+  data: ApplicationSecurityGroup,
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
@@ -24,7 +25,7 @@ export function createApplicationSecurityGroupEntity(data: ApplicationSecurityGr
         etag: data.etag,
         provisioningState: data.provisioningState,
         resourceGuid: data.resourceGuid,
-        type: data.type
+        type: data.type,
       },
     },
   });

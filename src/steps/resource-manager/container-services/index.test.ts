@@ -66,16 +66,15 @@ test('rm-access-role', async () => {
       recordFailedRequests: true,
     },
   });
-  
+
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   const mappedRelationship = stepResults.collectedRelationships.filter(
     (r) =>
-    r._type ===
-    ContainerServiceMappedRelationships
-    .TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER._type,
+      r._type ===
+      ContainerServiceMappedRelationships
+        .TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER._type,
   );
   expect(mappedRelationship.length).toBeGreaterThan(0);
-
 }, 100_000);
 
 test('rm-kubernetes-service', async () => {

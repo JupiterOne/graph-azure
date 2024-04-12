@@ -47,11 +47,12 @@ export class ServiceBusClient extends Client {
             namespace.name,
           );
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.queues.listByNamespaceNext(nextLink);
-        },
+        listNext:
+          /* istanbul ignore next: testing iteration might be difficult */ async (
+            nextLink: string,
+          ) => {
+            return serviceClient.queues.listByNamespaceNext(nextLink);
+          },
       },
       resourceDescription: 'serviceBus.queue',
       callback,
@@ -77,11 +78,12 @@ export class ServiceBusClient extends Client {
             namespace.name,
           );
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.topics.listByNamespaceNext(nextLink);
-        },
+        listNext:
+          /* istanbul ignore next: testing iteration might be difficult */ async (
+            nextLink: string,
+          ) => {
+            return serviceClient.topics.listByNamespaceNext(nextLink);
+          },
       },
       resourceDescription: 'serviceBus.topic',
       callback,
@@ -109,11 +111,12 @@ export class ServiceBusClient extends Client {
             topicName,
           );
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.topics.listByNamespaceNext(nextLink);
-        },
+        listNext:
+          /* istanbul ignore next: testing iteration might be difficult */ async (
+            nextLink: string,
+          ) => {
+            return serviceClient.topics.listByNamespaceNext(nextLink);
+          },
       },
       resourceDescription: 'serviceBus.topic.subscription',
       callback,

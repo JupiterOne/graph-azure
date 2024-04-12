@@ -15,9 +15,11 @@ export function getSubscriptionId(azureResourceId: string | undefined) {
   if (!azureResourceId) return;
 
   if (containsSubscriptionId(azureResourceId)) {
-    return (azureResourceId.match(
-      new RegExp(SUBSCRIPTION_MATCHER, 'i'),
-    ) as RegExpMatchArray)[0];
+    return (
+      azureResourceId.match(
+        new RegExp(SUBSCRIPTION_MATCHER, 'i'),
+      ) as RegExpMatchArray
+    )[0];
   }
 }
 
@@ -36,9 +38,11 @@ function getNonNormalizedResourceGroupId(
   azureResourceId: string,
 ): string | undefined {
   if (containsResourceGroup(azureResourceId)) {
-    return (azureResourceId.match(
-      new RegExp(RESOURCE_GROUP_MATCHER, 'i'),
-    ) as RegExpMatchArray)[0];
+    return (
+      azureResourceId.match(
+        new RegExp(RESOURCE_GROUP_MATCHER, 'i'),
+      ) as RegExpMatchArray
+    )[0];
   }
 }
 
@@ -66,9 +70,7 @@ export function getResourceGroupName(
   azureResourceId: string,
 ): string | undefined {
   if (containsResourceGroup(azureResourceId)) {
-    return (getNonNormalizedResourceGroupId(
-      azureResourceId,
-    ) as string).replace(
+    return (getNonNormalizedResourceGroupId(azureResourceId) as string).replace(
       new RegExp(RESOURCE_GROUP_MATCHER),
       (match, subscriptionId, resourceGroupId, offset, string) =>
         resourceGroupId.toLowerCase(),

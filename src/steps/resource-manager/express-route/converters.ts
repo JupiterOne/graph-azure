@@ -140,7 +140,7 @@ export function createAzureApplicationGatewayEntity(
         provisioningState: data.provisioningState,
         resourceGuid: data.resourceGuid,
         operationalState: data.operationalState,
-        skuName: data.sku?.name
+        skuName: data.sku?.name,
       },
     },
   });
@@ -219,9 +219,9 @@ export function createAzureExpressRouteCircuitEntity(
         id: data.id,
         circuitProvisioningState: data.circuitProvisioningState,
         location: data.location,
-        type: data.type, 
-        serviceKey: data.serviceKey, 
-        etag: data.etag
+        type: data.type,
+        serviceKey: data.serviceKey,
+        etag: data.etag,
       },
     },
   });

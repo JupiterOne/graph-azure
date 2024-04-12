@@ -29,10 +29,10 @@ export const STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RE
 export const STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION =
   'rm-azure-subscription-has-azure-bgp-service-communities-relation';
 export const STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION =
-  'rm-azure-bgp-service-communities-has-azure-express-route-relation'; 
+  'rm-azure-bgp-service-communities-has-azure-express-route-relation';
 export const STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION =
-  'rm-azure-express-route-has-azure-application-gateway-relation'; 
-export const STEP_AZURE_APPLICATION_GATEWAY = 'rm-azure-application-gateway'; 
+  'rm-azure-express-route-has-azure-application-gateway-relation';
+export const STEP_AZURE_APPLICATION_GATEWAY = 'rm-azure-application-gateway';
 
 export const ExpressRouteEntities = {
   AZURE_EXPRESS_ROUTE_CIRCUIT: {
@@ -107,7 +107,7 @@ export const ExpressRouteEntities = {
     schema: {
       properties: {
         CIDR: { exclude: true },
-        internal: { exclude : true },
+        internal: { exclude: true },
       },
     },
     resourceName: 'Azure Application Gateway',

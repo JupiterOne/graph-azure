@@ -64,19 +64,33 @@ export class ComputeClient extends Client {
   }
 
   // Function to retrieve aplication security group associated with a network interface
-  public async getASGs(resourceGroupName: string, nicId: string): Promise<ApplicationSecurityGroup[]> {
+  public async getASGs(
+    resourceGroupName: string,
+    nicId: string,
+  ): Promise<ApplicationSecurityGroup[]> {
     try {
-      const networkClient = await this.getAuthenticatedServiceClient(NetworkManagementClient);
-  
-      const nic = await networkClient.networkInterfaces.get(resourceGroupName, nicId);
-      return nic && nic.ipConfigurations && nic.ipConfigurations[0]?.applicationSecurityGroups || [];
+      const networkClient = await this.getAuthenticatedServiceClient(
+        NetworkManagementClient,
+      );
+
+      const nic = await networkClient.networkInterfaces.get(
+        resourceGroupName,
+        nicId,
+      );
+      return (
+        (nic &&
+          nic.ipConfigurations &&
+          nic.ipConfigurations[0]?.applicationSecurityGroups) ||
+        []
+      );
     } catch (error) {
-      this.logger.error(`Error occurred while retrieving ASGs for NIC ${nicId}:`);
+      this.logger.error(
+        `Error occurred while retrieving ASGs for NIC ${nicId}:`,
+      );
       this.logger.error(error.message);
       return [];
     }
   }
-  
 
   public async iterateVirtualMachineExtensions(
     virtualMachine: {

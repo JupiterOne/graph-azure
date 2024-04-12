@@ -90,46 +90,46 @@ export function createRoutingRuleEntity(
         'routeConfiguration.odatatype':
           routingRule.routeConfiguration?.odatatype,
         // if ForwardingConfiguration
-        'routeConfiguration.customForwardingPath': (routingRule.routeConfiguration as
-          | ForwardingConfiguration
-          | undefined)?.customForwardingPath,
-        'routeConfiguration.forwardingProtocol': (routingRule.routeConfiguration as
-          | ForwardingConfiguration
-          | undefined)?.forwardingProtocol,
-        'routeConfiguration.cacheConfiguration.cacheDuration': (routingRule.routeConfiguration as
-          | ForwardingConfiguration
-          | undefined)?.cacheConfiguration?.cacheDuration,
-        'routeConfiguration.cacheConfiguration.dynamicCompression': (routingRule.routeConfiguration as
-          | ForwardingConfiguration
-          | undefined)?.cacheConfiguration?.dynamicCompression,
-        'routeConfiguration.cacheConfiguration.queryParameterStripDirective': (routingRule.routeConfiguration as
-          | ForwardingConfiguration
-          | undefined)?.cacheConfiguration?.queryParameterStripDirective,
-        'routeConfiguration.cacheConfiguration.queryParameters': (routingRule.routeConfiguration as
-          | ForwardingConfiguration
-          | undefined)?.cacheConfiguration?.queryParameters,
-        'routeConfiguration.cacheConfiguration.backendPoolId': (routingRule.routeConfiguration as
-          | ForwardingConfiguration
-          | undefined)?.backendPool?.id,
+        'routeConfiguration.customForwardingPath': (
+          routingRule.routeConfiguration as ForwardingConfiguration | undefined
+        )?.customForwardingPath,
+        'routeConfiguration.forwardingProtocol': (
+          routingRule.routeConfiguration as ForwardingConfiguration | undefined
+        )?.forwardingProtocol,
+        'routeConfiguration.cacheConfiguration.cacheDuration': (
+          routingRule.routeConfiguration as ForwardingConfiguration | undefined
+        )?.cacheConfiguration?.cacheDuration,
+        'routeConfiguration.cacheConfiguration.dynamicCompression': (
+          routingRule.routeConfiguration as ForwardingConfiguration | undefined
+        )?.cacheConfiguration?.dynamicCompression,
+        'routeConfiguration.cacheConfiguration.queryParameterStripDirective': (
+          routingRule.routeConfiguration as ForwardingConfiguration | undefined
+        )?.cacheConfiguration?.queryParameterStripDirective,
+        'routeConfiguration.cacheConfiguration.queryParameters': (
+          routingRule.routeConfiguration as ForwardingConfiguration | undefined
+        )?.cacheConfiguration?.queryParameters,
+        'routeConfiguration.cacheConfiguration.backendPoolId': (
+          routingRule.routeConfiguration as ForwardingConfiguration | undefined
+        )?.backendPool?.id,
         // if RedirectConfiguration
-        'routeConfiguration.customFragment': (routingRule.routeConfiguration as
-          | RedirectConfiguration
-          | undefined)?.customFragment,
-        'routeConfiguration.customHost': (routingRule.routeConfiguration as
-          | RedirectConfiguration
-          | undefined)?.customHost,
-        'routeConfiguration.customPath': (routingRule.routeConfiguration as
-          | RedirectConfiguration
-          | undefined)?.customPath,
-        'routeConfiguration.customQueryString': (routingRule.routeConfiguration as
-          | RedirectConfiguration
-          | undefined)?.customQueryString,
-        'routeConfiguration.redirectProtocol': (routingRule.routeConfiguration as
-          | RedirectConfiguration
-          | undefined)?.redirectProtocol,
-        'routeConfiguration.redirectType': (routingRule.routeConfiguration as
-          | RedirectConfiguration
-          | undefined)?.redirectType,
+        'routeConfiguration.customFragment': (
+          routingRule.routeConfiguration as RedirectConfiguration | undefined
+        )?.customFragment,
+        'routeConfiguration.customHost': (
+          routingRule.routeConfiguration as RedirectConfiguration | undefined
+        )?.customHost,
+        'routeConfiguration.customPath': (
+          routingRule.routeConfiguration as RedirectConfiguration | undefined
+        )?.customPath,
+        'routeConfiguration.customQueryString': (
+          routingRule.routeConfiguration as RedirectConfiguration | undefined
+        )?.customQueryString,
+        'routeConfiguration.redirectProtocol': (
+          routingRule.routeConfiguration as RedirectConfiguration | undefined
+        )?.redirectProtocol,
+        'routeConfiguration.redirectType': (
+          routingRule.routeConfiguration as RedirectConfiguration | undefined
+        )?.redirectType,
         rulesEngineId: routingRule.rulesEngine?.id,
       },
     },

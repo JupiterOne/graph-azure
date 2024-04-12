@@ -43,9 +43,8 @@ export const entities = {
 };
 
 export const relationships = {
-  RESOURCE_GROUP_HAS_SQL_SERVER: createResourceGroupResourceRelationshipMetadata(
-    entities.SERVER._type,
-  ),
+  RESOURCE_GROUP_HAS_SQL_SERVER:
+    createResourceGroupResourceRelationshipMetadata(entities.SERVER._type),
   SQL_SERVER_HAS_SQL_DATABASE: {
     _type: generateRelationshipType(
       RelationshipClass.HAS,

@@ -21,7 +21,7 @@ import {
 } from './steps/active-directory/constants';
 import { steps as computeSteps } from './steps/resource-manager/compute/constants';
 import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb/constants';
-import {Steps} from './steps/resource-manager/container-services/constants'
+import { Steps } from './steps/resource-manager/container-services/constants';
 import {
   STEP_RM_DATABASE_MARIADB_DATABASES,
   STEP_RM_DATABASE_MARIADB_DATABASES_DIAGNOSTIC_SETTINGS,
@@ -130,10 +130,13 @@ import {
   STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION,
   EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION,
   STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION,
-  EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION
+  EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION,
 } from './steps/resource-manager/event-hub/constants';
-import { STEP_AZURE_APPLICATION_SECURITY_GROUP, STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION } from './steps/resource-manager/application-security-group/constants';
-import { DdosSteps } from './steps/resource-manager/ddos/constant'
+import {
+  STEP_AZURE_APPLICATION_SECURITY_GROUP,
+  STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION,
+} from './steps/resource-manager/application-security-group/constants';
+import { DdosSteps } from './steps/resource-manager/ddos/constant';
 import {
   STEP_AZURE_EXPRESS_ROUTE,
   STEP_AZURE_APPLICATION_GATEWAY,
@@ -148,9 +151,9 @@ import {
   STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION,
   STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION,
   STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION,
-  STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION
-} from './steps/resource-manager/express-route/constants'
-import { SYNAPSE_STEPS } from './steps/resource-manager/synapse/constant'
+  STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION,
+} from './steps/resource-manager/express-route/constants';
+import { SYNAPSE_STEPS } from './steps/resource-manager/synapse/constant';
 import { AdvisorSteps } from './steps/resource-manager/advisor/constants';
 import { SecuritySteps } from './steps/resource-manager/security/constants';
 import { PolicySteps } from './steps/resource-manager/policy/constants';
@@ -316,55 +319,95 @@ describe('getStepStartStates', () => {
       [Steps.ACCESS_ROLE]: { disabled: true },
       [Steps.KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE]: { disabled: true },
       [Steps.KUBERNETES_SERVICE]: { disabled: true },
+      [Steps.ROLE_BINDING]: { disabled: true },
+      [Steps.MANAGED_CLUSTER_CONTAINS_ROLE_BINDING]: { disabled: true },
       [Steps.MAINTENANCE_CONFIGURATION]: { disabled: true },
-      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: {
+        disabled: true,
+      },
       [SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_POLICY]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_RULE]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_KEYS]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE_KEY_RELATIONSHIP]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE_SQL_POOL_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP]: {
+        disabled: true,
+      },
       [SYNAPSE_STEPS.SYNAPSE_SQL_POOL]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP]: {
+        disabled: true,
+      },
+      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP]: {
+        disabled: true,
+      },
       [SYNAPSE_STEPS.SYNAPSE_WORKSPACES]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_KEYS_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP]: {
+        disabled: true,
+      },
+      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: {
+        disabled: true,
+      },
       [STEP_AZURE_EVENT_HUB]: { disabled: true },
       [STEP_AZURE_APPLICATION_SECURITY_GROUP]: { disabled: true },
-      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: { disabled: true },
+      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: {
+        disabled: true,
+      },
       [STEP_EVENT_HUB_CLUSTER]: { disabled: true },
       [STEP_AZURE_CONSUMER_GROUP]: { disabled: true },
       [STEP_EVENT_HUB_KEYS]: { disabled: true },
       [STEP_EVENT_HUB_NAMESPACE]: { disabled: true },
       [STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION]: { disabled: true },
       [EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION]: { disabled: true },
-      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
-      [STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
-      [STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
-      [STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION]: { disabled: true },
+      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: true,
+      },
+      [STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION]: {
+        disabled: true,
+      },
       [STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION]: { disabled: true },
       [EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
       [STEP_AZURE_EXPRESS_ROUTE]: { disabled: true },
-      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION]: { disabled: true },
+      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION]: {
+        disabled: true,
+      },
       [STEP_AZURE_APPLICATION_GATEWAY]: { disabled: true },
       [STEP_AZURE_BGP_SERVICE_COMMUNITIES]: { disabled: true },
-      [STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION]: { disabled: true },
+      [STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION]: {
+        disabled: true,
+      },
       [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT]: { disabled: true },
       [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]: { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]:
+        { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]:
+        { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]:
+        { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]:
+        { disabled: true },
       [STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION]: { disabled: true },
-      [DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP]: { disabled: true },
+      [DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP]: {
+        disabled: true,
+      },
       [DdosSteps.DDOS_PROTECTION_PLAN_VNET_RELATIONSHIP]: { disabled: true },
       [DdosSteps.PROTECTION_PLAN]: { disabled: true },
-      [DdosSteps.RESOURCE_GROUPS_DDOS_PROTECTION_PLAN_RELATIONSHIP]: { disabled: true },
+      [DdosSteps.RESOURCE_GROUPS_DDOS_PROTECTION_PLAN_RELATIONSHIP]: {
+        disabled: true,
+      },
 
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
       [AdvisorSteps.RESOURCE_RECOMMENDATION_RELATIONSHIP]: { disabled: true },
@@ -547,57 +590,97 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [Steps.ACCESS_ROLE]: { disabled: true },
+      [Steps.ROLE_BINDING]: { disabled: true },
+      [Steps.MANAGED_CLUSTER_CONTAINS_ROLE_BINDING]: { disabled: true },
       [Steps.KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE]: { disabled: true },
       [Steps.KUBERNETES_SERVICE]: { disabled: true },
       [Steps.MAINTENANCE_CONFIGURATION]: { disabled: true },
-      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: {
+        disabled: true,
+      },
       [SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_POLICY]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_RULE]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_KEYS]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE_KEY_RELATIONSHIP]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE_SQL_POOL_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP]: {
+        disabled: true,
+      },
       [SYNAPSE_STEPS.SYNAPSE_SQL_POOL]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP]: {
+        disabled: true,
+      },
+      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP]: {
+        disabled: true,
+      },
       [SYNAPSE_STEPS.SYNAPSE_WORKSPACES]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_KEYS_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP]: {
+        disabled: true,
+      },
+      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: {
+        disabled: true,
+      },
       [STEP_AZURE_EVENT_HUB]: { disabled: true },
       [STEP_AZURE_APPLICATION_SECURITY_GROUP]: { disabled: true },
-      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: { disabled: true },
+      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: {
+        disabled: true,
+      },
       [STEP_EVENT_HUB_CLUSTER]: { disabled: true },
       [STEP_AZURE_CONSUMER_GROUP]: { disabled: true },
       [STEP_EVENT_HUB_KEYS]: { disabled: true },
       [STEP_EVENT_HUB_NAMESPACE]: { disabled: true },
       [STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION]: { disabled: true },
       [EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION]: { disabled: true },
-      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
-      [STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
-      [STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
-      [STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION]: { disabled: true },
+      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: true,
+      },
+      [STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION]: {
+        disabled: true,
+      },
       [STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION]: { disabled: true },
       [EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
       [STEP_AZURE_EXPRESS_ROUTE]: { disabled: true },
-      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION]: { disabled: true },
+      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION]: {
+        disabled: true,
+      },
       [STEP_AZURE_APPLICATION_GATEWAY]: { disabled: true },
       [STEP_AZURE_BGP_SERVICE_COMMUNITIES]: { disabled: true },
-      [STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION]: { disabled: true },
+      [STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION]: {
+        disabled: true,
+      },
       [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT]: { disabled: true },
       [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]: { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]:
+        { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]:
+        { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]:
+        { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]:
+        { disabled: true },
       [STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION]: { disabled: true },
-      [DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP]: { disabled: true },
+      [DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP]: {
+        disabled: true,
+      },
       [DdosSteps.DDOS_PROTECTION_PLAN_VNET_RELATIONSHIP]: { disabled: true },
       [DdosSteps.PROTECTION_PLAN]: { disabled: true },
-      [DdosSteps.RESOURCE_GROUPS_DDOS_PROTECTION_PLAN_RELATIONSHIP]: { disabled: true },
+      [DdosSteps.RESOURCE_GROUPS_DDOS_PROTECTION_PLAN_RELATIONSHIP]: {
+        disabled: true,
+      },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
       [AdvisorSteps.RESOURCE_RECOMMENDATION_RELATIONSHIP]: { disabled: true },
       [AdvisorSteps.ASSESSMENT_RECOMMENDATION_RELATIONSHIP]: { disabled: true },
@@ -788,57 +871,99 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: false },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: false },
       [Steps.ACCESS_ROLE]: { disabled: false },
+      [Steps.ROLE_BINDING]: { disabled: true },
+      [Steps.MANAGED_CLUSTER_CONTAINS_ROLE_BINDING]: { disabled: true },
       [Steps.KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE]: { disabled: false },
       [Steps.KUBERNETES_SERVICE]: { disabled: false },
       [Steps.MAINTENANCE_CONFIGURATION]: { disabled: false },
-      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: false },
+      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: {
+        disabled: false,
+      },
       [SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_POLICY]: { disabled: false },
       [SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_RULE]: { disabled: false },
       [SYNAPSE_STEPS.SYNAPSE_KEYS]: { disabled: false },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE]: { disabled: false },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE_KEY_RELATIONSHIP]: { disabled: false },
-      [SYNAPSE_STEPS.SYNAPSE_SERVICE_SQL_POOL_RELATIONSHIP]: { disabled: false },
-      [SYNAPSE_STEPS.SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP]: { disabled: false },
+      [SYNAPSE_STEPS.SYNAPSE_SERVICE_SQL_POOL_RELATIONSHIP]: {
+        disabled: false,
+      },
+      [SYNAPSE_STEPS.SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP]: {
+        disabled: false,
+      },
       [SYNAPSE_STEPS.SYNAPSE_SQL_POOL]: { disabled: false },
-      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP]: { disabled: false },
-      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP]: { disabled: false },
+      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP]: {
+        disabled: false,
+      },
+      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP]: {
+        disabled: false,
+      },
       [SYNAPSE_STEPS.SYNAPSE_WORKSPACES]: { disabled: false },
       [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_KEYS_RELATIONSHIP]: { disabled: false },
-      [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP]: { disabled: false },
-      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: false },
+      [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP]: {
+        disabled: false,
+      },
+      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: {
+        disabled: false,
+      },
       [STEP_AZURE_EVENT_HUB]: { disabled: false },
       [STEP_AZURE_APPLICATION_SECURITY_GROUP]: { disabled: false },
-      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: { disabled: false },
+      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: {
+        disabled: false,
+      },
       [STEP_EVENT_HUB_CLUSTER]: { disabled: false },
       [STEP_AZURE_CONSUMER_GROUP]: { disabled: false },
       [STEP_EVENT_HUB_KEYS]: { disabled: false },
       [STEP_EVENT_HUB_NAMESPACE]: { disabled: false },
       [STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION]: { disabled: false },
       [EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION]: { disabled: false },
-      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: false },
-      [STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: false },
-      [STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: false },
-      [STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION]: { disabled: false },
+      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: false,
+      },
+      [STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: false,
+      },
+      [STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: false,
+      },
+      [STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION]: {
+        disabled: false,
+      },
       [STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION]: { disabled: false },
       [EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: false },
       [STEP_AZURE_EXPRESS_ROUTE]: { disabled: false },
-      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION]: { disabled: false },
+      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION]: {
+        disabled: false,
+      },
       [STEP_AZURE_APPLICATION_GATEWAY]: { disabled: false },
       [STEP_AZURE_BGP_SERVICE_COMMUNITIES]: { disabled: false },
-      [STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION]: { disabled: false },
+      [STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION]: {
+        disabled: false,
+      },
       [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT]: { disabled: false },
       [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION]: { disabled: false },
-      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]: { disabled: false },
-      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]: { disabled: false },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION]: { disabled: false },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]: { disabled: false },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION]: { disabled: false },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]: { disabled: false },
+      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]:
+        { disabled: false },
+      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]:
+        { disabled: false },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION]: {
+        disabled: false,
+      },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]:
+        { disabled: false },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION]: {
+        disabled: false,
+      },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]:
+        { disabled: false },
       [STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION]: { disabled: false },
-      [DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP]: { disabled: false },
+      [DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP]: {
+        disabled: false,
+      },
       [DdosSteps.DDOS_PROTECTION_PLAN_VNET_RELATIONSHIP]: { disabled: false },
       [DdosSteps.PROTECTION_PLAN]: { disabled: false },
-      [DdosSteps.RESOURCE_GROUPS_DDOS_PROTECTION_PLAN_RELATIONSHIP]: { disabled: false },
+      [DdosSteps.RESOURCE_GROUPS_DDOS_PROTECTION_PLAN_RELATIONSHIP]: {
+        disabled: false,
+      },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: false },
       [AdvisorSteps.RESOURCE_RECOMMENDATION_RELATIONSHIP]: { disabled: false },
       [AdvisorSteps.ASSESSMENT_RECOMMENDATION_RELATIONSHIP]: {
@@ -1024,57 +1149,97 @@ describe('getStepStartStates', () => {
       [STEP_RM_EVENT_GRID_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [STEP_RM_EVENT_GRID_DOMAIN_TOPIC_SUBSCRIPTIONS]: { disabled: true },
       [Steps.ACCESS_ROLE]: { disabled: true },
+      [Steps.ROLE_BINDING]: { disabled: true },
+      [Steps.MANAGED_CLUSTER_CONTAINS_ROLE_BINDING]: { disabled: true },
       [Steps.KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE]: { disabled: true },
       [Steps.KUBERNETES_SERVICE]: { disabled: true },
       [Steps.MAINTENANCE_CONFIGURATION]: { disabled: true },
-      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: {
+        disabled: true,
+      },
       [SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_POLICY]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_DATA_MASKING_RULE]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_KEYS]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE_KEY_RELATIONSHIP]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_SERVICE_SQL_POOL_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.SYNAPSE_SERVICE_WORKSPACE_RELATIONSHIP]: {
+        disabled: true,
+      },
       [SYNAPSE_STEPS.SYNAPSE_SQL_POOL]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_POLICY_RELATIONSHIP]: {
+        disabled: true,
+      },
+      [SYNAPSE_STEPS.SYNAPSE_SQL_POOL_DATA_MASKING_RULE_RELATIONSHIP]: {
+        disabled: true,
+      },
       [SYNAPSE_STEPS.SYNAPSE_WORKSPACES]: { disabled: true },
       [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_KEYS_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP]: { disabled: true },
-      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: { disabled: true },
+      [SYNAPSE_STEPS.SYNAPSE_WORKSPACE_SQL_POOL_RELATIONSHIP]: {
+        disabled: true,
+      },
+      [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: {
+        disabled: true,
+      },
       [STEP_AZURE_EVENT_HUB]: { disabled: true },
       [STEP_AZURE_APPLICATION_SECURITY_GROUP]: { disabled: true },
-      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: { disabled: true },
+      [STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION]: {
+        disabled: true,
+      },
       [STEP_EVENT_HUB_CLUSTER]: { disabled: true },
       [STEP_AZURE_CONSUMER_GROUP]: { disabled: true },
       [STEP_EVENT_HUB_KEYS]: { disabled: true },
       [STEP_EVENT_HUB_NAMESPACE]: { disabled: true },
       [STEP_AZURE_EVENT_HUB_HAS_LOCATION_RELATION]: { disabled: true },
       [EVENT_HUB_NAMESPACE_HAS_EVENT_HUB_KEY_RELATION]: { disabled: true },
-      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
-      [STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
-      [STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
-      [STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION]: { disabled: true },
+      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_CONSUMER_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: {
+        disabled: true,
+      },
+      [STEP_EVENT_HUB_CLUSTER_ASSIGNED_EVENT_HUB_NAMESPACE_RELATION]: {
+        disabled: true,
+      },
       [STEP_EVENT_HUB_KEYS_USES_AZURE_KEY_VAULT_RELATION]: { disabled: true },
       [EVENT_HUB_NAMESPACE_HAS_AZURE_EVENT_HUB_RELATION]: { disabled: true },
       [STEP_AZURE_EXPRESS_ROUTE]: { disabled: true },
-      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION]: { disabled: true },
+      [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_BGP_SERVICE_COMMUNITIES_RELATION]: {
+        disabled: true,
+      },
       [STEP_AZURE_APPLICATION_GATEWAY]: { disabled: true },
       [STEP_AZURE_BGP_SERVICE_COMMUNITIES]: { disabled: true },
-      [STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION]: { disabled: true },
+      [STEP_AZURE_BGP_SERVICE_COMMUNITIES_HAS_AZURE_EXPRESS_ROUTE_RELATION]: {
+        disabled: true,
+      },
       [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT]: { disabled: true },
       [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION]: { disabled: true },
-      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]: { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]:
+        { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_CIRCUIT_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]:
+        { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_APPLICATION_GATEWAY_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION_RELATION]:
+        { disabled: true },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_EXPRESS_ROUTE_CIRCUIT_RELATION]: {
+        disabled: true,
+      },
+      [STEP_AZURE_EXPRESS_ROUTE_HAS_AZURE_PEER_EXPRESS_ROUTE_CONNECTION_RELATION]:
+        { disabled: true },
       [STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION]: { disabled: true },
-      [DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP]: { disabled: true },
+      [DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP]: {
+        disabled: true,
+      },
       [DdosSteps.DDOS_PROTECTION_PLAN_VNET_RELATIONSHIP]: { disabled: true },
       [DdosSteps.PROTECTION_PLAN]: { disabled: true },
-      [DdosSteps.RESOURCE_GROUPS_DDOS_PROTECTION_PLAN_RELATIONSHIP]: { disabled: true },
+      [DdosSteps.RESOURCE_GROUPS_DDOS_PROTECTION_PLAN_RELATIONSHIP]: {
+        disabled: true,
+      },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
       [AdvisorSteps.RESOURCE_RECOMMENDATION_RELATIONSHIP]: { disabled: true },
       [AdvisorSteps.ASSESSMENT_RECOMMENDATION_RELATIONSHIP]: { disabled: true },

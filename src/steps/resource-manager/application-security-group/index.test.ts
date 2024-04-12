@@ -7,7 +7,7 @@ import {
   setupAzureRecording,
   getMatchRequestsBy,
 } from '../../../../test/helpers/recording';
-import { STEP_AZURE_APPLICATION_SECURITY_GROUP} from './constants';
+import { STEP_AZURE_APPLICATION_SECURITY_GROUP } from './constants';
 
 let recording: Recording;
 
@@ -19,7 +19,9 @@ afterEach(async () => {
 test(
   STEP_AZURE_APPLICATION_SECURITY_GROUP,
   async () => {
-    const stepTestConfig = getStepTestConfigForStep(STEP_AZURE_APPLICATION_SECURITY_GROUP);
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_AZURE_APPLICATION_SECURITY_GROUP,
+    );
 
     recording = setupAzureRecording(
       {
@@ -39,4 +41,3 @@ test(
   },
   100_000,
 );
-

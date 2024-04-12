@@ -140,7 +140,7 @@ export const Relationships: Record<
     targetType: Entities.MAINTENANCE_CONFIGURATION._type,
   },
   MANAGED_CLUSTER_CONTAINS_ROLE_BINDING: {
-    _type: 'managed_cluster_contains_role_binding',
+    _type: 'azure_kubernetes_cluster_contains_kube_cluster_role_binding',
     sourceType: 'azure_kubernetes_cluster',
     _class: RelationshipClass.CONTAINS,
     targetType: Entities.ROLE_BINDING._type,
@@ -174,14 +174,22 @@ export const Relationships: Record<
 
 
 export const ContainerServiceMappedRelationships: Record<
-  | 'TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER',
+  | 'TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER'
+  | 'ROLE_BINDING_IS_KUBERNETES_CLUSTER_ROLE_BINDING',
   StepMappedRelationshipMetadata
 > = {
   TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER: {
     _type: 'azure_kube_trusted_access_role_is_kube_cluster_role',
     sourceType: 'azure_kube_trusted_access_role',
-    _class: RelationshipClass.HAS,
+    _class: RelationshipClass.IS,
     targetType: 'kube_cluster_role',
+    direction: RelationshipDirection.FORWARD,
+  },
+  ROLE_BINDING_IS_KUBERNETES_CLUSTER_ROLE_BINDING: {
+    _type: 'azure_kube_cluster_role_binding_is_kube_cluster_role_binding',
+    sourceType: 'azure_kube_cluster_role_binding',
+    _class: RelationshipClass.IS,
+    targetType: 'kube_cluster_role_binding',
     direction: RelationshipDirection.FORWARD,
   },
 }

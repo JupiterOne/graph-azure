@@ -23,17 +23,23 @@ export function getAccessRoleKey(name, location) {
   return `azure_access_role_${name}_location_${location} `;
 }
 
-function getEntityFromId(id: string, entityName): string {
-  const parts = id.split('/');
-  const index = parts.indexOf(entityName);
-  if (index !== -1 && index + 1 < parts.length) {
-    return parts[index + 1];
-  } else {
-    throw new Error('Invalid id format');
+function getEntityFromId(id: string, entityName, logger): string {
+  try {
+    const parts = id.split('/');
+    const index = parts.indexOf(entityName);
+    if (index !== -1 && index + 1 < parts.length) {
+      return parts[index + 1];
+    } else {
+      throw new Error('Invalid id format');
+    }
+  } catch (error) {
+    logger.error('Error:', error.message);
+    return ''; 
   }
 }
 
 export function createClusterEntity(
+  logger,
   webLinker: AzureWebLinker,
   data: ManagedCluster,
 ): Entity {
@@ -62,7 +68,7 @@ export function createClusterEntity(
         enablePodSecurityPolicy: data.enablePodSecurityPolicy,
         disableLocalAccounts: data.disableLocalAccounts,
         webLink: webLinker.portalResourceUrl(data.id),
-        resourceGroupName: getEntityFromId(data.id as string, 'resourcegroups'),
+        resourceGroupName: getEntityFromId(data.id as string, 'resourcegroups', logger),
       },
     },
   });
@@ -114,6 +120,7 @@ export function createAccessRoleEntity(
 }
 
 export function createRoleBindingEntity(
+  logger,
   webLinker: AzureWebLinker,
   data: TrustedAccessRoleBinding,
 ): Entity {
@@ -137,7 +144,7 @@ export function createRoleBindingEntity(
         lastModifiedByType: data.systemData?.lastModifiedByType,
         type: data.type,
         webLink: webLinker.portalResourceUrl(data.id),
-        clusterName: getEntityFromId(data.id as string, 'managedClusters'),
+        clusterName: getEntityFromId(data.id as string, 'managedClusters', logger),
       },
     },
   });

@@ -61,18 +61,12 @@ export function createClusterEntity(
         kubernetesVersion: data.kubernetesVersion,
         dnsPrefix: data.dnsPrefix,
         fqdn: data.fqdn,
-        adminGroupObjectIDs: data.aadProfile?.adminGroupObjectIDs,
         nodeResourceGroup: data.nodeResourceGroup,
         // 8.5 Enable RBAC within Azure Kubernetes Clusters
         enableRBAC: data.enableRbac,
         enablePodSecurityPolicy: data.enablePodSecurityPolicy,
         disableLocalAccounts: data.disableLocalAccounts,
         webLink: webLinker.portalResourceUrl(data.id),
-        resourceGroupName: getEntityFromId(
-          data.id as string,
-          'resourcegroups',
-          logger,
-        ),
       },
     },
   });

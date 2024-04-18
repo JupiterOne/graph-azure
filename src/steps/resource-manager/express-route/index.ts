@@ -69,29 +69,41 @@ export async function fetchAzureExpressRoute(
     createAzureExpressRouteEntity(instance.id, instance.config.subscriptionId),
   );
 
-  // if subscription id is not present integartion will throw error while validating config
-  const subscriptionKey = `/subscriptions/${instance.config.subscriptionId}`;
-  const azureExpressRouteKey = getazureExpressRouteKey(
-    instance.id as string,
-    ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type,
-  );
+  await jobState.iterateEntities(
+    { _type: entities.SUBSCRIPTION._type },
 
-  if (!jobState.hasKey(azureExpressRouteKey)) {
-    throw new IntegrationMissingKeyError(
-      `Express Route Service Key Missing ${subscriptionKey}`,
-    );
-  }
-  // add subscription and express route service relationship
-  await jobState.addRelationship(
-    createDirectRelationship({
-      _class: RelationshipClass.HAS,
-      fromKey: subscriptionKey,
-      fromType: entities.SUBSCRIPTION._type,
-      toKey: azureExpressRouteKey,
-      toType: ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type,
-    }),
+    async (subscriptionEntity) => {
+      if (
+        subscriptionEntity._key == undefined &&
+        !jobState.hasKey(subscriptionEntity._key)
+      ) {
+        throw new IntegrationMissingKeyError(
+          `subscriptionEntity Key Missing ${subscriptionEntity._key}`,
+        );
+      }
+      const azureExpressRouteKey = getazureExpressRouteKey(
+        instance.id as string,
+        ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type,
+      );
+      if (!jobState.hasKey(azureExpressRouteKey)) {
+        throw new IntegrationMissingKeyError(
+          `Express Route Key Missing ${azureExpressRouteKey}`,
+        );
+      }
+      // add subscription and express route service relationship
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: RelationshipClass.HAS,
+          fromKey: subscriptionEntity._key,
+          fromType: entities.SUBSCRIPTION._type,
+          toKey: azureExpressRouteKey,
+          toType: ExpressRouteEntities.AZURE_EXPRESS_ROUTE._type,
+        }),
+      );
+    },
   );
 }
+
 export async function buildAzureExpressRouteExpressRouteCircuitRelation(
   executionContext: IntegrationStepContext,
 ) {
@@ -212,7 +224,7 @@ export async function buildAzureExpressRouteCircuitPeerExpressRouteCircuitConnec
   }
 }
 
-export async function buildAzureExpressRouteExpressRouteCrossConnectionRelation() {}
+export async function buildAzureExpressRouteExpressRouteCrossConnectionRelation() { }
 
 export async function buildAzureSubscriptionAndAzureBgpCommunitiesRelation(
   executionContext: IntegrationStepContext,

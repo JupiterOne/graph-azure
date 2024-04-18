@@ -539,18 +539,29 @@ export async function fetchAzureBgpServiceCommunities(
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ExpressRouteClient(instance.config, logger);
+  await jobState.iterateEntities(
+    { _type: entities.SUBSCRIPTION._type },
+    async (subscriptionEntity) => {
+      if (
+        subscriptionEntity._key == undefined &&
+        !jobState.hasKey(subscriptionEntity._key)
+      ) {
+        throw new IntegrationMissingKeyError(
+          `subscriptionEntity Key Missing ${subscriptionEntity._key}`,
+        );
+      }
+      // Fetch all Azure Bgp service Communities
+      await client.iterateBgpServiceCommunities(async (bgpServiceCommunity) => {
+        const bgpServiceCommunityEntity = createAzureBgpServiceCommunitiesEntity(
+          webLinker,
+          bgpServiceCommunity,
+          subscriptionEntity._key,
+        );
+        await jobState.addEntity(bgpServiceCommunityEntity);
+      });
 
-  const subscriptionKey = `/subscriptions/${instance.config.subscriptionId}`;
-
-  // Fetch all Azure Bgp service Communities
-  await client.iterateBgpServiceCommunities(async (bgpServiceCommunity) => {
-    const bgpServiceCommunityEntity = createAzureBgpServiceCommunitiesEntity(
-      webLinker,
-      bgpServiceCommunity,
-      subscriptionKey,
-    );
-    await jobState.addEntity(bgpServiceCommunityEntity);
-  });
+    },
+  );
 }
 
 export async function fetchAzureApplicationGateway(
@@ -717,7 +728,7 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     name: 'Azure Bgp Service Communities',
     entities: [ExpressRouteEntities.AZURE_BGP_SERVICE_COMMUNITIES],
     relationships: [],
-    dependsOn: [STEP_AD_ACCOUNT],
+    dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTION],
     executionHandler: fetchAzureBgpServiceCommunities,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },

@@ -21,7 +21,10 @@ import {
   Relationships,
   ContainerServiceMappedRelationships,
 } from './constants';
-import { entities } from '../subscriptions/constants';
+import {
+  entities,
+  steps as subscriptionSteps,
+} from '../subscriptions/constants';
 import {
   createClusterEntity,
   createMaintenanceConfigurationsEntity,
@@ -182,19 +185,21 @@ export async function kubernetesService(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, jobState } = executionContext;
-  await jobState.addEntity(createKubernetesServiceEntity(instance));
+  const serviceEntity = await jobState.addEntity(
+    createKubernetesServiceEntity(instance),
+  );
 
-  const subscriptionKey = `/subscriptions/${instance.config.subscriptionId}`;
-
-  const kubernetesServiceKey = getKubernetesServiceKey(instance.id);
-  await jobState.addRelationship(
-    createDirectRelationship({
-      _class: RelationshipClass.HAS,
-      fromKey: subscriptionKey,
-      fromType: entities.SUBSCRIPTION._type,
-      toKey: kubernetesServiceKey,
-      toType: Entities.KUBERNETES_SERVICE._type,
-    }),
+  await jobState.iterateEntities(
+    { _type: entities.SUBSCRIPTION._type },
+    async (subscription) => {
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: RelationshipClass.HAS,
+          from: subscription,
+          to: serviceEntity,
+        }),
+      );
+    },
   );
 }
 
@@ -287,7 +292,11 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     name: 'Kubernetes Service',
     entities: [Entities.KUBERNETES_SERVICE],
     relationships: [Relationships.AZURE_SUBSCRIPTION_HAS_KUBERNETES_SERVICE],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CONTAINER_SERVICES_CLUSTERS],
+    dependsOn: [
+      subscriptionSteps.SUBSCRIPTION,
+      STEP_AD_ACCOUNT,
+      STEP_RM_CONTAINER_SERVICES_CLUSTERS,
+    ],
     executionHandler: kubernetesService,
   },
   {

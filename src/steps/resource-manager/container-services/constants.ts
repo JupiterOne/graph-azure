@@ -35,7 +35,7 @@ export const ContainerServicesEntities = {
         disableLocalAccounts: { type: 'boolean' },
         nodeImageVersion: { type: 'array' },
         osType: { type: 'string' },
-        osSku: { type: 'string' },
+        osSKU: { type: 'string' },
       },
     },
   },

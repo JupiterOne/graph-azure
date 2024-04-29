@@ -1,3 +1,15 @@
+# v6.4.0 (Mon Apr 29 2024)
+
+#### 🚀 Enhancement
+
+- adding props to entity [#637](https://github.com/JupiterOne/graph-azure/pull/637) ([@mikiodehartj1](https://github.com/mikiodehartj1))
+
+#### Authors: 1
+
+- [@mikiodehartj1](https://github.com/mikiodehartj1)
+
+---
+
 # v6.3.0 (Thu Apr 11 2024)
 
 #### 🚀 Enhancement

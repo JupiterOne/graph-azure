@@ -34,6 +34,9 @@ export function createClusterEntitiy(
         enablePodSecurityPolicy: data.enablePodSecurityPolicy,
         disableLocalAccounts: data.disableLocalAccounts,
         webLink: webLinker.portalResourceUrl(data.id),
+        nodeImageVersion: data.agentPoolProfiles?.map(i => i.nodeImageVersion as string),
+        osType: data.agentPoolProfiles?.map(i => i.osType),
+        osSku: data.agentPoolProfiles?.map(i => i.osSku),
       },
     },
   });

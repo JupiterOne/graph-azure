@@ -18,6 +18,7 @@ import {
   STEP_AD_ROLE_ASSIGNMENTS,
   STEP_AD_ROLE_DEFINITIONS,
   STEP_AD_DEVICES,
+  STEP_AD_SERVICE_PRINCIPAL_ACCESS,
 } from './steps/active-directory/constants';
 import { steps as authorizationSteps } from './steps/resource-manager/authorization/constants';
 import { steps as computeSteps } from './steps/resource-manager/compute/constants';
@@ -194,6 +195,7 @@ export function getActiveDirectorySteps(): GetApiSteps {
       STEP_AD_USERS,
       STEP_AD_SERVICE_PRINCIPALS,
       STEP_AD_ROLE_ASSIGNMENTS,
+      STEP_AD_SERVICE_PRINCIPAL_ACCESS,
       STEP_AD_ROLE_DEFINITIONS,
       subscriptionSteps.ALL_SKIPPED_SUBSCRIPTIONS,
     ],
@@ -356,6 +358,7 @@ export function getResourceManagerSteps(): GetApiSteps {
       SecuritySteps.SECURITY_CENTER_CONTACTS,
       SecuritySteps.SETTINGS,
       SecuritySteps.AUTO_PROVISIONING_SETTINGS,
+      SecuritySteps.DEFENDER_ALERTS,
       SecuritySteps.PRICING_CONFIGURATIONS,
       MonitorSteps.MONITOR_LOG_PROFILES,
       MonitorSteps.MONITOR_ACTIVITY_LOG_ALERTS,

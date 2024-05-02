@@ -229,7 +229,7 @@ export async function fetchVirtualMachines(
     } catch (err) {
       logger.warn(
         {
-          err,
+          error: err.message,
           name: vm.name,
           resourceGroup: getResourceGroupName(vm.id || ''),
         },

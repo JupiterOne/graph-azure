@@ -44,7 +44,7 @@ export class PostgreSQLClient extends Client {
     } catch (err) {
       this.logger.warn(
         {
-          err: err,
+          error: err.message,
           server: server.id,
           resourceGroup,
         },

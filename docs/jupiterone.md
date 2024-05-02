@@ -351,6 +351,7 @@ The following entities are created:
 | [RM] DNS Zone                                    | `azure_dns_zone`                                  | `DomainZone`                       |
 | [RM] Data Masking Policy                         | `azure_synapse_masking_policy`                    | `Policy`                           |
 | [RM] Data Masking Rule                           | `azure_synapse_masking_rule`                      | `Rule`                             |
+| [RM] Defender Alert                              | `azure_defender_alert`                            | `Vulnerability`                    |
 | [RM] Event Grid Domain                           | `azure_event_grid_domain`                         | `Service`                          |
 | [RM] Event Grid Domain Topic                     | `azure_event_grid_domain_topic`                   | `Queue`                            |
 | [RM] Event Grid Topic                            | `azure_event_grid_topic`                          | `Queue`                            |
@@ -437,6 +438,7 @@ The following relationships are created:
 
 | Source Entity `_type`              | Relationship `_class` | Target Entity `_type`                             |
 | ---------------------------------- | --------------------- | ------------------------------------------------- |
+| `ANY_RESOURCE`                     | **HAS**               | `azure_defender_alert`                            |
 | `ANY_RESOURCE`                     | **HAS**               | `azure_policy_state`                              |
 | `ANY_RESOURCE`                     | **GENERATED**         | `azure_shared_image_version`                      |
 | `ANY_SCOPE`                        | **HAS**               | `azure_advisor_recommendation`                    |
@@ -578,6 +580,9 @@ The following relationships are created:
 | `azure_service_bus_namespace`      | **HAS**               | `azure_service_bus_topic`                         |
 | `azure_service_bus_topic`          | **HAS**               | `azure_service_bus_subscription`                  |
 | `azure_service_principal`          | **HAS**               | `ad-role-definitions`                             |
+| `azure_service_principal`          | **ASSIGNED**          | `azure_service_principal`                         |
+| `azure_service_principal`          | **ASSIGNED**          | `azure_user`                                      |
+| `azure_service_principal`          | **ASSIGNED**          | `azure_user_group`                                |
 | `azure_shared_image`               | **HAS**               | `azure_shared_image_version`                      |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_database`                              |
 | `azure_sql_server`                 | **HAS**               | `azure_sql_server_active_directory_admin`         |
@@ -593,6 +598,7 @@ The following relationships are created:
 | `azure_subnet`                     | **HAS**               | `azure_vm`                                        |
 | `azure_subscription`               | **HAS**               | `azure_bgp_service_communities`                   |
 | `azure_subscription`               | **HAS**               | `azure_ddos_protection_plan`                      |
+| `azure_subscription`               | **HAS**               | `azure_defender_alert`                            |
 | `azure_subscription`               | **HAS**               | `azure_event_hub`                                 |
 | `azure_subscription`               | **HAS**               | `azure_expressroute`                              |
 | `azure_subscription`               | **HAS**               | `azure_kube_service`                              |
@@ -713,7 +719,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (103)                                                 |
+| Role Permissions List (104)                                                 |
 | --------------------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                                    |
 | `Microsoft.ApiManagement/service/apis/read`                                 |
@@ -790,6 +796,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Resources/subscriptions/locations/read`                          |
 | `Microsoft.Resources/subscriptions/read`                                    |
 | `Microsoft.Resources/subscriptions/resourceGroups/read`                     |
+| `Microsoft.Security/alerts/read`                                            |
 | `Microsoft.Security/assessments/read`                                       |
 | `Microsoft.Security/autoProvisioningSettings/read`                          |
 | `Microsoft.Security/pricings/read`                                          |

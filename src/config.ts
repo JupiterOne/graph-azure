@@ -233,4 +233,10 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     defaultsToDisabled: true,
     cannotBeDisabled: false,
   },
+  [INGESTION_SOURCE_IDS.DEFENDER_ALERTS]: {
+    title: 'Defender Alerts',
+    description: 'Ingest defender for cloud alerts',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
 };

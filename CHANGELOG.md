@@ -1,4 +1,4 @@
-# v6.1.4 (Mon Apr 08 2024)
+# v7.0.0 (Thu May 02 2024)
 
 ### Added
 
@@ -66,6 +66,64 @@
 - `azure_expressroute_circuit`       **HAS**               `azure_peer_expressroute_circut_connection`       
 - `azure_subscription`               **HAS**               `azure_expressroute`                  
 - `azure_subscription`               **HAS**               `azure_bgp_service_communities`
+
+# v6.4.0 (Mon Apr 29 2024)
+
+#### 🚀 Enhancement
+
+- adding props to entity [#637](https://github.com/JupiterOne/graph-azure/pull/637) ([@mikiodehartj1](https://github.com/mikiodehartj1))
+
+#### Authors: 1
+
+- [@mikiodehartj1](https://github.com/mikiodehartj1)
+
+---
+
+# v6.3.0 (Thu Apr 11 2024)
+
+#### 🚀 Enhancement
+
+- Added service_principal assigned user, groups and service principals [#634](https://github.com/JupiterOne/graph-azure/pull/634) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v6.2.0 (Fri Apr 05 2024)
+
+#### 🚀 Enhancement
+
+- Add azure_defender_alerts and vuln severity config [#633](https://github.com/JupiterOne/graph-azure/pull/633) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v6.1.5 (Wed Apr 03 2024)
+
+#### 🐛 Bug Fix
+
+- Removed more raw errors being logged [#632](https://github.com/JupiterOne/graph-azure/pull/632) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v6.1.4 (Tue Apr 02 2024)
+
+#### 🐛 Bug Fix
+
+- Int 10135 [#631](https://github.com/JupiterOne/graph-azure/pull/631) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
 
 ---
 

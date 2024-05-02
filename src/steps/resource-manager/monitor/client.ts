@@ -72,7 +72,10 @@ export class MonitorClient extends Client {
         callback,
       });
     } catch (err) {
-      this.logger.warn({ err }, 'Error iterating diagnostic settings.');
+      this.logger.warn(
+        { error: err.message },
+        'Error iterating diagnostic settings.',
+      );
     }
   }
 

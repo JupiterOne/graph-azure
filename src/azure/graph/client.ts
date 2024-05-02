@@ -120,7 +120,7 @@ export abstract class GraphClient {
           const endpoint = (graphRequest as any).buildFullUrl?.();
           this.logger.warn(
             {
-              err,
+              error: err.message,
               endpoint,
               attemptsRemaining: context.attemptsRemaining,
             },
@@ -151,7 +151,7 @@ export abstract class GraphClient {
       // Fetch errors include the properties code, errno, message, name, stack, type.
       if (err instanceof FetchError) {
         this.logger.warn(
-          { err, resourceUrl: endpoint },
+          { error: err.message, resourceUrl: endpoint },
           'Encountered fetch error in Azure Graph client.',
         );
         throw new IntegrationProviderAPIError({
@@ -164,7 +164,7 @@ export abstract class GraphClient {
 
       if (err.statusCode === 403) {
         this.logger.warn(
-          { err, resourceUrl: endpoint },
+          { error: err.message, resourceUrl: endpoint },
           'Encountered auth error in Azure Graph client.',
         );
         throw new IntegrationProviderAuthorizationError({
@@ -176,7 +176,7 @@ export abstract class GraphClient {
       }
       if (err.statusCode !== 404) {
         this.logger.warn(
-          { err, resourceUrl: endpoint },
+          { error: err.message, resourceUrl: endpoint },
           'Encountered error in Azure Graph client.',
         );
         throw new IntegrationProviderAPIError({
@@ -188,7 +188,7 @@ export abstract class GraphClient {
       }
 
       this.logger.warn(
-        { err, resourceUrl: endpoint },
+        { error: err.message, resourceUrl: endpoint },
         'Encountered non-fatal error in Azure Graph client.',
       );
     }

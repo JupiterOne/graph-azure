@@ -60,6 +60,8 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
   ingestActiveDirectory?: boolean;
 
   configureSubscriptionInstances?: boolean;
+
+  defenderAlertsSeverities?: string;
 }
 
 export interface AzureIntegrationStep

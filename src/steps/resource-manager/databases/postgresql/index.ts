@@ -61,7 +61,7 @@ export async function fetchPostgreSQLServers(
     });
   } catch (error) {
     logger.info(
-      { error },
+      { error: error.message },
       'An error happened while executing fetchPostgreSQLServers',
     );
     throw error;

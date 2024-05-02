@@ -28,7 +28,10 @@ export async function fetchSubscriptionUsageDetails(
       try {
         usageDetails = await client.getUsageDetails(subscription.id as string);
       } catch (error) {
-        logger.warn({ error }, "Can't get subscription usage details.");
+        logger.warn(
+          { error: error.message },
+          "Can't get subscription usage details.",
+        );
       }
       if (usageDetails && usageDetails[0]) {
         const usageEntity = await jobState.addEntity(

@@ -69,6 +69,9 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
         type: 'boolean',
         mask: false,
       },
+      defenderAlertsSeverities: {
+        type: 'string',
+      },
     },
     validateInvocation,
 

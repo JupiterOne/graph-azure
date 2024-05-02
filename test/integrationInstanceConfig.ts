@@ -32,6 +32,7 @@ export const configFromEnv: IntegrationConfig = {
   clientSecret: process.env.CLIENT_SECRET || 'clientSecret',
   directoryId: process.env.DIRECTORY_ID || 'directoryId',
   subscriptionId: process.env.SUBSCRIPTION_ID || 'subscription-id',
+  defenderAlertsSeverities: process.env.SUBSCRIPTION_ID || 'HIGH,MEDIUM',
 };
 
 export function getStepTestConfigForStep(

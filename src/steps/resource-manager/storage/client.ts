@@ -106,7 +106,7 @@ export function createStorageAccountServiceClient(options: {
           logger.warn(
             {
               storageAccount,
-              e,
+              error: e.message,
             },
             'Failed to get table service properties for storage account',
           );

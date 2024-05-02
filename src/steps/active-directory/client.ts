@@ -223,6 +223,17 @@ export class DirectoryGraphClient extends GraphClient {
       callback,
     });
   }
+
+  public async iterateServicePrincipalMembers(
+    callback: (a: any) => void | Promise<void>,
+    serviceId: string,
+  ): Promise<void> {
+    const resourceUrl = `/servicePrincipals/${serviceId}/appRoleAssignedTo`;
+    return this.iterateResources({
+      resourceUrl,
+      callback,
+    });
+  }
   public async iterateRoleDefinitions(
     callback: (a: any) => void | Promise<void>,
   ): Promise<void> {
@@ -280,7 +291,7 @@ export class DirectoryGraphClient extends GraphClient {
               this.logger.warn(
                 {
                   resourceUrl,
-                  err,
+                  error: err.message,
                 },
                 'Callback error while iterating an API response in DirectoryGraphClient',
               );
@@ -293,7 +304,7 @@ export class DirectoryGraphClient extends GraphClient {
     } catch (error) {
       if (error.status === 403) {
         this.logger.warn(
-          { error, resourceUrl: resourceUrl },
+          { error: error.message, resourceUrl: resourceUrl },
           'Encountered auth error in Azure Graph client.',
         );
         this.logger.publishWarnEvent({

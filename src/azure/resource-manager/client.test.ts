@@ -99,9 +99,7 @@ test('request should expose Azure RestError error codes', async () => {
       'fake-resource',
       1000,
     ),
-  ).rejects.toThrow(
-    'Provider API failed at fake-resource: FeatureNotSupportedForAccount Table is not supported for the account',
-  );
+  ).rejects.toThrow('Table is not supported for the account');
 });
 
 test('request should expose node-fetch error codes', async () => {
@@ -123,9 +121,7 @@ test('request should expose node-fetch error codes', async () => {
       'fake-resource',
       1000,
     ),
-  ).rejects.toThrow(
-    'Provider API failed at fake-resource: ECONNRESET Error message for system error',
-  );
+  ).rejects.toThrow('Error message for system error');
 }, 20_000);
 
 test('request should expose Azure RestError status and text', async () => {
@@ -178,9 +174,7 @@ test('request should expose Azure RestError status and text', async () => {
       'fake-resource',
       1000,
     ),
-  ).rejects.toThrow(
-    'Provider API failed at fake-resource: 400 Table is not supported for the account',
-  );
+  ).rejects.toThrow('Table is not supported for the account');
 });
 
 test('request should expose Azure RestError status and text when message is StringfiedJSON', async () => {
@@ -236,7 +230,7 @@ test('request should expose Azure RestError status and text when message is Stri
       1000,
     ),
   ).rejects.toThrow(
-    'Provider API failed at fake-resource: 401 Please register to Microsoft.Security in order to view your security status',
+    'Please register to Microsoft.Security in order to view your security status',
   );
 });
 

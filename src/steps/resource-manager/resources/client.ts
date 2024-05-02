@@ -36,10 +36,10 @@ export class ResourcesClient extends Client {
     } catch (err) {
       /* istanbul ignore else */
       if (err.statusCode === 404) {
-        this.logger.warn({ err }, 'Resources not found');
+        this.logger.warn({ error: err.message }, 'Resources not found');
       } else {
         throw new IntegrationProviderAPIError({
-          cause: err,
+          cause: err.statusText,
           endpoint: 'resources.resourceGroups',
           status: err.statusCode,
           statusText: err.statusText,

@@ -28,35 +28,46 @@ export async function fetchProtectionPlans(
   const { instance, logger, jobState } = executionContext;
   const client = new Ddos(instance.config, logger);
 
-  // if subscription id is not present integartion will throw error while validating config
-  const subscriptionKey = `/subscriptions/${instance.config.subscriptionId}`;
-
   await client.iterateDdosProtectionPlan(async (protection_plan) => {
     const protectionPlanEntity = createProtectionPlanEntity(protection_plan);
     await jobState.addEntity(protectionPlanEntity);
 
     const protectionPlanKey = getDdosProtectionPlanKey(protectionPlanEntity.id);
+    await jobState.iterateEntities(
+      { _type: entities.SUBSCRIPTION._type },
 
-    if (
-      !jobState.hasKey(protectionPlanKey) ||
-      !jobState.hasKey(subscriptionKey)
-    ) {
-      throw new IntegrationMissingKeyError(`
+      async (subscriptionEntity) => {
+        if (
+          subscriptionEntity._key == undefined &&
+          !jobState.hasKey(subscriptionEntity._key)
+        ) {
+          throw new IntegrationMissingKeyError(
+            `subscriptionEntity Key Missing ${subscriptionEntity._key}`,
+          );
+        }
+
+        if (
+          !jobState.hasKey(protectionPlanKey) ||
+          !jobState.hasKey(subscriptionEntity._key)
+        ) {
+          throw new IntegrationMissingKeyError(`
         Cannot Build Relationship. Error : Entity Key Missing.  
         Protection Plan Key : ${protectionPlanKey}
-        Subscription Key : ${subscriptionKey}
+        Subscription Key : ${subscriptionEntity._key}
       `);
-    }
+        }
 
-    // add subscription and Ddos Protection plan relationship
-    await jobState.addRelationship(
-      createDirectRelationship({
-        _class: RelationshipClass.HAS,
-        fromKey: subscriptionKey,
-        fromType: entities.SUBSCRIPTION._type,
-        toKey: protectionPlanKey,
-        toType: DdosEntities.PROTECTION_PLAN._type,
-      }),
+        // add subscription and Ddos Protection plan relationship
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.HAS,
+            fromKey: subscriptionEntity._key,
+            fromType: entities.SUBSCRIPTION._type,
+            toKey: protectionPlanKey,
+            toType: DdosEntities.PROTECTION_PLAN._type,
+          }),
+        );
+      },
     );
   });
 }

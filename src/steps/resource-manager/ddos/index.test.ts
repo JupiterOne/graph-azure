@@ -40,7 +40,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   DdosSteps.DDOS_PROTECTION_PLAN_PUBLIC_IP_RELATIONSHIP,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(

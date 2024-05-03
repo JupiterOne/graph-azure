@@ -1,6 +1,5 @@
 import { Client } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
-import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
 import { ContainerServiceClient } from '@azure/arm-containerservice';
 import {
   ManagedCluster,
@@ -92,41 +91,31 @@ export class ContainerServicesClient extends Client {
    */
   public async iterateAccessRoles(
     config,
+    locationsArray: string[] | undefined,
     logger: IntegrationLogger,
     callback: (e, location) => void | Promise<void>,
   ): Promise<void> {
-    const subscriptionClient = new SubscriptionClient(
-      this.getClientSecretCredentials(),
-      config.subscriptionId,
-    );
-
-    const locationsArray: any = [];
-    for await (const item of subscriptionClient.subscriptions.listLocations(
-      config.subscriptionId,
-    )) {
-      locationsArray.push(item);
-    }
     const serviceClient = new ContainerServiceClient(
       this.getClientSecretCredentials(),
       config.subscriptionId,
     );
-
-    for (const location of locationsArray) {
+    if (!locationsArray) return;
+    for (const locationName of locationsArray) {
       const resArray: any = [];
       try {
-        const roles = serviceClient.trustedAccessRoles.list(location.name);
+        const roles = serviceClient.trustedAccessRoles.list(locationName);
 
         for await (const item of roles) {
           resArray.push(item);
         }
 
         for (const role of resArray) {
-          await callback(role, location.name);
+          await callback(role, locationName);
         }
       } catch (error) {
         if (error.statusCode && error.statusCode === 400) {
           logger.warn(
-            `No registered resource provider found for location '${location.name}'.`,
+            `No registered resource provider found for location '${locationName}'.`,
           );
           // Skipping this location and continue with the next one
           continue;

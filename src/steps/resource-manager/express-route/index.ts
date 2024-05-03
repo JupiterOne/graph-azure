@@ -224,7 +224,7 @@ export async function buildAzureExpressRouteCircuitPeerExpressRouteCircuitConnec
   }
 }
 
-export async function buildAzureExpressRouteExpressRouteCrossConnectionRelation() { }
+export async function buildAzureExpressRouteExpressRouteCrossConnectionRelation() {}
 
 export async function buildAzureSubscriptionAndAzureBgpCommunitiesRelation(
   executionContext: IntegrationStepContext,
@@ -552,14 +552,14 @@ export async function fetchAzureBgpServiceCommunities(
       }
       // Fetch all Azure Bgp service Communities
       await client.iterateBgpServiceCommunities(async (bgpServiceCommunity) => {
-        const bgpServiceCommunityEntity = createAzureBgpServiceCommunitiesEntity(
-          webLinker,
-          bgpServiceCommunity,
-          subscriptionEntity._key,
-        );
+        const bgpServiceCommunityEntity =
+          createAzureBgpServiceCommunitiesEntity(
+            webLinker,
+            bgpServiceCommunity,
+            subscriptionEntity._key,
+          );
         await jobState.addEntity(bgpServiceCommunityEntity);
       });
-
     },
   );
 }
@@ -589,6 +589,7 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT],
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
+    rolePermissions: ['Microsoft.Network/expressRouteCircuits/read'],
     executionHandler: fetchAzureExpressRouteCircuit,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },
@@ -702,6 +703,7 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
   //   entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CROSS_CONNECTION],
   //   relationships: [],
   //   dependsOn: [STEP_AD_ACCOUNT],
+  //   rolePermissions: ['Microsoft.Network/expressRouteCrossConnections/read'],
   //   executionHandler: fetchAzureExpressRouteCrossConnection,
   //   ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE
   // },
@@ -711,6 +713,9 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     entities: [ExpressRouteEntities.AZURE_PEER_EXPRESS_ROUTE_CONNECTION],
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT, STEP_AZURE_EXPRESS_ROUTE_CIRCUIT],
+    rolePermissions: [
+      'Microsoft.Network/expressRouteCircuits/peerings/peerConnections/read',
+    ],
     executionHandler: fetchAzurePeerExpressRouteConnection,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },
@@ -720,6 +725,9 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     entities: [ExpressRouteEntities.AZURE_EXPRESS_ROUTE_CIRCUIT_CONNECTION],
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT, STEP_AZURE_PEER_EXPRESS_ROUTE_CONNECTION],
+    rolePermissions: [
+      'Microsoft.Network/expressRouteCircuits/peerings/connections/read',
+    ],
     executionHandler: fetchAzureExpressRouteCircuitConnection,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },
@@ -729,6 +737,7 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     entities: [ExpressRouteEntities.AZURE_BGP_SERVICE_COMMUNITIES],
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT, steps.SUBSCRIPTION],
+    rolePermissions: ['Microsoft.Network/bgpServiceCommunities/read'],
     executionHandler: fetchAzureBgpServiceCommunities,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },
@@ -760,6 +769,7 @@ export const expressRouteSteps: AzureIntegrationStep[] = [
     entities: [ExpressRouteEntities.AZURE_APPLICATION_GATEWAY],
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
+    rolePermissions: ['Microsoft.Network/applicationGateways/read'],
     executionHandler: fetchAzureApplicationGateway,
     ingestionSourceId: INGESTION_SOURCE_IDS.EXPRESS_ROUTE,
   },

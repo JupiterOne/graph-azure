@@ -56,11 +56,11 @@ export async function buildAzureApplicationSecurityGroupVirtualMachineRelation(
         // Check if ApplicationSecurityGroup is defined and non-empty
         if (ApplicationSecurityGroup.length != 0) {
           for (const applicationSecurityGroupEntityKey of ApplicationSecurityGroup) {
-            if (jobState.hasKey(applicationSecurityGroupEntityKey['id'])) {
+            if (jobState.hasKey(applicationSecurityGroupEntityKey)) {
               await jobState.addRelationship(
                 createDirectRelationship({
                   _class: RelationshipClass.PROTECTS,
-                  fromKey: applicationSecurityGroupEntityKey['id'],
+                  fromKey: applicationSecurityGroupEntityKey,
                   fromType:
                     ApplicationSecurityGroupEntities
                       .AZURE_APPLICATION_SECURITY_GROUP._type,
@@ -70,7 +70,7 @@ export async function buildAzureApplicationSecurityGroupVirtualMachineRelation(
               );
             } else {
               throw new IntegrationMissingKeyError(
-                `Build Azure Application Security Group and Virtual Machine Relation: ${applicationSecurityGroupEntityKey['id']} Missing.`,
+                `Build Azure Application Security Group and Virtual Machine Relation: ${applicationSecurityGroupEntityKey} Missing.`,
               );
             }
           }
@@ -95,6 +95,7 @@ export const applicationSecurityGroupSteps: AzureIntegrationStep[] = [
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchApplicationSecurityGroup,
     ingestionSourceId: INGESTION_SOURCE_IDS.APPLICATION_SECURITY_GROUP,
+    rolePermissions: ['Microsoft.Network/applicationSecurityGroups/read'],
   },
   {
     id: STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION,

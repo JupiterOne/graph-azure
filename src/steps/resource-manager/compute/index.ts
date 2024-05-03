@@ -51,6 +51,7 @@ import {
 import { StorageAccount } from '@azure/arm-storage/esm/models';
 import { getResourceGroupName } from '../utils/matchers';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { ApplicationSecurityGroup } from '@azure/arm-network-latest';
 
 export async function fetchGalleries(
   executionContext: IntegrationStepContext,
@@ -206,18 +207,30 @@ export async function fetchVirtualMachines(
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ComputeClient(instance.config, logger);
 
-  const asgsArray: any = []; // Provide type annotation
+  const asgsArray: ApplicationSecurityGroup[] = []; // Provide type annotation
 
   await client.iterateVirtualMachines(async (vm) => {
     // Extracting resource group name from the virtual machine ID
     const resourceGroupName = getResourceGroupName(vm.id || '') as string;
-    const networkInterfaces = vm.networkProfile?.networkInterfaces || [];
-    for (const nicRef of networkInterfaces) {
-      const nicId = nicRef.id?.split('/').pop();
-      if (nicId) {
-        const asgs = await client.getASGs(resourceGroupName, nicId);
-        asgsArray.push(asgs); // Store each value of asgs in an array
+
+    try {
+      const networkInterfaces = vm.networkProfile?.networkInterfaces || [];
+      for (const nicRef of networkInterfaces) {
+        const nicId = nicRef.id?.split('/').pop();
+        if (nicId) {
+          const asgs = await client.getASGs(resourceGroupName, nicId);
+          asgsArray.push(...asgs); // Store each value of asgs in an array
+        }
       }
+    } catch (err) {
+      logger.warn(
+        {
+          error: err.message,
+          name: vm.name,
+          resourceGroup: getResourceGroupName(vm.id || ''),
+        },
+        'Warning: unable to fetch virtual machine ASGs',
+      );
     }
 
     let instanceView: VirtualMachinesInstanceViewResponse | undefined;
@@ -864,7 +877,10 @@ export const computeSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_RESOURCES_RESOURCE_GROUPS],
     executionHandler: fetchVirtualMachines,
-    rolePermissions: ['Microsoft.Compute/virtualMachines/read'],
+    rolePermissions: [
+      'Microsoft.Compute/virtualMachines/read',
+      'Microsoft.Network/networkInterfaces/read',
+    ],
     ingestionSourceId: INGESTION_SOURCE_IDS.COMPUTE,
   },
   {

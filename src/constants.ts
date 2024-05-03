@@ -13,6 +13,7 @@ export const INGESTION_SOURCE_IDS = {
   CONTAINER_INSTANCE: 'container-instance',
   CONTAINER_REGISTRY: 'container-registry',
   CONTAINER_SERVICES: 'container-services',
+  CONTAINER_SERVICES_EXTRAS: 'container-services-extras',
   COSMOSDB: 'cosmosdb',
   DATABASES: 'databases',
   DNS: 'dns',

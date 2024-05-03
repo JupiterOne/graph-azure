@@ -607,7 +607,7 @@ export const SynapseSteps: AzureIntegrationStep[] = [
     relationships: [],
     dependsOn: [SYNAPSE_STEPS.SYNAPSE_WORKSPACES],
     executionHandler: fetchSynapseSqlPool,
-    rolePermissions: [],
+    rolePermissions: ['Microsoft.Synapse/workspaces/sqlPools/read'],
     ingestionSourceId: INGESTION_SOURCE_IDS.SYNAPSE,
   },
   {

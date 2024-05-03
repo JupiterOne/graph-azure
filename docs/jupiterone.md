@@ -719,7 +719,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (104)                                                 |
+| Role Permissions List (116)                                                 |
 | --------------------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                                    |
 | `Microsoft.ApiManagement/service/apis/read`                                 |
@@ -754,6 +754,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.ContainerRegistry/registries/webhooks/read`                      |
 | `Microsoft.ContainerService/managedClusters/maintenanceConfigurations/read` |
 | `Microsoft.ContainerService/managedClusters/read`                           |
+| `Microsoft.ContainerService/managedClusters/trustedAccessRoleBindings/read` |
 | `Microsoft.DBforMariaDB/servers/databases/read`                             |
 | `Microsoft.DBforMariaDB/servers/read`                                       |
 | `Microsoft.DBforMySQL/servers/databases/read`                               |
@@ -768,6 +769,10 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.EventGrid/domains/topics/read`                                   |
 | `Microsoft.EventGrid/topics/eventSubscriptions/read`                        |
 | `Microsoft.EventGrid/topics/read`                                           |
+| `Microsoft.EventHub/clusters/read`                                          |
+| `Microsoft.EventHub/namespaces/eventHubs/consumergroups/read`               |
+| `Microsoft.EventHub/namespaces/eventhubs/read`                              |
+| `Microsoft.EventHub/namespaces/read`                                        |
 | `Microsoft.Insights/ActivityLogAlerts/Read`                                 |
 | `Microsoft.Insights/DiagnosticSettings/Read`                                |
 | `Microsoft.Insights/LogProfiles/Read`                                       |
@@ -775,10 +780,16 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.KeyVault/vaults/read`                                            |
 | `Microsoft.KeyVault/vaults/secrets/read`                                    |
 | `Microsoft.Management/managementGroups/read`                                |
+| `Microsoft.Network/applicationGateways/read`                                |
+| `Microsoft.Network/applicationSecurityGroups/read`                          |
 | `Microsoft.Network/azurefirewalls/read`                                     |
+| `Microsoft.Network/bgpServiceCommunities/read`                              |
 | `Microsoft.Network/ddosProtectionPlans/read`                                |
 | `Microsoft.Network/dnszones/read`                                           |
 | `Microsoft.Network/dnszones/recordsets/read`                                |
+| `Microsoft.Network/expressRouteCircuits/peerings/connections/read`          |
+| `Microsoft.Network/expressRouteCircuits/peerings/peerConnections/read`      |
+| `Microsoft.Network/expressRouteCircuits/read`                               |
 | `Microsoft.Network/firewallPolicies/Read`                                   |
 | `Microsoft.Network/firewallPolicies/ruleCollectionGroups/Read`              |
 | `Microsoft.Network/frontDoors/read`                                         |
@@ -821,6 +832,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Synapse/workspaces/read`                                         |
 | `Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/read`            |
 | `Microsoft.Synapse/workspaces/sqlPools/dataMaskingPolicies/rules/read`      |
+| `Microsoft.Synapse/workspaces/sqlPools/read`                                |
 | `Microsoft.Web/serverfarms/Read`                                            |
 | `Microsoft.Web/sites/config/list/action`                                    |
 | `Microsoft.Web/sites/config/Read`                                           |

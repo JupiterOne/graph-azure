@@ -22,7 +22,9 @@ import {
   ContainerServiceMappedRelationships,
 } from './constants';
 import {
+  SetDataTypes,
   entities,
+  setDataKeys,
   steps as subscriptionSteps,
 } from '../subscriptions/constants';
 import {
@@ -146,9 +148,14 @@ export async function fetchAccessRoles(
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new ContainerServicesClient(instance.config, logger);
+  const locationsMap: SetDataTypes['locationNameMap'] | undefined =
+    await jobState.getData<SetDataTypes['locationNameMap']>(
+      setDataKeys.locationNameMap,
+    );
 
   await client.iterateAccessRoles(
     instance.config,
+    locationsMap ? Object.keys(locationsMap) : undefined,
     logger,
     async (accessRole, locationName) => {
       const accessRoleEntity = createAccessRoleEntity(
@@ -286,6 +293,7 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
       'Microsoft.ContainerService/managedClusters/maintenanceConfigurations/read',
     ],
     executionHandler: fetchMaintenanceConfigurations,
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_SERVICES_EXTRAS,
   },
   {
     id: Steps.KUBERNETES_SERVICE,
@@ -298,6 +306,7 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
       STEP_RM_CONTAINER_SERVICES_CLUSTERS,
     ],
     executionHandler: kubernetesService,
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_SERVICES_EXTRAS,
   },
   {
     id: Steps.ACCESS_ROLE,
@@ -307,8 +316,16 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     mappedRelationships: [
       ContainerServiceMappedRelationships.TRUSTED_ACCESS_ROLE_IS_KUBERNETES_CLUSTER,
     ],
-    dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CONTAINER_SERVICES_CLUSTERS],
+    dependsOn: [
+      STEP_AD_ACCOUNT,
+      STEP_RM_CONTAINER_SERVICES_CLUSTERS,
+      subscriptionSteps.LOCATIONS,
+    ],
+    rolePermissions: [
+      'Microsoft.ContainerService/managedClusters/trustedAccessRoleBindings/read',
+    ],
     executionHandler: fetchAccessRoles,
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_SERVICES_EXTRAS,
   },
   {
     id: Steps.ROLE_BINDING,
@@ -319,6 +336,7 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     ],
     dependsOn: [STEP_AD_ACCOUNT, STEP_RM_CONTAINER_SERVICES_CLUSTERS],
     executionHandler: fetchRoleBindings,
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_SERVICES_EXTRAS,
   },
   {
     id: Steps.KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE,
@@ -327,6 +345,7 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     relationships: [Relationships.KUBERNETES_SERVICE_CONTAINS_ACCESS_ROLE],
     dependsOn: [Steps.ACCESS_ROLE, Steps.KUBERNETES_SERVICE],
     executionHandler: buildKubernetesAccessRoleRelationship,
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_SERVICES_EXTRAS,
   },
   {
     id: Steps.MANAGED_CLUSTER_CONTAINS_ROLE_BINDING,
@@ -335,5 +354,6 @@ export const containerServicesSteps: AzureIntegrationStep[] = [
     relationships: [Relationships.MANAGED_CLUSTER_CONTAINS_ROLE_BINDING],
     dependsOn: [STEP_RM_CONTAINER_SERVICES_CLUSTERS, Steps.ROLE_BINDING],
     executionHandler: buildKubernetesClusterRoleBindingRelationship,
+    ingestionSourceId: INGESTION_SOURCE_IDS.CONTAINER_SERVICES_EXTRAS,
   },
 ];

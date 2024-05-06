@@ -44,8 +44,19 @@ export async function fetchSubscription(
       webLinker,
       subscription,
     );
-    await jobState.addEntity(subscriptionEntity);
+    if (subscriptionEntity) {
+      await jobState.addEntity(subscriptionEntity);
+    } else {
+      logger.warn(
+        { subscriptionId: instance.config.subscriptionId },
+        'Could not create subscription entity',
+      );
+    }
   } else {
+    logger.warn(
+      { subscriptionId: instance.config.subscriptionId },
+      'Missing subscription',
+    );
     throw new IntegrationError({
       message:
         'Unable to find the subscription using the provided "Subscription ID"',

@@ -91,7 +91,8 @@
     "cross-fetch": "^3.0.4",
     "date-fns": "^2.24.0",
     "lodash.map": "^4.6.0",
-    "lodash.snakecase": "^4.1.1"
+    "lodash.snakecase": "^4.1.1",
+    "to-json-schema": "^0.2.5"
   },
   "resolutions": {
     "@azure/ms-rest-azure-js": "^2.0.0",

@@ -1,3 +1,15 @@
+# v6.4.1 (Mon May 06 2024)
+
+#### 🐛 Bug Fix
+
+- Added logs to identify problems [#639](https://github.com/JupiterOne/graph-azure/pull/639) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v6.4.0 (Mon Apr 29 2024)
 
 #### 🚀 Enhancement

@@ -45,6 +45,10 @@ export async function fetchSubscription(
       subscription,
     );
     if (subscriptionEntity) {
+      logger.info(
+        { subscriptionKey: subscriptionEntity._key },
+        'Ingesting subscription',
+      );
       await jobState.addEntity(subscriptionEntity);
     } else {
       logger.warn(

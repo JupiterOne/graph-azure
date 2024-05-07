@@ -1,3 +1,15 @@
+# v6.4.2 (Tue May 07 2024)
+
+#### 🐛 Bug Fix
+
+- Add logger to find key of ingested subscription [#640](https://github.com/JupiterOne/graph-azure/pull/640) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v6.4.1 (Mon May 06 2024)
 
 #### 🐛 Bug Fix

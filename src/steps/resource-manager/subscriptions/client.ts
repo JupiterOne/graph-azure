@@ -16,6 +16,7 @@ import {
   requestWithAuthErrorhandling,
 } from '../../../azure/resource-manager/client';
 import { UsageDetail } from '@azure/arm-consumption/esm/models';
+import toJsonSchema from 'to-json-schema';
 
 export class J1SubscriptionClient extends Client {
   public async getSubscription(subscriptionId: string) {
@@ -145,10 +146,39 @@ export class J1SubscriptionClient extends Client {
       'subscriptions',
       FIVE_MINUTES,
     );
+    this.logger.info(
+      { schema: getResponseShape(subscription?._response?.parsedBody) },
+      'Subscription schema',
+    );
     return subscription?._response?.parsedBody;
   }
 }
 
+function getResponseShape(response: any): string {
+  try {
+    const shape = toJsonSchema(response, {
+      arrays: {
+        mode: 'first',
+      },
+      postProcessFnc: (
+        type: string,
+        schema: any,
+        value: any,
+        commmonPostProcessDefault: (
+          type: string,
+          schema: any,
+          value: any,
+        ) => any,
+      ): any =>
+        type === 'array'
+          ? { ...schema, length: value.length }
+          : commmonPostProcessDefault(type, schema, value),
+    });
+    return `Response shape: ${JSON.stringify(shape)}`;
+  } catch (err) {
+    return `Error getting response shape: ${err}`;
+  }
+}
 /**
  *  Taken from node_modules/@azure/arm-subscriptions/src/operations/subscriptions.ts with the only change being the api version
  */

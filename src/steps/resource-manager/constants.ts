@@ -11,7 +11,7 @@ export const ANY_SCOPE = 'ANY_SCOPE';
 export const ANY_RESOURCE = 'ANY_RESOURCE';
 
 /**
- * ANY_PRINCIPAL is used to describe any active directory principal.
+ * ANY_PRINCIPAL is used to describe any entra id principal.
  * It includes users, groups, and service principals.
  */
 export const ANY_PRINCIPAL = 'ANY_PRINCIPAL';

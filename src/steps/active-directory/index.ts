@@ -307,7 +307,7 @@ function convertGraphTypeTo_type(graphType: string): string {
 export const activeDirectorySteps: AzureIntegrationStep[] = [
   {
     id: STEP_AD_ACCOUNT,
-    name: 'Active Directory Info',
+    name: 'Entra ID Information',
     entities: [ADEntities.ACCOUNT],
     relationships: [],
     executionHandler: fetchAccount,
@@ -316,7 +316,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   },
   {
     id: STEP_AD_USER_REGISTRATION_DETAILS,
-    name: 'Active Directory User Registration Details',
+    name: 'Entra ID User Registration Details',
     entities: [],
     relationships: [],
     dependsOn: [],
@@ -325,7 +325,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   },
   {
     id: STEP_AD_USERS,
-    name: 'Active Directory Users',
+    name: 'Entra ID Users',
     entities: [ADEntities.USER],
     relationships: [ADRelationships.ACCOUNT_HAS_USER],
     dependsOn: [STEP_AD_ACCOUNT, STEP_AD_USER_REGISTRATION_DETAILS],
@@ -334,7 +334,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   },
   {
     id: STEP_AD_DEVICES,
-    name: 'Active Directory Devices',
+    name: 'Entra ID Devices',
     entities: [ADEntities.DEVICE],
     relationships: [ADRelationships.USER_HAS_DEVICE],
     dependsOn: [STEP_AD_USERS],
@@ -344,7 +344,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   },
   {
     id: STEP_AD_GROUPS,
-    name: 'Active Directory Groups',
+    name: 'Entra ID Groups',
     entities: [ADEntities.USER_GROUP],
     relationships: [ADRelationships.ACCOUNT_HAS_GROUP],
     dependsOn: [STEP_AD_ACCOUNT],
@@ -354,7 +354,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   },
   {
     id: STEP_AD_GROUP_MEMBERS,
-    name: 'Active Directory Group Members',
+    name: 'Entra ID Group Members',
     entities: [ADEntities.GROUP_MEMBER],
     relationships: [
       ADRelationships.GROUP_HAS_USER,
@@ -367,7 +367,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   },
   {
     id: STEP_AD_SERVICE_PRINCIPALS,
-    name: 'Active Directory Service Principals',
+    name: 'Entra ID Service Principals',
     entities: [ADEntities.SERVICE_PRINCIPAL],
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
@@ -376,7 +376,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   },
   {
     id: STEP_AD_ROLE_DEFINITIONS,
-    name: 'Active Directory Role Definitions',
+    name: 'Entra ID Role Definitions',
     entities: [ADEntities.AD_ROLE_DEFINITION],
     relationships: [],
     dependsOn: [STEP_AD_ACCOUNT],
@@ -385,7 +385,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   },
   {
     id: STEP_AD_ROLE_ASSIGNMENTS,
-    name: 'Active Directory Role Assignments',
+    name: 'Entra ID Role Assignments',
     entities: [],
     relationships: [
       ADRelationships.USER_HAS_ROLE,
@@ -401,7 +401,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
   },
   {
     id: STEP_AD_SERVICE_PRINCIPAL_ACCESS,
-    name: 'Active Directory Service Principal Access',
+    name: 'Entra ID Service Principal Access',
     entities: [],
     relationships: [
       ADRelationships.SERVICE_PRINCIPAL_ASSIGNED_USER_GROUP,

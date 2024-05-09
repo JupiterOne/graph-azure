@@ -1,4 +1,4 @@
-# Active Directory
+# Entra ID
 
 What happens when there are multiple directories in an Azure Account?
 

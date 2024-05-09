@@ -38,14 +38,13 @@ export const entities = {
   ACTIVE_DIRECTORY_ADMIN: {
     _type: 'azure_sql_server_active_directory_admin',
     _class: ['AccessRole'],
-    resourceName: '[RM] SQL Server Active Directory Admin',
+    resourceName: '[RM] SQL Server Entra ID Admin',
   },
 };
 
 export const relationships = {
-  RESOURCE_GROUP_HAS_SQL_SERVER: createResourceGroupResourceRelationshipMetadata(
-    entities.SERVER._type,
-  ),
+  RESOURCE_GROUP_HAS_SQL_SERVER:
+    createResourceGroupResourceRelationshipMetadata(entities.SERVER._type),
   SQL_SERVER_HAS_SQL_DATABASE: {
     _type: generateRelationshipType(
       RelationshipClass.HAS,

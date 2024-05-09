@@ -15,13 +15,13 @@ Only the Azure portal and the Azure Resource Manager APIs support RBAC. Users,
 groups, and applications that are assigned RBAC roles cannot use the
 [Azure classic deployment model APIs](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/deployment-models).
 
-If you need to assign administrator roles in Azure Active Directory, see View
-and assign administrator roles in Azure Active Directory. Azure AD administrator
-roles are used to manage Azure AD resources in a directory such as create or
-edit users, assign administrative roles to others, reset user passwords, manage
-user licenses, and manage domains. See the Portal "Roles and administrators"
-blade in a selected Directory. Role information can be accessed in Azure admin
-portal, Microsoft 365 admin center, Microsoft Graph, AzureAD PowerShell.
+If you need to assign administrator roles in Microsoft Entra ID, see View and
+assign administrator roles in Microsoft Entra ID. Azure AD administrator roles
+are used to manage Azure AD resources in a directory such as create or edit
+users, assign administrative roles to others, reset user passwords, manage user
+licenses, and manage domains. See the Portal "Roles and administrators" blade in
+a selected Directory. Role information can be accessed in Azure admin portal,
+Microsoft 365 admin center, Microsoft Graph, AzureAD PowerShell.
 
 By default, Azure RBAC roles and Azure AD administrator roles do not span Azure
 and Azure AD. However, if a Global Administrator elevates their access by

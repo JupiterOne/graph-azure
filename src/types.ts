@@ -47,11 +47,11 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
   subscriptionId?: string | null;
 
   /**
-   * A directive indicating whether or not to ingest Active Directory resources.
+   * A directive indicating whether or not to ingest Entra ID resources.
    * A value of `undefined` will be interpreted as `false`.
    *
    * The integration may be configured to enable or disable the ingestion of
-   * Active Directory resources. This is necessary to prevent a graph from
+   * Entra ID resources. This is necessary to prevent a graph from
    * ending up with duplicate AD resources when more than one integration is
    * configured for an AD domain, a scenario that exists when more than one
    * subscription from the AD domain is ingested through different integration
@@ -77,7 +77,7 @@ export interface AzureIntegrationStep
   rolePermissions?: Array<string>;
   /**
    * Azure API Permissions assigned directly to a service principal within
-   * Azure Active Directory. Specifically, these permissions allow access to
+   * Microsoft Entra ID. Specifically, these permissions allow access to
    * the Azure Graph API.
    *
    * See https://learn.microsoft.com/en-us/graph/use-the-api

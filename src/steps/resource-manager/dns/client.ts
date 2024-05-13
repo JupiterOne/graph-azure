@@ -43,11 +43,12 @@ export class J1DnsManagementClient extends Client {
             zoneName,
           );
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.recordSets.listByDnsZoneNext(nextLink);
-        },
+        listNext:
+          /* istanbul ignore next: testing iteration might be difficult */ async (
+            nextLink: string,
+          ) => {
+            return serviceClient.recordSets.listByDnsZoneNext(nextLink);
+          },
       },
       resourceDescription: 'dns.recordSet',
       callback,

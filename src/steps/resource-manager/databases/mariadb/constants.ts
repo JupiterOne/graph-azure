@@ -23,9 +23,10 @@ export const MariaDBEntities = {
 };
 
 export const MariaDBRelationships = {
-  RESOURCE_GROUP_HAS_MARIADB_SERVER: createResourceGroupResourceRelationshipMetadata(
-    MariaDBEntities.SERVER._type,
-  ),
+  RESOURCE_GROUP_HAS_MARIADB_SERVER:
+    createResourceGroupResourceRelationshipMetadata(
+      MariaDBEntities.SERVER._type,
+    ),
 
   MARIADB_SERVER_HAS_MARIADB_DATABASE: {
     _type: generateRelationshipType(

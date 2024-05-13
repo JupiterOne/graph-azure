@@ -40,11 +40,12 @@ export class J1ContainerRegistryManagementClient extends Client {
         list: async () => {
           return serviceClient.webhooks.list(resourceGroup, registryName);
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.webhooks.listNext(nextLink);
-        },
+        listNext:
+          /* istanbul ignore next: testing iteration might be difficult */ async (
+            nextLink: string,
+          ) => {
+            return serviceClient.webhooks.listNext(nextLink);
+          },
       },
       resourceDescription: 'containerRegistry.webhook',
       callback,

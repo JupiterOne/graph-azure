@@ -57,7 +57,8 @@ export function separateDiagnosticSettingsRelationships(
 
   return {
     diagnosticSettingsRelationships: diagnosticSettingsRelationships,
-    diagnosticSettingsStorageRelationships: diagnosticSettingsStorageRelationships,
+    diagnosticSettingsStorageRelationships:
+      diagnosticSettingsStorageRelationships,
     rest: restAFterDiagnosticSettingsStorage,
   };
 }

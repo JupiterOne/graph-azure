@@ -36,6 +36,13 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     defaultsToDisabled: false,
     cannotBeDisabled: false,
   },
+  [INGESTION_SOURCE_IDS.APPLICATION_SECURITY_GROUP]: {
+    title: 'Application Security Group',
+    description:
+      'Ingest API management services and application security group.',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
   [INGESTION_SOURCE_IDS.APPSERVICE]: {
     title: 'App service',
     description: 'Ingest apps and service plans.',
@@ -84,6 +91,13 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     defaultsToDisabled: false,
     cannotBeDisabled: false,
   },
+  [INGESTION_SOURCE_IDS.CONTAINER_SERVICES_EXTRAS]: {
+    title: 'Container clusters extra information',
+    description:
+      'Ingest container clusters maintenance configuration and kubernetes specific data.',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
   [INGESTION_SOURCE_IDS.COSMOSDB]: {
     title: 'Cosmos Database',
     description: 'Gather information about Cosmos database.',
@@ -107,6 +121,30 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     title: 'Event grid',
     description: 'Gather information about domains and topics.',
     defaultsToDisabled: false,
+    cannotBeDisabled: false,
+  },
+  [INGESTION_SOURCE_IDS.EVENT_HUB]: {
+    title: 'Event hub',
+    description: 'Gather information about cluster and namespaces.',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
+  [INGESTION_SOURCE_IDS.EXPRESS_ROUTE]: {
+    title: 'Express Route',
+    description: 'Gather information about Route Circuit and Peer Connections.',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
+  [INGESTION_SOURCE_IDS.SYNAPSE]: {
+    title: 'Synapse Service',
+    description: 'Gather information about Sql Pools and Workspaces.',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
+  [INGESTION_SOURCE_IDS.DDOS]: {
+    title: 'DDOS',
+    description: 'Gather information about Ddos Protection Plans.',
+    defaultsToDisabled: true,
     cannotBeDisabled: false,
   },
   [INGESTION_SOURCE_IDS.FRONTDOOR]: {

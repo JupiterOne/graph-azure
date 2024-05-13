@@ -112,9 +112,8 @@ describe('rm-monitor-activity-log-alerts', () => {
       },
     });
 
-    const { accountEntity, resourceGroupEntity } = getSetupEntities(
-      configFromEnv,
-    );
+    const { accountEntity, resourceGroupEntity } =
+      getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -188,13 +187,12 @@ describe('rm-monitor-activity-log-alert-scope-relationships', () => {
 
     await fetchActivityLogAlerts(context);
 
-    const activityLogAlertEntitiesWithSubscriptionScope = context.jobState.collectedEntities.filter(
-      (a) => {
+    const activityLogAlertEntitiesWithSubscriptionScope =
+      context.jobState.collectedEntities.filter((a) => {
         const alert = getRawData<ActivityLogAlertResource>(a);
 
         return alert?.scopes.some((s) => isSubscriptionId(s));
-      },
-    );
+      });
 
     expect(
       activityLogAlertEntitiesWithSubscriptionScope.length,
@@ -227,11 +225,8 @@ describe('rm-monitor-activity-log-alert-scope-relationships', () => {
       },
     });
 
-    const {
-      accountEntity,
-      subscriptionEntity,
-      activityLogAlertEntities,
-    } = await getSetupEntities(configFromEnv);
+    const { accountEntity, subscriptionEntity, activityLogAlertEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,

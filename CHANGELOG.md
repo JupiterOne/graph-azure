@@ -1,3 +1,27 @@
+# v7.0.0 (Mon May 13 2024)
+
+#### 💥 Breaking Change
+
+- Azure enhancement [#638](https://github.com/JupiterOne/graph-azure/pull/638) ([@Bharatkk-metron](https://github.com/Bharatkk-metron) [@poornima-metron](https://github.com/poornima-metron) [@suraj-metron](https://github.com/suraj-metron) gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### 🐛 Bug Fix
+
+- Azure Enhancement dev [#636](https://github.com/JupiterOne/graph-azure/pull/636) ([@poornima-metron](https://github.com/poornima-metron) gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- completed rolebinding step and relationship [#635](https://github.com/JupiterOne/graph-azure/pull/635) ([@poornima-metron](https://github.com/poornima-metron))
+- Azure enhancement dev [#630](https://github.com/JupiterOne/graph-azure/pull/630) ([@Bharatkk-metron](https://github.com/Bharatkk-metron) [@poornima-metron](https://github.com/poornima-metron))
+- Synapse service dev [#628](https://github.com/JupiterOne/graph-azure/pull/628) ([@Bharatkk-metron](https://github.com/Bharatkk-metron))
+- Ddos service [#627](https://github.com/JupiterOne/graph-azure/pull/627) ([@Bharatkk-metron](https://github.com/Bharatkk-metron))
+- completed eventhub steps [#629](https://github.com/JupiterOne/graph-azure/pull/629) ([@poornima-metron](https://github.com/poornima-metron))
+
+#### Authors: 4
+
+- [@Bharatkk-metron](https://github.com/Bharatkk-metron)
+- [@suraj-metron](https://github.com/suraj-metron)
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+- poornima-metron ([@poornima-metron](https://github.com/poornima-metron))
+
+---
+
 # v7.0.0 (Thu May 13 2024)
 
 ### Added

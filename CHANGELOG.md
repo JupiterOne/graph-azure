@@ -1,4 +1,4 @@
-# v7.0.0 (Thu May 02 2024)
+# v7.0.0 (Thu May 13 2024)
 
 ### Added
 
@@ -66,6 +66,29 @@
 - `azure_expressroute_circuit`       **HAS**               `azure_peer_expressroute_circut_connection`       
 - `azure_subscription`               **HAS**               `azure_expressroute`                  
 - `azure_subscription`               **HAS**               `azure_bgp_service_communities`
+# v6.4.2 (Tue May 07 2024)
+
+#### 🐛 Bug Fix
+
+- Add logger to find key of ingested subscription [#640](https://github.com/JupiterOne/graph-azure/pull/640) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v6.4.1 (Mon May 06 2024)
+
+#### 🐛 Bug Fix
+
+- Added logs to identify problems [#639](https://github.com/JupiterOne/graph-azure/pull/639) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
 
 # v6.4.0 (Mon Apr 29 2024)
 

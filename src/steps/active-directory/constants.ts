@@ -23,7 +23,7 @@ export const USER_ENTITY_TYPE = 'azure_user';
 export const USER_ENTITY_CLASS = ['User'];
 
 export const DEVICE_ENTITY_TYPE = 'azure_device';
-// export const DEVICE_ENTITY_CLASS = ['Device'];
+export const DEVICE_ENTITY_CLASS = ['Device'];
 
 export const SERVICE_PRINCIPAL_ENTITY_TYPE = 'azure_service_principal';
 export const SERVICE_PRINCIPAL_ENTITY_CLASS = ['Service'];

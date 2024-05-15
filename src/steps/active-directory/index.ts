@@ -105,15 +105,26 @@ export async function fetchUsers(
 ): Promise<void> {
   const { logger, instance, jobState } = executionContext;
   const graphClient = new DirectoryGraphClient(logger, instance.config);
-
   const accountEntity = await getAccountEntity(jobState);
   const userRegistrationDetailsMap = await jobState.getData<
     Map<string, UserRegistrationDetails>
   >('userRegistrationDetailsMap');
-
+  let details = [];
   await graphClient.iterateUsers(async (user) => {
+    const userId = user.id as string;
+    await graphClient.fetchUserDetails(userId, async (userDetials) => {
+      details = userDetials;
+    });
+    const department = details[0] as string;
+    const employeeHireDate = details[1] as string;
+    const employeeType = details[2] as string;
+    const lastPasswordChanged = details[3] as string;
     const userEntity = createUserEntity(
       user,
+      department,
+      employeeHireDate,
+      employeeType,
+      lastPasswordChanged,
       userRegistrationDetailsMap?.get(user.id as string),
     );
     await jobState.addEntity(userEntity);

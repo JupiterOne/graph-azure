@@ -38,4 +38,5 @@ export const INGESTION_SOURCE_IDS = {
   SYNAPSE: 'synapse',
   DDOS: 'ddos',
   DEFENDER_ALERTS: 'defender_alerts',
+  ACCESS_PACKAGE: 'identity-governance-access-packages'
 };

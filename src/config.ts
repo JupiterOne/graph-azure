@@ -246,4 +246,10 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     defaultsToDisabled: true,
     cannotBeDisabled: false,
   },
+  [INGESTION_SOURCE_IDS.ACCESS_PACKAGE]: {
+    title: 'Access Package',
+    description: 'Ingest defender for Access Package',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
 };

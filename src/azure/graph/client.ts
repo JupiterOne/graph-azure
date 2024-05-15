@@ -19,6 +19,11 @@ import { permissions } from '../../steps/constants';
 
 export type IterableGraphResponse<T> = {
   value: T[];
+  stages: T[];
+  department: T;
+  employeeType: T;
+  employeeHireDate: T;
+  lastPasswordChangeDateTime: T;
 };
 
 type AzureGraphResponse<TResponseType = any> = TResponseType & {

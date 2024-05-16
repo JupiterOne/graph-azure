@@ -1,3 +1,15 @@
+# v7.0.1 (Thu May 16 2024)
+
+#### 🐛 Bug Fix
+
+- Changed azure active directory to Microsoft Entra ID [#641](https://github.com/JupiterOne/graph-azure/pull/641) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.0.0 (Mon May 13 2024)
 
 #### 💥 Breaking Change

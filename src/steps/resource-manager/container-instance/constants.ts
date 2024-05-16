@@ -28,9 +28,10 @@ export const ContainerInstanceEntities = {
 };
 
 export const ContainerInstanceRelationships = {
-  RESOURCE_GROUP_HAS_CONTAINER_GROUP: createResourceGroupResourceRelationshipMetadata(
-    ContainerInstanceEntities.CONTAINER_GROUP._type,
-  ),
+  RESOURCE_GROUP_HAS_CONTAINER_GROUP:
+    createResourceGroupResourceRelationshipMetadata(
+      ContainerInstanceEntities.CONTAINER_GROUP._type,
+    ),
 
   CONTAINER_GROUP_HAS_CONTAINER: {
     _type: generateRelationshipType(

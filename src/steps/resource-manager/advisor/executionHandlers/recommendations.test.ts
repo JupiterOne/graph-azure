@@ -51,7 +51,7 @@ test('rm-advisor-assessment-recommendation-relationships', async () => {
 
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
-}, 10_000);
+}, 100_000);
 
 test('rm-advisor-resource-recommendation-relationships', async () => {
   const stepTestConfig = getStepTestConfigForStep(

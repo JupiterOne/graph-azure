@@ -1,3 +1,95 @@
+# v7.0.0 (Mon May 13 2024)
+
+#### 💥 Breaking Change
+
+- Azure enhancement [#638](https://github.com/JupiterOne/graph-azure/pull/638) ([@Bharatkk-metron](https://github.com/Bharatkk-metron) [@poornima-metron](https://github.com/poornima-metron) [@suraj-metron](https://github.com/suraj-metron) gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### 🐛 Bug Fix
+
+- Azure Enhancement dev [#636](https://github.com/JupiterOne/graph-azure/pull/636) ([@poornima-metron](https://github.com/poornima-metron) gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- completed rolebinding step and relationship [#635](https://github.com/JupiterOne/graph-azure/pull/635) ([@poornima-metron](https://github.com/poornima-metron))
+- Azure enhancement dev [#630](https://github.com/JupiterOne/graph-azure/pull/630) ([@Bharatkk-metron](https://github.com/Bharatkk-metron) [@poornima-metron](https://github.com/poornima-metron))
+- Synapse service dev [#628](https://github.com/JupiterOne/graph-azure/pull/628) ([@Bharatkk-metron](https://github.com/Bharatkk-metron))
+- Ddos service [#627](https://github.com/JupiterOne/graph-azure/pull/627) ([@Bharatkk-metron](https://github.com/Bharatkk-metron))
+- completed eventhub steps [#629](https://github.com/JupiterOne/graph-azure/pull/629) ([@poornima-metron](https://github.com/poornima-metron))
+
+#### Authors: 4
+
+- [@Bharatkk-metron](https://github.com/Bharatkk-metron)
+- [@suraj-metron](https://github.com/suraj-metron)
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+- poornima-metron ([@poornima-metron](https://github.com/poornima-metron))
+
+---
+
+# v7.0.0 (Thu May 13 2024)
+
+### Added
+
+- Support for ingesting the following **new** resources
+
+- New entities
+  - `azure_event_hub`
+  - `azure_event_hub_cluster`
+  - `azure_event_hub_key`
+  - `azure_event_hub_namespace`
+  - `azure_event_hub_consumer_group`
+  - `azure_synapse`
+  - `azure_synapse_masking_policy`
+  - `azure_synapse_masking_rule`
+  - `azure_synapse_sql_pool`
+  - `azure_synapse_workspace`
+  - `azure_synapse_key`
+  - `azure_ddos_protection_plan`
+  - `azure_application_security_group`
+  - `azure_kube_maintenance_configuration`
+  - `azure_kubernetes_cluster`
+  - `azure_kube_service`
+  - `azure_kube_trusted_access_role`
+  - `azure_expressroute_circuit`
+  - `azure_peer_expressroute_circut_connection`
+  - `azure_expressroute_circut_connection`
+  - `azure_expressroute`
+  - `azure_bgp_service_communities`
+  - `azure_application_gateway`
+  
+
+- New relationships
+- `azure_event_hub`                  **HAS**               `azure_location`                                  
+- `azure_event_hub_cluster`          **ASSIGNED**          `azure_event_hub_namespace`                       
+- `azure_event_hub_consumer_group`   **HAS**               `azure_event_hub`                                 
+- `azure_event_hub_key`              **USES**              `azure_keyvault_service`                          
+- `azure_event_hub_namespace`        **HAS**               `azure_event_hub`                                 
+- `azure_event_hub_namespace`        **HAS**               `azure_event_hub_key`  
+- `azure_resource_group`             **HAS**               `azure_event_hub`
+- `azure_subscription`               **HAS**               `azure_event_hub`
+- `azure_synapse`                    **HAS**               `azure_synapse_key`
+- `azure_synapse`                    **HAS**               `azure_synapse_sql_pool`
+- `azure_synapse`                    **HAS**               `azure_synapse_workspace`
+- `azure_synapse_sql_pool`           **ASSIGNED**          `azure_synapse_masking_policy`
+- `azure_synapse_sql_pool`           **HAS**               `azure_synapse_masking_rule`
+- `azure_synapse_workspace`          **HAS**               `azure_synapse_key`
+- `azure_synapse_workspace`          **HAS**               `azure_synapse_sql_pool`
+- `azure_subscription`               **HAS**               `azure_synapse`
+- `azure_keyvault_service`           **HAS**               `azure_synapse_key`
+- `azure_resource_group`             **HAS**               `azure_kubernetes_cluster`
+- `azure_kube_service`               **CONTAINS**          `azure_kube_trusted_access_role`
+- `azure_kube_trusted_access_role`   **HAS**               `kube_cluster_role`
+- `azure_kubernetes_cluster`         **HAS**               `azure_kube_maintenance_configuration`
+- `azure_subscription`               **HAS**               `azure_kube_service`
+- `azure_resource_group`             **HAS**               `azure_ddos_protection_plan`
+- `azure_subscription`               **HAS**               `azure_ddos_protection_plan`
+- `azure_ddos_protection_plan`       **ASSIGNED**          `azure_public_ip`
+- `azure_ddos_protection_plan`       **ASSIGNED**          `azure_vnet`
+- `azure_bgp_service_communities`    **HAS**               `azure_expressroute`                              
+- `azure_expressroute`               **HAS**               `azure_application_gateway`                       
+- `azure_expressroute`               **HAS**               `azure_expressroute`                              
+- `azure_expressroute`               **HAS**               `azure_expressroute_circuit_connection`           
+- `azure_expressroute`               **HAS**               `azure_peer_expressroute_circut_connection`       
+- `azure_expressroute_circuit`       **HAS**               `azure_expressroute_circuit_connection`           
+- `azure_expressroute_circuit`       **HAS**               `azure_peer_expressroute_circut_connection`       
+- `azure_subscription`               **HAS**               `azure_expressroute`                  
+- `azure_subscription`               **HAS**               `azure_bgp_service_communities`
 # v6.4.2 (Tue May 07 2024)
 
 #### 🐛 Bug Fix

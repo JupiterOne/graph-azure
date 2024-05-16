@@ -24,6 +24,7 @@ import {
 import { AzureWebLinker } from '../../../azure';
 import { resourceGroupName } from '../../../azure/utils';
 import { entities } from './constants';
+import { ApplicationSecurityGroup } from '@azure/arm-network-latest';
 
 function mapVirtualMachineStatus(status?: InstanceViewStatus) {
   if (status?.displayStatus === 'VM running') {
@@ -36,6 +37,7 @@ function mapVirtualMachineStatus(status?: InstanceViewStatus) {
 }
 
 export function createVirtualMachineEntity(
+  asgs: ApplicationSecurityGroup[] | undefined,
   webLinker: AzureWebLinker,
   data: VirtualMachine,
   instanceView?: VirtualMachinesInstanceViewResponse,
@@ -96,6 +98,7 @@ export function createVirtualMachineEntity(
     ),
     hostname: null,
     webLink: webLinker.portalResourceUrl(data.id),
+    applicationSecurityGroup: asgs?.map((appSecGroup) => appSecGroup.id!),
   };
 
   assignTags(entity, data.tags);

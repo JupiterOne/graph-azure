@@ -20,16 +20,17 @@ export const RESOURCE_GROUP_ENTITY: StepEntityMetadata = {
 };
 
 const SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS = RelationshipClass.HAS;
-export const SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_METADATA: StepRelationshipMetadata = {
-  _class: SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS,
-  sourceType: subscriptionEntities.SUBSCRIPTION._type,
-  _type: generateRelationshipType(
-    SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS,
-    subscriptionEntities.SUBSCRIPTION._type,
-    RESOURCE_GROUP_ENTITY._type,
-  ),
-  targetType: RESOURCE_GROUP_ENTITY._type,
-};
+export const SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_METADATA: StepRelationshipMetadata =
+  {
+    _class: SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS,
+    sourceType: subscriptionEntities.SUBSCRIPTION._type,
+    _type: generateRelationshipType(
+      SUBSCRIPTION_RESOURCE_GROUP_RELATIONSHIP_CLASS,
+      subscriptionEntities.SUBSCRIPTION._type,
+      RESOURCE_GROUP_ENTITY._type,
+    ),
+    targetType: RESOURCE_GROUP_ENTITY._type,
+  };
 
 export const RESOURCE_LOCK_ENTITY: StepEntityMetadata = {
   _type: 'azure_resource_lock',

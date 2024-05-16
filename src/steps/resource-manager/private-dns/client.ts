@@ -40,11 +40,12 @@ export class J1PrivateDnsManagementClient extends Client {
         list: async () => {
           return serviceClient.recordSets.list(resourceGroup, privateZoneName);
         },
-        listNext: /* istanbul ignore next: testing iteration might be difficult */ async (
-          nextLink: string,
-        ) => {
-          return serviceClient.recordSets.listNext(nextLink);
-        },
+        listNext:
+          /* istanbul ignore next: testing iteration might be difficult */ async (
+            nextLink: string,
+          ) => {
+            return serviceClient.recordSets.listNext(nextLink);
+          },
       },
       resourceDescription: 'privatedns.recordSet',
       callback,

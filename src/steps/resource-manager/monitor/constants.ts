@@ -81,9 +81,10 @@ export const MonitorRelationships = {
     _class: RelationshipClass.USES,
     targetType: storageEntities.STORAGE_ACCOUNT._type,
   },
-  RESOURCE_GROUP_HAS_ACTIVITY_LOG_ALERT: createResourceGroupResourceRelationshipMetadata(
-    MonitorEntities.ACTIVITY_LOG_ALERT._type,
-  ),
+  RESOURCE_GROUP_HAS_ACTIVITY_LOG_ALERT:
+    createResourceGroupResourceRelationshipMetadata(
+      MonitorEntities.ACTIVITY_LOG_ALERT._type,
+    ),
   ACTIVITY_LOG_ALERT_MONITORS_SCOPE: {
     _type: 'azure_monitor_activity_log_alert_monitors_azure_scope',
     sourceType: MonitorEntities.ACTIVITY_LOG_ALERT._type,

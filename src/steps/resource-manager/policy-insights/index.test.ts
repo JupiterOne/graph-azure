@@ -102,11 +102,8 @@ describe('rm-policy-state-to-policy-assignment-relationships', () => {
       },
     });
 
-    const {
-      accountEntity,
-      policyStateEntities,
-      policyAssignmentEntities,
-    } = await getSetupEntities(configFromEnv);
+    const { accountEntity, policyStateEntities, policyAssignmentEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -174,11 +171,8 @@ describe('rm-policy-state-to-policy-definition-relationships', () => {
       },
     });
 
-    const {
-      accountEntity,
-      policyStateEntities,
-      policyDefinitionEntities,
-    } = await getSetupEntities(configFromEnv);
+    const { accountEntity, policyStateEntities, policyDefinitionEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -245,11 +239,8 @@ describe('rm-policy-state-to-resource-relationships', () => {
       },
     });
 
-    const {
-      accountEntity,
-      policyStateEntities,
-      keyVaultEntities,
-    } = await getSetupEntities(configFromEnv);
+    const { accountEntity, policyStateEntities, keyVaultEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,

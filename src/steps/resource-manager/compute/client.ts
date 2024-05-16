@@ -22,6 +22,8 @@ import {
   request,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../azure/utils';
+import { NetworkManagementClient } from '@azure/arm-network';
+import { ApplicationSecurityGroup } from '@azure/arm-network-latest';
 
 export class ComputeClient extends Client {
   public async iterateVirtualMachines(
@@ -59,6 +61,35 @@ export class ComputeClient extends Client {
       FIVE_MINUTES,
     );
     return response;
+  }
+
+  // Function to retrieve aplication security group associated with a network interface
+  public async getASGs(
+    resourceGroupName: string,
+    nicId: string,
+  ): Promise<ApplicationSecurityGroup[]> {
+    try {
+      const networkClient = await this.getAuthenticatedServiceClient(
+        NetworkManagementClient,
+      );
+
+      const nic = await networkClient.networkInterfaces.get(
+        resourceGroupName,
+        nicId,
+      );
+      return (
+        (nic &&
+          nic.ipConfigurations &&
+          nic.ipConfigurations[0]?.applicationSecurityGroups) ||
+        []
+      );
+    } catch (error) {
+      this.logger.error(
+        `Error occurred while retrieving ASGs for NIC ${nicId}:`,
+      );
+      this.logger.error(error.message);
+      return [];
+    }
   }
 
   public async iterateVirtualMachineExtensions(

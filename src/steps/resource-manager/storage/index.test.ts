@@ -25,7 +25,7 @@ test('rm-storage-resources', async () => {
 
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
-}, 20_000);
+}, 100_000);
 
 test('rm-storage-containers', async () => {
   const stepTestConfig = getStepTestConfigForStep(steps.STORAGE_CONTAINERS);

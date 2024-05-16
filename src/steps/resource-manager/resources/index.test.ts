@@ -68,8 +68,7 @@ describe('#createSubscriptionResourceGroupRelationship', () => {
     expect(result).toEqual({
       _class: 'HAS',
       _fromEntityKey: '/subscriptions/subscription-id',
-      _key:
-        '/subscriptions/subscription-id|has|/subscriptions/subscription-id/resourceGroups/resource-group-id',
+      _key: '/subscriptions/subscription-id|has|/subscriptions/subscription-id/resourceGroups/resource-group-id',
       _toEntityKey:
         '/subscriptions/subscription-id/resourceGroups/resource-group-id',
       _type: 'azure_subscription_has_resource_group',
@@ -276,13 +275,11 @@ describe('step - resource has resource lock relationships', () => {
   function separateResourceLockRelationships(
     collectedRelationships: Relationship[],
   ) {
-    const {
-      targets: directRelationships,
-      rest: mappedRelationships,
-    } = filterGraphObjects(collectedRelationships, (r) => !r._mapping) as {
-      targets: ExplicitRelationship[];
-      rest: MappedRelationship[];
-    };
+    const { targets: directRelationships, rest: mappedRelationships } =
+      filterGraphObjects(collectedRelationships, (r) => !r._mapping) as {
+        targets: ExplicitRelationship[];
+        rest: MappedRelationship[];
+      };
 
     const { rest: directResourceLockRelationships } = filterGraphObjects(
       directRelationships,
@@ -317,11 +314,8 @@ describe('step - resource has resource lock relationships', () => {
       },
     });
 
-    const {
-      sqlServerEntities,
-      resourceGroupEntities,
-      resourceLockEntities,
-    } = await getSetupEntities(configFromEnv);
+    const { sqlServerEntities, resourceGroupEntities, resourceLockEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
@@ -344,12 +338,10 @@ describe('step - resource has resource lock relationships', () => {
 
     expect(context.jobState.collectedEntities).toHaveLength(0);
 
-    const {
-      directResourceLockRelationships,
-      mappedResourceLockRelationships,
-    } = separateResourceLockRelationships(
-      context.jobState.collectedRelationships,
-    );
+    const { directResourceLockRelationships, mappedResourceLockRelationships } =
+      separateResourceLockRelationships(
+        context.jobState.collectedRelationships,
+      );
 
     expect(directResourceLockRelationships.length).toBeGreaterThan(0);
     expect(mappedResourceLockRelationships.length).toBeGreaterThan(0);

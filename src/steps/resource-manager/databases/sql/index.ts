@@ -254,7 +254,7 @@ export const sqlSteps: AzureIntegrationStep[] = [
   },
   {
     id: steps.SERVER_AD_ADMINS,
-    name: 'SQL Server Active Directory Admins',
+    name: 'SQL Server Entra ID Admins',
     entities: [entities.ACTIVE_DIRECTORY_ADMIN],
     relationships: [relationships.SQL_SERVER_HAS_AD_ADMIN],
     dependsOn: [steps.SERVERS],

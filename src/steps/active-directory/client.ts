@@ -71,7 +71,7 @@ export class DirectoryGraphClient extends GraphClient {
       return response;
     } catch (err) {
       // This endpoint is brittle, since it behaves differently whether the default directory (tenant) is a "personal"
-      // account or a "school/work" account. In order to protect us from execution failures during an important active directory
+      // account or a "school/work" account. In order to protect us from execution failures during an important entra id
       // step, we'll never throw an error here but _explicitly_ warn operators (developers) using logger.error, and
       // also send a message to sentry via logger.onFailure.
       //

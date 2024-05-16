@@ -44,9 +44,9 @@ The integration is triggered by an event containing the information for a
 specific integration instance. Users configure the integration by providing API
 credentials obtained through the Azure portal.
 
-Azure Active Directory is authenticated and accessed through the [Microsoft
-Graph API][1]. Azure Resource Manager is authenticated and accessed through
-[Resource Manager APIs][2].
+Microsoft Entra ID is authenticated and accessed through the [Microsoft Graph
+API][1]. Azure Resource Manager is authenticated and accessed through [Resource
+Manager APIs][2].
 
 ### Azure Application Configuration
 
@@ -54,7 +54,7 @@ To create the App Registration:
 
 1. Navigate to your [Azure portal](https://portal.azure.com).
 
-2. Navigate to **Azure Active Directory**, then **App registrations**
+2. Navigate to **Microsoft Entra ID**, then **App registrations**
 
 3. Create a new App registration, using the **Name** "{{productName}}",
    selecting **Accounts in this organizational directory only**, with **no**
@@ -72,7 +72,7 @@ To create the App Registration:
 
 9. Save and copy the generated secret **Value** (NOT the **Secret ID**)
 
-#### API Permissions (Azure Active Directory)
+#### API Permissions (Microsoft Entra ID)
 
 Grant permission to read Microsoft Graph information:
 
@@ -98,14 +98,14 @@ Manager information:
      **Management Groups**, then to the
      [Tenant Root Group](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#root-management-group-for-each-directory).
      (NOTE: If it is not possible to select the **Tenant Root Group** first
-     navigate to Azure Active Directory -> Properties -> Select **Yes** on
-     **Access management for Azure resources**. Check
+     navigate to Microsoft Entra ID -> Properties -> Select **Yes** on **Access
+     management for Azure resources**. Check
      [elevating access](https://learn.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin)
      for more information)
 
      Please also enable the following flags in your integration instance:
 
-     - Ingest Active Directory.
+     - Ingest Entra ID.
      - Configure Subscription Instances.
        - Auto-Delete Removed Subscriptions.
 
@@ -401,7 +401,7 @@ The following entities are created:
 | [RM] SQL Database                                | `azure_sql_database`                              | `Database`, `DataStore`            |
 | [RM] SQL Pool                                    | `azure_synapse_sql_pool`                          | `Configuration`                    |
 | [RM] SQL Server                                  | `azure_sql_server`                                | `Database`, `DataStore`, `Host`    |
-| [RM] SQL Server Active Directory Admin           | `azure_sql_server_active_directory_admin`         | `AccessRole`                       |
+| [RM] SQL Server Entra ID Admin                   | `azure_sql_server_active_directory_admin`         | `AccessRole`                       |
 | [RM] SQL Server Firewall Rule                    | `azure_sql_server_firewall_rule`                  | `Firewall`                         |
 | [RM] Security Assessment                         | `azure_security_assessment`                       | `Assessment`                       |
 | [RM] Security Center Auto Provisioning Setting   | `azure_security_center_auto_provisioning_setting` | `Configuration`                    |

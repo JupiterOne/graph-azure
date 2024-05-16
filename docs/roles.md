@@ -15,23 +15,24 @@ Only the Azure portal and the Azure Resource Manager APIs support RBAC. Users,
 groups, and applications that are assigned RBAC roles cannot use the
 [Azure classic deployment model APIs](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/deployment-models).
 
-If you need to assign administrator roles in Azure Active Directory, see View
-and assign administrator roles in Azure Active Directory. Azure AD administrator
-roles are used to manage Azure AD resources in a directory such as create or
-edit users, assign administrative roles to others, reset user passwords, manage
-user licenses, and manage domains. See the Portal "Roles and administrators"
-blade in a selected Directory. Role information can be accessed in Azure admin
-portal, Microsoft 365 admin center, Microsoft Graph, AzureAD PowerShell.
+If you need to assign administrator roles in Microsoft Entra ID, see View and
+assign administrator roles in Microsoft Entra ID. Microsoft Entra administrator
+roles are used to manage Microsoft Entra resources in a directory such as create
+or edit users, assign administrative roles to others, reset user passwords,
+manage user licenses, and manage domains. See the Portal "Roles and
+administrators" blade in a selected Directory. Role information can be accessed
+in Azure admin portal, Microsoft 365 admin center, Microsoft Graph, Microsoft
+Entra PowerShell.
 
-By default, Azure RBAC roles and Azure AD administrator roles do not span Azure
-and Azure AD. However, if a Global Administrator elevates their access by
-choosing the Global admin can manage Azure Subscriptions and Management Groups
-switch in the Azure portal, the Global Administrator will be granted the User
-Access Administrator role (an RBAC role) on all subscriptions for a particular
-tenant. The User Access Administrator role enables the user to grant other users
-access to Azure resources. This switch can be helpful to regain access to a
-subscription. For more information, see Elevate access as an Azure AD
-administrator.
+By default, Azure RBAC roles and Microsoft Entra administrator roles do not span
+Azure and Microsoft Entra. However, if a Global Administrator elevates their
+access by choosing the Global admin can manage Azure Subscriptions and
+Management Groups switch in the Azure portal, the Global Administrator will be
+granted the User Access Administrator role (an RBAC role) on all subscriptions
+for a particular tenant. The User Access Administrator role enables the user to
+grant other users access to Azure resources. This switch can be helpful to
+regain access to a subscription. For more information, see Elevate access as an
+Microsoft Entra administrator.
 
 ---
 
@@ -46,7 +47,7 @@ delete. Roles can be high-level, like owner, or specific, like virtual machine
 reader.
 
 Azure includes several built-in roles that you can use. **Custom roles** require
-an Azure AD Premium P1 or P2.
+an Microsoft Entra Premium P1 or P2.
 
 The following lists four fundamental built-in roles. The first three apply to
 all resource types.
@@ -98,4 +99,4 @@ Can any Global Administrators manage access to all Azure subscriptions and
 management groups in any directory?
 
 - This is considered a safety net means of getting control over IAM (Azure RBAC)
-  as a Global Admin in the AD associated with an Azure Account
+  as a Global Admin in the Microsoft Entra ID associated with an Azure Account

@@ -3,21 +3,21 @@ import { INGESTION_SOURCE_IDS } from './constants';
 
 export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
   [INGESTION_SOURCE_IDS.AD_GENERALS]: {
-    title: 'Active directory generals',
+    title: 'Entra ID generals',
     description:
       'Gather information related to user identities, authentication events, and access permissions.',
     defaultsToDisabled: false,
     cannotBeDisabled: true,
   },
   [INGESTION_SOURCE_IDS.AD_GROUPS]: {
-    title: 'Active directory groups',
+    title: 'Entra ID groups',
     description:
       'Gather information related to user groups and group membership.',
     defaultsToDisabled: true,
     cannotBeDisabled: false,
   },
   [INGESTION_SOURCE_IDS.AD_DEVICES]: {
-    title: 'Active directory devices',
+    title: 'Entra ID devices',
     description:
       'Gather information related to user devices and device ownership.',
     defaultsToDisabled: true,

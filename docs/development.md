@@ -3,15 +3,14 @@
 There are a few steps to take to setup Azure integration development:
 
 1. Identify an Azure account for local development. It is highly recommended
-   that you avoid targeting a production Active Directory or Subscription,
-   because tests rely on Polly.js recordings for playback in CI/CD environments.
+   that you avoid targeting a production Entra ID or Subscription, because tests
+   rely on Polly.js recordings for playback in CI/CD environments.
 1. Create credentials with write permissions to configure
    `<graph-azure>/terraform/.env`. The Terraform Azure provider client needs a
    lot more permissions than the integration itself.
 1. Create an App Registration with read permissions to configure
    `<graph-azure>/.env`. The integration Azure client will use this for
-   ingesting information about the targeted Active Directory and Azure
-   Subscription.
+   ingesting information about the targeted Entra ID and Azure Subscription.
 
 ## Prerequisites
 
@@ -22,7 +21,7 @@ Subscription for IaaS resources for development.
 
 If you already have a Microsoft account, you can use that email address to get
 started with Azure, though you should be careful to avoid using the default
-Active Directory or any production Active Directory or Azure Subscription.
+Microsoft Entra ID or any production Microsofot Entra ID or Azure Subscription.
 Alternatively, consider creating a free Microsoft Hotmail email address and
 create a completely independent account to get started. In any case, be aware
 that you will likely run into charges at some point, so be sure you know how
@@ -107,16 +106,15 @@ credentials.
 
 The integration is in essence itself just another script, so it too needs a
 Service Principal, though one with only enough permissions to read information
-from the target Active Directory and Azure Subscription. The Service Principal
-created for Terraform _must not be used_ as it will lead to problems in
-production, where the script will most certainly NOT have such permissive
-credentials.
+from the target Entra ID and Azure Subscription. The Service Principal created
+for Terraform _must not be used_ as it will lead to problems in production,
+where the script will most certainly NOT have such permissive credentials.
 
 Currently, customers are asked to create an App Registration for JupiterOne in
-their own Active Directory, which produces a Service Principal. You will
+their own Entra ID, which produces a Service Principal. You will
 _[take the same steps](jupiterone.md#integration-instance-configuration)_ in
-your development Active Directory to create an App Registration, granting it
-consent to access certain APIs, and using the App Registration Service Principal
+your development Entra ID to create an App Registration, granting it consent to
+access certain APIs, and using the App Registration Service Principal
 credentials to execute the integration on your local machine.
 
 Using the Application (client) ID, Directory (tenant) ID, and generated secret
@@ -196,9 +194,9 @@ TODO: Make request matching ignore some deets
 
 ## Learn About Microsoft APIs
 
-Azure Active Directory is authenticated and accessed through the [Microsoft
-Graph API][5]. Azure Resource Manager is authenticated and accessed through
-[Resource Manager APIs][6]. Notice that the code is structured to highlight this
+Microsoft Entra ID is authenticated and accessed through the [Microsoft Graph
+API][5]. Azure Resource Manager is authenticated and accessed through [Resource
+Manager APIs][6]. Notice that the code is structured to highlight this
 distinction.
 
 Working with the Microsoft Graph is made easier by setting up the [Postman

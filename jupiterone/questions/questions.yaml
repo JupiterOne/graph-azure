@@ -129,7 +129,7 @@ questions:
     title:
       Is Azure Security Defaults enabled for all Microsoft directories/tenants?
     description:
-      Security defaults in Azure Active Directory (Azure AD) make it easier to
+      Security defaults in Microsoft Entra ID make it easier to
       be secure and help protect your organization. Security defaults contain
       preconfigured security settings for common attacks.\nMicrosoft is making
       security defaults available to everyone. The goal is to ensure that all
@@ -2835,9 +2835,9 @@ questions:
         requirements:
           - '9.4'
   - id: integration-question-azure-appservice-register-azure-active-directory
-    title: Are all Azure Web Apps using "Register with Azure Active Directory"?
+    title: Are all Azure Web Apps using "Register with Microsoft Entra ID"?
     description:
-      Checks that all Azure Web Apps have "Register with Azure Active Directory"
+      Checks that all Azure Web Apps have "Register with Microsoft Entra ID"
       enabled.
     queries:
       - name: good

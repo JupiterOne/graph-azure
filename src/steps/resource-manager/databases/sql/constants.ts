@@ -38,7 +38,7 @@ export const entities = {
   ACTIVE_DIRECTORY_ADMIN: {
     _type: 'azure_sql_server_active_directory_admin',
     _class: ['AccessRole'],
-    resourceName: '[RM] SQL Server Active Directory Admin',
+    resourceName: '[RM] SQL Server Entra ID Admin',
   },
 };
 

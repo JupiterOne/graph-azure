@@ -1313,7 +1313,7 @@ describe('getStepStartStates', () => {
 });
 
 describe('dependencies', () => {
-  test('getActiveDirectorySteps should not depend on non-active directory steps', () => {
+  test('getActiveDirectorySteps should not depend on non-entra id steps', () => {
     const getApiStepsResponse = getActiveDirectorySteps();
 
     const activeDirectorySteps = [
@@ -1327,7 +1327,7 @@ describe('dependencies', () => {
     );
   });
 
-  test('getResourceManagerSteps should not depend on non-active directory steps', () => {
+  test('getResourceManagerSteps should not depend on non-entra id steps', () => {
     const getApiStepsResponse = getResourceManagerSteps();
 
     const resourceManagerStepIds = [
@@ -1341,7 +1341,7 @@ describe('dependencies', () => {
     );
   });
 
-  test('getManagementGroupSteps should not depend on non-active directory steps', () => {
+  test('getManagementGroupSteps should not depend on non-entra id steps', () => {
     const getApiStepsResponse = getManagementGroupSteps();
 
     const managementGroupStepIds = [

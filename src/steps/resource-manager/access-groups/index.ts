@@ -14,7 +14,7 @@ import {
   STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY,
   STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST,
   STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP,
-  STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION,
+  STEP_ACCESS_PACKAGE_RESOURCE,
   STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP,
   STEP_AZURE_APPLICATION,
   STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
@@ -422,7 +422,7 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
   },
 
   {
-    id: STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION,
+    id: STEP_ACCESS_PACKAGE_RESOURCE,
     name: 'Entitlement Management Access Package Resource Application',
     entities: [accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE],
     relationships: [],
@@ -448,7 +448,7 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
     relationships: [
       accessPackageRelationships.STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP,
     ],
-    dependsOn: [STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION, STEP_AZURE_APPLICATION],
+    dependsOn: [STEP_ACCESS_PACKAGE_RESOURCE, STEP_AZURE_APPLICATION],
     rolePermissions: [],
     executionHandler: buildAccessPackageResourceAssignedApplicationRelationship,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,

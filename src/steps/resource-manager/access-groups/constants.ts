@@ -12,8 +12,8 @@ export const STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST =
   'rm-access-package-assignment-request';
 export const STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER =
   'rm-access-package-assignment-approver';
-export const STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION =
-  'rm-access-package-resource-application';
+export const STEP_ACCESS_PACKAGE_RESOURCE =
+  'rm-access-package-resource';
 export const STEP_AZURE_APPLICATION =
   'rm-azure-application';
 

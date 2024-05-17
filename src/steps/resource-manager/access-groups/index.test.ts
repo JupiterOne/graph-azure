@@ -16,7 +16,9 @@ import {
   STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY,
   STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST,
   STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP,
-  STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION,
+  STEP_ACCESS_PACKAGE_RESOURCE,
+  STEP_AZURE_APPLICATION,
+  STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP,
   STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
   STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
   STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP,
@@ -123,14 +125,38 @@ test(
 );
 
 test(
-  STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION,
+  STEP_ACCESS_PACKAGE_RESOURCE,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(
-      STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION,
+      STEP_ACCESS_PACKAGE_RESOURCE,
     );
 
     recording = setupAzureRecording({
-      name: STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION,
+      name: STEP_ACCESS_PACKAGE_RESOURCE,
+      directory: __dirname,
+      options: {
+        recordFailedRequests: true,
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
+    });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  },
+  100_000,
+);
+
+test(
+  STEP_AZURE_APPLICATION,
+  async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_AZURE_APPLICATION,
+    );
+
+    recording = setupAzureRecording({
+      name: STEP_AZURE_APPLICATION,
       directory: __dirname,
       options: {
         recordFailedRequests: true,
@@ -179,6 +205,30 @@ test(
 
     recording = setupAzureRecording({
       name: STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER_IS_AZURE_USER_RELATIONSHIP,
+      directory: __dirname,
+      options: {
+        recordFailedRequests: true,
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
+    });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  },
+  200_000,
+);
+
+test(
+  STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP,
+  async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP,
+    );
+
+    recording = setupAzureRecording({
+      name: STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP,
       directory: __dirname,
       options: {
         recordFailedRequests: true,

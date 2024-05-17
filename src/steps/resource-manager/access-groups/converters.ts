@@ -132,8 +132,8 @@ export function createAccessPackageCatalogEntity(
         name: data.displayName,
         status: data.status,
         id: data.id as string,
-        originId: data.originId as string,
-        originSystem: data.originSystem,
+        catalogType: data.catalogType as string,
+        state: data.state,
         description: data.description,
         resourceAppId: resourceAppId
       },

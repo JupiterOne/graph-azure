@@ -90,6 +90,18 @@ export class AccessPackageClient extends GraphClient {
     });
   }
 
+  public async iterateAzureApplications(
+    callback: (application: any) => void | Promise<void>,
+  ): Promise<void> {
+    const resourceUrl = `/applications`;
+    this.logger.debug('Iterating Azure Applications');
+    return this.iterateResources({
+      resourceUrl,
+      callback,
+    });
+  }
+  
+
   // Not using PageIterator because it doesn't allow async callback
   private async iterateResources<T>({
     resourceUrl,

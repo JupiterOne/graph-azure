@@ -1,15 +1,11 @@
 import {
   Entity,
-  IntegrationInstance,
   createIntegrationEntity,
 } from '@jupiterone/integration-sdk-core';
-import { Package } from '@microsoft/microsoft-graph-types';
 import { accessPackageEntites } from './constants';
 import { ApplicationPackage } from '@azure/arm-batch/esm/models';
-import { AccessPackageClient } from './client';
 import { PolicyAssignment } from '@azure/arm-policy/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
-import { Policy } from '@azure/arm-apimanagement';
 
 export function createAccessPackageEntity(data: ApplicationPackage): Entity {
   return createIntegrationEntity({
@@ -23,6 +19,25 @@ export function createAccessPackageEntity(data: ApplicationPackage): Entity {
         name: data.id as string,
         category: ['infrastructure'],
         function: ['workflow'],
+      },
+    },
+  });
+}
+
+export function createAzureApplicationEntity(data: any): Entity {
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _class: accessPackageEntites.STEP_AZURE_APPLICATION._class,
+        _key: generateEntityKey(data.appId),
+        _type: accessPackageEntites.STEP_AZURE_APPLICATION._type,
+        resourceName: accessPackageEntites.STEP_AZURE_APPLICATION.resourceName,
+        name: data.displayName,
+        id: data.id,
+        publisherDomain: data.publisherDomain,
+        signInAudience: data.signInAudience,
+        appId: data.appId
       },
     },
   });
@@ -106,18 +121,19 @@ export function createAccessPackageResourceApplicationEntity(
       source: data,
       assign: {
         _class:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION._class,
-        _key: generateEntityKey(data.id),
+          accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._class,
+        _key: accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._type + "_" + generateEntityKey(data.id),
         _type:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION._type,
+          accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._type,
         resourceName:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION
+          accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE
             .resourceName,
         name: data.displayName,
         status: data.status,
         id: data.id as string,
         originId: data.originId as string,
         originSystem: data.originSystem,
+        description: data.description
       },
     },
   });

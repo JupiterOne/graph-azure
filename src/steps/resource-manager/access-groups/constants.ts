@@ -14,8 +14,10 @@ export const STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER =
   'rm-access-package-assignment-approver';
 export const STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION =
   'rm-access-package-resource-application';
+export const STEP_AZURE_APPLICATION =
+  'rm-azure-application';
 
-// Realationships
+// Relationships
 export const STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER_IS_AZURE_USER_RELATIONSHIP =
   'rm-access-package-assignment-approver-is-user';
 export const STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP =
@@ -28,6 +30,8 @@ export const STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP =
   'rm-azure-user-assigned-to-access-package';
 export const STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP =
   'rm-azure-group-assigned-to-access-package';
+export const STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP =
+  'rm-access-package-resource-application-assigned-to-azure-application';
 
 export const accessPackageEntites = {
   STEP_ACCESS_PACKAGE: {
@@ -55,11 +59,16 @@ export const accessPackageEntites = {
     _class: ['Review'],
     resourceName: '[RM] Access Package Assignment Approver',
   },
-  STEP_ACCESS_PACKAGE_RESOURCE_APPLICATION: {
-    _type: 'azure_access_packages_resource_application',
-    _class: ['Application'],
-    resourceName: '[RM] Access Package Resource Application',
+  STEP_ACCESS_PACKAGE_RESOURCE: {
+    _type: 'azure_access_packages_resource',
+    _class: ['Resource'],
+    resourceName: '[RM] Access Package Resource',
   },
+  STEP_AZURE_APPLICATION: {
+    _type: 'azure_application',
+    _class: ['Application'],
+    resourceName: '[RM] Azure Application',
+  }
 };
 
 export const accessPackageRelationships = {
@@ -103,4 +112,10 @@ export const accessPackageRelationships = {
     _class: RelationshipClass.ASSIGNED,
     targetType: accessPackageEntites.STEP_ACCESS_PACKAGE._type,
   },
+  STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP: {
+    _type: 'azure_application_assigned_access_packages_resource',
+    sourceType: accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._type,
+    _class: RelationshipClass.ASSIGNED,
+    targetType: accessPackageEntites.STEP_AZURE_APPLICATION._type,
+  }
 };

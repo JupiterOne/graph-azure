@@ -78,11 +78,11 @@ export class AccessPackageClient extends GraphClient {
 
   public async iterateAccessPackageResource(
     input: {
-      catelogId: string;
+      catalogId: string;
     },
     callback: (catelog: any) => void | Promise<void>,
   ): Promise<void> {
-    const resourceUrl = `/identityGovernance/entitlementManagement/catalogs/${input.catelogId}/resources?$expand=scopes,roles`;
+    const resourceUrl = `/identityGovernance/entitlementManagement/catalogs/${input.catalogId}/resources?$expand=scopes,roles`;
     this.logger.debug('Iterating Access Packages Resource');
     return this.iterateResources({
       resourceUrl,

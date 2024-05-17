@@ -12,8 +12,8 @@ export const STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST =
   'rm-access-package-assignment-request';
 export const STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER =
   'rm-access-package-assignment-approver';
-export const STEP_ACCESS_PACKAGE_RESOURCE =
-  'rm-access-package-resource';
+export const STEP_ACCESS_PACKAGE_CATALOG =
+  'rm-access-package-catalog';
 export const STEP_AZURE_APPLICATION =
   'rm-azure-application';
 
@@ -30,8 +30,8 @@ export const STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP =
   'rm-azure-user-assigned-to-access-package';
 export const STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP =
   'rm-azure-group-assigned-to-access-package';
-export const STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP =
-  'rm-access-package-resource-application-assigned-to-azure-application';
+export const STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP =
+  'rm-azure-application-assigned-to-access-package-catalog';
 
 export const accessPackageEntites = {
   STEP_ACCESS_PACKAGE: {
@@ -59,10 +59,10 @@ export const accessPackageEntites = {
     _class: ['Review'],
     resourceName: '[RM] Access Package Assignment Approver',
   },
-  STEP_ACCESS_PACKAGE_RESOURCE: {
-    _type: 'azure_access_packages_resource',
+  STEP_ACCESS_PACKAGE_CATALOG: {
+    _type: 'azure_access_packages_catalog',
     _class: ['Resource'],
-    resourceName: '[RM] Access Package Resource',
+    resourceName: '[RM] Access Package Catalog',
   },
   STEP_AZURE_APPLICATION: {
     _type: 'azure_application',
@@ -112,9 +112,9 @@ export const accessPackageRelationships = {
     _class: RelationshipClass.ASSIGNED,
     targetType: accessPackageEntites.STEP_ACCESS_PACKAGE._type,
   },
-  STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP: {
-    _type: 'azure_application_assigned_access_packages_resource',
-    sourceType: accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._type,
+  STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP: {
+    _type: 'azure_application_assigned_access_packages_catalog',
+    sourceType: accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
     _class: RelationshipClass.ASSIGNED,
     targetType: accessPackageEntites.STEP_AZURE_APPLICATION._type,
   }

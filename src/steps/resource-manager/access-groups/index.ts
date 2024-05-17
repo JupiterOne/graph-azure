@@ -14,8 +14,8 @@ import {
   STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY,
   STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST,
   STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP,
-  STEP_ACCESS_PACKAGE_RESOURCE,
-  STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP,
+  STEP_ACCESS_PACKAGE_CATALOG,
+  STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP,
   STEP_AZURE_APPLICATION,
   STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
   STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
@@ -28,8 +28,8 @@ import {
   createAccessPackageAssignmentEntity,
   createAccessPackageAssignmentPolicyEntity,
   createAccessPackageAssignmentRequestEntity,
+  createAccessPackageCatalogEntity,
   createAccessPackageEntity,
-  createAccessPackageResourceApplicationEntity,
   createAzureApplicationEntity,
 } from './converters';
 import {
@@ -128,30 +128,33 @@ export async function fetchAccessPackageAssignmentApprover(
   );
 }
 
-export async function fetchAccessPackageResourceApplication(
+export async function fetchAccessPackageCatalog(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { logger, instance, jobState } = executionContext;
   const graphClient = new AccessPackageClient(logger, instance.config);
-  await graphClient.iterateAccessPackagecatelog(async (catelog) => {
-    const catelogId = catelog.id as string;
+
+  await graphClient.iterateAccessPackagecatelog(async (catalog) => {
+    const catalogId = catalog.id as string;
+
+    const resourceAppIds: string[] = [];
+
     await graphClient.iterateAccessPackageResource(
-      { catelogId },
+      { catalogId },
       async (resource) => {
         if (resource.originSystem === 'AadApplication') {
-
-          if (!jobState.hasKey(accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._type + "_" + resource.id)) {
-            const accessPackageResourceApplicationEntity =
-              createAccessPackageResourceApplicationEntity(resource);
-            await jobState.addEntity(accessPackageResourceApplicationEntity);
-            await jobState.setData(
-              accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._type,
-              accessPackageResourceApplicationEntity,
-            );
-          }
+          resourceAppIds.push(resource.description);
         }
-      },
+      }
     );
+    if (resourceAppIds.length > 0) {
+      const accessPackageResourceApplicationEntity = createAccessPackageCatalogEntity(catalog, resourceAppIds);
+      await jobState.addEntity(accessPackageResourceApplicationEntity);
+      await jobState.setData(
+        accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
+        accessPackageResourceApplicationEntity,
+      );
+    }
   });
 }
 
@@ -195,35 +198,38 @@ export async function buildAccessPackageApproverIsAzureUserRelationship(
   );
 }
 
-export async function buildAccessPackageResourceAssignedApplicationRelationship(
+export async function buildApplicationAssignedToCatalogRelationship(
   executionContext: IntegrationStepContext,
 ) {
   const { jobState } = executionContext;
 
   await jobState.iterateEntities(
     {
-      _type: accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._type,
+      _type: accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
     },
-    async (resourceEntity) => {
-      const description = resourceEntity.description as string;
+    async (catalogEntity) => {
+      const resourceAppIds = catalogEntity.resourceAppId as string[];
       const appIdPattern = /AppId:\s*([a-f0-9-]+)/i;
-      const match = description.match(appIdPattern);
-      const applicationKey = match ? match[1] : null;
 
-      if (applicationKey) {
-        if (jobState.hasKey(applicationKey)) {
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.ASSIGNED,
-              fromKey: applicationKey,
-              fromType: accessPackageEntites.STEP_AZURE_APPLICATION._type,
-              toKey: resourceEntity._key,
-              toType: accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._type,
-            }),
-          );
+      for (const resourceAppId of resourceAppIds) {
+        const match = resourceAppId.match(appIdPattern);
+        const applicationKey = match ? match[1] : null;
+
+        if (applicationKey) {
+          if (await jobState.hasKey(applicationKey)) { // Await the hasKey check
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.ASSIGNED,
+                fromKey: applicationKey,
+                fromType: accessPackageEntites.STEP_AZURE_APPLICATION._type,
+                toKey: catalogEntity._key,
+                toType: accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
+              }),
+            );
+          }
+        } else {
+          console.error("Application key not found in resourceAppId:", resourceAppId);
         }
-      } else {
-        console.error("Application key not found in description:", description);
       }
     },
   );
@@ -422,13 +428,13 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
   },
 
   {
-    id: STEP_ACCESS_PACKAGE_RESOURCE,
-    name: 'Entitlement Management Access Package Resource Application',
-    entities: [accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE],
+    id: STEP_ACCESS_PACKAGE_CATALOG,
+    name: 'Entitlement Management Access Package Catalog',
+    entities: [accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG],
     relationships: [],
     dependsOn: [],
     rolePermissions: ['EntitlementManagement.ReadWrite.All'],
-    executionHandler: fetchAccessPackageResourceApplication,
+    executionHandler: fetchAccessPackageCatalog,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },
   {
@@ -442,15 +448,15 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },
   {
-    id: STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP,
-    name: 'Entitlement Management Resource Application Assigned To Azure Application',
+    id: STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP,
+    name: 'Entitlement Management Resource Application Assigned To Access Catalog',
     entities: [],
     relationships: [
-      accessPackageRelationships.STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_RESOURCE_RELATIONSHIP,
+      accessPackageRelationships.STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP,
     ],
-    dependsOn: [STEP_ACCESS_PACKAGE_RESOURCE, STEP_AZURE_APPLICATION],
+    dependsOn: [STEP_ACCESS_PACKAGE_CATALOG, STEP_AZURE_APPLICATION],
     rolePermissions: [],
-    executionHandler: buildAccessPackageResourceAssignedApplicationRelationship,
+    executionHandler: buildApplicationAssignedToCatalogRelationship,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },
   {

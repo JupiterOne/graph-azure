@@ -113,27 +113,29 @@ export function createAccessPackageAssignmentRequestEntity(data: any): Entity {
   });
 }
 
-export function createAccessPackageResourceApplicationEntity(
+export function createAccessPackageCatalogEntity(
   data: any,
+  resourceAppId: string[]
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
         _class:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._class,
-        _key: accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._type + "_" + generateEntityKey(data.id),
+          accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._class,
+        _key: accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type + "_" + generateEntityKey(data.id),
         _type:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE._type,
+          accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
         resourceName:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_RESOURCE
+          accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG
             .resourceName,
         name: data.displayName,
         status: data.status,
         id: data.id as string,
         originId: data.originId as string,
         originSystem: data.originSystem,
-        description: data.description
+        description: data.description,
+        resourceAppId: resourceAppId
       },
     },
   });

@@ -134,7 +134,7 @@ export async function fetchAccessPackageCatalog(
   const { logger, instance, jobState } = executionContext;
   const graphClient = new AccessPackageClient(logger, instance.config);
 
-  await graphClient.iterateAccessPackagecatelog(async (catalog) => {
+  await graphClient.iterateAccessPackagecatalog(async (catalog) => {
     const catalogId = catalog.id as string;
 
     const resourceAppIds: string[] = [];

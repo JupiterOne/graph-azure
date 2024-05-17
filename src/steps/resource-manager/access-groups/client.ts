@@ -65,11 +65,11 @@ export class AccessPackageClient extends GraphClient {
     });
   }
 
-  public async iterateAccessPackagecatelog(
-    callback: (catelog: any) => void | Promise<void>,
+  public async iterateAccessPackagecatalog(
+    callback: (catalog: any) => void | Promise<void>,
   ): Promise<void> {
     const resourceUrl = `/identityGovernance/entitlementManagement/catalogs`;
-    this.logger.debug('Iterating Access Packages Catelog');
+    this.logger.debug('Iterating Access Packages Catalog');
     return this.iterateResources({
       resourceUrl,
       callback,
@@ -80,7 +80,7 @@ export class AccessPackageClient extends GraphClient {
     input: {
       catalogId: string;
     },
-    callback: (catelog: any) => void | Promise<void>,
+    callback: (catealog: any) => void | Promise<void>,
   ): Promise<void> {
     const resourceUrl = `/identityGovernance/entitlementManagement/catalogs/${input.catalogId}/resources?$expand=scopes,roles`;
     this.logger.debug('Iterating Access Packages Resource');

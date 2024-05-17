@@ -1287,13 +1287,13 @@ describe('getStepStartStates', () => {
       [STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY]: { disabled: true },
       [STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST]: { disabled: true },
       [STEP_ACCESS_PACKAGE_CATALOG]: { disabled: true },
-      [STEP_AZURE_APPLICATION]: { disabled: false },
+      [STEP_AZURE_APPLICATION]: { disabled: true },
       [STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER]: { disabled: true },
       [STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER_IS_AZURE_USER_RELATIONSHIP]: {
         disabled: true,
       },
       [STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP]:
-      { disabled: false },
+      { disabled: true },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
         { disabled: true },
       [STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP]: {

@@ -2364,18 +2364,10 @@ questions:
           find azure_security_group that HAS azure_security_group_flow_logs with retentionPolicy.days >= 90
       - name: bad
         query: |
-          find azure_security_group as sg that !HAS azure_security_group_flow_logs with retentionPolicy.days >=90 as flowLog
-              return
-                  flowLog.webLink,
-                  flowLog.retentionPolicy.days,
-                  flowLog.retentionPolicy.enabled,
-                  sg.webLink,
-                  sg.displayName,
-                  sg.category,
-                  sg.id,
-                  sg.isWideOpen,
-                  sg.region,
-                  sg.resourceGroup
+          FIND azure_security_group AS sg THAT HAS azure_security_group_flow_logs WITH retentionPolicy.days < 90 AS fl return fl.webLink AS "Flowlog URL", fl.retentionPolicy.days AS "Retention Policy in Days", fl.retentionPolicy.enabled AS "Retention Policy Enabled", sg.webLink AS "Security Group URL", sg.displayName AS "Security Group Name", sg.category AS "Security Group Category", sg.id AS "Security Group ID", sg.isWideOpen AS "Security Group Wide Open", sg.region AS "Security Group Region", sg.resource AS "Security Group Resource"
+      - name: INFORMATIVE
+        query: |
+          FIND azure_security_group AS sg THAT !HAS azure_security_group_flow_logs RETURN sg.webLink AS "Security Group URL", sg.displayName AS "Security Group Name", sg.category AS "Security Group Category", sg.id AS "Security Group ID", sg.isWideOpen AS "Security Group Wide Open", sg.region AS "Security Group Region", sg.resource AS "Security Group Resource"    
     tags:
       - azure
       - network

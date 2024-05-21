@@ -114,23 +114,24 @@ export async function fetchUsers(
     const userId = user.id as string;
     await graphClient.fetchUserDetails(userId, async (userDetials) => {
       details = userDetials;
+
+      const department = details[0] as string;
+      const employeeHireDate = details[1] as string;
+      const employeeType = details[2] as string;
+      const lastPasswordChanged = details[3] as string;
+      const userEntity = createUserEntity(
+        user,
+        department,
+        employeeHireDate,
+        employeeType,
+        lastPasswordChanged,
+        userRegistrationDetailsMap?.get(user.id as string),
+      );
+      await jobState.addEntity(userEntity);
+      await jobState.addRelationship(
+        createAccountUserRelationship(accountEntity, userEntity),
+      );
     });
-    const department = details[0] as string;
-    const employeeHireDate = details[1] as string;
-    const employeeType = details[2] as string;
-    const lastPasswordChanged = details[3] as string;
-    const userEntity = createUserEntity(
-      user,
-      department,
-      employeeHireDate,
-      employeeType,
-      lastPasswordChanged,
-      userRegistrationDetailsMap?.get(user.id as string),
-    );
-    await jobState.addEntity(userEntity);
-    await jobState.addRelationship(
-      createAccountUserRelationship(accountEntity, userEntity),
-    );
   });
 }
 

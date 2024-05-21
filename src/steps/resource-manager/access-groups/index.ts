@@ -145,16 +145,16 @@ export async function fetchAccessPackageCatalog(
         if (resource.originSystem === 'AadApplication') {
           resourceAppIds.push(resource.description);
         }
+        if (resourceAppIds.length > 0) {
+          const accessPackageResourceApplicationEntity = createAccessPackageCatalogEntity(catalog, resourceAppIds);
+          await jobState.addEntity(accessPackageResourceApplicationEntity);
+          await jobState.setData(
+            accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
+            accessPackageResourceApplicationEntity,
+          );
+        }
       }
     );
-    if (resourceAppIds.length > 0) {
-      const accessPackageResourceApplicationEntity = createAccessPackageCatalogEntity(catalog, resourceAppIds);
-      await jobState.addEntity(accessPackageResourceApplicationEntity);
-      await jobState.setData(
-        accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
-        accessPackageResourceApplicationEntity,
-      );
-    }
   });
 }
 
@@ -216,7 +216,7 @@ export async function buildApplicationAssignedToCatalogRelationship(
         const applicationKey = match ? match[1] : null;
 
         if (applicationKey) {
-          if (await jobState.hasKey(applicationKey)) { // Await the hasKey check
+          if (jobState.hasKey(applicationKey)) {
             await jobState.addRelationship(
               createDirectRelationship({
                 _class: RelationshipClass.ASSIGNED,
@@ -227,8 +227,6 @@ export async function buildApplicationAssignedToCatalogRelationship(
               }),
             );
           }
-        } else {
-          console.error("Application key not found in resourceAppId:", resourceAppId);
         }
       }
     },

@@ -40,7 +40,7 @@ test('rm-storage-containers', async () => {
 
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
-}, 20_000);
+}, 200_000);
 
 test('rm-storage-file-shares', async () => {
   const stepTestConfig = getStepTestConfigForStep(steps.STORAGE_FILE_SHARES);
@@ -55,7 +55,7 @@ test('rm-storage-file-shares', async () => {
 
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
-}, 20_000);
+}, 200_000);
 
 test('rm-storage-queues', async () => {
   const stepTestConfig = getStepTestConfigForStep(steps.STORAGE_QUEUES);

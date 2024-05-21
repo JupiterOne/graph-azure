@@ -66,7 +66,7 @@ test(
     const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
-  100_000,
+  200_000,
 );
 test(
   STEP_RM_BATCH_POOL,

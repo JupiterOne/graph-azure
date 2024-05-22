@@ -109,7 +109,7 @@ export async function fetchUsers(
   const userRegistrationDetailsMap = await jobState.getData<
     Map<string, UserRegistrationDetails>
   >('userRegistrationDetailsMap');
-  
+
   await graphClient.iterateUsers(async (user) => {
     const userId = user.id as string;
     await graphClient.fetchUserDetails(userId, async (userDetials) => {

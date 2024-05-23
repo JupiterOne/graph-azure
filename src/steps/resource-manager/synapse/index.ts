@@ -81,7 +81,7 @@ export async function createSynapseService(
       await jobState.addRelationship(
         createDirectRelationship({
           _class: RelationshipClass.HAS,
-          fromKey: subscriptionEntity._Key as string,
+          fromKey: subscriptionEntity._key as string,
           fromType: entities.SUBSCRIPTION._type,
           toKey: synapseServiceKey,
           toType: SynapseEntities.SYNAPSE_SERVICE._type,

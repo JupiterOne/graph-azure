@@ -1,3 +1,17 @@
+# v7.0.2 (Thu May 23 2024)
+
+#### 🐛 Bug Fix
+
+- Corrected key uppercase [#645](https://github.com/JupiterOne/graph-azure/pull/645) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+- fixing bad queries + adding query [#643](https://github.com/JupiterOne/graph-azure/pull/643) ([@mikiodehartj1](https://github.com/mikiodehartj1))
+
+#### Authors: 2
+
+- [@mikiodehartj1](https://github.com/mikiodehartj1)
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.0.1 (Thu May 16 2024)
 
 #### 🐛 Bug Fix

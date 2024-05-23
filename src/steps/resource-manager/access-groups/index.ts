@@ -22,6 +22,8 @@ import {
   STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP,
   accessPackageEntites,
   accessPackageRelationships,
+  AccessPackage,
+  STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP,
 } from './constants';
 import {
   createAccessPackageAssignmentApproverEntity,
@@ -38,6 +40,7 @@ import {
   STEP_AD_USERS,
   USER_ENTITY_TYPE,
 } from '../../active-directory/constants';
+import { generateEntityKey } from '../../../utils/generateKeys';
 
 export async function fetchAccessPackages(
   executionContext: IntegrationStepContext,
@@ -127,18 +130,16 @@ export async function fetchAccessPackageAssignmentApprover(
     },
   );
 }
-
 export async function fetchAccessPackageCatalog(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { logger, instance, jobState } = executionContext;
   const graphClient = new AccessPackageClient(logger, instance.config);
-
   await graphClient.iterateAccessPackagecatalog(async (catalog) => {
     const catalogId = catalog.id as string;
-
+    const accessPackageArray: AccessPackage[] = catalog.accessPackages
+    const accessPackageIds: string[] = accessPackageArray.map(packageItem => packageItem.id);
     const resourceAppIds: string[] = [];
-
     await graphClient.iterateAccessPackageResource(
       { catalogId },
       async (resource) => {
@@ -146,12 +147,14 @@ export async function fetchAccessPackageCatalog(
           resourceAppIds.push(resource.description);
         }
         if (resourceAppIds.length > 0) {
-          const accessPackageResourceApplicationEntity = createAccessPackageCatalogEntity(catalog, resourceAppIds);
-          await jobState.addEntity(accessPackageResourceApplicationEntity);
-          await jobState.setData(
-            accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
-            accessPackageResourceApplicationEntity,
-          );
+          if (!jobState.hasKey(accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type + "_" + generateEntityKey(catalog.id))) {
+            const accessPackageResourceApplicationEntity = createAccessPackageCatalogEntity(catalog, resourceAppIds, accessPackageIds);
+            await jobState.addEntity(accessPackageResourceApplicationEntity);
+            await jobState.setData(
+              accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
+              accessPackageResourceApplicationEntity,
+            );
+          }
         }
       }
     );
@@ -369,6 +372,47 @@ export async function buildAzureGroupAssignedToAccessPackageRelationship(
   );
 }
 
+export async function buildAccessPackageHasApplicationRelationship(
+  executionContext: IntegrationStepContext,
+) {
+  const { jobState } = executionContext;
+  const processedRelationships = new Set<string>();
+  await jobState.iterateEntities(
+    {
+      _type: accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
+    },
+    async (catalogEntity) => {
+      const resourceAppIds = catalogEntity.resourceAppId as string[];
+      const accessPackageIds = catalogEntity.accessPackageId as string[];
+      const appIdPattern = /AppId:\s*([a-f0-9-]+)/i;
+      for (const resourceAppId of resourceAppIds) {
+        const match = resourceAppId.match(appIdPattern);
+        const applicationKey = match ? match[1] : null;
+        for (const accessPackageId of accessPackageIds) {
+          const accessPackageKey = accessPackageId as string
+          const relationshipKey = `${accessPackageKey}|has|${applicationKey}`;
+          if (applicationKey && accessPackageKey) {
+            if (!processedRelationships.has(relationshipKey)) {
+              if (jobState.hasKey(applicationKey) && jobState.hasKey(accessPackageKey)) {
+                await jobState.addRelationship(
+                  createDirectRelationship({
+                    _class: RelationshipClass.HAS,
+                    fromKey: accessPackageKey,
+                    fromType: accessPackageEntites.STEP_ACCESS_PACKAGE._type,
+                    toKey: applicationKey,
+                    toType: accessPackageEntites.STEP_AZURE_APPLICATION._type,
+                  }),
+                );
+                processedRelationships.add(relationshipKey);
+              }
+            }
+          }
+        }
+      }
+    },
+  );
+}
+
 export const accessPackageSteps: AzureIntegrationStep[] = [
   {
     id: STEP_ACCESS_PACKAGE,
@@ -433,6 +477,22 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
     dependsOn: [],
     rolePermissions: ['EntitlementManagement.ReadWrite.All'],
     executionHandler: fetchAccessPackageCatalog,
+    ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
+  },
+  {
+    id: STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP,
+    name: 'Azure Access Package Has Application',
+    entities: [],
+    relationships: [
+      accessPackageRelationships.STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP,
+    ],
+    dependsOn: [
+      STEP_ACCESS_PACKAGE,
+      STEP_AZURE_APPLICATION,
+      STEP_ACCESS_PACKAGE_CATALOG,
+    ],
+    rolePermissions: [],
+    executionHandler: buildAccessPackageHasApplicationRelationship,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },
   {

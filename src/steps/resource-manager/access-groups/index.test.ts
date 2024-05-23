@@ -22,6 +22,7 @@ import {
   STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
   STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
   STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP,
+  STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP
 } from './constants';
 
 let recording: Recording;
@@ -349,6 +350,30 @@ test(
 
     recording = setupAzureRecording({
       name: STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
+      directory: __dirname,
+      options: {
+        recordFailedRequests: true,
+        matchRequestsBy: getMatchRequestsBy({
+          config: stepTestConfig.instanceConfig,
+        }),
+      },
+    });
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  },
+  100_000,
+);
+
+test(
+  STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP,
+  async () => {
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP,
+    );
+
+    recording = setupAzureRecording({
+      name: STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP,
       directory: __dirname,
       options: {
         recordFailedRequests: true,

@@ -35,6 +35,7 @@ import {
   STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
   STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
   STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP,
+  STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP,
 } from './steps/resource-manager/access-groups/constants';
 import { steps as computeSteps } from './steps/resource-manager/compute/constants';
 import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb/constants';
@@ -439,6 +440,8 @@ describe('getStepStartStates', () => {
       },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
         { disabled: true },
+      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]:
+        { disabled: true },
       [STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP]: {
         disabled: true,
       },
@@ -696,6 +699,8 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
+        { disabled: true },
+      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]:
         { disabled: true },
       [STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP]: {
         disabled: true,
@@ -990,6 +995,8 @@ describe('getStepStartStates', () => {
         disabled: false,
       },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
+        { disabled: false },
+      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]:
         { disabled: false },
       [STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP]:
         { disabled: false },
@@ -1293,8 +1300,10 @@ describe('getStepStartStates', () => {
         disabled: true,
       },
       [STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP]:
-      { disabled: true },
+        { disabled: true },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
+        { disabled: true },
+      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]:
         { disabled: true },
       [STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP]: {
         disabled: true,

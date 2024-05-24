@@ -455,6 +455,7 @@ The following relationships are created:
 | `azure_access_packages_catalog`            | **ASSIGNED**          | `azure_application`                               |
 | `azure_access_packages_service_assignment` | **CONTAINS**          | `azure_access_packages_policy`                    |
 | `azure_access_packages_services`           | **HAS**               | `azure_access_packages_service_assignment`        |
+| `azure_access_packages_services`           | **HAS**               | `azure_application`                               |
 | `azure_account`                            | **HAS**               | `azure_keyvault_service`                          |
 | `azure_account`                            | **HAS**               | `azure_management_group`                          |
 | `azure_account`                            | **HAS**               | `azure_user`                                      |

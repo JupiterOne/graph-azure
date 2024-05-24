@@ -68,7 +68,7 @@ export class AccessPackageClient extends GraphClient {
   public async iterateAccessPackagecatalog(
     callback: (catalog: any) => void | Promise<void>,
   ): Promise<void> {
-    const resourceUrl = `/identityGovernance/entitlementManagement/catalogs`;
+    const resourceUrl = `/identityGovernance/entitlementManagement/catalogs?$expand=accessPackages`;
     this.logger.debug('Iterating Access Packages Catalog');
     return this.iterateResources({
       resourceUrl,

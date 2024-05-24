@@ -115,7 +115,8 @@ export function createAccessPackageAssignmentRequestEntity(data: any): Entity {
 
 export function createAccessPackageCatalogEntity(
   data: any,
-  resourceAppId: string[]
+  resourceAppId: string[],
+  accessPackageId: string[]
 ): Entity {
   return createIntegrationEntity({
     entityData: {
@@ -135,7 +136,8 @@ export function createAccessPackageCatalogEntity(
         catalogType: data.catalogType as string,
         state: data.state,
         description: data.description,
-        resourceAppId: resourceAppId
+        resourceAppId: resourceAppId,
+        accessPackageId: accessPackageId
       },
     },
   });

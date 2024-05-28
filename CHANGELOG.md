@@ -1,3 +1,23 @@
+# v7.1.0 (Tue May 28 2024)
+
+#### 🚀 Enhancement
+
+- Azure access group dev [#646](https://github.com/JupiterOne/graph-azure/pull/646) ([@poornima-metron](https://github.com/poornima-metron) [@suraj-metron](https://github.com/suraj-metron) [@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### 🐛 Bug Fix
+
+- moved access-grp to active directory [#647](https://github.com/JupiterOne/graph-azure/pull/647) ([@poornima-metron](https://github.com/poornima-metron))
+- added access package entity [#644](https://github.com/JupiterOne/graph-azure/pull/644) ([@poornima-metron](https://github.com/poornima-metron))
+- access-group developed [#642](https://github.com/JupiterOne/graph-azure/pull/642) ([@poornima-metron](https://github.com/poornima-metron))
+
+#### Authors: 3
+
+- [@suraj-metron](https://github.com/suraj-metron)
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+- poornima-metron ([@poornima-metron](https://github.com/poornima-metron))
+
+---
+
 # v7.0.2 (Thu May 23 2024)
 
 #### 🐛 Bug Fix

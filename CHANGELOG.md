@@ -1,3 +1,15 @@
+# v7.1.2 (Tue May 28 2024)
+
+#### 🐛 Bug Fix
+
+- Correct typo in ingestion sources description [#649](https://github.com/JupiterOne/graph-azure/pull/649) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.1.1 (Tue May 28 2024)
 
 #### 🐛 Bug Fix

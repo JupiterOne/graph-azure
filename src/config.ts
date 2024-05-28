@@ -248,7 +248,7 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
   },
   [INGESTION_SOURCE_IDS.ACCESS_PACKAGE]: {
     title: 'Access Package',
-    description: 'Ingest defender for Access Package',
+    description: 'Ingest Access Packages, assignments and catalogs.',
     defaultsToDisabled: true,
     cannotBeDisabled: false,
   },

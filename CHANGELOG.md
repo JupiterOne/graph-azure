@@ -1,3 +1,15 @@
+# v7.1.1 (Tue May 28 2024)
+
+#### 🐛 Bug Fix
+
+- Manage kube error better [#648](https://github.com/JupiterOne/graph-azure/pull/648) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.1.0 (Tue May 28 2024)
 
 #### 🚀 Enhancement

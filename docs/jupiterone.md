@@ -734,9 +734,8 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (117)                                                 |
+| Role Permissions List (116)                                                 |
 | --------------------------------------------------------------------------- |
-| `EntitlementManagement.Read.All`                                            |
 | `Microsoft.Advisor/recommendations/read`                                    |
 | `Microsoft.ApiManagement/service/apis/read`                                 |
 | `Microsoft.ApiManagement/service/read`                                      |
@@ -857,12 +856,13 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START} -->
 
-| API Permissions List (4) |
-| ------------------------ |
-| `AuditLog.Read.All`      |
-| `Device.Read.All`        |
-| `Directory.Read.All`     |
-| `Policy.Read.All`        |
+| API Permissions List (5)         |
+| -------------------------------- |
+| `AuditLog.Read.All`              |
+| `Device.Read.All`                |
+| `Directory.Read.All`             |
+| `EntitlementManagement.Read.All` |
+| `Policy.Read.All`                |
 
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_END} -->

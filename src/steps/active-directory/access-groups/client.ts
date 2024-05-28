@@ -100,7 +100,6 @@ export class AccessPackageClient extends GraphClient {
       callback,
     });
   }
-  
 
   // Not using PageIterator because it doesn't allow async callback
   private async iterateResources<T>({

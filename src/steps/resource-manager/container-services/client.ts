@@ -113,16 +113,21 @@ export class ContainerServicesClient extends Client {
           await callback(role, locationName);
         }
       } catch (error) {
-        if (error.statusCode && error.statusCode === 400) {
-          logger.warn(
-            `No registered resource provider found for location '${locationName}'.`,
-          );
-          // Skipping this location and continue with the next one
-          continue;
-        } else {
-          // Rethrow the error if it's not a 400 error
-          throw error;
+        if (error.statusCode) {
+          if (error.statusCode === 400) {
+            logger.warn(
+              `No registered resource provider found for location '${locationName}'.`,
+            );
+            // Skipping this location and continue with the next one
+            continue;
+          }
+          if (error.statusCode === 404) {
+            logger.warn(`Subscription not found for '${locationName}'.`);
+            // Skipping this location and continue with the next one
+            continue;
+          }
         }
+        throw error;
       }
     }
   }

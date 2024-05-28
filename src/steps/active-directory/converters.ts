@@ -138,6 +138,12 @@ export function createUserEntity(
         accountEnabled: data.accountEnabled,
         officeLocation: data.officeLocation,
         usageLocation: data.usageLocation,
+        department: data.department,
+        employeeHireDate: (data as any).employeeHireDate,
+        employeeType: (data as any).employeeType,
+        lastPasswordChanged: parseTimePropertyValue(
+          (data as any).lastPasswordChanged,
+        ),
       },
     },
   });

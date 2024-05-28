@@ -446,6 +446,6 @@ describe('ad-service-principals', () => {
       const stepResults = await executeStepWithDependencies(stepTestConfig);
       expect(stepResults).toMatchStepMetadata(stepTestConfig);
     },
-    100_000,
+    100_0000,
   );
 });

@@ -105,12 +105,10 @@ export async function fetchUsers(
 ): Promise<void> {
   const { logger, instance, jobState } = executionContext;
   const graphClient = new DirectoryGraphClient(logger, instance.config);
-
   const accountEntity = await getAccountEntity(jobState);
   const userRegistrationDetailsMap = await jobState.getData<
     Map<string, UserRegistrationDetails>
   >('userRegistrationDetailsMap');
-
   await graphClient.iterateUsers(async (user) => {
     const userEntity = createUserEntity(
       user,

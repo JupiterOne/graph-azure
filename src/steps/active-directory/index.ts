@@ -110,26 +110,14 @@ export async function fetchUsers(
     Map<string, UserRegistrationDetails>
   >('userRegistrationDetailsMap');
   await graphClient.iterateUsers(async (user) => {
-    const userId = user.id as string;
-    await graphClient.fetchUserDetails(userId, async (userDetials) => {
-
-      const department = userDetials[0] as string;
-      const employeeHireDate = userDetials[1] as string;
-      const employeeType = userDetials[2] as string;
-      const lastPasswordChanged = userDetials[3] as string;
-      const userEntity = createUserEntity(
-        user,
-        department,
-        employeeHireDate,
-        employeeType,
-        lastPasswordChanged,
-        userRegistrationDetailsMap?.get(user.id as string),
-      );
-      await jobState.addEntity(userEntity);
-      await jobState.addRelationship(
-        createAccountUserRelationship(accountEntity, userEntity),
-      );
-    });
+    const userEntity = createUserEntity(
+      user,
+      userRegistrationDetailsMap?.get(user.id as string),
+    );
+    await jobState.addEntity(userEntity);
+    await jobState.addRelationship(
+      createAccountUserRelationship(accountEntity, userEntity),
+    );
   });
 }
 

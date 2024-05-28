@@ -50,10 +50,6 @@ export async function fetchAccessPackages(
   await graphClient.iterateAccessPackage(async (packages) => {
     const accessPackageEntity = createAccessPackageEntity(packages);
     await jobState.addEntity(accessPackageEntity);
-    await jobState.setData(
-      accessPackageEntites.STEP_ACCESS_PACKAGE._type,
-      accessPackageEntity,
-    );
   });
 }
 
@@ -66,10 +62,6 @@ export async function fetchAccessPackageAssignment(
     const accessPackageAssignmentEntity =
       createAccessPackageAssignmentEntity(assignment);
     await jobState.addEntity(accessPackageAssignmentEntity);
-    await jobState.setData(
-      accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT._type,
-      accessPackageAssignmentEntity,
-    );
   });
 }
 
@@ -82,10 +74,6 @@ export async function fetchAccessPackageAssignmentPolicy(
     const accessPackageAssignmentPolicyEntity =
       createAccessPackageAssignmentPolicyEntity(policy);
     await jobState.addEntity(accessPackageAssignmentPolicyEntity);
-    await jobState.setData(
-      accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY._type,
-      accessPackageAssignmentPolicyEntity,
-    );
   });
 }
 
@@ -98,10 +86,6 @@ export async function fetchAccessPackageAssignmentRequest(
     const accessPackageAssignmentRequestEntity =
       createAccessPackageAssignmentRequestEntity(request);
     await jobState.addEntity(accessPackageAssignmentRequestEntity);
-    await jobState.setData(
-      accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST._type,
-      accessPackageAssignmentRequestEntity,
-    );
   });
 }
 
@@ -121,10 +105,6 @@ export async function fetchAccessPackageAssignmentApprover(
           const accessPackageAssignmentApproverEntity =
             createAccessPackageAssignmentApproverEntity(approver);
           await jobState.addEntity(accessPackageAssignmentApproverEntity);
-          await jobState.setData(
-            accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER._type,
-            accessPackageAssignmentApproverEntity,
-          );
         },
       );
     },
@@ -137,8 +117,10 @@ export async function fetchAccessPackageCatalog(
   const graphClient = new AccessPackageClient(logger, instance.config);
   await graphClient.iterateAccessPackagecatalog(async (catalog) => {
     const catalogId = catalog.id as string;
-    const accessPackageArray: AccessPackage[] = catalog.accessPackages
-    const accessPackageIds: string[] = accessPackageArray.map(packageItem => packageItem.id);
+    const accessPackageArray: AccessPackage[] = catalog.accessPackages;
+    const accessPackageIds: string[] = accessPackageArray.map(
+      (packageItem) => packageItem.id,
+    );
     const resourceAppIds: string[] = [];
     await graphClient.iterateAccessPackageResource(
       { catalogId },
@@ -147,16 +129,23 @@ export async function fetchAccessPackageCatalog(
           resourceAppIds.push(resource.description);
         }
         if (resourceAppIds.length > 0) {
-          if (!jobState.hasKey(accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type + "_" + generateEntityKey(catalog.id))) {
-            const accessPackageResourceApplicationEntity = createAccessPackageCatalogEntity(catalog, resourceAppIds, accessPackageIds);
+          if (
+            !jobState.hasKey(
+              accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type +
+                '_' +
+                generateEntityKey(catalog.id),
+            )
+          ) {
+            const accessPackageResourceApplicationEntity =
+              createAccessPackageCatalogEntity(
+                catalog,
+                resourceAppIds,
+                accessPackageIds,
+              );
             await jobState.addEntity(accessPackageResourceApplicationEntity);
-            await jobState.setData(
-              accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
-              accessPackageResourceApplicationEntity,
-            );
           }
         }
-      }
+      },
     );
   });
 }
@@ -167,8 +156,7 @@ export async function fetchAzureApplication(
   const { logger, instance, jobState } = executionContext;
   const graphClient = new AccessPackageClient(logger, instance.config);
   await graphClient.iterateAzureApplications(async (application) => {
-    const azureApplicationEntity =
-      createAzureApplicationEntity(application);
+    const azureApplicationEntity = createAzureApplicationEntity(application);
     await jobState.addEntity(azureApplicationEntity);
   });
 }
@@ -235,7 +223,6 @@ export async function buildApplicationAssignedToCatalogRelationship(
     },
   );
 }
-
 
 export async function buildAzureUserCreatedAccessPackageAssignmentRequestRelationship(
   executionContext: IntegrationStepContext,
@@ -389,11 +376,14 @@ export async function buildAccessPackageHasApplicationRelationship(
         const match = resourceAppId.match(appIdPattern);
         const applicationKey = match ? match[1] : null;
         for (const accessPackageId of accessPackageIds) {
-          const accessPackageKey = accessPackageId as string
+          const accessPackageKey = accessPackageId as string;
           const relationshipKey = `${accessPackageKey}|has|${applicationKey}`;
           if (applicationKey && accessPackageKey) {
             if (!processedRelationships.has(relationshipKey)) {
-              if (jobState.hasKey(applicationKey) && jobState.hasKey(accessPackageKey)) {
+              if (
+                jobState.hasKey(applicationKey) &&
+                jobState.hasKey(accessPackageKey)
+              ) {
                 await jobState.addRelationship(
                   createDirectRelationship({
                     _class: RelationshipClass.HAS,
@@ -420,7 +410,7 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
     entities: [accessPackageEntites.STEP_ACCESS_PACKAGE],
     relationships: [],
     dependsOn: [],
-    rolePermissions: ['EntitlementManagement.ReadWrite.All'],
+    rolePermissions: ['EntitlementManagement.Read.All'],
     executionHandler: fetchAccessPackages,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },
@@ -431,7 +421,7 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
     entities: [accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT],
     relationships: [],
     dependsOn: [],
-    rolePermissions: ['EntitlementManagement.ReadWrite.All'],
+    rolePermissions: ['EntitlementManagement.Read.All'],
     executionHandler: fetchAccessPackageAssignment,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },
@@ -442,7 +432,7 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
     entities: [accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY],
     relationships: [],
     dependsOn: [],
-    rolePermissions: ['EntitlementManagement.ReadWrite.All'],
+    rolePermissions: ['EntitlementManagement.Read.All'],
     executionHandler: fetchAccessPackageAssignmentPolicy,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },
@@ -453,7 +443,7 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
     entities: [accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST],
     relationships: [],
     dependsOn: [],
-    rolePermissions: ['EntitlementManagement.ReadWrite.All'],
+    rolePermissions: ['EntitlementManagement.Read.All'],
     executionHandler: fetchAccessPackageAssignmentRequest,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },
@@ -464,7 +454,7 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
     entities: [accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER],
     relationships: [],
     dependsOn: [STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST],
-    rolePermissions: ['EntitlementManagement.ReadWrite.All'],
+    rolePermissions: ['EntitlementManagement.Read.All'],
     executionHandler: fetchAccessPackageAssignmentApprover,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },
@@ -475,7 +465,7 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
     entities: [accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG],
     relationships: [],
     dependsOn: [],
-    rolePermissions: ['EntitlementManagement.ReadWrite.All'],
+    rolePermissions: ['EntitlementManagement.Read.All'],
     executionHandler: fetchAccessPackageCatalog,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },
@@ -501,7 +491,7 @@ export const accessPackageSteps: AzureIntegrationStep[] = [
     entities: [accessPackageEntites.STEP_AZURE_APPLICATION],
     relationships: [],
     dependsOn: [],
-    rolePermissions: ['EntitlementManagement.ReadWrite.All'],
+    rolePermissions: ['EntitlementManagement.Read.All'],
     executionHandler: fetchAzureApplication,
     ingestionSourceId: INGESTION_SOURCE_IDS.ACCESS_PACKAGE,
   },

@@ -188,24 +188,15 @@ export class DirectoryGraphClient extends GraphClient {
       'userPrincipalName',
       'id',
       'usageLocation',
+      'department',
+      'employeeType',
+      'employeeHireDate',
+      'lastPasswordChangeDateTime',
     ];
     const select = [...defaultSelect, 'userType', 'accountEnabled'];
     return this.iterateResources({
       resourceUrl,
       options: { select },
-      callback,
-    });
-  }
-
-
-  public async fetchUserDetails(
-    userId: String,
-    callback: (userDetails: any) => void | Promise<void>,
-  ): Promise<void> {
-    const resourceUrl = `/users/${userId}?$select=department,employeeType,employeeHireDate,lastPasswordChangeDateTime`;
-    this.logger.debug('Finding User Details');
-    return this.iterateUserResources({
-      resourceUrl,
       callback,
     });
   }
@@ -309,74 +300,6 @@ export class DirectoryGraphClient extends GraphClient {
                 'Callback error while iterating an API response in DirectoryGraphClient',
               );
             }
-          }
-        } else {
-          nextLink = undefined;
-        }
-      } while (nextLink);
-    } catch (error) {
-      if (error.status === 403) {
-        this.logger.warn(
-          { error: error.message, resourceUrl: resourceUrl },
-          'Encountered auth error in Azure Graph client.',
-        );
-        this.logger.publishWarnEvent({
-          name: IntegrationWarnEventName.MissingPermission,
-          description: `Received authorization error when attempting to call ${resourceUrl}. Please update credentials to grant access.`,
-        });
-        return;
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  private async iterateUserResources<T>({
-    resourceUrl,
-    options,
-    callback,
-  }: {
-    resourceUrl: string;
-    options?: { select?: string[]; useBeta?: boolean; expand?: string };
-    callback: (item: T[]) => void | Promise<void>;
-  }): Promise<void> {
-    try {
-      let nextLink: string | undefined;
-      do {
-        let api = this.client.api(nextLink || resourceUrl);
-        //nextlink: The URL also contains all the other query parameters present in the original request.
-        if (!nextLink) {
-          if (options?.useBeta) {
-            api = api.version('beta');
-          }
-          if (options?.select) {
-            api = api.select(options.select);
-          }
-          if (options?.expand) {
-            api = api.expand(options.expand);
-          }
-        }
-        const response = await this.request<IterableGraphResponse<T>>(api);
-        if (response) {
-          const userDetails = [
-            response.department,
-            response.employeeHireDate,
-            response.employeeType,
-            response.lastPasswordChangeDateTime,
-          ];
-          nextLink = response['@odata.nextLink'];
-          // for (const value of userDetails) {
-          try {
-            await callback(userDetails);
-          } catch (err) {
-            this.logger.warn(
-              {
-                resourceUrl,
-                error: err.message,
-              },
-              'Callback error while iterating an API response in DirectoryGraphClient',
-            );
-            //}
           }
         } else {
           nextLink = undefined;

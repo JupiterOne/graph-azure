@@ -734,8 +734,9 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
 
-| Role Permissions List (116)                                                 |
+| Role Permissions List (117)                                                 |
 | --------------------------------------------------------------------------- |
+| `EntitlementManagement.Read.All`                                            |
 | `Microsoft.Advisor/recommendations/read`                                    |
 | `Microsoft.ApiManagement/service/apis/read`                                 |
 | `Microsoft.ApiManagement/service/read`                                      |

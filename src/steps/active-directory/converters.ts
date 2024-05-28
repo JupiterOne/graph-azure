@@ -115,10 +115,6 @@ export function createGroupEntity(data: Group): Entity {
 
 export function createUserEntity(
   data: User,
-  departmentDetails: string,
-  employeeHireDetails: string,
-  employeeTypeDetails: string,
-  lastPasswordChange: string,
   registrationDetails?: UserRegistrationDetails,
 ): Entity {
   const userEntity = createIntegrationEntity({
@@ -142,10 +138,12 @@ export function createUserEntity(
         accountEnabled: data.accountEnabled,
         officeLocation: data.officeLocation,
         usageLocation: data.usageLocation,
-        department: departmentDetails,
-        employeeHireDate: employeeHireDetails,
-        employeeType: employeeTypeDetails,
-        lastPasswordChanged: lastPasswordChange,
+        department: data.department,
+        employeeHireDate: (data as any).employeeHireDate,
+        employeeType: (data as any).employeeType,
+        lastPasswordChanged: parseTimePropertyValue(
+          (data as any).lastPasswordChanged,
+        ),
       },
     },
   });

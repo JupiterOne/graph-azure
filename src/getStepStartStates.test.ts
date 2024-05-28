@@ -36,7 +36,7 @@ import {
   STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
   STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP,
   STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP,
-} from './steps/resource-manager/access-groups/constants';
+} from './steps/active-directory//access-groups/constants';
 import { steps as computeSteps } from './steps/resource-manager/compute/constants';
 import { STEP_RM_COSMOSDB_SQL_DATABASES } from './steps/resource-manager/cosmosdb/constants';
 import { Steps } from './steps/resource-manager/container-services/constants';
@@ -685,33 +685,33 @@ describe('getStepStartStates', () => {
       [STEP_AZURE_SUBSCRIPTION_HAS_AZURE_EVENT_HUB_RELATION]: {
         disabled: true,
       },
-      [STEP_ACCESS_PACKAGE]: { disabled: true },
-      [STEP_ACCESS_PACKAGE_ASSIGNMENT]: { disabled: true },
-      [STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY]: { disabled: true },
-      [STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST]: { disabled: true },
-      [STEP_ACCESS_PACKAGE_CATALOG]: { disabled: true },
-      [STEP_AZURE_APPLICATION]: { disabled: true },
-      [STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER]: { disabled: true },
+      [STEP_ACCESS_PACKAGE]: { disabled: false },
+      [STEP_ACCESS_PACKAGE_ASSIGNMENT]: { disabled: false },
+      [STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY]: { disabled: false },
+      [STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST]: { disabled: false },
+      [STEP_ACCESS_PACKAGE_CATALOG]: { disabled: false },
+      [STEP_AZURE_APPLICATION]: { disabled: false },
+      [STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER]: { disabled: false },
       [STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER_IS_AZURE_USER_RELATIONSHIP]: {
-        disabled: true,
+        disabled: false,
       },
       [STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP]: {
-        disabled: true,
+        disabled: false,
       },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
-        { disabled: true },
+        { disabled: false },
       [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]:
-        { disabled: true },
+        { disabled: false },
       [STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP]: {
-        disabled: true,
+        disabled: false,
       },
       [STEP_ACCESS_PACKAGE_ASSIGNMENT_CONTAINS_ACCESS_PACKAGE_ASSIGNMENT_POLICY_RELATIONSHIP]:
-        { disabled: true },
+        { disabled: false },
       [STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP]: {
-        disabled: true,
+        disabled: false,
       },
       [STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP]: {
-        disabled: true,
+        disabled: false,
       },
       [STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: {
         disabled: true,
@@ -984,32 +984,32 @@ describe('getStepStartStates', () => {
       [SYNAPSE_STEPS.KEY_VAULT_SERVICE_SYNAPSE_KEY_RELATIONSHIP]: {
         disabled: false,
       },
-      [STEP_ACCESS_PACKAGE]: { disabled: false },
-      [STEP_ACCESS_PACKAGE_ASSIGNMENT]: { disabled: false },
-      [STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY]: { disabled: false },
-      [STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST]: { disabled: false },
-      [STEP_ACCESS_PACKAGE_CATALOG]: { disabled: false },
-      [STEP_AZURE_APPLICATION]: { disabled: false },
-      [STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER]: { disabled: false },
+      [STEP_ACCESS_PACKAGE]: { disabled: true },
+      [STEP_ACCESS_PACKAGE_ASSIGNMENT]: { disabled: true },
+      [STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY]: { disabled: true },
+      [STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST]: { disabled: true },
+      [STEP_ACCESS_PACKAGE_CATALOG]: { disabled: true },
+      [STEP_AZURE_APPLICATION]: { disabled: true },
+      [STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER]: { disabled: true },
       [STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER_IS_AZURE_USER_RELATIONSHIP]: {
-        disabled: false,
+        disabled: true,
       },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
-        { disabled: false },
+        { disabled: true },
       [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]:
-        { disabled: false },
+        { disabled: true },
       [STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP]:
-        { disabled: false },
+        { disabled: true },
       [STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP]: {
-        disabled: false,
+        disabled: true,
       },
       [STEP_ACCESS_PACKAGE_ASSIGNMENT_CONTAINS_ACCESS_PACKAGE_ASSIGNMENT_POLICY_RELATIONSHIP]:
-        { disabled: false },
+        { disabled: true },
       [STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP]: {
-        disabled: false,
+        disabled: true,
       },
       [STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP]: {
-        disabled: false,
+        disabled: true,
       },
       [STEP_AZURE_EVENT_HUB]: { disabled: false },
       [STEP_AZURE_APPLICATION_SECURITY_GROUP]: { disabled: false },

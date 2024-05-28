@@ -37,11 +37,11 @@ import { managementGroupSteps } from './steps/resource-manager/management-groups
 import { containerServicesSteps } from './steps/resource-manager/container-services';
 import { frontdoorSteps } from './steps/resource-manager/frontdoor';
 import { ingestionConfig } from './config';
-import { accessPackageSteps } from './steps/resource-manager/access-groups';
 import { SynapseSteps } from './steps/resource-manager/synapse';
 import { DdosServiceSteps } from './steps/resource-manager/ddos';
 import { eventHubStep } from './steps/resource-manager/event-hub';
 import { applicationSecurityGroupSteps } from './steps/resource-manager/application-security-group';
+import { accessPackageSteps } from './steps/active-directory/access-groups';
 
 export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
 {

@@ -478,7 +478,7 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
       );
       logger.publishWarnEvent({
         name: IntegrationWarnEventName.MissingPermission,
-        description: `Received authorization error when attempting to call ${resourceEndpoint}. Please update credentials to grant access.`,
+        description: `Received authorization error when attempting to call ${resourceDescription}. Please update credentials to grant access.`,
       });
       return;
     } else {

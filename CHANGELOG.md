@@ -1,3 +1,15 @@
+# v7.1.3 (Wed Jun 05 2024)
+
+#### 🐛 Bug Fix
+
+- Corrected resource description on log [#650](https://github.com/JupiterOne/graph-azure/pull/650) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.1.2 (Tue May 28 2024)
 
 #### 🐛 Bug Fix

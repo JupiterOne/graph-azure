@@ -300,9 +300,17 @@ export async function fetchStorageContainers(
           skuTier: storageAccount.sku?.tier as SkuTier,
         },
         async (container) => {
+          let accountName = storageAccount.name as string;
+          let containerName = container.name as string;
+          let storageInByte = await storageAccountServiceClient.iterateBlob(
+            containerName,
+            accountName,
+          );
+          console.log(storageInByte + ` byte !!!`);
           const containerEntity = createStorageContainerEntity(
             webLinker,
             storageAccountEntity,
+            storageInByte,
             container,
             metadataByContainerNameMap.get(container.name!),
           );

@@ -167,6 +167,7 @@ export function createStorageAccountEntity(
 export function createStorageContainerEntity(
   webLinker: AzureWebLinker,
   storageAccountEntity: Entity,
+  storageInByte: any,
   data: BlobContainer,
   metadata: ContainerItem['metadata'],
 ): Entity {
@@ -183,6 +184,7 @@ export function createStorageContainerEntity(
           data.publicAccess && /(container|blob)/i.test(data.publicAccess)
         ),
         publicAccess: data.publicAccess,
+        containerSize: storageInByte + ` bytes`,
         classification: null,
         encrypted: storageAccountEntity.encryptedBlob || false,
       },

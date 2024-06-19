@@ -157,11 +157,9 @@ export function createStorageAccountServiceClient(options: {
         let totalSize = 0;
         try {
           for await (const blob of containerClient.listBlobsFlat()) {
-            const blobClient = containerClient.getBlobClient(blob.name);
-            const properties = await blobClient.getProperties();
-            totalSize += properties.contentLength || 0;
+            const blobSize = blob.properties.contentLength;
+            totalSize += blobSize || 0;
           }
-          console.log(totalSize + '----------');
           return totalSize;
         } catch (error) {
           logger.warn(

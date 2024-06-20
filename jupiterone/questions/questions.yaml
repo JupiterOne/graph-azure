@@ -64,6 +64,18 @@ questions:
     tags:
       - azure
       - network
+  - id: integration-question-azure-custom-role-definitions
+    title: What custom role definitions exist and what actions do they allow?
+    description:
+      Returns custom role defintions, the actions associated with them, and the assignable scopes. 
+    queries:
+      - name: Custom role definitions 
+        resultsAre: INFORMATIVE
+        query: |
+          FIND azure_role_definition WITH roleType="CustomRole" as d 
+          RETURN d.displayName, d.actions, d.assignableScopes
+    tags:
+      - azure
 
   ##########################################
   # CIS 1 - Identity & Access Management

@@ -1,6 +1,3 @@
-// Use following commands to run the conditional access policy service steps
-// yarn start --step 'fetch-conditional-access,fetch-conditional-access-template,fetch-conditional-access-policy,fetch-conditional-access-named-location,fetch-conditional-access-auth-context,build-conditional-access-has-conditional-access-policy-relationships,build-conditional-access-has-conditional-access-auth-context-relationships,build-conditional-access-has-conditional-access-template-relationships,build-conditional-access-policy-assigned-azure-ad-users-relationships,build-conditional-access-policy-assigned-azure-ad-groups-relationships,build-conditional-access-policy-contains-conditional-access-named-location-relationships' --no-cache
-
 import {
   RelationshipClass,
   StepEntityMetadata,

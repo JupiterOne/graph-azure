@@ -8,6 +8,8 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { GROUP_ENTITY_TYPE, USER_ENTITY_TYPE } from '../constants';
 
+export const TIME_OUT = 100_000;
+
 // Steps
 export const ConditionalAccessSteps = {
   CONDITIONAL_ACCESS: 'fetch-conditional-access',

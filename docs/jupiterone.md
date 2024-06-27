@@ -874,7 +874,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Directory.Read.All`             |
 | `EntitlementManagement.Read.All` |
 | `Policy.Read.All`                |
-| `Policy.Read.ConditionalAccess	`  |
+| `Policy.Read.ConditionalAccess`  |
 
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_END} -->

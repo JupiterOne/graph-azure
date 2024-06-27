@@ -2,7 +2,7 @@ import {
   Recording,
   executeStepWithDependencies,
 } from '@jupiterone/integration-sdk-testing';
-import { ConditionalAccessSteps } from '../../constants';
+import { ConditionalAccessSteps, TIME_OUT } from '../../constants';
 import { getStepTestConfigForStep } from '../../../../../../test/integrationInstanceConfig';
 import {
   setupAzureRecording,
@@ -36,5 +36,5 @@ test(
     const stepResults = await executeStepWithDependencies(stepTestConfig);
     expect(stepResults).toMatchStepMetadata(stepTestConfig);
   },
-  100_000,
+  TIME_OUT,
 );

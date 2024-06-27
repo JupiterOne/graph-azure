@@ -30,6 +30,6 @@ export const conditionalAccessAuthorizationContextStep: AzureIntegrationStep = {
   entities: [ConditionalAccessEntities.CONDITIONAL_ACCESS_AUTH_CONTEXT],
   relationships: [],
   dependsOn: [],
-  apiPermissions: ['Policy.Read.ConditionalAccess	'],
+  apiPermissions: ['Policy.Read.ConditionalAccess'],
   executionHandler: fetchConditionalAccessAuthorizationContext,
 };

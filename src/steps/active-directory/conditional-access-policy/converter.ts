@@ -158,6 +158,7 @@ export function createConditionalAccessServiceEntity(instanceId: any): Entity {
         _key: getConditionalAccessServiceKey(instanceId),
         category: 'other',
         function: ['access-review'],
+        name: 'Conditional Access Service',
       },
     },
   });

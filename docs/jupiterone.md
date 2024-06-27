@@ -312,6 +312,11 @@ The following entities are created:
 | FrontDoor Routing Rule                           | `azure_frontdoor_routing_rule`                    | `Rule`                             |
 | FrontDoor Rules Engine                           | `azure_frontdoor_rules_engine`                    | `Ruleset`                          |
 | [AD] Account                                     | `azure_account`                                   | `Account`                          |
+| [AD] Conditional Access                          | `azure_conditional_access_service`                | `Service`                          |
+| [AD] Conditional Access Authorization Context    | `azure_conditional_access_authorization_context`  | `Resource`                         |
+| [AD] Conditional Access Named location           | `azure_conditional_access_named_location`         | `Network`                          |
+| [AD] Conditional Access Policy                   | `azure_conditional_access_policy`                 | `AccessPolicy`                     |
+| [AD] Conditional Access Template                 | `azure_conditional_access_template`               | `AccessPolicy`                     |
 | [AD] Device                                      | `azure_device`                                    | `Device`                           |
 | [AD] Group                                       | `azure_user_group`                                | `UserGroup`                        |
 | [AD] Group Member                                | `azure_group_member`                              | `User`                             |
@@ -468,6 +473,12 @@ The following relationships are created:
 | `azure_bgp_service_communities`            | **HAS**               | `azure_expressroute`                              |
 | `azure_cdn_profile`                        | **HAS**               | `azure_cdn_endpoint`                              |
 | `azure_classic_admin_group`                | **HAS**               | `azure_user`                                      |
+| `azure_conditional_access_policy`          | **CONTAINS**          | `azure_conditional_access_named_location`         |
+| `azure_conditional_access_policy`          | **ASSIGNED**          | `azure_user`                                      |
+| `azure_conditional_access_policy`          | **ASSIGNED**          | `azure_user_group`                                |
+| `azure_conditional_access_service`         | **HAS**               | `azure_conditional_access_authorization_context`  |
+| `azure_conditional_access_service`         | **HAS**               | `azure_conditional_access_policy`                 |
+| `azure_conditional_access_service`         | **HAS**               | `azure_conditional_access_template`               |
 | `azure_container`                          | **USES**              | `azure_container_volume`                          |
 | `azure_container_group`                    | **HAS**               | `azure_container`                                 |
 | `azure_container_group`                    | **HAS**               | `azure_container_volume`                          |
@@ -856,13 +867,14 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START} -->
 
-| API Permissions List (5)         |
+| API Permissions List (6)         |
 | -------------------------------- |
 | `AuditLog.Read.All`              |
 | `Device.Read.All`                |
 | `Directory.Read.All`             |
 | `EntitlementManagement.Read.All` |
 | `Policy.Read.All`                |
+| `Policy.Read.ConditionalAccess`  |
 
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_END} -->

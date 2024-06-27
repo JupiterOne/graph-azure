@@ -57,6 +57,13 @@ export const ConditionalAccessEntities: Record<
     _type: 'azure_conditional_access_named_location',
     _class: ['Network'],
     resourceName: '[AD] Conditional Access Named location',
+    schema: {
+      properties: {
+        CIDR: { exclude: true },
+        internal: { exclude: true },
+        public: { exclude: true },
+      },
+    },
   },
   CONDITIONAL_ACCESS_AUTH_CONTEXT: {
     _type: 'azure_conditional_access_authorization_context',

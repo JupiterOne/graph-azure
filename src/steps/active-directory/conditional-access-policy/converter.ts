@@ -114,6 +114,9 @@ export function createConditionalAccessNamedLocationEntity(data: any): Entity {
         name: data.displayName,
         description: data.description,
         scenarios: data.scenarios,
+        createdDateTime: data.createdDateTime,
+        countriesAndRegions: data.countriesAndRegions,
+        countryLookupMethod: data.countryLookupMethod,
       },
     },
   });
@@ -140,8 +143,6 @@ export function createConditionalAccessAuthContextEntity(data: any): Entity {
     },
   });
 }
-
-createConditionalAccessServiceEntity;
 
 /**
  * Create and returns conditional Access Service Entity.

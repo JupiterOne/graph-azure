@@ -9,23 +9,23 @@ export const TIME_OUT = 100_000;
 
 // Steps
 export const ConditionalAccessSteps = {
-  CONDITIONAL_ACCESS: 'fetch-conditional-access',
-  CONDITIONAL_ACCESS_POLICY: 'fetch-conditional-access-policy',
-  CONDITIONAL_ACCESS_TEMPLATE: 'fetch-conditional-access-template',
-  CONDITIONAL_ACCESS_NAMED_LOCATION: 'fetch-conditional-access-named-location',
-  CONDITIONAL_ACCESS_AUTH_CONTEXT: 'fetch-conditional-access-auth-context',
+  CONDITIONAL_ACCESS: 'ad-conditional-access',
+  CONDITIONAL_ACCESS_POLICY: 'ad-conditional-access-policy',
+  CONDITIONAL_ACCESS_TEMPLATE: 'ad-conditional-access-template',
+  CONDITIONAL_ACCESS_NAMED_LOCATION: 'ad-conditional-access-named-location',
+  CONDITIONAL_ACCESS_AUTH_CONTEXT: 'ad-conditional-access-auth-context',
   CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_POLICY:
-    'build-conditional-access-has-conditional-access-policy-relationships',
+    'ad-conditional-access-has-conditional-access-policy-relationships',
   CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_AUTH_CONTEXT:
-    'build-conditional-access-has-conditional-access-auth-context-relationships',
+    'ad-conditional-access-has-conditional-access-auth-context-relationships',
   CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_TEMPLATE:
-    'build-conditional-access-has-conditional-access-template-relationships',
+    'ad-conditional-access-has-conditional-access-template-relationships',
   CONDITIONAL_ACCESS_POLICY_CONTAINS_NAMED_LOCATION:
-    'build-conditional-access-policy-contains-conditional-access-named-location-relationships',
+    'ad-conditional-access-policy-contains-conditional-access-named-location-relationships',
   CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_USERS:
-    'build-conditional-access-policy-assigned-azure-ad-users-relationships',
+    'ad-conditional-access-policy-assigned-azure-ad-users-relationships',
   CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_GROUPS:
-    'build-conditional-access-policy-assigned-azure-ad-groups-relationships',
+    'ad-conditional-access-policy-assigned-azure-ad-groups-relationships',
 };
 
 // entities

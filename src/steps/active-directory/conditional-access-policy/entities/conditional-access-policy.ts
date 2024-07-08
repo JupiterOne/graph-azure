@@ -1,3 +1,4 @@
+import { INGESTION_SOURCE_IDS } from '../../../../constants';
 import {
   AzureIntegrationStep,
   IntegrationStepContext,
@@ -28,4 +29,5 @@ export const conditionalAccessPolicyStep: AzureIntegrationStep = {
   dependsOn: [],
   apiPermissions: ['Policy.Read.All'],
   executionHandler: fetchConditionalAccessPolicy,
+  ingestionSourceId: INGESTION_SOURCE_IDS.CONDITIONAL_ACCESS,
 };

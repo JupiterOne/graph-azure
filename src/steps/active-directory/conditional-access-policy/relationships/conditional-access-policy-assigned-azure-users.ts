@@ -12,6 +12,7 @@ import {
   ConditionalAccessSteps,
 } from '../constants';
 import { STEP_AD_USERS, USER_ENTITY_TYPE } from '../../constants';
+import { INGESTION_SOURCE_IDS } from '../../../../constants';
 
 export async function buildConditionalAccessPolicyAssignedUsersRelationships(
   executionContext: IntegrationStepContext,
@@ -75,4 +76,6 @@ export const conditionalAccessPolicyAssignedADUsersStep: AzureIntegrationStep =
       ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY,
     ],
     executionHandler: buildConditionalAccessPolicyAssignedUsersRelationships,
+    ingestionSourceId:
+      INGESTION_SOURCE_IDS.CONDITIONAL_ACCESS_USER_RELATIONSHIP,
   };

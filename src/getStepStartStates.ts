@@ -185,6 +185,7 @@ import {
 } from './steps/resource-manager/express-route/constants';
 import { SYNAPSE_STEPS } from './steps/resource-manager/synapse/constant';
 import { DdosSteps } from './steps/resource-manager/ddos/constant';
+import { ConditionalAccessSteps } from './steps/active-directory/conditional-access-policy/constants';
 
 function makeStepStartStates(
   stepIds: string[],
@@ -230,6 +231,17 @@ export function getActiveDirectorySteps(): GetApiSteps {
       STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
       STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP,
       STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS_TEMPLATE,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS_AUTH_CONTEXT,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS_NAMED_LOCATION,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_USERS,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_GROUPS,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_POLICY,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_CONTAINS_NAMED_LOCATION,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_TEMPLATE,
+      ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_AUTH_CONTEXT,
     ],
     executeLastSteps: [],
   };

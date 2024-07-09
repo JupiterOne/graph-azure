@@ -252,4 +252,16 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     defaultsToDisabled: true,
     cannotBeDisabled: false,
   },
+  [INGESTION_SOURCE_IDS.CONDITIONAL_ACCESS]: {
+    title: 'Conditional Access Policy',
+    description: 'Ingest Conditional Access policies, templates and context.',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
+  [INGESTION_SOURCE_IDS.CONDITIONAL_ACCESS_USER_RELATIONSHIP]: {
+    title: 'Conditional Access User Relationship',
+    description: 'Ingest Access Policy relationship to users.',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
 };

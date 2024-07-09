@@ -187,6 +187,7 @@ import {
   getMatchRequestsBy,
 } from '../test/helpers/recording';
 import { configFromEnv } from '../test/integrationInstanceConfig';
+import { ConditionalAccessSteps } from './steps/active-directory/conditional-access-policy/constants';
 
 describe('getStepStartStates', () => {
   test('all steps represented', async () => {
@@ -440,20 +441,57 @@ describe('getStepStartStates', () => {
       },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
         { disabled: true },
-      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]:
-        { disabled: true },
+      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]: { disabled: true },
       [STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP]: {
         disabled: true,
       },
-      [STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP]: {
-        disabled: true,
-      },
+      [STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP]:
+        {
+          disabled: true,
+        },
       [STEP_ACCESS_PACKAGE_ASSIGNMENT_CONTAINS_ACCESS_PACKAGE_ASSIGNMENT_POLICY_RELATIONSHIP]:
         { disabled: true },
       [STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP]: {
         disabled: true,
       },
       [STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_AUTH_CONTEXT]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_AUTH_CONTEXT]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_POLICY]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_TEMPLATE]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_NAMED_LOCATION]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_GROUPS]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_USERS]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_CONTAINS_NAMED_LOCATION]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_TEMPLATE]: {
         disabled: true,
       },
       [AdvisorSteps.RECOMMENDATIONS]: { disabled: true },
@@ -695,13 +733,13 @@ describe('getStepStartStates', () => {
       [STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER_IS_AZURE_USER_RELATIONSHIP]: {
         disabled: false,
       },
-      [STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP]: {
-        disabled: false,
-      },
+      [STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP]:
+        {
+          disabled: false,
+        },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
         { disabled: false },
-      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]:
-        { disabled: false },
+      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]: { disabled: false },
       [STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP]: {
         disabled: false,
       },
@@ -711,6 +749,43 @@ describe('getStepStartStates', () => {
         disabled: false,
       },
       [STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP]: {
+        disabled: false,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS]: {
+        disabled: false,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_AUTH_CONTEXT]: {
+        disabled: false,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_AUTH_CONTEXT]:
+        {
+          disabled: false,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_POLICY]:
+        {
+          disabled: false,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_TEMPLATE]:
+        {
+          disabled: false,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_NAMED_LOCATION]: {
+        disabled: false,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY]: {
+        disabled: false,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_GROUPS]: {
+        disabled: false,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_USERS]: {
+        disabled: false,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_CONTAINS_NAMED_LOCATION]:
+        {
+          disabled: false,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_TEMPLATE]: {
         disabled: false,
       },
       [STEP_AZURE_RESOURCE_GROUP_HAS_AZURE_EVENT_HUB_RELATION]: {
@@ -821,6 +896,43 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_DEVICES]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_AUTH_CONTEXT]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_AUTH_CONTEXT]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_POLICY]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_TEMPLATE]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_NAMED_LOCATION]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_GROUPS]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_USERS]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_CONTAINS_NAMED_LOCATION]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_TEMPLATE]: {
+        disabled: true,
+      },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: false },
       [STEP_RM_KEYVAULT_KEYS]: { disabled: false },
       [STEP_RM_KEYVAULT_SECRETS]: { disabled: false },
@@ -996,8 +1108,7 @@ describe('getStepStartStates', () => {
       },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
         { disabled: true },
-      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]:
-        { disabled: true },
+      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]: { disabled: true },
       [STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP]:
         { disabled: true },
       [STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP]: {
@@ -1132,6 +1243,43 @@ describe('getStepStartStates', () => {
       [STEP_AD_USERS]: { disabled: true },
       [STEP_AD_DEVICES]: { disabled: true },
       [STEP_AD_SERVICE_PRINCIPALS]: { disabled: true },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_AUTH_CONTEXT]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_AUTH_CONTEXT]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_POLICY]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_HAS_CONDITIONAL_ACCESS_TEMPLATE]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_NAMED_LOCATION]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_GROUPS]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_USERS]: {
+        disabled: true,
+      },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_POLICY_CONTAINS_NAMED_LOCATION]:
+        {
+          disabled: true,
+        },
+      [ConditionalAccessSteps.CONDITIONAL_ACCESS_TEMPLATE]: {
+        disabled: true,
+      },
       [STEP_RM_KEYVAULT_VAULTS]: { disabled: true },
       [STEP_RM_KEYVAULT_KEYS]: { disabled: true },
       [STEP_RM_KEYVAULT_SECRETS]: { disabled: true },
@@ -1303,8 +1451,7 @@ describe('getStepStartStates', () => {
         { disabled: true },
       [STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP]:
         { disabled: true },
-      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]:
-        { disabled: true },
+      [STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP]: { disabled: true },
       [STEP_ACCESS_PACKAGE_HAS_ACCESS_PACKAGE_ASSIGNMENT_RELATIONSHIP]: {
         disabled: true,
       },

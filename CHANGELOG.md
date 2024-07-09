@@ -1,3 +1,16 @@
+# v7.2.0 (Tue Jul 09 2024)
+
+#### 🚀 Enhancement
+
+- Azure conditional access dev [#652](https://github.com/JupiterOne/graph-azure/pull/652) ([@Bharatkk-metron](https://github.com/Bharatkk-metron) [@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 2
+
+- [@Bharatkk-metron](https://github.com/Bharatkk-metron)
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.1.3 (Wed Jun 05 2024)
 
 #### 🐛 Bug Fix

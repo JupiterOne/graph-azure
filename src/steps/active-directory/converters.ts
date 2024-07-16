@@ -58,6 +58,7 @@ export function createAccountEntity(instance: IntegrationInstance): Entity {
 export function createAccountEntityWithOrganization(
   instance: IntegrationInstance,
   organization: Organization,
+  passwordValidityPeriodInDays,
   securityDefaults?: IdentitySecurityDefaultsEnforcementPolicy,
 ): Entity {
   let defaultDomain: string | undefined;
@@ -68,6 +69,28 @@ export function createAccountEntityWithOrganization(
     return e.name as string;
   });
 
+  const passwordProperties = {
+    charactersAllowedInPassword: [
+      'Uppercase characters (A - Z)',
+      'Lowercase characters (a - z)',
+      'Numbers (0 - 9)',
+      '@ # $ % ^ & * - _ ! + = [ ] { } |  : \' , . ? / ` ~ " ( ) ; < >',
+      'blank space',
+    ],
+    charactersNotAllowedInPassword: 'Unicode characters',
+    PasswordLength: '8 <= 256',
+    PasswordComplexity: [
+      'Uppercase characters',
+      'Lowercase characters',
+      'Numbers',
+      'Symbols',
+    ],
+    PasswordNotRecentlyUsed:
+      'When a user changes their password, the new password should not be the same as the current password',
+    PasswordIsNotBannedByMicrosoftEntraPasswordProtection:
+      'The password can not be on the global list of banned passwords for Microsoft Entra Password Protection, or on the customizable list of banned passwords specific to your organization',
+    passwordValidityPeriodInDays: passwordValidityPeriodInDays, // fetched from domain API
+  };
   const accountEntityWithOrganization = createIntegrationEntity({
     entityData: {
       source: organization,
@@ -81,6 +104,7 @@ export function createAccountEntityWithOrganization(
         defaultDomain,
         verifiedDomains,
         securityDefaultsEnabled: securityDefaults?.isEnabled,
+        ...passwordProperties,
       },
     },
   });

@@ -61,12 +61,15 @@ export async function fetchAccount(
 
   let accountEntity: Entity;
   try {
-    const organization = await graphClient.fetchOrganization();
+    const organization = await graphClient.fetchOrganization()
+    const domain = await graphClient.fetchDomain();
+
     const securityDefaults =
       await graphClient.fetchIdentitySecurityDefaultsEnforcementPolicy();
     accountEntity = createAccountEntityWithOrganization(
       instance,
       organization,
+      domain.passwordValidityPeriodInDays,
       securityDefaults,
     );
   } catch (err) {

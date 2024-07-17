@@ -71,26 +71,30 @@ export function createAccountEntityWithOrganization(
 
   const passwordProperties = {
     charactersAllowedInPassword: [
-      'Uppercase characters (A - Z)',
-      'Lowercase characters (a - z)',
-      'Numbers (0 - 9)',
+      'A - Z',
+      'a - z',
+      '0 - 9',
       '@ # $ % ^ & * - _ ! + = [ ] { } |  : \' , . ? / ` ~ " ( ) ; < >',
       'blank space',
     ],
     charactersNotAllowedInPassword: 'Unicode characters',
-    PasswordLength: '8 <= 256',
-    PasswordComplexity: [
-      'Uppercase characters',
-      'Lowercase characters',
-      'Numbers',
-      'Symbols',
+    passwordLength: [
+      'A minimum of eight characters',
+      'A maximum of 256 characters',
     ],
-    PasswordNotRecentlyUsed:
-      'When a user changes their password, the new password should not be the same as the current password',
-    PasswordIsNotBannedByMicrosoftEntraPasswordProtection:
-      'The password can not be on the global list of banned passwords for Microsoft Entra Password Protection, or on the customizable list of banned passwords specific to your organization',
+    passwordComplexity: [
+      'A minimum of 8 characters and a maximum of 256 characters',
+      `Requires three out of four of the following types of characters: 
+      Lowercase characters 
+      Uppercase characters 
+      Numbers (0 - 9) 
+      Symbols`,
+    ],
+    passwordNotRecentlyUsed: true,
+    passwordIsNotBannedByMicrosoftEntraPasswordProtection: true,
     passwordValidityPeriodInDays: passwordValidityPeriodInDays, // fetched from domain API
   };
+
   const accountEntityWithOrganization = createIntegrationEntity({
     entityData: {
       source: organization,

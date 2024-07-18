@@ -140,7 +140,7 @@ export function createStorageAccountServiceClient(options: {
       }
     },
 
-    iterateBlob: async (containerName: any, AccountName: any) => {
+    iterateBlob: async (containerName: string, AccountName: string) => {
       if (
         isServiceEnabledForKindAndTier.blob(
           storageAccount.kind,

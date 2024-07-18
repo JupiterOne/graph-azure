@@ -184,7 +184,7 @@ export function createStorageContainerEntity(
           data.publicAccess && /(container|blob)/i.test(data.publicAccess)
         ),
         publicAccess: data.publicAccess,
-        containerSize: storageInByte + ` bytes`,
+        containerSize: storageInByte,
         classification: null,
         encrypted: storageAccountEntity.encryptedBlob || false,
       },

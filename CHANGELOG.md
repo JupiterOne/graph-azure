@@ -1,3 +1,17 @@
+# v7.3.0 (Thu Jul 18 2024)
+
+#### 🚀 Enhancement
+
+- Azure v6.1.6 dev [#651](https://github.com/JupiterOne/graph-azure/pull/651) ([@suraj-metron](https://github.com/suraj-metron) [@Bharatkk-metron](https://github.com/Bharatkk-metron) [@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 3
+
+- [@Bharatkk-metron](https://github.com/Bharatkk-metron)
+- [@suraj-metron](https://github.com/suraj-metron)
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.2.0 (Tue Jul 09 2024)
 
 #### 🚀 Enhancement

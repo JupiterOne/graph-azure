@@ -312,7 +312,7 @@ export async function fetchStorageContainers(
           const containerEntity = createStorageContainerEntity(
             webLinker,
             storageAccountEntity,
-            storageInByte || 0,
+            storageInByte,
             container,
             metadataByContainerNameMap.get(container.name!),
           );

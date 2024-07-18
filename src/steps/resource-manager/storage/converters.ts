@@ -167,7 +167,7 @@ export function createStorageAccountEntity(
 export function createStorageContainerEntity(
   webLinker: AzureWebLinker,
   storageAccountEntity: Entity,
-  storageInByte: number,
+  storageInByte: number | undefined,
   data: BlobContainer,
   metadata: ContainerItem['metadata'],
 ): Entity {

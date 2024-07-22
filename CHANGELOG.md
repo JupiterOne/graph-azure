@@ -1,3 +1,15 @@
+# v7.3.1 (Mon Jul 22 2024)
+
+#### 🐛 Bug Fix
+
+- INT-11313: add extra priperties to access policy entity [#654](https://github.com/JupiterOne/graph-azure/pull/654) ([@gastonyelmini](https://github.com/gastonyelmini))
+
+#### Authors: 1
+
+- Gaston Yelmini ([@gastonyelmini](https://github.com/gastonyelmini))
+
+---
+
 # v7.3.0 (Thu Jul 18 2024)
 
 #### 🚀 Enhancement

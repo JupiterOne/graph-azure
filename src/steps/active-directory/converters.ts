@@ -14,6 +14,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import {
   Device,
+  Domain,
   Group,
   Organization,
   User,
@@ -37,8 +38,14 @@ import {
   ADEntities,
   DEVICE_ENTITY_CLASS,
   DEVICE_ENTITY_TYPE,
+  DOMAIN_ENTITY_TYPE,
+  DOMAIN_ENTITY_CLASS,
 } from './constants';
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
+
+export function getDomainKey(id: string) {
+  return DOMAIN_ENTITY_TYPE + ':' + id;
+}
 
 export function createAccountEntity(instance: IntegrationInstance): Entity {
   return createIntegrationEntity({
@@ -55,20 +62,7 @@ export function createAccountEntity(instance: IntegrationInstance): Entity {
   });
 }
 
-export function createAccountEntityWithOrganization(
-  instance: IntegrationInstance,
-  organization: Organization,
-  passwordValidityPeriodInDays,
-  securityDefaults?: IdentitySecurityDefaultsEnforcementPolicy,
-): Entity {
-  let defaultDomain: string | undefined;
-  const verifiedDomains = map(organization.verifiedDomains, (e) => {
-    if (e.isDefault) {
-      defaultDomain = e.name;
-    }
-    return e.name as string;
-  });
-
+export function createDomainEntity(data: Domain): Entity {
   const passwordProperties = {
     charactersAllowedInPassword: [
       'A - Z',
@@ -92,8 +86,45 @@ export function createAccountEntityWithOrganization(
     ],
     passwordNotRecentlyUsed: true,
     passwordIsNotBannedByMicrosoftEntraPasswordProtection: true,
-    passwordValidityPeriodInDays: passwordValidityPeriodInDays, // fetched from domain API
+    // passwordValidityPeriodInDays: passwordValidityPeriodInDays, // fetched from domain API
   };
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: getDomainKey(data.id as string),
+        _type: DOMAIN_ENTITY_TYPE,
+        _class: DOMAIN_ENTITY_CLASS,
+        name: `Domain: ${data.id}`,
+        category: ['infrastructure'],
+        function: ['IAM'],
+        authenticationType: data.authenticationType,
+        isAdminManaged: data.isAdminManaged,
+        isDefault: data.isDefault,
+        isInitial: data.isInitial,
+        isRoot: data.isRoot,
+        isVerified: data.isVerified,
+        supportedServices: data.isVerified,
+        passwordValidityPeriodInDays: data.passwordValidityPeriodInDays,
+        passwordNotificationWindowInDays: data.passwordNotificationWindowInDays,
+        ...passwordProperties,
+      },
+    },
+  });
+}
+
+export function createAccountEntityWithOrganization(
+  instance: IntegrationInstance,
+  organization: Organization,
+  securityDefaults?: IdentitySecurityDefaultsEnforcementPolicy,
+): Entity {
+  let defaultDomain: string | undefined;
+  const verifiedDomains = map(organization.verifiedDomains, (e) => {
+    if (e.isDefault) {
+      defaultDomain = e.name;
+    }
+    return e.name as string;
+  });
 
   const accountEntityWithOrganization = createIntegrationEntity({
     entityData: {
@@ -108,7 +139,6 @@ export function createAccountEntityWithOrganization(
         defaultDomain,
         verifiedDomains,
         securityDefaultsEnabled: securityDefaults?.isEnabled,
-        ...passwordProperties,
       },
     },
   });

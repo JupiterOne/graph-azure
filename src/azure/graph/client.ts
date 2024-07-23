@@ -98,12 +98,16 @@ export abstract class GraphClient {
     return response!.value[0];
   }
 
-
-  public async fetchDomain(): Promise<Domain> {
+  public async fetchDomain(
+    callback: (domain: Domain) => Promise<void>,
+  ): Promise<void> {
     const response = await this.request<IterableGraphResponse<Domain>>(
       this.client.api('/domains'),
     );
-    return response!.value[0];
+
+    for (const domain of response!.value) {
+      await callback(domain);
+    }
   }
 
   async retryRequest<TResponseType = any>(

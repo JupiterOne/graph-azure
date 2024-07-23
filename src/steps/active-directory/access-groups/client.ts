@@ -6,6 +6,16 @@ import {
 import { ApplicationPackage } from '@azure/arm-batch/esm/models';
 import { PolicyAssignment } from '@azure/arm-policy/esm/models';
 
+type ExtraProperties = {
+  expiration?: {
+    endDateTime?: string | undefined;
+    duration?: string | undefined;
+    type?: string | undefined;
+  };
+};
+
+export type ExtendedPolicyAssignment = PolicyAssignment & ExtraProperties;
+
 export class AccessPackageClient extends GraphClient {
   public async iterateAccessPackage(
     callback: (packages: ApplicationPackage) => void | Promise<void>,
@@ -30,7 +40,7 @@ export class AccessPackageClient extends GraphClient {
   }
 
   public async iterateAccessPackageAssignmentPolicy(
-    callback: (policy: PolicyAssignment) => void | Promise<void>,
+    callback: (policy: ExtendedPolicyAssignment) => void | Promise<void>,
   ): Promise<void> {
     const resourceUrl = `/identityGovernance/entitlementManagement/assignmentPolicies`;
     this.logger.debug('Iterating Access Packages Assignment Policy');

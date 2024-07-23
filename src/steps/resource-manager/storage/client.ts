@@ -1,6 +1,10 @@
 import { StorageManagementClient } from '@azure/arm-storage';
 import { TableServiceClient } from '@azure/data-tables';
-import { BlobServiceClient, ContainerItem } from '@azure/storage-blob';
+import {
+  BlobServiceClient,
+  ContainerClient,
+  ContainerItem,
+} from '@azure/storage-blob';
 import { QueueServiceClient } from '@azure/storage-queue';
 import {
   BlobContainer,
@@ -132,6 +136,43 @@ export function createStorageAccountServiceClient(options: {
           includeMetadata: true,
         })) {
           await callback(container);
+        }
+      }
+    },
+
+    iterateBlob: async (containerName: string, AccountName: string) => {
+      if (
+        isServiceEnabledForKindAndTier.blob(
+          storageAccount.kind,
+          storageAccount.skuTier,
+        )
+      ) {
+        const blobServiceClient = new BlobServiceClient(
+          `https://${AccountName}.blob.core.windows.net`,
+          credential,
+        );
+
+        const containerClient: ContainerClient =
+          blobServiceClient.getContainerClient(containerName);
+        let totalSize = 0;
+        try {
+          for await (const blob of containerClient.listBlobsFlat()) {
+            const blobSize = blob.properties.contentLength;
+            totalSize += blobSize || 0;
+          }
+          return totalSize;
+        } catch (error) {
+          logger.warn(
+            {
+              errorMessage: error.message,
+              errorCode: error.code,
+              errorName: error.name,
+              statusCode: error.statusCode,
+              requestId: error.requestId,
+            },
+            'Failed to get the total size of blobs in the container',
+          );
+          return 0;
         }
       }
     },

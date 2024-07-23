@@ -1,11 +1,12 @@
 import {
   Entity,
   createIntegrationEntity,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 import { accessPackageEntites } from './constants';
 import { ApplicationPackage } from '@azure/arm-batch/esm/models';
-import { PolicyAssignment } from '@azure/arm-policy/esm/models';
 import { generateEntityKey } from '../../../utils/generateKeys';
+import { ExtendedPolicyAssignment } from './client';
 
 export function createAccessPackageEntity(data: ApplicationPackage): Entity {
   return createIntegrationEntity({
@@ -37,7 +38,7 @@ export function createAzureApplicationEntity(data: any): Entity {
         id: data.id,
         publisherDomain: data.publisherDomain,
         signInAudience: data.signInAudience,
-        appId: data.appId
+        appId: data.appId,
       },
     },
   });
@@ -67,7 +68,7 @@ export function createAccessPackageAssignmentEntity(data: any): Entity {
 }
 
 export function createAccessPackageAssignmentPolicyEntity(
-  data: PolicyAssignment,
+  data: ExtendedPolicyAssignment,
 ): Entity {
   return createIntegrationEntity({
     entityData: {
@@ -83,6 +84,11 @@ export function createAccessPackageAssignmentPolicyEntity(
         name: data.displayName as string,
         description: data.description,
         id: data.id,
+        expirationEndDateTimeOn: parseTimePropertyValue(
+          data.expiration?.endDateTime,
+        ),
+        expirationDuration: data.expiration?.duration,
+        expirationType: data.expiration?.type,
       },
     },
   });
@@ -116,20 +122,20 @@ export function createAccessPackageAssignmentRequestEntity(data: any): Entity {
 export function createAccessPackageCatalogEntity(
   data: any,
   resourceAppId: string[],
-  accessPackageId: string[]
+  accessPackageId: string[],
 ): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
       assign: {
-        _class:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._class,
-        _key: accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type + "_" + generateEntityKey(data.id),
-        _type:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
+        _class: accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._class,
+        _key:
+          accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type +
+          '_' +
+          generateEntityKey(data.id),
+        _type: accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
         resourceName:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG
-            .resourceName,
+          accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG.resourceName,
         name: data.displayName,
         status: data.status,
         id: data.id as string,
@@ -137,7 +143,7 @@ export function createAccessPackageCatalogEntity(
         state: data.state,
         description: data.description,
         resourceAppId: resourceAppId,
-        accessPackageId: accessPackageId
+        accessPackageId: accessPackageId,
       },
     },
   });

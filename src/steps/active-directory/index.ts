@@ -360,7 +360,7 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     entities: [ADEntities.AD_DOMAIN],
     relationships: [],
     executionHandler: fetchDomain,
-    apiPermissions: ['Domain.Read.All'],
+    apiPermissions: ['Domain.Read.All', 'Directory.Read.All'],
     ingestionSourceId: INGESTION_SOURCE_IDS.AD_DOMAIN,
   },
   {

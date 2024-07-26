@@ -205,6 +205,7 @@ export class AccessPackageClient extends GraphClient {
         if (response) {
           nextLink = response['@odata.nextLink'];
           for (const value of response.stages) {
+            //Difference here is we iterate stages
             try {
               await callback(value);
             } catch (err) {
@@ -222,7 +223,8 @@ export class AccessPackageClient extends GraphClient {
         }
       } while (nextLink);
     } catch (error) {
-      if (error.status === 403) {
+      if (error.status === 403 || error.status == 401) {
+        //401 only for this endpoint also indicates missing permissions
         this.logger.warn(
           { error: error.message, resourceUrl: resourceUrl },
           'Encountered auth error in Azure Graph client.',

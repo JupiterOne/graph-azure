@@ -126,7 +126,7 @@ export async function fetchRoleBindings(
                 _class: 'AccessPolicy',
                 _type: 'kube_cluster_role_binding',
               },
-              targetFilterKeys: [['_class', '_type']],
+              targetFilterKeys: [['_key', '_class', '_type']],
               skipTargetCreation: true,
             },
           });
@@ -179,7 +179,7 @@ export async function fetchAccessRoles(
             _class: 'AccessRole',
             _type: 'kube_cluster_role',
           },
-          targetFilterKeys: [['_class', '_type']],
+          targetFilterKeys: [['_key', '_class', '_type']],
           skipTargetCreation: true,
         },
       });

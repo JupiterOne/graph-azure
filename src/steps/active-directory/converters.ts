@@ -5,7 +5,6 @@ import {
   createIntegrationEntity,
   createDirectRelationship,
   Entity,
-  getTime,
   IntegrationInstance,
   Relationship,
   assignTags,
@@ -24,33 +23,27 @@ import {
   IdentitySecurityDefaultsEnforcementPolicy,
   UserRegistrationDetails,
 } from './client';
-import {
-  ACCOUNT_ENTITY_CLASS,
-  ACCOUNT_ENTITY_TYPE,
-  ACCOUNT_GROUP_RELATIONSHIP_TYPE,
-  GROUP_ENTITY_CLASS,
-  GROUP_ENTITY_TYPE,
-  USER_ENTITY_CLASS,
-  USER_ENTITY_TYPE,
-  SERVICE_PRINCIPAL_ENTITY_CLASS,
-  SERVICE_PRINCIPAL_ENTITY_TYPE,
-  ADEntities,
-  DEVICE_ENTITY_CLASS,
-  DEVICE_ENTITY_TYPE,
-} from './constants';
+import { ACCOUNT_GROUP_RELATIONSHIP_TYPE, ADEntities } from './constants';
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
+import {
+  createAccountAssignEntity,
+  createDeviceAssignEntity,
+  createRoleDefinitionAssignEntity,
+  createServicePrincipalAssignEntity,
+  createUserAssignEntity,
+  createUserGroupAssignEntity,
+} from '../../entities';
 
 export function createAccountEntity(instance: IntegrationInstance): Entity {
   return createIntegrationEntity({
     entityData: {
       source: {},
-      assign: {
-        _class: ACCOUNT_ENTITY_CLASS,
+      assign: createAccountAssignEntity({
         _key: generateEntityKey(instance.id),
-        _type: ACCOUNT_ENTITY_TYPE,
         name: instance.name,
         displayName: instance.name,
-      },
+        vendor: 'Microsoft',
+      }),
     },
   });
 }
@@ -71,17 +64,16 @@ export function createAccountEntityWithOrganization(
   const accountEntityWithOrganization = createIntegrationEntity({
     entityData: {
       source: organization,
-      assign: {
-        _class: ACCOUNT_ENTITY_CLASS,
+      assign: createAccountAssignEntity({
         _key: generateEntityKey(instance.id),
-        _type: ACCOUNT_ENTITY_TYPE,
-        name: organization.displayName,
+        name: organization.displayName || instance.name,
         displayName: instance.name,
         organizationName: organization.displayName,
         defaultDomain,
         verifiedDomains,
         securityDefaultsEnabled: securityDefaults?.isEnabled,
-      },
+        vendor: 'Microsoft',
+      }),
     },
   });
 
@@ -98,17 +90,15 @@ export function createGroupEntity(data: Group): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
+      assign: createUserGroupAssignEntity({
         ...convertProperties(data, { parseTime: true }),
         _key: generateEntityKey(data.id),
-        _class: GROUP_ENTITY_CLASS,
-        _type: GROUP_ENTITY_TYPE,
-        name: data.displayName,
-        deletedOn: getTime(data.deletedDateTime),
-        createdOn: getTime(data.createdDateTime),
+        name: data.displayName || '',
+        deletedOn: parseTimePropertyValue(data.deletedDateTime),
+        createdOn: parseTimePropertyValue(data.createdDateTime),
         email: data.mail ?? undefined,
-        renewedOn: getTime(data.renewedDateTime),
-      },
+        renewedOn: parseTimePropertyValue(data.renewedDateTime),
+      }),
     },
   });
 }
@@ -120,12 +110,10 @@ export function createUserEntity(
   const userEntity = createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
+      assign: createUserAssignEntity({
         ...convertProperties(data),
         _key: generateEntityKey(data.id),
-        _class: USER_ENTITY_CLASS,
-        _type: USER_ENTITY_TYPE,
-        name: data.displayName,
+        name: data.displayName || '',
         active: data.accountEnabled,
         email: data.mail ?? undefined,
         firstName: data.givenName || data.displayName?.split(' ')[0],
@@ -136,15 +124,22 @@ export function createUserEntity(
           registrationDetails?.userPreferredMethodForSecondaryAuthentication,
         mfaMethods: registrationDetails?.methodsRegistered,
         accountEnabled: data.accountEnabled,
+        isAccountEnabled: data.accountEnabled,
         officeLocation: data.officeLocation,
         usageLocation: data.usageLocation,
         department: data.department,
-        employeeHireDate: (data as any).employeeHireDate,
+        employeeHireDate: parseTimePropertyValue(
+          (data as any).employeeHireDate,
+        ),
+        employeeHireOn: parseTimePropertyValue((data as any).employeeHireDate),
         employeeType: (data as any).employeeType,
         lastPasswordChanged: parseTimePropertyValue(
           (data as any).lastPasswordChanged,
         ),
-      },
+        lastPasswordChangedOn: parseTimePropertyValue(
+          (data as any).lastPasswordChanged,
+        ),
+      }),
     },
   });
 
@@ -173,30 +168,44 @@ export function createDeviceEntity(
           (registeredUser) => registeredUser.id,
         ),
       },
-      assign: {
+      assign: createDeviceAssignEntity({
         _key: generateEntityKey(data.id),
-        _class: DEVICE_ENTITY_CLASS,
-        _type: DEVICE_ENTITY_TYPE,
-        name: data.displayName,
+        name: data.displayName || '',
         active: data.accountEnabled,
         alternativeSecurityIds: data.alternativeSecurityIds?.map(
           (alternativeSecurityId) =>
             alternativeSecurityId.identityProvider || '',
         ),
+        // marked deprecated in docs
         approximateLastSignInDateTime: parseTimePropertyValue(
           data.approximateLastSignInDateTime,
         ),
-        complianceExpirationDateTime: data.complianceExpirationDateTime,
+        approximateLastSignInOn: parseTimePropertyValue(
+          data.approximateLastSignInDateTime,
+        ),
+        // marked deprecated in docs
+        complianceExpirationDateTime: parseTimePropertyValue(
+          data.complianceExpirationDateTime,
+        ),
+        complianceExpirationOn: parseTimePropertyValue(
+          data.complianceExpirationDateTime,
+        ),
         deviceMetadata: data.deviceMetadata,
         deviceVersion: data.deviceVersion,
         manufacturer: data.manufacturer,
         displayName: data.displayName,
         isCompliant: data.isCompliant,
         isManaged: data.isManaged,
+        // marked deprecated in docs
         onPremisesLastSyncDateTime: parseTimePropertyValue(
           data.onPremisesLastSyncDateTime,
         ),
+        onPremisesLastSyncOn: parseTimePropertyValue(
+          data.onPremisesLastSyncDateTime,
+        ),
+        // marked deprecated in docs
         onPremisesSyncEnabled: data.onPremisesSyncEnabled,
+        isOnPremisesSyncEnabled: data.onPremisesSyncEnabled,
         operatingSystem: data.operatingSystem,
         operatingSystemVersion: data.operatingSystemVersion,
         physicalIds: data.physicalIds,
@@ -206,14 +215,15 @@ export function createDeviceEntity(
         registeredUsers: data.registeredUsers?.map(
           (registeredUser) => registeredUser.id || '',
         ),
-        deviceId: data.deviceId,
+        deviceId: data.deviceId ?? null,
         aadDeviceId: data.deviceId,
-        category: data.deviceCategory,
+        category: data.deviceCategory ?? null,
         make: data.manufacturer || 'Unknown',
         model: data.model || 'Unknown',
         serial: 'Unknown', // Serial number not provided by azure
-        lastSeenOn: parseTimePropertyValue(data.approximateLastSignInDateTime),
-      },
+        lastSeenOn:
+          parseTimePropertyValue(data.approximateLastSignInDateTime) ?? null,
+      }),
     },
   });
 }
@@ -222,10 +232,8 @@ export function createServicePrincipalEntity(data: any): Entity {
   const entity = createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
+      assign: createServicePrincipalAssignEntity({
         _key: generateEntityKey(data.id),
-        _class: SERVICE_PRINCIPAL_ENTITY_CLASS,
-        _type: SERVICE_PRINCIPAL_ENTITY_TYPE,
         function: ['service-account'],
         userType: 'service',
         category: ['infrastructure'],
@@ -235,7 +243,7 @@ export function createServicePrincipalEntity(data: any): Entity {
         appId: data.appId,
         servicePrincipalType: data.servicePrincipalType,
         servicePrincipalNames: data.servicePrincipalNames,
-      },
+      }),
     },
   });
 
@@ -255,16 +263,14 @@ export function createRoleDefinitions(data: any): Entity {
   const entity = createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
+      assign: createRoleDefinitionAssignEntity({
         _key: generateEntityKey(data.id),
-        _class: ADEntities.AD_ROLE_DEFINITION._class,
-        _type: ADEntities.AD_ROLE_DEFINITION._type,
         name: data.displayName,
         displayName: data.displayName,
         isBuiltIn: data.isBuiltIn,
         isEnabled: data.isEnabled,
         allowedActions: allowedActions,
-      },
+      }),
     },
   });
   return entity;
@@ -280,9 +286,9 @@ export function createAccountGroupRelationship(
   return createDirectRelationship({
     _class: RelationshipClass.HAS,
     fromKey: parentKey,
-    fromType: ACCOUNT_ENTITY_TYPE,
+    fromType: ADEntities.ACCOUNT._type,
     toKey: childKey,
-    toType: GROUP_ENTITY_TYPE,
+    toType: ADEntities.USER_GROUP._type,
     properties: {
       _type: ACCOUNT_GROUP_RELATIONSHIP_TYPE,
     },
@@ -298,9 +304,9 @@ export function createAccountUserRelationship(
 
   return createDirectRelationship({
     _class: RelationshipClass.HAS,
-    fromType: ACCOUNT_ENTITY_TYPE,
+    fromType: ADEntities.ACCOUNT._type,
     fromKey,
-    toType: USER_ENTITY_TYPE,
+    toType: ADEntities.USER._type,
     toKey,
   });
 }

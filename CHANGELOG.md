@@ -1,3 +1,15 @@
+# v7.7.0 (Tue Aug 06 2024)
+
+#### 🚀 Enhancement
+
+- Kno 427 [#661](https://github.com/JupiterOne/graph-azure/pull/661) ([@SeaBlooms](https://github.com/SeaBlooms))
+
+#### Authors: 1
+
+- Colin Blumer ([@SeaBlooms](https://github.com/SeaBlooms))
+
+---
+
 # v7.6.0 (Tue Aug 06 2024)
 
 #### 🚀 Enhancement

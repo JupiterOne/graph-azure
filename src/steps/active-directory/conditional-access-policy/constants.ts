@@ -4,6 +4,13 @@ import {
   StepRelationshipMetadata,
 } from '@jupiterone/integration-sdk-core';
 import { ADEntities } from '../constants';
+import {
+  ConditionalAccessServiceEntityMetadata,
+  ConditionalAccessPolicyEntityMetadata,
+  ConditionalAccessTemplateEntityMetadata,
+  ConditionalAccessNamedLocationEntityMetadata,
+  ConditionalAccessAuthorizationContextEntityMetadata,
+} from './entities';
 
 export const TIME_OUT = 100_000;
 
@@ -37,38 +44,13 @@ export const ConditionalAccessEntities: Record<
   | 'CONDITIONAL_ACCESS_AUTH_CONTEXT',
   StepEntityMetadata
 > = {
-  CONDITIONAL_ACCESS: {
-    _type: 'azure_conditional_access_service',
-    _class: ['Service'],
-    resourceName: '[AD] Conditional Access',
-  },
-  CONDITIONAL_ACCESS_POLICY: {
-    _type: 'azure_conditional_access_policy',
-    _class: ['AccessPolicy'],
-    resourceName: '[AD] Conditional Access Policy',
-  },
-  CONDITIONAL_ACCESS_TEMPLATE: {
-    _type: 'azure_conditional_access_template',
-    _class: ['AccessPolicy'],
-    resourceName: '[AD] Conditional Access Template',
-  },
-  CONDITIONAL_ACCESS_NAMED_LOCATION: {
-    _type: 'azure_conditional_access_named_location',
-    _class: ['Network'],
-    resourceName: '[AD] Conditional Access Named location',
-    schema: {
-      properties: {
-        CIDR: { exclude: true },
-        internal: { exclude: true },
-        public: { exclude: true },
-      },
-    },
-  },
-  CONDITIONAL_ACCESS_AUTH_CONTEXT: {
-    _type: 'azure_conditional_access_authorization_context',
-    _class: ['Resource'],
-    resourceName: '[AD] Conditional Access Authorization Context',
-  },
+  CONDITIONAL_ACCESS: ConditionalAccessServiceEntityMetadata,
+  CONDITIONAL_ACCESS_POLICY: ConditionalAccessPolicyEntityMetadata,
+  CONDITIONAL_ACCESS_TEMPLATE: ConditionalAccessTemplateEntityMetadata,
+  CONDITIONAL_ACCESS_NAMED_LOCATION:
+    ConditionalAccessNamedLocationEntityMetadata,
+  CONDITIONAL_ACCESS_AUTH_CONTEXT:
+    ConditionalAccessAuthorizationContextEntityMetadata,
 };
 
 // Relationships

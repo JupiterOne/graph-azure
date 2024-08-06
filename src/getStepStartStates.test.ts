@@ -19,6 +19,8 @@ import {
   STEP_AD_SERVICE_PRINCIPAL_ACCESS,
   STEP_AD_ROLE_DEFINITIONS,
   STEP_AD_DEVICES,
+  STEP_AD_DOMAIN,
+  STEP_AD_ACCOUNT_HAS_DOMAIN,
 } from './steps/active-directory/constants';
 import {
   STEP_ACCESS_PACKAGE,
@@ -202,6 +204,8 @@ describe('getStepStartStates', () => {
     const states = await getStepStartStates(context);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
+      [STEP_AD_DOMAIN]: { disabled: true },
+      [STEP_AD_ACCOUNT_HAS_DOMAIN]: { disabled: true },
       [STEP_AD_GROUPS]: { disabled: true },
       [STEP_AD_GROUP_MEMBERS]: { disabled: true },
       [STEP_AD_USER_REGISTRATION_DETAILS]: { disabled: true },
@@ -542,6 +546,8 @@ describe('getStepStartStates', () => {
     const states = await getStepStartStates(context);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
+      [STEP_AD_DOMAIN]: { disabled: false },
+      [STEP_AD_ACCOUNT_HAS_DOMAIN]: { disabled: false },
       [STEP_AD_GROUPS]: { disabled: false },
       [STEP_AD_GROUP_MEMBERS]: { disabled: false },
       [STEP_AD_USER_REGISTRATION_DETAILS]: { disabled: false },
@@ -886,6 +892,8 @@ describe('getStepStartStates', () => {
     const states = await getStepStartStates(context);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
+      [STEP_AD_DOMAIN]: { disabled: true },
+      [STEP_AD_ACCOUNT_HAS_DOMAIN]: { disabled: true },
       [STEP_AD_GROUPS]: { disabled: true },
       [STEP_AD_GROUP_MEMBERS]: { disabled: true },
       [STEP_AD_USER_REGISTRATION_DETAILS]: { disabled: true },
@@ -1233,6 +1241,8 @@ describe('getStepStartStates', () => {
     const states = await getStepStartStates(context);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
+      [STEP_AD_DOMAIN]: { disabled: true },
+      [STEP_AD_ACCOUNT_HAS_DOMAIN]: { disabled: true },
       [STEP_AD_GROUPS]: { disabled: true },
       [STEP_AD_GROUP_MEMBERS]: { disabled: true },
       [STEP_AD_USER_REGISTRATION_DETAILS]: { disabled: true },
@@ -1606,6 +1616,8 @@ describe('dependencies', () => {
     const resourceManagerStepIds = [
       STEP_AD_ACCOUNT,
       STEP_AD_USERS,
+      STEP_AD_DOMAIN,
+      STEP_AD_ACCOUNT_HAS_DOMAIN,
       STEP_AD_GROUPS,
       STEP_AD_USER_REGISTRATION_DETAILS,
       ...getApiStepsResponse.executeFirstSteps,

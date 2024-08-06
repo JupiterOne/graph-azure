@@ -9,6 +9,12 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
     defaultsToDisabled: false,
     cannotBeDisabled: true,
   },
+  [INGESTION_SOURCE_IDS.AD_DOMAIN]: {
+    title: 'Entra ID Domain',
+    description: 'Gather information related to Domain.',
+    defaultsToDisabled: true,
+    cannotBeDisabled: false,
+  },
   [INGESTION_SOURCE_IDS.AD_GROUPS]: {
     title: 'Entra ID groups',
     description:

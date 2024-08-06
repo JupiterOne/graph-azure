@@ -10,7 +10,7 @@ import {
   Client,
   GraphRequest,
 } from '@microsoft/microsoft-graph-client';
-import { Organization } from '@microsoft/microsoft-graph-types';
+import { Domain, Organization } from '@microsoft/microsoft-graph-types';
 
 import { IntegrationConfig } from '../../types';
 import { authenticate } from './authenticate';
@@ -96,6 +96,18 @@ export abstract class GraphClient {
       this.client.api('/organization'),
     );
     return response!.value[0];
+  }
+
+  public async fetchDomain(
+    callback: (domain: Domain) => Promise<void>,
+  ): Promise<void> {
+    const response = await this.request<IterableGraphResponse<Domain>>(
+      this.client.api('/domains'),
+    );
+
+    for (const domain of response!.value) {
+      await callback(domain);
+    }
   }
 
   async retryRequest<TResponseType = any>(

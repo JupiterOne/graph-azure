@@ -1,5 +1,6 @@
 export const INGESTION_SOURCE_IDS = {
   AD_GENERALS: 'ad-generals',
+  AD_DOMAIN: 'ad-domain',
   AD_GROUPS: 'ad-groups',
   AD_DEVICES: 'ad-devices',
   ADVISOR_RECOMMENDATIONS: 'advisor-recommendations',

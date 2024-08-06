@@ -24,7 +24,6 @@ import {
   EntityPrincipalType,
   STEP_AD_DOMAIN,
   STEP_AD_ACCOUNT_HAS_DOMAIN,
-  DOMAIN_ENTITY_TYPE,
 } from './constants';
 import {
   createAccountEntity,
@@ -111,7 +110,7 @@ export async function buildAccountDomainRelationship(
               fromKey: account._key,
               _class: RelationshipClass.HAS,
               toKey: domainEntityKey,
-              toType: DOMAIN_ENTITY_TYPE,
+              toType: ADEntities.AD_DOMAIN._type,
             }),
           );
         }

@@ -24,16 +24,12 @@ import {
   IdentitySecurityDefaultsEnforcementPolicy,
   UserRegistrationDetails,
 } from './client';
-import {
-  ACCOUNT_GROUP_RELATIONSHIP_TYPE,
-  ADEntities,
-  DOMAIN_ENTITY_TYPE,
-  DOMAIN_ENTITY_CLASS,
-} from './constants';
+import { ACCOUNT_GROUP_RELATIONSHIP_TYPE, ADEntities } from './constants';
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 import {
   createAccountAssignEntity,
   createDeviceAssignEntity,
+  createDomainAssignEntity,
   createRoleDefinitionAssignEntity,
   createServicePrincipalAssignEntity,
   createUserAssignEntity,
@@ -41,7 +37,7 @@ import {
 } from '../../entities';
 
 export function getDomainKey(id: string) {
-  return DOMAIN_ENTITY_TYPE + ':' + id;
+  return ADEntities.AD_DOMAIN._type + ':' + id;
 }
 
 export function createAccountEntity(instance: IntegrationInstance): Entity {
@@ -87,10 +83,8 @@ export function createDomainEntity(data: Domain): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
+      assign: createDomainAssignEntity({
         _key: getDomainKey(data.id as string),
-        _type: DOMAIN_ENTITY_TYPE,
-        _class: DOMAIN_ENTITY_CLASS,
         name: `Domain: ${data.id}`,
         category: ['infrastructure'],
         function: ['IAM'],
@@ -100,11 +94,11 @@ export function createDomainEntity(data: Domain): Entity {
         isInitial: data.isInitial,
         isRoot: data.isRoot,
         isVerified: data.isVerified,
-        supportedServices: data.isVerified,
+        supportedServices: data.supportedServices,
         passwordValidityPeriodInDays: data.passwordValidityPeriodInDays,
         passwordNotificationWindowInDays: data.passwordNotificationWindowInDays,
         ...passwordProperties,
-      },
+      }),
     },
   });
 }

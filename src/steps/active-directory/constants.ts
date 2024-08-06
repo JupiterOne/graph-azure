@@ -2,6 +2,7 @@ import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 import {
   AccountEntityMetadata,
   DeviceEntityMetadata,
+  DomainEntityMetadata,
   GroupMemberEntityMetadata,
   RoleDefinitionEntityMetadata,
   ServicePrincipalEntityMetadata,
@@ -25,9 +26,6 @@ export const STEP_AD_SERVICE_PRINCIPAL_ACCESS =
   'ad-role-service_principal_access';
 // Graph objects
 
-export const DOMAIN_ENTITY_TYPE = 'azure_domain';
-export const DOMAIN_ENTITY_CLASS = ['Service'];
-
 export const ACCOUNT_GROUP_RELATIONSHIP_TYPE = 'azure_account_has_group';
 export const ACCOUNT_USER_RELATIONSHIP_TYPE = 'azure_account_has_user';
 export const ACCOUNT_DOMAIN_RELATIONSHIP_TYPE = 'azure_account_has_domain';
@@ -42,11 +40,7 @@ export const ADEntities = {
   GROUP_MEMBER: GroupMemberEntityMetadata,
   SERVICE_PRINCIPAL: ServicePrincipalEntityMetadata,
   AD_ROLE_DEFINITION: RoleDefinitionEntityMetadata,
-  AD_DOMAIN: {
-    resourceName: '[AD] Domain',
-    _type: DOMAIN_ENTITY_TYPE,
-    _class: DOMAIN_ENTITY_CLASS,
-  },
+  AD_DOMAIN: DomainEntityMetadata,
 };
 
 export const ADRelationships = {
@@ -60,7 +54,7 @@ export const ADRelationships = {
     _type: ACCOUNT_DOMAIN_RELATIONSHIP_TYPE,
     sourceType: ADEntities.ACCOUNT._type,
     _class: RelationshipClass.HAS,
-    targetType: DOMAIN_ENTITY_TYPE,
+    targetType: ADEntities.AD_DOMAIN._type,
   },
   USER_HAS_DEVICE: {
     _type: USER_HAS_DEVICE_RELATIONSHIP_TYPE,

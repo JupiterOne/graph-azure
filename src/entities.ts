@@ -188,3 +188,68 @@ export const [RoleDefinitionEntityMetadata, createRoleDefinitionAssignEntity] =
       ),
     }),
   });
+
+export const [DomainEntityMetadata, createDomainAssignEntity] =
+  createEntityMetadata({
+    resourceName: '[AD] Domain',
+    _class: ['Service'],
+    _type: createEntityType('domain'),
+    description: 'Azure Active Directory Domain',
+    schema: SchemaType.Object({
+      category: SchemaType.Array(
+        SchemaType.String(SchemaType.Literal('infrastructure')),
+      ),
+      function: SchemaType.Array(SchemaType.String(SchemaType.Literal('IAM'))),
+      authenticationType: SchemaType.Optional(
+        SchemaType.Union([
+          SchemaType.Literal('Managed'),
+          SchemaType.Literal('Federated'),
+          SchemaType.String(),
+        ]),
+      ),
+      isAdminManaged: SchemaType.Optional(SchemaType.Boolean()),
+      isDefault: SchemaType.Optional(SchemaType.Boolean()),
+      isInitial: SchemaType.Optional(SchemaType.Boolean()),
+      isRoot: SchemaType.Optional(SchemaType.Boolean()),
+      isVerified: SchemaType.Optional(SchemaType.Boolean()),
+      supportedServices: SchemaType.Optional(
+        SchemaType.Array(SchemaType.String()),
+      ),
+      passwordValidityPeriodInDays: SchemaType.Optional(SchemaType.Number()),
+      passwordNotificationWindowInDays: SchemaType.Optional(
+        SchemaType.Number(),
+      ),
+      charactersAllowedInPassword: SchemaType.Array(SchemaType.String(), {
+        default: [
+          'A - Z',
+          'a - z',
+          '0 - 9',
+          '@ # $ % ^ & * - _ ! + = [ ] { } |  : \' , . ? / ` ~ " ( ) ; < >',
+          'blank space',
+        ],
+      }),
+      charactersNotAllowedInPassword: SchemaType.String(
+        SchemaType.Literal('Unicode characters'),
+      ),
+      passwordLength: SchemaType.Array(SchemaType.String(), {
+        default: [
+          'A minimum of eight characters',
+          'A maximum of 256 characters',
+        ],
+      }),
+      passwordComplexity: SchemaType.Array(SchemaType.String(), {
+        default: [
+          'A minimum of 8 characters and a maximum of 256 characters',
+          `Requires three out of four of the following types of characters: 
+      Lowercase characters 
+      Uppercase characters 
+      Numbers (0 - 9) 
+      Symbols`,
+        ],
+      }),
+      passwordNotRecentlyUsed: SchemaType.Boolean(SchemaType.Literal(true)),
+      passwordIsNotBannedByMicrosoftEntraPasswordProtection: SchemaType.Boolean(
+        SchemaType.Literal(true),
+      ),
+    }),
+  });

@@ -19,6 +19,8 @@ import {
   STEP_AD_ROLE_DEFINITIONS,
   STEP_AD_DEVICES,
   STEP_AD_SERVICE_PRINCIPAL_ACCESS,
+  STEP_AD_DOMAIN,
+  STEP_AD_ACCOUNT_HAS_DOMAIN,
 } from './steps/active-directory/constants';
 import { steps as authorizationSteps } from './steps/resource-manager/authorization/constants';
 import { steps as computeSteps } from './steps/resource-manager/compute/constants';
@@ -208,6 +210,8 @@ export function getActiveDirectorySteps(): GetApiSteps {
     executeFirstSteps: [
       STEP_AD_DEVICES,
       STEP_AD_GROUPS,
+      STEP_AD_DOMAIN,
+      STEP_AD_ACCOUNT_HAS_DOMAIN,
       STEP_AD_GROUP_MEMBERS,
       STEP_AD_USER_REGISTRATION_DETAILS,
       STEP_AD_USERS,

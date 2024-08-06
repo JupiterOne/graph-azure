@@ -2,6 +2,8 @@ import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 // Step IDs
 export const STEP_AD_ACCOUNT = 'ad-account';
+export const STEP_AD_DOMAIN = 'ad-domain';
+export const STEP_AD_ACCOUNT_HAS_DOMAIN = 'ad-account-domain';
 export const STEP_AD_GROUPS = 'ad-groups';
 export const STEP_AD_GROUP_MEMBERS = 'ad-group-members';
 export const STEP_AD_USER_REGISTRATION_DETAILS = 'ad-user-registration-details';
@@ -28,6 +30,9 @@ export const DEVICE_ENTITY_CLASS = ['Device'];
 export const SERVICE_PRINCIPAL_ENTITY_TYPE = 'azure_service_principal';
 export const SERVICE_PRINCIPAL_ENTITY_CLASS = ['Service'];
 
+export const DOMAIN_ENTITY_TYPE = 'azure_domain';
+export const DOMAIN_ENTITY_CLASS = ['Service'];
+
 /**
  * The entity type used for members of groups which are not one of the ingested
  * directory objects.
@@ -42,6 +47,7 @@ export const GROUP_MEMBER_ENTITY_CLASS = 'User';
 
 export const ACCOUNT_GROUP_RELATIONSHIP_TYPE = 'azure_account_has_group';
 export const ACCOUNT_USER_RELATIONSHIP_TYPE = 'azure_account_has_user';
+export const ACCOUNT_DOMAIN_RELATIONSHIP_TYPE = 'azure_account_has_domain';
 export const USER_HAS_DEVICE_RELATIONSHIP_TYPE = 'azure_user_has_device';
 export const GROUP_MEMBER_RELATIONSHIP_TYPE = 'azure_group_has_member';
 
@@ -81,6 +87,11 @@ export const ADEntities = {
     _type: 'azure_ad_role_definition',
     _class: ['AccessRole'],
   },
+  AD_DOMAIN: {
+    resourceName: '[AD] Domain',
+    _type: DOMAIN_ENTITY_TYPE,
+    _class: DOMAIN_ENTITY_CLASS,
+  },
 };
 
 export const ADRelationships = {
@@ -89,6 +100,12 @@ export const ADRelationships = {
     sourceType: ACCOUNT_ENTITY_TYPE,
     _class: RelationshipClass.HAS,
     targetType: USER_ENTITY_TYPE,
+  },
+  ACCOUNT_HAS_DOMAIN: {
+    _type: ACCOUNT_DOMAIN_RELATIONSHIP_TYPE,
+    sourceType: ACCOUNT_ENTITY_TYPE,
+    _class: RelationshipClass.HAS,
+    targetType: DOMAIN_ENTITY_TYPE,
   },
   USER_HAS_DEVICE: {
     _type: USER_HAS_DEVICE_RELATIONSHIP_TYPE,

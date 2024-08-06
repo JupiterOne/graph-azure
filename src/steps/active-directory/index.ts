@@ -24,6 +24,9 @@ import {
   STEP_AD_DEVICES,
   STEP_AD_SERVICE_PRINCIPAL_ACCESS,
   EntityPrincipalType,
+  STEP_AD_DOMAIN,
+  STEP_AD_ACCOUNT_HAS_DOMAIN,
+  DOMAIN_ENTITY_TYPE,
 } from './constants';
 import {
   createAccountEntity,
@@ -36,6 +39,8 @@ import {
   createRoleDefinitions,
   createUserDeviceRelationship,
   createDeviceEntity,
+  createDomainEntity,
+  getDomainKey,
 } from './converters';
 import { INGESTION_SOURCE_IDS } from '../../constants';
 
@@ -76,6 +81,43 @@ export async function fetchAccount(
 
   await jobState.addEntity(accountEntity);
   await jobState.setData(ACCOUNT_ENTITY_TYPE, accountEntity);
+}
+
+export async function fetchDomain(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { logger, instance, jobState } = executionContext;
+  const graphClient = new DirectoryGraphClient(logger, instance.config);
+  await graphClient.fetchDomain(async (domain) => {
+    const domainEntity = createDomainEntity(domain);
+    await jobState.addEntity(domainEntity);
+  });
+}
+
+export async function buildAccountDomainRelationship(
+  executionContext: IntegrationStepContext,
+): Promise<void> {
+  const { jobState } = executionContext;
+
+  await jobState.iterateEntities(
+    { _type: ACCOUNT_ENTITY_TYPE },
+    async (account) => {
+      for (const domain of (account?.verifiedDomains as string[]) || []) {
+        const domainEntityKey = getDomainKey(domain);
+        if (jobState.hasKey(domainEntityKey)) {
+          await jobState.addRelationship(
+            createDirectRelationship({
+              fromType: ACCOUNT_ENTITY_TYPE,
+              fromKey: account._key,
+              _class: RelationshipClass.HAS,
+              toKey: domainEntityKey,
+              toType: DOMAIN_ENTITY_TYPE,
+            }),
+          );
+        }
+      }
+    },
+  );
 }
 
 export async function fetchUserRegistrationDetails(
@@ -311,6 +353,23 @@ export const activeDirectorySteps: AzureIntegrationStep[] = [
     executionHandler: fetchAccount,
     apiPermissions: ['Directory.Read.All', 'Policy.Read.All'],
     ingestionSourceId: INGESTION_SOURCE_IDS.AD_GENERALS,
+  },
+  {
+    id: STEP_AD_DOMAIN,
+    name: 'Entra ID Domain Information',
+    entities: [ADEntities.AD_DOMAIN],
+    relationships: [],
+    executionHandler: fetchDomain,
+    apiPermissions: ['Domain.Read.All', 'Directory.Read.All'],
+    ingestionSourceId: INGESTION_SOURCE_IDS.AD_DOMAIN,
+  },
+  {
+    id: STEP_AD_ACCOUNT_HAS_DOMAIN,
+    name: 'Entra ID Account Has Domain',
+    entities: [],
+    relationships: [ADRelationships.ACCOUNT_HAS_DOMAIN],
+    dependsOn: [STEP_AD_DOMAIN, STEP_AD_ACCOUNT],
+    executionHandler: buildAccountDomainRelationship,
   },
   {
     id: STEP_AD_USER_REGISTRATION_DETAILS,

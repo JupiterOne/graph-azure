@@ -36,6 +36,8 @@ import {
   STEP_AD_ROLE_ASSIGNMENTS,
   STEP_AD_DEVICES,
   STEP_AD_SERVICE_PRINCIPAL_ACCESS,
+  STEP_AD_DOMAIN,
+  STEP_AD_ACCOUNT_HAS_DOMAIN,
 } from './constants';
 import { getMockAccountEntity } from '../../../test/helpers/getMockEntity';
 import { IntegrationProviderAuthorizationError } from '@jupiterone/integration-sdk-core';
@@ -237,6 +239,50 @@ describe('ad-groups', () => {
         },
       },
     });
+  });
+});
+
+describe('ad-domain', () => {
+  test(STEP_AD_DOMAIN, async () => {
+    const stepTestConfig = getStepTestConfigForStep(STEP_AD_DOMAIN);
+
+    recording = setupAzureRecording(
+      {
+        name: STEP_AD_DOMAIN,
+        directory: __dirname,
+        options: {
+          matchRequestsBy: getMatchRequestsBy({
+            config: stepTestConfig.instanceConfig,
+          }),
+        },
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
+  });
+});
+
+describe('ad-account-domain', () => {
+  test(STEP_AD_ACCOUNT_HAS_DOMAIN, async () => {
+    const stepTestConfig = getStepTestConfigForStep(STEP_AD_ACCOUNT_HAS_DOMAIN);
+
+    recording = setupAzureRecording(
+      {
+        name: STEP_AD_ACCOUNT_HAS_DOMAIN,
+        directory: __dirname,
+        options: {
+          matchRequestsBy: getMatchRequestsBy({
+            config: stepTestConfig.instanceConfig,
+          }),
+        },
+      },
+      stepTestConfig.instanceConfig,
+    );
+
+    const stepResults = await executeStepWithDependencies(stepTestConfig);
+    expect(stepResults).toMatchStepMetadata(stepTestConfig);
   });
 });
 

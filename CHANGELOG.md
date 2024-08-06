@@ -1,3 +1,28 @@
+# v7.6.0 (Tue Aug 06 2024)
+
+#### 🚀 Enhancement
+
+- Azure 6.1.8 [#653](https://github.com/JupiterOne/graph-azure/pull/653) ([@Bharatkk-metron](https://github.com/Bharatkk-metron) [@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 2
+
+- [@Bharatkk-metron](https://github.com/Bharatkk-metron)
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v7.4.0 (Mon Aug 05 2024)
+
+#### 🚀 Enhancement
+
+- add 3 new props to azure_dns_record_set [#656](https://github.com/JupiterOne/graph-azure/pull/656) ([@SeaBlooms](https://github.com/SeaBlooms))
+
+#### Authors: 1
+
+- Colin Blumer ([@SeaBlooms](https://github.com/SeaBlooms))
+
+---
+
 # v7.3.3 (Mon Aug 05 2024)
 
 #### 🐛 Bug Fix

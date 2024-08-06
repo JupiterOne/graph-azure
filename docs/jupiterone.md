@@ -318,6 +318,7 @@ The following entities are created:
 | [AD] Conditional Access Policy                   | `azure_conditional_access_policy`                 | `AccessPolicy`                     |
 | [AD] Conditional Access Template                 | `azure_conditional_access_template`               | `AccessPolicy`                     |
 | [AD] Device                                      | `azure_device`                                    | `Device`                           |
+| [AD] Domain                                      | `azure_domain`                                    | `Service`                          |
 | [AD] Group                                       | `azure_user_group`                                | `UserGroup`                        |
 | [AD] Group Member                                | `azure_group_member`                              | `User`                             |
 | [AD] Role Definition                             | `azure_ad_role_definition`                        | `AccessRole`                       |
@@ -461,6 +462,7 @@ The following relationships are created:
 | `azure_access_packages_service_assignment` | **CONTAINS**          | `azure_access_packages_policy`                    |
 | `azure_access_packages_services`           | **HAS**               | `azure_access_packages_service_assignment`        |
 | `azure_access_packages_services`           | **HAS**               | `azure_application`                               |
+| `azure_account`                            | **HAS**               | `azure_domain`                                    |
 | `azure_account`                            | **HAS**               | `azure_keyvault_service`                          |
 | `azure_account`                            | **HAS**               | `azure_management_group`                          |
 | `azure_account`                            | **HAS**               | `azure_user`                                      |
@@ -744,7 +746,6 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
-
 | Role Permissions List (116)                                                 |
 | --------------------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                                    |
@@ -863,18 +864,16 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Web/sites/config/list/action`                                    |
 | `Microsoft.Web/sites/config/Read`                                           |
 | `Microsoft.Web/sites/Read`                                                  |
-
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START} -->
-
-| API Permissions List (6)         |
+| API Permissions List (7)         |
 | -------------------------------- |
 | `AuditLog.Read.All`              |
 | `Device.Read.All`                |
 | `Directory.Read.All`             |
+| `Domain.Read.All`                |
 | `EntitlementManagement.Read.All` |
 | `Policy.Read.All`                |
 | `Policy.Read.ConditionalAccess`  |
-
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_END} -->

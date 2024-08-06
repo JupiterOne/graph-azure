@@ -14,6 +14,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import {
   Device,
+  Domain,
   Group,
   Organization,
   User,
@@ -37,8 +38,14 @@ import {
   ADEntities,
   DEVICE_ENTITY_CLASS,
   DEVICE_ENTITY_TYPE,
+  DOMAIN_ENTITY_TYPE,
+  DOMAIN_ENTITY_CLASS,
 } from './constants';
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
+
+export function getDomainKey(id: string) {
+  return DOMAIN_ENTITY_TYPE + ':' + id;
+}
 
 export function createAccountEntity(instance: IntegrationInstance): Entity {
   return createIntegrationEntity({
@@ -50,6 +57,57 @@ export function createAccountEntity(instance: IntegrationInstance): Entity {
         _type: ACCOUNT_ENTITY_TYPE,
         name: instance.name,
         displayName: instance.name,
+      },
+    },
+  });
+}
+
+export function createDomainEntity(data: Domain): Entity {
+  const passwordProperties = {
+    charactersAllowedInPassword: [
+      'A - Z',
+      'a - z',
+      '0 - 9',
+      '@ # $ % ^ & * - _ ! + = [ ] { } |  : \' , . ? / ` ~ " ( ) ; < >',
+      'blank space',
+    ],
+    charactersNotAllowedInPassword: 'Unicode characters',
+    passwordLength: [
+      'A minimum of eight characters',
+      'A maximum of 256 characters',
+    ],
+    passwordComplexity: [
+      'A minimum of 8 characters and a maximum of 256 characters',
+      `Requires three out of four of the following types of characters: 
+      Lowercase characters 
+      Uppercase characters 
+      Numbers (0 - 9) 
+      Symbols`,
+    ],
+    passwordNotRecentlyUsed: true,
+    passwordIsNotBannedByMicrosoftEntraPasswordProtection: true,
+    // passwordValidityPeriodInDays: passwordValidityPeriodInDays, // fetched from domain API
+  };
+  return createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: getDomainKey(data.id as string),
+        _type: DOMAIN_ENTITY_TYPE,
+        _class: DOMAIN_ENTITY_CLASS,
+        name: `Domain: ${data.id}`,
+        category: ['infrastructure'],
+        function: ['IAM'],
+        authenticationType: data.authenticationType,
+        isAdminManaged: data.isAdminManaged,
+        isDefault: data.isDefault,
+        isInitial: data.isInitial,
+        isRoot: data.isRoot,
+        isVerified: data.isVerified,
+        supportedServices: data.isVerified,
+        passwordValidityPeriodInDays: data.passwordValidityPeriodInDays,
+        passwordNotificationWindowInDays: data.passwordNotificationWindowInDays,
+        ...passwordProperties,
       },
     },
   });

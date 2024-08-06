@@ -38,7 +38,7 @@ export function createPolicyStateEntity(
         resourceType: data.resourceType,
         resourceLocation: data.resourceLocation,
         resourceGroup: data.resourceGroup,
-        resourcesTags: data.resourceTags,
+        resourceTags: data.resourceTags,
         policyAssignmentId: data.policyAssignmentId,
         policyAssignmentName: data.policyAssignmentName,
         policyAssignmentScope: data.policyAssignmentScope,

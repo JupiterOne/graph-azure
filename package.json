@@ -86,7 +86,7 @@
     "@azure/keyvault-keys": "4.7.0",
     "@azure/keyvault-secrets": "4.7.0",
     "@azure/ms-rest-nodeauth": "^2.0.5",
-    "@azure/storage-blob": "^12.5.0",
+    "@azure/storage-blob": "^12.18.0",
     "@azure/storage-queue": "^12.4.0",
     "@lifeomic/attempt": "^3.0.3",
     "@microsoft/microsoft-graph-client": "^2.0.0",

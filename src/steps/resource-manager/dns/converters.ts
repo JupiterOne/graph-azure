@@ -52,9 +52,28 @@ export function createDnsRecordSetEntity(
         type: getDomainRecordTypeFromAzureRecordSet(data),
         fqdn: data.fqdn,
         provisioningState: data.provisioningState,
-        cnameRecord: data.cnameRecord?.cname,
         azureType: data.type,
         webLink: webLinker.portalResourceUrl(data.id),
+        // CNAME type
+        cnameRecord: data.cnameRecord?.cname,
+        // SOA type
+        soaRecordHost: data.soaRecord?.host,
+        soaRecordEmail: data.soaRecord?.email,
+        soaRecordserialNumber: data.soaRecord?.serialNumber,
+        // A type
+        aRecords: data.aRecords,
+        // AAAA type
+        aaaaRecords: data.aaaaRecords,
+        // NS type
+        nsRecords: data.nsRecords,
+        // MX type
+        mxRecords: data.mxRecords,
+        // TXT type
+        txtRecords: data.txtRecords,
+        // PTR type
+        ptrRecords: data.ptrRecords,
+        // SRV type
+        srvRecords: data.srvRecords,
       },
     },
   });

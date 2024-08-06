@@ -300,7 +300,7 @@ describe('ad-group-members', () => {
     expect(groupEntities.length).toBeGreaterThan(0);
 
     const userEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === ADEntities.ACCOUNT._type,
+      (e) => e._type === ADEntities.USER._type,
     );
     expect(userEntities.length).toBeGreaterThan(0);
 

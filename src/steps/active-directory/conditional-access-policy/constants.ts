@@ -3,7 +3,7 @@ import {
   StepEntityMetadata,
   StepRelationshipMetadata,
 } from '@jupiterone/integration-sdk-core';
-import { GROUP_ENTITY_TYPE, USER_ENTITY_TYPE } from '../constants';
+import { ADEntities } from '../constants';
 
 export const TIME_OUT = 100_000;
 
@@ -110,12 +110,12 @@ export const ConditionalAccessRelationships: Record<
     _type: 'azure_conditional_access_policy_assigned_user',
     _class: RelationshipClass.ASSIGNED,
     sourceType: ConditionalAccessEntities.CONDITIONAL_ACCESS_POLICY._type,
-    targetType: USER_ENTITY_TYPE,
+    targetType: ADEntities.USER._type,
   },
   CONDITIONAL_ACCESS_POLICY_ASSIGNED_AD_GROUPS: {
     _type: 'azure_conditional_access_policy_assigned_user_group',
     _class: RelationshipClass.ASSIGNED,
     sourceType: ConditionalAccessEntities.CONDITIONAL_ACCESS_POLICY._type,
-    targetType: GROUP_ENTITY_TYPE,
+    targetType: ADEntities.USER_GROUP._type,
   },
 };

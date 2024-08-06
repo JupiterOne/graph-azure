@@ -22,22 +22,15 @@ import {
 } from './index';
 import { createMockAzureStepExecutionContext } from '../../../test/createMockAzureStepExecutionContext';
 import {
-  ACCOUNT_ENTITY_TYPE,
-  ACCOUNT_ENTITY_CLASS,
-  USER_ENTITY_CLASS,
   ACCOUNT_USER_RELATIONSHIP_TYPE,
-  GROUP_ENTITY_TYPE,
-  GROUP_ENTITY_CLASS,
   ACCOUNT_GROUP_RELATIONSHIP_TYPE,
-  SERVICE_PRINCIPAL_ENTITY_TYPE,
-  SERVICE_PRINCIPAL_ENTITY_CLASS,
-  USER_ENTITY_TYPE,
   STEP_AD_ROLE_DEFINITIONS,
   STEP_AD_ROLE_ASSIGNMENTS,
   STEP_AD_DEVICES,
   STEP_AD_SERVICE_PRINCIPAL_ACCESS,
   STEP_AD_DOMAIN,
   STEP_AD_ACCOUNT_HAS_DOMAIN,
+  ADEntities,
 } from './constants';
 import { getMockAccountEntity } from '../../../test/helpers/getMockEntity';
 import { IntegrationProviderAuthorizationError } from '@jupiterone/integration-sdk-core';
@@ -68,7 +61,7 @@ describe('ad-account', () => {
 
     expect(accountEntities).toHaveLength(1);
     expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-      _class: ACCOUNT_ENTITY_CLASS,
+      _class: ADEntities.ACCOUNT._class,
     });
 
     expect(context.jobState.collectedRelationships).toHaveLength(0);
@@ -96,7 +89,7 @@ describe('ad-users', () => {
       instanceConfig: configFromEnv,
       entities: [accountEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -106,7 +99,7 @@ describe('ad-users', () => {
 
     expect(userEntities.length).toBeGreaterThan(0);
     expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-      _class: USER_ENTITY_CLASS,
+      _class: ADEntities.USER._class,
     });
 
     const accountUserRelationships = context.jobState.collectedRelationships;
@@ -147,7 +140,7 @@ describe.skip('ad-user-registration-details', () => {
       instanceConfig: configFromEnv,
       entities: [accountEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -158,7 +151,7 @@ describe.skip('ad-user-registration-details', () => {
 
     expect(userEntities.length).toBeGreaterThan(0);
     expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-      _class: USER_ENTITY_CLASS,
+      _class: ADEntities.USER._class,
       schema: {
         properties: {
           isMfaRegistered: { type: 'boolean' },
@@ -183,7 +176,7 @@ describe.skip('ad-user-registration-details', () => {
       instanceConfig: configFromEnv,
       entities: [accountEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -214,7 +207,7 @@ describe('ad-groups', () => {
       instanceConfig: configFromEnv,
       entities: [accountEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -224,7 +217,7 @@ describe('ad-groups', () => {
 
     expect(groupEntities.length).toBeGreaterThan(0);
     expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-      _class: GROUP_ENTITY_CLASS,
+      _class: ADEntities.USER_GROUP._class,
     });
 
     const accountGroupRelationships = context.jobState.collectedRelationships;
@@ -294,7 +287,7 @@ describe('ad-group-members', () => {
       instanceConfig: configFromEnv,
       entities: [accountEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -302,12 +295,12 @@ describe('ad-group-members', () => {
     await fetchUsers(context);
 
     const groupEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === GROUP_ENTITY_TYPE,
+      (e) => e._type === ADEntities.USER_GROUP._type,
     );
     expect(groupEntities.length).toBeGreaterThan(0);
 
     const userEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === USER_ENTITY_TYPE,
+      (e) => e._type === ADEntities.ACCOUNT._type,
     );
     expect(userEntities.length).toBeGreaterThan(0);
 
@@ -364,7 +357,7 @@ describe('ad-service-principals', () => {
       instanceConfig: configFromEnv,
       entities: [accountEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -374,11 +367,11 @@ describe('ad-service-principals', () => {
 
     expect(servicePrincipalEntities.length).toBeGreaterThan(0);
     expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
-      _class: SERVICE_PRINCIPAL_ENTITY_CLASS,
+      _class: ADEntities.SERVICE_PRINCIPAL._class,
       schema: {
         additionalProperties: false,
         properties: {
-          _type: { const: SERVICE_PRINCIPAL_ENTITY_TYPE },
+          _type: { const: ADEntities.SERVICE_PRINCIPAL._type },
           userType: { const: 'service' },
           function: { type: 'array' },
           username: { type: 'string' },

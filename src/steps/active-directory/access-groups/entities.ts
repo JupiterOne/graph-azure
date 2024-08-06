@@ -11,9 +11,7 @@ export const [AccessPackageEntityMetadata, createAccessPackageAssignEntity] =
     description: 'Resource Manager Access Package',
     schema: SchemaType.Object({
       resourceName: SchemaType.String(
-        SchemaType.Literal(
-          accessPackageEntites.STEP_ACCESS_PACKAGE.resourceName,
-        ),
+        SchemaType.Literal('[RM] Access Package'),
       ),
       category: SchemaType.Array(SchemaType.Literal('infrastructure')),
       function: SchemaType.Array(SchemaType.Literal('workflow')),
@@ -30,9 +28,7 @@ export const [
   description: 'Resource Manager Access Package Assignment',
   schema: SchemaType.Object({
     resourceName: SchemaType.String(
-      SchemaType.Literal(
-        accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT.resourceName,
-      ),
+      SchemaType.Literal('[RM] Access Package Assignment'),
     ),
     state: SchemaType.Optional(SchemaType.String()),
     accessPackage: SchemaType.Optional(SchemaType.String()),
@@ -52,9 +48,7 @@ export const [
   description: 'Resource Manager Access Package Assignment Policy',
   schema: SchemaType.Object({
     resourceName: SchemaType.String(
-      SchemaType.Literal(
-        accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY.resourceName,
-      ),
+      SchemaType.Literal('[RM] Access Package Assignment Policy'),
     ),
     expirationEndDateTimeOn: SchemaType.Optional(
       SchemaType.Number({
@@ -78,10 +72,7 @@ export const [
   description: 'Resource Manager Access Package Assignment Request',
   schema: SchemaType.Object({
     resourceName: SchemaType.String(
-      SchemaType.Literal(
-        accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST
-          .resourceName,
-      ),
+      SchemaType.Literal('[RM] Access Package Assignment Request'),
     ),
     requestType: SchemaType.Optional(SchemaType.String()),
     status: SchemaType.Optional(SchemaType.String()),
@@ -101,10 +92,7 @@ export const [
   description: 'Resource Manager Access Package Assignment Approver',
   schema: SchemaType.Object({
     resourceName: SchemaType.String(
-      SchemaType.Literal(
-        accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER
-          .resourceName,
-      ),
+      SchemaType.Literal('[RM] Access Package Assignment Approver'),
     ),
     reviewResult: SchemaType.Optional(SchemaType.String()),
     status: SchemaType.Optional(SchemaType.String()),
@@ -123,9 +111,7 @@ export const [
   description: 'Resource Manager Access Package Catalog',
   schema: SchemaType.Object({
     resourceName: SchemaType.String(
-      SchemaType.Literal(
-        accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG.resourceName,
-      ),
+      SchemaType.Literal('[RM] Access Package Catalog'),
     ),
     catalogType: SchemaType.Optional(SchemaType.String()),
     state: SchemaType.Optional(SchemaType.String()),
@@ -142,9 +128,7 @@ export const [ApplicationEntityMetadata, createApplicationAssignEntity] =
     description: 'Resource Manager Azure Application',
     schema: SchemaType.Object({
       resourceName: SchemaType.String(
-        SchemaType.Literal(
-          accessPackageEntites.STEP_AZURE_APPLICATION.resourceName,
-        ),
+        SchemaType.Literal('[RM] Azure Application'),
       ),
       publisherDomain: SchemaType.Optional(SchemaType.String()),
       signInAudience: SchemaType.Optional(SchemaType.String()),

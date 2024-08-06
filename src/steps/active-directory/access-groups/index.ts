@@ -35,10 +35,9 @@ import {
   createAzureApplicationEntity,
 } from './converters';
 import {
-  GROUP_ENTITY_TYPE,
+  ADEntities,
   STEP_AD_GROUPS,
   STEP_AD_USERS,
-  USER_ENTITY_TYPE,
 } from '../../active-directory/constants';
 import { generateEntityKey } from '../../../utils/generateKeys';
 
@@ -181,7 +180,7 @@ export async function buildAccessPackageApproverIsAzureUserRelationship(
               accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER
                 ._type,
             toKey: userKey,
-            toType: USER_ENTITY_TYPE,
+            toType: ADEntities.USER._type,
           }),
         );
       }
@@ -240,7 +239,7 @@ export async function buildAzureUserCreatedAccessPackageAssignmentRequestRelatio
           createDirectRelationship({
             _class: RelationshipClass.CREATED,
             fromKey: userKey,
-            fromType: USER_ENTITY_TYPE,
+            fromType: ADEntities.USER._type,
             toKey: request._key,
             toType:
               accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST._type,
@@ -318,7 +317,7 @@ export async function buildAzureUserAssignedToAccessPackageRelationship(
             createDirectRelationship({
               _class: RelationshipClass.ASSIGNED,
               fromKey: userKey,
-              fromType: USER_ENTITY_TYPE,
+              fromType: ADEntities.USER._type,
               toKey: accessPackageKey,
               toType: accessPackageEntites.STEP_ACCESS_PACKAGE._type,
             }),
@@ -347,7 +346,7 @@ export async function buildAzureGroupAssignedToAccessPackageRelationship(
             createDirectRelationship({
               _class: RelationshipClass.ASSIGNED,
               fromKey: groupId,
-              fromType: GROUP_ENTITY_TYPE,
+              fromType: ADEntities.USER_GROUP._type,
               toKey: accessPackageKey,
               toType: accessPackageEntites.STEP_ACCESS_PACKAGE._type,
             }),

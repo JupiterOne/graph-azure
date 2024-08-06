@@ -746,7 +746,6 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
-
 | Role Permissions List (116)                                                 |
 | --------------------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                                    |
@@ -865,10 +864,8 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Web/sites/config/list/action`                                    |
 | `Microsoft.Web/sites/config/Read`                                           |
 | `Microsoft.Web/sites/Read`                                                  |
-
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START} -->
-
 | API Permissions List (7)         |
 | -------------------------------- |
 | `AuditLog.Read.All`              |
@@ -878,6 +875,5 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `EntitlementManagement.Read.All` |
 | `Policy.Read.All`                |
 | `Policy.Read.ConditionalAccess`  |
-
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_END} -->

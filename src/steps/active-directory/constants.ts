@@ -11,6 +11,8 @@ import {
 
 // Step IDs
 export const STEP_AD_ACCOUNT = 'ad-account';
+export const STEP_AD_DOMAIN = 'ad-domain';
+export const STEP_AD_ACCOUNT_HAS_DOMAIN = 'ad-account-domain';
 export const STEP_AD_GROUPS = 'ad-groups';
 export const STEP_AD_GROUP_MEMBERS = 'ad-group-members';
 export const STEP_AD_USER_REGISTRATION_DETAILS = 'ad-user-registration-details';
@@ -23,8 +25,12 @@ export const STEP_AD_SERVICE_PRINCIPAL_ACCESS =
   'ad-role-service_principal_access';
 // Graph objects
 
+export const DOMAIN_ENTITY_TYPE = 'azure_domain';
+export const DOMAIN_ENTITY_CLASS = ['Service'];
+
 export const ACCOUNT_GROUP_RELATIONSHIP_TYPE = 'azure_account_has_group';
 export const ACCOUNT_USER_RELATIONSHIP_TYPE = 'azure_account_has_user';
+export const ACCOUNT_DOMAIN_RELATIONSHIP_TYPE = 'azure_account_has_domain';
 export const USER_HAS_DEVICE_RELATIONSHIP_TYPE = 'azure_user_has_device';
 export const GROUP_MEMBER_RELATIONSHIP_TYPE = 'azure_group_has_member';
 
@@ -36,6 +42,11 @@ export const ADEntities = {
   GROUP_MEMBER: GroupMemberEntityMetadata,
   SERVICE_PRINCIPAL: ServicePrincipalEntityMetadata,
   AD_ROLE_DEFINITION: RoleDefinitionEntityMetadata,
+  AD_DOMAIN: {
+    resourceName: '[AD] Domain',
+    _type: DOMAIN_ENTITY_TYPE,
+    _class: DOMAIN_ENTITY_CLASS,
+  },
 };
 
 export const ADRelationships = {
@@ -44,6 +55,12 @@ export const ADRelationships = {
     sourceType: ADEntities.ACCOUNT._type,
     _class: RelationshipClass.HAS,
     targetType: ADEntities.USER._type,
+  },
+  ACCOUNT_HAS_DOMAIN: {
+    _type: ACCOUNT_DOMAIN_RELATIONSHIP_TYPE,
+    sourceType: ADEntities.ACCOUNT._type,
+    _class: RelationshipClass.HAS,
+    targetType: DOMAIN_ENTITY_TYPE,
   },
   USER_HAS_DEVICE: {
     _type: USER_HAS_DEVICE_RELATIONSHIP_TYPE,

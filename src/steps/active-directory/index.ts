@@ -9,12 +9,10 @@ import {
 import { IntegrationStepContext, AzureIntegrationStep } from '../../types';
 import { UserRegistrationDetails, DirectoryGraphClient } from './client';
 import {
-  ACCOUNT_ENTITY_TYPE,
   STEP_AD_ACCOUNT,
   STEP_AD_GROUP_MEMBERS,
   STEP_AD_GROUPS,
   STEP_AD_USERS,
-  GROUP_ENTITY_TYPE,
   STEP_AD_SERVICE_PRINCIPALS,
   STEP_AD_USER_REGISTRATION_DETAILS,
   ADEntities,
@@ -45,7 +43,9 @@ import {
 import { INGESTION_SOURCE_IDS } from '../../constants';
 
 export async function getAccountEntity(jobState: JobState): Promise<Entity> {
-  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_TYPE);
+  const accountEntity = await jobState.getData<Entity>(
+    ADEntities.ACCOUNT._type,
+  );
 
   if (!accountEntity) {
     throw new IntegrationError({
@@ -80,7 +80,7 @@ export async function fetchAccount(
   }
 
   await jobState.addEntity(accountEntity);
-  await jobState.setData(ACCOUNT_ENTITY_TYPE, accountEntity);
+  await jobState.setData(ADEntities.ACCOUNT._type, accountEntity);
 }
 
 export async function fetchDomain(
@@ -100,14 +100,14 @@ export async function buildAccountDomainRelationship(
   const { jobState } = executionContext;
 
   await jobState.iterateEntities(
-    { _type: ACCOUNT_ENTITY_TYPE },
+    { _type: ADEntities.ACCOUNT._type },
     async (account) => {
       for (const domain of (account?.verifiedDomains as string[]) || []) {
         const domainEntityKey = getDomainKey(domain);
         if (jobState.hasKey(domainEntityKey)) {
           await jobState.addRelationship(
             createDirectRelationship({
-              fromType: ACCOUNT_ENTITY_TYPE,
+              fromType: ADEntities.ACCOUNT._type,
               fromKey: account._key,
               _class: RelationshipClass.HAS,
               toKey: domainEntityKey,
@@ -212,7 +212,7 @@ export async function fetchGroupMembers(
   const graphClient = new DirectoryGraphClient(logger, instance.config);
 
   await jobState.iterateEntities(
-    { _type: GROUP_ENTITY_TYPE },
+    { _type: ADEntities.USER_GROUP._type },
     async (groupEntity) => {
       await graphClient.iterateGroupMembers(
         { groupId: groupEntity.id as string },
@@ -232,7 +232,7 @@ export async function fetchGroupMembers(
           await jobState.addRelationship(
             createDirectRelationship({
               fromKey: groupEntity.id as string,
-              fromType: GROUP_ENTITY_TYPE,
+              fromType: ADEntities.USER_GROUP._type,
               _class: RelationshipClass.HAS,
               toType: convertGraphTypeTo_type(groupMember['@odata.type']),
               toKey: groupMember.id!,

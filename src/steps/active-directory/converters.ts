@@ -255,8 +255,8 @@ export function createDeviceEntity(
         deviceVersion: data.deviceVersion,
         manufacturer: data.manufacturer,
         displayName: data.displayName,
-        isCompliant: data.isCompliant,
-        isManaged: data.isManaged,
+        isCompliant: Boolean(data.isCompliant),
+        isManaged: Boolean(data.isManaged),
         // marked deprecated in docs
         onPremisesLastSyncDateTime: parseTimePropertyValue(
           data.onPremisesLastSyncDateTime,
@@ -265,8 +265,8 @@ export function createDeviceEntity(
           data.onPremisesLastSyncDateTime,
         ),
         // marked deprecated in docs
-        onPremisesSyncEnabled: data.onPremisesSyncEnabled,
-        isOnPremisesSyncEnabled: data.onPremisesSyncEnabled,
+        onPremisesSyncEnabled: Boolean(data.onPremisesSyncEnabled),
+        isOnPremisesSyncEnabled: Boolean(data.onPremisesSyncEnabled),
         operatingSystem: data.operatingSystem,
         operatingSystemVersion: data.operatingSystemVersion,
         physicalIds: data.physicalIds,

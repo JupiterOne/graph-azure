@@ -1,6 +1,5 @@
 import { SchemaType } from '@jupiterone/integration-sdk-core';
 import { createEntityType, createEntityMetadata } from '../../../helpers';
-import { accessPackageEntites } from './constants';
 
 // Access Package Entities
 export const [AccessPackageEntityMetadata, createAccessPackageAssignEntity] =

@@ -83,9 +83,13 @@ export const [DeviceEntityMetadata, createDeviceAssignEntity] =
         }),
       ),
       complianceExpirationOn: SchemaType.Optional(SchemaType.Number()),
-      deviceMetadata: SchemaType.Optional(SchemaType.String()),
+      deviceMetadata: SchemaType.Optional(
+        SchemaType.Union([SchemaType.String(), SchemaType.Null()]),
+      ),
       deviceVersion: SchemaType.Optional(SchemaType.Number()),
-      manufacturer: SchemaType.Optional(SchemaType.String()),
+      manufacturer: SchemaType.Optional(
+        SchemaType.Union([SchemaType.String(), SchemaType.Null()]),
+      ),
       isCompliant: SchemaType.Optional(SchemaType.Boolean()),
       isManaged: SchemaType.Optional(SchemaType.Boolean()),
       onPremisesLastSyncDateTime: SchemaType.Optional(

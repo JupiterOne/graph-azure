@@ -3,8 +3,8 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { ANY_PRINCIPAL } from '../constants';
+import { ADEntities } from '../../active-directory/constants';
 
 // Step IDs
 export const STEP_RM_KEYVAULT_VAULTS = 'rm-keyvault-vaults';
@@ -52,7 +52,7 @@ export const KeyVaultEntities = {
 export const ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS = RelationshipClass.HAS;
 export const ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE = generateRelationshipType(
   ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
-  ACCOUNT_ENTITY_TYPE,
+  ADEntities.ACCOUNT._type,
   KEY_VAULT_SERVICE_ENTITY_TYPE,
 );
 
@@ -89,7 +89,7 @@ export const KeyVaultRelationships = {
   },
   ACCOUNT_HAS_KEY_VAULT: {
     _type: ACCOUNT_KEY_VAULT_RELATIONSHIP_TYPE,
-    sourceType: ACCOUNT_ENTITY_TYPE,
+    sourceType: ADEntities.ACCOUNT._type,
     _class: ACCOUNT_KEY_VAULT_RELATIONSHIP_CLASS,
     targetType: KEY_VAULT_SERVICE_ENTITY_TYPE,
   },

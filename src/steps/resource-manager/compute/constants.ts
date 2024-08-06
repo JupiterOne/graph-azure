@@ -2,11 +2,10 @@ import {
   generateRelationshipType,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { SERVICE_PRINCIPAL_ENTITY_TYPE } from '../../active-directory/constants';
-
 import { entities as storageEntities } from '../storage/constants';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
 import { ANY_RESOURCE } from '../constants';
+import { ADEntities } from '../../active-directory/constants';
 
 // Step IDs
 export const steps = {
@@ -147,7 +146,7 @@ export const relationships = {
     _type: 'azure_vm_uses_managed_identity',
     sourceType: entities.VIRTUAL_MACHINE._type,
     _class: RelationshipClass.USES,
-    targetType: SERVICE_PRINCIPAL_ENTITY_TYPE,
+    targetType: ADEntities.SERVICE_PRINCIPAL._type,
   },
   VIRTUAL_MACHINE_USES_SCALE_SETS: {
     _type: 'azure_vm_uses_scale_set',

@@ -1,8 +1,16 @@
 import {
   Entity,
   createIntegrationEntity,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 import { ConditionalAccessEntities } from './constants';
+import {
+  createConditionalAccessAuthorizationContextAssignEntity,
+  createConditionalAccessNamedLocationAssignEntity,
+  createConditionalAccessPolicyAssignEntity,
+  createConditionalAccessServiceAssignEntity,
+  createConditionalAccessTemplateAssignEntity,
+} from './entities';
 
 /**
  * return key: -> type:id
@@ -58,19 +66,18 @@ export function createPolicyEntity(data: any): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class: ConditionalAccessEntities.CONDITIONAL_ACCESS_POLICY._class,
-        _type: ConditionalAccessEntities.CONDITIONAL_ACCESS_POLICY._type,
+      assign: createConditionalAccessPolicyAssignEntity({
         _key: getConditionalAccessPolicyKey(data.id),
         templateId: data.templateId,
         name: data.displayName,
         state: data.state,
-        createdDateTime: data.createdDateTime,
+        createdDateTime: parseTimePropertyValue(data.createdDateTime),
+        createdOn: parseTimePropertyValue(data.createdDateTime),
         includeLocations: data.conditions.locations?.includeLocations,
         includeUsers: data.conditions.users?.includeUsers,
         includeGroups: data.conditions.users?.includeGroups,
         includeApplication: data.conditions.applications?.includeApplications,
-      },
+      }),
     },
   });
 }
@@ -84,14 +91,12 @@ export function createConditionalAccessTemplateEntity(data: any): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class: ConditionalAccessEntities.CONDITIONAL_ACCESS_TEMPLATE._class,
-        _type: ConditionalAccessEntities.CONDITIONAL_ACCESS_TEMPLATE._type,
+      assign: createConditionalAccessTemplateAssignEntity({
         _key: getConditionalAccessTemplateKey(data.id),
         name: data.name,
         description: data.description,
         scenarios: data.scenarios,
-      },
+      }),
     },
   });
 }
@@ -105,19 +110,20 @@ export function createConditionalAccessNamedLocationEntity(data: any): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class:
-          ConditionalAccessEntities.CONDITIONAL_ACCESS_NAMED_LOCATION._class,
-        _type:
-          ConditionalAccessEntities.CONDITIONAL_ACCESS_NAMED_LOCATION._type,
+      assign: createConditionalAccessNamedLocationAssignEntity({
         _key: getConditionalAccessNamedLocationKey(data.id),
         name: data.displayName,
         description: data.description,
         scenarios: data.scenarios,
-        createdDateTime: data.createdDateTime,
+        createdDateTime: parseTimePropertyValue(data.createdDateTime),
+        createdOn: parseTimePropertyValue(data.createdDateTime),
         countriesAndRegions: data.countriesAndRegions,
         countryLookupMethod: data.countryLookupMethod,
-      },
+        // TODO: Determine if `Network` is the correct _class for this entity given the schema & fix if necessary
+        public: false,
+        internal: false,
+        CIDR: null,
+      }),
     },
   });
 }
@@ -131,15 +137,12 @@ export function createConditionalAccessAuthContextEntity(data: any): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class:
-          ConditionalAccessEntities.CONDITIONAL_ACCESS_AUTH_CONTEXT._class,
-        _type: ConditionalAccessEntities.CONDITIONAL_ACCESS_AUTH_CONTEXT._type,
+      assign: createConditionalAccessAuthorizationContextAssignEntity({
         _key: getConditionalAccessAuthContextKey(data.id),
         name: data.displayName,
         description: data.description,
         isAvailable: data.isAvailable,
-      },
+      }),
     },
   });
 }
@@ -153,14 +156,12 @@ export function createConditionalAccessServiceEntity(instanceId: any): Entity {
   return createIntegrationEntity({
     entityData: {
       source: {},
-      assign: {
-        _class: ConditionalAccessEntities.CONDITIONAL_ACCESS._class,
-        _type: ConditionalAccessEntities.CONDITIONAL_ACCESS._type,
+      assign: createConditionalAccessServiceAssignEntity({
         _key: getConditionalAccessServiceKey(instanceId),
         category: ['other'],
         function: ['access-review'],
         name: 'Conditional Access Service',
-      },
+      }),
     },
   });
 }

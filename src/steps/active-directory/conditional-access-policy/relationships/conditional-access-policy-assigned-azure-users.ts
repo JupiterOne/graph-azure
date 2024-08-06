@@ -11,7 +11,7 @@ import {
   ConditionalAccessRelationships,
   ConditionalAccessSteps,
 } from '../constants';
-import { STEP_AD_USERS, USER_ENTITY_TYPE } from '../../constants';
+import { ADEntities, STEP_AD_USERS } from '../../constants';
 import { INGESTION_SOURCE_IDS } from '../../../../constants';
 
 export async function buildConditionalAccessPolicyAssignedUsersRelationships(
@@ -28,7 +28,7 @@ export async function buildConditionalAccessPolicyAssignedUsersRelationships(
           break;
         } else if (userID === 'All') {
           await jobState.iterateEntities(
-            { _type: USER_ENTITY_TYPE },
+            { _type: ADEntities.USER._type },
             async (adUser) => {
               await jobState.addRelationship(
                 createDirectRelationship({
@@ -37,7 +37,7 @@ export async function buildConditionalAccessPolicyAssignedUsersRelationships(
                   fromType:
                     ConditionalAccessEntities.CONDITIONAL_ACCESS_POLICY._type,
                   toKey: adUser._key,
-                  toType: USER_ENTITY_TYPE,
+                  toType: ADEntities.USER._type,
                 }),
               );
             },
@@ -51,7 +51,7 @@ export async function buildConditionalAccessPolicyAssignedUsersRelationships(
                 fromType:
                   ConditionalAccessEntities.CONDITIONAL_ACCESS_POLICY._type,
                 toKey: userID,
-                toType: USER_ENTITY_TYPE,
+                toType: ADEntities.USER._type,
               }),
             );
           } else {

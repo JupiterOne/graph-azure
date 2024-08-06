@@ -15,7 +15,7 @@ import {
 
 import { AzureWebLinker } from '../../../azure';
 import { entities, relationships } from './constants';
-import { USER_ENTITY_TYPE } from '../../active-directory/constants';
+import { ADEntities } from '../../active-directory/constants';
 
 export function createClassicAdministratorEntity(): Entity {
   return createIntegrationEntity({
@@ -45,7 +45,7 @@ export function createClassicAdministratorHasUserMappedRelationship(options: {
       sourceEntityKey: classicAdministratorGroupEntity._key,
       targetFilterKeys: [['_type', 'userPrincipalName']],
       targetEntity: {
-        _type: USER_ENTITY_TYPE,
+        _type: ADEntities.USER._type,
         userPrincipalName: data.emailAddress,
       },
     },

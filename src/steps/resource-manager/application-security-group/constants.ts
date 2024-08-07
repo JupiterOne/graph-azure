@@ -4,6 +4,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { entities } from '../compute/constants';
 import { NetworkEntities } from '../network/constants';
+import { ApplicationSecurityGroupEntityMetadata } from './entities';
 
 export const STEP_AZURE_APPLICATION_SECURITY_GROUP =
   'rm-azure-application-security-group';
@@ -12,11 +13,7 @@ export const STEP_AZURE_APPLICATION_SECURITY_GROUP_VIRTUAL_MACHINE_RELATION =
   'rm-azure-application-security-group-virtual-machine-relation';
 
 export const ApplicationSecurityGroupEntities = {
-  AZURE_APPLICATION_SECURITY_GROUP: {
-    _type: 'azure_application_security_group',
-    _class: ['Firewall'],
-    resourceName: 'Azure Application Security Groups',
-  },
+  AZURE_APPLICATION_SECURITY_GROUP: ApplicationSecurityGroupEntityMetadata,
 };
 
 export const AzureApplicationSecurityGroupRelationships = {

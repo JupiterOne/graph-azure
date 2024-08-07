@@ -9,10 +9,7 @@ import {
   ApiManagementServiceResource,
   ApiContract,
 } from '@azure/arm-apimanagement/esm/models';
-import {
-  createApiAssignEntity,
-  createServiceAssignEntity,
-} from '../advisor/entities';
+import { createApiAssignEntity, createServiceAssignEntity } from './entities';
 
 export function createApiManagementServiceEntity(
   webLinker: AzureWebLinker,

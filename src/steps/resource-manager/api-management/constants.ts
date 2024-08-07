@@ -3,7 +3,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
-import { ServiceEntityMetadata, ApiEntityMetadata } from '../advisor/entities';
+import { ServiceEntityMetadata, ApiEntityMetadata } from './entities';
 
 // Fetch Resource Groups
 export const STEP_RM_API_MANAGEMENT_SERVICES = 'rm-api-management-services';

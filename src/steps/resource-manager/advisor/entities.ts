@@ -1,27 +1,30 @@
 import { SchemaType } from '@jupiterone/integration-sdk-core';
 import { createEntityType, createEntityMetadata } from '../../../helpers';
 
-// RM Advisor Entities
-export const [ServiceEntityMetadata, createServiceAssignEntity] =
+// Advisor Entities
+export const [RecommendationEntityMetadata, createRecommendationAssignEntity] =
   createEntityMetadata({
-    resourceName: '[RM] API Management Service',
-    _class: ['Gateway'],
-    _type: createEntityType('api_management_service'),
-    description: 'Azure API Management Service',
+    resourceName: '[RM] Advisor Recommendation ',
+    _class: ['Finding'],
+    _type: createEntityType('advisor_recommendation'),
+    description: 'Azure Advisor Recommendation',
     schema: SchemaType.Object({
-      function: SchemaType.Array(
-        SchemaType.String(SchemaType.Literal('api-gateway')),
-      ),
-      category: SchemaType.Array(
-        SchemaType.String(SchemaType.Literal('application')),
-      ),
+      category: SchemaType.String([
+        SchemaType.Literal('HighAvailability'),
+        SchemaType.Literal('Security'),
+        SchemaType.Literal('Performance'),
+        SchemaType.Literal('Cost'),
+        SchemaType.Literal('OperationalExcellence'),
+      ]),
+      severity: SchemaType.String([
+        SchemaType.Literal('High'),
+        SchemaType.Literal('Medium'),
+        SchemaType.Literal('Low'),
+      ]),
+      id: SchemaType.Optional(SchemaType.String()),
+      shortDescriptionProblem: SchemaType.Optional(SchemaType.String()),
+      shortDescriptionSolution: SchemaType.Optional(SchemaType.String()),
+      resourceId: SchemaType.Optional(SchemaType.String()),
+      source: SchemaType.Optional(SchemaType.String()),
     }),
   });
-
-export const [ApiEntityMetadata, createApiAssignEntity] = createEntityMetadata({
-  resourceName: '[RM] API Management API',
-  _class: ['ApplicationEndpoint'],
-  _type: createEntityType('api_management_api'),
-  description: 'Azure API Management API',
-  schema: SchemaType.Object({}),
-});

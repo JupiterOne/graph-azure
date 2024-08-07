@@ -6,11 +6,11 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
-import { AdvisorEntities } from './constants';
 import {
   ResourceRecommendationBase,
   Impact,
 } from '@azure/arm-advisor/esm/models';
+import { createRecommendationAssignEntity } from './entities';
 
 function maybeConvertToNumber(maybeNumber: string | undefined) {
   if (!isNaN(parseFloat(maybeNumber || 'NaN'))) return parseFloat(maybeNumber!);
@@ -44,16 +44,14 @@ export function createRecommendationEntity(
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
+      assign: createRecommendationAssignEntity({
         ...convertProperties(data),
         _key: data.id as string,
-        _type: AdvisorEntities.RECOMMENDATION._type,
-        _class: AdvisorEntities.RECOMMENDATION._class,
         id: data.id,
-        name: data.shortDescription?.solution,
-        category: data.category,
+        name: data.shortDescription?.solution || data.id || '',
+        category: data.category || 'unknown',
         assessment: data.extendedProperties?.assessmentKey,
-        severity: data.impact,
+        severity: data.impact || 'informational',
         numericSeverity: getNumericSeverity(data.impact),
         score: maybeConvertToNumber(data.extendedProperties?.score),
         impact: data.impact?.toLowerCase(),
@@ -61,13 +59,12 @@ export function createRecommendationEntity(
         targets: getTargets(data),
         shortDescriptionProblem: data.shortDescription?.problem,
         shortDescriptionSolution: data.shortDescription?.solution,
-
         resourceId: data.resourceMetadata?.resourceId,
         source: data.resourceMetadata?.source,
         open: true,
         updatedOn: parseTimePropertyValue(data.lastUpdated),
         webLink: webLinker.portalResourceUrl(data.id),
-      },
+      }),
     },
   });
 }

@@ -1,5 +1,10 @@
 import { RelationshipClass } from '@jupiterone/data-model';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
+import {
+  WebAppEntityMetadata,
+  FunctionAppEntityMetadata,
+  AppServicePlanEntityMetadata,
+} from './entities';
 
 export const AppServiceSteps = {
   APPS: 'rm-appservice-apps',
@@ -8,21 +13,9 @@ export const AppServiceSteps = {
 };
 
 export const AppServiceEntities = {
-  WEB_APP: {
-    _type: 'azure_web_app',
-    _class: ['Application'],
-    resourceName: '[RM] Web App',
-  },
-  FUNCTION_APP: {
-    _type: 'azure_function_app',
-    _class: ['Function'],
-    resourceName: '[RM] Function App',
-  },
-  APP_SERVICE_PLAN: {
-    _type: 'azure_app_service_plan',
-    _class: ['Configuration'],
-    resourceName: '[RM] App Service Plan',
-  },
+  WEB_APP: WebAppEntityMetadata,
+  FUNCTION_APP: FunctionAppEntityMetadata,
+  APP_SERVICE_PLAN: AppServicePlanEntityMetadata,
 };
 
 export const AppServiceRelationships = {

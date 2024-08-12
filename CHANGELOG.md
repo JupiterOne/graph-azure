@@ -1,3 +1,15 @@
+# v7.7.1 (Mon Aug 12 2024)
+
+#### 🐛 Bug Fix
+
+- Freeze microsoft package.json versions [#663](https://github.com/JupiterOne/graph-azure/pull/663) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.7.0 (Tue Aug 06 2024)
 
 #### 🚀 Enhancement

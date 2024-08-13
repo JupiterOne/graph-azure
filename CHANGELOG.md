@@ -1,3 +1,16 @@
+# v7.8.0 (Tue Aug 13 2024)
+
+#### 🚀 Enhancement
+
+- add more record type properties [#662](https://github.com/JupiterOne/graph-azure/pull/662) ([@SeaBlooms](https://github.com/SeaBlooms) [@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 2
+
+- Colin Blumer ([@SeaBlooms](https://github.com/SeaBlooms))
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.7.1 (Mon Aug 12 2024)
 
 #### 🐛 Bug Fix

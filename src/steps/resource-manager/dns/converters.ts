@@ -61,19 +61,19 @@ export function createDnsRecordSetEntity(
         soaRecordEmail: data.soaRecord?.email,
         soaRecordserialNumber: data.soaRecord?.serialNumber,
         // A type
-        aRecords: data.aRecords,
+        aRecordsIps: data.aRecords?.map((r) => r.ipv4Address),
         // AAAA type
-        aaaaRecords: data.aaaaRecords,
+        aaaaRecordsIps: data.aaaaRecords?.map((r) => r.ipv6Address),
         // NS type
-        nsRecords: data.nsRecords,
+        nsRecordsNames: data.nsRecords?.map((r) => r.nsdname),
         // MX type
-        mxRecords: data.mxRecords,
+        mxRecordsExchanges: data.mxRecords?.map((r) => r.exchange),
         // TXT type
-        txtRecords: data.txtRecords,
+        txtRecordsValues: data.txtRecords?.map((r) => r.value?.join(',')),
         // PTR type
-        ptrRecords: data.ptrRecords,
+        ptrRecordsNames: data.ptrRecords?.map((r) => r.ptrdname),
         // SRV type
-        srvRecords: data.srvRecords,
+        srvRecordsTargets: data.srvRecords?.map((r) => `${r.target}:${r.port}`),
       },
     },
   });

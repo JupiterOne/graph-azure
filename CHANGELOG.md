@@ -1,3 +1,16 @@
+# v7.8.1 (Wed Aug 14 2024)
+
+#### 🐛 Bug Fix
+
+- SST | High urgency | add resourceName to azure_policy_state [#664](https://github.com/JupiterOne/graph-azure/pull/664) ([@SeaBlooms](https://github.com/SeaBlooms) [@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 2
+
+- Colin Blumer ([@SeaBlooms](https://github.com/SeaBlooms))
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.8.0 (Tue Aug 13 2024)
 
 #### 🚀 Enhancement

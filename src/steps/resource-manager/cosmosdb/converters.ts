@@ -35,6 +35,7 @@ export function createAccountEntity(
         enableMultipleWriteLocations: data.enableMultipleWriteLocations,
         isVirtualNetworkFilterEnabled: data.isVirtualNetworkFilterEnabled,
         ipRangeFilter: data.ipRangeFilter,
+        vendor: data.id,
         category: ['infrastructure'],
         endpoints: data.readLocations
           ?.map((e) => e.documentEndpoint)

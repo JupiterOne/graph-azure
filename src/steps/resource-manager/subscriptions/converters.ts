@@ -10,6 +10,7 @@ import { Subscription, Location } from '@azure/arm-subscriptions/esm/models';
 export function createSubscriptionEntity(
   webLinker: AzureWebLinker,
   data: Subscription,
+  directoryId: string,
 ): Entity {
   const tags = {};
   if ((data as any).tags != undefined) {
@@ -34,6 +35,8 @@ export function createSubscriptionEntity(
         ...tags,
         webLink: webLinker.portalResourceUrl(data.id),
         offerName: data.subscriptionPolicies?.quotaId,
+        tenantId: directoryId,
+        vendor: data.displayName
       },
     },
   });

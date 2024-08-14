@@ -29,6 +29,7 @@ export async function fetchSubscription(
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new J1SubscriptionClient(instance.config, logger);
+  const { directoryId } = instance.config;
 
   if (!instance.config.subscriptionId) {
     // This should never happen as getStepStartStates should turn off this step if there is no subscriptionId
@@ -43,6 +44,7 @@ export async function fetchSubscription(
     const subscriptionEntity = createSubscriptionEntity(
       webLinker,
       subscription,
+      directoryId
     );
     await jobState.addEntity(subscriptionEntity);
   } else {
@@ -66,6 +68,7 @@ export async function fetchAllSkippedSubscriptions(
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new J1SubscriptionClient(instance.config, logger);
+  const { directoryId } = instance.config;
 
   const subscriptions = await client.fetchSubscriptions();
   if (subscriptions) {
@@ -82,6 +85,7 @@ export async function fetchAllSkippedSubscriptions(
         const subscriptionEntity = createSubscriptionEntity(
           webLinker,
           subscriptionWithDetails as Subscription,
+          directoryId
         );
         await jobState.addEntity(subscriptionEntity);
       }

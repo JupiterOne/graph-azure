@@ -15,6 +15,15 @@ export function getPolicyStateKey(data: PolicyState, isLatest: boolean) {
   }`;
 }
 
+// parse the resource name from the resourceId field
+export function getResourceName(data: PolicyState, isLatest: boolean) {
+  const resourceId = data.resourceId || 'ResourceId not found';
+  const n = resourceId.lastIndexOf('/');
+  const resourceName = resourceId?.substring(n + 1);
+
+  return `${resourceName}:${isLatest ? 'latest' : data.timestamp}`;
+}
+
 export function createPolicyStateEntity(
   webLinker: AzureWebLinker,
   data: PolicyState,
@@ -35,6 +44,7 @@ export function createPolicyStateEntity(
         complianceState: data.complianceState,
         subscriptionId: data.subscriptionId,
         resourceId: data.resourceId,
+        resourceName: getResourceName(data, isLatest),
         resourceType: data.resourceType,
         resourceLocation: data.resourceLocation,
         resourceGroup: data.resourceGroup,

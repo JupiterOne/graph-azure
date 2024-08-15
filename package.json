@@ -85,8 +85,6 @@
     "@azure/identity": "^4.4.1",
     "@azure/keyvault-keys": "4.7.0",
     "@azure/keyvault-secrets": "4.7.0",
-    "@azure/ms-rest-azure-js": "^2.1.0",
-    "@azure/ms-rest-js": "^2.7.0",
     "@azure/ms-rest-nodeauth": "^3.1.1",
     "@azure/storage-blob": "12.5.0",
     "@azure/storage-queue": "12.4.0",

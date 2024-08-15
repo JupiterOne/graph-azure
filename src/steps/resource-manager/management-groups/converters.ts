@@ -5,7 +5,7 @@ import {
 
 import { AzureWebLinker } from '../../../azure';
 import { ManagementGroupEntities } from './constants';
-import { ManagementGroup } from '@azure/arm-managementgroups/esm/models';
+import { ManagementGroup } from '@azure/arm-managementgroups';
 
 export function createManagementGroupEntity(
   webLinker: AzureWebLinker,

@@ -1,11 +1,8 @@
 import { KeyVaultManagementClient } from '@azure/arm-keyvault';
-import { Vault } from '@azure/arm-keyvault/esm/models';
+import { Vault } from '@azure/arm-keyvault';
 import { KeyClient, KeyProperties } from '@azure/keyvault-keys';
 import { SecretClient, SecretProperties } from '@azure/keyvault-secrets';
-import {
-  Client,
-  iterateAllResources,
-} from '../../../azure/resource-manager/client';
+import { Client, iterateAll } from '../../../azure/resource-manager/client';
 import { resourceGroupName, resourceName } from '../../../azure/utils';
 import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
 
@@ -16,21 +13,20 @@ export class KeyVaultClient extends Client {
       serviceClient: KeyVaultManagementClient,
     ) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      KeyVaultManagementClient,
-    );
+    const serviceClient = this.getServiceClient(KeyVaultManagementClient, {
+      passSubscriptionId: true,
+    });
 
-    await iterateAllResources({
+    await iterateAll({
+      resourceEndpoint: serviceClient.vaults.list(),
       logger: this.logger,
-      serviceClient,
-      resourceEndpoint: serviceClient.vaults,
       resourceDescription: 'keyvault.vaults',
-      callback: async (vault: Vault, client) => {
-        const vaultWithProperties = await client.vaults.get(
+      callback: async (vault) => {
+        const vaultWithProperties = await serviceClient.vaults.get(
           resourceGroupName(vault.id, true),
           resourceName(vault),
         );
-        await callback(vaultWithProperties, client);
+        await callback(vaultWithProperties, serviceClient);
       },
     });
   }

@@ -1,52 +1,36 @@
 import { MySQLManagementClient } from '@azure/arm-mysql';
-import { Database, Server } from '@azure/arm-mysql/esm/models';
+import { Database, Server } from '@azure/arm-mysql';
 
-import {
-  Client,
-  iterateAllResources,
-} from '../../../../azure/resource-manager/client';
+import { Client, iterateAll } from '../../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../../azure/utils';
 
 export class MySQLClient extends Client {
   public async iterateServers(
-    callback: (
-      s: Server,
-      serviceClient: MySQLManagementClient,
-    ) => void | Promise<void>,
+    callback: (s: Server) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      MySQLManagementClient,
-    );
-    const servers = await serviceClient.servers.list();
-    for (const server of servers) {
-      await callback(server, serviceClient);
-    }
+    const serviceClient = this.getServiceClient(MySQLManagementClient);
+    return iterateAll({
+      resourceEndpoint: serviceClient.servers.list(),
+      logger: this.logger,
+      resourceDescription: 'mysql.servers',
+      callback,
+    });
   }
 
   public async iterateDatabases(
     server: Server,
-    callback: (
-      d: Database,
-      serviceClient: MySQLManagementClient,
-    ) => void | Promise<void>,
+    callback: (d: Database) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      MySQLManagementClient,
-    );
+    const serviceClient = this.getServiceClient(MySQLManagementClient);
     const resourceGroup = resourceGroupName(server.id, true);
     const serverName = server.name as string;
 
-    return iterateAllResources({
+    return iterateAll({
+      resourceEndpoint: serviceClient.databases.listByServer(
+        resourceGroup,
+        serverName,
+      ),
       logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.databases.listByServer(
-            resourceGroup,
-            serverName,
-          );
-        },
-      },
       resourceDescription: 'mysql.databases',
       callback,
     });

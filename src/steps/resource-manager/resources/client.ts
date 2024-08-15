@@ -3,11 +3,11 @@ import { ResourceGroup } from '@azure/arm-resources/esm/models';
 import {
   Client,
   FIVE_MINUTES,
-  iterateAllResources,
+  iterateAll,
   request,
 } from '../../../azure/resource-manager/client';
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
-import { ManagementLockClient, ManagementLockModels } from '@azure/arm-locks';
+import { ManagementLockClient, ManagementLockObject } from '@azure/arm-locks';
 export class ResourcesClient extends Client {
   public async getResourceProvider(resourceProviderNamespace: string) {
     const serviceClient = await this.getAuthenticatedServiceClient(
@@ -50,24 +50,16 @@ export class ResourcesClient extends Client {
 
   public async iterateLocks(
     resourceGroupName: string,
-    callback: (
-      lock: ManagementLockModels.ManagementLockObject,
-    ) => void | Promise<void>,
+    callback: (lock: ManagementLockObject) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      ManagementLockClient,
-    );
+    const serviceClient = this.getServiceClient(ManagementLockClient);
 
-    await iterateAllResources({
+    await iterateAll({
+      resourceEndpoint:
+        serviceClient.managementLocks.listAtResourceGroupLevel(
+          resourceGroupName,
+        ),
       logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: () =>
-          serviceClient.managementLocks.listAtResourceGroupLevel(
-            resourceGroupName,
-          ),
-        listNext: serviceClient.managementLocks.listAtResourceGroupLevelNext,
-      },
       resourceDescription: 'resources.resourceLocks',
       callback,
       endpointRatePeriod: FIVE_MINUTES,

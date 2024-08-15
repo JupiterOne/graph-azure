@@ -13,7 +13,7 @@ import { configFromEnv } from '../integrationInstanceConfig';
 import { Subscription } from '@azure/arm-subscriptions/esm/models';
 import { User } from '@microsoft/microsoft-graph-types';
 import { KeyVaultClient } from '../../src/steps/resource-manager/key-vault/client';
-import { Vault } from '@azure/arm-keyvault/esm/models';
+import { Vault } from '@azure/arm-keyvault';
 import { MonitorClient } from '../../src/steps/resource-manager/monitor/client';
 import { DiagnosticSettingsResource } from '@azure/arm-monitor/esm/models';
 

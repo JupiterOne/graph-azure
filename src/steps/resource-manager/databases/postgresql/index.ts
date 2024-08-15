@@ -25,7 +25,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { STEP_RM_RESOURCES_RESOURCE_GROUPS } from '../../resources/constants';
-import { Server } from '@azure/arm-postgresql/esm/models';
+import { Server } from '@azure/arm-postgresql';
 import { createPosgreSqlServerFirewallRuleEntity } from './converters';
 import { INGESTION_SOURCE_IDS } from '../../../../constants';
 import { steps as storageSteps } from '../../storage/constants';

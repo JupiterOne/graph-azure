@@ -5,12 +5,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { AzureWebLinker } from '../../../azure';
 import { BatchEntities } from './constants';
-import {
-  BatchAccount,
-  Pool,
-  Application,
-  Certificate,
-} from '@azure/arm-batch/esm/models';
+import { BatchAccount, Pool, Application, Certificate } from '@azure/arm-batch';
 import { normalizeId } from '../utils/normalizeId';
 
 export function createBatchAccountEntity(

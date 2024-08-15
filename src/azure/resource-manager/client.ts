@@ -23,7 +23,6 @@ import { PagedAsyncIterableIterator } from '@azure/core-paging';
 
 export const FIVE_MINUTES = 5 * 60 * 1000;
 export const DEFAULT_MAX_RETRIES = 5;
-export const DEFAULT_PAGE_SIZE = 300;
 /**
  * An Azure resource manager endpoint that has `listAll` and `listAllNext` functions.
  */

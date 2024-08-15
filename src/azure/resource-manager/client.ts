@@ -112,7 +112,12 @@ export abstract class Client {
     });
     return client;
   }
-
+  /**
+   * Create a service client for the latest version of azure packages.
+   * @param ctor an AzureServiceClient constructor function
+   * @param options if we should pass the subscription id.
+   * @returns
+   */
   getServiceClient<T>(
     ctor: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -307,7 +312,12 @@ export function createClient<T>(
   }
   return new ctor(...args);
 }
-
+/**
+ * Creates a credential using a client secret credential. It also applies retry policies.
+ * @param ctor an AzureServiceClient constructor function
+ * @param options for the client
+ * @returns
+ */
 export function createCredentialClient<T>(
   ctor: { new (...args: unknown[]): T },
   options: {
@@ -568,7 +578,12 @@ export interface IterateAllOptions<ResourceType> {
   maxRetryAttempts?: number;
   timeout?: number;
 }
-
+/**
+ * Iterates over all resources coming from a AsyncIterableIterator, using error handling and retries.
+ * This should be the standard for all azure packages on the lastes versions.
+ * @param param0
+ * @returns
+ */
 export async function iterateAll<ResourceType>({
   resourceEndpoint,
   resourceDescription,

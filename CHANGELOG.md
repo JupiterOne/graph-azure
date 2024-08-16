@@ -1,3 +1,16 @@
+# v7.8.1 (Fri Aug 16 2024)
+
+#### 🚀 Enhancement
+
+- Added tenantId property in azure_subscription Entity
+- Upgraded SDK to the latest version 
+
+#### Authors: 1
+
+- Poornima Babbe ([@poornima-metron](https://github.com/poornima-metron))
+
+---
+
 # v7.8.0 (Tue Aug 13 2024)
 
 #### 🚀 Enhancement

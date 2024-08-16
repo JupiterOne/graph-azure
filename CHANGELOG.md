@@ -10,6 +10,8 @@
 
 - Poornima Babbe ([@poornima-metron](https://github.com/poornima-metron))
 
+---
+
 # v7.8.1 (Wed Aug 14 2024)
 
 #### 🐛 Bug Fix

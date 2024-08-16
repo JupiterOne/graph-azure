@@ -26,7 +26,7 @@ import {
   getMockAccountEntity,
   getMockResourceGroupEntity,
 } from '../../../../test/helpers/getMockEntity';
-import { IntegrationConfig } from '../../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import { fetchSQLServers } from '../databases/sql';
 import { entities } from '../databases/sql/constants';
 import { RESOURCE_GROUP_ENTITY, RESOURCE_LOCK_ENTITY } from './constants';
@@ -61,7 +61,7 @@ describe('#createSubscriptionResourceGroupRelationship', () => {
     };
 
     const result = await createSubscriptionResourceGroupRelationship(
-      context,
+      context as IntegrationStepContext,
       resourceGroupEntity,
     );
 
@@ -92,7 +92,7 @@ describe('#createSubscriptionResourceGroupRelationship', () => {
 
     const exec = async () =>
       await createSubscriptionResourceGroupRelationship(
-        context,
+        context as IntegrationStepContext,
         resourceGroupEntity,
       );
 
@@ -115,7 +115,7 @@ describe('#createSubscriptionResourceGroupRelationship', () => {
 
     const exec = async () =>
       await createSubscriptionResourceGroupRelationship(
-        context,
+        context as IntegrationStepContext,
         resourceGroupEntity,
       );
 
@@ -150,7 +150,7 @@ test('step - resource groups', async () => {
     },
   });
 
-  await fetchResourceGroups(context);
+  await fetchResourceGroups(context as IntegrationStepContext);
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
@@ -201,8 +201,8 @@ test('step - resource group locks', async () => {
     },
   });
 
-  await fetchResourceGroups(context);
-  await fetchResourceGroupLocks(context);
+  await fetchResourceGroups(context as IntegrationStepContext);
+  await fetchResourceGroupLocks(context as IntegrationStepContext);
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(
@@ -248,11 +248,11 @@ describe('step - resource has resource lock relationships', () => {
       setData: {
         [ACCOUNT_ENTITY_TYPE]: accountEntity,
       },
-    });
+    }) ;
 
-    await fetchSQLServers(context);
-    await fetchResourceGroups(context);
-    await fetchResourceGroupLocks(context);
+    await fetchSQLServers(context as IntegrationStepContext);
+    await fetchResourceGroups(context as IntegrationStepContext);
+    await fetchResourceGroupLocks(context as IntegrationStepContext);
 
     const sqlServerEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === entities.SERVER._type,
@@ -334,7 +334,7 @@ describe('step - resource has resource lock relationships', () => {
       },
     });
 
-    await buildResourceHasResourceLockRelationships(context);
+    await buildResourceHasResourceLockRelationships(context as IntegrationStepContext);
 
     expect(context.jobState.collectedEntities).toHaveLength(0);
 

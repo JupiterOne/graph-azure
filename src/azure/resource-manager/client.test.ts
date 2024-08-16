@@ -11,8 +11,9 @@ import { setupAzureRecording } from '../../../test/helpers/recording';
 
 import { FetchError } from 'node-fetch';
 import { RestError as AzureRestError } from '@azure/ms-rest-js';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
-class SomeClient extends Client {}
+class SomeClient extends Client { }
 
 let recording: Recording;
 
@@ -33,7 +34,7 @@ test('client accessToken fetched once and used across resources', async () => {
     requests++;
   });
 
-  const client = new SomeClient(config, createMockIntegrationLogger());
+  const client = new SomeClient(config, createMockIntegrationLogger() as IntegrationLogger);
 
   await expect(
     client.getAuthenticatedServiceClient(NetworkManagementClient),
@@ -53,7 +54,7 @@ test('client accessToken fetched once and used across resources', async () => {
 
 test('request should expose Azure RestError error codes', async () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const noop: any = () => {};
+  const noop: any = () => { };
   const azureRequest = {
     url: 'some-url',
     method: 'GET' as any,
@@ -95,7 +96,7 @@ test('request should expose Azure RestError error codes', async () => {
           },
         );
       },
-      createMockIntegrationLogger(),
+      createMockIntegrationLogger() as IntegrationLogger,
       'fake-resource',
       1000,
     ),
@@ -117,7 +118,7 @@ test('request should expose node-fetch error codes', async () => {
           systemError,
         );
       },
-      createMockIntegrationLogger(),
+      createMockIntegrationLogger() as IntegrationLogger,
       'fake-resource',
       1000,
     ),
@@ -126,7 +127,7 @@ test('request should expose node-fetch error codes', async () => {
 
 test('request should expose Azure RestError status and text', async () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const noop: any = () => {};
+  const noop: any = () => { };
   const azureRequest = {
     url: 'some-url',
     method: 'GET' as any,
@@ -170,7 +171,7 @@ test('request should expose Azure RestError status and text', async () => {
           },
         );
       },
-      createMockIntegrationLogger(),
+      createMockIntegrationLogger() as IntegrationLogger,
       'fake-resource',
       1000,
     ),
@@ -179,7 +180,7 @@ test('request should expose Azure RestError status and text', async () => {
 
 test('request should expose Azure RestError status and text when message is StringfiedJSON', async () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const noop: any = () => {};
+  const noop: any = () => { };
   const azureRequest = {
     url: 'some-url',
     method: 'GET' as any,
@@ -225,7 +226,7 @@ test('request should expose Azure RestError status and text when message is Stri
           },
         );
       },
-      createMockIntegrationLogger(),
+      createMockIntegrationLogger() as IntegrationLogger,
       'fake-resource',
       1000,
     ),
@@ -244,7 +245,7 @@ test('Should retry after failing once ', async () => {
           counter++;
           throw new Error();
         },
-        createMockIntegrationLogger(),
+        createMockIntegrationLogger() as IntegrationLogger,
         'fake-resource',
         100,
       ),

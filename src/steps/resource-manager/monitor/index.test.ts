@@ -1,5 +1,5 @@
 import { Recording } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig } from '../../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import {
   getMatchRequestsBy,
   setupAzureRecording,
@@ -66,7 +66,7 @@ test('step = monitor log profiles', async () => {
     },
   });
 
-  await fetchLogProfiles(context);
+  await fetchLogProfiles(context as IntegrationStepContext);
 
   const { collectedEntities, collectedRelationships } = context.jobState;
 
@@ -123,7 +123,7 @@ describe('rm-monitor-activity-log-alerts', () => {
       },
     });
 
-    await fetchActivityLogAlerts(context);
+    await fetchActivityLogAlerts(context as IntegrationStepContext);
 
     const activityLogAlertEntities = context.jobState.collectedEntities;
 
@@ -185,7 +185,7 @@ describe('rm-monitor-activity-log-alert-scope-relationships', () => {
       },
     });
 
-    await fetchActivityLogAlerts(context);
+    await fetchActivityLogAlerts(context as IntegrationStepContext);
 
     const activityLogAlertEntitiesWithSubscriptionScope =
       context.jobState.collectedEntities.filter((a) => {
@@ -236,7 +236,7 @@ describe('rm-monitor-activity-log-alert-scope-relationships', () => {
       },
     });
 
-    await buildActivityLogScopeRelationships(context);
+    await buildActivityLogScopeRelationships(context as IntegrationStepContext);
 
     const activityLogScopeRelationships =
       context.jobState.collectedRelationships;

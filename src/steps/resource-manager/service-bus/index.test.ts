@@ -5,7 +5,7 @@ import {
   fetchServiceBusSubscriptions,
 } from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig } from '../../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
@@ -44,7 +44,7 @@ test('step - service bus namespaces', async () => {
     },
   });
 
-  await fetchServiceBusNamespaces(context);
+  await fetchServiceBusNamespaces(context as IntegrationStepContext);
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
@@ -94,7 +94,7 @@ test('step - service bus queues', async () => {
     },
   });
 
-  await fetchServiceBusQueues(context);
+  await fetchServiceBusQueues(context as IntegrationStepContext);
 
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
     _class: ['Queue'],
@@ -143,7 +143,7 @@ test('step - service bus topics', async () => {
     },
   });
 
-  await fetchServiceBusTopics(context);
+  await fetchServiceBusTopics(context as IntegrationStepContext);
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
@@ -193,7 +193,7 @@ test('step - service bus subscriptions', async () => {
     },
   });
 
-  await fetchServiceBusSubscriptions(context);
+  await fetchServiceBusSubscriptions(context as IntegrationStepContext);
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({

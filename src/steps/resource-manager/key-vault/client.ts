@@ -4,7 +4,6 @@ import { KeyClient, KeyProperties } from '@azure/keyvault-keys';
 import { SecretClient, SecretProperties } from '@azure/keyvault-secrets';
 import {
   Client,
-  iterateAllResources,
 } from '../../../azure/resource-manager/client';
 import { resourceGroupName, resourceName } from '../../../azure/utils';
 import { IntegrationWarnEventName } from '@jupiterone/integration-sdk-core';
@@ -20,19 +19,14 @@ export class KeyVaultClient extends Client {
       KeyVaultManagementClient,
     );
 
-    await iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: serviceClient.vaults,
-      resourceDescription: 'keyvault.vaults',
-      callback: async (vault: Vault, client) => {
-        const vaultWithProperties = await client.vaults.get(
-          resourceGroupName(vault.id, true),
-          resourceName(vault),
-        );
-        await callback(vaultWithProperties, client);
-      },
-    });
+    const vaultsResponse = await serviceClient.vaults.list();
+    for (const vault of vaultsResponse) {
+      const vaultWithProperties = await serviceClient.vaults.get(
+        resourceGroupName(vault.id, true),
+        resourceName(vault),
+      );
+      await callback(vaultWithProperties, serviceClient);
+    }
   }
 
   public async iterateKeys(

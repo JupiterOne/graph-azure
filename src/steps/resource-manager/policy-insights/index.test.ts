@@ -1,5 +1,5 @@
 import { Recording } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig } from '../../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import {
   getMatchRequestsBy,
   setupAzureRecording,
@@ -55,7 +55,7 @@ describe('rm-policy-states-for-subscription', () => {
       },
     });
 
-    await fetchLatestPolicyStatesForSubscription(context);
+    await fetchLatestPolicyStatesForSubscription(context as IntegrationStepContext);
 
     const policyStateEntities = context.jobState.collectedEntities;
 
@@ -79,13 +79,13 @@ describe('rm-policy-state-to-policy-assignment-relationships', () => {
       },
     });
 
-    await fetchLatestPolicyStatesForSubscription(context);
+    await fetchLatestPolicyStatesForSubscription(context as IntegrationStepContext);
     const policyStateEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === PolicyInsightEntities.POLICY_STATE._type,
     );
     expect(policyStateEntities.length).toBeGreaterThan(0);
 
-    await fetchPolicyAssignments(context);
+    await fetchPolicyAssignments(context as IntegrationStepContext);
     const policyAssignmentEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === PolicyEntities.POLICY_ASSIGNMENT._type,
     );
@@ -113,7 +113,7 @@ describe('rm-policy-state-to-policy-assignment-relationships', () => {
       },
     });
 
-    await buildPolicyStateAssignmentRelationships(context);
+    await buildPolicyStateAssignmentRelationships(context as IntegrationStepContext);
 
     expect(context.jobState.collectedEntities).toHaveLength(0);
 
@@ -147,14 +147,14 @@ describe('rm-policy-state-to-policy-definition-relationships', () => {
       },
     });
 
-    await fetchLatestPolicyStatesForSubscription(context);
+    await fetchLatestPolicyStatesForSubscription(context as IntegrationStepContext);
     const policyStateEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === PolicyInsightEntities.POLICY_STATE._type,
     );
     expect(policyStateEntities.length).toBeGreaterThan(0);
 
-    await fetchPolicyAssignments(context);
-    await fetchPolicyDefinitionsForAssignments(context);
+    await fetchPolicyAssignments(context as IntegrationStepContext);
+    await fetchPolicyDefinitionsForAssignments(context as IntegrationStepContext);
     const policyDefinitionEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === PolicyEntities.POLICY_DEFINITION._type,
     );
@@ -182,7 +182,7 @@ describe('rm-policy-state-to-policy-definition-relationships', () => {
       },
     });
 
-    await buildPolicyStateDefinitionRelationships(context);
+    await buildPolicyStateDefinitionRelationships(context as IntegrationStepContext);
 
     expect(context.jobState.collectedEntities).toHaveLength(0);
 
@@ -216,13 +216,13 @@ describe('rm-policy-state-to-resource-relationships', () => {
       },
     });
 
-    await fetchLatestPolicyStatesForSubscription(context);
+    await fetchLatestPolicyStatesForSubscription(context as IntegrationStepContext);
     const policyStateEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === PolicyInsightEntities.POLICY_STATE._type,
     );
     expect(policyStateEntities.length).toBeGreaterThan(0);
 
-    await fetchKeyVaults(context);
+    await fetchKeyVaults(context as IntegrationStepContext);
     const keyVaultEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === KEY_VAULT_SERVICE_ENTITY_TYPE,
     );
@@ -250,7 +250,7 @@ describe('rm-policy-state-to-resource-relationships', () => {
       },
     });
 
-    await buildPolicyStateResourceRelationships(context);
+    await buildPolicyStateResourceRelationships(context as IntegrationStepContext);
 
     expect(context.jobState.collectedEntities).toHaveLength(0);
 

@@ -11,7 +11,7 @@ import {
   configFromEnv,
   getStepTestConfigForStep,
 } from '../../../test/integrationInstanceConfig';
-import { IntegrationConfig } from '../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../types';
 import {
   fetchAccount,
   fetchGroupMembers,
@@ -62,7 +62,7 @@ describe('ad-account', () => {
       instanceConfig: configFromEnv,
     });
 
-    await fetchAccount(context);
+    await fetchAccount(context as IntegrationStepContext);
 
     const accountEntities = context.jobState.collectedEntities;
 
@@ -100,7 +100,7 @@ describe('ad-users', () => {
       },
     });
 
-    await fetchUsers(context);
+    await fetchUsers(context as IntegrationStepContext);
 
     const userEntities = context.jobState.collectedEntities;
 
@@ -151,8 +151,8 @@ describe.skip('ad-user-registration-details', () => {
       },
     });
 
-    await fetchUserRegistrationDetails(context);
-    await fetchUsers(context);
+    await fetchUserRegistrationDetails(context  as IntegrationStepContext);
+    await fetchUsers(context as IntegrationStepContext);
 
     const userEntities = context.jobState.collectedEntities;
 
@@ -187,7 +187,7 @@ describe.skip('ad-user-registration-details', () => {
       },
     });
 
-    await expect(fetchUserRegistrationDetails(context)).resolves.not.toThrow(
+    await expect(fetchUserRegistrationDetails(context as IntegrationStepContext)).resolves.not.toThrow(
       IntegrationProviderAuthorizationError,
     );
   });
@@ -218,7 +218,7 @@ describe('ad-groups', () => {
       },
     });
 
-    await fetchGroups(context);
+    await fetchGroups(context as IntegrationStepContext);
 
     const groupEntities = context.jobState.collectedEntities;
 
@@ -298,8 +298,8 @@ describe('ad-group-members', () => {
       },
     });
 
-    await fetchGroups(context);
-    await fetchUsers(context);
+    await fetchGroups(context as IntegrationStepContext);
+    await fetchUsers(context as IntegrationStepContext);
 
     const groupEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === GROUP_ENTITY_TYPE,
@@ -332,7 +332,7 @@ describe('ad-group-members', () => {
       entities: [...groupEntities, ...userEntities],
     });
 
-    await fetchGroupMembers(context);
+    await fetchGroupMembers(context as IntegrationStepContext);
 
     expect(context.jobState.collectedEntities).toHaveLength(0);
 
@@ -368,7 +368,7 @@ describe('ad-service-principals', () => {
       },
     });
 
-    await fetchServicePrincipals(context);
+    await fetchServicePrincipals(context as IntegrationStepContext);
 
     const servicePrincipalEntities = context.jobState.collectedEntities;
 

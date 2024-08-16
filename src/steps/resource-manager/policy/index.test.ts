@@ -1,5 +1,5 @@
 import { Recording } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig } from '../../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import {
   getMatchRequestsBy,
   setupAzureRecording,
@@ -48,7 +48,7 @@ describe('rm-policy-assignments', () => {
       },
     });
 
-    await fetchPolicyAssignments(context);
+    await fetchPolicyAssignments(context as IntegrationStepContext);
 
     const policyAssignmentEntities = context.jobState.collectedEntities;
 
@@ -72,7 +72,7 @@ describe('rm-policy-definitions', () => {
       },
     });
 
-    await fetchPolicyAssignments(context);
+    await fetchPolicyAssignments(context as IntegrationStepContext);
 
     const policyAssignmentEntities = context.jobState.collectedEntities.filter(
       (e) => e._type === PolicyEntities.POLICY_ASSIGNMENT._type,
@@ -170,7 +170,7 @@ describe('rm-policy-definitions', () => {
       },
     });
 
-    await fetchPolicyDefinitionsForAssignments(context);
+    await fetchPolicyDefinitionsForAssignments(context as IntegrationStepContext);
 
     const {
       policyDefinitionEntities,

@@ -77,7 +77,7 @@ import {
   STEP_RM_NETWORK_FIREWALL_RULE_RELATIONSHIPS,
 } from './steps/resource-manager/network/constants';
 import { steps as storageSteps } from './steps/resource-manager/storage/constants';
-import { IntegrationConfig } from './types';
+import { IntegrationConfig, IntegrationStepContext } from './types';
 import { steps as authorizationSteps } from './steps/resource-manager/authorization/constants';
 import {
   STEP_RM_RESOURCES_RESOURCE_GROUPS,
@@ -194,14 +194,14 @@ import { ConditionalAccessSteps } from './steps/active-directory/conditional-acc
 describe('getStepStartStates', () => {
   test('all steps represented', async () => {
     const context = createMockExecutionContext<IntegrationConfig>();
-    const states = await getStepStartStates(context);
+    const states = await getStepStartStates(context as IntegrationStepContext);
     const stepIds = invocationConfig.integrationSteps.map((s) => s.id);
     expect(Object.keys(states).sort()).toEqual(stepIds.sort());
   });
 
   test('empty config', async () => {
     const context = createMockExecutionContext<IntegrationConfig>();
-    const states = await getStepStartStates(context);
+    const states = await getStepStartStates(context as IntegrationStepContext);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
       [STEP_AD_DOMAIN]: { disabled: true },
@@ -543,7 +543,7 @@ describe('getStepStartStates', () => {
     const context = createMockExecutionContext<IntegrationConfig>({
       instanceConfig: { ingestActiveDirectory: true } as IntegrationConfig,
     });
-    const states = await getStepStartStates(context);
+    const states = await getStepStartStates(context as IntegrationStepContext);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
       [STEP_AD_DOMAIN]: { disabled: false },
@@ -889,7 +889,7 @@ describe('getStepStartStates', () => {
         clientSecret: 'clientSecret',
       } as IntegrationConfig,
     });
-    const states = await getStepStartStates(context);
+    const states = await getStepStartStates(context as IntegrationStepContext);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
       [STEP_AD_DOMAIN]: { disabled: true },
@@ -1238,7 +1238,7 @@ describe('getStepStartStates', () => {
         configureSubscriptionInstances: true,
       } as IntegrationConfig,
     });
-    const states = await getStepStartStates(context);
+    const states = await getStepStartStates(context as IntegrationStepContext);
     expect(states).toEqual({
       [STEP_AD_ACCOUNT]: { disabled: false },
       [STEP_AD_DOMAIN]: { disabled: true },
@@ -1587,7 +1587,7 @@ describe('getStepStartStates', () => {
       },
     });
 
-    const states = await getStepStartStates(context);
+    const states = await getStepStartStates(context as IntegrationStepContext);
     for (const key in states) {
       expect(states[key].disabled).toBe(key != STEP_AD_ACCOUNT);
     }

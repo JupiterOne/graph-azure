@@ -3,7 +3,6 @@ import { Database, Server } from '@azure/arm-mariadb/esm/models';
 
 import {
   Client,
-  iterateAllResources,
 } from '../../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../../azure/utils';
 
@@ -14,13 +13,10 @@ export class MariaDBClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       MariaDBManagementClient,
     );
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: serviceClient.servers,
-      resourceDescription: 'maria.servers',
-      callback,
-    });
+    const serversResponse = await serviceClient.servers.list();
+    for (const server of serversResponse) {
+      await callback(server);
+    }
   }
 
   public async iterateDatabases(
@@ -36,19 +32,15 @@ export class MariaDBClient extends Client {
     const resourceGroup = resourceGroupName(server.id, true);
     const serverName = server.name as string;
 
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.databases.listByServer(
-            resourceGroup,
-            serverName,
-          );
-        },
-      },
-      resourceDescription: 'maria.databases',
-      callback,
-    });
+    // Fetch the list of databases from the server
+    const databasesResponse = await serviceClient.databases.listByServer(
+      resourceGroup,
+      serverName,
+    );
+
+    // Assuming that databasesResponse contains an array of databases directly
+    for (const database of databasesResponse) {
+      await callback(database, serviceClient);
+    }
   }
 }

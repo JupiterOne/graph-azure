@@ -9,7 +9,7 @@ import {
   Recording,
   executeStepWithDependencies,
 } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig } from '../../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import {
   getMatchRequestsBy,
   setupAzureRecording,
@@ -67,7 +67,7 @@ test('step - security assessments', async () => {
     },
   });
 
-  await fetchAssessments(context);
+  await fetchAssessments(context as IntegrationStepContext);
 
   const { collectedEntities, collectedRelationships } = context.jobState;
 
@@ -107,7 +107,7 @@ test('step - security center contacts', async () => {
     },
   });
 
-  await fetchSecurityCenterContacts(context);
+  await fetchSecurityCenterContacts(context as IntegrationStepContext);
 
   const { collectedEntities, collectedRelationships } = context.jobState;
 
@@ -157,7 +157,7 @@ describe('rm-security-center-pricing-configs', () => {
       },
     });
 
-    await fetchSecurityCenterPricingConfigurations(context);
+    await fetchSecurityCenterPricingConfigurations(context as IntegrationStepContext);
 
     const pricingEntities = context.jobState.collectedEntities;
 
@@ -212,7 +212,7 @@ describe('rm-security-center-settings', () => {
       },
     });
 
-    await fetchSecurityCenterSettings(context);
+    await fetchSecurityCenterSettings(context as IntegrationStepContext);
 
     const securityCenterSettingEntities = context.jobState.collectedEntities;
 
@@ -268,7 +268,7 @@ describe('rm-security-center-auto-provisioning-settings', () => {
       },
     });
 
-    await fetchSecurityCenterAutoProvisioningSettings(context);
+    await fetchSecurityCenterAutoProvisioningSettings(context as IntegrationStepContext);
 
     const securityCenterAutoProvisioningSettingEntities =
       context.jobState.collectedEntities;

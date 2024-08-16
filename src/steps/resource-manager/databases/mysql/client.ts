@@ -3,7 +3,6 @@ import { Database, Server } from '@azure/arm-mysql/esm/models';
 
 import {
   Client,
-  iterateAllResources,
 } from '../../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../../azure/utils';
 
@@ -36,19 +35,13 @@ export class MySQLClient extends Client {
     const resourceGroup = resourceGroupName(server.id, true);
     const serverName = server.name as string;
 
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.databases.listByServer(
-            resourceGroup,
-            serverName,
-          );
-        },
-      },
-      resourceDescription: 'mysql.databases',
-      callback,
-    });
+    // Fetch the list of databases from the server
+    const databasesResponse = await serviceClient.databases.listByServer(
+      resourceGroup,
+      serverName,
+    );
+    for (const database of databasesResponse) {
+      await callback(database, serviceClient);
+    }
   }
 }

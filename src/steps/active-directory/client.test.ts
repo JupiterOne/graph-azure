@@ -9,6 +9,7 @@ import {
   setupAzureRecording,
   getMatchRequestsBy,
 } from '../../../test/helpers/recording';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 const logger = createMockIntegrationLogger();
 
@@ -49,7 +50,7 @@ describe('fetchIdentitySecurityDefaultsEnforcementPolicy', () => {
       },
     });
 
-    const client = new DirectoryGraphClient(logger, configFromEnv);
+    const client = new DirectoryGraphClient(logger as IntegrationLogger, configFromEnv);
     const response =
       await client.fetchIdentitySecurityDefaultsEnforcementPolicy();
 
@@ -75,7 +76,7 @@ describe('fetchIdentitySecurityDefaultsEnforcementPolicy', () => {
     });
     const publishEventSpy = jest.spyOn(logger, 'publishEvent');
 
-    const client = new DirectoryGraphClient(logger, configFromEnv);
+    const client = new DirectoryGraphClient(logger as IntegrationLogger, configFromEnv);
     const response =
       await client.fetchIdentitySecurityDefaultsEnforcementPolicy();
 
@@ -98,7 +99,7 @@ describe('iterateUsers', () => {
       name: 'iterateUsers404',
     });
 
-    const client = new DirectoryGraphClient(logger, config);
+    const client = new DirectoryGraphClient(logger as IntegrationLogger, config);
 
     recording.server
       .get('https://graph.microsoft.com/v1.0/users')

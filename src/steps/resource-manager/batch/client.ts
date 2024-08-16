@@ -7,7 +7,6 @@ import {
 } from '@azure/arm-batch/esm/models';
 import {
   Client,
-  iterateAllResources,
 } from '../../../azure/resource-manager/client';
 
 export class BatchClient extends Client {
@@ -25,19 +24,28 @@ export class BatchClient extends Client {
     );
     const { resourceGroupName } = resourceGroupInfo;
 
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () =>
-          serviceClient.batchAccount.listByResourceGroup(resourceGroupName),
-        listNext: serviceClient.batchAccount.listByResourceGroupNext,
-      },
-      resourceDescription: 'batch.account',
-      callback,
-    });
+    this.logger.debug('Iterating Batch Accounts');
+    let nextLink: string | undefined;
+    try {
+      do {
+        const response = await (nextLink
+          ? serviceClient.batchAccount.listByResourceGroupNext(nextLink)
+          : serviceClient.batchAccount.listByResourceGroup(resourceGroupName));
+        if (response) {
+          for (const batchAccount of response) {
+            await callback(batchAccount);
+          }
+          nextLink = response.nextLink;
+        }
+      } while (nextLink);
+    } catch (error) {
+      this.logger.error(
+        { error: error.message },
+        'Failed to iterate batch accounts'
+      );
+      throw error;
+    }
   }
-
   /**
    * Retrieves all Batch Account Pools for a Batch Account in a Resource Group from an Azure Subscription
    * @param batchAccountInfo Information for the Batch Account, including the resourceGroupName and batchAccountName
@@ -53,20 +61,30 @@ export class BatchClient extends Client {
 
     const { resourceGroupName, batchAccountName } = batchAccountInfo;
 
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () =>
-          serviceClient.pool.listByBatchAccount(
-            resourceGroupName,
-            batchAccountName,
-          ),
-        listNext: serviceClient.pool.listByBatchAccountNext,
-      },
-      resourceDescription: 'batch.pool',
-      callback,
-    });
+    this.logger.debug('Iterating Batch Pools');
+
+    let nextLink: string | undefined;
+
+    try {
+      do {
+        const response = await (nextLink
+          ? serviceClient.pool.listByBatchAccountNext(nextLink)
+          : serviceClient.pool.listByBatchAccount(resourceGroupName, batchAccountName));
+
+        if (response) {
+          for (const pool of response) {
+            await callback(pool);
+          }
+          nextLink = response.nextLink;
+        }
+      } while (nextLink);
+    } catch (error) {
+      this.logger.error(
+        { error: error.message, resourceGroupName, batchAccountName },
+        'Failed to iterate batch pools'
+      );
+      throw error;
+    }
   }
 
   /**
@@ -84,17 +102,29 @@ export class BatchClient extends Client {
 
     const { resourceGroupName, batchAccountName } = batchAccountInfo;
 
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () =>
-          serviceClient.application.list(resourceGroupName, batchAccountName),
-        listNext: serviceClient.application.listNext,
-      },
-      resourceDescription: 'batch.application',
-      callback,
-    });
+    this.logger.debug('Iterating Batch Account Applications');
+
+    let nextLink: string | undefined;
+
+    try {
+      do {
+        const response = await (nextLink
+          ? serviceClient.application.listNext(nextLink)
+          : serviceClient.application.list(resourceGroupName, batchAccountName));
+        if (response) {
+          for (const application of response) {
+            await callback(application);
+          }
+          nextLink = response.nextLink;
+        }
+      } while (nextLink);
+    } catch (error) {
+      this.logger.error(
+        { error: error.message, resourceGroupName, batchAccountName },
+        'Failed to iterate batch applications'
+      );
+      throw error;
+    }
   }
 
   /**
@@ -112,19 +142,27 @@ export class BatchClient extends Client {
 
     const { resourceGroupName, batchAccountName } = batchAccountInfo;
 
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () =>
-          serviceClient.certificate.listByBatchAccount(
-            resourceGroupName,
-            batchAccountName,
-          ),
-        listNext: serviceClient.certificate.listByBatchAccountNext,
-      },
-      resourceDescription: 'batch.certificate',
-      callback,
-    });
+    this.logger.debug('Iterating Batch Account Certificates');
+    let nextLink: string | undefined;
+    try {
+      do {
+        const response = await (nextLink
+          ? serviceClient.certificate.listByBatchAccountNext(nextLink)
+          : serviceClient.certificate.listByBatchAccount(resourceGroupName, batchAccountName));
+
+        if (response) {
+          for (const certificate of response) {
+            await callback(certificate);
+          }
+          nextLink = response.nextLink;
+        }
+      } while (nextLink);
+    } catch (error) {
+      this.logger.error(
+        { error: error.message, resourceGroupName, batchAccountName },
+        'Failed to iterate batch certificates'
+      );
+      throw error;
+    }
   }
 }

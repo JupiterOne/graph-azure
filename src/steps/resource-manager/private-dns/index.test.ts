@@ -1,6 +1,6 @@
 import { fetchPrivateZones, fetchPrivateRecordSets } from '.';
 import { Recording, RecordingEntry } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig } from '../../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import {
   azureMutations,
   getMatchRequestsBy,
@@ -49,7 +49,7 @@ describe('rm-private-dns-zones', () => {
       },
     });
 
-    await fetchPrivateZones(context);
+    await fetchPrivateZones(context as IntegrationStepContext);
 
     expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
     expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
@@ -86,7 +86,7 @@ describe('rm-private-dns-zones', () => {
       },
     });
 
-    await expect(fetchPrivateZones(context)).resolves.not.toThrow();
+    await expect(fetchPrivateZones(context as IntegrationStepContext)).resolves.not.toThrow();
   }, 10_000);
 });
 
@@ -122,7 +122,7 @@ test('step - private dns record sets', async () => {
     },
   });
 
-  await fetchPrivateRecordSets(context);
+  await fetchPrivateRecordSets(context as IntegrationStepContext);
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({

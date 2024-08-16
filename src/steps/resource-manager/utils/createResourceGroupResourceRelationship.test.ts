@@ -1,5 +1,5 @@
 import instanceConfig from '../../../../test/integrationInstanceConfig';
-import { Entity } from '@jupiterone/integration-sdk-core';
+import { Entity, StepExecutionContext } from '@jupiterone/integration-sdk-core';
 import createResourceGroupResourceRelationship from './createResourceGroupResourceRelationship';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 
@@ -25,7 +25,7 @@ describe('#createResourceGroupResourceRelationship', () => {
         resourceGroupId + '/providers/Microsoft/KeyVault/vaults/key-vault-id',
     };
 
-    await createResourceGroupResourceRelationship(context, resourceEntity);
+    await createResourceGroupResourceRelationship(context as StepExecutionContext, resourceEntity);
 
     expect(context.jobState.collectedRelationships.length).toBe(1);
     const result = context.jobState.collectedRelationships[0];
@@ -64,7 +64,7 @@ describe('#createResourceGroupResourceRelationship', () => {
         '/providers/Microsoft/KeyVault/vaults/key-vault-id',
     };
 
-    await createResourceGroupResourceRelationship(context, resourceEntity);
+    await createResourceGroupResourceRelationship(context as StepExecutionContext, resourceEntity);
 
     expect(context.jobState.collectedRelationships.length).toBe(1);
     const result = context.jobState.collectedRelationships[0];
@@ -99,7 +99,7 @@ describe('#createResourceGroupResourceRelationship', () => {
         resourceGroupId + '/providers/Microsoft/KeyVault/vaults/key-vault-id',
     };
 
-    await createResourceGroupResourceRelationship(context, resourceEntity);
+    await createResourceGroupResourceRelationship(context as StepExecutionContext, resourceEntity);
 
     expect(context.jobState.collectedRelationships.length).toBe(0);
 
@@ -124,7 +124,7 @@ describe('#createResourceGroupResourceRelationship', () => {
     };
 
     const exec = async () =>
-      createResourceGroupResourceRelationship(context, resourceEntity);
+      createResourceGroupResourceRelationship(context as StepExecutionContext, resourceEntity);
 
     await expect(exec).rejects.toThrow(
       'Could not identify a resource group ID in the entity _key: some-key-without-resource-group',
@@ -141,7 +141,7 @@ describe('#createResourceGroupResourceRelationship', () => {
     const context = createMockAzureStepExecutionContext({
       instanceConfig,
       entities: [resourceGroupEntity],
-    });
+    }) ;
 
     const resourceEntity: Entity = {
       _class: ['Service'],
@@ -149,7 +149,7 @@ describe('#createResourceGroupResourceRelationship', () => {
       _key: '/subscriptions/subscription-id/resourceGroups/RESOURCE-GROUP-ID/providers/Microsoft/KeyVault/vaults/key-vault-id',
     };
 
-    await createResourceGroupResourceRelationship(context, resourceEntity);
+    await createResourceGroupResourceRelationship(context as StepExecutionContext, resourceEntity);
 
     expect(context.jobState.collectedRelationships.length).toBe(1);
     const result = context.jobState.collectedRelationships[0];

@@ -3,7 +3,6 @@ import { ResourceGroup } from '@azure/arm-resources/esm/models';
 import {
   Client,
   FIVE_MINUTES,
-  iterateAllResources,
   request,
 } from '../../../azure/resource-manager/client';
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
@@ -57,21 +56,26 @@ export class ResourcesClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       ManagementLockClient,
     );
+    let nextLink: string | undefined;
+    try {
+      do {
+        const response = await (nextLink
+          ? serviceClient.managementLocks.listAtResourceGroupLevelNext(nextLink)
+          : serviceClient.managementLocks.listAtResourceGroupLevel(resourceGroupName));
 
-    await iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: () =>
-          serviceClient.managementLocks.listAtResourceGroupLevel(
-            resourceGroupName,
-          ),
-        listNext: serviceClient.managementLocks.listAtResourceGroupLevelNext,
-      },
-      resourceDescription: 'resources.resourceLocks',
-      callback,
-      endpointRatePeriod: FIVE_MINUTES,
-      maxRetryAttempts: 20,
-    });
+        if (response) {
+          for (const lock of response) {
+            await callback(lock);
+          }
+          nextLink = response.nextLink;
+        }
+      } while (nextLink);
+    } catch (error) {
+      this.logger.error(
+        { error: error.message, resourceGroupName },
+        'Failed to iterate resource locks'
+      );
+      throw error;
+    }
   }
 }

@@ -30,6 +30,6 @@ export function getMockResourceGroupEntity(
 
 export function getMockSubscriptionEntity(config: IntegrationConfig) {
   return createSubscriptionEntity(webLinker, {
-    id: `/subscriptions/${config.subscriptionId}`,
-  });
+    id: `/subscriptions/${config.subscriptionId}`, 
+  }, 'TestTenantId');
 }

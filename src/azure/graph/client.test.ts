@@ -11,10 +11,11 @@ import {
   setupAzureRecording,
 } from '../../../test/helpers/recording';
 import { GraphRequest } from '@microsoft/microsoft-graph-client';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 const { getRolesFromAccessToken } = testFunctions;
 
-class AnyGraphClient extends GraphClient {}
+class AnyGraphClient extends GraphClient { }
 
 let recording: Recording;
 
@@ -75,7 +76,7 @@ test('accessToken fetched and cached', async () => {
     requests++;
   });
 
-  const client = new AnyGraphClient(createMockIntegrationLogger(), config);
+  const client = new AnyGraphClient(createMockIntegrationLogger() as IntegrationLogger, config);
   await expect(client.fetchMetadata()).resolves.toMatchObject({
     '@odata.context': 'https://graph.microsoft.com/v1.0/$metadata',
   });
@@ -94,7 +95,7 @@ describe('fetchOrganization', () => {
       name: 'fetchOrganization',
     });
 
-    const client = new AnyGraphClient(createMockIntegrationLogger(), config);
+    const client = new AnyGraphClient(createMockIntegrationLogger() as IntegrationLogger, config);
     await expect(client.fetchOrganization()).resolves.toMatchObject({
       verifiedDomains: [
         expect.objectContaining({
@@ -120,7 +121,7 @@ describe('fetchOrganization', () => {
     });
 
     const client = new AnyGraphClient(
-      createMockIntegrationLogger(),
+      createMockIntegrationLogger() as IntegrationLogger,
       configFromEnv,
     );
     await expect(client.fetchOrganization()).rejects.toThrow(
@@ -130,7 +131,7 @@ describe('fetchOrganization', () => {
 });
 
 test('client.request should retry requests 3 times', async () => {
-  const client = new AnyGraphClient(createMockIntegrationLogger(), config);
+  const client = new AnyGraphClient(createMockIntegrationLogger() as IntegrationLogger, config);
 
   const graphClientError = new Error('Generic Graph client error');
   (graphClientError as any).statusCode = 400;
@@ -150,7 +151,7 @@ test('client.request should retry requests 3 times', async () => {
 });
 
 test('client.request should expose node-fetch error codes', async () => {
-  const client = new AnyGraphClient(createMockIntegrationLogger(), config);
+  const client = new AnyGraphClient(createMockIntegrationLogger() as IntegrationLogger, config);
 
   const systemError = new Error('system error');
   (systemError as any).code = 'ECONNRESET';
@@ -180,7 +181,7 @@ test('should refresh access token', async () => {
   });
 
   const client = new AnyGraphClient(
-    createMockIntegrationLogger(),
+    createMockIntegrationLogger() as IntegrationLogger,
     configFromEnv,
   );
   const refreshTokenSpy = jest.spyOn(

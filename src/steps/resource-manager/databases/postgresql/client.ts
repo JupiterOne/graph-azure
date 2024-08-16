@@ -7,7 +7,6 @@ import {
 
 import {
   Client,
-  iterateAllResources,
 } from '../../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../../azure/utils';
 
@@ -18,13 +17,11 @@ export class PostgreSQLClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       PostgreSQLManagementClient,
     );
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: serviceClient.servers,
-      resourceDescription: 'postgresql.servers',
-      callback,
-    });
+    const serversResponse = await serviceClient.servers.list();
+
+    for (const server of serversResponse) {
+      await callback(server);
+    }
   }
 
   public async getServerConfigurations(server: { name: string; id: string }) {
@@ -66,20 +63,14 @@ export class PostgreSQLClient extends Client {
     const resourceGroup = resourceGroupName(server.id, true);
     const serverName = server.name as string;
 
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.databases.listByServer(
-            resourceGroup,
-            serverName,
-          );
-        },
-      },
-      resourceDescription: 'postgresql.databases',
-      callback,
-    });
+    // Fetch the list of databases from the server
+    const databasesResponse = await serviceClient.databases.listByServer(
+      resourceGroup,
+      serverName,
+    );
+    for (const database of databasesResponse) {
+      await callback(database, serviceClient);
+    }
   }
 
   public async iterateServerFirewallRules(
@@ -96,19 +87,13 @@ export class PostgreSQLClient extends Client {
     const resourceGroup = resourceGroupName(server.id, true);
     const serverName = server.name as string;
 
-    return iterateAllResources({
-      logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.firewallRules.listByServer(
-            resourceGroup,
-            serverName,
-          );
-        },
-      },
-      resourceDescription: 'postgresql.firewallRules',
-      callback,
-    });
+    // Fetch the list of firewall rules from the server
+    const firewallRulesResponse = await serviceClient.firewallRules.listByServer(
+      resourceGroup,
+      serverName,
+    );
+    for (const rule of firewallRulesResponse) {
+      await callback(rule);
+    }
   }
 }

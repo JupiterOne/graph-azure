@@ -16,6 +16,7 @@ import { KeyVaultClient } from '../../src/steps/resource-manager/key-vault/clien
 import { Vault } from '@azure/arm-keyvault/esm/models';
 import { MonitorClient } from '../../src/steps/resource-manager/monitor/client';
 import { DiagnosticSettingsResource } from '@azure/arm-monitor/esm/models';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 let recording: Recording;
 
@@ -55,7 +56,7 @@ test('should not re-record azure resource-manager API calls', async () => {
 
   const client = new J1SubscriptionClient(
     executionContext.instance.config,
-    executionContext.logger,
+    executionContext.logger as IntegrationLogger,
   );
   const clientSubscriptions: Subscription[] = [];
   await client.iterateSubscriptions((subscription) => {
@@ -67,9 +68,9 @@ test('should not re-record azure resource-manager API calls', async () => {
   // the tests should pass if the recording matches.
   recording = setupMatchRequestRecording(recordingName, mockInstanceConfig);
 
-  const badClient = new J1SubscriptionClient(
+  const badClient = new J1SubscriptionClient( 
     mockInstanceConfig,
-    executionContext.logger,
+    executionContext.logger as IntegrationLogger,
   );
   const badClientSubscriptions: Subscription[] = [];
   await badClient.iterateSubscriptions((subscription) => {
@@ -86,7 +87,7 @@ test('should not re-record azure resource-manager API calls that use an explicit
   ) {
     const keyVaultClient = new KeyVaultClient(
       instanceConfig,
-      createMockIntegrationLogger(),
+      createMockIntegrationLogger() as IntegrationLogger,
     );
     const keyVaults: Vault[] = [];
     // This makes calls using `config.subscriptionId`. It should match by replacing
@@ -97,7 +98,7 @@ test('should not re-record azure resource-manager API calls that use an explicit
 
     const monitorClient = new MonitorClient(
       instanceConfig,
-      createMockIntegrationLogger(),
+      createMockIntegrationLogger() as IntegrationLogger,
     );
     const diagnosticSettings: DiagnosticSettingsResource[] = [];
     for (const keyVault of keyVaults) {
@@ -144,7 +145,7 @@ test('should not re-record azure graph API calls', async () => {
   );
 
   const graphClient = new DirectoryGraphClient(
-    executionContext.logger,
+    executionContext.logger as IntegrationLogger,
     executionContext.instance.config,
   );
   const graphClientUsers: User[] = [];
@@ -158,7 +159,7 @@ test('should not re-record azure graph API calls', async () => {
   recording = setupMatchRequestRecording(recordingName, mockInstanceConfig);
 
   const badGraphClient = new DirectoryGraphClient(
-    executionContext.logger,
+    executionContext.logger as IntegrationLogger,
     mockInstanceConfig,
   );
   const badGraphClientUsers: User[] = [];

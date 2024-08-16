@@ -27,7 +27,7 @@ import {
   fetchVirtualNetworks,
 } from './';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { IntegrationConfig } from '../../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import {
   NetworkEntities,
@@ -166,13 +166,13 @@ describe('network steps', () => {
     });
 
     // Simulates dependency order of execution
-    await fetchAccount(context);
-    await fetchPublicIPAddresses(context);
-    await fetchNetworkInterfaces(context);
-    await fetchNetworkSecurityGroups(context);
-    await fetchVirtualNetworks(context);
-    await fetchLoadBalancers(context);
-    await buildSecurityGroupRuleRelationships(context);
+    await fetchAccount(context as IntegrationStepContext);
+    await fetchPublicIPAddresses(context as IntegrationStepContext);
+    await fetchNetworkInterfaces(context as IntegrationStepContext);
+    await fetchNetworkSecurityGroups(context as IntegrationStepContext);
+    await fetchVirtualNetworks(context as IntegrationStepContext);
+    await fetchLoadBalancers(context as IntegrationStepContext);
+    await buildSecurityGroupRuleRelationships(context as IntegrationStepContext);
   }, 120000);
 
   afterAll(async () => {
@@ -1059,7 +1059,7 @@ describe('network steps', () => {
         },
       });
 
-      await fetchAzureFirewalls(context);
+      await fetchAzureFirewalls(context as IntegrationStepContext);
     });
 
     afterAll(async () => {
@@ -1149,7 +1149,7 @@ describe('network steps', () => {
         },
       });
 
-      await fetchNetworkWatchers(context);
+      await fetchNetworkWatchers(context as IntegrationStepContext);
 
       const networkWatcherEntities = context.jobState.collectedEntities;
 
@@ -1201,8 +1201,8 @@ describe('network steps', () => {
         },
       });
 
-      await fetchPrivateEndpoints(context);
-      await fetchVirtualNetworks(context);
+      await fetchPrivateEndpoints(context as IntegrationStepContext);
+      await fetchVirtualNetworks(context as IntegrationStepContext);
 
       const subnetEntities = context.jobState.collectedEntities.filter(
         (e) => e._type === NetworkEntities.SUBNET._type,
@@ -1233,7 +1233,7 @@ describe('network steps', () => {
         entities: [...subnetEntities, ...privateEndpointEntities],
       });
 
-      await buildPrivateEndpointSubnetRelationships(context);
+      await buildPrivateEndpointSubnetRelationships(context as IntegrationStepContext);
 
       const privateEndpointSubnetRelationships =
         context.jobState.collectedRelationships;
@@ -1298,14 +1298,14 @@ describe('network steps', () => {
         },
       });
 
-      await fetchPrivateEndpoints(context);
+      await fetchPrivateEndpoints(context as IntegrationStepContext);
 
       /**
        * This step sets the `publicIpAddresses` raw data, which is required for
        * fetchNetworkInterfaces.
        */
-      await fetchPublicIPAddresses(context);
-      await fetchNetworkInterfaces(context);
+      await fetchPublicIPAddresses(context as IntegrationStepContext);
+      await fetchNetworkInterfaces(context as IntegrationStepContext);
 
       const networkInterfaceEntities =
         context.jobState.collectedEntities.filter(
@@ -1337,7 +1337,7 @@ describe('network steps', () => {
         entities: [...networkInterfaceEntities, ...privateEndpointEntities],
       });
 
-      await buildPrivateEndpointNetworkInterfaceRelationships(context);
+      await buildPrivateEndpointNetworkInterfaceRelationships(context as IntegrationStepContext);
 
       const privateEndpointNetworkInterfaceRelationships =
         context.jobState.collectedRelationships;

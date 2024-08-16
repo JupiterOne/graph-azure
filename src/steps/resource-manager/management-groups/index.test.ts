@@ -1,5 +1,5 @@
 import { Recording } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig } from '../../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import {
   getMatchRequestsBy,
   setupAzureRecording,
@@ -89,7 +89,7 @@ describe('rm-management-groups', () => {
       },
     });
 
-    await fetchManagementGroups(context);
+    await fetchManagementGroups(context as IntegrationStepContext);
 
     const managementGroupEntities = context.jobState.collectedEntities;
 
@@ -134,7 +134,7 @@ describe('validateManagementGroupStepInvocation', () => {
       instanceConfig: configFromEnv,
     });
 
-    const response = await validateManagementGroupStepInvocation(context);
+    const response = await validateManagementGroupStepInvocation(context as IntegrationStepContext);
 
     expect(response).toEqual(true);
   });
@@ -153,6 +153,6 @@ describe('validateManagementGroupStepInvocation', () => {
       instanceConfig: configFromEnv,
     });
 
-    expect(await validateManagementGroupStepInvocation(context)).toEqual(false);
+    expect(await validateManagementGroupStepInvocation(context as IntegrationStepContext)).toEqual(false);
   });
 });

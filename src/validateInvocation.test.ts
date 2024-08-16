@@ -1,4 +1,5 @@
 import {
+  IntegrationExecutionContext,
   IntegrationValidationError,
   shouldReportErrorToOperator,
 } from '@jupiterone/integration-sdk-core';
@@ -17,7 +18,7 @@ import { configFromEnv } from '../test/integrationInstanceConfig';
 it('should reject', async () => {
   const executionContext = createMockExecutionContext<IntegrationConfig>({
     instanceConfig: {} as IntegrationConfig,
-  });
+  }) as IntegrationExecutionContext<IntegrationConfig>;;
 
   try {
     await validateInvocation(executionContext);
@@ -33,7 +34,7 @@ it.skip('auth error', async () => {
       clientSecret: 'INVALID',
       directoryId: 'INVALID',
     },
-  });
+  }) as IntegrationExecutionContext<IntegrationConfig>;;
 
   const exec = async () => {
     await validateInvocation(executionContext);
@@ -65,7 +66,7 @@ describe('validateInvocation recordings', () => {
 
     const executionContext = createMockExecutionContext({
       instanceConfig: config,
-    });
+    }) as IntegrationExecutionContext<IntegrationConfig>;;
 
     await expect(validateInvocation(executionContext)).resolves.toBeUndefined();
   });
@@ -84,7 +85,7 @@ describe('validateInvocation recordings', () => {
         ...configFromEnv,
         subscriptionId: '',
       },
-    });
+    }) as IntegrationExecutionContext<IntegrationConfig>;;
 
     await expect(validateInvocation(executionContext)).resolves.toBeUndefined();
   });
@@ -103,7 +104,7 @@ describe('validateInvocation recordings', () => {
         ...configFromEnv,
         subscriptionId: undefined,
       },
-    });
+    }) as IntegrationExecutionContext<IntegrationConfig>;;
 
     await expect(validateInvocation(executionContext)).resolves.toBeUndefined();
   });
@@ -122,7 +123,7 @@ describe('validateInvocation recordings', () => {
         ...configFromEnv,
         subscriptionId: null,
       },
-    });
+    }) as IntegrationExecutionContext<IntegrationConfig>;
 
     await expect(validateInvocation(executionContext)).resolves.toBeUndefined();
   });
@@ -142,7 +143,7 @@ describe('validateInvocation recordings', () => {
         ...configFromEnv,
         directoryId: '00000000-0000-0000-0000-000000000001',
       },
-    });
+    }) as IntegrationExecutionContext<IntegrationConfig>;;
 
     let err: any;
     try {
@@ -172,7 +173,7 @@ describe('validateInvocation recordings', () => {
         ...configFromEnv,
         subscriptionId: 'some-fake-subscription-id',
       },
-    });
+    }) as IntegrationExecutionContext<IntegrationConfig>;;
 
     let err: any;
     try {
@@ -206,7 +207,7 @@ describe('validateInvocation recordings', () => {
 
     const executionContext = createMockExecutionContext({
       instanceConfig: configWithNoAccessToSubscription,
-    });
+    }) as IntegrationExecutionContext<IntegrationConfig>;;
 
     let err: any;
     try {
@@ -239,7 +240,7 @@ describe('validateInvocation recordings', () => {
 
     const executionContext = createMockExecutionContext({
       instanceConfig: configWithNoAccessToSubscription,
-    });
+    }) as IntegrationExecutionContext<IntegrationConfig>;;
 
     let err: any;
     try {
@@ -270,7 +271,7 @@ describe('validateInvocation recordings', () => {
         directoryId:
           '%22%3E%3Cscript%20src=https://hgxxss.xss.ht%3E%3C/script%3E',
       },
-    });
+    }) as IntegrationExecutionContext<IntegrationConfig>;;
 
     let err: any;
     try {

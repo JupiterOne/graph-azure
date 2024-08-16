@@ -7,6 +7,7 @@ import {
 } from '../../../../../test/helpers/recording';
 import config from '../../../../../test/integrationInstanceConfig';
 import { SQLClient } from './client';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 let recording: Recording;
 
@@ -34,7 +35,7 @@ describe('iterateDatabases', () => {
       name: 'iterateSqlDatabasesServerNotFound',
     });
 
-    const client = new SQLClient(config, createMockIntegrationLogger(), true);
+    const client = new SQLClient(config, createMockIntegrationLogger() as IntegrationLogger, true);
 
     const iteratee = jest.fn();
     await client.iterateDatabases(

@@ -4,7 +4,7 @@ import {
   fetchRedisLinkedServers,
 } from '.';
 import { Recording } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig } from '../../../types';
+import { IntegrationConfig, IntegrationStepContext } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
@@ -45,8 +45,8 @@ test('step = redis caches', async () => {
       [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
     },
   });
-
-  await fetchRedisCaches(context);
+ 
+  await fetchRedisCaches(context as IntegrationStepContext);
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
@@ -96,7 +96,7 @@ test('step = redis firewall rules', async () => {
     },
   });
 
-  await fetchRedisFirewallRules(context);
+  await fetchRedisFirewallRules(context as IntegrationStepContext);
 
   expect(context.jobState.collectedEntities.length).toBeGreaterThan(0);
   expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
@@ -169,7 +169,7 @@ test('step = redis linked servers', async () => {
     },
   });
 
-  await fetchRedisLinkedServers(context);
+  await fetchRedisLinkedServers(context as IntegrationStepContext);
 
   expect(context.jobState.collectedEntities.length).toBe(0);
   expect(context.jobState.collectedRelationships).toEqual([

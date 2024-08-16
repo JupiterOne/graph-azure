@@ -669,7 +669,7 @@
     "@azure/ms-rest-js" "^2.2.0"
     tslib "^1.9.3"
 
-"@azure/arm-batch@^9.2.0":
+"@azure/arm-batch@~9.2.0":
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-batch/-/arm-batch-9.2.0.tgz#04cc58e4622652e673e8b562d09f58291e2c0561"
   integrity sha512-1J9DEFWcKaKZLQctUZ/ko/8sGgycpv5fiWJXNzATWGPERPy5konldBW/Sh1IDJtCXjFG/1jiksbohyLO/r/etQ==
@@ -791,7 +791,7 @@
     "@azure/ms-rest-js" "^2.2.0"
     tslib "^1.10.0"
 
-"@azure/arm-keyvault@^3.1.0":
+"@azure/arm-keyvault@~3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-keyvault/-/arm-keyvault-3.1.0.tgz#ce4cfe570ee29aaf03199696c8ed558c262d6034"
   integrity sha512-0JiARDpiGBzesBHRFFKmJnAd4wyeXGky5D4L3SUA2V9Q9I7zCAk6goYQ044N5xzyizPoAi0VbQif+c1VzgyugQ==
@@ -804,7 +804,7 @@
     "@azure/core-rest-pipeline" "^1.12.0"
     tslib "^2.2.0"
 
-"@azure/arm-locks@^2.1.0":
+"@azure/arm-locks@~2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-locks/-/arm-locks-2.1.0.tgz#f42bed9c53d767e79f0fb370c7528c6f9b3db00e"
   integrity sha512-p2E29GyNvW+2+YrS39S9moDUefoWBOciFkF0J3l6iizDU2m2avPcMMV7WKsfhQOlNza/Do7Tk8+p8zZ9Kju3dA==
@@ -815,7 +815,7 @@
     "@azure/core-rest-pipeline" "^1.8.0"
     tslib "^2.2.0"
 
-"@azure/arm-managementgroups@^2.0.2":
+"@azure/arm-managementgroups@~2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@azure/arm-managementgroups/-/arm-managementgroups-2.0.2.tgz#464fd82e1618bfc766937673353d3bdf2c8b298d"
   integrity sha512-vR5g/LDdyVI5zTUJrNCYks3AMU7TYUqbDbQ2lfhGvyf+6Vvi9qh3BHVYTFE963x7/M9oEINK2lPvl21/dxFNyA==
@@ -828,7 +828,7 @@
     "@azure/core-rest-pipeline" "^1.8.0"
     tslib "^2.2.0"
 
-"@azure/arm-mariadb@^2.1.0":
+"@azure/arm-mariadb@~2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-mariadb/-/arm-mariadb-2.1.0.tgz#73d33899d9de2550379185904e9a5c8c3bfb0c53"
   integrity sha512-lP6+xBNLri50MrJGQDDg9VsD+Qop2Skz5CtGaFWVLe7cfRaIf7kO35nQgu7zrC9gSx29u0WPb8HUU5T7AQGlEg==
@@ -850,7 +850,7 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
-"@azure/arm-mysql@^5.1.0":
+"@azure/arm-mysql@~5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-mysql/-/arm-mysql-5.1.0.tgz#bf6b55ac810548b47bb70f47d89d332eade1270f"
   integrity sha512-Y95qv8jNiDOo8d5q+nqdgMTS4eD+zaUp8swhB4YL7OqT5n6g+Ph4ySiKJTMGI7KO+EqqJ1jEKJCCAkkJ0cP11g==
@@ -903,7 +903,7 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
-"@azure/arm-postgresql@^6.1.0":
+"@azure/arm-postgresql@~6.1.0":
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-postgresql/-/arm-postgresql-6.1.0.tgz#6af5d1cf335575cedf0f7c66187560077f859469"
   integrity sha512-rN1Ud2Jcv3QGvf0wy3SgHp8t0USHYc/+a5hsYNz/jXyLWmpk6ng2E1u8bSV9DXoc2T3vPk2xQ4Q6XIfRsRFjhw==
@@ -1261,7 +1261,7 @@
     tslib "^2.2.0"
     uuid "^8.3.0"
 
-"@azure/identity@^4.4.1":
+"@azure/identity@~4.4.1":
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/@azure/identity/-/identity-4.4.1.tgz#490fa2ad26786229afa36411892bb53dfa3478d3"
   integrity sha512-DwnG4cKFEM7S3T+9u05NstXU/HN0dk45kPOinUyNKsn5VWwpXd9sbPKEg6kgJzGbm1lMuhx9o31PVbCtM5sfBA==
@@ -1350,7 +1350,7 @@
     uuid "^8.3.2"
     xml2js "^0.5.0"
 
-"@azure/ms-rest-nodeauth@^3.1.1":
+"@azure/ms-rest-nodeauth@~3.1.1":
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/@azure/ms-rest-nodeauth/-/ms-rest-nodeauth-3.1.1.tgz#2624222f0685ae580801d6f1abeab20923814693"
   integrity sha512-UA/8dgLy3+ZiwJjAZHxL4MUB14fFQPkaAOZ94jsTW/Z6WmoOeny2+cLk0+dyIX/iH6qSrEWKwbStEeB970B9pA==

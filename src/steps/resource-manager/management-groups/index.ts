@@ -90,7 +90,7 @@ export async function getGraphObjectsForManagementGroup(options: {
   );
 
   for (const child of managementGroup.children || []) {
-    if (child.type === '/providers/Microsoft.Management/managementGroups') {
+    if (child.type === 'Microsoft.Management/managementGroups') {
       const { managementGroupEntity: childManagementGroupEntity } =
         await getGraphObjectsForManagementGroup({
           ...options,

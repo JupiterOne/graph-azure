@@ -150,7 +150,13 @@ describe('validateManagementGroupStepInvocation', () => {
     });
 
     const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
+      instanceConfig: {
+        clientId: 'clientId',
+        clientSecret: 'clientSecret',
+        directoryId: 'directoryId',
+        subscriptionId: 'subscription-id',
+        defenderAlertsSeverities: 'HIGH,MEDIUM',
+      },
     });
 
     expect(await validateManagementGroupStepInvocation(context)).toEqual(false);

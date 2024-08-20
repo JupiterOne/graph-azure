@@ -70,7 +70,7 @@ export function createBatchApplicationEntity(
         _type: BatchEntities.BATCH_APPLICATION._type,
         _class: BatchEntities.BATCH_APPLICATION._class,
         id: data.id,
-        name: data.displayName,
+        name: data.displayName ?? data.name,
         webLink: webLinker.portalResourceUrl(normalizedId),
       },
     },

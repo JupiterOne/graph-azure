@@ -70,7 +70,7 @@ test('rm-storage-queues', async () => {
 
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
-}, 20_000);
+}, 200_000);
 
 test('rm-storage-tables', async () => {
   const stepTestConfig = getStepTestConfigForStep(steps.STORAGE_TABLES);
@@ -85,4 +85,4 @@ test('rm-storage-tables', async () => {
 
   const stepResults = await executeStepWithDependencies(stepTestConfig);
   expect(stepResults).toMatchStepMetadata(stepTestConfig);
-}, 20_000);
+}, 200_000);

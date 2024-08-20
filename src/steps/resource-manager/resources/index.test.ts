@@ -308,6 +308,7 @@ describe('step - resource has resource lock relationships', () => {
       directory: __dirname,
       name: 'resource-manager-step-resource-has-resource-lock-relationships',
       options: {
+        recordFailedRequests: true,
         matchRequestsBy: getMatchRequestsBy({
           config: configFromEnv,
         }),

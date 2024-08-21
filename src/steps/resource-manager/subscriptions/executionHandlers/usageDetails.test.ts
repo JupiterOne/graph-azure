@@ -2,8 +2,14 @@ import {
   executeStepWithDependencies,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
-import { setupAzureRecording } from '../../../../../test/helpers/recording';
-import { getStepTestConfigForStep } from '../../../../../test/integrationInstanceConfig';
+import {
+  getMatchRequestsBy,
+  setupAzureRecording,
+} from '../../../../../test/helpers/recording';
+import {
+  configFromEnv,
+  getStepTestConfigForStep,
+} from '../../../../../test/integrationInstanceConfig';
 import { steps } from '../constants';
 
 let recording: Recording;
@@ -20,6 +26,14 @@ test('rm-subscription-usage-details', async () => {
     {
       name: steps.USAGE_DETAILS,
       directory: __dirname,
+      options: {
+        matchRequestsBy: getMatchRequestsBy({
+          config: configFromEnv,
+          options: {
+            url: { query: false },
+          },
+        }),
+      },
     },
     stepTestConfig.instanceConfig,
   );

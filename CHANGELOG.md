@@ -1,3 +1,15 @@
+# v7.9.0 (Fri Aug 23 2024)
+
+#### 🚀 Enhancement
+
+- Recordings update [#667](https://github.com/JupiterOne/graph-azure/pull/667) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.8.1 (Wed Aug 14 2024)
 
 #### 🐛 Bug Fix

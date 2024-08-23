@@ -16,6 +16,7 @@ import {
   requestWithAuthErrorhandling,
 } from '../../../azure/resource-manager/client';
 import { UsageDetail } from '@azure/arm-consumption/esm/models';
+import { getUsageDetailsQueryDates } from './utils';
 
 export class J1SubscriptionClient extends Client {
   public async getSubscription(subscriptionId: string) {
@@ -71,8 +72,7 @@ export class J1SubscriptionClient extends Client {
         passSubscriptionId: false,
       },
     );
-    const d = new Date(Date.now());
-    d.setDate(d.getDate() - 1);
+    const dates = getUsageDetailsQueryDates();
     const usageDetails = await requestWithAuthErrorhandling(
       // Need API version to 2020-01-01 in order to return subscription tags
       // serviceClient.subscriptions.get() does not work because the api version is too old
@@ -83,9 +83,7 @@ export class J1SubscriptionClient extends Client {
             scope,
             options: {
               timeout: FIVE_MINUTES,
-              filter: `properties/usageEnd eq '${new Date(
-                Date.now(),
-              ).toISOString()}' and properties/usageStart eq '${d.toISOString()}'`,
+              filter: `properties/usageEnd eq '${dates.usageEnd}' and properties/usageStart eq '${dates.usageStart}'`,
             },
           },
           listUsageDetailsOperationSpec,

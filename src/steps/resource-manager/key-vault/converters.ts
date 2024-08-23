@@ -1,4 +1,4 @@
-import { Vault } from '@azure/arm-keyvault/esm/models';
+import { Vault } from '@azure/arm-keyvault';
 import { KeyProperties } from '@azure/keyvault-keys';
 import { SecretProperties } from '@azure/keyvault-secrets';
 import {

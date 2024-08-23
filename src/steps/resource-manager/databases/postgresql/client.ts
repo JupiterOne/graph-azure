@@ -1,45 +1,45 @@
-import { PostgreSQLManagementClient } from '@azure/arm-postgresql';
 import {
-  Database,
-  FirewallRule,
-  Server,
-} from '@azure/arm-postgresql/esm/models';
+  Configuration,
+  PostgreSQLManagementClient,
+} from '@azure/arm-postgresql';
+import { Database, FirewallRule, Server } from '@azure/arm-postgresql';
 
-import {
-  Client,
-  iterateAllResources,
-} from '../../../../azure/resource-manager/client';
+import { Client, iterateAll } from '../../../../azure/resource-manager/client';
 import { resourceGroupName } from '../../../../azure/utils';
 
 export class PostgreSQLClient extends Client {
   public async iterateServers(
     callback: (s: Server) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      PostgreSQLManagementClient,
-    );
-    return iterateAllResources({
+    const serviceClient = this.getServiceClient(PostgreSQLManagementClient);
+
+    return iterateAll({
+      resourceEndpoint: serviceClient.servers.list(),
       logger: this.logger,
-      serviceClient,
-      resourceEndpoint: serviceClient.servers,
       resourceDescription: 'postgresql.servers',
       callback,
     });
   }
 
   public async getServerConfigurations(server: { name: string; id: string }) {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      PostgreSQLManagementClient,
-    );
+    const serviceClient = this.getServiceClient(PostgreSQLManagementClient);
 
     const resourceGroup = resourceGroupName(server.id, true);
     const serverName = server.name;
 
     try {
-      const response = await serviceClient.configurations.listByServer(
-        resourceGroup,
-        serverName,
-      );
+      const response: Configuration[] = [];
+      await iterateAll({
+        resourceEndpoint: serviceClient.configurations.listByServer(
+          resourceGroup,
+          serverName,
+        ),
+        logger: this.logger,
+        resourceDescription: 'postgresql.configuration',
+        callback: (config) => {
+          response.push(config);
+        },
+      });
       return response;
     } catch (err) {
       this.logger.warn(
@@ -55,28 +55,18 @@ export class PostgreSQLClient extends Client {
 
   public async iterateDatabases(
     server: Server,
-    callback: (
-      d: Database,
-      serviceClient: PostgreSQLManagementClient,
-    ) => void | Promise<void>,
+    callback: (d: Database) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      PostgreSQLManagementClient,
-    );
+    const serviceClient = this.getServiceClient(PostgreSQLManagementClient);
     const resourceGroup = resourceGroupName(server.id, true);
     const serverName = server.name as string;
 
-    return iterateAllResources({
+    return iterateAll({
+      resourceEndpoint: serviceClient.databases.listByServer(
+        resourceGroup,
+        serverName,
+      ),
       logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.databases.listByServer(
-            resourceGroup,
-            serverName,
-          );
-        },
-      },
       resourceDescription: 'postgresql.databases',
       callback,
     });
@@ -89,24 +79,17 @@ export class PostgreSQLClient extends Client {
     },
     callback: (r: FirewallRule) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      PostgreSQLManagementClient,
-    );
+    const serviceClient = this.getServiceClient(PostgreSQLManagementClient);
 
     const resourceGroup = resourceGroupName(server.id, true);
     const serverName = server.name as string;
 
-    return iterateAllResources({
+    return iterateAll({
+      resourceEndpoint: serviceClient.firewallRules.listByServer(
+        resourceGroup,
+        serverName,
+      ),
       logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () => {
-          return serviceClient.firewallRules.listByServer(
-            resourceGroup,
-            serverName,
-          );
-        },
-      },
       resourceDescription: 'postgresql.firewallRules',
       callback,
     });

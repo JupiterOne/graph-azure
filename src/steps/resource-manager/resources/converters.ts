@@ -1,5 +1,5 @@
 import { ResourceGroup } from '@azure/arm-resources/esm/models';
-import { ManagementLockModels } from '@azure/arm-locks';
+import { ManagementLockObject } from '@azure/arm-locks';
 import {
   Entity,
   createIntegrationEntity,
@@ -36,7 +36,7 @@ export function createResourceGroupEntity(
 
 export function createResourceLockEntitiy(
   webLinker: AzureWebLinker,
-  data: ManagementLockModels.ManagementLockObject,
+  data: ManagementLockObject,
 ): Entity {
   return createIntegrationEntity({
     entityData: {

@@ -27,7 +27,7 @@ import {
   KEY_VAULT_SERVICE_ENTITY_TYPE,
   STEP_RM_KEYVAULT_VAULTS,
 } from '../key-vault/constants';
-import { Vault } from '@azure/arm-keyvault/esm/models';
+import { Vault } from '@azure/arm-keyvault';
 import { ContainerItem } from '@azure/storage-blob';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
 // import { MonitorClient } from '../monitor/client';

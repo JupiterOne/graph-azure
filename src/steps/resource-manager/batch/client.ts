@@ -1,14 +1,6 @@
 import { BatchManagementClient } from '@azure/arm-batch';
-import {
-  BatchAccount,
-  Pool,
-  Application,
-  Certificate,
-} from '@azure/arm-batch/esm/models';
-import {
-  Client,
-  iterateAllResources,
-} from '../../../azure/resource-manager/client';
+import { BatchAccount, Pool, Application, Certificate } from '@azure/arm-batch';
+import { Client, iterateAll } from '../../../azure/resource-manager/client';
 
 export class BatchClient extends Client {
   /**
@@ -20,19 +12,18 @@ export class BatchClient extends Client {
     resourceGroupInfo: { resourceGroupName: string },
     callback: (s: BatchAccount) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      BatchManagementClient,
-    );
+    const serviceClient = this.getServiceClient(BatchManagementClient, {
+      passSubscriptionId: true,
+    });
+
     const { resourceGroupName } = resourceGroupInfo;
 
-    return iterateAllResources({
+    return iterateAll({
+      resourceEndpoint:
+        serviceClient.batchAccountOperations.listByResourceGroup(
+          resourceGroupName,
+        ),
       logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () =>
-          serviceClient.batchAccount.listByResourceGroup(resourceGroupName),
-        listNext: serviceClient.batchAccount.listByResourceGroupNext,
-      },
       resourceDescription: 'batch.account',
       callback,
     });
@@ -47,23 +38,18 @@ export class BatchClient extends Client {
     batchAccountInfo: { resourceGroupName: string; batchAccountName: string },
     callback: (s: Pool) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      BatchManagementClient,
-    );
+    const serviceClient = this.getServiceClient(BatchManagementClient, {
+      passSubscriptionId: true,
+    });
 
     const { resourceGroupName, batchAccountName } = batchAccountInfo;
 
-    return iterateAllResources({
+    return iterateAll({
+      resourceEndpoint: serviceClient.poolOperations.listByBatchAccount(
+        resourceGroupName,
+        batchAccountName,
+      ),
       logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () =>
-          serviceClient.pool.listByBatchAccount(
-            resourceGroupName,
-            batchAccountName,
-          ),
-        listNext: serviceClient.pool.listByBatchAccountNext,
-      },
       resourceDescription: 'batch.pool',
       callback,
     });
@@ -78,20 +64,18 @@ export class BatchClient extends Client {
     batchAccountInfo: { resourceGroupName: string; batchAccountName: string },
     callback: (s: Application) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      BatchManagementClient,
-    );
+    const serviceClient = this.getServiceClient(BatchManagementClient, {
+      passSubscriptionId: true,
+    });
 
     const { resourceGroupName, batchAccountName } = batchAccountInfo;
 
-    return iterateAllResources({
+    return iterateAll({
+      resourceEndpoint: serviceClient.applicationOperations.list(
+        resourceGroupName,
+        batchAccountName,
+      ),
       logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () =>
-          serviceClient.application.list(resourceGroupName, batchAccountName),
-        listNext: serviceClient.application.listNext,
-      },
       resourceDescription: 'batch.application',
       callback,
     });
@@ -106,23 +90,18 @@ export class BatchClient extends Client {
     batchAccountInfo: { resourceGroupName: string; batchAccountName: string },
     callback: (s: Certificate) => void | Promise<void>,
   ): Promise<void> {
-    const serviceClient = await this.getAuthenticatedServiceClient(
-      BatchManagementClient,
-    );
+    const serviceClient = this.getServiceClient(BatchManagementClient, {
+      passSubscriptionId: true,
+    });
 
     const { resourceGroupName, batchAccountName } = batchAccountInfo;
 
-    return iterateAllResources({
+    return iterateAll({
+      resourceEndpoint: serviceClient.certificateOperations.listByBatchAccount(
+        resourceGroupName,
+        batchAccountName,
+      ),
       logger: this.logger,
-      serviceClient,
-      resourceEndpoint: {
-        list: async () =>
-          serviceClient.certificate.listByBatchAccount(
-            resourceGroupName,
-            batchAccountName,
-          ),
-        listNext: serviceClient.certificate.listByBatchAccountNext,
-      },
       resourceDescription: 'batch.certificate',
       callback,
     });

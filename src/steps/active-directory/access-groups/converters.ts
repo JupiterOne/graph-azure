@@ -4,7 +4,7 @@ import {
   parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 import { accessPackageEntites } from './constants';
-import { ApplicationPackage } from '@azure/arm-batch/esm/models';
+import { ApplicationPackage } from '@azure/arm-batch';
 import { generateEntityKey } from '../../../utils/generateKeys';
 import { ExtendedPolicyAssignment } from './client';
 

@@ -25,6 +25,7 @@ import {
 import { entities as SubscriptionEntities } from '../subscriptions/constants';
 import { createManagementGroupEntity } from './converters';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
+import { KnownManagementGroupChildType } from '@azure/arm-managementgroups';
 
 export async function fetchManagementGroups(
   executionContext: IntegrationStepContext,
@@ -90,7 +91,10 @@ export async function getGraphObjectsForManagementGroup(options: {
   );
 
   for (const child of managementGroup.children || []) {
-    if (child.type === '/providers/Microsoft.Management/managementGroups') {
+    if (
+      child.type ===
+      KnownManagementGroupChildType.MicrosoftManagementManagementGroups
+    ) {
       const { managementGroupEntity: childManagementGroupEntity } =
         await getGraphObjectsForManagementGroup({
           ...options,
@@ -103,7 +107,7 @@ export async function getGraphObjectsForManagementGroup(options: {
           to: childManagementGroupEntity,
         }),
       );
-    } else if (child.type === '/subscriptions') {
+    } else if (child.type === KnownManagementGroupChildType.Subscriptions) {
       await jobState.addRelationship(
         createMappedRelationship({
           _class: RelationshipClass.HAS,

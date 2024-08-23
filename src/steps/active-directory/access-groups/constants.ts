@@ -12,10 +12,8 @@ export const STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST =
   'rm-access-package-assignment-request';
 export const STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER =
   'rm-access-package-assignment-approver';
-export const STEP_ACCESS_PACKAGE_CATALOG =
-  'rm-access-package-catalog';
-export const STEP_AZURE_APPLICATION =
-  'rm-azure-application';
+export const STEP_ACCESS_PACKAGE_CATALOG = 'rm-access-package-catalog';
+export const STEP_AZURE_APPLICATION = 'rm-azure-application';
 
 // Relationships
 export const STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER_IS_AZURE_USER_RELATIONSHIP =
@@ -33,7 +31,7 @@ export const STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP =
 export const STEP_AZURE_APPLICATION_ASSIGNED_TO_ACCESS_PACKAGE_CATALOG_RELATIONSHIP =
   'rm-azure-application-assigned-to-access-package-catalog';
 export const STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP =
-  'rm-azure-access-package-has-application'
+  'rm-azure-access-package-has-application';
 
 export const accessPackageEntites = {
   STEP_ACCESS_PACKAGE: {
@@ -70,7 +68,7 @@ export const accessPackageEntites = {
     _type: 'azure_application',
     _class: ['Application'],
     resourceName: '[RM] Azure Application',
-  }
+  },
 };
 
 export const accessPackageRelationships = {
@@ -95,13 +93,13 @@ export const accessPackageRelationships = {
     targetType: accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT._type,
   },
   STEP_ACCESS_PACKAGE_ASSIGNMENT_CONTAINS_ACCESS_PACKAGE_ASSIGNMENT_POLICY_RELATIONSHIP:
-  {
-    _type: 'azure_access_packages_service_assignment_contains_policy',
-    sourceType: accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT._type,
-    _class: RelationshipClass.CONTAINS,
-    targetType:
-      accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY._type,
-  },
+    {
+      _type: 'azure_access_packages_service_assignment_contains_policy',
+      sourceType: accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT._type,
+      _class: RelationshipClass.CONTAINS,
+      targetType:
+        accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY._type,
+    },
   STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP: {
     _type: 'azure_user_assigned_access_packages_services',
     sourceType: USER_ENTITY_TYPE,
@@ -124,8 +122,8 @@ export const accessPackageRelationships = {
     _type: 'azure_access_packages_services_has_application',
     sourceType: accessPackageEntites.STEP_ACCESS_PACKAGE._type,
     _class: RelationshipClass.HAS,
-    targetType: accessPackageEntites.STEP_AZURE_APPLICATION._type
-  }
+    targetType: accessPackageEntites.STEP_AZURE_APPLICATION._type,
+  },
 };
 
 export interface AccessPackage {

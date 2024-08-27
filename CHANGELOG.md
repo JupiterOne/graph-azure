@@ -1,3 +1,15 @@
+# v7.9.2 (Tue Aug 27 2024)
+
+#### 🐛 Bug Fix
+
+- Resource groups: Paginate correctly [#669](https://github.com/JupiterOne/graph-azure/pull/669) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.9.1 (Tue Aug 27 2024)
 
 #### 🐛 Bug Fix

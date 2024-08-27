@@ -4,9 +4,9 @@ import {
   Client,
   FIVE_MINUTES,
   iterateAll,
+  iterateAllResources,
   request,
 } from '../../../azure/resource-manager/client';
-import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 import { ManagementLockClient, ManagementLockObject } from '@azure/arm-locks';
 export class ResourcesClient extends Client {
   public async getResourceProvider(resourceProviderNamespace: string) {
@@ -28,24 +28,16 @@ export class ResourcesClient extends Client {
     const serviceClient = await this.getAuthenticatedServiceClient(
       ResourceManagementClient,
     );
-    try {
-      const items = await serviceClient.resourceGroups.list();
-      for (const item of items) {
-        await callback(item);
-      }
-    } catch (err) {
-      /* istanbul ignore else */
-      if (err.statusCode === 404) {
-        this.logger.warn({ error: err.message }, 'Resources not found');
-      } else {
-        throw new IntegrationProviderAPIError({
-          cause: err.statusText,
-          endpoint: 'resources.resourceGroups',
-          status: err.statusCode,
-          statusText: err.statusText,
-        });
-      }
-    }
+    return iterateAllResources({
+      logger: this.logger,
+      serviceClient,
+      resourceEndpoint: {
+        list: async () => serviceClient.resourceGroups.list(),
+        listNext: serviceClient.resourceGroups.listNext,
+      },
+      resourceDescription: 'resources.resourceGroups',
+      callback,
+    });
   }
 
   public async iterateLocks(

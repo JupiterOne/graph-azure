@@ -33,7 +33,9 @@ export class ResourcesClient extends Client {
       serviceClient,
       resourceEndpoint: {
         list: async () => serviceClient.resourceGroups.list(),
-        listNext: serviceClient.resourceGroups.listNext,
+        listNext: (nextLink) => {
+          return serviceClient.resourceGroups.listNext(nextLink);
+        },
       },
       resourceDescription: 'resources.resourceGroups',
       callback,

@@ -1,3 +1,15 @@
+# v7.9.4 (Wed Aug 28 2024)
+
+#### 🐛 Bug Fix
+
+- Add directory id to subscription [#671](https://github.com/JupiterOne/graph-azure/pull/671) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v7.9.3 (Wed Aug 28 2024)
 
 #### 🐛 Bug Fix

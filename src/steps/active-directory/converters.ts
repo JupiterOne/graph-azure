@@ -139,6 +139,7 @@ export function createAccountEntityWithOrganization(
         defaultDomain,
         verifiedDomains,
         securityDefaultsEnabled: securityDefaults?.isEnabled,
+        vendor: 'Microsoft',
       },
     },
   });

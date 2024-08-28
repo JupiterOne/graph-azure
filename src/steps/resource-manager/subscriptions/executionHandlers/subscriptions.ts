@@ -26,6 +26,7 @@ export async function fetchSubscription(
   executionContext: IntegrationStepContext,
 ): Promise<void> {
   const { instance, logger, jobState } = executionContext;
+  const { directoryId } = instance.config;
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
   const client = new J1SubscriptionClient(instance.config, logger);
@@ -43,6 +44,7 @@ export async function fetchSubscription(
     const subscriptionEntity = createSubscriptionEntity(
       webLinker,
       subscription,
+      directoryId,
     );
     await jobState.addEntity(subscriptionEntity);
   } else {
@@ -65,6 +67,7 @@ export async function fetchAllSkippedSubscriptions(
   const { instance, logger, jobState } = executionContext;
   const accountEntity = await getAccountEntity(jobState);
   const webLinker = createAzureWebLinker(accountEntity.defaultDomain as string);
+  const { directoryId } = instance.config;
   const client = new J1SubscriptionClient(instance.config, logger);
 
   const subscriptions = await client.fetchSubscriptions();
@@ -82,6 +85,7 @@ export async function fetchAllSkippedSubscriptions(
         const subscriptionEntity = createSubscriptionEntity(
           webLinker,
           subscriptionWithDetails as Subscription,
+          directoryId,
         );
         await jobState.addEntity(subscriptionEntity);
       }

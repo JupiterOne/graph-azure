@@ -131,8 +131,9 @@ export abstract class GraphClient {
         return graphRequest.get();
       },
       {
-        maxAttempts: 3,
-        delay: 200,
+        maxAttempts: 5,
+        factor: 2,
+        delay: 2_000,
         handleError: (err, context, options) => {
           const endpoint = (graphRequest as any).buildFullUrl?.();
           this.logger.warn(

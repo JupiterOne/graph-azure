@@ -36,7 +36,7 @@ export function createSubscriptionEntity(
         webLink: webLinker.portalResourceUrl(data.id),
         offerName: data.subscriptionPolicies?.quotaId,
         tenantId: directoryId,
-        vendor: data.displayName,
+        vendor: 'Microsoft',
       },
     },
   });

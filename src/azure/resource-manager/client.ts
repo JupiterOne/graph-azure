@@ -19,6 +19,8 @@ import { IntegrationConfig } from '../../types';
 import authenticate from './authenticate';
 import { bunyanLogPolicy } from './BunyanLogPolicy';
 import { AzureManagementClientCredentials } from './types';
+import { PagedAsyncIterableIterator } from '@azure/core-paging';
+
 export const FIVE_MINUTES = 5 * 60 * 1000;
 export const DEFAULT_MAX_RETRIES = 5;
 /**
@@ -49,6 +51,7 @@ export type ResourceGetResponse<T> = T & ResourceResponse;
 export abstract class Client {
   private auth: AzureManagementClientCredentials;
   private clientSecretCredentials: ClientSecretCredential;
+  protected subscriptionId: string | undefined | null;
   constructor(
     private config: IntegrationConfig,
     readonly logger: IntegrationLogger,
@@ -61,6 +64,7 @@ export abstract class Client {
       this.config.clientId,
       this.config.clientSecret,
     );
+    this.subscriptionId = this.config.subscriptionId;
   }
 
   /**
@@ -99,6 +103,33 @@ export abstract class Client {
     }
     const client = createClient(ctor, {
       auth: this.auth,
+      logger: this.logger,
+      noRetryPolicy: this.noRetryPolicy,
+      passSubscriptionId:
+        options?.passSubscriptionId === undefined
+          ? true
+          : options.passSubscriptionId,
+    });
+    return client;
+  }
+  /**
+   * Create a service client for the latest version of azure packages.
+   * @param ctor an AzureServiceClient constructor function
+   * @param options if we should pass the subscription id.
+   * @returns
+   */
+  getServiceClient<T>(
+    ctor: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      new (...args: any[]): T;
+    },
+    options?: {
+      passSubscriptionId?: boolean;
+    },
+  ): T {
+    const client = createCredentialClient(ctor, {
+      credentials: this.clientSecretCredentials,
+      subscriptionId: this.subscriptionId,
       logger: this.logger,
       noRetryPolicy: this.noRetryPolicy,
       passSubscriptionId:
@@ -278,6 +309,57 @@ export function createClient<T>(
     ];
   } else {
     args = [options.auth.credentials, constructorOptions];
+  }
+  return new ctor(...args);
+}
+/**
+ * Creates a credential using a client secret credential. It also applies retry policies.
+ * @param ctor an AzureServiceClient constructor function
+ * @param options for the client
+ * @returns
+ */
+export function createCredentialClient<T>(
+  ctor: { new (...args: unknown[]): T },
+  options: {
+    credentials: ClientSecretCredential;
+    subscriptionId?: string | null;
+    logger: IntegrationLogger;
+    noRetryPolicy?: boolean;
+    passSubscriptionId: boolean;
+  },
+): T {
+  // Builds a custom policy chain to address
+  // https://github.com/Azure/azure-sdk-for-js/issues/7989
+  // See also: https://docs.microsoft.com/en-us/azure/virtual-machines/troubleshooting/troubleshooting-throttling-errors
+  const constructorOptions = {
+    noRetryPolicy: true, // < -- This removes retry policies so they can be added after the Deserialization
+    requestPolicyFactories: (
+      defaultRequestPolicyFactories: RequestPolicyFactory[],
+    ): RequestPolicyFactory[] => {
+      const policyChain = defaultRequestPolicyFactories;
+
+      // Tests may turn off retry altogether
+      if (!options.noRetryPolicy) {
+        policyChain.push(
+          ...[
+            exponentialRetryPolicy(), // < -- This will not retry a 429 response
+            systemErrorRetryPolicy(),
+            throttlingRetryPolicy(), // < -- This thing will only retry once
+          ],
+        );
+      }
+
+      policyChain.push(bunyanLogPolicy(options.logger));
+
+      return policyChain;
+    },
+  };
+
+  let args: any[];
+  if (options.passSubscriptionId) {
+    args = [options.credentials, options.subscriptionId, constructorOptions];
+  } else {
+    args = [options.credentials, constructorOptions];
   }
   return new ctor(...args);
 }
@@ -485,4 +567,78 @@ export async function iterateAllResources<ServiceClientType, ResourceType>({
       throw error;
     }
   }
+}
+
+export interface IterateAllOptions<ResourceType> {
+  resourceEndpoint: PagedAsyncIterableIterator<ResourceType>;
+  resourceDescription: string;
+  callback: (resource: ResourceType) => void | Promise<void>;
+  logger: IntegrationLogger;
+  endpointRatePeriod?: number;
+  maxRetryAttempts?: number;
+  timeout?: number;
+}
+/**
+ * Iterates over all resources coming from a AsyncIterableIterator, using error handling and retries.
+ * This should be the standard for all azure packages on the lastes versions.
+ * @param param0
+ * @returns
+ */
+export async function iterateAll<ResourceType>({
+  resourceEndpoint,
+  resourceDescription,
+  callback,
+  logger,
+  endpointRatePeriod = 5 * 60 * 1000,
+  maxRetryAttempts = DEFAULT_MAX_RETRIES,
+  timeout,
+}: IterateAllOptions<ResourceType>): Promise<void> {
+  let iterator: AsyncIterableIterator<ResourceType[]>;
+  let continuationToken;
+  let page;
+  let currentPage = 1;
+  do {
+    // Get Page of Blobs
+    iterator = continuationToken
+      ? resourceEndpoint.byPage({ continuationToken })
+      : resourceEndpoint.byPage();
+
+    try {
+      const result = await retryResourceRequest<
+        IteratorResult<ResourceType[], any>
+      >(
+        async () => await iterator.next(),
+        endpointRatePeriod,
+        logger,
+        maxRetryAttempts,
+        timeout,
+      );
+
+      page = result.value ?? [];
+
+      // Move to next page
+      continuationToken = page.continuationToken;
+      if (continuationToken) {
+        currentPage++;
+      }
+
+      for (const item of page) {
+        await callback(item);
+      }
+    } catch (error) {
+      if (error.status === 403) {
+        logger.warn(
+          { error: error.message, resourceUrl: resourceEndpoint },
+          'Encountered auth error in Azure Graph client.',
+        );
+        logger.publishWarnEvent({
+          name: IntegrationWarnEventName.MissingPermission,
+          description: `Received authorization error when attempting to call ${resourceDescription}. Please update credentials to grant access.`,
+        });
+        return;
+      } else {
+        throw error;
+      }
+    }
+  } while (continuationToken!);
 }

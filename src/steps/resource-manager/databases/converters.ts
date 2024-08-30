@@ -1,16 +1,16 @@
 import {
   Database as MariaDBDatabase,
   Server as MariaDBServer,
-} from '@azure/arm-mariadb/esm/models';
+} from '@azure/arm-mariadb';
 import {
   Database as MySQLDatabase,
   Server as MySQLServer,
-} from '@azure/arm-mysql/esm/models';
+} from '@azure/arm-mysql';
 import {
   Configuration as PostgreSQLServerConfiguration,
   Database as PostgreSQLDatabase,
   Server as PostgreSQLServer,
-} from '@azure/arm-postgresql/esm/models';
+} from '@azure/arm-postgresql';
 import {
   Database as SQLDatabase,
   Server as SQLServer,

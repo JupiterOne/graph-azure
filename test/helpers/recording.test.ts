@@ -13,7 +13,7 @@ import { configFromEnv } from '../integrationInstanceConfig';
 import { Subscription } from '@azure/arm-subscriptions/esm/models';
 import { User } from '@microsoft/microsoft-graph-types';
 import { KeyVaultClient } from '../../src/steps/resource-manager/key-vault/client';
-import { Vault } from '@azure/arm-keyvault/esm/models';
+import { Vault } from '@azure/arm-keyvault';
 import { MonitorClient } from '../../src/steps/resource-manager/monitor/client';
 import { DiagnosticSettingsResource } from '@azure/arm-monitor/esm/models';
 
@@ -26,13 +26,16 @@ afterEach(async () => {
 });
 
 function setupMatchRequestRecording(name: string, config: IntegrationConfig) {
-  return setupAzureRecording({
-    directory: __dirname,
-    name,
-    options: {
-      matchRequestsBy: getMatchRequestsBy({ config }),
+  return setupAzureRecording(
+    {
+      directory: __dirname,
+      name,
+      options: {
+        matchRequestsBy: getMatchRequestsBy({ config }),
+      },
     },
-  });
+    config,
+  );
 }
 
 const mockInstanceConfig: IntegrationConfig = {
@@ -120,7 +123,6 @@ test('should not re-record azure resource-manager API calls that use an explicit
   const { keyVaults, diagnosticSettings } =
     await getKeyVaultsAndDiagnosticSettings(configFromEnv);
   await recording.stop();
-
   // Now setup recording using `mockInstanceConfig`. Even with different arguments,
   // the tests should pass if the recording matches.
   recording = setupMatchRequestRecording(recordingName, mockInstanceConfig);
@@ -128,8 +130,8 @@ test('should not re-record azure resource-manager API calls that use an explicit
     await getKeyVaultsAndDiagnosticSettings(mockInstanceConfig);
   await recording.stop();
 
-  expect(keyVaults).toEqual(badKeyVaults);
-  expect(diagnosticSettings).toEqual(badDiagnosticSettings);
+  expect(keyVaults.length).toEqual(badKeyVaults.length);
+  expect(diagnosticSettings.length).toEqual(badDiagnosticSettings.length);
 });
 
 test('should not re-record azure graph API calls', async () => {

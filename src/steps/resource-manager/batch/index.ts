@@ -34,7 +34,7 @@ import {
   diagnosticSettingsEntitiesForResource,
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
-import { BatchAccount } from '@azure/arm-batch/esm/models';
+import { BatchAccount } from '@azure/arm-batch';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
 import { steps as storageSteps } from '../storage/constants';
 

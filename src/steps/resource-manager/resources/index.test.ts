@@ -2,36 +2,28 @@ import {
   fetchResourceGroups,
   createSubscriptionResourceGroupRelationship,
   fetchResourceGroupLocks,
-  buildResourceHasResourceLockRelationships,
 } from '.';
-import { Recording } from '@jupiterone/integration-sdk-testing';
+import { steps as storageSteps } from '../storage/constants';
+import {
+  executeStepWithDependencies,
+  Recording,
+} from '@jupiterone/integration-sdk-testing';
 import globalInstanceConfig, {
   configFromEnv,
+  getStepTestConfigForStep,
 } from '../../../../test/integrationInstanceConfig';
 import {
   getMatchRequestsBy,
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
-import {
-  Entity,
-  ExplicitRelationship,
-  generateRelationshipType,
-  MappedRelationship,
-  Relationship,
-  RelationshipClass,
-} from '@jupiterone/integration-sdk-core';
+import { Entity } from '@jupiterone/integration-sdk-core';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
+import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 import {
-  getMockAccountEntity,
-  getMockResourceGroupEntity,
-} from '../../../../test/helpers/getMockEntity';
-import { IntegrationConfig } from '../../../types';
-import { fetchSQLServers } from '../databases/sql';
-import { entities } from '../databases/sql/constants';
-import { RESOURCE_GROUP_ENTITY, RESOURCE_LOCK_ENTITY } from './constants';
-import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
-import { ANY_SCOPE } from '../constants';
+  STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
+  STEP_RM_RESOURCES_RESOURCE_LOCKS,
+} from './constants';
 let recording: Recording;
 
 afterEach(async () => {
@@ -231,119 +223,33 @@ test('step - resource group locks', async () => {
 }, 100000);
 
 describe('step - resource has resource lock relationships', () => {
-  async function getSetupEntities(config: IntegrationConfig) {
-    const accountEntity = getMockAccountEntity(config);
-    const resourceGroupEntity = getMockResourceGroupEntity('j1dev');
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [
-        {
-          _class: ['Account'],
-          _type: 'azure_subscription',
-          _key: `/subscriptions/193f89dc-6225-4a80-bacb-96b32fbf6dd0`,
-        },
-        resourceGroupEntity,
-      ],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
-      },
-    });
-
-    await fetchSQLServers(context);
-    await fetchResourceGroups(context);
-    await fetchResourceGroupLocks(context);
-
-    const sqlServerEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === entities.SERVER._type,
-    );
-
-    const resourceGroupEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === RESOURCE_GROUP_ENTITY._type,
-    );
-    const resourceLockEntities = context.jobState.collectedEntities.filter(
-      (e) => e._type === RESOURCE_LOCK_ENTITY._type,
-    );
-
-    return {
-      sqlServerEntities,
-      resourceGroupEntities,
-      resourceLockEntities,
-    };
-  }
-
-  function separateResourceLockRelationships(
-    collectedRelationships: Relationship[],
-  ) {
-    const { targets: directRelationships, rest: mappedRelationships } =
-      filterGraphObjects(collectedRelationships, (r) => !r._mapping) as {
-        targets: ExplicitRelationship[];
-        rest: MappedRelationship[];
-      };
-
-    const { rest: directResourceLockRelationships } = filterGraphObjects(
-      directRelationships,
-      (r) =>
-        r._type ===
-        generateRelationshipType(
-          RelationshipClass.HAS,
-          ANY_SCOPE,
-          RESOURCE_LOCK_ENTITY._type,
-        ),
-    );
-
-    const { targets: mappedResourceLockRelationships } = filterGraphObjects(
-      mappedRelationships,
-      (r) => (r._mapping.targetEntity._type as string) === 'ANY_SCOPE',
-    );
-
-    return {
-      directResourceLockRelationships,
-      mappedResourceLockRelationships,
-    };
-  }
-
   test('success', async () => {
-    recording = setupAzureRecording({
-      directory: __dirname,
-      name: 'resource-manager-step-resource-has-resource-lock-relationships',
-      options: {
-        matchRequestsBy: getMatchRequestsBy({
-          config: configFromEnv,
-        }),
+    const stepTestConfig = getStepTestConfigForStep(
+      STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
+    );
+
+    recording = setupAzureRecording(
+      {
+        name: STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
+        directory: __dirname,
       },
-    });
+      stepTestConfig.instanceConfig,
+    );
 
-    const { sqlServerEntities, resourceGroupEntities, resourceLockEntities } =
-      await getSetupEntities(configFromEnv);
-
-    const context = createMockAzureStepExecutionContext({
-      instanceConfig: configFromEnv,
-      entities: [
-        {
-          _class: ['Account'],
-          _type: 'azure_subscription',
-          _key: `/subscriptions/193f89dc-6225-4a80-bacb-96b32fbf6dd0`,
-        },
-        ...sqlServerEntities,
-        ...resourceGroupEntities,
-        ...resourceLockEntities,
+    const stepResults = await executeStepWithDependencies({
+      ...stepTestConfig,
+      dependencyStepIds: [
+        STEP_RM_RESOURCES_RESOURCE_LOCKS,
+        storageSteps.STORAGE_ACCOUNTS,
       ],
-      setData: {
-        [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(configFromEnv),
-      },
     });
-
-    await buildResourceHasResourceLockRelationships(context);
-
-    expect(context.jobState.collectedEntities).toHaveLength(0);
-
-    const { directResourceLockRelationships, mappedResourceLockRelationships } =
-      separateResourceLockRelationships(
-        context.jobState.collectedRelationships,
-      );
-
-    expect(directResourceLockRelationships.length).toBeGreaterThan(0);
-    expect(mappedResourceLockRelationships.length).toBeGreaterThan(0);
-  }, 50000);
+    const mappedRelationships = stepResults.collectedRelationships.filter(
+      (relationship) => relationship._mapping,
+    );
+    const directRelationships = stepResults.collectedRelationships.filter(
+      (relationship) => relationship._mapping!,
+    );
+    expect(mappedRelationships.length > 0);
+    expect(directRelationships.length > 0);
+  }, 50_000);
 });

@@ -27,7 +27,6 @@ import {
 } from './converters';
 import { SUBSCRIPTION_MATCHER } from '../utils/matchers';
 import { steps as subscriptionSteps } from '../subscriptions/constants';
-import { getResourceManagerSteps } from '../../../getStepStartStates';
 import { ANY_SCOPE } from '../constants';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
 
@@ -182,10 +181,8 @@ export const resourcesSteps: AzureIntegrationStep[] = [
     name: 'Resource HAS Resource Lock Relationships',
     entities: [],
     relationships: [relationships.RESOURCE_LOCK_HAS_ANY_SCOPE],
-    dependsOn: [
-      STEP_RM_RESOURCES_RESOURCE_LOCKS,
-      ...getResourceManagerSteps().executeFirstSteps,
-    ],
+    dependsOn: [],
+    dependencyGraphId: 'last',
     executionHandler: buildResourceHasResourceLockRelationships,
     ingestionSourceId: INGESTION_SOURCE_IDS.RESOURCES,
   },

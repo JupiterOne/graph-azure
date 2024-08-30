@@ -16,6 +16,7 @@ import {
   requestWithAuthErrorhandling,
 } from '../../../azure/resource-manager/client';
 import { UsageDetail } from '@azure/arm-consumption/esm/models';
+import { getUsageDetailsQueryDates } from './utils';
 
 export class J1SubscriptionClient extends Client {
   public async getSubscription(subscriptionId: string) {
@@ -71,13 +72,20 @@ export class J1SubscriptionClient extends Client {
         passSubscriptionId: false,
       },
     );
+    const dates = getUsageDetailsQueryDates();
     const usageDetails = await requestWithAuthErrorhandling(
       // Need API version to 2020-01-01 in order to return subscription tags
       // serviceClient.subscriptions.get() does not work because the api version is too old
       // sendOperationRequest was the only way I found to change the API version with this sdk
       async () =>
         await serviceClient.sendOperationRequest(
-          { scope, options: { timeout: FIVE_MINUTES } },
+          {
+            scope,
+            options: {
+              timeout: FIVE_MINUTES,
+              filter: `properties/usageEnd eq '${dates.usageEnd}' and properties/usageStart eq '${dates.usageStart}'`,
+            },
+          },
           listUsageDetailsOperationSpec,
         ),
       this.logger,
@@ -279,11 +287,20 @@ const apiVersion2019: msRest.OperationQueryParameter = {
     },
   },
 };
+export const filter1: msRest.OperationQueryParameter = {
+  parameterPath: ['options', 'filter'],
+  mapper: {
+    serializedName: '$filter',
+    type: {
+      name: 'String',
+    },
+  },
+};
 const listUsageDetailsOperationSpec: msRest.OperationSpec = {
   httpMethod: 'GET',
   path: '{scope}/providers/Microsoft.Consumption/usageDetails',
   urlParameters: [scope0, top],
-  queryParameters: [apiVersion2019],
+  queryParameters: [filter1, apiVersion2019],
   headerParameters: [acceptLanguage],
   responses: {
     200: {

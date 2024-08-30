@@ -1,4 +1,4 @@
-import { FirewallRule } from '@azure/arm-postgresql/esm/models';
+import { FirewallRule } from '@azure/arm-postgresql';
 import { createIntegrationEntity } from '@jupiterone/integration-sdk-core';
 import { PostgreSQLEntities } from './constants';
 

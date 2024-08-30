@@ -29,7 +29,11 @@ export function getMockResourceGroupEntity(
 }
 
 export function getMockSubscriptionEntity(config: IntegrationConfig) {
-  return createSubscriptionEntity(webLinker, {
-    id: `/subscriptions/${config.subscriptionId}`,
-  });
+  return createSubscriptionEntity(
+    webLinker,
+    {
+      id: `/subscriptions/${config.subscriptionId}`,
+    },
+    config.directoryId,
+  );
 }

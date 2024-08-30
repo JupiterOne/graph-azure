@@ -33,7 +33,7 @@ import {
   getDiagnosticSettingsRelationshipsForResource,
 } from '../utils/createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import { getAccountEntity } from '../../active-directory';
-import { Vault } from '@azure/arm-keyvault/esm/models';
+import { Vault } from '@azure/arm-keyvault';
 import { INGESTION_SOURCE_IDS } from '../../../constants';
 import { steps as storageSteps } from '../storage/constants';
 export async function fetchKeyVaults(

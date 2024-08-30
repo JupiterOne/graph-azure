@@ -19,7 +19,9 @@ afterEach(async () => {
     await recording.stop();
   }
 });
-test(
+// Skipping this tests since there is not a current way to create this resources in the azure portal
+// https://learn.microsoft.com/en-us/azure/mariadb/whats-happening-to-mariadb
+test.skip(
   STEP_RM_DATABASE_MARIADB_DATABASES,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(
@@ -45,7 +47,7 @@ test(
   100_000,
 );
 
-test(
+test.skip(
   STEP_RM_DATABASE_MARIADB_DATABASES_DIAGNOSTIC_SETTINGS,
   async () => {
     const stepTestConfig = getStepTestConfigForStep(

@@ -3,8 +3,8 @@ import {
   GraphClient,
   IterableGraphResponse,
 } from '../../../azure/graph/client';
-import { ApplicationPackage } from '@azure/arm-batch/esm/models';
 import { PolicyAssignment } from '@azure/arm-policy/esm/models';
+import { ApplicationPackage } from '@azure/arm-batch';
 
 type ExtraProperties = {
   expiration?: {

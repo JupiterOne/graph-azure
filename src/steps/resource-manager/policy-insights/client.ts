@@ -8,7 +8,7 @@ import { IntegrationConfig } from '../../../types';
 import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 export class AzurePolicyInsightsClient extends Client {
-  private subscriptionId: string;
+  public subscriptionId: string;
 
   constructor(
     config: IntegrationConfig,

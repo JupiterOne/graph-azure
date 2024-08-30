@@ -1,3 +1,113 @@
+# v7.9.4 (Wed Aug 28 2024)
+
+#### 🐛 Bug Fix
+
+- Add directory id to subscription [#671](https://github.com/JupiterOne/graph-azure/pull/671) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v7.9.3 (Wed Aug 28 2024)
+
+#### 🐛 Bug Fix
+
+- Change graph retry logic [#670](https://github.com/JupiterOne/graph-azure/pull/670) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v7.9.2 (Tue Aug 27 2024)
+
+#### 🐛 Bug Fix
+
+- Resource groups: Paginate correctly [#669](https://github.com/JupiterOne/graph-azure/pull/669) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v7.9.1 (Tue Aug 27 2024)
+
+#### 🐛 Bug Fix
+
+- Paginate resource groups [#668](https://github.com/JupiterOne/graph-azure/pull/668) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v7.9.0 (Fri Aug 23 2024)
+
+#### 🚀 Enhancement
+
+- Recordings update [#667](https://github.com/JupiterOne/graph-azure/pull/667) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v7.8.1 (Wed Aug 14 2024)
+
+#### 🐛 Bug Fix
+
+- SST | High urgency | add resourceName to azure_policy_state [#664](https://github.com/JupiterOne/graph-azure/pull/664) ([@SeaBlooms](https://github.com/SeaBlooms) [@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 2
+
+- Colin Blumer ([@SeaBlooms](https://github.com/SeaBlooms))
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v7.8.0 (Tue Aug 13 2024)
+
+#### 🚀 Enhancement
+
+- add more record type properties [#662](https://github.com/JupiterOne/graph-azure/pull/662) ([@SeaBlooms](https://github.com/SeaBlooms) [@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 2
+
+- Colin Blumer ([@SeaBlooms](https://github.com/SeaBlooms))
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v7.7.1 (Mon Aug 12 2024)
+
+#### 🐛 Bug Fix
+
+- Freeze microsoft package.json versions [#663](https://github.com/JupiterOne/graph-azure/pull/663) ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
+# v7.7.0 (Tue Aug 06 2024)
+
+#### 🚀 Enhancement
+
+- Kno 427 [#661](https://github.com/JupiterOne/graph-azure/pull/661) ([@SeaBlooms](https://github.com/SeaBlooms))
+
+#### Authors: 1
+
+- Colin Blumer ([@SeaBlooms](https://github.com/SeaBlooms))
+
+---
+
 # v7.6.0 (Tue Aug 06 2024)
 
 #### 🚀 Enhancement

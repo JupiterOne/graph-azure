@@ -1,3 +1,15 @@
+# v7.9.5 (Mon Sep 02 2024)
+
+#### 🐛 Bug Fix
+
+- INT-11596: add public access property for database servers [#672](https://github.com/JupiterOne/graph-azure/pull/672) ([@gastonyelmini](https://github.com/gastonyelmini))
+
+#### Authors: 1
+
+- Gaston Yelmini ([@gastonyelmini](https://github.com/gastonyelmini))
+
+---
+
 # v7.9.4 (Wed Aug 28 2024)
 
 #### 🐛 Bug Fix

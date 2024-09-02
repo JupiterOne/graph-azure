@@ -55,7 +55,7 @@ export class SQLClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
-        list: async () => {
+        list: () => {
           return serviceClient.databases.listByServer(
             resourceGroup,
             serverName,
@@ -82,7 +82,7 @@ export class SQLClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
-        list: async () => {
+        list: () => {
           return serviceClient.serverAzureADAdministrators.listByServer(
             resourceGroup,
             serverName,
@@ -296,7 +296,7 @@ export class SQLClient extends Client {
       logger: this.logger,
       serviceClient,
       resourceEndpoint: {
-        list: async () => {
+        list: () => {
           return serviceClient.firewallRules.listByServer(
             resourceGroup,
             serverName,

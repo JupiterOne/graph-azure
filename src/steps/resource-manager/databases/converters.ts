@@ -82,6 +82,7 @@ export function createDbServerEntity(
         classification: null,
         encrypted: null,
         secureTransport: anyServer.sslEnforcement === 'Enabled',
+        publiclyAccessible: data.publicNetworkAccess === 'Enabled',
         'configuration.logCheckpoints': getConfiguration(
           configurations,
           'log_checkpoints',

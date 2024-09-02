@@ -972,13 +972,14 @@
     "@azure/ms-rest-js" "^2.0.4"
     tslib "^1.10.0"
 
-"@azure/arm-sql@7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@azure/arm-sql/-/arm-sql-7.0.2.tgz#d4fbdef82cf86751d5010373f47b44d5d294bfec"
-  integrity sha512-4oNjPXnSDh+V86j5b4R88ftfj0O4RqtbAjSgb93lLkw9nfz8FPLLjlde/4OHH2tIK0CdB/0dPqb3mZrdhDhwBw==
+"@azure/arm-sql@8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/arm-sql/-/arm-sql-8.0.0.tgz#2f7ba3683029ac5a7a5914b859630aa9637f36fb"
+  integrity sha512-teH2r31gXDnaVJUEbBzas+BZEe1paDDmCV7h5753sILoOj7/a6z2AyZyjI0LdI7yrG3kIHHtSPCQ9Bq7lYl8Pw==
   dependencies:
-    "@azure/ms-rest-azure-js" "^2.0.1"
-    "@azure/ms-rest-js" "^2.0.4"
+    "@azure/core-auth" "^1.1.4"
+    "@azure/ms-rest-azure-js" "^2.1.0"
+    "@azure/ms-rest-js" "^2.2.0"
     tslib "^1.10.0"
 
 "@azure/arm-storage@15.3.0":

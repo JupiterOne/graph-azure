@@ -7,20 +7,27 @@ import { accessPackageEntites } from './constants';
 import { ApplicationPackage } from '@azure/arm-batch';
 import { generateEntityKey } from '../../../utils/generateKeys';
 import { ExtendedPolicyAssignment } from './client';
+import {
+  createAccessPackageApproverAssignEntity,
+  createAccessPackageAssignEntity,
+  createAccessPackageAssignmentAssignEntity,
+  createAccessPackageAssignmentPolicyAssignEntity,
+  createAccessPackageCatalogAssignEntity,
+  createAccessPackageRequestAssignEntity,
+  createApplicationAssignEntity,
+} from './entities';
 
 export function createAccessPackageEntity(data: ApplicationPackage): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class: accessPackageEntites.STEP_ACCESS_PACKAGE._class,
+      assign: createAccessPackageAssignEntity({
         _key: generateEntityKey(data.id),
-        _type: accessPackageEntites.STEP_ACCESS_PACKAGE._type,
         resourceName: accessPackageEntites.STEP_ACCESS_PACKAGE.resourceName,
         name: data.id as string,
         category: ['infrastructure'],
         function: ['workflow'],
-      },
+      }),
     },
   });
 }
@@ -29,17 +36,15 @@ export function createAzureApplicationEntity(data: any): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class: accessPackageEntites.STEP_AZURE_APPLICATION._class,
+      assign: createApplicationAssignEntity({
         _key: generateEntityKey(data.appId),
-        _type: accessPackageEntites.STEP_AZURE_APPLICATION._type,
         resourceName: accessPackageEntites.STEP_AZURE_APPLICATION.resourceName,
         name: data.displayName,
         id: data.id,
         publisherDomain: data.publisherDomain,
         signInAudience: data.signInAudience,
         appId: data.appId,
-      },
+      }),
     },
   });
 }
@@ -48,10 +53,8 @@ export function createAccessPackageAssignmentEntity(data: any): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class: accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT._class,
+      assign: createAccessPackageAssignmentAssignEntity({
         _key: generateEntityKey(data.id),
-        _type: accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT._type,
         resourceName:
           accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT.resourceName,
         name: data.id as string,
@@ -62,7 +65,7 @@ export function createAccessPackageAssignmentEntity(data: any): Entity {
           .userId as string,
         groupId: data.assignmentPolicy.specificAllowedTargets[0]
           .groupId as string,
-      },
+      }),
     },
   });
 }
@@ -73,11 +76,8 @@ export function createAccessPackageAssignmentPolicyEntity(
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY._class,
+      assign: createAccessPackageAssignmentPolicyAssignEntity({
         _key: generateEntityKey(data.id),
-        _type: accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY._type,
         resourceName:
           accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY
             .resourceName,
@@ -87,9 +87,10 @@ export function createAccessPackageAssignmentPolicyEntity(
         expirationEndDateTimeOn: parseTimePropertyValue(
           data.expiration?.endDateTime,
         ),
+        expirationEndOn: parseTimePropertyValue(data.expiration?.endDateTime),
         expirationDuration: data.expiration?.duration,
         expirationType: data.expiration?.type,
-      },
+      }),
     },
   });
 }
@@ -98,12 +99,8 @@ export function createAccessPackageAssignmentRequestEntity(data: any): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST._class,
+      assign: createAccessPackageRequestAssignEntity({
         _key: generateEntityKey(data.id),
-        _type:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST._type,
         resourceName:
           accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST
             .resourceName,
@@ -114,7 +111,7 @@ export function createAccessPackageAssignmentRequestEntity(data: any): Entity {
         name: data.id as string,
         title: 'Access Package Request',
         objectId: data.requestor.objectId as string,
-      },
+      }),
     },
   });
 }
@@ -127,13 +124,11 @@ export function createAccessPackageCatalogEntity(
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class: accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._class,
+      assign: createAccessPackageCatalogAssignEntity({
         _key:
           accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type +
           '_' +
           generateEntityKey(data.id),
-        _type: accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG._type,
         resourceName:
           accessPackageEntites.STEP_ACCESS_PACKAGE_CATALOG.resourceName,
         name: data.displayName,
@@ -144,7 +139,7 @@ export function createAccessPackageCatalogEntity(
         description: data.description,
         resourceAppId: resourceAppId,
         accessPackageId: accessPackageId,
-      },
+      }),
     },
   });
 }
@@ -153,12 +148,8 @@ export function createAccessPackageAssignmentApproverEntity(data: any): Entity {
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _class:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER._class,
+      assign: createAccessPackageApproverAssignEntity({
         _key: `${data.id}/requestApproverKey` as string,
-        _type:
-          accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER._type,
         resourceName:
           accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER
             .resourceName,
@@ -169,7 +160,7 @@ export function createAccessPackageAssignmentApproverEntity(data: any): Entity {
         reviewedById: data.reviewedBy?.id,
         displayName: data.reviewedBy?.displayName,
         title: 'request is ' + data.reviewResult,
-      },
+      }),
     },
   });
 }

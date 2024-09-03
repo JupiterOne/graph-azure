@@ -3,6 +3,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { createResourceGroupResourceRelationshipMetadata } from '../utils/createResourceGroupResourceRelationship';
+import { ServiceEntityMetadata, ApiEntityMetadata } from './entities';
 
 // Fetch Resource Groups
 export const STEP_RM_API_MANAGEMENT_SERVICES = 'rm-api-management-services';
@@ -10,16 +11,8 @@ export const STEP_RM_API_MANAGEMENT_APIS = 'rm-api-management-apis';
 export const STEP_RM_API_MANAGEMENT_SERVICES_DIAGNOSTIC_SETTINGS =
   'm-api-management-services-diagnostic-settings';
 export const ApiManagementEntities = {
-  SERVICE: {
-    _type: 'azure_api_management_service',
-    _class: ['Gateway'],
-    resourceName: '[RM] API Management Service',
-  },
-  API: {
-    _type: 'azure_api_management_api',
-    _class: ['ApplicationEndpoint'],
-    resourceName: '[RM] API Management API',
-  },
+  SERVICE: ServiceEntityMetadata,
+  API: ApiEntityMetadata,
 };
 
 export const ApiManagementRelationships = {

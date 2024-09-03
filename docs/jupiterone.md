@@ -304,7 +304,7 @@ The following entities are created:
 | Resources                                        | Entity `_type`                                    | Entity `_class`                    |
 | ------------------------------------------------ | ------------------------------------------------- | ---------------------------------- |
 | Azure Application Gateway                        | `azure_application_gateway`                       | `Network`                          |
-| Azure Application Security Groups                | `azure_application_security_group`                | `Firewall`                         |
+| Azure Application Security Group                 | `azure_application_security_group`                | `Firewall`                         |
 | Azure Synapse Analytics                          | `azure_synapse`                                   | `Service`                          |
 | FrontDoor                                        | `azure_frontdoor`                                 | `Service`                          |
 | FrontDoor Backend Pool                           | `azure_frontdoor_backend_pool`                    | `Configuration`                    |
@@ -314,7 +314,7 @@ The following entities are created:
 | [AD] Account                                     | `azure_account`                                   | `Account`                          |
 | [AD] Conditional Access                          | `azure_conditional_access_service`                | `Service`                          |
 | [AD] Conditional Access Authorization Context    | `azure_conditional_access_authorization_context`  | `Resource`                         |
-| [AD] Conditional Access Named location           | `azure_conditional_access_named_location`         | `Network`                          |
+| [AD] Conditional Access Named Location           | `azure_conditional_access_named_location`         | `Network`                          |
 | [AD] Conditional Access Policy                   | `azure_conditional_access_policy`                 | `AccessPolicy`                     |
 | [AD] Conditional Access Template                 | `azure_conditional_access_template`               | `AccessPolicy`                     |
 | [AD] Device                                      | `azure_device`                                    | `Device`                           |
@@ -746,6 +746,7 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_START} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_START} -->
+
 | Role Permissions List (116)                                                 |
 | --------------------------------------------------------------------------- |
 | `Microsoft.Advisor/recommendations/read`                                    |
@@ -864,8 +865,10 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `Microsoft.Web/sites/config/list/action`                                    |
 | `Microsoft.Web/sites/config/Read`                                           |
 | `Microsoft.Web/sites/Read`                                                  |
+
 <!-- {J1_PERMISSIONS_DOCUMENTATION_ROLE_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_START} -->
+
 | API Permissions List (7)         |
 | -------------------------------- |
 | `AuditLog.Read.All`              |
@@ -875,5 +878,6 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
 | `EntitlementManagement.Read.All` |
 | `Policy.Read.All`                |
 | `Policy.Read.ConditionalAccess`  |
+
 <!-- {J1_PERMISSIONS_DOCUMENTATION_API_PERMISSIONS_END} -->
 <!-- {J1_PERMISSIONS_DOCUMENTATION_MARKER_END} -->

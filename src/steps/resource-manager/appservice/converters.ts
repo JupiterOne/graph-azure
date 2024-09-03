@@ -12,7 +12,12 @@ import {
   WebAppsGetAuthSettingsResponse,
   WebAppsGetConfigurationResponse,
 } from '@azure/arm-appservice/esm/models';
-import { AppServiceEntities } from './constants';
+import {
+  createAppServicePlanAssignEntity,
+  createFunctionAppAssignEntity,
+  createWebAppAssignEntity,
+  WebAppEntityMetadata,
+} from './entities';
 
 export function createAppEntity({
   webLinker,
@@ -27,42 +32,47 @@ export function createAppEntity({
   appConfig: WebAppsGetConfigurationResponse | undefined;
   appAuthSettings: WebAppsGetAuthSettingsResponse | undefined;
 }): Entity {
+  const entityData = {
+    _key: `${data.id}-${appConfig?.id ?? ''}-${appAuthSettings?.id ?? ''}`,
+    id: data.id,
+    name: data.name || data.id || '',
+    type: data.type,
+    kind: data.kind?.split(','),
+    location: data.location,
+    // 9.1 Ensure App Service Authentication is set on Azure App Service (Automated)
+    authEnabled: appAuthSettings?.enabled,
+    isAuthEnabled: appAuthSettings?.enabled,
+    // 9.2 Ensure web app redirects all HTTP traffic to HTTPS in Azure App Service (Automated)
+    httpsOnly: data.httpsOnly,
+    // 9.3 Ensure web app is using the latest version of TLS encryption (Automated)
+    minTlsVersion: appConfig?.minTlsVersion,
+    // 9.4 Ensure the web app has 'Client Certificates (Incoming client certificates)' set to 'On' (Automated)
+    clientCertEnabled: data.clientCertEnabled,
+    isClientCertEnabled: data.clientCertEnabled,
+    // 9.5 Ensure that Register with Azure Active Directory is enabled on App Service (Automated)
+    principalId: data.identity?.principalId,
+    // 9.6 Ensure that 'PHP version' is the latest, if used to run the web app (Manual)
+    phpVersion: appConfig?.phpVersion,
+    // 9.7 Ensure that 'Python version' is the latest, if used to run the web app (Manual)
+    pythonVersion: appConfig?.pythonVersion,
+    // 9.8 Ensure that 'Java version' is the latest, if used to run the web app (Manual)
+    javaVersion: appConfig?.javaVersion,
+    // Not CIS benchmark, but useful property
+    nodeVersion: appConfig?.nodeVersion,
+    // 9.9 Ensure that 'HTTP Version' is the latest, if used to run the web app (Manual)
+    http20Enabled: appConfig?.http20Enabled,
+    isHttp20Enabled: appConfig?.http20Enabled,
+    // 9.10 Ensure FTP deployments are disabled (Automated)
+    ftpsState: appConfig?.ftpsState,
+    webLink: webLinker.portalResourceUrl(data.id),
+  };
   const appServiceEntity = createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
-        _key: `${data.id}-${appConfig?.id ?? ''}-${appAuthSettings?.id ?? ''}`,
-        _type: metadata._type,
-        _class: metadata._class,
-        id: data.id,
-        name: data.name,
-        type: data.type,
-        kind: data.kind?.split(','),
-        location: data.location,
-        // 9.1 Ensure App Service Authentication is set on Azure App Service (Automated)
-        authEnabled: appAuthSettings?.enabled,
-        // 9.2 Ensure web app redirects all HTTP traffic to HTTPS in Azure App Service (Automated)
-        httpsOnly: data.httpsOnly,
-        // 9.3 Ensure web app is using the latest version of TLS encryption (Automated)
-        minTlsVersion: appConfig?.minTlsVersion,
-        // 9.4 Ensure the web app has 'Client Certificates (Incoming client certificates)' set to 'On' (Automated)
-        clientCertEnabled: data.clientCertEnabled,
-        // 9.5 Ensure that Register with Azure Active Directory is enabled on App Service (Automated)
-        principalId: data.identity?.principalId,
-        // 9.6 Ensure that 'PHP version' is the latest, if used to run the web app (Manual)
-        phpVersion: appConfig?.phpVersion,
-        // 9.7 Ensure that 'Python version' is the latest, if used to run the web app (Manual)
-        pythonVersion: appConfig?.pythonVersion,
-        // 9.8 Ensure that 'Java version' is the latest, if used to run the web app (Manual)
-        javaVersion: appConfig?.javaVersion,
-        // Not CIS benchmark, but useful property
-        nodeVersion: appConfig?.nodeVersion,
-        // 9.9 Ensure that 'HTTP Version' is the latest, if used to run the web app (Manual)
-        http20Enabled: appConfig?.http20Enabled,
-        // 9.10 Ensure FTP deployments are disabled (Automated)
-        ftpsState: appConfig?.ftpsState,
-        webLink: webLinker.portalResourceUrl(data.id),
-      },
+      assign:
+        metadata._type === WebAppEntityMetadata._type
+          ? createWebAppAssignEntity({ ...entityData })
+          : createFunctionAppAssignEntity({ ...entityData }),
     },
   });
 
@@ -90,22 +100,25 @@ export function createAppServicePlanEntity(
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
+      assign: createAppServicePlanAssignEntity({
         _key: data.id as string,
-        _type: AppServiceEntities.APP_SERVICE_PLAN._type,
-        _class: AppServiceEntities.APP_SERVICE_PLAN._class,
         id: data.id,
-        name: data.name,
+        name: data.name || data.id || '',
         type: data.type,
         kind: data.kind?.split(','),
         location: data.location,
         'sku.name': data.sku?.name,
+        skuName: data.sku?.name,
         'sku.tier': data.sku?.tier,
+        skuTier: data.sku?.tier,
         'sku.size': data.sku?.size,
+        skuSize: data.sku?.size,
         'sku.family': data.sku?.family,
+        skuFamily: data.sku?.family,
         'sku.capacity': data.sku?.capacity,
+        skuCapacity: data.sku?.capacity,
         webLink: webLinker.portalResourceUrl(data.id),
-      },
+      }),
     },
   });
 }

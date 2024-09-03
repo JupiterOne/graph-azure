@@ -2,8 +2,8 @@ import {
   RelationshipClass,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { entities } from '../subscriptions/constants';
+import { ADEntities } from '../../active-directory/constants';
 
 export const ManagementGroupSteps = {
   MANAGEMENT_GROUPS: 'rm-management-groups',
@@ -20,7 +20,7 @@ export const ManagementGroupEntities = {
 export const ManagementGroupRelationships = {
   ACCOUNT_HAS_ROOT_MANAGEMENT_GROUP: {
     _type: 'azure_account_has_management_group',
-    sourceType: ACCOUNT_ENTITY_TYPE,
+    sourceType: ADEntities.ACCOUNT._type,
     _class: RelationshipClass.HAS,
     targetType: ManagementGroupEntities.MANAGEMENT_GROUP._type,
   },

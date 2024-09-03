@@ -1,11 +1,9 @@
 import { PrincipalType } from '@azure/arm-authorization/esm/models';
 import {
-  GROUP_ENTITY_TYPE,
   STEP_AD_GROUPS,
-  USER_ENTITY_TYPE,
   STEP_AD_USERS,
-  SERVICE_PRINCIPAL_ENTITY_TYPE,
   STEP_AD_SERVICE_PRINCIPALS,
+  ADEntities,
 } from '../../active-directory/constants';
 import {
   generateRelationshipType,
@@ -14,6 +12,11 @@ import {
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { ANY_SCOPE } from '../constants';
+import {
+  RoleDefinitionEntityMetadata,
+  ClassicAdminGroupEntityMetadata,
+  RoleAssignmentEntityMetadata,
+} from './entities';
 
 export const steps = {
   ROLE_ASSIGNMENTS: 'rm-authorization-role-assignments',
@@ -28,22 +31,9 @@ export const steps = {
 };
 
 export const entities = {
-  ROLE_DEFINITION: {
-    _type: 'azure_role_definition',
-    _class: ['AccessRole'],
-    resourceName: '[RM] Role Definition',
-  },
-  CLASSIC_ADMIN: {
-    _key: 'azure_classic_admin_group',
-    _type: 'azure_classic_admin_group',
-    _class: ['UserGroup'],
-    resourceName: '[RM] Classic Admin',
-  },
-  ROLE_ASSIGNMENT: {
-    _type: 'azure_role_assignment',
-    _class: ['AccessPolicy'],
-    resourceName: '[RM] Role Assignment',
-  },
+  ROLE_DEFINITION: RoleDefinitionEntityMetadata,
+  CLASSIC_ADMIN: ClassicAdminGroupEntityMetadata,
+  ROLE_ASSIGNMENT: RoleAssignmentEntityMetadata,
 };
 
 interface RoleAssignmentPrincipalMap {
@@ -80,7 +70,7 @@ const ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP: RoleAssignmentPrincipalMap[] = [
   },
   {
     principalType: 'Group',
-    type: GROUP_ENTITY_TYPE,
+    type: ADEntities.USER_GROUP._type,
     dependsOn: [STEP_AD_GROUPS],
   },
   {
@@ -90,7 +80,7 @@ const ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP: RoleAssignmentPrincipalMap[] = [
   },
   {
     principalType: 'ServicePrincipal',
-    type: SERVICE_PRINCIPAL_ENTITY_TYPE,
+    type: ADEntities.SERVICE_PRINCIPAL._type,
     dependsOn: [STEP_AD_SERVICE_PRINCIPALS],
   },
   {
@@ -100,7 +90,7 @@ const ROLE_ASSIGNMENT_PRINCIPAL_TYPES_MAP: RoleAssignmentPrincipalMap[] = [
   },
   {
     principalType: 'User',
-    type: USER_ENTITY_TYPE,
+    type: ADEntities.USER._type,
     dependsOn: [STEP_AD_USERS],
   },
 ];
@@ -153,7 +143,7 @@ export const relationships = {
     _type: 'azure_classic_admin_group_has_user',
     sourceType: entities.CLASSIC_ADMIN._type,
     _class: RelationshipClass.HAS,
-    targetType: USER_ENTITY_TYPE,
+    targetType: ADEntities.USER._type,
   },
   ROLE_ASSIGNMENT_USES_DEFINITION: {
     _type: 'azure_role_assignment_uses_definition',

@@ -5,11 +5,11 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { AzureWebLinker } from '../../../azure';
-import { ApiManagementEntities } from './constants';
 import {
   ApiManagementServiceResource,
   ApiContract,
 } from '@azure/arm-apimanagement/esm/models';
+import { createApiAssignEntity, createServiceAssignEntity } from './entities';
 
 export function createApiManagementServiceEntity(
   webLinker: AzureWebLinker,
@@ -18,18 +18,16 @@ export function createApiManagementServiceEntity(
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
+      assign: createServiceAssignEntity({
         ...convertProperties(data),
         _key: data.id as string,
-        _type: ApiManagementEntities.SERVICE._type,
-        _class: ApiManagementEntities.SERVICE._class,
         id: data.id,
-        name: data.name,
+        name: data.name || data.id || '',
         public: !!data.publicIPAddresses?.length,
         function: ['api-gateway'],
         category: ['application'],
         webLink: webLinker.portalResourceUrl(data.id),
-      },
+      }),
     },
   });
 }
@@ -41,16 +39,14 @@ export function createApiManagementApiEntity(
   return createIntegrationEntity({
     entityData: {
       source: data,
-      assign: {
+      assign: createApiAssignEntity({
         ...convertProperties(data),
         _key: data.id as string,
-        _type: ApiManagementEntities.API._type,
-        _class: ApiManagementEntities.API._class,
         id: data.id,
-        name: data.name,
+        name: data.name || data.id || '',
         address: data.path,
         webLink: webLinker.portalResourceUrl(data.id),
-      },
+      }),
     },
   });
 }

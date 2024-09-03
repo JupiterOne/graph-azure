@@ -5,7 +5,6 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import {
   buildActivityLogScopeRelationships,
   fetchActivityLogAlerts,
@@ -21,6 +20,7 @@ import { MonitorEntities, MonitorRelationships } from './constants';
 import { Entity, getRawData } from '@jupiterone/integration-sdk-core';
 import { ActivityLogAlertResource } from '@azure/arm-monitor/esm/models';
 import { EOL_MATCHER, SUBSCRIPTION_MATCHER } from '../utils/matchers';
+import { ADEntities } from '../../active-directory/constants';
 
 let recording: Recording;
 
@@ -62,7 +62,7 @@ test('step = monitor log profiles', async () => {
       },
     ],
     setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      [ADEntities.ACCOUNT._type]: { defaultDomain: 'www.fake-domain.com' },
     },
   });
 
@@ -119,7 +119,7 @@ describe('rm-monitor-activity-log-alerts', () => {
       instanceConfig: configFromEnv,
       entities: [resourceGroupEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -181,7 +181,7 @@ describe('rm-monitor-activity-log-alert-scope-relationships', () => {
       instanceConfig: config,
       entities: [resourceGroupEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -232,7 +232,7 @@ describe('rm-monitor-activity-log-alert-scope-relationships', () => {
       instanceConfig: configFromEnv,
       entities: [subscriptionEntity, ...activityLogAlertEntities],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 

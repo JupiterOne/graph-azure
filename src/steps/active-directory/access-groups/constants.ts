@@ -1,8 +1,14 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
+import { ADEntities } from '../constants';
 import {
-  GROUP_ENTITY_TYPE,
-  USER_ENTITY_TYPE,
-} from '../../active-directory/constants';
+  AccessPackageApproverEntityMetadata,
+  AccessPackageAssignmentEntityMetadata,
+  AccessPackageAssignmentPolicyEntityMetadata,
+  AccessPackageCatalogEntityMetadata,
+  AccessPackageEntityMetadata,
+  AccessPackageRequestEntityMetadata,
+  ApplicationEntityMetadata,
+} from './entities';
 
 export const STEP_ACCESS_PACKAGE = 'rm-access-package';
 export const STEP_ACCESS_PACKAGE_ASSIGNMENT = 'rm-access-package-assignment';
@@ -34,41 +40,14 @@ export const STEP_ACCESS_PACKAGE_HAS_APPLICATION_RELATIONSHIP =
   'rm-azure-access-package-has-application';
 
 export const accessPackageEntites = {
-  STEP_ACCESS_PACKAGE: {
-    _type: 'azure_access_packages_services',
-    _class: ['Service'],
-    resourceName: '[RM] Access Package',
-  },
-  STEP_ACCESS_PACKAGE_ASSIGNMENT: {
-    _type: 'azure_access_packages_service_assignment',
-    _class: ['AccessRole'],
-    resourceName: '[RM] Access Package Assignment',
-  },
-  STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY: {
-    _type: 'azure_access_packages_policy',
-    _class: ['AccessPolicy'],
-    resourceName: '[RM] Access Package Assignment Policy',
-  },
-  STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST: {
-    _type: 'azure_access_packages_request',
-    _class: ['Requirement'],
-    resourceName: '[RM] Access Package Assignment Request',
-  },
-  STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER: {
-    _type: 'azure_access_packages_approver',
-    _class: ['Review'],
-    resourceName: '[RM] Access Package Assignment Approver',
-  },
-  STEP_ACCESS_PACKAGE_CATALOG: {
-    _type: 'azure_access_packages_catalog',
-    _class: ['Resource'],
-    resourceName: '[RM] Access Package Catalog',
-  },
-  STEP_AZURE_APPLICATION: {
-    _type: 'azure_application',
-    _class: ['Application'],
-    resourceName: '[RM] Azure Application',
-  },
+  STEP_ACCESS_PACKAGE: AccessPackageEntityMetadata,
+  STEP_ACCESS_PACKAGE_ASSIGNMENT: AccessPackageAssignmentEntityMetadata,
+  STEP_ACCESS_PACKAGE_ASSIGNMENT_POLICY:
+    AccessPackageAssignmentPolicyEntityMetadata,
+  STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST: AccessPackageRequestEntityMetadata,
+  STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER: AccessPackageApproverEntityMetadata,
+  STEP_ACCESS_PACKAGE_CATALOG: AccessPackageCatalogEntityMetadata,
+  STEP_AZURE_APPLICATION: ApplicationEntityMetadata,
 };
 
 export const accessPackageRelationships = {
@@ -77,11 +56,11 @@ export const accessPackageRelationships = {
     sourceType:
       accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_APPROVER._type,
     _class: RelationshipClass.IS,
-    targetType: USER_ENTITY_TYPE,
+    targetType: ADEntities.USER._type,
   },
   STEP_AZURE_USER_CREATED_ACCESS_PACKAGE_ASSIGNMENT_REQUEST_RELATIONSHIP: {
     _type: 'azure_user_created_access_packages_request',
-    sourceType: USER_ENTITY_TYPE,
+    sourceType: ADEntities.USER._type,
     _class: RelationshipClass.CREATED,
     targetType:
       accessPackageEntites.STEP_ACCESS_PACKAGE_ASSIGNMENT_REQUEST._type,
@@ -102,13 +81,13 @@ export const accessPackageRelationships = {
     },
   STEP_AZURE_USER_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP: {
     _type: 'azure_user_assigned_access_packages_services',
-    sourceType: USER_ENTITY_TYPE,
+    sourceType: ADEntities.USER._type,
     _class: RelationshipClass.ASSIGNED,
     targetType: accessPackageEntites.STEP_ACCESS_PACKAGE._type,
   },
   STEP_AZURE_GROUP_ASSIGNED_TO_ACCESS_PACKAGE_RELATIONSHIP: {
     _type: 'azure_user_group_assigned_access_packages_services',
-    sourceType: GROUP_ENTITY_TYPE,
+    sourceType: ADEntities.USER_GROUP._type,
     _class: RelationshipClass.ASSIGNED,
     targetType: accessPackageEntites.STEP_ACCESS_PACKAGE._type,
   },

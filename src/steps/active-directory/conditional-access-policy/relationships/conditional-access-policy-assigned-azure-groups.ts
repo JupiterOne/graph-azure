@@ -11,7 +11,7 @@ import {
   ConditionalAccessRelationships,
   ConditionalAccessSteps,
 } from '../constants';
-import { GROUP_ENTITY_TYPE, STEP_AD_GROUPS } from '../../constants';
+import { ADEntities, STEP_AD_GROUPS } from '../../constants';
 
 export async function buildConditionalAccessPolicyAssignedGroupsRelationships(
   executionContext: IntegrationStepContext,
@@ -30,7 +30,7 @@ export async function buildConditionalAccessPolicyAssignedGroupsRelationships(
             fromKey: conditionalPolicy._key,
             fromType: ConditionalAccessEntities.CONDITIONAL_ACCESS_POLICY._type,
             toKey: groupId,
-            toType: GROUP_ENTITY_TYPE,
+            toType: ADEntities.USER_GROUP._type,
           }),
         );
       }

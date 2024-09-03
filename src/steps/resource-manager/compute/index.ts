@@ -13,10 +13,7 @@ import {
 import { createAzureWebLinker } from '../../../azure';
 import { IntegrationStepContext, AzureIntegrationStep } from '../../../types';
 import { getAccountEntity } from '../../active-directory';
-import {
-  SERVICE_PRINCIPAL_ENTITY_TYPE,
-  STEP_AD_ACCOUNT,
-} from '../../active-directory/constants';
+import { ADEntities, STEP_AD_ACCOUNT } from '../../active-directory/constants';
 import { ComputeClient } from './client';
 import { steps, entities, relationships } from './constants';
 import {
@@ -649,7 +646,7 @@ export async function buildVirtualMachineManagedIdentityRelationships(
               _class: RelationshipClass.ASSIGNED,
               source: vmEntity,
               target: {
-                _type: SERVICE_PRINCIPAL_ENTITY_TYPE,
+                _type: ADEntities.SERVICE_PRINCIPAL._type,
                 _key: vm.identity.principalId,
               },
               properties: {
@@ -692,7 +689,7 @@ export async function buildVirtualMachineManagedIdentityRelationships(
                   _class: RelationshipClass.ASSIGNED,
                   source: vmEntity,
                   target: {
-                    _type: SERVICE_PRINCIPAL_ENTITY_TYPE,
+                    _type: ADEntities.SERVICE_PRINCIPAL._type,
                     _key: userAssignedIdentity.principalId,
                   },
                   properties: {

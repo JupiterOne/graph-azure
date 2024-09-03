@@ -1096,12 +1096,13 @@
     xml2js "^0.4.19"
 
 "@azure/core-lro@^1.0.2":
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/@azure/core-lro/-/core-lro-1.0.3.tgz"
-  integrity sha512-Py2crJ84qx1rXkzIwfKw5Ni4WJuzVU7KAF6i1yP3ce8fbynUeu8eEWS4JGtSQgU7xv02G55iPDROifmSDbxeHA==
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@azure/core-lro/-/core-lro-1.0.5.tgz#856a2cb6a9bec739ee9cde33a27cc28f81ac0522"
+  integrity sha512-0EFCFZxARrIoLWMIRt4vuqconRVIO2Iin7nFBfJiYCCbKp5eEmxutNk8uqudPmG0XFl5YqlVh68/al/vbE5OOg==
   dependencies:
     "@azure/abort-controller" "^1.0.0"
     "@azure/core-http" "^1.2.0"
+    "@azure/core-tracing" "1.0.0-preview.11"
     events "^3.0.0"
     tslib "^2.0.0"
 
@@ -1197,6 +1198,15 @@
   dependencies:
     "@opencensus/web-types" "0.0.7"
     "@opentelemetry/api" "^0.10.2"
+    tslib "^2.0.0"
+
+"@azure/core-tracing@1.0.0-preview.11":
+  version "1.0.0-preview.11"
+  resolved "https://registry.yarnpkg.com/@azure/core-tracing/-/core-tracing-1.0.0-preview.11.tgz#bdfb2ba73cd6c39b7d6c207b9522eb98e08b4ddd"
+  integrity sha512-frF0pJc9HTmKncVokhBxCqipjbql02DThQ1ZJ9wLi7SDMLdPAFyDI5xZNzX5guLz+/DtPkY+SGK2li9FIXqshQ==
+  dependencies:
+    "@opencensus/web-types" "0.0.7"
+    "@opentelemetry/api" "1.0.0-rc.0"
     tslib "^2.0.0"
 
 "@azure/core-tracing@1.0.0-preview.13":
@@ -2099,24 +2109,26 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@jupiterone/data-model@^0.55.0":
-  version "0.55.0"
-  resolved "https://registry.yarnpkg.com/@jupiterone/data-model/-/data-model-0.55.0.tgz#e67dfa2901ca8e7ad9bd111d30d4caa6b7dd8fe0"
-  integrity sha512-lZ/R8z/6HrhitCywyhuLcSD7josRicvj6z5Rh1Bv4ksa5ye00PrI0fg8cQ0GyunYe0FAJtS5hAoit0i+uzVDiw==
+"@jupiterone/data-model@^0.61.9":
+  version "0.61.9"
+  resolved "https://registry.yarnpkg.com/@jupiterone/data-model/-/data-model-0.61.9.tgz#4052f6d30210cb17aac78e246aa2fe71d0cbc2b2"
+  integrity sha512-5hFbsej5kXAjXGL2UIyGdtB9PXGkfp86c8SQ07wvLQeaVvH+9wv9GgJzNoaPxifo34VwN5z4RSycZ5sgFWRgvw==
   dependencies:
+    "@sinclair/typebox" "^0.32.30"
     ajv "^8.0.0"
     ajv-formats "^2.0.0"
 
-"@jupiterone/integration-sdk-cli@^12.4.1":
-  version "12.4.1"
-  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-cli/-/integration-sdk-cli-12.4.1.tgz#09bbfac2a356e5a4f320f34cc82c9cb7b7d3c211"
-  integrity sha512-Ez/3scvrYxP0TrJIUQG7jpPGaTHJBoVjgo40JFiwbiBnC0PZJSXmKGSIadgxsd8JGz2fPphMe4rfGkuMwMYTPw==
+"@jupiterone/integration-sdk-cli@^13.2.0":
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-cli/-/integration-sdk-cli-13.2.0.tgz#8ab1c12dcc5ad9766c67581e6a7d08607d7148a3"
+  integrity sha512-9FRCRb8CG/oFSzkyQPWiWF6U75VsENjxt4DKOEXF+tDs1L8XLUICyIc5+Av/UK3r8ecOku/D6p80/SWu9AIkbw==
   dependencies:
-    "@jupiterone/data-model" "^0.55.0"
-    "@jupiterone/integration-sdk-core" "^12.4.1"
-    "@jupiterone/integration-sdk-runtime" "^12.4.1"
+    "@jupiterone/data-model" "^0.61.9"
+    "@jupiterone/integration-sdk-core" "^13.2.0"
+    "@jupiterone/integration-sdk-runtime" "^13.2.0"
     chalk "^4"
     commander "^9.4.0"
+    ejs "^3.1.9"
     fs-extra "^10.1.0"
     globby "^11.0.0"
     inquirer-checkbox-plus-prompt "^1.4.2"
@@ -2130,21 +2142,23 @@
     upath "^1.2.0"
     url-exists "^1.0.3"
 
-"@jupiterone/integration-sdk-core@^12.2.7", "@jupiterone/integration-sdk-core@^12.4.1":
-  version "12.4.1"
-  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-core/-/integration-sdk-core-12.4.1.tgz#f0746437307dc732652a64ca01ad23d43766b26c"
-  integrity sha512-YeDt8wZftXu/Egb27/zInrd+5wETYz98eyLJvCOf4IQW6IUT8zZ4Bfnbt2/ZVrLlnBX/ICRhc79KCQxuNdlqxg==
+"@jupiterone/integration-sdk-core@^13.2.0":
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-core/-/integration-sdk-core-13.2.0.tgz#00ba41ca3af367e64f1552084622600afadda714"
+  integrity sha512-CfMWvS136NPMhucDWEwOPpFjEhR1Gk0/QC1M1TjpORBvXP0+tEwMeG5m40vzM8BOYummCxyHvkv3DX7hxda3SA==
   dependencies:
-    "@jupiterone/data-model" "^0.55.0"
+    "@jupiterone/data-model" "^0.61.9"
+    "@jupiterone/integration-sdk-entity-validator" "^13.2.0"
+    "@sinclair/typebox" "^0.32.30"
     lodash "^4.17.21"
 
-"@jupiterone/integration-sdk-dev-tools@^12.2.7":
-  version "12.4.1"
-  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-dev-tools/-/integration-sdk-dev-tools-12.4.1.tgz#6faebb35afc032bf7ecb19ff134bde6f74aafe47"
-  integrity sha512-PuBBz0cIzH+RQanYHGT568qhbT0EctBycj6l6WVhLAdcQpbb78TWEmGVDopL+ZycQ3XdJPzGKfP4E23yeDeecQ==
+"@jupiterone/integration-sdk-dev-tools@^13.2.0":
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-dev-tools/-/integration-sdk-dev-tools-13.2.0.tgz#d7ad1be18d3cda6ed75062a1263fc6dca15cb7ee"
+  integrity sha512-S6/zioIXuA9hyqZZsM3cc2sQzrJD9FHPCsTL00lDr6tnCo0RzCUILEyetn+ZhQ8pt67USpoHn6S5FZ0tqzi/QA==
   dependencies:
-    "@jupiterone/integration-sdk-cli" "^12.4.1"
-    "@jupiterone/integration-sdk-testing" "^12.4.1"
+    "@jupiterone/integration-sdk-cli" "^13.2.0"
+    "@jupiterone/integration-sdk-testing" "^13.2.0"
     "@types/jest" "^29.5.3"
     "@types/node" "^18"
     "@typescript-eslint/eslint-plugin" "^6.2.1"
@@ -2159,14 +2173,23 @@
     prettier "^3.0.0"
     ts-jest "^29.1.1"
     ts-node "^9.1.1"
-    typescript "^5.1.6"
+    typescript "^5.5.2"
 
-"@jupiterone/integration-sdk-runtime@^12.4.1":
-  version "12.4.1"
-  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-runtime/-/integration-sdk-runtime-12.4.1.tgz#ac633d48434b7fe13d1872aa1e8954d4fd765278"
-  integrity sha512-dmTjFwA4Fm27Avu7X80i+q/5edtAQGGDbQMPqtkaGAe+bgGHrRpaCnKG7LCLspCYK8dCoGQkRx63COdd1DDNqQ==
+"@jupiterone/integration-sdk-entity-validator@^13.2.0":
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-entity-validator/-/integration-sdk-entity-validator-13.2.0.tgz#88b43e1b091bc17e65894c1e3378a1587a8194ea"
+  integrity sha512-uDr3einGneDJJIEI5LB4XEdlPS/4ZpT/ctBhO/17v+TdLuF+HTK5YkqziHnsugEUYzV93V6Rp2KCEQxCS09UtQ==
   dependencies:
-    "@jupiterone/integration-sdk-core" "^12.4.1"
+    ajv "^8.12.0"
+    ajv-formats "^3.0.1"
+    prettier "^3.2.5"
+
+"@jupiterone/integration-sdk-runtime@^13.2.0":
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-runtime/-/integration-sdk-runtime-13.2.0.tgz#ec96a48968a666b53fdc5db54b71b842f4c8d7f3"
+  integrity sha512-t5b5Vdid8DKeQpEHVWVESXYlei1b20ulD/jSXK8WJPNgrK9db17cfWqEzGkRC/zDKfI0qsFhSa7Svon7THOEWA==
+  dependencies:
+    "@jupiterone/integration-sdk-core" "^13.2.0"
     "@lifeomic/alpha" "^5.2.0"
     "@lifeomic/attempt" "^3.0.3"
     async-sema "^3.1.0"
@@ -2182,13 +2205,13 @@
     p-queue "^6.3.0"
     rimraf "^3.0.2"
 
-"@jupiterone/integration-sdk-testing@^12.2.7", "@jupiterone/integration-sdk-testing@^12.4.1":
-  version "12.4.1"
-  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-testing/-/integration-sdk-testing-12.4.1.tgz#685a29f52777acf84e8eb8a2926f30175e6faaf9"
-  integrity sha512-LH3VGWqMWYo949v+YU4e7iralKzelHkd6xshHdyvhCEgM6z9EP3csq2Gacip+mF39s7zmAiMSEaanXh6FEDiwg==
+"@jupiterone/integration-sdk-testing@^13.2.0":
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-testing/-/integration-sdk-testing-13.2.0.tgz#68aab49fc45a0ec6466b3ca9a0a0baf1922eb41c"
+  integrity sha512-huubIaruglKaURwt+imJP80Xx3sMsjlNK3Pyy0jtpz7JrBTriVkLxcEM/pXXFl+mllKlhVzN0luSp5iaX93PUA==
   dependencies:
-    "@jupiterone/integration-sdk-core" "^12.4.1"
-    "@jupiterone/integration-sdk-runtime" "^12.4.1"
+    "@jupiterone/integration-sdk-core" "^13.2.0"
+    "@jupiterone/integration-sdk-runtime" "^13.2.0"
     "@pollyjs/adapter-node-http" "^6.0.5"
     "@pollyjs/core" "^6.0.5"
     "@pollyjs/persister-fs" "^6.0.5"
@@ -2404,6 +2427,11 @@
   resolved "https://registry.npmjs.org/@opencensus/web-types/-/web-types-0.0.7.tgz"
   integrity sha512-xB+w7ZDAu3YBzqH44rCmG9/RlrOmFuDPt/bpf17eJr8eZSrLt7nc7LnWdxM9Mmoj/YKMHpxRg28txu3TcpiL+g==
 
+"@opentelemetry/api@1.0.0-rc.0":
+  version "1.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-1.0.0-rc.0.tgz#0c7c3f5e1285f99cedb563d74ad1adb9822b5144"
+  integrity sha512-iXKByCMfrlO5S6Oh97BuM56tM2cIBB0XsL/vWF/AtJrJEKx4MC/Xdu0xDsGXMGcNWpqF7ujMsjjnp0+UHBwnDQ==
+
 "@opentelemetry/api@^0.10.2":
   version "0.10.2"
   resolved "https://registry.npmjs.org/@opentelemetry/api/-/api-0.10.2.tgz"
@@ -2500,6 +2528,11 @@
   version "0.27.8"
   resolved "https://registry.npmjs.org/@sinclair/typebox/-/typebox-0.27.8.tgz"
   integrity sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==
+
+"@sinclair/typebox@^0.32.30":
+  version "0.32.35"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.32.35.tgz#41c04473509478df9895800018a3d3ae7d40fb3c"
+  integrity sha512-Ul3YyOTU++to8cgNkttakC0dWvpERr6RYoHO2W47DLbFvrwBDJUY31B1sImH6JZSYc4Kt4PyHtoPNu+vL2r2dA==
 
 "@sindresorhus/fnv1a@^2.0.1":
   version "2.0.1"
@@ -3498,6 +3531,13 @@ ajv-formats@^2.0.0:
   dependencies:
     ajv "^8.0.0"
 
+ajv-formats@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-3.0.1.tgz#3d5dc762bca17679c3c2ea7e90ad6b7532309578"
+  integrity sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==
+  dependencies:
+    ajv "^8.0.0"
+
 ajv@^6.12.4, ajv@^6.5.5:
   version "6.12.6"
   resolved "https://registry.npmjs.org/ajv/-/ajv-6.12.6.tgz"
@@ -3517,6 +3557,16 @@ ajv@^8.0.0:
     json-schema-traverse "^1.0.0"
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
+
+ajv@^8.12.0:
+  version "8.17.1"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.17.1.tgz#37d9a5c776af6bc92d7f4f9510eba4c0a60d11a6"
+  integrity sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==
+  dependencies:
+    fast-deep-equal "^3.1.3"
+    fast-uri "^3.0.1"
+    json-schema-traverse "^1.0.0"
+    require-from-string "^2.0.2"
 
 ansi-colors@^3.2.1:
   version "3.2.4"
@@ -3670,6 +3720,11 @@ async@^2.6.3:
   integrity sha512-mzo5dfJYwAn29PeiJ0zvwTo04zj8HDJj0Mn8TD7sno7q12prdbnasKJHhkm2c1LgrhlJ0teaea8860oxi51mGA==
   dependencies:
     lodash "^4.17.14"
+
+async@^3.2.3:
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/async/-/async-3.2.5.tgz#ebd52a8fdaf7a2289a24df399f8d8485c8a46b66"
+  integrity sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==
 
 asynckit@^0.4.0:
   version "0.4.0"
@@ -3875,6 +3930,13 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
+brace-expansion@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.0.1.tgz#1edc459e0f0c548486ecf9fc99f2221364b9a0ae"
+  integrity sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==
+  dependencies:
+    balanced-match "^1.0.0"
+
 braces@^3.0.2:
   version "3.0.2"
   resolved "https://registry.npmjs.org/braces/-/braces-3.0.2.tgz"
@@ -4006,7 +4068,7 @@ caseless@~0.12.0:
   resolved "https://registry.npmjs.org/caseless/-/caseless-0.12.0.tgz"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
-chalk@4.1.2, chalk@^4, chalk@^4.1.0, chalk@^4.1.1:
+chalk@4.1.2, chalk@^4, chalk@^4.0.2, chalk@^4.1.0, chalk@^4.1.1:
   version "4.1.2"
   resolved "https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz"
   integrity sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
@@ -4564,6 +4626,13 @@ ee-first@1.1.1:
   resolved "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
+ejs@^3.1.9:
+  version "3.1.10"
+  resolved "https://registry.yarnpkg.com/ejs/-/ejs-3.1.10.tgz#69ab8358b14e896f80cc39e62087b88500c3ac3b"
+  integrity sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==
+  dependencies:
+    jake "^10.8.5"
+
 electron-to-chromium@^1.4.477:
   version "1.4.491"
   resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.4.491.tgz"
@@ -4960,6 +5029,11 @@ fast-levenshtein@^2.0.6:
   resolved "https://registry.npmjs.org/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
+fast-uri@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-3.0.1.tgz#cddd2eecfc83a71c1be2cc2ef2061331be8a7134"
+  integrity sha512-MWipKbbYiYI0UC7cl8m/i/IWTqfC8YXsqjzybjddLsFjStroQzsHXkc73JutMvBiXmOvapk+axIl79ig5t55Bw==
+
 fast-xml-parser@4.2.5:
   version "4.2.5"
   resolved "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-4.2.5.tgz"
@@ -5001,6 +5075,13 @@ file-entry-cache@^6.0.1:
   integrity sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==
   dependencies:
     flat-cache "^3.0.4"
+
+filelist@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/filelist/-/filelist-1.0.4.tgz#f78978a1e944775ff9e62e744424f215e58352b5"
+  integrity sha512-w1cEuf3S+DrLCQL7ET6kz+gmlJdbq9J7yXCSjK/OZCPA+qEN1WyF4ZAf0YYJa4/shHJra2t/d/r8SV4Ji+x+8Q==
+  dependencies:
+    minimatch "^5.0.1"
 
 fill-range@^7.0.1:
   version "7.0.1"
@@ -5907,6 +5988,16 @@ istanbul-reports@^3.1.3:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
 
+jake@^10.8.5:
+  version "10.9.2"
+  resolved "https://registry.yarnpkg.com/jake/-/jake-10.9.2.tgz#6ae487e6a69afec3a5e167628996b59f35ae2b7f"
+  integrity sha512-2P4SQ0HrLQ+fw6llpLnOaGAvN2Zu6778SJMrCUwns4fOoG9ayrTiZk3VV8sCPkVZF8ab0zksVpS8FDY5pRCNBA==
+  dependencies:
+    async "^3.2.3"
+    chalk "^4.0.2"
+    filelist "^1.0.4"
+    minimatch "^3.1.2"
+
 java-properties@^1.0.0:
   version "1.0.2"
   resolved "https://registry.npmjs.org/java-properties/-/java-properties-1.0.2.tgz"
@@ -6778,6 +6869,13 @@ minimatch@^3.0.5, minimatch@^3.1.2:
   dependencies:
     brace-expansion "^1.1.7"
 
+minimatch@^5.0.1:
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.1.6.tgz#1cfcb8cf5522ea69952cd2af95ae09477f122a96"
+  integrity sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==
+  dependencies:
+    brace-expansion "^2.0.1"
+
 minimist@^1.2.0, minimist@^1.2.5:
   version "1.2.6"
   resolved "https://registry.npmjs.org/minimist/-/minimist-1.2.6.tgz"
@@ -7454,6 +7552,11 @@ prettier@^3.0.0:
   version "3.0.1"
   resolved "https://registry.npmjs.org/prettier/-/prettier-3.0.1.tgz"
   integrity sha512-fcOWSnnpCrovBsmFZIGIy9UqK2FaI7Hqax+DIO0A9UxeVoY4iweyaFjS5TavZN97Hfehph0nhsZnjlVKzEQSrQ==
+
+prettier@^3.2.5:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.3.3.tgz#30c54fe0be0d8d12e6ae61dbb10109ea00d53105"
+  integrity sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==
 
 pretty-format@^29.0.0, pretty-format@^29.6.2:
   version "29.6.2"
@@ -8426,10 +8529,10 @@ typescript-memoize@^1.0.0-alpha.3:
   resolved "https://registry.npmjs.org/typescript-memoize/-/typescript-memoize-1.1.0.tgz"
   integrity sha512-LQPKVXK8QrBBkL/zclE6YgSWn0I8ew5m0Lf+XL00IwMhlotqRLlzHV+BRrljVQIc+NohUAuQP7mg4HQwrx5Xbg==
 
-typescript@^5.1.6:
-  version "5.1.6"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-5.1.6.tgz"
-  integrity sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==
+typescript@^5.5.2:
+  version "5.5.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.5.4.tgz#d9852d6c82bad2d2eda4fd74a5762a8f5909e9ba"
+  integrity sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==
 
 typical@^4.0.0:
   version "4.0.0"

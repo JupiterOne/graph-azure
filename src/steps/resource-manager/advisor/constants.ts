@@ -1,6 +1,7 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 import { SecurityEntities } from '../security/constants';
 import { ANY_SCOPE } from '../constants';
+import { RecommendationEntityMetadata } from './entities';
 
 export const AdvisorSteps = {
   RECOMMENDATIONS: 'rm-advisor-recommendations',
@@ -11,11 +12,7 @@ export const AdvisorSteps = {
 };
 
 export const AdvisorEntities = {
-  RECOMMENDATION: {
-    _type: 'azure_advisor_recommendation',
-    _class: ['Finding'],
-    resourceName: '[RM] Advisor Recommendation',
-  },
+  RECOMMENDATION: RecommendationEntityMetadata,
 };
 
 export const AdvisorRelationships = {

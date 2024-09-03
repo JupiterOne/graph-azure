@@ -22,7 +22,7 @@ export function createClassicAdministratorEntity(): Entity {
     entityData: {
       source: {},
       assign: {
-        _key: entities.CLASSIC_ADMIN._key,
+        _key: entities.CLASSIC_ADMIN._type,
         _type: entities.CLASSIC_ADMIN._type,
         _class: entities.CLASSIC_ADMIN._class,
         name: 'Azure Classic Administrator',

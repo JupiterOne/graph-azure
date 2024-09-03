@@ -12,6 +12,11 @@ import {
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
 import { ANY_SCOPE } from '../constants';
+import {
+  RoleDefinitionEntityMetadata,
+  ClassicAdminGroupEntityMetadata,
+  RoleAssignmentEntityMetadata,
+} from './entities';
 
 export const steps = {
   ROLE_ASSIGNMENTS: 'rm-authorization-role-assignments',
@@ -26,22 +31,9 @@ export const steps = {
 };
 
 export const entities = {
-  ROLE_DEFINITION: {
-    _type: 'azure_role_definition',
-    _class: ['AccessRole'],
-    resourceName: '[RM] Role Definition',
-  },
-  CLASSIC_ADMIN: {
-    _key: 'azure_classic_admin_group',
-    _type: 'azure_classic_admin_group',
-    _class: ['UserGroup'],
-    resourceName: '[RM] Classic Admin',
-  },
-  ROLE_ASSIGNMENT: {
-    _type: 'azure_role_assignment',
-    _class: ['AccessPolicy'],
-    resourceName: '[RM] Role Assignment',
-  },
+  ROLE_DEFINITION: RoleDefinitionEntityMetadata,
+  CLASSIC_ADMIN: ClassicAdminGroupEntityMetadata,
+  ROLE_ASSIGNMENT: RoleAssignmentEntityMetadata,
 };
 
 interface RoleAssignmentPrincipalMap {

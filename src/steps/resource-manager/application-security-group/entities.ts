@@ -6,10 +6,10 @@ export const [
   ApplicationSecurityGroupEntityMetadata,
   createApplicationSecurityGroupAssignEntity,
 ] = createEntityMetadata({
-  resourceName: '[RM] Application Security Group ',
+  resourceName: 'Azure Application Security Group',
   _class: ['Firewall'],
   _type: createEntityType('application_security_group'),
-  description: 'Azure Application Security Groups',
+  description: 'Azure Application Security Group',
   schema: SchemaType.Object({
     etag: SchemaType.Optional(SchemaType.String()),
     provisioningState: SchemaType.Optional(SchemaType.String()),

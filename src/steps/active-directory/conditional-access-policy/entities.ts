@@ -84,12 +84,12 @@ export const [
     countryLookupMethod: SchemaType.Optional(SchemaType.String()),
     public: SchemaType.Boolean({
       description:
-        'This value is not applicable to this entity, however is expected on a entity with a _class of `Network`',
+        'This value is not applicable to this entity, however is expected on entities with a _class of `Network`',
       default: false,
     }),
     internal: SchemaType.Boolean({
       description:
-        'This value is not applicable to this entity, however is expected on a entity with a _class of `Network`',
+        'This value is not applicable to this entity, however is expected on entities with a _class of `Network`',
       default: false,
     }),
   }),

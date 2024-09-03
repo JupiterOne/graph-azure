@@ -7,7 +7,7 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
+import { ADEntities } from '../../active-directory/constants';
 
 const instanceConfig: IntegrationConfig = {
   clientId: process.env.CLIENT_ID || 'clientId',
@@ -42,7 +42,7 @@ test('step = redis caches', async () => {
       },
     ],
     setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      [ADEntities.ACCOUNT._type]: { defaultDomain: 'www.fake-domain.com' },
     },
   });
 
@@ -92,7 +92,7 @@ test('step = redis firewall rules', async () => {
       },
     ],
     setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      [ADEntities.ACCOUNT._type]: { defaultDomain: 'www.fake-domain.com' },
     },
   });
 
@@ -165,7 +165,7 @@ test('step = redis linked servers', async () => {
     instanceConfig,
     entities,
     setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      [ADEntities.ACCOUNT._type]: { defaultDomain: 'www.fake-domain.com' },
     },
   });
 

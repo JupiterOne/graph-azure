@@ -2,7 +2,6 @@ import { Recording } from '@jupiterone/integration-sdk-testing';
 import { IntegrationConfig } from '../../../types';
 import { setupAzureRecording } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { createDiagnosticSettingsEntitiesAndRelationshipsForResource } from './createDiagnosticSettingsEntitiesAndRelationshipsForResource';
 import {
   KEY_VAULT_SERVICE_ENTITY_CLASS,
@@ -12,6 +11,7 @@ import { Entity } from '@jupiterone/integration-sdk-core';
 import { MonitorEntities, MonitorRelationships } from '../monitor/constants';
 import { separateDiagnosticSettingsRelationships } from '../../../../test/helpers/filterGraphObjects';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
+import { ADEntities } from '../../active-directory/constants';
 
 let recording: Recording;
 
@@ -64,7 +64,7 @@ describe('createDiagnosticSettingsEntitiesAndRelationshipsForResource', () => {
       instanceConfig,
       entities: [keyVaultEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 

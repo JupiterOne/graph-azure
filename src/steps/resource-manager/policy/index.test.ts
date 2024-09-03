@@ -5,7 +5,6 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import {
   fetchPolicyAssignments,
   fetchPolicyDefinitionsForAssignments,
@@ -15,6 +14,7 @@ import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 import { PolicyEntities, PolicyRelationships } from './constants';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
 import { Entity, Relationship } from '@jupiterone/integration-sdk-core';
+import { ADEntities } from '../../active-directory/constants';
 
 let recording: Recording;
 
@@ -44,7 +44,7 @@ describe('rm-policy-assignments', () => {
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -68,7 +68,7 @@ describe('rm-policy-definitions', () => {
     const context = createMockAzureStepExecutionContext({
       instanceConfig: config,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -158,15 +158,14 @@ describe('rm-policy-definitions', () => {
       },
     });
 
-    const { accountEntity, policyAssignmentEntities } = await getSetupEntities(
-      configFromEnv,
-    );
+    const { accountEntity, policyAssignmentEntities } =
+      await getSetupEntities(configFromEnv);
 
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
       entities: [...policyAssignmentEntities],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 

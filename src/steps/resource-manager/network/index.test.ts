@@ -28,7 +28,6 @@ import {
 } from './';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
 import { IntegrationConfig } from '../../../types';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import {
   NetworkEntities,
   NetworkRelationships,
@@ -50,6 +49,7 @@ import {
 } from '../../../../test/helpers/getMockEntity';
 import { RESOURCE_GROUP_ENTITY } from '../resources/constants';
 import { steps as storageSteps } from '../storage/constants';
+import { ADEntities } from '../../active-directory/constants';
 
 const GUID_REGEX = new RegExp(
   '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
@@ -156,9 +156,9 @@ describe('network steps', () => {
       instanceConfig,
       entities: [resourceGroupEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: {
+        [ADEntities.ACCOUNT._type]: {
           defaultDomain: 'www.fake-domain.com',
-          _type: ACCOUNT_ENTITY_TYPE,
+          _type: ADEntities.ACCOUNT._type,
           _key: 'azure_account_id',
           id: 'azure_account_id',
         },
@@ -1050,9 +1050,9 @@ describe('network steps', () => {
         instanceConfig,
         entities: [resourceGroupEntity],
         setData: {
-          [ACCOUNT_ENTITY_TYPE]: {
+          [ADEntities.ACCOUNT._type]: {
             defaultDomain: 'www.fake-domain.com',
-            _type: ACCOUNT_ENTITY_TYPE,
+            _type: ADEntities.ACCOUNT._type,
             _key: 'azure_account_id',
             id: 'azure_account_id',
           },
@@ -1145,7 +1145,7 @@ describe('network steps', () => {
         instanceConfig: configFromEnv,
         entities: [resourceGroupEntity],
         setData: {
-          [ACCOUNT_ENTITY_TYPE]: accountEntity,
+          [ADEntities.ACCOUNT._type]: accountEntity,
         },
       });
 
@@ -1197,7 +1197,7 @@ describe('network steps', () => {
         instanceConfig: configFromEnv,
         entities: [accountEntity, resourceGroupEntity],
         setData: {
-          [ACCOUNT_ENTITY_TYPE]: accountEntity,
+          [ADEntities.ACCOUNT._type]: accountEntity,
         },
       });
 
@@ -1294,7 +1294,7 @@ describe('network steps', () => {
         instanceConfig: configFromEnv,
         entities: [accountEntity, resourceGroupEntity],
         setData: {
-          [ACCOUNT_ENTITY_TYPE]: accountEntity,
+          [ADEntities.ACCOUNT._type]: accountEntity,
         },
       });
 

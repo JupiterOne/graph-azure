@@ -5,7 +5,6 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import {
   buildPolicyStateAssignmentRelationships,
   buildPolicyStateDefinitionRelationships,
@@ -22,6 +21,7 @@ import {
 import { PolicyEntities } from '../policy/constants';
 import { fetchKeyVaults } from '../key-vault';
 import { KEY_VAULT_SERVICE_ENTITY_TYPE } from '../key-vault/constants';
+import { ADEntities } from '../../active-directory/constants';
 
 let recording: Recording;
 
@@ -51,7 +51,7 @@ describe('rm-policy-states-for-subscription', () => {
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -75,7 +75,7 @@ describe('rm-policy-state-to-policy-assignment-relationships', () => {
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -109,7 +109,7 @@ describe('rm-policy-state-to-policy-assignment-relationships', () => {
       instanceConfig: configFromEnv,
       entities: [...policyStateEntities, ...policyAssignmentEntities],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -143,7 +143,7 @@ describe('rm-policy-state-to-policy-definition-relationships', () => {
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -178,7 +178,7 @@ describe('rm-policy-state-to-policy-definition-relationships', () => {
       instanceConfig: configFromEnv,
       entities: [...policyStateEntities, ...policyDefinitionEntities],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -212,7 +212,7 @@ describe('rm-policy-state-to-resource-relationships', () => {
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -246,7 +246,7 @@ describe('rm-policy-state-to-resource-relationships', () => {
       instanceConfig: configFromEnv,
       entities: [...policyStateEntities, ...keyVaultEntities],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 

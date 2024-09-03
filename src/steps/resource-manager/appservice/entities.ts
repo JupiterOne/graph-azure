@@ -37,7 +37,9 @@ export const [WebAppEntityMetadata, createWebAppAssignEntity] =
       principalId: SchemaType.Optional(SchemaType.String()),
       phpVersion: SchemaType.Optional(SchemaType.String()),
       pythonVersion: SchemaType.Optional(SchemaType.String()),
-      javaVersion: SchemaType.Optional(SchemaType.String()),
+      javaVersion: SchemaType.Optional(
+        SchemaType.Union([SchemaType.String(), SchemaType.Null()]),
+      ),
       nodeVersion: SchemaType.Optional(SchemaType.String()),
       http20Enabled: SchemaType.Optional(
         SchemaType.Boolean({
@@ -91,7 +93,9 @@ export const [FunctionAppEntityMetadata, createFunctionAppAssignEntity] =
       principalId: SchemaType.Optional(SchemaType.String()),
       phpVersion: SchemaType.Optional(SchemaType.String()),
       pythonVersion: SchemaType.Optional(SchemaType.String()),
-      javaVersion: SchemaType.Optional(SchemaType.String()),
+      javaVersion: SchemaType.Optional(
+        SchemaType.Union([SchemaType.String(), SchemaType.Null()]),
+      ),
       nodeVersion: SchemaType.Optional(SchemaType.String()),
       http20Enabled: SchemaType.Optional(
         SchemaType.Boolean({

@@ -15,7 +15,6 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { entities as subscriptionEntities } from '../subscriptions/constants';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import {
   SecurityEntities,
   SecurityRelationships,
@@ -31,6 +30,7 @@ import {
   getMockSubscriptionEntity,
 } from '../../../../test/helpers/getMockEntity';
 import { getConfigForTest } from './__tests__/utils';
+import { ADEntities } from '../../active-directory/constants';
 
 let recording: Recording;
 
@@ -63,7 +63,7 @@ test('step - security assessments', async () => {
       },
     ],
     setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      [ADEntities.ACCOUNT._type]: { defaultDomain: 'www.fake-domain.com' },
     },
   });
 
@@ -103,7 +103,7 @@ test('step - security center contacts', async () => {
       },
     ],
     setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      [ADEntities.ACCOUNT._type]: { defaultDomain: 'www.fake-domain.com' },
     },
   });
 
@@ -153,7 +153,7 @@ describe('rm-security-center-pricing-configs', () => {
       instanceConfig: config,
       entities: [subscriptionEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -208,7 +208,7 @@ describe('rm-security-center-settings', () => {
       instanceConfig: config,
       entities: [subscriptionEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 
@@ -264,7 +264,7 @@ describe('rm-security-center-auto-provisioning-settings', () => {
       instanceConfig: config,
       entities: [subscriptionEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 

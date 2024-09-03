@@ -304,7 +304,6 @@ The following entities are created:
 | Resources                                        | Entity `_type`                                    | Entity `_class`                    |
 | ------------------------------------------------ | ------------------------------------------------- | ---------------------------------- |
 | Azure Application Gateway                        | `azure_application_gateway`                       | `Network`                          |
-| Azure Application Security Groups                | `azure_application_security_group`                | `Firewall`                         |
 | Azure Synapse Analytics                          | `azure_synapse`                                   | `Service`                          |
 | FrontDoor                                        | `azure_frontdoor`                                 | `Service`                          |
 | FrontDoor Backend Pool                           | `azure_frontdoor_backend_pool`                    | `Configuration`                    |
@@ -335,6 +334,7 @@ The following entities are created:
 | [RM] Access Role                                 | `azure_kube_trusted_access_role`                  | `AccessRole`                       |
 | [RM] Advisor Recommendation                      | `azure_advisor_recommendation`                    | `Finding`                          |
 | [RM] App Service Plan                            | `azure_app_service_plan`                          | `Configuration`                    |
+| [RM] Application Security Group                  | `azure_application_security_group`                | `Firewall`                         |
 | [RM] Azure Application                           | `azure_application`                               | `Application`                      |
 | [RM] Azure Bgp Service Communities               | `azure_bgp_service_communities`                   | `Network`                          |
 | [RM] Azure Consumer Group                        | `azure_event_hub_consumer_group`                  | `Channel`                          |

@@ -18,12 +18,12 @@ import {
 } from '../../../../test/helpers/recording';
 import { Entity } from '@jupiterone/integration-sdk-core';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
 import {
   STEP_RM_RESOURCES_RESOURCE_HAS_LOCK,
   STEP_RM_RESOURCES_RESOURCE_LOCKS,
 } from './constants';
+import { ADEntities } from '../../active-directory/constants';
 let recording: Recording;
 
 afterEach(async () => {
@@ -138,7 +138,7 @@ test('step - resource groups', async () => {
       },
     ],
     setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      [ADEntities.ACCOUNT._type]: { defaultDomain: 'www.fake-domain.com' },
     },
   });
 
@@ -189,7 +189,7 @@ test('step - resource group locks', async () => {
       },
     ],
     setData: {
-      [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(configFromEnv),
+      [ADEntities.ACCOUNT._type]: getMockAccountEntity(configFromEnv),
     },
   });
 

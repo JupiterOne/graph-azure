@@ -5,7 +5,6 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import {
   fetchManagementGroups,
   validateManagementGroupStepInvocation,
@@ -18,6 +17,7 @@ import {
 } from './constants';
 import { Relationship } from '@jupiterone/integration-sdk-core';
 import { filterGraphObjects } from '../../../../test/helpers/filterGraphObjects';
+import { ADEntities } from '../../active-directory/constants';
 
 let recording: Recording;
 
@@ -85,7 +85,7 @@ describe('rm-management-groups', () => {
       instanceConfig: configFromEnv,
       entities: [accountEntity],
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: accountEntity,
+        [ADEntities.ACCOUNT._type]: accountEntity,
       },
     });
 

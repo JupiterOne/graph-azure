@@ -7,10 +7,10 @@ import {
   setupAzureRecording,
 } from '../../../../test/helpers/recording';
 import { createMockAzureStepExecutionContext } from '../../../../test/createMockAzureStepExecutionContext';
-import { ACCOUNT_ENTITY_TYPE } from '../../active-directory/constants';
 import { configFromEnv } from '../../../../test/integrationInstanceConfig';
 import { DnsEntities } from '../dns/constants';
 import { getMockAccountEntity } from '../../../../test/helpers/getMockEntity';
+import { ADEntities } from '../../active-directory/constants';
 let recording: Recording;
 
 afterEach(async () => {
@@ -45,7 +45,7 @@ describe('rm-private-dns-zones', () => {
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(configFromEnv),
+        [ADEntities.ACCOUNT._type]: getMockAccountEntity(configFromEnv),
       },
     });
 
@@ -82,7 +82,7 @@ describe('rm-private-dns-zones', () => {
     const context = createMockAzureStepExecutionContext({
       instanceConfig: configFromEnv,
       setData: {
-        [ACCOUNT_ENTITY_TYPE]: getMockAccountEntity(configFromEnv),
+        [ADEntities.ACCOUNT._type]: getMockAccountEntity(configFromEnv),
       },
     });
 
@@ -118,7 +118,7 @@ test('step - private dns record sets', async () => {
       },
     ],
     setData: {
-      [ACCOUNT_ENTITY_TYPE]: { defaultDomain: 'www.fake-domain.com' },
+      [ADEntities.ACCOUNT._type]: { defaultDomain: 'www.fake-domain.com' },
     },
   });
 
